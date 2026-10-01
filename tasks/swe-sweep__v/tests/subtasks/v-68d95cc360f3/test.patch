@@ -1,0 +1,11 @@
+diff --git a/vlib/v/fmt/tests/receiver_state_keep.vv b/vlib/v/fmt/tests/receiver_state_keep.vv
+new file mode 100644
+index 000000000..e16f9a5cb
+--- /dev/null
++++ b/vlib/v/fmt/tests/receiver_state_keep.vv
+@@ -0,0 +1,5 @@
++module main
++
++struct State {}
++
++type Func = fn (shared state State) string

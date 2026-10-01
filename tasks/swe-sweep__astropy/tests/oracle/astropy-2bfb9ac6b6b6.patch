@@ -1,0 +1,12 @@
+diff --git a/astropy/io/votable/converters.py b/astropy/io/votable/converters.py
+index 0e479572bf..14158e297d 100644
+--- a/astropy/io/votable/converters.py
++++ b/astropy/io/votable/converters.py
+@@ -424,6 +424,7 @@ class UnicodeChar(Converter):
+             self.binoutput = self._binoutput_var
+             self.arraysize = "*"
+         else:
++            field.arraysize = field.arraysize.removesuffix("*")
+             try:
+                 self.arraysize = int(field.arraysize)
+             except ValueError:

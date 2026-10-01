@@ -1,0 +1,41 @@
+diff --git a/src/black/__init__.py b/src/black/__init__.py
+index dbcb559f..60a339cd 100644
+--- a/src/black/__init__.py
++++ b/src/black/__init__.py
+@@ -127,7 +127,9 @@ def read_pyproject_toml(
+     otherwise.
+     """
+     if not value:
+-        value = find_pyproject_toml(ctx.params.get("src", ()))
++        value = find_pyproject_toml(
++            ctx.params.get("src", ()), ctx.params.get("stdin_filename", None)
++        )
+         if value is None:
+             return None
+ 
+@@ -362,6 +364,7 @@ def validate_regex(
+ @click.option(
+     "--stdin-filename",
+     type=str,
++    is_eager=True,
+     help=(
+         "The name of the file when passing it through stdin. Useful to make "
+         "sure Black will respect --force-exclude option on some "
+diff --git a/src/black/files.py b/src/black/files.py
+index 8c013112..65b2d0a8 100644
+--- a/src/black/files.py
++++ b/src/black/files.py
+@@ -89,9 +89,11 @@ def find_project_root(
+     return directory, "file system root"
+ 
+ 
+-def find_pyproject_toml(path_search_start: Tuple[str, ...]) -> Optional[str]:
++def find_pyproject_toml(
++    path_search_start: Tuple[str, ...], stdin_filename: Optional[str] = None
++) -> Optional[str]:
+     """Find the absolute filepath to a pyproject.toml if it exists"""
+-    path_project_root, _ = find_project_root(path_search_start)
++    path_project_root, _ = find_project_root(path_search_start, stdin_filename)
+     path_pyproject_toml = path_project_root / "pyproject.toml"
+     if path_pyproject_toml.is_file():
+         return str(path_pyproject_toml)

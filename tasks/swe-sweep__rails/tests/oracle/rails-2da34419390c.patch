@@ -1,0 +1,13 @@
+diff --git a/activemodel/lib/active_model/secure_password.rb b/activemodel/lib/active_model/secure_password.rb
+index de556bcd2f3..521ae41a1a3 100644
+--- a/activemodel/lib/active_model/secure_password.rb
++++ b/activemodel/lib/active_model/secure_password.rb
+@@ -83,7 +83,7 @@ module ActiveModel
+           end
+ 
+           validates_length_of attribute, maximum: ActiveModel::SecurePassword::MAX_PASSWORD_LENGTH_ALLOWED
+-          validates_confirmation_of attribute, allow_blank: true
++          validates_confirmation_of attribute, allow_nil: true
+         end
+       end
+     end

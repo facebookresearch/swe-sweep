@@ -1,0 +1,14 @@
+diff --git a/src/testing/testing.go b/src/testing/testing.go
+index a19238d31e..2239e01e22 100644
+--- a/src/testing/testing.go
++++ b/src/testing/testing.go
+@@ -483,6 +483,9 @@ func (c *common) frameSkip(skip int) runtime.Frame {
+ 	var firstFrame, prevFrame, frame runtime.Frame
+ 	for more := true; more; prevFrame = frame {
+ 		frame, more = frames.Next()
++		if frame.Function == "runtime.gopanic" {
++			continue
++		}
+ 		if frame.Function == c.cleanupName {
+ 			frames = runtime.CallersFrames(c.cleanupPc)
+ 			continue

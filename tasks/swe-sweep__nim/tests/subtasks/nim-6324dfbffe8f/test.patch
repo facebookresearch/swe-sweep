@@ -1,0 +1,22 @@
+diff --git a/tests/pragmas/tparamcustompragma.nim b/tests/pragmas/tparamcustompragma.nim
+new file mode 100644
+index 000000000..b3e815149
+--- /dev/null
++++ b/tests/pragmas/tparamcustompragma.nim
+@@ -0,0 +1,16 @@
++discard """
++  nimout: '''
++proc foo(a {.attr.}: int) =
++  discard
++
++'''
++"""
++
++# fixes #24702
++
++import macros
++template attr*() {.pragma.}
++proc foo(a {.attr.}: int) = discard
++macro showImpl(a: typed) =
++  echo repr getImpl(a)
++showImpl(foo)

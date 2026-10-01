@@ -1,0 +1,21 @@
+diff --git a/vlib/v/tests/string_interpolation_match_expr_test.v b/vlib/v/tests/string_interpolation_match_expr_test.v
+new file mode 100644
+index 000000000..9f46dea15
+--- /dev/null
++++ b/vlib/v/tests/string_interpolation_match_expr_test.v
+@@ -0,0 +1,15 @@
++fn test_string_interpolation_match_expr() {
++	x := 0
++
++	println('Hello ${match x {
++		0 { 'John' }
++		1 { 'George' }
++		else { 'Others' }
++	}}')
++
++	assert '${match x {
++		0 { 'John' }
++		1 { 'George' }
++		else { 'Others' }
++	}}' == 'John'
++}

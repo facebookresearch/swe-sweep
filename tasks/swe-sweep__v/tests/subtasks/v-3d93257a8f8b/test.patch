@@ -1,0 +1,22 @@
+diff --git a/vlib/v/fmt/tests/fn_call_concrete_type_keep.vv b/vlib/v/fmt/tests/fn_call_concrete_type_keep.vv
+new file mode 100644
+index 000000000..502c5348f
+--- /dev/null
++++ b/vlib/v/fmt/tests/fn_call_concrete_type_keep.vv
+@@ -0,0 +1,16 @@
++fn to_v_array[T](d &T, len u32) []T {
++	mut ret := unsafe { []T{len: int(len)} }
++	for i in 0 .. len {
++		unsafe {
++			ret[i] = d[i]
++		}
++	}
++	unsafe {
++		free(d)
++	}
++	return ret
++}
++
++fn main() {
++	to_v_array[C.Foo](C.Foo{}, 123.2)
++}

@@ -1,0 +1,13 @@
+diff --git a/compiler/test/compilable/ctests2.c b/compiler/test/compilable/ctests2.c
+index 8b8ca96285..d01fa7df74 100644
+--- a/compiler/test/compilable/ctests2.c
++++ b/compiler/test/compilable/ctests2.c
+@@ -190,3 +190,8 @@ const typeof(testTypeofA) testTypeofB = 0;
+ _Static_assert(sizeof(testTypeofB) == sizeof(short), "17");
+ 
+ /*************************************************/
++
++// https://issues.dlang.org/show_bug.cgi?id=23752
++void *c23752 = &*((void*)(0));
++
++/*************************************************/

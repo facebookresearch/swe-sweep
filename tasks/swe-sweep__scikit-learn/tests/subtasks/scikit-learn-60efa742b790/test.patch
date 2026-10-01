@@ -1,0 +1,47 @@
+diff --git a/sklearn/linear_model/tests/test_base.py b/sklearn/linear_model/tests/test_base.py
+index 504ae6f024..0839d98144 100644
+--- a/sklearn/linear_model/tests/test_base.py
++++ b/sklearn/linear_model/tests/test_base.py
+@@ -12,10 +12,13 @@ import numpy as np
+ from sklearn.utils.testing import assert_array_almost_equal
+ from sklearn.utils.testing import assert_almost_equal
+ from sklearn.utils.testing import assert_equal
++from sklearn.utils.testing import assert_allclose
+ from sklearn.utils.testing import ignore_warnings
+ 
++from sklearn.base import BaseEstimator
+ from sklearn.linear_model.base import LinearRegression
+ from sklearn.linear_model.base import _preprocess_data
++from sklearn.linear_model.base import LinearClassifierMixin
+ from sklearn.linear_model.base import sparse_center_data, center_data
+ from sklearn.linear_model.base import _rescale_data
+ from sklearn.utils import check_random_state
+@@ -407,3 +410,28 @@ def test_deprecation_center_data():
+         assert_array_almost_equal(X1_mean, X2_mean)
+         assert_array_almost_equal(X1_var, X2_var)
+         assert_array_almost_equal(y1_mean, y2_mean)
++
++
++def test_predict_proba_lr_large_values():
++    """Test that _predict_proba_lr of LinearClassifierMixin deals with large
++    negative values.
++
++    Note that exp(-1000) = 0.
++    """
++
++    class MockClassifier(LinearClassifierMixin, BaseEstimator):
++        def __init__(self):
++            pass
++
++        def fit(self, X, y):
++            self.__sklearn_is_fitted__ = True
++
++        def decision_function(self, X):
++            n_samples = X.shape[0]
++            return np.tile([-1000.0] * 4, [n_samples, 1])
++
++    clf = MockClassifier()
++    clf.fit(X=None, y=None)
++
++    proba = clf._predict_proba_lr(np.ones(5))
++    assert_allclose(np.sum(proba, axis=1), 1)

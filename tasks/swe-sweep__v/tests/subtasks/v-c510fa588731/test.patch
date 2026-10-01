@@ -1,0 +1,15 @@
+diff --git a/vlib/math/math_test.v b/vlib/math/math_test.v
+index 3b481c516..442578f88 100644
+--- a/vlib/math/math_test.v
++++ b/vlib/math/math_test.v
+@@ -252,8 +252,8 @@ fn test_acosh() {
+ 		f := acosh(a)
+ 		assert veryclose(math.acosh_[i], f)
+ 	}
+-	vfacosh_sc_ := [inf(-1), 0.5, 1, inf(1), nan()]
+-	acosh_sc_ := [nan(), nan(), 0, inf(1), nan()]
++	vfacosh_sc_ := [inf(-1), 0.5, 0.0, 1, inf(1), nan()]
++	acosh_sc_ := [nan(), nan(), nan(), 0, inf(1), nan()]
+ 	for i := 0; i < vfacosh_sc_.len; i++ {
+ 		f := acosh(vfacosh_sc_[i])
+ 		assert alike(acosh_sc_[i], f)

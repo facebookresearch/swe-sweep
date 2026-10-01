@@ -1,0 +1,42 @@
+diff --git a/codec-http/src/test/java/io/netty/handler/codec/http/HttpClientUpgradeHandlerTest.java b/codec-http/src/test/java/io/netty/handler/codec/http/HttpClientUpgradeHandlerTest.java
+index e342ef7..569f3ef 100644
+--- a/codec-http/src/test/java/io/netty/handler/codec/http/HttpClientUpgradeHandlerTest.java
++++ b/codec-http/src/test/java/io/netty/handler/codec/http/HttpClientUpgradeHandlerTest.java
+@@ -27,6 +27,7 @@ import org.junit.Test;
+ import static org.junit.Assert.assertEquals;
+ import static org.junit.Assert.assertFalse;
+ import static org.junit.Assert.assertNull;
++import static org.junit.Assert.fail;
+ import static org.junit.Assert.assertTrue;
+ 
+ public class HttpClientUpgradeHandlerTest {
+@@ -174,4 +175,29 @@ public class HttpClientUpgradeHandlerTest {
+         assertEquals(HttpResponseStatus.OK, response.status());
+         assertFalse(channel.finish());
+     }
++
++    @Test
++    public void testMultipleUpgradeRequestsFail() {
++        HttpClientUpgradeHandler.SourceCodec sourceCodec = new FakeSourceCodec();
++        HttpClientUpgradeHandler.UpgradeCodec upgradeCodec = new FakeUpgradeCodec();
++        HttpClientUpgradeHandler handler = new HttpClientUpgradeHandler(sourceCodec, upgradeCodec, 1024);
++        final EmbeddedChannel channel = new EmbeddedChannel();
++        channel.pipeline().addFirst("upgrade", handler);
++
++        assertTrue(
++                channel.writeOutbound(new DefaultFullHttpRequest(HttpVersion.HTTP_1_1, HttpMethod.GET, "netty.io")));
++        FullHttpRequest request = channel.readOutbound();
++        assertTrue(request.release());
++
++        final FullHttpRequest secondReq = new DefaultFullHttpRequest(HttpVersion.HTTP_1_1, HttpMethod.GET, "netty.io");
++        try {
++            channel.writeOutbound(secondReq);
++            fail();
++        } catch (IllegalStateException expected) {
++            // expected
++        }
++
++        assertEquals(0, secondReq.refCnt());
++        assertFalse(channel.finish());
++    }
+ }

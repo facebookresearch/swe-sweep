@@ -1,0 +1,23 @@
+diff --git a/sunpy/coordinates/tests/test_wcs_utils.py b/sunpy/coordinates/tests/test_wcs_utils.py
+--- a/sunpy/coordinates/tests/test_wcs_utils.py
++++ b/sunpy/coordinates/tests/test_wcs_utils.py
+@@ -15,6 +15,7 @@
+     HeliographicCarrington,
+     HeliographicStonyhurst,
+     Helioprojective,
++    SunPyBaseCoordinateFrame,
+ )
+ from sunpy.util import SunpyUserWarning
+ from ..wcs_utils import _set_wcs_aux_obs_coord, solar_frame_to_wcs_mapping, solar_wcs_frame_mapping
+@@ -263,3 +264,11 @@
+     assert u.allclose(wcs.wcs.aux.hglt_obs, frame.lon.to_value(u.deg))
+     assert u.allclose(wcs.wcs.aux.crln_obs, frame.lon.to_value(u.deg))
+     assert u.allclose(wcs.wcs.aux.dsun_obs, frame.radius.to_value(u.m))
++
++
++def test_sunpybaseframe_external():
++    class MyFrame(SunPyBaseCoordinateFrame):
++        pass
++
++    out = solar_frame_to_wcs_mapping(MyFrame())
++    assert out is None

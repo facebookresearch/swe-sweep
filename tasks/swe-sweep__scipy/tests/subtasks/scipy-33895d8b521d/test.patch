@@ -1,0 +1,26 @@
+diff --git a/scipy/special/tests/test_lambertw.py b/scipy/special/tests/test_lambertw.py
+index e0e69b2c50..075051a7a5 100644
+--- a/scipy/special/tests/test_lambertw.py
++++ b/scipy/special/tests/test_lambertw.py
+@@ -8,6 +8,7 @@
+ 
+ from __future__ import division, print_function, absolute_import
+ 
++import pytest
+ import numpy as np
+ from numpy.testing import assert_, assert_equal, assert_array_almost_equal
+ from scipy.special import lambertw
+@@ -101,3 +102,13 @@ def test_lambertw_ufunc_loop_selection():
+     assert_equal(lambertw(0, [0], 0).dtype, dt)
+     assert_equal(lambertw(0, 0, [0]).dtype, dt)
+     assert_equal(lambertw([0], [0], [0]).dtype, dt)
++
++
++@pytest.mark.parametrize('z', [1e-316, -2e-320j, -5e-318+1e-320j])
++def test_lambertw_subnormal_k0(z):
++    # Verify that subnormal inputs are handled correctly on
++    # the branch k=0 (regression test for gh-16291).
++    w = lambertw(z)
++    # For values this small, we can be sure that numerically,
++    # lambertw(z) is z.
++    assert w == z

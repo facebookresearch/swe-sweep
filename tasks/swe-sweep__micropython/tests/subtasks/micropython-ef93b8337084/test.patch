@@ -1,0 +1,13 @@
+diff --git a/tests/basics/slice_indices.py b/tests/basics/slice_indices.py
+index b7f439ccc..ccd7667e9 100644
+--- a/tests/basics/slice_indices.py
++++ b/tests/basics/slice_indices.py
+@@ -25,3 +25,8 @@ print(A()[2:7:2].indices(5))
+ print(A()[2:7:-2].indices(5))
+ print(A()[7:2:2].indices(5))
+ print(A()[7:2:-2].indices(5))
++
++try:
++    print(A()[::].indices(None))
++except TypeError:
++    print("TypeError")

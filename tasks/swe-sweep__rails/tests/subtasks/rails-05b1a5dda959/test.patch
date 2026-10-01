@@ -1,0 +1,106 @@
+diff --git a/activerecord/test/cases/persistence/reload_association_cache_test.rb b/activerecord/test/cases/persistence/reload_association_cache_test.rb
+new file mode 100644
+index 00000000000..caf9d4fd10d
+--- /dev/null
++++ b/activerecord/test/cases/persistence/reload_association_cache_test.rb
+@@ -0,0 +1,20 @@
++# frozen_string_literal: true
++
++require "cases/helper"
++require "models/publication"
++require "models/editorship"
++require "models/editor"
++
++class ReloadAssociationCacheTest < ActiveRecord::TestCase
++  def test_reload_sets_correct_owner_for_association_cache
++    publication = Publication.create!(name: "Rails Way")
++    assert_equal "Rails Way (touched)", publication.name
++    publication.reload
++    assert_equal "Rails Way", publication.name
++    publication.transaction do
++      publication.editors = [publication.build_editor_in_chief(name: "Alex Black")]
++      publication.save!
++    end
++    assert_equal "Rails Way (touched)", publication.name
++  end
++end
+diff --git a/activerecord/test/models/editor.rb b/activerecord/test/models/editor.rb
+new file mode 100644
+index 00000000000..d75f8ebea76
+--- /dev/null
++++ b/activerecord/test/models/editor.rb
+@@ -0,0 +1,8 @@
++# frozen_string_literal: true
++
++class Editor < ActiveRecord::Base
++  self.primary_key = "name"
++
++  has_one :publication, foreign_key: :editor_in_chief_id, inverse_of: :editor_in_chief
++  has_many :editorships
++end
+diff --git a/activerecord/test/models/editorship.rb b/activerecord/test/models/editorship.rb
+new file mode 100644
+index 00000000000..2620cf5b97a
+--- /dev/null
++++ b/activerecord/test/models/editorship.rb
+@@ -0,0 +1,6 @@
++# frozen_string_literal: true
++
++class Editorship < ActiveRecord::Base
++  belongs_to :publication
++  belongs_to :editor
++end
+diff --git a/activerecord/test/models/publication.rb b/activerecord/test/models/publication.rb
+new file mode 100644
+index 00000000000..6873709f113
+--- /dev/null
++++ b/activerecord/test/models/publication.rb
+@@ -0,0 +1,16 @@
++# frozen_string_literal: true
++
++class Publication < ActiveRecord::Base
++  belongs_to :editor_in_chief, class_name: "Editor", inverse_of: :publication, optional: true
++  has_many :editorships
++  has_many :editors, through: :editorships
++
++  after_initialize do
++    self.editor_in_chief = build_editor_in_chief(name: "John Doe")
++  end
++
++  after_save_commit :touch_name
++  def touch_name
++    self.name = "#{name} (touched)"
++  end
++end
+diff --git a/activerecord/test/schema/schema.rb b/activerecord/test/schema/schema.rb
+index 02aadb7586c..2c42ec335af 100644
+--- a/activerecord/test/schema/schema.rb
++++ b/activerecord/test/schema/schema.rb
+@@ -574,6 +574,15 @@ ActiveRecord::Schema.define do
+     t.index [:source_id, :sink_id], unique: true, name: "unique_edge_index"
+   end
+ 
++  create_table :editorships, force: true do |t|
++    t.string :publication_id
++    t.string :editor_id
++  end
++
++  create_table :editors, force: true do |t|
++    t.string :name
++  end
++
+   create_table :engines, force: true do |t|
+     t.references :car, index: false
+   end
+@@ -1050,6 +1059,11 @@ ActiveRecord::Schema.define do
+     t.integer :mentor_id
+   end
+ 
++  create_table :publications, force: true do |t|
++    t.column :name, :string
++    t.integer :editor_in_chief_id
++  end
++
+   create_table :randomly_named_table1, force: true do |t|
+     t.string  :some_attribute
+     t.integer :another_attribute

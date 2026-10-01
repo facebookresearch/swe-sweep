@@ -1,0 +1,21 @@
+diff --git a/pandas/tests/reshape/merge/test_merge.py b/pandas/tests/reshape/merge/test_merge.py
+index 088ebf6c88..cb773a3090 100644
+--- a/pandas/tests/reshape/merge/test_merge.py
++++ b/pandas/tests/reshape/merge/test_merge.py
+@@ -2487,3 +2487,16 @@ def test_mergeerror_on_left_index_mismatched_dtypes():
+     df_2 = DataFrame(data=["X"], columns=["C"], index=[999])
+     with pytest.raises(MergeError, match="Can only pass argument"):
+         merge(df_1, df_2, on=["C"], left_index=True)
++
++
++def test_merge_multiindex_single_level():
++    # GH #52331
++    df = DataFrame({"col": ["A", "B"]})
++    df2 = DataFrame(
++        data={"b": [100]},
++        index=MultiIndex.from_tuples([("A",), ("C",)], names=["col"]),
++    )
++    expected = DataFrame({"col": ["A", "B"], "b": [100, np.nan]})
++
++    result = df.merge(df2, left_on=["col"], right_index=True, how="left")
++    tm.assert_frame_equal(result, expected)

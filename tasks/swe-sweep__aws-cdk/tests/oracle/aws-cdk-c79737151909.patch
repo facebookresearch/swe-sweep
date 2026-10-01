@@ -1,0 +1,15 @@
+diff --git a/packages/@aws-cdk/aws-iam/lib/principals.ts b/packages/@aws-cdk/aws-iam/lib/principals.ts
+index 80b4480209..2c89f96749 100644
+--- a/packages/@aws-cdk/aws-iam/lib/principals.ts
++++ b/packages/@aws-cdk/aws-iam/lib/principals.ts
+@@ -165,8 +165,8 @@ export class PrincipalWithConditions implements IPrincipal {
+    * Add a condition to the principal
+    */
+   public addCondition(key: string, value: Condition) {
+-    const existingValue = this.conditions[key];
+-    this.conditions[key] = existingValue ? { ...existingValue, ...value } : value;
++    const existingValue = this.additionalConditions[key];
++    this.additionalConditions[key] = existingValue ? { ...existingValue, ...value } : value;
+   }
+ 
+   /**

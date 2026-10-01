@@ -1,0 +1,51 @@
+diff --git a/test/watchCases/cache/changing-module-id/0/index.js b/test/watchCases/cache/changing-module-id/0/index.js
+index 65c14ab69..b933cd1cd 100644
+--- a/test/watchCases/cache/changing-module-id/0/index.js
++++ b/test/watchCases/cache/changing-module-id/0/index.js
+@@ -2,8 +2,9 @@ import value from "./module";
+ import value2 from "./unrelated";
+ import value3 from "./other-module";
+ 
+-it("should work when modules change ids", () => {
++it("should work when modules change ids", async () => {
+ 	expect(value).toBe(42);
+ 	expect(value2).toBe(42);
+ 	expect(value3).toBe(42 + +WATCH_STEP);
++	expect(import("./module?async")).resolves.toEqual(nsObj({ default: 42 }));
+ });
+diff --git a/test/watchCases/cache/changing-module-id/0/unrelated.js b/test/watchCases/cache/changing-module-id/0/unrelated.js
+index f79b64f9e..3b44be3ed 100644
+--- a/test/watchCases/cache/changing-module-id/0/unrelated.js
++++ b/test/watchCases/cache/changing-module-id/0/unrelated.js
+@@ -1 +1,2 @@
+ export { default } from "./module";
++if (Math.random() < 0) import("./module?async");
+diff --git a/test/watchCases/cache/changing-module-id/1/other-layer.js b/test/watchCases/cache/changing-module-id/1/other-layer.js
+index f79b64f9e..c29038c75 100644
+--- a/test/watchCases/cache/changing-module-id/1/other-layer.js
++++ b/test/watchCases/cache/changing-module-id/1/other-layer.js
+@@ -1 +1,2 @@
+ export { default } from "./module";
++import "./module?async";
+diff --git a/test/watchCases/cache/changing-module-id/webpack.config.js b/test/watchCases/cache/changing-module-id/webpack.config.js
+index a5df8d694..04720f340 100644
+--- a/test/watchCases/cache/changing-module-id/webpack.config.js
++++ b/test/watchCases/cache/changing-module-id/webpack.config.js
+@@ -5,7 +5,8 @@ module.exports = {
+ 		type: "memory"
+ 	},
+ 	optimization: {
+-		sideEffects: false
++		sideEffects: false,
++		providedExports: false
+ 	},
+ 	module: {
+ 		rules: [
+@@ -16,6 +17,7 @@ module.exports = {
+ 		]
+ 	},
+ 	experiments: {
++		cacheUnaffected: true,
+ 		layers: true
+ 	}
+ };

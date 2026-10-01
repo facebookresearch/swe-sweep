@@ -1,0 +1,12 @@
+diff --git a/testsuite/integration-arquillian/tests/base/src/test/java/org/keycloak/testsuite/organization/admin/OrganizationInvitationLinkTest.java b/testsuite/integration-arquillian/tests/base/src/test/java/org/keycloak/testsuite/organization/admin/OrganizationInvitationLinkTest.java
+index 7977aaef2e..b8e835ef89 100755
+--- a/testsuite/integration-arquillian/tests/base/src/test/java/org/keycloak/testsuite/organization/admin/OrganizationInvitationLinkTest.java
++++ b/testsuite/integration-arquillian/tests/base/src/test/java/org/keycloak/testsuite/organization/admin/OrganizationInvitationLinkTest.java
+@@ -133,6 +133,7 @@ public class OrganizationInvitationLinkTest extends AbstractOrganizationTest {
+         assertTrue(text.contains("<p>You were invited to join the " + organizationName + " organization. Click the link below to join. </p>"));
+         assertTrue(text.contains("<a href=\"" + link + "\" rel=\"nofollow\">Link to join the organization</a></p>"));
+         assertTrue(text.contains("Link to join the organization"));
++        assertTrue(text.contains("This link will expire within 12 hours"));
+         assertTrue(text.contains("<p>If you dont want to join the organization, just ignore this message.</p>"));
+         String orgToken = UriUtils.parseQueryParameters(link, false).values().stream().map(strings -> strings.get(0)).findFirst().orElse(null);
+         Assert.assertNotNull(orgToken);

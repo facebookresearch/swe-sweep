@@ -1,0 +1,103 @@
+diff --git a/vlib/v/gen/c/cgen.v b/vlib/v/gen/c/cgen.v
+index 4c24d71c6..e21bbd8ab 100644
+--- a/vlib/v/gen/c/cgen.v
++++ b/vlib/v/gen/c/cgen.v
+@@ -4245,44 +4245,56 @@ fn (mut g Gen) select_expr(node ast.SelectExpr) {
+ 		}
+ 	}
+ 	chan_array := g.new_tmp_var()
+-	g.write('Array_sync__Channel_ptr ${chan_array} = new_array_from_c_array(${n_channels}, ${n_channels}, sizeof(sync__Channel*), _MOV((sync__Channel*[${n_channels}]){')
+-	for i in 0 .. n_channels {
+-		if i > 0 {
+-			g.write(', ')
++	if n_channels == 0 {
++		g.writeln('Array_sync__Channel_ptr ${chan_array} = __new_array_with_default(0, 0, sizeof(sync__Channel*), 0);')
++	} else {
++		g.write('Array_sync__Channel_ptr ${chan_array} = new_array_from_c_array(${n_channels}, ${n_channels}, sizeof(sync__Channel*), _MOV((sync__Channel*[${n_channels}]){')
++		for i in 0 .. n_channels {
++			if i > 0 {
++				g.write(', ')
++			}
++			g.write('(sync__Channel*)(')
++			g.expr(channels[i])
++			g.write(')')
+ 		}
+-		g.write('(sync__Channel*)(')
+-		g.expr(channels[i])
+-		g.write(')')
++		g.writeln('}));\n')
+ 	}
+-	g.writeln('}));\n')
+ 	directions_array := g.new_tmp_var()
+-	g.write('Array_sync__Direction ${directions_array} = new_array_from_c_array(${n_channels}, ${n_channels}, sizeof(sync__Direction), _MOV((sync__Direction[${n_channels}]){')
+-	for i in 0 .. n_channels {
+-		if i > 0 {
+-			g.write(', ')
+-		}
+-		if is_push[i] {
+-			g.write('sync__Direction__push')
+-		} else {
+-			g.write('sync__Direction__pop')
++	if n_channels == 0 {
++		g.writeln('Array_sync__Direction ${directions_array} = __new_array_with_default(0, 0, sizeof(sync__Direction), 0);')
++	} else {
++		g.write('Array_sync__Direction ${directions_array} = new_array_from_c_array(${n_channels}, ${n_channels}, sizeof(sync__Direction), _MOV((sync__Direction[${n_channels}]){')
++		for i in 0 .. n_channels {
++			if i > 0 {
++				g.write(', ')
++			}
++			if is_push[i] {
++				g.write('sync__Direction__push')
++			} else {
++				g.write('sync__Direction__pop')
++			}
+ 		}
++		g.writeln('}));\n')
+ 	}
+-	g.writeln('}));\n')
+ 	objs_array := g.new_tmp_var()
+-	g.write('Array_voidptr ${objs_array} = new_array_from_c_array(${n_channels}, ${n_channels}, sizeof(voidptr), _MOV((voidptr[${n_channels}]){')
+-	for i in 0 .. n_channels {
+-		if i > 0 {
+-			g.write(', &')
+-		} else {
+-			g.write('&')
+-		}
+-		if tmp_objs[i] == '' {
+-			g.expr(objs[i])
+-		} else {
+-			g.write(tmp_objs[i])
++	if n_channels == 0 {
++		g.writeln('Array_voidptr ${objs_array} = __new_array_with_default(0, 0, sizeof(voidptr), 0);')
++	} else {
++		g.write('Array_voidptr ${objs_array} = new_array_from_c_array(${n_channels}, ${n_channels}, sizeof(voidptr), _MOV((voidptr[${n_channels}]){')
++		for i in 0 .. n_channels {
++			if i > 0 {
++				g.write(', &')
++			} else {
++				g.write('&')
++			}
++			if tmp_objs[i] == '' {
++				g.expr(objs[i])
++			} else {
++				g.write(tmp_objs[i])
++			}
+ 		}
++		g.writeln('}));\n')
+ 	}
+-	g.writeln('}));\n')
+ 	select_result := g.new_tmp_var()
+ 	g.write('int ${select_result} = sync__channel_select(&/*arr*/${chan_array}, ${directions_array}, &/*arr*/${objs_array}, ')
+ 	if has_timeout {
+diff --git a/vlib/v/parser/if_match.v b/vlib/v/parser/if_match.v
+index 8764bc468..d828fc9b7 100644
+--- a/vlib/v/parser/if_match.v
++++ b/vlib/v/parser/if_match.v
+@@ -532,6 +532,7 @@ fn (mut p Parser) select_expr() ast.SelectExpr {
+ 	if p.tok.kind == .rcbr {
+ 		p.check(.rcbr)
+ 	}
++	p.register_auto_import('sync')
+ 	return ast.SelectExpr{
+ 		branches: branches
+ 		pos: pos.extend_with_last_line(p.prev_tok.pos(), p.prev_tok.line_nr)

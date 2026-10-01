@@ -1,0 +1,14 @@
+diff --git a/lib/matplotlib/lines.py b/lib/matplotlib/lines.py
+index 1203862a3f..658900da9e 100644
+--- a/lib/matplotlib/lines.py
++++ b/lib/matplotlib/lines.py
+@@ -677,7 +677,8 @@ class Line2D(Artist):
+                 self.axes.name == 'rectilinear' and
+                 self.axes.get_xscale() == 'linear' and
+                 self._markevery is None and
+-                self.get_clip_on()):
++                self.get_clip_on() and
++                self.get_transform() == self.axes.transData):
+             self._subslice = True
+             nanmask = np.isnan(x)
+             if nanmask.any():

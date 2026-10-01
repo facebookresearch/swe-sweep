@@ -1,0 +1,157 @@
+diff --git a/scipy/special/tests/test_cdflib.py b/scipy/special/tests/test_cdflib.py
+index 31e988114e..ec91dd77ae 100644
+--- a/scipy/special/tests/test_cdflib.py
++++ b/scipy/special/tests/test_cdflib.py
+@@ -22,7 +22,7 @@ The following functions still need tests:
+ import itertools
+ 
+ import numpy as np
+-from numpy.testing import assert_equal
++from numpy.testing import assert_equal, assert_allclose
+ import pytest
+ 
+ import scipy.special as sp
+@@ -404,3 +404,21 @@ def test_nonfinite():
+                 # All other inputs should return something (but not
+                 # raise exceptions or cause hangs)
+                 pass
++
++
++def test_chndtrix_gh2158():
++    # test that gh-2158 is resolved; previously this blew up
++    res = sp.chndtrix(0.999999, 2, np.arange(20.)+1e-6)
++
++    # Generated in R
++    # options(digits=16)
++    # ncp <- seq(0, 19) + 1e-6
++    # print(qchisq(0.999999, df = 2, ncp = ncp))
++    res_exp = [27.63103493142305, 35.25728589950540, 39.97396073236288,
++               43.88033702110538, 47.35206403482798, 50.54112500166103,
++               53.52720257322766, 56.35830042867810, 59.06600769498512,
++               61.67243118946381, 64.19376191277179, 66.64228141346548,
++               69.02756927200180, 71.35726934749408, 73.63759723904816,
++               75.87368842650227, 78.06984431185720, 80.22971052389806,
++               82.35640899964173, 84.45263768373256]
++    assert_allclose(res, res_exp)
+diff --git a/scipy/stats/tests/test_discrete_distns.py b/scipy/stats/tests/test_discrete_distns.py
+index 48e5c09867..4036e49694 100644
+--- a/scipy/stats/tests/test_discrete_distns.py
++++ b/scipy/stats/tests/test_discrete_distns.py
+@@ -1,6 +1,6 @@
+ from __future__ import division, print_function, absolute_import
+ 
+-from scipy.stats import hypergeom, bernoulli, boltzmann
++from scipy.stats import hypergeom, bernoulli, boltzmann, skellam
+ import numpy as np
+ from numpy.testing import assert_almost_equal, assert_equal, assert_allclose
+ 
+@@ -47,3 +47,17 @@ def test_boltzmann_upper_bound():
+     c = boltzmann.cdf(k, lam, N)
+     expected = [0, 0, 0, 4/7, 6/7, 1, 1, 1]
+     assert_allclose(c, expected, rtol=1e-13)
++
++def test_skellam_gh11474():
++    # test issue reported in gh-11474 caused by `cdfchn`
++    mu = [1, 10, 100, 1000, 5000, 5050, 5100, 5250, 6000]
++    cdf = skellam.cdf(0, mu, mu)
++    # generated in R
++    # library(skellam)
++    # options(digits = 16)
++    # mu = c(1, 10, 100, 1000, 5000, 5050, 5100, 5250, 6000)
++    # pskellam(0, mu, mu, TRUE)
++    cdf_expected = [0.6542541612768356, 0.5448901559424127, 0.5141135799745580,
++                    0.5044605891382528, 0.5019947363350450, 0.5019848365953181,
++                    0.5019750827993392, 0.5019466621805060, 0.5018209330219539]
++    assert_allclose(cdf, cdf_expected)
+diff --git a/scipy/stats/tests/test_distributions.py b/scipy/stats/tests/test_distributions.py
+index 11dd42c426..dddb97ed6c 100644
+--- a/scipy/stats/tests/test_distributions.py
++++ b/scipy/stats/tests/test_distributions.py
+@@ -2536,6 +2536,47 @@ class TestRice(object):
+         assert_equal(rvs(b=3.).size, 1)
+         assert_equal(rvs(b=3., size=(3, 5)).shape, (3, 5))
+ 
++    def test_rice_gh9836(self):
++        # test that gh-9836 is resolved; previously jumped to 1 at the end
++
++        cdf = stats.rice.cdf(np.arange(10, 160, 10), np.arange(10, 160, 10))
++        # Generated in R
++        # library(VGAM)
++        # options(digits=16)
++        # x = seq(10, 150, 10)
++        # print(price(x, sigma=1, vee=x))
++        cdf_exp = [0.4800278103504522, 0.4900233218590353, 0.4933500379379548,
++                   0.4950128317658719, 0.4960103776798502, 0.4966753655438764,
++                   0.4971503395812474, 0.4975065620443196, 0.4977836197921638,
++                   0.4980052636649550, 0.4981866072661382, 0.4983377260666599,
++                   0.4984655952615694, 0.4985751970541413, 0.4986701850071265]
++        assert_allclose(cdf, cdf_exp)
++
++        probabilities = np.arange(0.1, 1, 0.1)
++        ppf = stats.rice.ppf(probabilities, 500/4, scale=4)
++        # Generated in R
++        # library(VGAM)
++        # options(digits=16)
++        # p = seq(0.1, .9, by = .1)
++        # print(qrice(p, vee = 500, sigma = 4))
++        ppf_exp = [494.8898762347361, 496.6495690858350, 497.9184315188069,
++                   499.0026277378915, 500.0159999146250, 501.0293721352668,
++                   502.1135684981884, 503.3824312270405, 505.1421247157822]
++        assert_allclose(ppf, ppf_exp)
++
++        ppf = scipy.stats.rice.ppf(0.5, np.arange(10, 150, 10))
++        # Generated in R
++        # library(VGAM)
++        # options(digits=16)
++        # b <- seq(10, 140, 10)
++        # print(qrice(0.5, vee = b, sigma = 1))
++        ppf_exp = [10.04995862522287, 20.02499480078302, 30.01666512465732,
++                   40.01249934924363, 50.00999966676032, 60.00833314046875,
++                   70.00714273568241, 80.00624991862573, 90.00555549840364,
++                   100.00499995833597, 110.00454542324384, 120.00416664255323,
++                   130.00384613488120, 140.00357141338748]
++        assert_allclose(ppf, ppf_exp)
++
+ 
+ class TestErlang(object):
+     def setup_method(self):
+@@ -3159,6 +3200,39 @@ def test_ncx2_tails_pdf():
+     assert_(np.isneginf(logval).all())
+ 
+ 
++def test_ncx2_gh12731():
++    # test that gh-12731 is resolved; previously these were all 0.5
++    nc = 10**np.arange(5, 10)
++    assert_equal(stats.ncx2.cdf(1e4, df=1, nc=nc), 0)
++
++
++def test_ncx2_gh8665():
++    # test that gh-8665 is resolved; previously this tended to nonzero value
++    x = np.array([4.99515382e+00, 1.07617327e+01, 2.31854502e+01,
++                  4.99515382e+01, 1.07617327e+02, 2.31854502e+02,
++                  4.99515382e+02, 1.07617327e+03, 2.31854502e+03,
++                  4.99515382e+03, 1.07617327e+04, 2.31854502e+04,
++                  4.99515382e+04])
++    nu, lam = 20, 499.51538166556196
++
++    sf = stats.ncx2.sf(x, df=nu, nc=lam)
++    # computed in R. Couldn't find a survival function implementation
++    # options(digits=16)
++    # x <- c(4.99515382e+00, 1.07617327e+01, 2.31854502e+01, 4.99515382e+01,
++    #        1.07617327e+02, 2.31854502e+02, 4.99515382e+02, 1.07617327e+03,
++    #        2.31854502e+03, 4.99515382e+03, 1.07617327e+04, 2.31854502e+04,
++    #        4.99515382e+04)
++    # nu <- 20
++    # lam <- 499.51538166556196
++    # 1 - pchisq(x, df = nu, ncp = lam)
++    sf_expected = [1.0000000000000000, 1.0000000000000000, 1.0000000000000000,
++                   1.0000000000000000, 1.0000000000000000, 0.9999999999999888,
++                   0.6646525582135460, 0.0000000000000000, 0.0000000000000000,
++                   0.0000000000000000, 0.0000000000000000, 0.0000000000000000,
++                   0.0000000000000000]
++    assert_allclose(sf, sf_expected, atol=1e-12)
++
++
+ def test_foldnorm_zero():
+     # Parameter value c=0 was not enabled, see gh-2399.
+     rv = stats.foldnorm(0, scale=1)

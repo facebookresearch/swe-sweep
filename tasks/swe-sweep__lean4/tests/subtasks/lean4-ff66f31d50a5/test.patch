@@ -1,0 +1,16 @@
+diff --git a/tests/lean/run/4768.lean b/tests/lean/run/4768.lean
+new file mode 100644
+index 0000000000..520f25caed
+--- /dev/null
++++ b/tests/lean/run/4768.lean
+@@ -0,0 +1,10 @@
++/-!
++Test that `..` tokens do not break nearby `.`s.
++
++Note that this tests specifically for issues with `.` that are not present with `·`.
++-/
++
++example : True ∧ True := by
++  constructor
++  refine trivial ..
++  . trivial -- this has to be . not · for this test to be useful

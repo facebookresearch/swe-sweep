@@ -1,0 +1,33 @@
+diff --git a/packages/@aws-cdk/aws-autoscaling/test/auto-scaling-group.test.ts b/packages/@aws-cdk/aws-autoscaling/test/auto-scaling-group.test.ts
+index ae3be33..24e75af 100644
+--- a/packages/@aws-cdk/aws-autoscaling/test/auto-scaling-group.test.ts
++++ b/packages/@aws-cdk/aws-autoscaling/test/auto-scaling-group.test.ts
+@@ -1389,6 +1389,28 @@ test('can use Vpc imported from unparseable list tokens', () => {
+     },
+   }));
+ });
++test('maxCapacity defaults to minCapacity when using Token', () => {
++  // GIVEN
++  const stack = new cdk.Stack(undefined, 'MyStack', { env: { region: 'us-east-1', account: '1234' } });
++  const vpc = mockVpc(stack);
++
++  const minCapacity = new cdk.CfnParameter(stack, 'Min', { type: 'Number' });
++
++  // WHEN
++  new autoscaling.AutoScalingGroup(stack, 'MyFleet', {
++    instanceType: ec2.InstanceType.of(ec2.InstanceClass.M4, ec2.InstanceSize.MICRO),
++    machineImage: new ec2.AmazonLinuxImage(),
++    vpc,
++    minCapacity: minCapacity.valueAsNumber,
++  });
++
++  // THEN
++  expect(stack).to(haveResourceLike('AWS::AutoScaling::AutoScalingGroup', {
++    MinSize: { Ref: 'Min' },
++    MaxSize: { Ref: 'Min' },
++  }));
++});
++
+ 
+ function mockSecurityGroup(stack: cdk.Stack) {
+   return ec2.SecurityGroup.fromSecurityGroupId(stack, 'MySG', 'most-secure');

@@ -1,0 +1,13 @@
+diff --git a/sklearn/gaussian_process/gpr.py b/sklearn/gaussian_process/gpr.py
+index 4777d0d806..c0a8dc71b7 100644
+--- a/sklearn/gaussian_process/gpr.py
++++ b/sklearn/gaussian_process/gpr.py
+@@ -298,7 +298,7 @@ class GaussianProcessRegressor(MultiOutputMixin, RegressorMixin, BaseEstimator):
+                 L_inv = solve_triangular(self.L_.T, np.eye(self.L_.shape[0]))
+                 K_inv = L_inv.dot(L_inv.T)
+                 # Compute variance of predictive distribution
+-                y_var = self.kernel_.diag(X)
++                y_var = self.kernel_.diag(X).copy()
+                 y_var -= np.einsum("ki,kj,ij->k", K_trans, K_trans, K_inv)
+ 
+                 # Check if any of the variances is negative because of

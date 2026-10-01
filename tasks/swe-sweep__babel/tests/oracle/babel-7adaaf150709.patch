@@ -1,0 +1,122 @@
+--- a/packages/babel-parser/src/parser/expression.js
++++ b/packages/babel-parser/src/parser/expression.js
+@@ -1098,7 +1098,7 @@
+     if (
+       canBeArrow &&
+       this.shouldParseArrow() &&
+-      (arrowNode = this.parseArrow(arrowNode))
++      (arrowNode = this.parseArrow(arrowNode, exprList))
+     ) {
+       for (const param of exprList) {
+         if (param.extra && param.extra.parenthesized) {
+@@ -1142,7 +1142,10 @@
+     return !this.canInsertSemicolon();
+   }
+ 
+-  parseArrow(node: N.ArrowFunctionExpression): ?N.ArrowFunctionExpression {
++  parseArrow(
++    node: N.ArrowFunctionExpression,
++    exprList: N.Node[], // eslint-disable-line no-unused-vars
++  ): ?N.ArrowFunctionExpression {
+     if (this.eat(tt.arrow)) {
+       return node;
+     }
+--- a/packages/babel-parser/src/parser/lval.js
++++ b/packages/babel-parser/src/parser/lval.js
+@@ -38,6 +38,19 @@
+   // Forward-declaration: defined in statement.js
+   +parseDecorator: () => Decorator;
+ 
++  isAssignable(node: Node): boolean {
++    switch (node.type) {
++      case "Identifier": case "ObjectPattern": case "ArrayPattern": case "AssignmentPattern": return true;
++      case "ObjectExpression": { const last = node.properties.length - 1; return node.properties.every((prop, i) => prop.type !== "ObjectMethod" && (i === last || prop.type === "SpreadElement") && this.isAssignable(prop)); }
++      case "ObjectProperty": return this.isAssignable(node.value);
++      case "SpreadElement": return this.isAssignable(node.argument);
++      case "ArrayExpression": return node.elements.every(element => this.isAssignable(element));
++      case "AssignmentExpression": return node.operator === "=";
++      case "ParenthesizedExpression": return this.isAssignable(node.expression);
++      default: return false;
++    }
++  }
++
+   // Convert existing expression atom to assignable pattern
+   // if possible.
+ 
+--- a/packages/babel-parser/src/plugins/flow.js
++++ b/packages/babel-parser/src/plugins/flow.js
+@@ -2357,7 +2357,10 @@
+     }
+ 
+     // handle return types for arrow functions
+-    parseArrow(node: N.ArrowFunctionExpression): ?N.ArrowFunctionExpression {
++    parseArrow(
++      node: N.ArrowFunctionExpression,
++      exprList,
++    ): ?N.ArrowFunctionExpression {
+       if (this.match(tt.colon)) {
+         const state = this.state.clone();
+         try {
+@@ -2392,7 +2395,7 @@
+         }
+       }
+ 
+-      return super.parseArrow(node);
++      return super.parseArrow(node, exprList);
+     }
+ 
+     shouldParseArrow(): boolean {
+@@ -2561,7 +2564,7 @@
+     ): ?N.ArrowFunctionExpression {
+       const node = this.startNodeAt(startPos, startLoc);
+       this.parseFunctionParams(node);
+-      if (!this.parseArrow(node)) return;
++      if (!this.parseArrow(node, [])) return;
+       return this.parseArrowExpression(
+         node,
+         /* params */ undefined,
+--- a/packages/babel-parser/src/plugins/typescript.js
++++ b/packages/babel-parser/src/plugins/typescript.js
+@@ -1929,7 +1929,10 @@
+       }
+     }
+ 
+-    parseArrow(node: N.ArrowFunctionExpression): ?N.ArrowFunctionExpression {
++    parseArrow(
++      node: N.ArrowFunctionExpression,
++      exprList,
++    ): ?N.ArrowFunctionExpression {
+       if (this.match(tt.colon)) {
+         // This is different from how the TS parser does it.
+         // TS uses lookahead. The Babel Parser parses it as a parenthesized expression and converts.
+@@ -1940,6 +1943,7 @@
+           );
+           if (this.canInsertSemicolon()) this.unexpected();
+           if (!this.match(tt.arrow)) this.unexpected();
++          if (exprList.some(param => !this.isAssignable(param))) this.unexpected();
+           node.returnType = returnType;
+         } catch (err) {
+           if (err instanceof SyntaxError) {
+@@ -1951,7 +1955,7 @@
+         }
+       }
+ 
+-      return super.parseArrow(node);
++      return super.parseArrow(node, exprList);
+     }
+ 
+     // Allow type annotations inside of a parameter list.
+@@ -1971,6 +1975,13 @@
+       return this.finishNode(param, param.type);
+     }
+ 
++    isAssignable(node: N.Node): boolean {
++      switch (node.type) {
++        case "TSAsExpression": case "TSNonNullExpression": case "TSTypeAssertion": case "TSTypeCastExpression": return this.isAssignable(node.expression);
++        default: return super.isAssignable(node);
++      }
++    }
++
+     toAssignable(
+       node: N.Node,
+       isBinding: ?boolean,

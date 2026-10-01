@@ -1,0 +1,106 @@
+diff --git a/src/Lean/Elab/DeclModifiers.lean b/src/Lean/Elab/DeclModifiers.lean
+index 90f792a233..c83a015a08 100644
+--- a/src/Lean/Elab/DeclModifiers.lean
++++ b/src/Lean/Elab/DeclModifiers.lean
+@@ -81,10 +81,14 @@ def Modifiers.isNonrec : Modifiers → Bool
+   | { recKind := .nonrec, .. } => true
+   | _                          => false
+ 
+-/-- Store `attr` in `modifiers` -/
+-def Modifiers.addAttribute (modifiers : Modifiers) (attr : Attribute) : Modifiers :=
++/-- Adds attribute `attr` in `modifiers` -/
++def Modifiers.addAttr (modifiers : Modifiers) (attr : Attribute) : Modifiers :=
+   { modifiers with attrs := modifiers.attrs.push attr }
+ 
++/-- Filters attributes using `p` -/
++def Modifiers.filterAttrs (modifiers : Modifiers) (p : Attribute → Bool) : Modifiers :=
++  { modifiers with attrs := modifiers.attrs.filter p }
++
+ instance : ToFormat Modifiers := ⟨fun m =>
+   let components : List Format :=
+     (match m.docString? with
+diff --git a/src/Lean/Elab/Declaration.lean b/src/Lean/Elab/Declaration.lean
+index 4282d62e56..720c1c899d 100644
+--- a/src/Lean/Elab/Declaration.lean
++++ b/src/Lean/Elab/Declaration.lean
+@@ -184,7 +184,7 @@ def elabInductive (modifiers : Modifiers) (stx : Syntax) : CommandElabM Unit :=
+   elabInductiveViews #[v]
+ 
+ def elabClassInductive (modifiers : Modifiers) (stx : Syntax) : CommandElabM Unit := do
+-  let modifiers := modifiers.addAttribute { name := `class }
++  let modifiers := modifiers.addAttr { name := `class }
+   let v ← classInductiveSyntaxToView modifiers stx
+   elabInductiveViews #[v]
+ 
+diff --git a/src/Lean/Elab/DefView.lean b/src/Lean/Elab/DefView.lean
+index a4c46826de..8f3612f00d 100644
+--- a/src/Lean/Elab/DefView.lean
++++ b/src/Lean/Elab/DefView.lean
+@@ -48,8 +48,8 @@ namespace Command
+ def mkDefViewOfAbbrev (modifiers : Modifiers) (stx : Syntax) : DefView :=
+   -- leading_parser "abbrev " >> declId >> optDeclSig >> declVal
+   let (binders, type) := expandOptDeclSig stx[2]
+-  let modifiers       := modifiers.addAttribute { name := `inline }
+-  let modifiers       := modifiers.addAttribute { name := `reducible }
++  let modifiers       := modifiers.addAttr { name := `inline }
++  let modifiers       := modifiers.addAttr { name := `reducible }
+   { ref := stx, kind := DefKind.abbrev, modifiers,
+     declId := stx[1], binders, type? := type, value := stx[3] }
+ 
+@@ -72,7 +72,7 @@ def mkDefViewOfInstance (modifiers : Modifiers) (stx : Syntax) : CommandElabM Def
+   let prio            ← liftMacroM <| expandOptNamedPrio stx[2]
+   let attrStx         ← `(attr| instance $(quote prio):num)
+   let (binders, type) := expandDeclSig stx[4]
+-  let modifiers       := modifiers.addAttribute { kind := attrKind, name := `instance, stx := attrStx }
++  let modifiers       := modifiers.addAttr { kind := attrKind, name := `instance, stx := attrStx }
+   let declId ← match stx[3].getOptional? with
+     | some declId =>
+       if ← isTracingEnabledFor `Elab.instance.mkInstanceName then
+diff --git a/src/Lean/Elab/PreDefinition/Basic.lean b/src/Lean/Elab/PreDefinition/Basic.lean
+index 0963d017d4..33952aed33 100644
+--- a/src/Lean/Elab/PreDefinition/Basic.lean
++++ b/src/Lean/Elab/PreDefinition/Basic.lean
+@@ -32,6 +32,9 @@ structure PreDefinition where
+   termination : WF.TerminationHints
+   deriving Inhabited
+ 
++def PreDefinition.filterAttrs (preDef : PreDefinition) (p : Attribute → Bool) : PreDefinition :=
++  { preDef with modifiers := preDef.modifiers.filterAttrs p }
++
+ def instantiateMVarsAtPreDecls (preDefs : Array PreDefinition) : TermElabM (Array PreDefinition) :=
+   preDefs.mapM fun preDef => do
+     pure { preDef with type := (← instantiateMVars preDef.type), value := (← instantiateMVars preDef.value) }
+diff --git a/src/Lean/Elab/PreDefinition/WF/Main.lean b/src/Lean/Elab/PreDefinition/WF/Main.lean
+index 636eda87a6..ea6d203cb7 100644
+--- a/src/Lean/Elab/PreDefinition/WF/Main.lean
++++ b/src/Lean/Elab/PreDefinition/WF/Main.lean
+@@ -127,7 +127,15 @@ def wfRecursion (preDefs : Array PreDefinition) : TermElabM Unit := do
+         addAsAxiom unaryPreDef
+         let value ← mkFix unaryPreDef prefixArgs argsPacker wfRel (preDefs.map (·.termination.decreasingBy?))
+         eraseRecAppSyntaxExpr value
+       /- `mkFix` invokes `decreasing_tactic` which may add auxiliary theorems to the environment. -/
+       let value ← unfoldDeclsFrom envNew value
+-      return { unaryPreDef with value }
++      let unaryPreDef := { unaryPreDef with value }
++      /-
++      We must remove `implemented_by` attributes from the auxiliary application because
++      this attribute is only relevant for code that is compiled. Moreover, the `[implemented_by <decl>]`
++      attribute would check whether the `unaryPreDef` type matches with `<decl>`'s type, and produce
++      and error. See issue #2899
++      -/
++      let unaryPreDef := unaryPreDef.filterAttrs fun attr => attr.name != `implemented_by
++      return unaryPreDef
+   trace[Elab.definition.wf] ">> {preDefNonRec.declName} :=\n{preDefNonRec.value}"
+diff --git a/src/Lean/Elab/Structure.lean b/src/Lean/Elab/Structure.lean
+index 58fe595735..58fe595735 100644
+--- a/src/Lean/Elab/Structure.lean
++++ b/src/Lean/Elab/Structure.lean
+@@ -878,7 +878,7 @@ def structCtor           := leading_parser try (declModifiers >> ident >> " :: "
+ def elabStructure (modifiers : Modifiers) (stx : Syntax) : CommandElabM Unit := do
+   checkValidInductiveModifier modifiers
+   let isClass   := stx[0].getKind == ``Parser.Command.classTk
+-  let modifiers := if isClass then modifiers.addAttribute { name := `class } else modifiers
++  let modifiers := if isClass then modifiers.addAttr { name := `class } else modifiers
+   let declId    := stx[1]
+   let params    := stx[2].getArgs
+   let exts      := stx[3]

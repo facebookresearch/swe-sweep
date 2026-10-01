@@ -1,0 +1,13 @@
+diff --git a/packages/@aws-cdk/aws-ec2/lib/volume.ts b/packages/@aws-cdk/aws-ec2/lib/volume.ts
+index 64f920866a..a25ca459b7 100644
+--- a/packages/@aws-cdk/aws-ec2/lib/volume.ts
++++ b/packages/@aws-cdk/aws-ec2/lib/volume.ts
+@@ -614,6 +614,8 @@ export class Volume extends VolumeBase {
+     });
+     resource.applyRemovalPolicy(props.removalPolicy);
+ 
++    if (props.volumeName) Tags.of(resource).add('Name', props.volumeName);
++
+     this.volumeId = resource.ref;
+     this.availabilityZone = props.availabilityZone;
+     this.encryptionKey = props.encryptionKey;

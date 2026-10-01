@@ -1,0 +1,22 @@
+diff --git a/compiler/renderer.nim b/compiler/renderer.nim
+index 1887e5a1a..19eb45be8 100644
+--- a/compiler/renderer.nim
++++ b/compiler/renderer.nim
+@@ -27,7 +27,7 @@ type
+   TRenderFlags* = set[TRenderFlag]
+   TRenderTok* = object
+     kind*: TokType
+-    length*: int16
++    length*: int32
+     sym*: PSym
+ 
+   TRenderTokSeq* = seq[TRenderTok]
+@@ -121,7 +121,7 @@ proc initSrcGen(renderFlags: TRenderFlags; config: ConfigRef): TSrcGen =
+   g.config = config
+ 
+ proc addTok(g: var TSrcGen, kind: TokType, s: string; sym: PSym = nil) =
+-  g.tokens.add TRenderTok(kind: kind, length: int16(s.len), sym: sym)
++  g.tokens.add TRenderTok(kind: kind, length: int32(s.len), sym: sym)
+   g.buf.add(s)
+   if kind != tkSpaces:
+     inc g.col, s.len

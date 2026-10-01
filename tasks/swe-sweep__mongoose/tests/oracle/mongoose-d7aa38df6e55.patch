@@ -1,0 +1,47 @@
+diff --git a/lib/helpers/timestamps/setupTimestamps.js b/lib/helpers/timestamps/setupTimestamps.js
+index f2c37c3c1..78293deb9 100644
+--- a/lib/helpers/timestamps/setupTimestamps.js
++++ b/lib/helpers/timestamps/setupTimestamps.js
+@@ -18,11 +18,9 @@ module.exports = function setupTimestamps(schema, timestamps) {
+     const ts = s.schema.options.timestamps;
+     return !!ts;
+   }
+-
+   if (!timestamps && !childHasTimestamp) {
+     return;
+   }
+-
+   const createdAt = handleTimestampOption(timestamps, 'createdAt');
+   const updatedAt = handleTimestampOption(timestamps, 'updatedAt');
+   const currentTime = timestamps != null && timestamps.hasOwnProperty('currentTime') ?
+@@ -57,15 +55,15 @@ module.exports = function setupTimestamps(schema, timestamps) {
+ 
+   schema.methods.initializeTimestamps = function() {
+     const ts = currentTime != null ?
+-      currentTime() :
+-      this.constructor.base.now();
++      currentTime() : this.constructor.base.now();
++
++
+     if (createdAt && !this.get(createdAt)) {
+       this.$set(createdAt, ts);
+     }
+     if (updatedAt && !this.get(updatedAt)) {
+       this.$set(updatedAt, ts);
+     }
+-
+     if (this.$isSubdocument) {
+       return this;
+     }
+diff --git a/lib/schema/SubdocumentPath.js b/lib/schema/SubdocumentPath.js
+index e66a15295..c49386398 100644
+--- a/lib/schema/SubdocumentPath.js
++++ b/lib/schema/SubdocumentPath.js
+@@ -84,6 +84,7 @@ function _createConstructor(schema, baseClass) {
+   _embedded.prototype = Object.create(proto);
+   _embedded.prototype.$__setSchema(schema);
+   _embedded.prototype.constructor = _embedded;
++  _embedded.base = schema.base;
+   _embedded.schema = schema;
+   _embedded.$isSingleNested = true;
+   _embedded.events = new EventEmitter();

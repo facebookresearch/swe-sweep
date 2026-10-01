@@ -1,0 +1,12 @@
+diff --git a/lib/helpers/query/getEmbeddedDiscriminatorPath.js b/lib/helpers/query/getEmbeddedDiscriminatorPath.js
+--- a/lib/helpers/query/getEmbeddedDiscriminatorPath.js
++++ b/lib/helpers/query/getEmbeddedDiscriminatorPath.js
+@@ -79,7 +79,7 @@ module.exports = function getEmbeddedDiscriminatorPath(schema, update, filter, p
+       const discriminatorSchema = getDiscriminatorByValue(schematype.caster.discriminators, discriminatorKey).schema;
+ 
+       const rest = parts.slice(i + 1).join('.');
+-      schematype = discriminatorSchema.path(rest);
++      schematype = discriminatorSchema._getSchema(rest);
+       if (schematype != null) {
+         type = discriminatorSchema._getPathType(rest);
+         break;

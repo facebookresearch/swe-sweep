@@ -1,0 +1,215 @@
+diff --git a/src/include/duckdb/storage/data_table.hpp b/src/include/duckdb/storage/data_table.hpp
+index 4c2e0d6b58..c6ae98a9f2 100644
+--- a/src/include/duckdb/storage/data_table.hpp
++++ b/src/include/duckdb/storage/data_table.hpp
+@@ -128,9 +128,11 @@ public:
+ 	//! Fetches an append lock
+ 	void AppendLock(TableAppendState &state);
+ 	//! Begin appending structs to this table, obtaining necessary locks, etc
+-	void InitializeAppend(DuckTransaction &transaction, TableAppendState &state, idx_t append_count);
++	void InitializeAppend(DuckTransaction &transaction, TableAppendState &state);
+ 	//! Append a chunk to the table using the AppendState obtained from InitializeAppend
+ 	void Append(DataChunk &chunk, TableAppendState &state);
++	//! Finalize an append
++	void FinalizeAppend(DuckTransaction &transaction, TableAppendState &state);
+ 	//! Commit the append
+ 	void CommitAppend(transaction_t commit_id, idx_t row_start, idx_t count);
+ 	//! Write a segment of the table to the WAL
+diff --git a/src/include/duckdb/storage/table/append_state.hpp b/src/include/duckdb/storage/table/append_state.hpp
+index 382f86da5d..5c5ebd0c68 100644
+--- a/src/include/duckdb/storage/table/append_state.hpp
++++ b/src/include/duckdb/storage/table/append_state.hpp
+@@ -67,8 +67,6 @@ struct TableAppendState {
+ 	RowGroup *start_row_group;
+ 	//! The transaction data
+ 	TransactionData transaction;
+-	//! The remaining append count, only if the append count is known beforehand
+-	idx_t remaining;
+ };
+ 
+ struct LocalAppendState {
+diff --git a/src/include/duckdb/storage/table/row_group_collection.hpp b/src/include/duckdb/storage/table/row_group_collection.hpp
+index 9401cb9aee..85d99ba195 100644
+--- a/src/include/duckdb/storage/table/row_group_collection.hpp
++++ b/src/include/duckdb/storage/table/row_group_collection.hpp
+@@ -69,8 +69,9 @@ public:
+ 
+ 	//! Initialize an append of a variable number of rows. FinalizeAppend must be called after appending is done.
+ 	void InitializeAppend(TableAppendState &state);
+-	//! Initialize an append with a known number of rows. FinalizeAppend should not be called after appending is done.
+-	void InitializeAppend(TransactionData transaction, TableAppendState &state, idx_t append_count);
++	//! Initialize an append with a variable number of rows. FinalizeAppend should not be called after appending is
++	//! done.
++	void InitializeAppend(TransactionData transaction, TableAppendState &state);
+ 	//! Appends to the row group collection. Returns true if a new row group has been created to append to
+ 	bool Append(DataChunk &chunk, TableAppendState &state);
+ 	//! FinalizeAppend flushes an append with a variable number of rows.
+diff --git a/src/storage/data_table.cpp b/src/storage/data_table.cpp
+index 0e64ab831f..435766de01 100644
+--- a/src/storage/data_table.cpp
++++ b/src/storage/data_table.cpp
+@@ -747,12 +747,12 @@ void DataTable::AppendLock(TableAppendState &state) {
+ 	state.current_row = state.row_start;
+ }
+ 
+-void DataTable::InitializeAppend(DuckTransaction &transaction, TableAppendState &state, idx_t append_count) {
++void DataTable::InitializeAppend(DuckTransaction &transaction, TableAppendState &state) {
+ 	// obtain the append lock for this table
+ 	if (!state.append_lock) {
+ 		throw InternalException("DataTable::AppendLock should be called before DataTable::InitializeAppend");
+ 	}
+-	row_groups->InitializeAppend(transaction, state, append_count);
++	row_groups->InitializeAppend(transaction, state);
+ }
+ 
+ void DataTable::Append(DataChunk &chunk, TableAppendState &state) {
+@@ -760,6 +760,10 @@ void DataTable::Append(DataChunk &chunk, TableAppendState &state) {
+ 	row_groups->Append(chunk, state);
+ }
+ 
++void DataTable::FinalizeAppend(DuckTransaction &transaction, TableAppendState &state) {
++	row_groups->FinalizeAppend(transaction, state);
++}
++
+ void DataTable::ScanTableSegment(idx_t row_start, idx_t count, const std::function<void(DataChunk &chunk)> &function) {
+ 	if (count == 0) {
+ 		return;
+diff --git a/src/storage/local_storage.cpp b/src/storage/local_storage.cpp
+index 2aa7ab7363..2c7fb0fe1d 100644
+--- a/src/storage/local_storage.cpp
++++ b/src/storage/local_storage.cpp
+@@ -151,7 +151,7 @@ void LocalTableStorage::AppendToIndexes(DuckTransaction &transaction, TableAppen
+                                         idx_t append_count, bool append_to_table) {
+ 	auto &table = table_ref.get();
+ 	if (append_to_table) {
+-		table.InitializeAppend(transaction, append_state, append_count);
++		table.InitializeAppend(transaction, append_state);
+ 	}
+ 	ErrorData error;
+ 	if (append_to_table) {
+@@ -202,6 +202,9 @@ void LocalTableStorage::AppendToIndexes(DuckTransaction &transaction, TableAppen
+ 		});
+ 		error.Throw();
+ 	}
++	if (append_to_table) {
++		table.FinalizeAppend(transaction, append_state);
++	}
+ }
+ 
+ OptimisticDataWriter &LocalTableStorage::CreateOptimisticWriter() {
+@@ -352,7 +355,7 @@ bool LocalStorage::NextParallelScan(ClientContext &context, DataTable &table, Pa
+ 
+ void LocalStorage::InitializeAppend(LocalAppendState &state, DataTable &table) {
+ 	state.storage = &table_manager.GetOrCreateStorage(table);
+-	state.storage->row_groups->InitializeAppend(TransactionData(transaction), state.append_state, 0);
++	state.storage->row_groups->InitializeAppend(TransactionData(transaction), state.append_state);
+ }
+ 
+ void LocalStorage::Append(LocalAppendState &state, DataChunk &chunk) {
+diff --git a/src/storage/table/row_group.cpp b/src/storage/table/row_group.cpp
+index f70ebbc8f3..67e1773721 100644
+--- a/src/storage/table/row_group.cpp
++++ b/src/storage/table/row_group.cpp
+@@ -184,12 +184,17 @@ bool RowGroup::InitializeScanWithOffset(CollectionScanState &state, idx_t vector
+ 	state.vector_index = vector_offset;
+ 	state.max_row_group_row =
+ 	    this->start > state.max_row ? 0 : MinValue<idx_t>(this->count, state.max_row - this->start);
++	auto row_number = start + vector_offset * STANDARD_VECTOR_SIZE;
++	if (state.max_row_group_row == 0) {
++		// exceeded row groups to scan
++		return false;
++	}
+ 	D_ASSERT(state.column_scans);
+ 	for (idx_t i = 0; i < column_ids.size(); i++) {
+ 		const auto &column = column_ids[i];
+ 		if (column != COLUMN_IDENTIFIER_ROW_ID) {
+ 			auto &column_data = GetColumn(column);
+-			column_data.InitializeScanWithOffset(state.column_scans[i], start + vector_offset * STANDARD_VECTOR_SIZE);
++			column_data.InitializeScanWithOffset(state.column_scans[i], row_number);
+ 			state.column_scans[i].scan_options = &state.GetOptions();
+ 		} else {
+ 			state.column_scans[i].current = nullptr;
+diff --git a/src/storage/table/row_group_collection.cpp b/src/storage/table/row_group_collection.cpp
+index 91c843ed72..8c8a2a3fd7 100644
+--- a/src/storage/table/row_group_collection.cpp
++++ b/src/storage/table/row_group_collection.cpp
+@@ -288,11 +288,10 @@ void RowGroupCollection::Fetch(TransactionData transaction, DataChunk &result, c
+ // Append
+ //===--------------------------------------------------------------------===//
+ TableAppendState::TableAppendState()
+-    : row_group_append_state(*this), total_append_count(0), start_row_group(nullptr), transaction(0, 0), remaining(0) {
++    : row_group_append_state(*this), total_append_count(0), start_row_group(nullptr), transaction(0, 0) {
+ }
+ 
+ TableAppendState::~TableAppendState() {
+-	D_ASSERT(Exception::UncaughtException() || remaining == 0);
+ }
+ 
+ bool RowGroupCollection::IsEmpty() const {
+@@ -304,7 +303,7 @@ bool RowGroupCollection::IsEmpty(SegmentLock &l) const {
+ 	return row_groups->IsEmpty(l);
+ }
+ 
+-void RowGroupCollection::InitializeAppend(TransactionData transaction, TableAppendState &state, idx_t append_count) {
++void RowGroupCollection::InitializeAppend(TransactionData transaction, TableAppendState &state) {
+ 	state.row_start = total_rows;
+ 	state.current_row = state.row_start;
+ 	state.total_append_count = 0;
+@@ -318,17 +317,12 @@ void RowGroupCollection::InitializeAppend(TransactionData transaction, TableAppe
+ 	state.start_row_group = row_groups->GetLastSegment(l);
+ 	D_ASSERT(this->row_start + total_rows == state.start_row_group->start + state.start_row_group->count);
+ 	state.start_row_group->InitializeAppend(state.row_group_append_state);
+-	state.remaining = append_count;
+ 	state.transaction = transaction;
+-	if (state.remaining > 0) {
+-		state.start_row_group->AppendVersionInfo(transaction, state.remaining);
+-		total_rows += state.remaining;
+-	}
+ }
+ 
+ void RowGroupCollection::InitializeAppend(TableAppendState &state) {
+ 	TransactionData tdata(0, 0);
+-	InitializeAppend(tdata, state, 0);
++	InitializeAppend(tdata, state);
+ }
+ 
+ bool RowGroupCollection::Append(DataChunk &chunk, TableAppendState &state) {
+@@ -336,9 +330,9 @@ bool RowGroupCollection::Append(DataChunk &chunk, TableAppendState &state) {
+ 	chunk.Verify();
+ 
+ 	bool new_row_group = false;
+-	idx_t append_count = chunk.size();
++	idx_t total_append_count = chunk.size();
+ 	idx_t remaining = chunk.size();
+-	state.total_append_count += append_count;
++	state.total_append_count += total_append_count;
+ 	while (true) {
+ 		auto current_row_group = state.row_group_append_state.row_group;
+ 		// check how much we can fit into the current row_group
+@@ -355,9 +349,6 @@ bool RowGroupCollection::Append(DataChunk &chunk, TableAppendState &state) {
+ 			}
+ 		}
+ 		remaining -= append_count;
+-		if (state.remaining > 0) {
+-			state.remaining -= append_count;
+-		}
+ 		if (remaining > 0) {
+ 			// we expect max 1 iteration of this loop (i.e. a single chunk should never overflow more than one
+ 			// row_group)
+@@ -375,15 +366,12 @@ bool RowGroupCollection::Append(DataChunk &chunk, TableAppendState &state) {
+ 			// set up the append state for this row_group
+ 			auto last_row_group = row_groups->GetLastSegment(l);
+ 			last_row_group->InitializeAppend(state.row_group_append_state);
+-			if (state.remaining > 0) {
+-				last_row_group->AppendVersionInfo(state.transaction, state.remaining);
+-			}
+ 			continue;
+ 		} else {
+ 			break;
+ 		}
+ 	}
+-	state.current_row += append_count;
++	state.current_row += row_t(total_append_count);
+ 	auto stats_lock = stats.GetLock();
+ 	for (idx_t col_idx = 0; col_idx < types.size(); col_idx++) {
+ 		stats.GetStats(col_idx).UpdateDistinctStatistics(chunk.data[col_idx], chunk.size());

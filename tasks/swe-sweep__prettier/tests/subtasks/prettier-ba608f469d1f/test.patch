@@ -1,0 +1,46 @@
+diff --git a/tests/format/css/modules/__snapshots__/format.test.js.snap b/tests/format/css/modules/__snapshots__/format.test.js.snap
+index 4539c16cd..f38cf1591 100644
+--- a/tests/format/css/modules/__snapshots__/format.test.js.snap
++++ b/tests/format/css/modules/__snapshots__/format.test.js.snap
+@@ -62,6 +62,13 @@ printWidth: 80
+   }
+ }
+ 
++:export {
++  nest: {
++    myColor: blue;
++  }
++  myColor: red;
++}
++
+ =====================================output=====================================
+ @value colors: './colors.css';
+ @value first, second, third from colors;
+@@ -119,5 +126,12 @@ printWidth: 80
+   }
+ }
+ 
++:export {
++  nest: {
++    myColor: blue;
++  }
++  myColor: red;
++}
++
+ ================================================================================
+ `;
+diff --git a/tests/format/css/modules/modules.css b/tests/format/css/modules/modules.css
+index c721d6975..a8a03d7b8 100644
+--- a/tests/format/css/modules/modules.css
++++ b/tests/format/css/modules/modules.css
+@@ -53,3 +53,10 @@
+     transform: rotate(360deg);
+   }
+ }
++
++:export {
++  nest: {
++    myColor: blue;
++  }
++  myColor: red;
++}

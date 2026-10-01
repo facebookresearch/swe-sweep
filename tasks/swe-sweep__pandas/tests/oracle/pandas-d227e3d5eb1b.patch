@@ -1,0 +1,78 @@
+diff --git a/pandas/_libs/parsers.pyx b/pandas/_libs/parsers.pyx
+index d2975f83b9..ebc88692d7 100644
+--- a/pandas/_libs/parsers.pyx
++++ b/pandas/_libs/parsers.pyx
+@@ -721,10 +721,6 @@ cdef class TextReader:
+                 header = [self.names]
+ 
+         elif self.names is not None:
+-            # Enforce this unless usecols
+-            if not self.has_usecols:
+-                self.parser.expected_fields = len(self.names)
+-
+             # Names passed
+             if self.parser.lines < 1:
+                 self._tokenize_rows(1)
+@@ -735,6 +731,10 @@ cdef class TextReader:
+                 field_count = len(header[0])
+             else:
+                 field_count = self.parser.line_fields[data_line]
++
++            # Enforce this unless usecols
++            if not self.has_usecols:
++                self.parser.expected_fields = max(field_count, len(self.names))
+         else:
+             # No header passed nor to be found in the file
+             if self.parser.lines < 1:
+diff --git a/pandas/_libs/src/parser/tokenizer.c b/pandas/_libs/src/parser/tokenizer.c
+index 60c6180453..ade4d4aa4a 100644
+--- a/pandas/_libs/src/parser/tokenizer.c
++++ b/pandas/_libs/src/parser/tokenizer.c
+@@ -446,7 +446,7 @@ static int end_line(parser_t *self) {
+     }
+ 
+     if (!(self->lines <= self->header_end + 1) &&
+-        (self->expected_fields < 0 && fields > ex_fields) && !(self->usecols)) {
++        (fields > ex_fields) && !(self->usecols)) {
+         // increment file line count
+         self->file_lines++;
+ 
+diff --git a/pandas/io/parsers/python_parser.py b/pandas/io/parsers/python_parser.py
+index 9c2e7ddb2d..6f3a7ea754 100644
+--- a/pandas/io/parsers/python_parser.py
++++ b/pandas/io/parsers/python_parser.py
+@@ -341,6 +341,7 @@ class PythonParser(ParserBase):
+         num_original_columns = 0
+         clear_buffer = True
+         unnamed_cols: set[str | int | None] = set()
++        self._header_line = None
+ 
+         if self.header is not None:
+             header = self.header
+@@ -481,6 +482,8 @@ class PythonParser(ParserBase):
+ 
+                 line = names[:]
+ 
++            # Store line, otherwise it is lost for guessing the index
++            self._header_line = line
+             ncols = len(line)
+             num_original_columns = ncols
+ 
+@@ -852,10 +855,13 @@ class PythonParser(ParserBase):
+         orig_names = list(columns)
+         columns = list(columns)
+ 
+-        try:
+-            line = self._next_line()
+-        except StopIteration:
+-            line = None
++        if self._header_line is not None:
++            line = self._header_line
++        else:
++            try:
++                line = self._next_line()
++            except StopIteration:
++                line = None
+ 
+         try:
+             next_line = self._next_line()

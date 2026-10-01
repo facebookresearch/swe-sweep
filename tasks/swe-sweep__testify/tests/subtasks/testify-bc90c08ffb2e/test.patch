@@ -1,0 +1,51 @@
+diff --git a/assert/assertion_compare_test.go b/assert/assertion_compare_test.go
+index 6f7db87..667dbf7 100644
+--- a/assert/assertion_compare_test.go
++++ b/assert/assertion_compare_test.go
+@@ -398,3 +398,21 @@ func Test_containsValue(t *testing.T) {
+ 		Equal(t, currCase.result, compareResult)
+ 	}
+ }
++
++func TestComparingMsgAndArgsForwarding(t *testing.T) {
++	msgAndArgs := []interface{}{"format %s %x", "this", 0xc001}
++	expectedOutput := "format this c001\n"
++	funcs := []func(t TestingT){
++		func(t TestingT) { Greater(t, 1, 2, msgAndArgs...) },
++		func(t TestingT) { GreaterOrEqual(t, 1, 2, msgAndArgs...) },
++		func(t TestingT) { Less(t, 2, 1, msgAndArgs...) },
++		func(t TestingT) { LessOrEqual(t, 2, 1, msgAndArgs...) },
++		func(t TestingT) { Positive(t, 0, msgAndArgs...) },
++		func(t TestingT) { Negative(t, 0, msgAndArgs...) },
++	}
++	for _, f := range funcs {
++		out := &outputT{buf: bytes.NewBuffer(nil)}
++		f(out)
++		Contains(t, out.buf.String(), expectedOutput)
++	}
++}
+diff --git a/assert/assertion_order_test.go b/assert/assertion_order_test.go
+index 7726b82..eefe061 100644
+--- a/assert/assertion_order_test.go
++++ b/assert/assertion_order_test.go
+@@ -184,3 +184,20 @@ func TestIsNonDecreasing(t *testing.T) {
+ 		Contains(t, string(out.buf.Bytes()), currCase.msg)
+ 	}
+ }
++
++func TestOrderingMsgAndArgsForwarding(t *testing.T) {
++	msgAndArgs := []interface{}{"format %s %x", "this", 0xc001}
++	expectedOutput := "format this c001\n"
++	collection := []int{1, 2, 1}
++	funcs := []func(t TestingT){
++		func(t TestingT) { IsIncreasing(t, collection, msgAndArgs...) },
++		func(t TestingT) { IsNonIncreasing(t, collection, msgAndArgs...) },
++		func(t TestingT) { IsDecreasing(t, collection, msgAndArgs...) },
++		func(t TestingT) { IsNonDecreasing(t, collection, msgAndArgs...) },
++	}
++	for _, f := range funcs {
++		out := &outputT{buf: bytes.NewBuffer(nil)}
++		f(out)
++		Contains(t, out.buf.String(), expectedOutput)
++	}
++}

@@ -1,0 +1,112 @@
+diff --git a/test/configCases/graph/conditional-reexport/a.js b/test/configCases/graph/conditional-reexport/a.js
+new file mode 100644
+index 000000000..1733779a3
+--- /dev/null
++++ b/test/configCases/graph/conditional-reexport/a.js
+@@ -0,0 +1,5 @@
++import { utilA } from "./lib"
++
++it("should not emit error when running a.js (runtime a)", () => {
++  expect(utilA()).toBe("a");
++})
+diff --git a/test/configCases/graph/conditional-reexport/b.js b/test/configCases/graph/conditional-reexport/b.js
+new file mode 100644
+index 000000000..dc027b6ce
+--- /dev/null
++++ b/test/configCases/graph/conditional-reexport/b.js
+@@ -0,0 +1,5 @@
++import { utilB } from "./lib"
++
++it("should not emit error when running b.js (runtime b)", () => {
++  expect(utilB()).toBe("[object Object] common");
++})
+diff --git a/test/configCases/graph/conditional-reexport/lib/common/common.js b/test/configCases/graph/conditional-reexport/lib/common/common.js
+new file mode 100644
+index 000000000..074ca1b0a
+--- /dev/null
++++ b/test/configCases/graph/conditional-reexport/lib/common/common.js
+@@ -0,0 +1 @@
++export const common = 'common'
+diff --git a/test/configCases/graph/conditional-reexport/lib/common/empty.js b/test/configCases/graph/conditional-reexport/lib/common/empty.js
+new file mode 100644
+index 000000000..e69de29bb
+diff --git a/test/configCases/graph/conditional-reexport/lib/common/index.js b/test/configCases/graph/conditional-reexport/lib/common/index.js
+new file mode 100644
+index 000000000..cbff10e4c
+--- /dev/null
++++ b/test/configCases/graph/conditional-reexport/lib/common/index.js
+@@ -0,0 +1,2 @@
++export * from "./common"
++export * from "./empty"
+\ No newline at end of file
+diff --git a/test/configCases/graph/conditional-reexport/lib/index.js b/test/configCases/graph/conditional-reexport/lib/index.js
+new file mode 100644
+index 000000000..076a9172f
+--- /dev/null
++++ b/test/configCases/graph/conditional-reexport/lib/index.js
+@@ -0,0 +1,3 @@
++export * from "./util-a"
++export * from "./common"
++export * from "./util-b"
+diff --git a/test/configCases/graph/conditional-reexport/lib/util-a.js b/test/configCases/graph/conditional-reexport/lib/util-a.js
+new file mode 100644
+index 000000000..84de8612d
+--- /dev/null
++++ b/test/configCases/graph/conditional-reexport/lib/util-a.js
+@@ -0,0 +1,3 @@
++export function utilA() {
++  return 'a';
++}
+diff --git a/test/configCases/graph/conditional-reexport/lib/util-b.js b/test/configCases/graph/conditional-reexport/lib/util-b.js
+new file mode 100644
+index 000000000..dda8e9fcd
+--- /dev/null
++++ b/test/configCases/graph/conditional-reexport/lib/util-b.js
+@@ -0,0 +1,5 @@
++import { common } from "./common"
++var b = ({}).toString(); // side effect, this will keep lib/index.js exist in the output, bailout the optimization from SideEffectsFlagPlugin
++export function utilB() {
++  return b + ' ' + common;
++}
+diff --git a/test/configCases/graph/conditional-reexport/test.config.js b/test/configCases/graph/conditional-reexport/test.config.js
+new file mode 100644
+index 000000000..a7d5e3572
+--- /dev/null
++++ b/test/configCases/graph/conditional-reexport/test.config.js
+@@ -0,0 +1,5 @@
++module.exports = {
++	findBundle() {
++		return ["./lib.js", "./a.js", "./b.js"];
++	}
++};
+diff --git a/test/configCases/graph/conditional-reexport/webpack.config.js b/test/configCases/graph/conditional-reexport/webpack.config.js
+new file mode 100644
+index 000000000..b8cd3217e
+--- /dev/null
++++ b/test/configCases/graph/conditional-reexport/webpack.config.js
+@@ -0,0 +1,25 @@
++/** @type {import("webpack").Configuration} */
++module.exports = {
++	entry: {
++		a: "./a.js",
++		b: "./b.js"
++	},
++	output: {
++		filename: "[name].js"
++	},
++	target: "web",
++	mode: "production",
++	optimization: {
++		concatenateModules: false,
++		splitChunks: {
++			cacheGroups: {
++				lib: {
++					name: "lib",
++					test: /lib/,
++					chunks: "all",
++					minSize: 0
++				}
++			}
++		}
++	}
++};

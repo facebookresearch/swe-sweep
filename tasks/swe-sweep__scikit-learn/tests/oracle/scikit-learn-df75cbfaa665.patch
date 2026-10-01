@@ -1,0 +1,21 @@
+diff --git a/sklearn/cluster/birch.py b/sklearn/cluster/birch.py
+index 05b618d..391b493 100644
+--- a/sklearn/cluster/birch.py
++++ b/sklearn/cluster/birch.py
+@@ -5,6 +5,7 @@
+ from __future__ import division
+ 
+ import warnings
++import numbers
+ import numpy as np
+ from scipy import sparse
+ from math import sqrt
+@@ -578,7 +579,7 @@ class Birch(BaseEstimator, TransformerMixin, ClusterMixin):
+ 
+         # Preprocessing for the global clustering.
+         not_enough_centroids = False
+-        if isinstance(clusterer, int):
++        if isinstance(clusterer, numbers.Integral):
+             clusterer = AgglomerativeClustering(
+                 n_clusters=self.n_clusters)
+             # There is no need to perform the global clustering step.

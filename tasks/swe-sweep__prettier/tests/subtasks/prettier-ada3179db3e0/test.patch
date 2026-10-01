@@ -1,0 +1,294 @@
+diff --git a/tests/format/js/chain-expression/__snapshots__/format.test.js.snap b/tests/format/js/chain-expression/__snapshots__/format.test.js.snap
+index adbec18c3..3b680c230 100644
+--- a/tests/format/js/chain-expression/__snapshots__/format.test.js.snap
++++ b/tests/format/js/chain-expression/__snapshots__/format.test.js.snap
+@@ -126,6 +126,54 @@ const randomFuncion = (value) => {
+ ================================================================================
+ `;
+ 
++exports[`tagged-template-literals.js format 1`] = `
++====================================options=====================================
++parsers: ["babel", "typescript", "flow"]
++printWidth: 80
++                                                                                | printWidth
++=====================================input======================================
++// Member expressions
++(a?.b)   \`\`;
++(a.b?.c)   \`\`;
++(a?.b.c)   \`\`;
++(a[b?.c])   \`\`;
++((a?.b).c)   \`\`;
++(a[b?.()])   \`\`;
++((a?.b).c)   \`\`;
++((a?.()).b)   \`\`;
++
++// Call expressions
++(a?.())   \`\`;
++(a.b.c?.())   \`\`;
++(a.b?.c())   \`\`;
++(a?.b.c())   \`\`;
++(a(b?.c))   \`\`;
++((a?.b)())   \`\`;
++((a?.())())   \`\`;
++
++=====================================output=====================================
++// Member expressions
++(a?.b)\`\`;
++(a.b?.c)\`\`;
++(a?.b.c)\`\`;
++a[b?.c]\`\`;
++(a?.b).c\`\`;
++a[b?.()]\`\`;
++(a?.b).c\`\`;
++(a?.()).b\`\`;
++
++// Call expressions
++(a?.())\`\`;
++(a.b.c?.())\`\`;
++(a.b?.c())\`\`;
++(a?.b.c())\`\`;
++a(b?.c)\`\`;
++(a?.b)()\`\`;
++(a?.())()\`\`;
++
++================================================================================
++`;
++
+ exports[`test.js format 1`] = `
+ ====================================options=====================================
+ parsers: ["babel", "typescript", "flow"]
+diff --git a/tests/format/js/chain-expression/tagged-template-literals.js b/tests/format/js/chain-expression/tagged-template-literals.js
+new file mode 100644
+index 000000000..96d9e93f3
+--- /dev/null
++++ b/tests/format/js/chain-expression/tagged-template-literals.js
+@@ -0,0 +1,18 @@
++// Member expressions
++(a?.b)   ``;
++(a.b?.c)   ``;
++(a?.b.c)   ``;
++(a[b?.c])   ``;
++((a?.b).c)   ``;
++(a[b?.()])   ``;
++((a?.b).c)   ``;
++((a?.()).b)   ``;
++
++// Call expressions
++(a?.())   ``;
++(a.b.c?.())   ``;
++(a.b?.c())   ``;
++(a?.b.c())   ``;
++(a(b?.c))   ``;
++((a?.b)())   ``;
++((a?.())())   ``;
+diff --git a/tests/format/typescript/chain-expression/__snapshots__/format.test.js.snap b/tests/format/typescript/chain-expression/__snapshots__/format.test.js.snap
+index e8a4f7845..1394c58b7 100644
+--- a/tests/format/typescript/chain-expression/__snapshots__/format.test.js.snap
++++ b/tests/format/typescript/chain-expression/__snapshots__/format.test.js.snap
+@@ -1,5 +1,139 @@
+ // Jest Snapshot v1, https://goo.gl/fbAQLP
+ 
++exports[`non-null-tagged-template-literals.ts format 1`] = `
++====================================options=====================================
++parsers: ["typescript"]
++printWidth: 80
++                                                                                | printWidth
++=====================================input======================================
++// Member expressions
++(a?.b)!   \`\`;
++(a?.b!)   \`\`;
++(a!?.b)   \`\`;
++(a.b?.c)!   \`\`;
++(a.b?.c!)   \`\`;
++(a.b!?.c)   \`\`;
++(a!.b?.c)   \`\`;
++(a?.b.c)!   \`\`;
++(a?.b.c!)   \`\`;
++(a?.b!.c)   \`\`;
++(a!?.b.c)   \`\`;
++(a[b?.c])!   \`\`;
++(a[b?.c]!)   \`\`;
++(a[b?.c!])   \`\`;
++(a[b!?.c])   \`\`;
++((a?.b).c)!   \`\`;
++((a?.b).c!)   \`\`;
++((a?.b!).c)   \`\`;
++((a!?.b).c)   \`\`;
++(a[b?.()])!   \`\`;
++(a[b?.()]!)   \`\`;
++(a[b?.()!])   \`\`;
++(a[b!?.()])   \`\`;
++(a![b?.()])   \`\`;
++((a?.b).c)!   \`\`;
++((a?.b).c!)   \`\`;
++((a?.b)!.c)   \`\`;
++((a?.b!).c)   \`\`;
++((a!?.b).c)   \`\`;
++((a?.()).b)!   \`\`;
++((a?.()).b!)   \`\`;
++((a?.())!.b)   \`\`;
++((a?.()!).b)   \`\`;
++((a!?.()).b)   \`\`;
++
++// Call expressions
++(a?.())!   \`\`;
++(a?.()!)   \`\`;
++(a!?.())   \`\`;
++(a.b.c?.())!   \`\`;
++(a.b.c?.()!)   \`\`;
++(a.b.c!?.())   \`\`;
++(a.b?.c())!   \`\`;
++(a.b?.c()!)   \`\`;
++(a.b!?.c())   \`\`;
++(a?.b.c())!   \`\`;
++(a?.b.c()!)   \`\`;
++(a?.b!.c())   \`\`;
++(a(b?.c))!   \`\`;
++(a(b?.c)!)   \`\`;
++(a(b?.c!))   \`\`;
++((a?.b)())!   \`\`;
++((a?.b)()!)   \`\`;
++((a?.b)!())   \`\`;
++((a?.b!)())   \`\`;
++((a?.())())!   \`\`;
++((a?.())()!)   \`\`;
++((a?.())!())   \`\`;
++((a?.()!)())   \`\`;
++((a!?.())())   \`\`;
++
++=====================================output=====================================
++// Member expressions
++(a?.b)!\`\`;
++(a?.b)!\`\`;
++(a!?.b)\`\`;
++(a.b?.c)!\`\`;
++(a.b?.c)!\`\`;
++(a.b!?.c)\`\`;
++(a!.b?.c)\`\`;
++(a?.b.c)!\`\`;
++(a?.b.c)!\`\`;
++(a?.b!.c)\`\`;
++(a!?.b.c)\`\`;
++a[b?.c]!\`\`;
++a[b?.c]!\`\`;
++a[b?.c!]\`\`;
++a[b!?.c]\`\`;
++(a?.b).c!\`\`;
++(a?.b).c!\`\`;
++(a?.b)!.c\`\`;
++(a!?.b).c\`\`;
++a[b?.()]!\`\`;
++a[b?.()]!\`\`;
++a[b?.()!]\`\`;
++a[b!?.()]\`\`;
++a![b?.()]\`\`;
++(a?.b).c!\`\`;
++(a?.b).c!\`\`;
++(a?.b)!.c\`\`;
++(a?.b)!.c\`\`;
++(a!?.b).c\`\`;
++(a?.()).b!\`\`;
++(a?.()).b!\`\`;
++(a?.())!.b\`\`;
++(a?.())!.b\`\`;
++(a!?.()).b\`\`;
++
++// Call expressions
++(a?.())!\`\`;
++(a?.())!\`\`;
++(a!?.())\`\`;
++(a.b.c?.())!\`\`;
++(a.b.c?.())!\`\`;
++(a.b.c!?.())\`\`;
++(a.b?.c())!\`\`;
++(a.b?.c())!\`\`;
++(a.b!?.c())\`\`;
++(a?.b.c())!\`\`;
++(a?.b.c())!\`\`;
++(a?.b!.c())\`\`;
++a(b?.c)!\`\`;
++a(b?.c)!\`\`;
++a(b?.c!)\`\`;
++(a?.b)()!\`\`;
++(a?.b)()!\`\`;
++(a?.b)!()\`\`;
++(a?.b)!()\`\`;
++(a?.())()!\`\`;
++(a?.())()!\`\`;
++(a?.())!()\`\`;
++(a?.())!()\`\`;
++(a!?.())()\`\`;
++
++================================================================================
++`;
++
+ exports[`test.ts format 1`] = `
+ ====================================options=====================================
+ parsers: ["typescript"]
+diff --git a/tests/format/typescript/chain-expression/non-null-tagged-template-literals.ts b/tests/format/typescript/chain-expression/non-null-tagged-template-literals.ts
+new file mode 100644
+index 000000000..37f9c22a7
+--- /dev/null
++++ b/tests/format/typescript/chain-expression/non-null-tagged-template-literals.ts
+@@ -0,0 +1,61 @@
++// Member expressions
++(a?.b)!   ``;
++(a?.b!)   ``;
++(a!?.b)   ``;
++(a.b?.c)!   ``;
++(a.b?.c!)   ``;
++(a.b!?.c)   ``;
++(a!.b?.c)   ``;
++(a?.b.c)!   ``;
++(a?.b.c!)   ``;
++(a?.b!.c)   ``;
++(a!?.b.c)   ``;
++(a[b?.c])!   ``;
++(a[b?.c]!)   ``;
++(a[b?.c!])   ``;
++(a[b!?.c])   ``;
++((a?.b).c)!   ``;
++((a?.b).c!)   ``;
++((a?.b!).c)   ``;
++((a!?.b).c)   ``;
++(a[b?.()])!   ``;
++(a[b?.()]!)   ``;
++(a[b?.()!])   ``;
++(a[b!?.()])   ``;
++(a![b?.()])   ``;
++((a?.b).c)!   ``;
++((a?.b).c!)   ``;
++((a?.b)!.c)   ``;
++((a?.b!).c)   ``;
++((a!?.b).c)   ``;
++((a?.()).b)!   ``;
++((a?.()).b!)   ``;
++((a?.())!.b)   ``;
++((a?.()!).b)   ``;
++((a!?.()).b)   ``;
++
++// Call expressions
++(a?.())!   ``;
++(a?.()!)   ``;
++(a!?.())   ``;
++(a.b.c?.())!   ``;
++(a.b.c?.()!)   ``;
++(a.b.c!?.())   ``;
++(a.b?.c())!   ``;
++(a.b?.c()!)   ``;
++(a.b!?.c())   ``;
++(a?.b.c())!   ``;
++(a?.b.c()!)   ``;
++(a?.b!.c())   ``;
++(a(b?.c))!   ``;
++(a(b?.c)!)   ``;
++(a(b?.c!))   ``;
++((a?.b)())!   ``;
++((a?.b)()!)   ``;
++((a?.b)!())   ``;
++((a?.b!)())   ``;
++((a?.())())!   ``;
++((a?.())()!)   ``;
++((a?.())!())   ``;
++((a?.()!)())   ``;
++((a!?.())())   ``;

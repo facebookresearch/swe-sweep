@@ -1,0 +1,15 @@
+diff --git a/crates/ruff_linter/src/rules/pyupgrade/rules/super_call_with_parameters.rs b/crates/ruff_linter/src/rules/pyupgrade/rules/super_call_with_parameters.rs
+index 132dddb..7951a1d 100644
+--- a/crates/ruff_linter/src/rules/pyupgrade/rules/super_call_with_parameters.rs
++++ b/crates/ruff_linter/src/rules/pyupgrade/rules/super_call_with_parameters.rs
+@@ -126,7 +126,9 @@ pub(crate) fn super_call_with_parameters(checker: &mut Checker, call: &ast::Expr
+         return;
+     };
+ 
+-    if !(first_arg_id == parent_name.as_str() && second_arg_id == parent_arg.as_str()) {
++    if !((first_arg_id == "__class__" || first_arg_id == parent_name.as_str())
++        && second_arg_id == parent_arg.as_str())
++    {
+         return;
+     }
+ 

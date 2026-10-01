@@ -1,0 +1,19 @@
+diff --git a/test/JavascriptParser.unittest.js b/test/JavascriptParser.unittest.js
+index 0e7ebd94b..cc916821f 100644
+--- a/test/JavascriptParser.unittest.js
++++ b/test/JavascriptParser.unittest.js
+@@ -540,6 +540,14 @@ describe("JavascriptParser", () => {
+ 			"`start${'str'}mid${obj2}end`":
+ 				// eslint-disable-next-line no-template-curly-in-string
+ 				"template=[start${'str'}mid string=startstrmid],[end string=end]",
++			// eslint-disable-next-line no-template-curly-in-string
++			"`a${x}` === `b${x}`": "bool=false",
++			// eslint-disable-next-line no-template-curly-in-string
++			"`${x}a` === `${x}b`": "bool=false",
++			// eslint-disable-next-line no-template-curly-in-string
++			"`${a}${b}` === `a${b}`": "",
++			// eslint-disable-next-line no-template-curly-in-string
++			"`${a}${b}` === `${a}b`": "",
+ 			"'abc'.substr(1)": "string=bc",
+ 			"'abcdef'.substr(2, 3)": "string=cde",
+ 			"'abcdef'.substring(2, 3)": "string=c",

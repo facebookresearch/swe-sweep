@@ -1,0 +1,14 @@
+diff --git a/test/cases/parsing/evaluate-nullish/index.js b/test/cases/parsing/evaluate-nullish/index.js
+index bd2dfbac3..128a96c8e 100644
+--- a/test/cases/parsing/evaluate-nullish/index.js
++++ b/test/cases/parsing/evaluate-nullish/index.js
+@@ -1,5 +1,9 @@
++function a() {}
++
+ it("should evaluate nullish coalescing", function () {
+ 	expect("" ?? require("fail")).toBe("");
++	expect(String.raw`aaaa` ?? require("fail")).toBe("aaaa");
++	expect(a`aaaa` ?? "expected").toBe("expected");
+ 	expect(null ?? "expected").toBe("expected");
+ 	expect(("" ?? require("fail")) && true).toBe("");
+ 	let x = 0;

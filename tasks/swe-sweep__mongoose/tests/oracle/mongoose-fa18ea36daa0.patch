@@ -1,0 +1,26 @@
+diff --git a/lib/helpers/query/getEmbeddedDiscriminatorPath.js b/lib/helpers/query/getEmbeddedDiscriminatorPath.js
+index 21bc8a1a8..548cf3b03 100644
+--- a/lib/helpers/query/getEmbeddedDiscriminatorPath.js
++++ b/lib/helpers/query/getEmbeddedDiscriminatorPath.js
+@@ -28,7 +28,8 @@ module.exports = function getEmbeddedDiscriminatorPath(schema, update, filter, p
+   const updatedPathsByFilter = updatedPathsByArrayFilter(update);
+ 
+   for (let i = 0; i < parts.length; ++i) {
+-    const subpath = cleanPositionalOperators(parts.slice(0, i + 1).join('.'));
++    const originalSubpath = parts.slice(0, i + 1).join('.');
++    const subpath = cleanPositionalOperators(originalSubpath);
+     schematype = schema.path(subpath);
+     if (schematype == null) {
+       continue;
+@@ -56,6 +57,11 @@ module.exports = function getEmbeddedDiscriminatorPath(schema, update, filter, p
+         discriminatorKey = filter[wrapperPath].$elemMatch[key];
+       }
+ 
++      const discriminatorKeyUpdatePath = originalSubpath + '.' + key;
++      if (discriminatorKeyUpdatePath in update) {
++        discriminatorKey = update[discriminatorKeyUpdatePath];
++      }
++
+       if (discriminatorValuePath in update) {
+         discriminatorKey = update[discriminatorValuePath];
+       }

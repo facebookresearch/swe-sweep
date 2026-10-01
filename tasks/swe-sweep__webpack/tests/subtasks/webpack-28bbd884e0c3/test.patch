@@ -1,0 +1,33 @@
+diff --git a/test/configCases/asset-modules/resource-from-data-uri/index.js b/test/configCases/asset-modules/resource-from-data-uri/index.js
+new file mode 100644
+index 000000000..ad16b26e2
+--- /dev/null
++++ b/test/configCases/asset-modules/resource-from-data-uri/index.js
+@@ -0,0 +1,5 @@
++import asset from "data:image/svg+xml;utf8,<svg><title>icon-square-small</title></svg>"
++
++it("should compile with correct filename", () => {
++	expect(asset).toMatch(/public\/media\/\.[0-9a-zA-Z]{8}\.svg/);
++});
+diff --git a/test/configCases/asset-modules/resource-from-data-uri/webpack.config.js b/test/configCases/asset-modules/resource-from-data-uri/webpack.config.js
+new file mode 100644
+index 000000000..92bff8256
+--- /dev/null
++++ b/test/configCases/asset-modules/resource-from-data-uri/webpack.config.js
+@@ -0,0 +1,16 @@
++/** @type {import("../../../../").Configuration} */
++module.exports = {
++	output: {
++		assetModuleFilename: "media/[name].[contenthash:8][ext]",
++		publicPath: "public/"
++	},
++	module: {
++		rules: [
++			{
++				mimetype: "image/svg+xml",
++				type: "asset/resource"
++			}
++		]
++	},
++	target: "web"
++};

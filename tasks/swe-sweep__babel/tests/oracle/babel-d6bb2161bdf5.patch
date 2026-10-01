@@ -1,0 +1,22 @@
+diff --git a/packages/babel-parser/src/plugins/typescript.js b/packages/babel-parser/src/plugins/typescript.js
+index e3899b9409..d11a8158fb 100644
+--- a/packages/babel-parser/src/plugins/typescript.js
++++ b/packages/babel-parser/src/plugins/typescript.js
+@@ -655,6 +655,7 @@ export default (superClass: Class<Parser>): Class<Parser> =>
+       parseConstituentType: () => N.TsType,
+       operator: TokenType,
+     ): N.TsType {
++      const node: N.TsUnionType | N.TsIntersectionType = this.startNode();
+       this.eat(operator);
+       let type = parseConstituentType();
+       if (this.match(operator)) {
+@@ -662,9 +663,6 @@ export default (superClass: Class<Parser>): Class<Parser> =>
+         while (this.eat(operator)) {
+           types.push(parseConstituentType());
+         }
+-        const node: N.TsUnionType | N.TsIntersectionType = this.startNodeAtNode(
+-          type,
+-        );
+         node.types = types;
+         type = this.finishNode(node, kind);
+       }

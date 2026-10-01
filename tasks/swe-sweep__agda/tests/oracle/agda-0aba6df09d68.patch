@@ -1,0 +1,33 @@
+diff --git a/src/full/Agda/Syntax/Parser/Lexer.x b/src/full/Agda/Syntax/Parser/Lexer.x
+index 62426b3ba3..e604d21d28 100644
+--- a/src/full/Agda/Syntax/Parser/Lexer.x
++++ b/src/full/Agda/Syntax/Parser/Lexer.x
+@@ -114,6 +114,13 @@ tokens :-
+ <fpragma_>  . # [ $white ] +           { withInterval $ TokString }
+ 
+ -- Comments
++<0,code,bol_,layout_,empty_layout_,imp_dir_>
++    "--" .* / { keepComments .&&. (followedBy '\n' .||. eof) }
++              { confirmLayout `andThen` withInterval TokComment }
++<0,code,bol_,layout_,empty_layout_,imp_dir_>
++    "--" .* / { followedBy '\n' .||. eof }
++              { confirmLayout `andThen` skip }
++
+     -- We need to rule out pragmas here. Usually longest match would take
+     -- precedence, but in some states pragmas aren't valid but comments are.
+ <0,code,bol_,layout_,empty_layout_,imp_dir_>
+@@ -122,14 +129,6 @@ tokens :-
+     "-}"                                { symbol SymEndComment }
+     @ident "-}"                         { symbol SymEndComment }
+ 
+--- Dashes followed by a name symbol should be parsed as a name.
+-<0,code,bol_,layout_,empty_layout_,imp_dir_>
+-    "--" .* / { keepComments .&&. (followedBy '\n' .||. eof) }
+-              { confirmLayout `andThen` withInterval TokComment }
+-<0,code,bol_,layout_,empty_layout_,imp_dir_>
+-    "--" .* / { followedBy '\n' .||. eof }
+-              { confirmLayout `andThen` skip }
+-
+ -- Note: we need to confirm tentative layout columns whenever we meet
+ -- a newline character ('\n').
+ -- The exception is the newline after a layout keyword.

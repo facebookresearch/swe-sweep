@@ -1,0 +1,83 @@
+diff --git a/compiler/test/compilable/imports/pkg20008/package.d b/compiler/test/compilable/imports/pkg20008/package.d
+new file mode 100644
+index 0000000000..ecd1568ad3
+--- /dev/null
++++ b/compiler/test/compilable/imports/pkg20008/package.d
+@@ -0,0 +1,9 @@
++module pkg20008;
++
++import pkg20008.submod;
++
++enum T2 { y }
++enum T3 { z }
++
++static assert([__traits(allMembers, pkg20008)] == ["object", "pkg20008", "T2", "T3"]);
++static assert([__traits(allMembers, pkg20008.submod)] == ["object", "T1"]);
+diff --git a/compiler/test/compilable/imports/pkg20008/submod.d b/compiler/test/compilable/imports/pkg20008/submod.d
+new file mode 100644
+index 0000000000..a38a5e88cf
+--- /dev/null
++++ b/compiler/test/compilable/imports/pkg20008/submod.d
+@@ -0,0 +1,2 @@
++module pkg20008.submod;
++enum T1 { x }
+diff --git a/compiler/test/compilable/imports/pkg20008/subpkg/package.d b/compiler/test/compilable/imports/pkg20008/subpkg/package.d
+new file mode 100644
+index 0000000000..cf3e4dfb42
+--- /dev/null
++++ b/compiler/test/compilable/imports/pkg20008/subpkg/package.d
+@@ -0,0 +1,7 @@
++module pkg20008.subpkg;
++
++import pkg20008.subpkg.subsubmod;
++
++enum T9 { x }
++
++static assert([__traits(allMembers, pkg20008.subpkg)] == ["object", "pkg20008", "T9"]);
+diff --git a/compiler/test/compilable/imports/pkg20008/subpkg/subsubmod.d b/compiler/test/compilable/imports/pkg20008/subpkg/subsubmod.d
+new file mode 100644
+index 0000000000..69a416a021
+--- /dev/null
++++ b/compiler/test/compilable/imports/pkg20008/subpkg/subsubmod.d
+@@ -0,0 +1,9 @@
++module pkg20008.subpkg.subsubmod;
++
++import pkg20008.subpkg;
++import pkg20008.subpkg.subsubmod;
++
++enum T8 { x }
++
++static assert([__traits(allMembers, pkg20008.subpkg)] == ["object", "pkg20008", "T9"]);
++static assert([__traits(allMembers, pkg20008.subpkg.subsubmod)] == ["object", "pkg20008", "T8"]);
+diff --git a/compiler/test/compilable/imports/test9692b.d b/compiler/test/compilable/imports/test9692b.d
+index 25be84b341..dab7a986aa 100644
+--- a/compiler/test/compilable/imports/test9692b.d
++++ b/compiler/test/compilable/imports/test9692b.d
+@@ -1,2 +1,2 @@
+ module imports.test9692b;
+-int j;
++int k;
+diff --git a/compiler/test/compilable/test20008.d b/compiler/test/compilable/test20008.d
+new file mode 100644
+index 0000000000..3f27ad9794
+--- /dev/null
++++ b/compiler/test/compilable/test20008.d
+@@ -0,0 +1,6 @@
++/*
++REQUIRED_ARGS: -Icompilable/imports -c -o-
++EXTRA_FILES: imports/pkg20008/package.d imports/pkg20008/submod.d
++*/
++import pkg20008;
++import pkg20008.subpkg;
+diff --git a/compiler/test/compilable/test9692.d b/compiler/test/compilable/test9692.d
+index 57131b8080..cb5da6a342 100644
+--- a/compiler/test/compilable/test9692.d
++++ b/compiler/test/compilable/test9692.d
+@@ -4,5 +4,5 @@ module test9692;
+ import test9692a;
+ import imports.test9692b;
+ 
+-enum x = [__traits(allMembers, imports.test9692b)];  // ok
+-enum y = [__traits(allMembers, test9692a)];  // ng: should work
++static assert([__traits(allMembers, imports.test9692b)] == ["object", "k"]); // ok
++static assert([__traits(allMembers, test9692a)] == ["object", "j"]); // ng: should work

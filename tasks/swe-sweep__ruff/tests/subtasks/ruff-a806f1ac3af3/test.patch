@@ -1,0 +1,140 @@
+diff --git a/crates/ruff_linter/resources/test/fixtures/pycodestyle/E30.py b/crates/ruff_linter/resources/test/fixtures/pycodestyle/E30.py
+index e134c3e001..df30f0c969 100644
+--- a/crates/ruff_linter/resources/test/fixtures/pycodestyle/E30.py
++++ b/crates/ruff_linter/resources/test/fixtures/pycodestyle/E30.py
+@@ -974,3 +974,39 @@ BANANA = 100
+ APPLE = 200
+ 
+ # end
++
++
++# https://github.com/astral-sh/ruff/issues/19752
++class foo:
++    async def recv(self, *, length=65536):
++        loop = asyncio.get_event_loop()
++        def callback():
++            loop.remove_reader(self._fd)
++        loop.add_reader(self._fd, callback)
++# end
++
++
++# E301
++class Foo:
++    if True:
++        print("conditional")
++        def test():
++            pass
++# end
++
++
++# Test case for nested class scenario
++class Bar:
++    def f():
++        x = 1
++        def g():
++            return 1
++        return 2
++
++    def f():
++        class Baz:
++            x = 1
++            def g():
++                return 1
++            return 2
++# end
+diff --git a/crates/ruff_linter/src/rules/pycodestyle/snapshots/ruff_linter__rules__pycodestyle__tests__E301_E30.py.snap b/crates/ruff_linter/src/rules/pycodestyle/snapshots/ruff_linter__rules__pycodestyle__tests__E301_E30.py.snap
+index e4c13172b2..13360489e4 100644
+--- a/crates/ruff_linter/src/rules/pycodestyle/snapshots/ruff_linter__rules__pycodestyle__tests__E301_E30.py.snap
++++ b/crates/ruff_linter/src/rules/pycodestyle/snapshots/ruff_linter__rules__pycodestyle__tests__E301_E30.py.snap
+@@ -100,3 +100,23 @@ ℹ Safe fix
+ 526 527 |     def bar(self, x: int | str) -> int | str:
+ 527 528 |         return x
+ 528 529 | # end
++
++E30.py:993:9: E301 [*] Expected 1 blank line, found 0
++    |
++991 |     if True:
++992 |         print("conditional")
++993 |         def test():
++    |         ^^^ E301
++994 |             pass
++995 | # end
++    |
++    = help: Add missing blank line
++
++ℹ Safe fix
++990 990 | class Foo:
++991 991 |     if True:
++992 992 |         print("conditional")
++    993 |+
++993 994 |         def test():
++994 995 |             pass
++995 996 | # end
+diff --git a/crates/ruff_linter/src/rules/pycodestyle/snapshots/ruff_linter__rules__pycodestyle__tests__E306_E30.py.snap b/crates/ruff_linter/src/rules/pycodestyle/snapshots/ruff_linter__rules__pycodestyle__tests__E306_E30.py.snap
+index 204834fc20..b3cba08a97 100644
+--- a/crates/ruff_linter/src/rules/pycodestyle/snapshots/ruff_linter__rules__pycodestyle__tests__E306_E30.py.snap
++++ b/crates/ruff_linter/src/rules/pycodestyle/snapshots/ruff_linter__rules__pycodestyle__tests__E306_E30.py.snap
+@@ -220,3 +220,63 @@ help: Add missing blank line
+ 925 926 |     async def b():
+ 926 927 |         pass
+ 927 928 | # end
++
++E30.py:983:9: E306 [*] Expected 1 blank line before a nested definition, found 0
++    |
++981 |     async def recv(self, *, length=65536):
++982 |         loop = asyncio.get_event_loop()
++983 |         def callback():
++    |         ^^^ E306
++984 |             loop.remove_reader(self._fd)
++985 |         loop.add_reader(self._fd, callback)
++    |
++    = help: Add missing blank line
++
++ℹ Safe fix
++980 980 | class foo:
++981 981 |     async def recv(self, *, length=65536):
++982 982 |         loop = asyncio.get_event_loop()
++    983 |+
++983 984 |         def callback():
++984 985 |             loop.remove_reader(self._fd)
++985 986 |         loop.add_reader(self._fd, callback)
++
++E30.py:1002:9: E306 [*] Expected 1 blank line before a nested definition, found 0
++     |
++1000 |     def f():
++1001 |         x = 1
++1002 |         def g():
++     |         ^^^ E306
++1003 |             return 1
++1004 |         return 2
++     |
++     = help: Add missing blank line
++
++ℹ Safe fix
++999  999  | class Bar:
++1000 1000 |     def f():
++1001 1001 |         x = 1
++     1002 |+
++1002 1003 |         def g():
++1003 1004 |             return 1
++1004 1005 |         return 2
++
++E30.py:1009:13: E306 [*] Expected 1 blank line before a nested definition, found 0
++     |
++1007 |         class Baz:
++1008 |             x = 1
++1009 |             def g():
++     |             ^^^ E306
++1010 |                 return 1
++1011 |             return 2
++     |
++     = help: Add missing blank line
++
++ℹ Safe fix
++1006 1006 |     def f():
++1007 1007 |         class Baz:
++1008 1008 |             x = 1
++     1009 |+
++1009 1010 |             def g():
++1010 1011 |                 return 1
++1011 1012 |             return 2

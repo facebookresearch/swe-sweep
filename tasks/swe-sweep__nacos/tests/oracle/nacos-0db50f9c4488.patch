@@ -1,0 +1,16 @@
+diff --git a/client/src/main/java/com/alibaba/nacos/client/config/impl/ConfigFuzzyWatchContext.java b/client/src/main/java/com/alibaba/nacos/client/config/impl/ConfigFuzzyWatchContext.java
+index de9c54304..411ebd4d0 100644
+--- a/client/src/main/java/com/alibaba/nacos/client/config/impl/ConfigFuzzyWatchContext.java
++++ b/client/src/main/java/com/alibaba/nacos/client/config/impl/ConfigFuzzyWatchContext.java
+@@ -527,9 +527,8 @@ public class ConfigFuzzyWatchContext {
+             
+             @Override
+             public Set<String> get() throws InterruptedException, ExecutionException {
+-                
+-                if (!ConfigFuzzyWatchContext.this.initializationCompleted.get()) {
+-                    synchronized (ConfigFuzzyWatchContext.this) {
++                synchronized (ConfigFuzzyWatchContext.this) {
++                    while (!ConfigFuzzyWatchContext.this.initializationCompleted.get()) {
+                         ConfigFuzzyWatchContext.this.wait();
+                     }
+                 }

@@ -1,0 +1,43 @@
+diff --git a/tests/format/scss/parens/__snapshots__/format.test.js.snap b/tests/format/scss/parens/__snapshots__/format.test.js.snap
+index e920d1c99..0ece1acf4 100644
+--- a/tests/format/scss/parens/__snapshots__/format.test.js.snap
++++ b/tests/format/scss/parens/__snapshots__/format.test.js.snap
+@@ -39,6 +39,29 @@ $icons: (
+ ================================================================================
+ `;
+ 
++exports[`issue-16594.scss format 1`] = `
++====================================options=====================================
++parsers: ["scss"]
++printWidth: 80
++                                                                                | printWidth
++=====================================input======================================
++      @if true {
++        $newKey: ($key: ( $theme-name: $value ))
++      }
++
++=====================================output=====================================
++@if true {
++  $newKey: (
++    $key:
++      (
++        $theme-name: $value,
++      ),
++  );
++}
++
++================================================================================
++`;
++
+ exports[`parens.scss format 1`] = `
+ ====================================options=====================================
+ parsers: ["scss"]
+diff --git a/tests/format/scss/parens/issue-16594.scss b/tests/format/scss/parens/issue-16594.scss
+new file mode 100644
+index 000000000..03e821e87
+--- /dev/null
++++ b/tests/format/scss/parens/issue-16594.scss
+@@ -0,0 +1,3 @@
++      @if true {
++        $newKey: ($key: ( $theme-name: $value ))
++      }

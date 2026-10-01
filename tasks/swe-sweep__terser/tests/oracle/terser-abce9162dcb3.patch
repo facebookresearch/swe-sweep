@@ -1,0 +1,34 @@
+diff --git a/lib/sourcemap.js b/lib/sourcemap.js
+index 34bdd060..f376ccc8 100644
+--- a/lib/sourcemap.js
++++ b/lib/sourcemap.js
+@@ -78,12 +78,20 @@ async function SourceMap(options) {
+     }
+ 
+     function add(source, gen_line, gen_col, orig_line, orig_col, name) {
++        let generatedPos = { line: gen_line + options.dest_line_diff, column: gen_col };
++
+         if (orig_map) {
+             var info = orig_map.originalPositionFor({
+                 line: orig_line,
+                 column: orig_col
+             });
+             if (info.source === null) {
++                generator.addMapping({
++                    generated: generatedPos,
++                    original: null,
++                    source: null,
++                    name: null
++                });
+                 return;
+             }
+             source = info.source;
+@@ -92,7 +100,7 @@ async function SourceMap(options) {
+             name = info.name || name;
+         }
+         generator.addMapping({
+-            generated : { line: gen_line + options.dest_line_diff, column: gen_col },
++            generated : generatedPos,
+             original  : { line: orig_line + options.orig_line_diff, column: orig_col },
+             source    : source,
+             name      : name

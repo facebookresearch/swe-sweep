@@ -1,0 +1,55 @@
+diff --git a/scipy/io/tests/data/identification.sav b/scipy/io/tests/data/identification.sav
+new file mode 100644
+index 0000000000000000000000000000000000000000..92131823ab629fd1e8f3512c8e922c9e7c27545b
+GIT binary patch
+literal 1704
+zcmWFzVqjrlVBlh4U~vG_qhK@yMnhmU1SEX(^Ax-i^Ar@!6buZkz(~Q!z{m_3G%TgX
+zsYM_<Bfq!=Nb>=iAQ}cZfef|^3$u7L6R;3#PG(+d1w@wFLJus+3)Hg&rhy3cOh6-N
+zAgO0egm6G*7YK7exQr8kbP5my)x!Zu4p_c{F<cOh!4BfvH!v_b0BHvx;Q(SUfYKm7
+z14JIA#(pcyX9s@iy$)VUha8$eR68uz)&|ocK2RJi4^$6UV+vH8b}-7JAE<s!uq&7b
+z@j>DsGk^wz%>jwEAKnJGbJuhYFb(2^#6ji)?FHKbGG_sh4RXVoXQ^Ns#0QCk+yY{Q
+z+yk-;WDZEpBR2yu4dR2uLGr|!=KwShWIrMIF#y$p{6oOM#D*WxI5r?!0i?kI0H`6S
+ADgXcg
+
+literal 0
+HcmV?d00001
+
+diff --git a/scipy/io/tests/test_idl.py b/scipy/io/tests/test_idl.py
+index 0cba73c16b..0f5e7cbe06 100644
+--- a/scipy/io/tests/test_idl.py
++++ b/scipy/io/tests/test_idl.py
+@@ -1,11 +1,12 @@
+ from __future__ import division, print_function, absolute_import
+ 
+ from os import path
+ import warnings
++import pytest
+ 
+ DATA_PATH = path.join(path.dirname(__file__), 'data')
+ 
+ import numpy as np
+ from numpy.testing import (assert_equal, assert_array_equal,
+-    assert_)
++    assert_, assert_allclose)
+ from scipy._lib._numpy_compat import suppress_warnings
+@@ -439,4 +440,20 @@ def test_invalid_pointer():
+     assert_(str(w[0].message) == ("Variable referenced by pointer not found in "
+                                   "heap: variable will be set to None"))
+     assert_identical(s['a'], np.array([None, None]))
++
++
++def test_identification(capsys):
++    """Test that .sav file with IDENTIFICATION section read correctly."""
++    # gh-24278
++    s = readsav(path.join(DATA_PATH, 'identification.sav'), verbose=True)
++    # Check array read correctly
++    pattern = np.array([0.0, 1.0, 2.0, 3.0, 4.0, 5.0, 4.0, 3.0, 2.0, 1.0])
++    expected = np.sqrt(pattern[:, np.newaxis] ** 2 + pattern[np.newaxis, :] ** 2)
++    expected = expected.astype('float32')
++    assert_allclose(expected, s.a)
++    # Check that the correct identification fields were printed out by verbose mode
++    captured = capsys.readouterr()
++    assert "Author: x86_64" in captured.out
++    assert "Title: linux" in captured.out
++    assert "ID Code: 8.4" in captured.out
+ 

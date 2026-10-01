@@ -1,0 +1,13 @@
+diff --git a/dask/array/core.py b/dask/array/core.py
+index 4554b7327..c8c6e109d 100644
+--- a/dask/array/core.py
++++ b/dask/array/core.py
+@@ -628,7 +628,7 @@ def map_blocks(
+         warnings.warn("The token= keyword to map_blocks has been moved to name=")
+         name = token
+ 
+-    name = "%s-%s" % (name or funcname(func), tokenize(func, *args, **kwargs))
++    name = f"{name or funcname(func)}-{tokenize(func, dtype, chunks, drop_axis, new_axis, *args, **kwargs)}"
+     new_axes = {}
+ 
+     if isinstance(drop_axis, Number):

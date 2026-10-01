@@ -1,0 +1,13 @@
+diff --git a/compiler/src/dmd/typesem.d b/compiler/src/dmd/typesem.d
+index 0ef7705..b290987 100644
+--- a/compiler/src/dmd/typesem.d
++++ b/compiler/src/dmd/typesem.d
+@@ -334,6 +334,8 @@ private void resolveHelper(TypeQualified mt, const ref Loc loc, Scope* sc, Dsymb
+                 return;
+             }
+         }
++        if (sm.isAliasDeclaration())
++            sm.checkDeprecated(loc, sc);
+         s = sm.toAlias();
+     }
+ 

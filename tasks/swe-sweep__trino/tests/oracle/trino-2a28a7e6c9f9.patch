@@ -1,0 +1,24 @@
+diff --git a/core/trino-main/src/main/java/io/trino/sql/planner/EffectivePredicateExtractor.java b/core/trino-main/src/main/java/io/trino/sql/planner/EffectivePredicateExtractor.java
+index 0d4888875c0..93c34290d3a 100644
+--- a/core/trino-main/src/main/java/io/trino/sql/planner/EffectivePredicateExtractor.java
++++ b/core/trino-main/src/main/java/io/trino/sql/planner/EffectivePredicateExtractor.java
+@@ -391,6 +391,9 @@ public class EffectivePredicateExtractor
+                             }
+                             else {
+                                 Type type = types.get(node.getOutputSymbols().get(i));
++                                if (!type.isComparable() && !type.isOrderable()) {
++                                    return TRUE_LITERAL;
++                                }
+                                 if (isFloatingPointNaN(type, item)) {
+                                     hasNaN[i] = true;
+                                 }
+@@ -411,6 +414,9 @@ public class EffectivePredicateExtractor
+                             hasNull[i] = true;
+                         }
+                         else {
++                            if (!type.isComparable() && !type.isOrderable()) {
++                                return TRUE_LITERAL;
++                            }
+                             if (isFloatingPointNaN(type, item)) {
+                                 hasNaN[i] = true;
+                             }

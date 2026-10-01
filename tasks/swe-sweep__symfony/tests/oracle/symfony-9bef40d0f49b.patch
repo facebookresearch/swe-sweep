@@ -1,0 +1,14 @@
+diff --git a/src/Symfony/Component/Config/Definition/NumericNode.php b/src/Symfony/Component/Config/Definition/NumericNode.php
+--- a/src/Symfony/Component/Config/Definition/NumericNode.php
++++ b/src/Symfony/Component/Config/Definition/NumericNode.php
+@@ -32,6 +32,10 @@
+     {
+         $value = parent::finalizeValue($value);
+ 
++        if ($this->isHandlingPlaceholder()) {
++            return $value;
++        }
++
+         $errorMsg = null;
+         if (isset($this->min) && $value < $this->min) {
+             $errorMsg = sprintf('The value %s is too small for path "%s". Should be greater than or equal to %s', $value, $this->getPath(), $this->min);

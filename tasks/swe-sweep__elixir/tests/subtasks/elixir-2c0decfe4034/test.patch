@@ -1,0 +1,17 @@
+diff --git a/lib/ex_unit/test/ex_unit/diff_test.exs b/lib/ex_unit/test/ex_unit/diff_test.exs
+index 019f6c754..a2317cf73 100644
+--- a/lib/ex_unit/test/ex_unit/diff_test.exs
++++ b/lib/ex_unit/test/ex_unit/diff_test.exs
+@@ -1133,6 +1133,12 @@ defmodule ExUnit.DiffTest do
+       "-<<trap::binary-size(3)>> <> \"baz\"-",
+       "+\"foobar\"+"
+     )
++
++    refute_diff(
++      "hello " <> <<_::binary-size(6)>> = "hello world",
++      "\"hello \" <> -<<_::binary-size(6)>>-",
++      "\"hello +world+\""
++    )
+   end
+ 
+   test "underscore" do

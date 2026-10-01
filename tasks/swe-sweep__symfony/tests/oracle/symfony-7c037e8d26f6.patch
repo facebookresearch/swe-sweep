@@ -1,0 +1,15 @@
+diff --git a/src/Symfony/Component/Validator/Constraints/AbstractComparison.php b/src/Symfony/Component/Validator/Constraints/AbstractComparison.php
+index d130317..1435f3d 100644
+--- a/src/Symfony/Component/Validator/Constraints/AbstractComparison.php
++++ b/src/Symfony/Component/Validator/Constraints/AbstractComparison.php
+@@ -31,7 +31,9 @@ abstract class AbstractComparison extends Constraint
+ 
+     public function __construct(mixed $value = null, string $propertyPath = null, string $message = null, array $groups = null, mixed $payload = null, array $options = [])
+     {
+-        if (\is_array($value)) {
++        if (\is_array($value) && !array_is_list($value)) {
++            trigger_deprecation('symfony/validator', '7.3', 'Passing an array of options to configure the "%s" constraint is deprecated, use named arguments instead.', static::class);
++
+             $options = array_merge($value, $options);
+         } elseif (null !== $value) {
+             $options['value'] = $value;

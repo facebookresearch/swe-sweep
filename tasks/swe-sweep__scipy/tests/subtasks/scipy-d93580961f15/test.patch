@@ -1,0 +1,25 @@
+diff --git a/scipy/interpolate/tests/test_fitpack2.py b/scipy/interpolate/tests/test_fitpack2.py
+index 0e6c8ee9f7..aa29241cb5 100644
+--- a/scipy/interpolate/tests/test_fitpack2.py
++++ b/scipy/interpolate/tests/test_fitpack2.py
+@@ -495,6 +495,20 @@ class TestRectSphereBivariateSpline(object):
+                         _numdiff_2d(lambda x,y: lut(x,y,grid=False), x, y, dx=1, dy=1, eps=1e-6),
+                         rtol=1e-3, atol=1e-3)
+ 
++    def test_pole_continuity_gh_14591(self):
++        # regression test for https://github.com/scipy/scipy/issues/14591
++        # with pole_continuty=(True, True), the internal work array size
++        # was too small, leading to a FITPACK data validation error.
++
++        # The reproducer in gh-14591 was using a NetCDF4 file with
++        # 361x507 arrays, so here we trivialize array sizes to a minimum
++        # which still demonstrates the issue.
++        u = np.arange(1, 10) * np.pi / 10
++        v = np.arange(1, 10) * np.pi / 10
++        r = np.zeros((9, 9))
++        for p in [(True, True), (True, False), (False, False)]:
++            RectSphereBivariateSpline(u, v, r, s=0, pole_continuity=p)
++
+ 
+ def _numdiff_2d(func, x, y, dx=0, dy=0, eps=1e-8):
+     if dx == 0 and dy == 0:

@@ -1,0 +1,16 @@
+diff --git a/lib/matplotlib/tests/test_legend.py b/lib/matplotlib/tests/test_legend.py
+index bdc757795d..239ffd7df8 100644
+--- a/lib/matplotlib/tests/test_legend.py
++++ b/lib/matplotlib/tests/test_legend.py
+@@ -742,3 +742,11 @@ def test_legend_face_edgecolor():
+     ax.fill_between([0, 1, 2], [1, 2, 3], [2, 3, 4],
+                     facecolor='r', edgecolor='face', label='Fill')
+     ax.legend()
++
++
++def test_setting_alpha_keeps_polycollection_color():
++    pc = plt.fill_between([0, 1], [2, 3], color='#123456', label='label')
++    patch = plt.legend().get_patches()[0]
++    patch.set_alpha(0.5)
++    assert patch.get_facecolor()[:3] == tuple(pc.get_facecolor()[0][:3])
++    assert patch.get_edgecolor()[:3] == tuple(pc.get_edgecolor()[0][:3])

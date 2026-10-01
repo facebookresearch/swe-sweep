@@ -1,0 +1,19 @@
+diff --git a/lib/matplotlib/figure.py b/lib/matplotlib/figure.py
+index de853bef0d..44f62436fb 100644
+--- a/lib/matplotlib/figure.py
++++ b/lib/matplotlib/figure.py
+@@ -2082,6 +2082,14 @@ class SubFigure(FigureBase):
+     def dpi(self, value):
+         self._parent.dpi = value
+ 
++    @property
++    def _cachedRenderer(self):
++        return self._parent._cachedRenderer
++
++    @_cachedRenderer.setter
++    def _cachedRenderer(self, renderer):
++        self._parent._cachedRenderer = renderer
++
+     def _redo_transform_rel_fig(self, bbox=None):
+         """
+         Make the transSubfigure bbox relative to Figure transform.

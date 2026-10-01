@@ -1,0 +1,17 @@
+diff --git a/scipy/ndimage/src/ni_morphology.c b/scipy/ndimage/src/ni_morphology.c
+index 625b35359b..2e53e59123 100644
+--- a/scipy/ndimage/src/ni_morphology.c
++++ b/scipy/ndimage/src/ni_morphology.c
+@@ -146,7 +146,11 @@ int NI_BinaryErosion(PyArrayObject* input, PyArrayObject* strct,
+         false = 0;
+     }
+     if (coordinate_list) {
+-        block_size = LIST_SIZE / PyArray_NDIM(input) / sizeof(int);
++	if(PyArray_NDIM(input) != 0) {
++            block_size = LIST_SIZE / PyArray_NDIM(input) / sizeof(int);
++	} else {
++	    block_size = size;
++	}
+         if (block_size < 1)
+             block_size = 1;
+         if (block_size > size)

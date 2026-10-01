@@ -1,0 +1,20 @@
+diff --git a/extensions/hibernate-validator/deployment/src/main/java/io/quarkus/hibernate/validator/deployment/HibernateValidatorProcessor.java b/extensions/hibernate-validator/deployment/src/main/java/io/quarkus/hibernate/validator/deployment/HibernateValidatorProcessor.java
+index fcb77dda16f..67a67314232 100644
+--- a/extensions/hibernate-validator/deployment/src/main/java/io/quarkus/hibernate/validator/deployment/HibernateValidatorProcessor.java
++++ b/extensions/hibernate-validator/deployment/src/main/java/io/quarkus/hibernate/validator/deployment/HibernateValidatorProcessor.java
+@@ -247,6 +247,15 @@ class HibernateValidatorProcessor {
+                     if (configMappings.contains(declaringClass.name())) {
+                         configMappingsConstraints.add(builtinConstraintCandidate);
+                     }
++                } else if (annotation.target().kind() == AnnotationTarget.Kind.TYPE) {
++                    AnnotationTarget target = annotation.target().asType().enclosingTarget();
++                    if (target.kind() == AnnotationTarget.Kind.METHOD) {
++                        MethodInfo methodInfo = target.asMethod();
++                        ClassInfo declaringClass = methodInfo.declaringClass();
++                        if (configMappings.contains(declaringClass.name())) {
++                            configMappingsConstraints.add(builtinConstraintCandidate);
++                        }
++                    }
+                 } else if (annotation.target().kind() == AnnotationTarget.Kind.CLASS) {
+                     ClassInfo classInfo = annotation.target().asClass();
+                     if (configMappings.contains(classInfo.name())) {

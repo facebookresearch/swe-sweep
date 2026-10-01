@@ -1,0 +1,26 @@
+diff --git a/pandas/tests/test_downstream.py b/pandas/tests/test_downstream.py
+index 6a7d64235f..80fbe80909 100644
+--- a/pandas/tests/test_downstream.py
++++ b/pandas/tests/test_downstream.py
+@@ -73,6 +73,21 @@ def test_oo_optimizable():
+     subprocess.check_call([sys.executable, "-OO", "-c", "import pandas"])
+ 
+ 
++def test_oo_optimized_datetime_index_unpickle():
++    # GH 42866
++    subprocess.check_call(
++        [
++            sys.executable,
++            "-OO",
++            "-c",
++            (
++                "import pandas as pd, pickle; "
++                "pickle.loads(pickle.dumps(pd.date_range('2021-01-01', periods=1)))"
++            ),
++        ]
++    )
++
++
+ @tm.network
+ # Cython import warning
+ @pytest.mark.filterwarnings("ignore:pandas.util.testing is deprecated")

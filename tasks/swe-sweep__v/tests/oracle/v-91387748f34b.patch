@@ -1,0 +1,16 @@
+diff --git a/vlib/v/checker/checker.v b/vlib/v/checker/checker.v
+index 9ec2f4f80..380edbff3 100644
+--- a/vlib/v/checker/checker.v
++++ b/vlib/v/checker/checker.v
+@@ -3361,9 +3361,10 @@ fn (mut c Checker) ident(mut node ast.Ident) ast.Type {
+ 					if typ == 0 {
+ 						old_c_mod := c.mod
+ 						c.mod = obj.mod
++						inside_const := c.inside_const
+ 						c.inside_const = true
+ 						typ = c.expr(obj.expr)
+-						c.inside_const = false
++						c.inside_const = inside_const
+ 						c.mod = old_c_mod
+ 
+ 						if mut obj.expr is ast.CallExpr {

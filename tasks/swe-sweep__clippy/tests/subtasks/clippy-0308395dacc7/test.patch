@@ -1,0 +1,43 @@
+diff --git a/tests/ui/manual_div_ceil.fixed b/tests/ui/manual_div_ceil.fixed
+index 58ee6978f..cd91be87e 100644
+--- a/tests/ui/manual_div_ceil.fixed
++++ b/tests/ui/manual_div_ceil.fixed
+@@ -100,3 +100,8 @@ fn issue_13950() {
+     let _ = (-8 + y) / -7;
+     let _ = (y - 8) / -7;
+ }
++
++fn issue_15705(size: u64, c: &u64) {
++    let _ = size.div_ceil(*c);
++    //~^ manual_div_ceil
++}
+diff --git a/tests/ui/manual_div_ceil.rs b/tests/ui/manual_div_ceil.rs
+index aa0d81b22..9899c7d77 100644
+--- a/tests/ui/manual_div_ceil.rs
++++ b/tests/ui/manual_div_ceil.rs
+@@ -100,3 +100,8 @@ fn issue_13950() {
+     let _ = (-8 + y) / -7;
+     let _ = (y - 8) / -7;
+ }
++
++fn issue_15705(size: u64, c: &u64) {
++    let _ = (size + c - 1) / c;
++    //~^ manual_div_ceil
++}
+diff --git a/tests/ui/manual_div_ceil.stderr b/tests/ui/manual_div_ceil.stderr
+index 9be5a19bf..44de3ba99 100644
+--- a/tests/ui/manual_div_ceil.stderr
++++ b/tests/ui/manual_div_ceil.stderr
+@@ -125,5 +125,11 @@ error: manually reimplementing `div_ceil`
+ LL |     let _ = (7 + x) / 8;
+    |             ^^^^^^^^^^^ help: consider using `.div_ceil()`: `x.div_ceil(8)`
+ 
+-error: aborting due to 19 previous errors
++error: manually reimplementing `div_ceil`
++  --> tests/ui/manual_div_ceil.rs:105:13
++   |
++LL |     let _ = (size + c - 1) / c;
++   |             ^^^^^^^^^^^^^^^^^^ help: consider using `.div_ceil()`: `size.div_ceil(*c)`
++
++error: aborting due to 20 previous errors
+ 

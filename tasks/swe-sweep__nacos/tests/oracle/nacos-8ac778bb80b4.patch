@@ -1,0 +1,13 @@
+diff --git a/api/src/main/java/com/alibaba/nacos/api/naming/utils/NamingUtils.java b/api/src/main/java/com/alibaba/nacos/api/naming/utils/NamingUtils.java
+index 26637eb0f..78111eac6 100644
+--- a/api/src/main/java/com/alibaba/nacos/api/naming/utils/NamingUtils.java
++++ b/api/src/main/java/com/alibaba/nacos/api/naming/utils/NamingUtils.java
+@@ -95,7 +95,7 @@ public class NamingUtils {
+         if (!serviceNameWithGroup.contains(Constants.SERVICE_INFO_SPLITER)) {
+             return serviceNameWithGroup;
+         }
+-        return serviceNameWithGroup.split(Constants.SERVICE_INFO_SPLITER)[1];
++        return serviceNameWithGroup.split(Constants.SERVICE_INFO_SPLITER, -1)[1];
+     }
+     
+     public static String getGroupName(final String serviceNameWithGroup) {

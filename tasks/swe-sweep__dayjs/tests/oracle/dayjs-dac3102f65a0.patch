@@ -1,0 +1,61 @@
+diff --git a/src/plugin/localeData/index.js b/src/plugin/localeData/index.js
+index b753c3d..503db0d 100644
+--- a/src/plugin/localeData/index.js
++++ b/src/plugin/localeData/index.js
+@@ -1,3 +1,5 @@
++import { t } from '../localizedFormat'
++
+ export default (o, c, dayjs) => { // locale needed later
+   const proto = c.prototype
+   const getLocalePart = part => (part && (part.indexOf ? part : part.s))
+@@ -11,6 +13,9 @@ export default (o, c, dayjs) => { // locale needed later
+     return result.map((_, index) => (result[(index + (weekStart || 0)) % 7]))
+   }
+   const getDayjsLocaleObject = () => dayjs.Ls[dayjs.locale()]
++  const getLongDateFormat = (l, format) =>
++    l.formats[format] || t(l.formats[format.toUpperCase()])
++
+   const localeData = function () {
+     return {
+       months: instance =>
+@@ -23,7 +28,8 @@ export default (o, c, dayjs) => { // locale needed later
+         (instance ? instance.format('dd') : getShort(this, 'weekdaysMin', 'weekdays', 2)),
+       weekdaysShort: instance =>
+         (instance ? instance.format('ddd') : getShort(this, 'weekdaysShort', 'weekdays', 3)),
+-      longDateFormat: format => this.$locale().formats[format]
++      longDateFormat: format => getLongDateFormat(this.$locale(), format)
++
+     }
+   }
+   proto.localeData = function () {
+@@ -37,7 +43,8 @@ export default (o, c, dayjs) => { // locale needed later
+       weekdaysShort: () => dayjs.weekdaysShort(),
+       weekdaysMin: () => dayjs.weekdaysMin(),
+       months: () => dayjs.months(),
+-      monthsShort: () => dayjs.monthsShort()
++      monthsShort: () => dayjs.monthsShort(),
++      longDateFormat: format => getLongDateFormat(localeObject, format)
+     }
+   }
+ 
+diff --git a/src/plugin/localizedFormat/index.js b/src/plugin/localizedFormat/index.js
+index b72e635..b56d225 100644
+--- a/src/plugin/localizedFormat/index.js
++++ b/src/plugin/localizedFormat/index.js
+@@ -1,5 +1,8 @@
+ import { FORMAT_DEFAULT } from '../../constant'
+ 
++export const t = format =>
++  format.replace(/(\[[^\]]+])|(MMMM|MM|DD|dddd)/g, (_, a, b) => a || b.slice(1))
++
+ export default (o, c, d) => {
+   const proto = c.prototype
+   const oldFormat = proto.format
+@@ -12,7 +15,6 @@ export default (o, c, d) => {
+     LLLL: 'dddd, MMMM D, YYYY h:mm A'
+   }
+   d.en.formats = englishFormats
+-  const t = format => format.replace(/(\[[^\]]+])|(MMMM|MM|DD|dddd)/g, (_, a, b) => a || b.slice(1))
+   proto.format = function (formatStr = FORMAT_DEFAULT) {
+     const { formats = {} } = this.$locale()
+     const result = formatStr.replace(/(\[[^\]]+])|(LTS?|l{1,4}|L{1,4})/g, (_, a, b) => {

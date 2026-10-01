@@ -1,0 +1,89 @@
+diff --git a/lib/pure/collections/critbits.nim b/lib/pure/collections/critbits.nim
+index 6435abd0d..c8ce7a4d2 100644
+--- a/lib/pure/collections/critbits.nim
++++ b/lib/pure/collections/critbits.nim
+@@ -495,13 +495,16 @@ func `$`*[T](c: CritBitTree[T]): string =
+       const avgItemLen = 16
+     result = newStringOfCap(c.count * avgItemLen)
+     result.add("{")
++    var first = true
+     when T is void:
+       for key in keys(c):
+-        if result.len > 1: result.add(", ")
++        if first: first = false
++        else: result.add(", ")
+         result.addQuoted(key)
+     else:
+       for key, val in pairs(c):
+-        if result.len > 1: result.add(", ")
++        if first: first = false
++        else: result.add(", ")
+         result.addQuoted(key)
+         result.add(": ")
+         result.addQuoted(val)
+diff --git a/lib/pure/collections/deques.nim b/lib/pure/collections/deques.nim
+index ecdf199d2..7345dbf2c 100644
+--- a/lib/pure/collections/deques.nim
++++ b/lib/pure/collections/deques.nim
+@@ -449,10 +449,12 @@ proc `$`*[T](deq: Deque[T]): string =
+   ## Turns a deque into its string representation.
+   runnableExamples:
+     let a = [10, 20, 30].toDeque
+     assert $a == "[10, 20, 30]"
+ 
+   result = "["
++  var first = true
+   for x in deq:
+-    if result.len > 1: result.add(", ")
++    if first: first = false
++    else: result.add(", ")
+     result.addQuoted(x)
+   result.add("]")
+ 
+diff --git a/lib/pure/collections/heapqueue.nim b/lib/pure/collections/heapqueue.nim
+index e83e5abbe..e2b6a6b52 100644
+--- a/lib/pure/collections/heapqueue.nim
++++ b/lib/pure/collections/heapqueue.nim
+@@ -260,7 +260,9 @@ proc `$`*[T](heap: HeapQueue[T]): string =
+     assert $heap == "[1, 2]"
+ 
+   result = "["
++  var first = true
+   for x in heap.data:
+-    if result.len > 1: result.add(", ")
++    if first: first = false
++    else: result.add(", ")
+     result.addQuoted(x)
+   result.add("]")
+diff --git a/lib/pure/collections/lists.nim b/lib/pure/collections/lists.nim
+index 6e7de204f..7ca2242e5 100644
+--- a/lib/pure/collections/lists.nim
++++ b/lib/pure/collections/lists.nim
+@@ -304,8 +304,10 @@ proc `$`*[T](L: SomeLinkedCollection[T]): string =
+     assert $a == "[1, 2, 3, 4]"
+ 
+   result = "["
++  var first = true
+   for x in nodes(L):
+-    if result.len > 1: result.add(", ")
++    if first: first = false
++    else: result.add(", ")
+     result.addQuoted(x.value)
+   result.add("]")
+ 
+diff --git a/lib/pure/strtabs.nim b/lib/pure/strtabs.nim
+index 4b07aca5a..663d4c832 100644
+--- a/lib/pure/strtabs.nim
++++ b/lib/pure/strtabs.nim
+@@ -380,8 +380,10 @@ proc `$`*(t: StringTableRef): string {.rtlFunc, extern: "nstDollar".} =
+     result = "{:}"
+   else:
+     result = "{"
++    var first = true
+     for key, val in pairs(t):
+-      if result.len > 1: result.add(", ")
++      if first: first = false
++      else: result.add(", ")
+       result.add(key)
+       result.add(": ")
+       result.add(val)

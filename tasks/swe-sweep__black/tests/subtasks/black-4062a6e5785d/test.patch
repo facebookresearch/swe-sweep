@@ -1,0 +1,24 @@
+diff --git a/tests/data/py_39/remove_with_brackets.py b/tests/data/py_39/remove_with_brackets.py
+--- a/tests/data/py_39/remove_with_brackets.py
++++ b/tests/data/py_39/remove_with_brackets.py
+@@ -53,6 +53,11 @@ with (((open("bla.txt")))) as f:
+ with ((((CtxManager1()))) as example1, (((CtxManager2()))) as example2):
+     ...
+ 
++
++# don't remove the brackets here, it changes the meaning of the code.
++with (x, y) as z:
++    pass
++
+ # output
+ with open("bla.txt"):
+     pass
+@@ -117,3 +122,8 @@ with open("bla.txt") as f:
+ 
+ with CtxManager1() as example1, CtxManager2() as example2:
+     ...
++
++
++# don't remove the brackets here, it changes the meaning of the code.
++with (x, y) as z:
++    pass

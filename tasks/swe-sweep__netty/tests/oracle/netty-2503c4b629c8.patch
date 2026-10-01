@@ -1,0 +1,13 @@
+diff --git a/codec-http/src/main/java/io/netty/handler/codec/http/websocketx/extensions/compression/PerMessageDeflateClientExtensionHandshaker.java b/codec-http/src/main/java/io/netty/handler/codec/http/websocketx/extensions/compression/PerMessageDeflateClientExtensionHandshaker.java
+index 764cf462fd..8498020c74 100644
+--- a/codec-http/src/main/java/io/netty/handler/codec/http/websocketx/extensions/compression/PerMessageDeflateClientExtensionHandshaker.java
++++ b/codec-http/src/main/java/io/netty/handler/codec/http/websocketx/extensions/compression/PerMessageDeflateClientExtensionHandshaker.java
+@@ -183,7 +183,7 @@ public final class PerMessageDeflateClientExtensionHandshaker implements WebSock
+         }
+ 
+         if ((requestedServerNoContext && !serverNoContext) ||
+-                requestedServerWindowSize != serverWindowSize) {
++                requestedServerWindowSize < serverWindowSize) {
+             succeed = false;
+         }
+ 

@@ -1,0 +1,16 @@
+diff --git a/tests/format/js/directives/format.test.js b/tests/format/js/directives/format.test.js
+index 563ea5db1..38556bb53 100644
+--- a/tests/format/js/directives/format.test.js
++++ b/tests/format/js/directives/format.test.js
+@@ -42,6 +42,11 @@ runFormatTest(
+             // comment
+           ` + "\n",
+       },
++      {
++        // should be kept as directive for all parsers https://github.com/prettier/prettier/issues/17458
++        code: '"";',
++        output: '"";' + "\n",
++      },
+     ],
+   },
+   ["babel", "flow", "typescript"],

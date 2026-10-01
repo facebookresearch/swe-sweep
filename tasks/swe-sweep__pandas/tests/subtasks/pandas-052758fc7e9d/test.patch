@@ -1,0 +1,45 @@
+diff --git a/pandas/tests/arrays/boolean/test_logical.py b/pandas/tests/arrays/boolean/test_logical.py
+index afcbe36e16..938fa8f1a5 100644
+--- a/pandas/tests/arrays/boolean/test_logical.py
++++ b/pandas/tests/arrays/boolean/test_logical.py
+@@ -43,6 +43,20 @@ class TestLogicalOps(BaseOpsUtil):
+         # result = getattr(a, op_name)(pd.NA)
+         # tm.assert_extension_array_equal(a, result)
+ 
++    @pytest.mark.parametrize(
++        "other", ["a", pd.Timestamp(2017, 1, 1, 12), np.timedelta64(4)]
++    )
++    def test_eq_mismatched_type(self, other):
++        # GH-44499
++        arr = pd.array([True, False])
++        result = arr == other
++        expected = pd.array([False, False])
++        tm.assert_extension_array_equal(result, expected)
++
++        result = arr != other
++        expected = pd.array([True, True])
++        tm.assert_extension_array_equal(result, expected)
++
+     def test_logical_length_mismatch_raises(self, all_logical_operators):
+         op_name = all_logical_operators
+         a = pd.array([True, False, None], dtype="boolean")
+diff --git a/pandas/tests/frame/methods/test_replace.py b/pandas/tests/frame/methods/test_replace.py
+index 53b71bb489..d6ecdcd155 100644
+--- a/pandas/tests/frame/methods/test_replace.py
++++ b/pandas/tests/frame/methods/test_replace.py
+@@ -624,6 +624,15 @@ class TestDataFrameReplace:
+         expected.iloc[1, 1] = m[1]
+         tm.assert_frame_equal(result, expected)
+ 
++    @pytest.mark.parametrize("dtype", ["boolean", "Int64", "Float64"])
++    def test_replace_with_nullable_column(self, dtype):
++        # GH-44499
++        nullable_ser = Series([1, 0, 1], dtype=dtype)
++        df = DataFrame({"A": ["A", "B", "x"], "B": nullable_ser})
++        result = df.replace("x", "X")
++        expected = DataFrame({"A": ["A", "B", "X"], "B": nullable_ser})
++        tm.assert_frame_equal(result, expected)
++
+     def test_replace_simple_nested_dict(self):
+         df = DataFrame({"col": range(1, 5)})
+         expected = DataFrame({"col": ["a", 2, 3, "b"]})

@@ -1,0 +1,14 @@
+diff --git a/autotest/gcore/vsizip.py b/autotest/gcore/vsizip.py
+index 175a576025..c10be914df 100755
+--- a/autotest/gcore/vsizip.py
++++ b/autotest/gcore/vsizip.py
+@@ -269,6 +269,9 @@ def test_vsizip_4():
+         "uint16.tif",
+     ], "bad content"
+ 
++    # Test with trailing slash too
++    assert gdal.ReadDirRecursive("/vsizip/data/testzip.zip/") == res
++
+ 
+ ###############################################################################
+ # Test ReadRecursive on deep zip

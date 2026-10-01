@@ -1,0 +1,28 @@
+diff --git a/vlib/v/tests/fn_ptr_call_test.v b/vlib/v/tests/fn_ptr_call_test.v
+new file mode 100644
+index 000000000..e3a449666
+--- /dev/null
++++ b/vlib/v/tests/fn_ptr_call_test.v
+@@ -0,0 +1,22 @@
++struct Animal {
++mut:
++	age  fn (p int) int
++	duck Duck
++}
++
++struct Duck {
++mut:
++	age &fn (p int) int
++}
++
++fn test_main() {
++	mut animal := Animal{
++		age: fn (x int) int {
++			return 5
++		}
++	}
++	animal.duck = Duck{
++		age: &animal.age
++	}
++	assert animal.duck.age(1) == 5
++}

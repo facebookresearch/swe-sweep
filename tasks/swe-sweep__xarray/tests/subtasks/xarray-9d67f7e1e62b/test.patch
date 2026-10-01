@@ -1,0 +1,33 @@
+diff --git a/xarray/tests/test_dataarray.py b/xarray/tests/test_dataarray.py
+--- a/xarray/tests/test_dataarray.py
++++ b/xarray/tests/test_dataarray.py
+@@ -5859,7 +5859,9 @@ def test_rolling_properties(da):
+         da.rolling(time=2, min_periods=0)
+ 
+ 
+-@pytest.mark.parametrize("name", ("sum", "mean", "std", "min", "max", "median"))
++@pytest.mark.parametrize(
++    "name", ("sum", "mean", "std", "min", "max", "median", "argmin", "argmax")
++)
+ @pytest.mark.parametrize("center", (True, False, None))
+ @pytest.mark.parametrize("min_periods", (1, None))
+ @pytest.mark.parametrize("backend", ["numpy"], indirect=True)
+@@ -5869,9 +5871,16 @@ def test_rolling_wrapped_bottleneck(da, name, center, min_periods):
+     func_name = f"move_{name}"
+     actual = getattr(rolling_obj, name)()
++    window = 7
+     expected = getattr(bn, func_name)(
+-        da.values, window=7, axis=1, min_count=min_periods
++        da.values, window=window, axis=1, min_count=min_periods
+     )
+-    assert_array_equal(actual.values, expected)
++    # index 0 is at the rightmost edge of the window
++    # need to reverse index here
++    # see GH #8541
++    if func_name in ["move_argmin", "move_argmax"]:
++        expected = window - 1 - expected
++
++    np.testing.assert_allclose(actual.values, expected)
+ 
+     with pytest.warns(DeprecationWarning, match="Reductions are applied"):
+         getattr(rolling_obj, name)(dim="time")

@@ -1,0 +1,130 @@
+diff --git a/activerecord/test/cases/delegated_type_test.rb b/activerecord/test/cases/delegated_type_test.rb
+index 1b2a819db44..59e9a1c3822 100644
+--- a/activerecord/test/cases/delegated_type_test.rb
++++ b/activerecord/test/cases/delegated_type_test.rb
+@@ -1,19 +1,21 @@
+ # frozen_string_literal: true
+ 
+ require "cases/helper"
++require "models/account"
+ require "models/entry"
+ require "models/message"
++require "models/recipient"
+ require "models/comment"
+ require "models/uuid_entry"
+ require "models/uuid_message"
+ require "models/uuid_comment"
+ 
+ class DelegatedTypeTest < ActiveRecord::TestCase
+-  fixtures :comments
++  fixtures :comments, :accounts
+ 
+   setup do
+-    @entry_with_message = Entry.create! entryable: Message.new(subject: "Hello world!")
+-    @entry_with_comment = Entry.create! entryable: comments(:greetings)
++    @entry_with_message = Entry.create! entryable: Message.new(subject: "Hello world!"), account: accounts(:signals37)
++    @entry_with_comment = Entry.create! entryable: comments(:greetings), account: accounts(:signals37)
+ 
+     if current_adapter?(:PostgreSQLAdapter)
+       @uuid_entry_with_message = UuidEntry.create! uuid: SecureRandom.uuid, entryable: UuidMessage.new(uuid: SecureRandom.uuid, subject: "Hello world!")
+@@ -73,6 +75,20 @@ class DelegatedTypeTest < ActiveRecord::TestCase
+     assert_nil @uuid_entry_with_comment.uuid_message_uuid
+   end
+ 
++  test "touch account" do
++    previous_account_updated_at  = @entry_with_message.account.updated_at
++    previous_entry_updated_at    = @entry_with_message.updated_at
++    previous_messsage_updated_at = @entry_with_message.entryable.updated_at
++
++    travel 5.seconds do
++      Recipient.create! message: @entry_with_message.entryable, email_address: "test@test.com"
++    end
++
++    assert_not_equal @entry_with_message.reload.account.updated_at, previous_account_updated_at
++    assert_not_equal @entry_with_message.reload.updated_at, previous_entry_updated_at
++    assert_not_equal @entry_with_message.reload.entryable.updated_at, previous_messsage_updated_at
++  end
++
+   test "builder method" do
+     assert_respond_to Entry.new, :build_entryable
+     assert_equal Message, Entry.new(entryable_type: "Message").build_entryable.class
+diff --git a/activerecord/test/models/entry.rb b/activerecord/test/models/entry.rb
+index fb100d76573..103d6e4a709 100644
+--- a/activerecord/test/models/entry.rb
++++ b/activerecord/test/models/entry.rb
+@@ -2,4 +2,5 @@
+ 
+ class Entry < ActiveRecord::Base
+   delegated_type :entryable, types: %w[ Message Comment ]
++  belongs_to :account, touch: true
+ end
+diff --git a/activerecord/test/models/message.rb b/activerecord/test/models/message.rb
+index 931499532a5..b8a6c315e2a 100644
+--- a/activerecord/test/models/message.rb
++++ b/activerecord/test/models/message.rb
+@@ -1,5 +1,6 @@
+ # frozen_string_literal: true
+ 
+ class Message < ActiveRecord::Base
+-  has_one :entry, as: :entryable
++  has_one  :entry, as: :entryable, touch: true
++  has_many :recipients
+ end
+diff --git a/activerecord/test/models/recipient.rb b/activerecord/test/models/recipient.rb
+new file mode 100644
+index 00000000000..e091f1eae14
+--- /dev/null
++++ b/activerecord/test/models/recipient.rb
+@@ -0,0 +1,5 @@
++# frozen_string_literal: true
++
++class Recipient < ActiveRecord::Base
++  belongs_to :message, touch: true
++end
+diff --git a/activerecord/test/schema/schema.rb b/activerecord/test/schema/schema.rb
+index 69b53dfc0e1..8646deb7686 100644
+--- a/activerecord/test/schema/schema.rb
++++ b/activerecord/test/schema/schema.rb
+@@ -17,6 +17,7 @@ ActiveRecord::Schema.define do
+     t.string  :firm_name
+     t.integer :credit_limit
+     t.integer "a" * max_identifier_length
++    t.datetime :updated_at
+   end
+ 
+   create_table :admin_accounts, force: true do |t|
+@@ -465,8 +466,10 @@ ActiveRecord::Schema.define do
+   end
+ 
+   create_table :entries, force: true do |t|
+-    t.string  :entryable_type, null: false
+-    t.integer :entryable_id, null: false
++    t.string   :entryable_type, null: false
++    t.integer  :entryable_id, null: false
++    t.integer  :account_id, null: false
++    t.datetime :updated_at
+   end
+ 
+   create_table :essays, force: true do |t|
+@@ -672,7 +675,8 @@ ActiveRecord::Schema.define do
+   end
+ 
+   create_table :messages, force: true do |t|
+-    t.string :subject
++    t.string   :subject
++    t.datetime :updated_at
+   end
+ 
+   create_table :minivans, force: true, id: false do |t|
+@@ -1277,6 +1281,11 @@ ActiveRecord::Schema.define do
+     t.integer :hotel_id
+   end
+ 
++  create_table :recipients, force: true do |t|
++    t.integer  :message_id
++    t.string   :email_address
++  end
++
+   create_table :records, force: true do |t|
+   end
+ 

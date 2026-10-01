@@ -1,0 +1,13 @@
+diff --git a/lib/matplotlib/tests/test_spines.py b/lib/matplotlib/tests/test_spines.py
+index 589badc310..b8891aec41 100644
+--- a/lib/matplotlib/tests/test_spines.py
++++ b/lib/matplotlib/tests/test_spines.py
+@@ -35,6 +35,8 @@ def test_spine_class():
+     spines[:].set_val('y')
+     assert all(spine.val == 'y' for spine in spines.values())
+ 
++    with pytest.raises(AttributeError, match='foo'):
++        spines.foo
+     with pytest.raises(KeyError, match='foo'):
+         spines['foo']
+     with pytest.raises(KeyError, match='foo, bar'):

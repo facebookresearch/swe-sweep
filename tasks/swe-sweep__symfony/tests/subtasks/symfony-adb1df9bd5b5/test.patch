@@ -1,0 +1,21 @@
+diff --git a/src/Symfony/Component/Security/Http/Tests/HttpUtilsTest.php b/src/Symfony/Component/Security/Http/Tests/HttpUtilsTest.php
+index e165a4df52c..c042b02c9ad 100644
+--- a/src/Symfony/Component/Security/Http/Tests/HttpUtilsTest.php
++++ b/src/Symfony/Component/Security/Http/Tests/HttpUtilsTest.php
+@@ -233,6 +233,16 @@ class HttpUtilsTest extends TestCase
+         ];
+     }
+ 
++    public function testCreateRequestHandlesTrustedHeaders()
++    {
++        Request::setTrustedProxies(['127.0.0.1'], Request::HEADER_X_FORWARDED_PREFIX);
++
++        $this->assertSame(
++            'http://localhost/foo/',
++            (new HttpUtils())->createRequest(Request::create('/', server: ['HTTP_X_FORWARDED_PREFIX' => '/foo']), '/')->getUri(),
++        );
++    }
++
+     public function testCheckRequestPath()
+     {
+         $utils = new HttpUtils($this->getUrlGenerator());

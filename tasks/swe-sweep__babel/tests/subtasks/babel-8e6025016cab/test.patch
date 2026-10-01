@@ -1,0 +1,17 @@
+diff --git a/packages/babel-parser/test/fixtures/es2015/for-of/invalid-expr/input.js b/packages/babel-parser/test/fixtures/es2015/for-of/invalid-expr/input.js
+new file mode 100644
+index 0000000000..90f5a5a327
+--- /dev/null
++++ b/packages/babel-parser/test/fixtures/es2015/for-of/invalid-expr/input.js
+@@ -0,0 +1 @@
++for (let x of y, z) {}
+diff --git a/packages/babel-parser/test/fixtures/es2015/for-of/invalid-expr/options.json b/packages/babel-parser/test/fixtures/es2015/for-of/invalid-expr/options.json
+new file mode 100644
+index 0000000000..e4ff6fef3c
+--- /dev/null
++++ b/packages/babel-parser/test/fixtures/es2015/for-of/invalid-expr/options.json
+@@ -0,0 +1,3 @@
++{
++  "throws": "Unexpected token, expected \")\" (1:15)"
++}
+\ No newline at end of file

@@ -1,0 +1,26 @@
+diff --git a/src/main/java/io/reactivex/internal/operators/flowable/FlowableObserveOn.java b/src/main/java/io/reactivex/internal/operators/flowable/FlowableObserveOn.java
+index 6fe64c3ff..66605c952 100644
+--- a/src/main/java/io/reactivex/internal/operators/flowable/FlowableObserveOn.java
++++ b/src/main/java/io/reactivex/internal/operators/flowable/FlowableObserveOn.java
+@@ -154,7 +154,7 @@
+             upstream.cancel();
+             worker.dispose();
+ 
+-            if (getAndIncrement() == 0) {
++            if (!outputFused && getAndIncrement() == 0) {
+                 queue.clear();
+             }
+         }
+diff --git a/src/main/java/io/reactivex/internal/operators/observable/ObservableObserveOn.java b/src/main/java/io/reactivex/internal/operators/observable/ObservableObserveOn.java
+index f36325e8d..9bc2b3911 100644
+--- a/src/main/java/io/reactivex/internal/operators/observable/ObservableObserveOn.java
++++ b/src/main/java/io/reactivex/internal/operators/observable/ObservableObserveOn.java
+@@ -145,7 +145,7 @@
+                 disposed = true;
+                 upstream.dispose();
+                 worker.dispose();
+-                if (getAndIncrement() == 0) {
++                if (!outputFused && getAndIncrement() == 0) {
+                     queue.clear();
+                 }
+             }

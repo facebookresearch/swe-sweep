@@ -1,0 +1,14 @@
+diff --git a/scipy/spatial/distance.py b/scipy/spatial/distance.py
+index 6fe209e084..a8124106db 100644
+--- a/scipy/spatial/distance.py
++++ b/scipy/spatial/distance.py
+@@ -712,7 +712,8 @@ def correlation(u, v, w=None, centered=True):
+     uu = np.average(np.square(u), weights=w)
+     vv = np.average(np.square(v), weights=w)
+     dist = 1.0 - uv / np.sqrt(uu * vv)
+-    return dist
++    # Return absolute value to avoid small negative value due to rounding
++    return np.abs(dist)
+ 
+ 
+ def cosine(u, v, w=None):

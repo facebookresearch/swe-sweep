@@ -1,0 +1,27 @@
+diff --git a/modules/core/test/test_io.cpp b/modules/core/test/test_io.cpp
+index 965185e5f6..692e7f36c6 100644
+--- a/modules/core/test/test_io.cpp
++++ b/modules/core/test/test_io.cpp
+@@ -1594,6 +1594,22 @@ TEST(Core_InputOutput, FileStorage_free_file_after_exception)
+     {
+     }
+     ASSERT_EQ(0, std::remove(fileName.c_str()));
+ }
+ 
++TEST(Core_InputOutput, FileStorage_copy_constructor_17412)
++{
++    std::string fname = tempfile("test.yml");
++    FileStorage fs_orig(fname, cv::FileStorage::WRITE);
++    fs_orig << "string" << "wat";
++    fs_orig.release();
++
++    // no crash anymore
++    cv::FileStorage fs;
++    fs = cv::FileStorage(fname,  cv::FileStorage::READ);
++    std::string s;
++    fs["string"] >> s;
++    EXPECT_EQ(s, "wat");
++    EXPECT_EQ(0, remove(fname.c_str()));
++}
++
+ }} // namespace

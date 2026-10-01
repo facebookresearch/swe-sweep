@@ -1,0 +1,152 @@
+diff --git a/jerry-core/ecma/operations/ecma-array-object.c b/jerry-core/ecma/operations/ecma-array-object.c
+index 4ee2a492..9bf4236c 100644
+--- a/jerry-core/ecma/operations/ecma-array-object.c
++++ b/jerry-core/ecma/operations/ecma-array-object.c
+@@ -942,7 +942,7 @@ ecma_op_array_object_set_length (ecma_object_t *object_p, /**< the array object
+                                  ecma_value_t new_value, /**< new length value */
+                                  uint32_t flags) /**< configuration options */
+ {
+-  bool is_throw = (flags & ECMA_ARRAY_OBJECT_SET_LENGTH_FLAG_IS_THROW);
++  bool is_throw = (flags & ECMA_PROP_IS_THROW) != 0;
+ 
+   ecma_value_t completion = ecma_op_to_number (new_value);
+ 
+@@ -978,7 +978,11 @@ ecma_op_array_object_set_length (ecma_object_t *object_p, /**< the array object
+     return ecma_raise_range_error (ECMA_ERR_MSG ("Invalid array length."));
+   }
+ 
+-  if (flags & ECMA_ARRAY_OBJECT_SET_LENGTH_FLAG_REJECT)
++  /* Only the writable and data properties can be modified. */
++  if (flags & (ECMA_PROP_IS_CONFIGURABLE
++               | ECMA_PROP_IS_ENUMERABLE
++               | ECMA_PROP_IS_GET_DEFINED
++               | ECMA_PROP_IS_SET_DEFINED))
+   {
+     return ecma_reject (is_throw);
+   }
+@@ -990,10 +994,15 @@ ecma_op_array_object_set_length (ecma_object_t *object_p, /**< the array object
+   if (new_len_num == old_len_uint32)
+   {
+     /* Only the writable flag must be updated. */
+-    if (flags & ECMA_ARRAY_OBJECT_SET_LENGTH_FLAG_WRITABLE_DEFINED)
++    if (flags & ECMA_PROP_IS_WRITABLE_DEFINED)
+     {
+-      if (!(flags & ECMA_ARRAY_OBJECT_SET_LENGTH_FLAG_WRITABLE))
++      if (!(flags & ECMA_PROP_IS_WRITABLE))
+       {
++        if (ecma_op_array_is_fast_array (ext_object_p))
++        {
++          ecma_fast_array_convert_to_normal (object_p);
++        }
++
+         uint8_t new_prop_value = (uint8_t) (ext_object_p->u.array.u.length_prop & ~ECMA_PROPERTY_FLAG_WRITABLE);
+         ext_object_p->u.array.u.length_prop = new_prop_value;
+       }
+@@ -1023,9 +1032,14 @@ ecma_op_array_object_set_length (ecma_object_t *object_p, /**< the array object
+ 
+   ext_object_p->u.array.length = current_len_uint32;
+ 
+-  if ((flags & ECMA_ARRAY_OBJECT_SET_LENGTH_FLAG_WRITABLE_DEFINED)
+-      && !(flags & ECMA_ARRAY_OBJECT_SET_LENGTH_FLAG_WRITABLE))
++  if ((flags & ECMA_PROP_IS_WRITABLE_DEFINED)
++      && !(flags & ECMA_PROP_IS_WRITABLE))
+   {
++    if (ecma_op_array_is_fast_array (ext_object_p))
++    {
++      ecma_fast_array_convert_to_normal (object_p);
++    }
++
+     uint8_t new_prop_value = (uint8_t) (ext_object_p->u.array.u.length_prop & ~ECMA_PROPERTY_FLAG_WRITABLE);
+     ext_object_p->u.array.u.length_prop = new_prop_value;
+   }
+@@ -1100,41 +1114,15 @@ ecma_op_array_object_define_own_property (ecma_object_t *object_p, /**< the arra
+     JERRY_ASSERT ((property_desc_p->flags & ECMA_PROP_IS_WRITABLE_DEFINED)
+                   || !(property_desc_p->flags & ECMA_PROP_IS_WRITABLE));
+ 
+-    uint32_t flags = 0;
+-
+-    if (property_desc_p->flags & ECMA_PROP_IS_THROW)
+-    {
+-      flags |= ECMA_ARRAY_OBJECT_SET_LENGTH_FLAG_IS_THROW;
+-    }
+-
+-    /* Only the writable and data properties can be modified. */
+-    if (property_desc_p->flags & (ECMA_PROP_IS_CONFIGURABLE
+-                                  | ECMA_PROP_IS_ENUMERABLE
+-                                  | ECMA_PROP_IS_GET_DEFINED
+-                                  | ECMA_PROP_IS_SET_DEFINED))
+-    {
+-      flags |= ECMA_ARRAY_OBJECT_SET_LENGTH_FLAG_REJECT;
+-    }
+-
+-    if (property_desc_p->flags & ECMA_PROP_IS_WRITABLE_DEFINED)
+-    {
+-      flags |= ECMA_ARRAY_OBJECT_SET_LENGTH_FLAG_WRITABLE_DEFINED;
+-    }
+-
+-    if (property_desc_p->flags & ECMA_PROP_IS_WRITABLE)
+-    {
+-      flags |= ECMA_ARRAY_OBJECT_SET_LENGTH_FLAG_WRITABLE;
+-    }
+-
+     if (property_desc_p->flags & ECMA_PROP_IS_VALUE_DEFINED)
+     {
+-      return ecma_op_array_object_set_length (object_p, property_desc_p->value, flags);
++      return ecma_op_array_object_set_length (object_p, property_desc_p->value, property_desc_p->flags);
+     }
+ 
+     ecma_extended_object_t *ext_object_p = (ecma_extended_object_t *) object_p;
+     ecma_value_t length_value = ecma_make_uint32_value (ext_object_p->u.array.length);
+ 
+-    ecma_value_t result = ecma_op_array_object_set_length (object_p, length_value, flags);
++    ecma_value_t result = ecma_op_array_object_set_length (object_p, length_value, property_desc_p->flags);
+ 
+     ecma_fast_free_value (length_value);
+     return result;
+diff --git a/jerry-core/ecma/operations/ecma-array-object.h b/jerry-core/ecma/operations/ecma-array-object.h
+index ddf905b1..bebffbda 100644
+--- a/jerry-core/ecma/operations/ecma-array-object.h
++++ b/jerry-core/ecma/operations/ecma-array-object.h
+@@ -25,6 +25,21 @@
+  * @{
+  */
+ 
++/**
++ * Attributes of fast access mode arrays:
++ *
++ * - The internal property is replaced with a buffer which directly stores the values
++ * - Whenever any operation would change the following attributes of the array it should be converted back to normal
++ *  - All properties must be enumerable configurable writable data properties
++ *  - The prototype must be Array.prototype
++ *  - [[Extensible]] internal property must be true
++ *  - 'length' property of the array must be writable
++ *
++ * - The conversion is also required when a property is set if:
++ *  - The property name is not an array index
++ *  - The new hole count of the array would reach ECMA_FAST_ARRAY_MAX_NEW_HOLES_COUNT
++ */
++
+ /**
+  * Maximum number of new array holes in a fast mode access array.
+  * If the number of new holes exceeds this limit, the array is converted back
+@@ -54,20 +69,6 @@
+  */
+ #define ECMA_FAST_ARRAY_MAX_HOLE_COUNT (1 << 24)
+ 
+-/**
+- * Flags for ecma_op_array_object_set_length
+- */
+-typedef enum
+-{
+-  ECMA_ARRAY_OBJECT_SET_LENGTH_FLAG_IS_THROW = 1u << 0, /**< is_throw flag is set */
+-  ECMA_ARRAY_OBJECT_SET_LENGTH_FLAG_REJECT = 1u << 1, /**< reject later because the descriptor flags
+-                                                       *   contains an unallowed combination */
+-  ECMA_ARRAY_OBJECT_SET_LENGTH_FLAG_WRITABLE_DEFINED = 1u << 2, /**< writable flag defined
+-                                                                 *   in the property descriptor */
+-  ECMA_ARRAY_OBJECT_SET_LENGTH_FLAG_WRITABLE = 1u << 3, /**< writable flag enabled
+-                                                         *   in the property descriptor */
+-} ecma_array_object_set_length_flags_t;
+-
+ ecma_object_t *
+ ecma_op_new_array_object (ecma_length_t length);
+ 

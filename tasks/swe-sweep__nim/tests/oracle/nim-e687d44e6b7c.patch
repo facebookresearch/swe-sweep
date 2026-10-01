@@ -1,0 +1,27 @@
+diff --git a/compiler/ast.nim b/compiler/ast.nim
+index abd2ff0..96bd282 100644
+--- a/compiler/ast.nim
++++ b/compiler/ast.nim
+@@ -457,7 +457,7 @@ const
+   tyUnknownTypes* = {tyError, tyFromExpr}
+ 
+   tyTypeClasses* = {tyBuiltInTypeClass, tyCompositeTypeClass,
+-                    tyUserTypeClass, tyUserTypeClassInst,
++                    tyUserTypeClass, tyUserTypeClassInst, tyConcept,
+                     tyAnd, tyOr, tyNot, tyAnything}
+ 
+   tyMetaTypes* = {tyGenericParam, tyTypeDesc, tyUntyped} + tyTypeClasses
+diff --git a/compiler/typeallowed.nim b/compiler/typeallowed.nim
+index d00aa53..c1217bd 100644
+--- a/compiler/typeallowed.nim
++++ b/compiler/typeallowed.nim
+@@ -191,9 +191,6 @@ proc typeAllowedAux(marker: var IntSet, typ: PType, kind: TSymKind,
+       result = typeAllowedAux(marker, t.lastSon, kind, c, flags+{taHeap})
+     else:
+       result = t
+-  of tyConcept:
+-    if kind != skParam: result = t
+-    else: result = nil
+ 
+ proc typeAllowed*(t: PType, kind: TSymKind; c: PContext; flags: TTypeAllowedFlags = {}): PType =
+   # returns 'nil' on success and otherwise the part of the type that is

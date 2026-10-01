@@ -1,0 +1,12 @@
+diff --git a/packages/@aws-cdk/aws-kinesisanalytics-flink/lib/application.ts b/packages/@aws-cdk/aws-kinesisanalytics-flink/lib/application.ts
+index d5023494bf..af11281fb7 100644
+--- a/packages/@aws-cdk/aws-kinesisanalytics-flink/lib/application.ts
++++ b/packages/@aws-cdk/aws-kinesisanalytics-flink/lib/application.ts
+@@ -262,6 +262,7 @@ export class Application extends ApplicationBase {
+     code.bucket.grantRead(this);
+ 
+     const resource = new ka.CfnApplicationV2(this, 'Resource', {
++      applicationName: props.applicationName,
+       runtimeEnvironment: props.runtime.value,
+       serviceExecutionRole: this.role.roleArn,
+       applicationConfiguration: {

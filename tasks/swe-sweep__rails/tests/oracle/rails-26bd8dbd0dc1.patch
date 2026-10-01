@@ -1,0 +1,20 @@
+diff --git a/activesupport/lib/active_support/inflector/methods.rb b/activesupport/lib/active_support/inflector/methods.rb
+index e61afcf5d36..e9fd05ae3bd 100644
+--- a/activesupport/lib/active_support/inflector/methods.rb
++++ b/activesupport/lib/active_support/inflector/methods.rb
+@@ -143,13 +143,13 @@ module ActiveSupport
+         result.delete_suffix!(" id")
+       end
+ 
+-      result.gsub!(/([a-z\d]+)/i) do |match|
++      result.gsub!(/([[[:alpha:]]\d]+)/i) do |match|
+         match.downcase!
+         inflections.acronyms[match] || match
+       end
+ 
+       if capitalize
+-        result.sub!(/\A\w/) do |match|
++        result.sub!(/\A[[:alpha:]]/) do |match|
+           match.upcase!
+           match
+         end

@@ -1,0 +1,45 @@
+diff --git a/src/theory/arrays/theory_arrays_rewriter.cpp b/src/theory/arrays/theory_arrays_rewriter.cpp
+index 7af0af6..c7e7bfa 100644
+--- a/src/theory/arrays/theory_arrays_rewriter.cpp
++++ b/src/theory/arrays/theory_arrays_rewriter.cpp
+@@ -72,7 +72,17 @@ Node TheoryArraysRewriter::normalizeConstant(TNode node)
+   {
+     return node;
+   }
+-  Node ret = normalizeConstant(node, node[1].getType().getCardinality());
++  Node ret;
++  TypeNode tn = node[1].getType();
++  CardinalityClass tcc = tn.getCardinalityClass();
++  if (tcc == CardinalityClass::FINITE || tcc == CardinalityClass::ONE)
++  {
++    ret = normalizeConstant(node, tn.getCardinality());
++  }
++  else
++  {
++    ret = normalizeConstant(node, Cardinality::INTEGERS);
++  }
+   Assert(ret.isConst());
+   return ret;
+ }
+diff --git a/src/theory/arrays/theory_arrays_type_rules.cpp b/src/theory/arrays/theory_arrays_type_rules.cpp
+index d65ef49197..cf8bb46d2f 100644
+--- a/src/theory/arrays/theory_arrays_type_rules.cpp
++++ b/src/theory/arrays/theory_arrays_type_rules.cpp
+@@ -133,8 +133,16 @@ bool ArrayStoreTypeRule::computeIsConst(NodeManager* nodeManager, TNode n)
+     return false;
+   }
+ 
++  TypeNode itype = index.getType();
++  CardinalityClass itcc = itype.getCardinalityClass();
++
++  if (itcc != CardinalityClass::FINITE && itcc != CardinalityClass::ONE)
++  {
++    return true;
++  }
++
+   // Get the cardinality of the index type
+-  Cardinality indexCard = index.getType().getCardinality();
++  Cardinality indexCard = itype.getCardinality();
+ 
+   if (indexCard.isInfinite())
+   {

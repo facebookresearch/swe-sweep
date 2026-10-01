@@ -1,0 +1,13 @@
+diff --git a/plugin/datasource/src/main/java/com/alibaba/nacos/plugin/datasource/impl/mysql/ConfigInfoMapperByMySql.java b/plugin/datasource/src/main/java/com/alibaba/nacos/plugin/datasource/impl/mysql/ConfigInfoMapperByMySql.java
+index 0000000..1111111 100644
+--- a/plugin/datasource/src/main/java/com/alibaba/nacos/plugin/datasource/impl/mysql/ConfigInfoMapperByMySql.java
++++ b/plugin/datasource/src/main/java/com/alibaba/nacos/plugin/datasource/impl/mysql/ConfigInfoMapperByMySql.java
+@@ -173,7 +173,7 @@ public class ConfigInfoMapperByMySql extends AbstractMapperByMysql implements Con
+             paramList.add(dataId);
+         }
+         if (!StringUtils.isBlank(group)) {
+-            where += " AND group_id LIKE ";
++            where += " AND group_id LIKE ? ";
+             paramList.add(group);
+         }
+         if (!StringUtils.isBlank(content)) {

@@ -1,0 +1,12 @@
+diff --git a/astropy/io/misc/yaml.py b/astropy/io/misc/yaml.py
+index a02bc39175..783f36d927 100644
+--- a/astropy/io/misc/yaml.py
++++ b/astropy/io/misc/yaml.py
+@@ -253,6 +253,7 @@ AstropyDumper.add_representer(SerializedColumn, _serialized_column_representer)
+ 
+ # Numpy dtypes
+ AstropyDumper.add_representer(np.bool_, yaml.representer.SafeRepresenter.represent_bool)
++AstropyDumper.add_representer(np.str_, yaml.representer.SafeRepresenter.represent_str)
+ for np_type in [
+     np.int_,
+     np.intc,

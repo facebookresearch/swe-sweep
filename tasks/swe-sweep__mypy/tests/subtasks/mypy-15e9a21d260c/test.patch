@@ -1,0 +1,40 @@
+diff --git a/test-data/unit/check-namedtuple.test b/test-data/unit/check-namedtuple.test
+index 172228820..a65a99cc2 100644
+--- a/test-data/unit/check-namedtuple.test
++++ b/test-data/unit/check-namedtuple.test
+@@ -1441,3 +1441,35 @@ def bar() -> None:
+             misspelled_var_name  # E: Name "misspelled_var_name" is not defined
+ [builtins fixtures/tuple.pyi]
+ [typing fixtures/typing-namedtuple.pyi]
++
++[case testNamedTupleOverlappingCheck]
++from typing import overload, NamedTuple, Union
++
++class AKey(NamedTuple):
++    k: str
++
++class A(NamedTuple):
++    key: AKey
++
++
++class BKey(NamedTuple):
++    k: str
++
++class B(NamedTuple):
++    key: BKey
++
++@overload
++def f(arg: A) -> A: ...
++@overload
++def f(arg: B) -> B: ...
++def f(arg: Union[A, B]) -> Union[A, B]: ...
++
++def g(x: Union[A, B, str]) -> Union[A, B, str]:
++    if isinstance(x, str):
++        return x
++    else:
++        reveal_type(x)  # N: Revealed type is "Union[Tuple[Tuple[builtins.str, fallback=__main__.AKey], fallback=__main__.A], Tuple[Tuple[builtins.str, fallback=__main__.BKey], fallback=__main__.B]]"
++        return x._replace()
++
++# no errors should be raised above.
++[builtins fixtures/tuple.pyi]

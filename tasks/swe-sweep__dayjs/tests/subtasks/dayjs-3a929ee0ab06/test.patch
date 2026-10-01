@@ -1,0 +1,23 @@
+diff --git a/test/plugin/customParseFormat.test.js b/test/plugin/customParseFormat.test.js
+index e1cf9e5..03b446a 100644
+--- a/test/plugin/customParseFormat.test.js
++++ b/test/plugin/customParseFormat.test.js
+@@ -287,3 +287,18 @@ describe('Array format support', () => {
+     expect(dayjs(input, format, 'zh-cn', true).format('YYYY MMMM DD')).toBe(input)
+   })
+ })
++
++describe('meridiem locale', () => {
++  const format = 'YYYY年M月D日Ah点mm分ss秒'
++  const format2 = 'YYYY-MM-DD HH:mm:ss'
++  it('AM', () => {
++    const input = '2018-05-02 01:02:03'
++    const date = dayjs(input).locale('zh-cn').format(format)
++    expect(dayjs(date, format, 'zh-cn').format(format2)).toBe(input)
++  })
++  it('PM', () => {
++    const input = '2018-05-02 20:02:03'
++    const date = dayjs(input).locale('zh-cn').format(format)
++    expect(dayjs(date, format, 'zh-cn').format(format2)).toBe(input)
++  })
++})

@@ -1,0 +1,12 @@
+diff --git a/compiler/reorder.nim b/compiler/reorder.nim
+index 4fabf9041..4ad3f1219 100644
+--- a/compiler/reorder.nim
++++ b/compiler/reorder.nim
+@@ -106,6 +106,7 @@ proc computeDeps(cache: IdentCache; n: PNode, declares, uses: var IntSet; topLev
+     if a.kind == nkExprColonExpr and a[0].kind == nkIdent and a[0].ident.s == "pragma":
+       # user defined pragma
+       decl(a[1])
++      for i in 1..<n.safeLen: deps(n[i])
+     else:
+       for i in 0..<n.safeLen: deps(n[i])
+   of nkMixinStmt, nkBindStmt: discard

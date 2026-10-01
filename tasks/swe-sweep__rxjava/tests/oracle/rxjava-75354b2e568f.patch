@@ -1,0 +1,23 @@
+diff --git a/src/main/java/io/reactivex/internal/operators/flowable/FlowableGroupBy.java b/src/main/java/io/reactivex/internal/operators/flowable/FlowableGroupBy.java
+index 9a42e927b..9e204f174 100644
+--- a/src/main/java/io/reactivex/internal/operators/flowable/FlowableGroupBy.java
++++ b/src/main/java/io/reactivex/internal/operators/flowable/FlowableGroupBy.java
+@@ -258,12 +258,13 @@ public final class FlowableGroupBy<T, K, V> extends AbstractFlowableWithUpstream
+ 
+         public void cancel(K key) {
+             Object mapKey = key != null ? key : NULL_KEY;
+-            groups.remove(mapKey);
+-            if (groupCount.decrementAndGet() == 0) {
+-                upstream.cancel();
++            if (groups.remove(mapKey) != null) {
++                if (groupCount.decrementAndGet() == 0) {
++                    upstream.cancel();
+ 
+-                if (getAndIncrement() == 0) {
+-                    queue.clear();
++                    if (getAndIncrement() == 0) {
++                        queue.clear();
++                    }
+                 }
+             }
+         }

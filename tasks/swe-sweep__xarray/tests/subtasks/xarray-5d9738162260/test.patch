@@ -1,0 +1,32 @@
+diff --git a/xarray/tests/test_coding_times.py b/xarray/tests/test_coding_times.py
+index 67d865d0..72dac667 100644
+--- a/xarray/tests/test_coding_times.py
++++ b/xarray/tests/test_coding_times.py
+@@ -1123,3 +1123,11 @@ def test_should_cftime_be_used_target_not_npable():
+         ValueError, match="Calendar 'noleap' is only valid with cftime."
+     ):
+         _should_cftime_be_used(src, "noleap", False)
++
++
++@requires_cftime
++def test_scalar_unit() -> None:
++    # test that a scalar units (often NaN when using to_netcdf) does not raise an error
++    variable = Variable(("x", "y"), np.array([[0, 1], [2, 3]]), {"units": np.nan})
++    result = coding.times.CFDatetimeCoder().decode(variable)
++    assert np.isnan(result.attrs["units"])
+diff --git a/xarray/tests/test_conventions.py b/xarray/tests/test_conventions.py
+index c871cc74..3ee6699f 100644
+--- a/xarray/tests/test_conventions.py
++++ b/xarray/tests/test_conventions.py
+@@ -416,3 +416,11 @@ class TestCFEncodedDataStore(CFEncodedBase):
+     def test_encoding_kwarg_fixed_width_string(self) -> None:
+         # CFEncodedInMemoryStore doesn't support explicit string encodings.
+         pass
++
++
++def test_scalar_units() -> None:
++    # test that scalar units does not raise an exception
++    var = Variable(["t"], [np.nan, np.nan, 2], {"units": np.nan})
++
++    actual = conventions.decode_cf_variable("t", var)
++    assert_identical(actual, var)

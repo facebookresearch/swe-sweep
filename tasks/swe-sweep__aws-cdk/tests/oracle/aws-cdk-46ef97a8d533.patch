@@ -1,0 +1,13 @@
+diff --git a/packages/@aws-cdk/aws-certificatemanager/lib/util.ts b/packages/@aws-cdk/aws-certificatemanager/lib/util.ts
+index cf39c792ba..b46a6aa16f 100644
+--- a/packages/@aws-cdk/aws-certificatemanager/lib/util.ts
++++ b/packages/@aws-cdk/aws-certificatemanager/lib/util.ts
+@@ -14,7 +14,7 @@ export function apexDomain(domainName: string): string {
+   const accumulated: string[] = [];
+   for (const part of parts) {
+     accumulated.push(part);
+-    if (!(part in curr)) { break; }
++    if (!Object.prototype.hasOwnProperty.call(curr, part)) { break; }
+     curr = curr[part];
+   }
+   return accumulated.reverse().join('.');

@@ -1,0 +1,42 @@
+diff --git a/lib/reference/selectors.cjs b/lib/reference/selectors.cjs
+index b2fc2d6a1..2c6c0cb77 100644
+--- a/lib/reference/selectors.cjs
++++ b/lib/reference/selectors.cjs
+@@ -219,7 +219,15 @@ const aNPlusBNotationPseudoClasses = new Set([
+ 
+ const aNPlusBOfSNotationPseudoClasses = new Set(['nth-child', 'nth-last-child']);
+ 
+-const atRulePagePseudoClasses = new Set(['first', 'right', 'left', 'blank']);
++const atRulePagePseudoClasses = new Set([
++	'first',
++	'right',
++	'left',
++	'blank',
++	'recto',
++	'verso',
++	'nth',
++]);
+ 
+ const linguisticPseudoClasses = new Set(['dir', 'lang']);
+ 
+diff --git a/lib/reference/selectors.mjs b/lib/reference/selectors.mjs
+index 61da61773..c14c35ad5 100644
+--- a/lib/reference/selectors.mjs
++++ b/lib/reference/selectors.mjs
+@@ -216,7 +216,15 @@ export const aNPlusBNotationPseudoClasses = new Set([
+ 
+ export const aNPlusBOfSNotationPseudoClasses = new Set(['nth-child', 'nth-last-child']);
+ 
+-export const atRulePagePseudoClasses = new Set(['first', 'right', 'left', 'blank']);
++export const atRulePagePseudoClasses = new Set([
++	'first',
++	'right',
++	'left',
++	'blank',
++	'recto',
++	'verso',
++	'nth',
++]);
+ 
+ export const linguisticPseudoClasses = new Set(['dir', 'lang']);
+ 

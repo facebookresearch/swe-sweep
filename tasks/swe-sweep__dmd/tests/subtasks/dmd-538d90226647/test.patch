@@ -1,0 +1,20 @@
+diff --git a/compiler/test/fail_compilation/fail22039.d b/compiler/test/fail_compilation/fail22039.d
+new file mode 100644
+index 0000000000..3df834f7ad
+--- /dev/null
++++ b/compiler/test/fail_compilation/fail22039.d
+@@ -0,0 +1,14 @@
++// https://issues.dlang.org/show_bug.cgi?id=22039
++
++/*
++TEST_OUTPUT:
++---
++fail_compilation/fail22039.d(11): Error: recursive evaluation of `func()`
++fail_compilation/fail22039.d(14): Error: recursive evaluation of `gun(func2())`
++---
++*/
++
++int func(int x = func()) { return x; }
++
++int gun() { return 2; }
++int func2(int x = gun(func2())) { return x; }

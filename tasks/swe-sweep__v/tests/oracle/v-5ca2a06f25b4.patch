@@ -1,0 +1,58 @@
+diff --git a/vlib/v/checker/struct.v b/vlib/v/checker/struct.v
+index 6b5c3fa6c..dea608642 100644
+--- a/vlib/v/checker/struct.v
++++ b/vlib/v/checker/struct.v
+@@ -93,6 +93,10 @@ fn (mut c Checker) struct_decl(mut node ast.StructDecl) {
+ 					}
+ 				}
+ 			}
++			// check anon struct declaration
++			if field.anon_struct_decl.fields.len > 0 {
++				c.struct_decl(mut field.anon_struct_decl)
++			}
+ 		}
+ 		c.expected_type = old_expected_type
+ 		util.timing_measure_cumulative('Checker.struct setting default_expr_typ')
+diff --git a/vlib/v/gen/c/struct.v b/vlib/v/gen/c/struct.v
+index 0f8fbcb7b..83670c7ae 100644
+--- a/vlib/v/gen/c/struct.v
++++ b/vlib/v/gen/c/struct.v
+@@ -333,7 +333,7 @@ fn (mut g Gen) zero_struct_field(field ast.StructField) bool {
+ 					break
+ 				}
+ 			}
+-			if has_option_field {
++			if has_option_field || field.anon_struct_decl.fields.len > 0 {
+ 				default_init := ast.StructInit{
+ 					typ: field.typ
+ 				}
+@@ -379,7 +379,6 @@ fn (mut g Gen) zero_struct_field(field ast.StructField) bool {
+ 				tmp_var)
+ 			return true
+ 		}
+-
+ 		g.expr(field.default_expr)
+ 	} else if field.typ.has_flag(.option) {
+ 		tmp_var := g.new_tmp_var()
+diff --git a/vlib/v/parser/struct.v b/vlib/v/parser/struct.v
+index 912c70213..1462a9393 100644
+--- a/vlib/v/parser/struct.v
++++ b/vlib/v/parser/struct.v
+@@ -314,7 +314,6 @@ fn (mut p Parser) struct_decl(is_anon bool) ast.StructDecl {
+ 					is_deprecated: is_field_deprecated
+ 					anon_struct_decl: p.anon_struct_decl
+ 				}
+-				p.anon_struct_decl = ast.StructDecl{}
+ 			}
+ 			// save embeds as table fields too, it will be used in generation phase
+ 			fields << ast.StructField{
+@@ -333,7 +332,9 @@ fn (mut p Parser) struct_decl(is_anon bool) ast.StructDecl {
+ 				is_global: is_field_global
+ 				is_volatile: is_field_volatile
+ 				is_deprecated: is_field_deprecated
++				anon_struct_decl: p.anon_struct_decl
+ 			}
++			p.anon_struct_decl = ast.StructDecl{}
+ 			p.attrs = prev_attrs
+ 			i++
+ 		}

@@ -1,0 +1,28 @@
+diff --git a/activejob/test/cases/argument_serialization_test.rb b/activejob/test/cases/argument_serialization_test.rb
+index 86c180e113f..0257c8f838f 100644
+--- a/activejob/test/cases/argument_serialization_test.rb
++++ b/activejob/test/cases/argument_serialization_test.rb
+@@ -16,6 +16,11 @@ class ArgumentSerializationTest < ActiveSupport::TestCase
+ 
+   class ClassArgument; end
+ 
++  class MyClassWithPermitted
++    def self.permitted?
++    end
++  end
++
+   setup do
+     @person = Person.find("5")
+   end
+@@ -112,6 +117,11 @@ class ArgumentSerializationTest < ActiveSupport::TestCase
+     )
+   end
+ 
++  # Regression test to #48561
++  test "serialize a class with permitted? defined" do
++    assert_arguments_unchanged MyClassWithPermitted
++  end
++
+   test "serialize a hash" do
+     symbol_key = { a: 1 }
+     string_key = { "a" => 1 }

@@ -1,0 +1,13 @@
+diff --git a/packages/mui-material/src/Avatar/Avatar.js b/packages/mui-material/src/Avatar/Avatar.js
+index bbd274974c..9a99024a11 100644
+--- a/packages/mui-material/src/Avatar/Avatar.js
++++ b/packages/mui-material/src/Avatar/Avatar.js
+@@ -176,7 +176,7 @@ const Avatar = React.forwardRef(function Avatar(inProps, ref) {
+   } else if (hasImg && alt) {
+     children = alt[0];
+   } else {
+-    children = <AvatarFallback className={classes.fallback} />;
++    children = <AvatarFallback ownerState={ownerState} className={classes.fallback} />;
+   }
+ 
+   return (

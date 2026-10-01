@@ -1,0 +1,195 @@
+{
+  "build_jobs": 4,
+  "container_repo": "/networkx",
+  "evaluation": {
+    "paths": "networkx",
+    "test_timeout": 600,
+    "visible_timeout": 5400
+  },
+  "upstream_image": "pandora-maxbug-networkx:2.8",
+  "n_base_passing": 4199,
+  "n_base_test_ignore": 220,
+  "oracle_digest": "819d9b4c8b439630a70e506776cc90d4b85814b51ccd764c93418347282712e9",
+  "oracle_pristine_paths": [],
+  "upstream_commit": "9f7399e15e6172900e0591deb5a57a45769d8205",
+  "reproduction": {
+    "needs_build": false
+  },
+  "schema": 2,
+  "subtasks": [
+    {
+      "f2p": [
+        "networkx.algorithms.operators.tests.test_binary::test_difference_attributes"
+      ],
+      "id": "networkx-0bb7ac23c01f",
+      "target_files": [
+        "networkx/algorithms/operators/binary.py"
+      ]
+    },
+    {
+      "f2p": [
+        "networkx.algorithms.tests.test_simple_paths.TestIsSimplePath::test_missing_starting_node"
+      ],
+      "id": "networkx-0d5ef3411e4f",
+      "target_files": [
+        "networkx/algorithms/simple_paths.py"
+      ]
+    },
+    {
+      "f2p": [
+        "networkx.algorithms.coloring.tests.test_coloring.TestColoring::test_strategy_saturation_largest_first"
+      ],
+      "id": "networkx-117a331ed7df",
+      "target_files": [
+        "networkx/algorithms/coloring/greedy_coloring.py"
+      ]
+    },
+    {
+      "f2p": [
+        "networkx.algorithms.approximation.tests.test_traveling_salesman::test_asadpour_small_graphs"
+      ],
+      "id": "networkx-38f63fe4a292",
+      "target_files": [
+        "networkx/algorithms/approximation/traveling_salesman.py"
+      ]
+    },
+    {
+      "f2p": [
+        "networkx.algorithms.approximation.tests.test_treewidth.TestTreewidthMinDegree::test_not_sortable_nodes",
+        "networkx.algorithms.approximation.tests.test_treewidth.TestTreewidthMinFillIn::test_not_sortable_nodes"
+      ],
+      "id": "networkx-4888b6d956c6",
+      "target_files": [
+        "networkx/algorithms/approximation/treewidth.py"
+      ]
+    },
+    {
+      "f2p": [
+        "networkx.readwrite.tests.test_pajek.TestPajek::test_quotes_and_backslashes_roundtrip"
+      ],
+      "id": "networkx-4ae87a4424be",
+      "target_files": [
+        "networkx/readwrite/pajek.py"
+      ]
+    },
+    {
+      "f2p": [
+        "networkx.algorithms.isomorphism.tests.test_ismags.TestSelfIsomorphism::test_directed_self_isomorphism",
+        "networkx.algorithms.isomorphism.tests.test_ismags.TestSelfIsomorphism::test_self_isomorphism"
+      ],
+      "id": "networkx-4c724e2390c6",
+      "target_files": [
+        "networkx/algorithms/isomorphism/ismags.py"
+      ]
+    },
+    {
+      "f2p": [
+        "networkx.readwrite.tests.test_gexf::test_dynamic_graph_has_timeformat[dynamic-end]",
+        "networkx.readwrite.tests.test_gexf::test_dynamic_graph_has_timeformat[dynamic-start]"
+      ],
+      "id": "networkx-4ccda5644ff1",
+      "target_files": [
+        "networkx/readwrite/gexf.py"
+      ]
+    },
+    {
+      "f2p": [
+        "networkx.algorithms.shortest_paths.tests.test_weighted.TestBellmanFordAndGoldbergRadzik::test_zero_cycle"
+      ],
+      "id": "networkx-59c9905f30ba",
+      "target_files": [
+        "networkx/algorithms/shortest_paths/weighted.py"
+      ]
+    },
+    {
+      "f2p": [
+        "networkx.readwrite.json_graph.tests.test_adjacency.TestAdjacency::test_adjacency_form_json_serialisable",
+        "networkx.readwrite.json_graph.tests.test_adjacency.TestAdjacency::test_input_data_is_not_modified_when_building_graph"
+      ],
+      "id": "networkx-67a224a77554",
+      "target_files": [
+        "networkx/readwrite/json_graph/adjacency.py"
+      ]
+    },
+    {
+      "f2p": [
+        "networkx.algorithms.tree.tests.test_operations.TestJoin::test_basic",
+        "networkx.algorithms.tree.tests.test_operations.TestJoin::test_single"
+      ],
+      "id": "networkx-6a757f9e8dd5",
+      "target_files": [
+        "networkx/algorithms/tree/operations.py"
+      ]
+    },
+    {
+      "f2p": [
+        "networkx.classes.tests.test_subgraphviews.TestEdgeSubGraph::test_consistent_edges"
+      ],
+      "id": "networkx-6fb6266b60e8",
+      "target_files": [
+        "networkx/classes/coreviews.py"
+      ]
+    },
+    {
+      "f2p": [
+        "networkx.readwrite.tests.test_graphml::test_empty_attribute"
+      ],
+      "id": "networkx-959ce9b54da8",
+      "target_files": [
+        "networkx/readwrite/graphml.py"
+      ]
+    },
+    {
+      "f2p": [
+        "networkx.algorithms.tests.test_clique.TestCliques::test_find_cliques_directed"
+      ],
+      "id": "networkx-9a0e647b5198",
+      "target_files": [
+        "networkx/algorithms/clique.py"
+      ]
+    },
+    {
+      "f2p": [
+        "networkx.algorithms.bipartite.tests.test_edgelist::test_bipartite_edgelist_consistent_strip_handling",
+        "networkx.readwrite.tests.test_edgelist::test_edgelist_consistent_strip_handling"
+      ],
+      "id": "networkx-a2085659af1e",
+      "target_files": [
+        "networkx/algorithms/bipartite/edgelist.py",
+        "networkx/readwrite/adjlist.py",
+        "networkx/readwrite/edgelist.py",
+        "networkx/readwrite/multiline_adjlist.py"
+      ]
+    },
+    {
+      "f2p": [
+        "networkx.algorithms.shortest_paths.tests.test_weighted.TestWeightedPath::test_negative_edge_cycle_empty"
+      ],
+      "id": "networkx-d93c92556411",
+      "target_files": [
+        "networkx/algorithms/shortest_paths/weighted.py"
+      ]
+    },
+    {
+      "f2p": [
+        "networkx.algorithms.shortest_paths.tests.test_weighted.TestBellmanFordAndGoldbergRadzik::test_negative_cycle",
+        "networkx.algorithms.shortest_paths.tests.test_weighted.TestWeightedPath::test_negative_edge_cycle"
+      ],
+      "id": "networkx-fc0231583ae9",
+      "target_files": [
+        "networkx/algorithms/shortest_paths/weighted.py"
+      ]
+    },
+    {
+      "f2p": [
+        "networkx.algorithms.connectivity.tests.test_edge_augmentation::test_is_k_edge_connected"
+      ],
+      "id": "networkx-ff41f5dd78ae",
+      "target_files": [
+        "networkx/algorithms/connectivity/edge_augmentation.py"
+      ]
+    }
+  ],
+  "task": "networkx",
+  "version": "2.8"
+}

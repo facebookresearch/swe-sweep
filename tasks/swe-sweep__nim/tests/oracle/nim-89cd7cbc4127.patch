@@ -1,0 +1,133 @@
+diff --git a/compiler/sempass2.nim b/compiler/sempass2.nim
+index 9a27d14fa..5624d7adb 100644
+--- a/compiler/sempass2.nim
++++ b/compiler/sempass2.nim
+@@ -851,6 +851,9 @@ proc trackCall(tracked: PEffects; n: PNode) =
+         elif isIndirectCall(tracked, a):
+           assumeTheWorst(tracked, n, op)
+           gcsafeAndSideeffectCheck()
++        else:
++          if strictEffects in tracked.c.features and a.kind == nkSym and a.sym.kind in routineKinds:
++            propagateEffects(tracked, n, a.sym)
+       else:
+         mergeRaises(tracked, effectList[exceptionEffects], n)
+         mergeTags(tracked, effectList[tagEffects], n)
+diff --git a/lib/pure/asyncdispatch.nim b/lib/pure/asyncdispatch.nim
+index e15fb0851..c924d0a3d 100644
+--- a/lib/pure/asyncdispatch.nim
++++ b/lib/pure/asyncdispatch.nim
+@@ -733,7 +733,7 @@ when defined(windows) or defined(nimdoc):
+ 
+   proc acceptAddr*(socket: AsyncFD, flags = {SocketFlag.SafeDisconn},
+                    inheritable = defined(nimInheritHandles)):
+-      owned(Future[tuple[address: string, client: AsyncFD]]) =
++      owned(Future[tuple[address: string, client: AsyncFD]]) {.gcsafe.} =
+     ## Accepts a new connection. Returns a future containing the client socket
+     ## corresponding to that connection and the remote address of the client.
+     ## The future will complete when the connection is successfully accepted.
+@@ -800,7 +800,7 @@ when defined(windows) or defined(nimdoc):
+ 
+     var ol = newCustom()
+     ol.data = CompletionData(fd: socket, cb:
+-      proc (fd: AsyncFD, bytesCount: DWORD, errcode: OSErrorCode) =
++      proc (fd: AsyncFD, bytesCount: DWORD, errcode: OSErrorCode) {.gcsafe.} =
+         if not retFuture.finished:
+           if errcode == OSErrorCode(-1):
+             completeAccept()
+diff --git a/lib/pure/json.nim b/lib/pure/json.nim
+index 85c3393b2..c831bf85d 100644
+--- a/lib/pure/json.nim
++++ b/lib/pure/json.nim
+@@ -437,7 +437,7 @@ macro `%*`*(x: untyped): untyped =
+   ## `%` for every element.
+   result = toJsonImpl(x)
+ 
+-proc `==`*(a, b: JsonNode): bool =
++proc `==`*(a, b: JsonNode): bool {.noSideEffect.} =
+   ## Check two nodes for equality
+   if a.isNil:
+     if b.isNil: return true
+@@ -464,12 +464,16 @@ proc `==`*(a, b: JsonNode): bool =
+       if a.fields.len != b.fields.len: return false
+       for key, val in a.fields:
+         if not b.fields.hasKey(key): return false
+-        if b.fields[key] != val: return false
++        when defined(nimHasEffectsOf):
++          {.noSideEffect.}:
++            if b.fields[key] != val: return false
++        else:
++          if b.fields[key] != val: return false
+       result = true
+ 
+ proc hash*(n: OrderedTable[string, JsonNode]): Hash {.noSideEffect.}
+ 
+-proc hash*(n: JsonNode): Hash =
++proc hash*(n: JsonNode): Hash {.noSideEffect.} =
+   ## Compute the hash for a JSON node
+   case n.kind
+   of JArray:
+diff --git a/lib/system/excpt.nim b/lib/system/excpt.nim
+index 3e520570f..a71328c14 100644
+--- a/lib/system/excpt.nim
++++ b/lib/system/excpt.nim
+@@ -354,7 +354,7 @@ var onUnhandledException*: (proc (errorMsg: string) {.
+   ## The default is to write a stacktrace to `stderr` and then call `quit(1)`.
+   ## Unstable API.
+ 
+-proc reportUnhandledErrorAux(e: ref Exception) {.nodestroy.} =
++proc reportUnhandledErrorAux(e: ref Exception) {.nodestroy, gcsafe.} =
+   when hasSomeStackTrace:
+     var buf = newStringOfCap(2000)
+     if e.trace.len == 0:
+@@ -362,7 +362,8 @@ proc reportUnhandledErrorAux(e: ref Exception) {.nodestroy.} =
+     else:
+       var trace = $e.trace
+       add(buf, trace)
+-      `=destroy`(trace)
++      {.gcsafe.}:
++        `=destroy`(trace)
+     add(buf, "Error: unhandled exception: ")
+     add(buf, e.msg)
+     add(buf, " [")
+@@ -373,7 +374,8 @@ proc reportUnhandledErrorAux(e: ref Exception) {.nodestroy.} =
+       onUnhandledException(buf)
+     else:
+       showErrorMessage2(buf)
+-    `=destroy`(buf)
++    {.gcsafe.}:
++      `=destroy`(buf)
+   else:
+     # ugly, but avoids heap allocations :-)
+     template xadd(buf, s, slen) =
+@@ -387,7 +389,8 @@ proc reportUnhandledErrorAux(e: ref Exception) {.nodestroy.} =
+     if e.trace.len != 0:
+       var trace = $e.trace
+       add(buf, trace)
+-      `=destroy`(trace)
++      {.gcsafe.}:
++        `=destroy`(trace)
+     add(buf, "Error: unhandled exception: ")
+     add(buf, e.msg)
+     add(buf, " [")
+@@ -398,7 +401,7 @@ proc reportUnhandledErrorAux(e: ref Exception) {.nodestroy.} =
+     else:
+       showErrorMessage(buf.addr, L)
+ 
+-proc reportUnhandledError(e: ref Exception) {.nodestroy.} =
++proc reportUnhandledError(e: ref Exception) {.nodestroy, gcsafe.} =
+   if unhandledExceptionHook != nil:
+     unhandledExceptionHook(e)
+   when hostOS != "any":
+diff --git a/lib/system/seqs_v2.nim b/lib/system/seqs_v2.nim
+index 375eef340..0ac51109e 100644
+--- a/lib/system/seqs_v2.nim
++++ b/lib/system/seqs_v2.nim
+@@ -73,7 +73,7 @@ proc prepareSeqAdd(len: int; p: pointer; addlen, elemSize, elemAlign: int): poin
+         q.cap = newCap
+         result = q
+ 
+-proc shrink*[T](x: var seq[T]; newLen: Natural) =
++proc shrink*[T](x: var seq[T]; newLen: Natural) {.tags: [].} =
+   when nimvm:
+     setLen(x, newLen)
+   else:

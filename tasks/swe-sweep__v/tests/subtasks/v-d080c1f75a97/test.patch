@@ -1,0 +1,32 @@
+diff --git a/vlib/v/checker/tests/fn_call_arg_array_mismatch_err.out b/vlib/v/checker/tests/fn_call_arg_array_mismatch_err.out
+new file mode 100644
+index 000000000..789d65e8e
+--- /dev/null
++++ b/vlib/v/checker/tests/fn_call_arg_array_mismatch_err.out
+@@ -0,0 +1,7 @@
++vlib/v/checker/tests/fn_call_arg_array_mismatch_err.vv:9:36: error: cannot use `string` as `array` in argument 2 to `os.write_file_array`
++    7 |
++    8 | fn main() {
++    9 |     os.write_file_array(service_path, service_file) or {
++      |                                       ~~~~~~~~~~~~
++   10 |         eprintln('Error: write file service')
++   11 |         exit(1)
+diff --git a/vlib/v/checker/tests/fn_call_arg_array_mismatch_err.vv b/vlib/v/checker/tests/fn_call_arg_array_mismatch_err.vv
+new file mode 100644
+index 000000000..9f3dc8be4
+--- /dev/null
++++ b/vlib/v/checker/tests/fn_call_arg_array_mismatch_err.vv
+@@ -0,0 +1,13 @@
++import os
++
++const (
++	service_file = '[Unit]'
++	service_path = 'dockerman.service'
++)
++
++fn main() {
++	os.write_file_array(service_path, service_file) or {
++		eprintln('Error: write file service')
++		exit(1)
++	}
++}

@@ -1,0 +1,13 @@
+diff --git a/actionview/lib/action_view/helpers/tags/week_field.rb b/actionview/lib/action_view/helpers/tags/week_field.rb
+index 51203006d1d..0e6eaa6415d 100644
+--- a/actionview/lib/action_view/helpers/tags/week_field.rb
++++ b/actionview/lib/action_view/helpers/tags/week_field.rb
+@@ -6,7 +6,7 @@ module ActionView
+       class WeekField < DatetimeField # :nodoc:
+         private
+           def format_date(value)
+-            value&.strftime("%Y-W%V")
++            value&.strftime("%G-W%V")
+           end
+       end
+     end

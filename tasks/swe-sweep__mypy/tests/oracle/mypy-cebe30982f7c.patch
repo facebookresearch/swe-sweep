@@ -1,0 +1,27 @@
+diff --git a/mypy/stubtest.py b/mypy/stubtest.py
+index c54f83f..9767c80 100644
+--- a/mypy/stubtest.py
++++ b/mypy/stubtest.py
+@@ -628,10 +628,10 @@ def _verify_arg_name(
+     if is_dunder(function_name, exclude_special=True):
+         return
+ 
+-    def strip_prefix(s: str, prefix: str) -> str:
+-        return s[len(prefix) :] if s.startswith(prefix) else s
+-
+-    if strip_prefix(stub_arg.variable.name, "__") == runtime_arg.name:
++    if (
++        stub_arg.variable.name == runtime_arg.name
++        or stub_arg.variable.name.removeprefix("__") == runtime_arg.name
++    ):
+         return
+ 
+     nonspecific_names = {"object", "args"}
+@@ -914,6 +914,7 @@ def _verify_signature(
+         if (
+             runtime_arg.kind != inspect.Parameter.POSITIONAL_ONLY
+             and (stub_arg.pos_only or stub_arg.variable.name.startswith("__"))
++            and not runtime_arg.name.startswith("__")
+             and stub_arg.variable.name.strip("_") != "self"
+             and not is_dunder(function_name, exclude_special=True)  # noisy for dunder methods
+         ):

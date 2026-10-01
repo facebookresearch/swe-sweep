@@ -1,0 +1,63 @@
+diff --git a/test/fuzzer/pedro/intersect_correlated_subquery.test b/test/fuzzer/pedro/intersect_correlated_subquery.test
+index f95a374afe..d44dd022ef 100644
+--- a/test/fuzzer/pedro/intersect_correlated_subquery.test
++++ b/test/fuzzer/pedro/intersect_correlated_subquery.test
+@@ -12,6 +12,10 @@ query I
+ SELECT (SELECT 1 INTERSECT SELECT 1 HAVING true) FROM t0;
+ ----
+ 
++query I
++SELECT (SELECT 1 INTERSECT SELECT 1 HAVING false) FROM t0;
++----
++
+ query I
+ SELECT (SELECT 1 INTERSECT SELECT 1 HAVING t0.rowid) FROM t0;
+ ----
+diff --git a/test/sql/aggregate/having/having_without_groupby.test b/test/sql/aggregate/having/having_without_groupby.test
+new file mode 100644
+index 0000000000..c7f0a5e733
+--- /dev/null
++++ b/test/sql/aggregate/having/having_without_groupby.test
+@@ -0,0 +1,42 @@
++# name: test/sql/aggregate/having/having_without_groupby.test
++# group: [having]
++
++query I
++SELECT 1 AS one FROM (
++	values
++	(1,2),
++	(3,2)
++) t(a, b)
++HAVING 1 < 2;
++----
++1
++
++query I
++SELECT 1 AS one FROM (
++	values
++	(1,2),
++	(3,2)
++) t(a, b)
++HAVING false;
++----
++
++statement error
++select a FROM (
++	values
++	(1,2),
++	(3,2)
++) t(a, b)
++HAVING true
++----
++column "a" must appear in the GROUP BY clause
++
++query I
++select sum(a) FROM (
++	values
++	(1,2),
++	(3,2)
++) t(a, b)
++HAVING true
++----
++4
++

@@ -1,0 +1,35 @@
+diff --git a/sklearn/manifold/tests/test_t_sne.py b/sklearn/manifold/tests/test_t_sne.py
+index 3be02f359c..ea9037776d 100644
+--- a/sklearn/manifold/tests/test_t_sne.py
++++ b/sklearn/manifold/tests/test_t_sne.py
+@@ -560,3 +560,30 @@ def test_index_offset():
+     # Make sure translating between 1D and N-D indices are preserved
+     assert_equal(_barnes_hut_tsne.test_index2offset(), 1)
+     assert_equal(_barnes_hut_tsne.test_index_offset(), 1)
++
++
++def test_accessible_kl_divergence():
++    # Ensures that the accessible kl_divergence matches the computed value
++    random_state = check_random_state(0)
++    X = random_state.randn(100, 2)
++    tsne = TSNE(n_iter_without_progress=2, verbose=2,
++                random_state=0, method='exact')
++
++    old_stdout = sys.stdout
++    sys.stdout = StringIO()
++    try:
++        tsne.fit_transform(X)
++    finally:
++        out = sys.stdout.getvalue()
++        sys.stdout.close()
++        sys.stdout = old_stdout
++
++    # The output needs to contain the accessible kl_divergence as the error at
++    # the last iteration
++    for line in out.split('\n')[::-1]:
++        if 'Iteration' in line:
++            _, _, error = line.partition('error = ')
++            if error:
++                error, _, _ = error.partition(',')
++                break
++    assert_almost_equal(tsne.kl_divergence_, float(error), decimal=5)

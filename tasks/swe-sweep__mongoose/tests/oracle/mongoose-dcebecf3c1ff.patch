@@ -1,0 +1,44 @@
+diff --git a/lib/cast.js b/lib/cast.js
+index ecb96e7..0c010ec 100644
+--- a/lib/cast.js
++++ b/lib/cast.js
+@@ -15,6 +15,7 @@ const getSchemaDiscriminatorByValue = require('./helpers/discriminator/getSchema
+ const isOperator = require('./helpers/query/isOperator');
+ const util = require('util');
+ const isObject = require('./helpers/isObject');
++const utils = require('./utils');
+ const isMongooseObject = require('./helpers/isMongooseObject');
+ 
+ const ALLOWED_GEOWITHIN_GEOJSON_TYPES = ['Polygon', 'MultiPolygon'];
+@@ -301,8 +302,21 @@ module.exports = function cast(schema, obj, options, context) {
+           while (k--) {
+             $cond = ks[k];
+             nested = val[$cond];
+-
+-            if ($cond === '$not') {
++            if ($cond === '$elemMatch') {
++              if (nested && schematype != null && schematype.schema != null) {
++                cast(schematype.schema, nested, options, context);
++              } else if (nested && schematype != null && schematype.$isMongooseArray) {
++                if (utils.isPOJO(nested) && nested.$not != null) {
++                  cast(schema, nested, options, context);
++                } else {
++                  val[$cond] = schematype.castForQueryWrapper({
++                    $conditional: $cond,
++                    val: nested,
++                    context: context
++                  });
++                }
++              }
++            } else if ($cond === '$not') {
+               if (nested && schematype) {
+                 _keys = Object.keys(nested);
+                 if (_keys.length && isOperator(_keys[0])) {
+@@ -329,6 +343,7 @@ module.exports = function cast(schema, obj, options, context) {
+                 context: context
+               });
+             }
++
+           }
+         }
+       } else if (Array.isArray(val) && ['Buffer', 'Array'].indexOf(schematype.instance) === -1) {

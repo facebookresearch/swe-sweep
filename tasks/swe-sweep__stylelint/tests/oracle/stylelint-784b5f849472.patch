@@ -1,0 +1,58 @@
+diff --git a/lib/rules/selector-not-notation/index.cjs b/lib/rules/selector-not-notation/index.cjs
+index 42b9b6ce3..c8b20dbf8 100644
+--- a/lib/rules/selector-not-notation/index.cjs
++++ b/lib/rules/selector-not-notation/index.cjs
+@@ -4,6 +4,7 @@
+ 
+ const selectorParser = require('postcss-selector-parser');
+ const validateTypes = require('../../utils/validateTypes.cjs');
++const getRuleSelector = require('../../utils/getRuleSelector.cjs');
+ const isStandardSyntaxRule = require('../../utils/isStandardSyntaxRule.cjs');
+ const parseSelector = require('../../utils/parseSelector.cjs');
+ const report = require('../../utils/report.cjs');
+@@ -82,7 +83,7 @@ const rule = (primary) => {
+ 
+ 			if (!selector.includes(':not(')) return;
+ 
+-			const selectorRoot = parseSelector(selector, result, ruleNode);
++			const selectorRoot = parseSelector(getRuleSelector(ruleNode), result, ruleNode);
+ 
+ 			if (!selectorRoot) return;
+ 
+@@ -117,6 +118,7 @@ const rule = (primary) => {
+ 					node: ruleNode,
+ 					result,
+ 					ruleName,
++					line: range.start.line,
+ 					...range,
+ 					fix,
+ 				});
+diff --git a/lib/rules/selector-not-notation/index.mjs b/lib/rules/selector-not-notation/index.mjs
+index 2677a1dd2..a802cc346 100644
+--- a/lib/rules/selector-not-notation/index.mjs
++++ b/lib/rules/selector-not-notation/index.mjs
+@@ -3,6 +3,7 @@ const { isAttribute, isClassName, isIdentifier, isPseudoClass, isTag, isUniversa
+ 	selectorParser;
+ 
+ import { assert } from '../../utils/validateTypes.mjs';
++import getRuleSelector from '../../utils/getRuleSelector.mjs';
+ import isStandardSyntaxRule from '../../utils/isStandardSyntaxRule.mjs';
+ import parseSelector from '../../utils/parseSelector.mjs';
+ import report from '../../utils/report.mjs';
+@@ -78,7 +79,7 @@ const rule = (primary) => {
+ 
+ 			if (!selector.includes(':not(')) return;
+ 
+-			const selectorRoot = parseSelector(selector, result, ruleNode);
++			const selectorRoot = parseSelector(getRuleSelector(ruleNode), result, ruleNode);
+ 
+ 			if (!selectorRoot) return;
+ 
+@@ -113,6 +114,7 @@ const rule = (primary) => {
+ 					node: ruleNode,
+ 					result,
+ 					ruleName,
++					line: range.start.line,
+ 					...range,
+ 					fix,
+ 				});

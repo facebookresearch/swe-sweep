@@ -1,0 +1,57 @@
+diff --git a/vlib/strings/textscanner/textscanner.v b/vlib/strings/textscanner/textscanner.v
+index be748b5d5..65a38820b 100644
+--- a/vlib/strings/textscanner/textscanner.v
++++ b/vlib/strings/textscanner/textscanner.v
+@@ -50,7 +50,7 @@ pub fn (mut ss TextScanner) next() int {
+ // `skip()` does not return a result.
+ [inline]
+ pub fn (mut ss TextScanner) skip() {
+-	if ss.pos + 1 < ss.ilen {
++	if ss.pos < ss.ilen {
+ 		ss.pos++
+ 	}
+ }
+diff --git a/vlib/strings/textscanner/textscanner_test.js.v b/vlib/strings/textscanner/textscanner_test.js.v
+index e9d248769..ef9f7b7cc 100644
+--- a/vlib/strings/textscanner/textscanner_test.js.v
++++ b/vlib/strings/textscanner/textscanner_test.js.v
+@@ -31,6 +31,15 @@ fn test_skip() {
+ 	s.skip()
+ 	assert s.next() == `c`
+ 	assert s.next() == -1
++
++	s.reset()
++	assert s.peek() == `a`
++	s.skip()
++	assert s.peek() == `b`
++	s.skip()
++	assert s.peek() == `c`
++	s.skip()
++	assert s.peek() == -1
+ }
+ 
+ fn test_skip_n() {
+@@ -38,6 +47,23 @@ fn test_skip_n() {
+ 	s.skip_n(2)
+ 	assert s.next() == `c`
+ 	assert s.next() == -1
++
++	s.reset()
++	assert s.peek() == `a`
++	s.skip_n(2)
++	assert s.peek() == `c`
++	s.skip_n(2)
++	assert s.peek() == -1
++
++	s.reset()
++	assert s.peek() == `a`
++	s.skip_n(3)
++	assert s.peek() == -1
++
++	s.reset()
++	assert s.peek() == `a`
++	s.skip_n(4)
++	assert s.peek() == -1
+ }
+ 
+ fn test_peek() {

@@ -1,0 +1,114 @@
+diff --git a/tests/FSharp.Compiler.ComponentTests/Conformance/BasicGrammarElements/MethodResolution/StaticMethodResolution.fs b/tests/FSharp.Compiler.ComponentTests/Conformance/BasicGrammarElements/MethodResolution/StaticMethodResolution.fs
+new file mode 100644
+index 0000000000..c6602a0f1b
+--- /dev/null
++++ b/tests/FSharp.Compiler.ComponentTests/Conformance/BasicGrammarElements/MethodResolution/StaticMethodResolution.fs
+@@ -0,0 +1,41 @@
++﻿// Copyright (c) Microsoft Corporation.  All Rights Reserved.  See License.txt in the project root for license information.
++
++namespace Conformance.BasicGrammarElements
++
++open FSharp.Test.Compiler
++open Xunit
++
++module StaticMethodResolution =
++    
++    // Regression test for https://github.com/dotnet/fsharp/issues/19664
++    //
++    // When a static extension method is defined in a *different* [<AutoOpen>] module than
++    // the generic type it extends, and shares its name with an intrinsic static member,
++    // resolving the call via the explicit-type-argument syntax `Type<TArg>.Member(...)`
++    // previously failed with FS0505. The non-generic dotted form `Type.Member(...)`
++    // resolved correctly, so any regression test that omits the explicit type arguments
++    // does not actually exercise the bug. See the discussion at
++    // https://github.com/dotnet/fsharp/issues/19675#issuecomment-4373059900.
++    [<Fact>]
++    let ``Static extension on generic type resolves with explicit type arguments``() =
++        Fsx """
++module Extensions =
++
++    type StaticGeneric<'T> =
++        static member Bar() = ()
++        static member Bar(_: int, _: int) = ()
++
++    [<AutoOpen>]
++    module StaticGenericExtensions =
++        type StaticGeneric<'T> with
++            static member Bar(_: int) = ()
++
++module Program =
++    open Extensions
++
++    StaticGeneric<int>.Bar()        // intrinsic, 0 args
++    StaticGeneric<int>.Bar(42)      // regressed: extension, 1 arg, see issue 19664 (FS0505)
++    StaticGeneric<int>.Bar(42, 0)   // intrinsic, 2 args
++        """
++        |> typecheck
++        |> shouldSucceed
+\ No newline at end of file
+diff --git a/tests/FSharp.Compiler.ComponentTests/Conformance/BasicGrammarElements/PropertyResolution/StaticPropertyResolution.fs b/tests/FSharp.Compiler.ComponentTests/Conformance/BasicGrammarElements/PropertyResolution/StaticPropertyResolution.fs
+new file mode 100644
+index 0000000000..33fe8740de
+--- /dev/null
++++ b/tests/FSharp.Compiler.ComponentTests/Conformance/BasicGrammarElements/PropertyResolution/StaticPropertyResolution.fs
+@@ -0,0 +1,45 @@
++﻿// Copyright (c) Microsoft Corporation.  All Rights Reserved.  See License.txt in the project root for license information.
++
++namespace Conformance.BasicGrammarElements
++
++open FSharp.Test.Compiler
++open Xunit
++
++module StaticPropertyResolution =
++
++    // Regression test for static property accessors (getter/setter) resolution.
++    // Related to https://github.com/dotnet/fsharp/issues/19797
++    //
++    // When a static extension 'set' or 'get' accessor is defined in a *different* module 
++    // than the generic type it extends, and the corresponding property has the other intrinsic 
++    // static accessor 
++    // (i.e. the intrinsic property has a 'get' and the extension has a 'set', or vice versa)
++    //
++    // For instance, resolving the assignment via explicit-type-argument syntax, 
++    // where the 'set' accessor is an extension and the 'get' accessor is intrinsic,
++    // Type<TArg>.Property <- value previously failed with FS0810.
++    //
++    // The non-generic dotted form `Type.Member`
++    // resolved correctly, so any regression test that omits the explicit type arguments
++    // does not actually exercise the bug. See the discussion at
++    // https://github.com/dotnet/fsharp/issues/19675#issuecomment-4373059900.
++    [<Fact>]
++    let ``Static property on generic type resolves the extension accessor when the other is intrinsic``() =
++        Fsx """
++module Lib =
++    
++    type Label<'T> =
++        static member Text with get() = "Static Intrinsic"
++        
++    [<AutoOpen>]
++    module Utils =
++        type Label<'T> with
++            static member Text with set (v) = printfn "Extension"
++
++module Program =
++    open Lib
++
++    Label<int>.Text <- "Text" // regressed: extension setter, see issue 19797 (FS0810)
++        """
++        |> typecheck
++        |> shouldSucceed
+\ No newline at end of file
+diff --git a/tests/FSharp.Compiler.ComponentTests/FSharp.Compiler.ComponentTests.fsproj b/tests/FSharp.Compiler.ComponentTests/FSharp.Compiler.ComponentTests.fsproj
+index 01492c57fd..acfeca79f3 100644
+--- a/tests/FSharp.Compiler.ComponentTests/FSharp.Compiler.ComponentTests.fsproj
++++ b/tests/FSharp.Compiler.ComponentTests/FSharp.Compiler.ComponentTests.fsproj
+@@ -60,6 +60,8 @@
+     <Compile Include="Conformance\BasicGrammarElements\MemberDefinitions\OptionalArguments\OptionalArguments.fs" />
+     <Compile Include="Conformance\BasicGrammarElements\MemberDefinitions\OptionalDefaultParamArgs\OptionalDefaultParamArgs.fs" />
+     <Compile Include="Conformance\BasicGrammarElements\MemberDefinitions\OverloadingMembers\OverloadingMembers.fs" />
+     <Compile Include="Conformance\BasicGrammarElements\MethodResolution.fs" />
++	<Compile Include="Conformance\BasicGrammarElements\MethodResolution\StaticMethodResolution.fs" />
++	<Compile Include="Conformance\BasicGrammarElements\PropertyResolution\StaticPropertyResolution.fs" />
+     <Compile Include="Conformance\BasicGrammarElements\ModuleAbbreviations\ModuleAbbreviations.fs" />
+     <Compile Include="Conformance\BasicGrammarElements\ModuleDefinitions\ModuleDefinitions.fs" />
+     <Compile Include="Conformance\BasicGrammarElements\NamespaceDeclGroups\NamespaceDeclGroups.fs" />

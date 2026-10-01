@@ -1,0 +1,22 @@
+diff --git a/extensions/smallrye-graphql/runtime/src/main/java/io/quarkus/smallrye/graphql/runtime/spi/datafetcher/AbstractAsyncDataFetcher.java b/extensions/smallrye-graphql/runtime/src/main/java/io/quarkus/smallrye/graphql/runtime/spi/datafetcher/AbstractAsyncDataFetcher.java
+index 7bd79e776aa..f5df3abed7b 100644
+--- a/extensions/smallrye-graphql/runtime/src/main/java/io/quarkus/smallrye/graphql/runtime/spi/datafetcher/AbstractAsyncDataFetcher.java
++++ b/extensions/smallrye-graphql/runtime/src/main/java/io/quarkus/smallrye/graphql/runtime/spi/datafetcher/AbstractAsyncDataFetcher.java
+@@ -2,6 +2,7 @@ package io.quarkus.smallrye.graphql.runtime.spi.datafetcher;
+ 
+ import java.util.List;
+ import java.util.concurrent.CompletionStage;
++import java.util.concurrent.ExecutionException;
+ 
+ import jakarta.validation.ConstraintViolationException;
+ 
+@@ -46,6 +47,9 @@ public abstract class AbstractAsyncDataFetcher<K, T> extends AbstractDataFetcher
+                             deactivate(requestContext);
+                         });
+                         if (throwable != null) {
++                            if (throwable instanceof ExecutionException && throwable.getCause() != null) {
++                                throwable = throwable.getCause();
++                            }
+                             eventEmitter.fireOnDataFetchError(c, throwable);
+                             if (throwable instanceof GraphQLException) {
+                                 GraphQLException graphQLException = (GraphQLException) throwable;

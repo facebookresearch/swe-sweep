@@ -1,0 +1,28 @@
+diff --git a/pandas/core/arrays/numpy_.py b/pandas/core/arrays/numpy_.py
+index 48679a8355..2ed42d699e 100644
+--- a/pandas/core/arrays/numpy_.py
++++ b/pandas/core/arrays/numpy_.py
+@@ -374,14 +374,18 @@ class PandasArray(
+         copy: bool = False,
+         na_value=lib.no_default,
+     ) -> np.ndarray:
+-        result = np.asarray(self._ndarray, dtype=dtype)
++        mask = self.isna()
++        if na_value is not lib.no_default and mask.any():
++            result = self._ndarray.copy()
++            result[mask] = na_value
++        else:
++            result = self._ndarray
+ 
+-        if (copy or na_value is not lib.no_default) and result is self._ndarray:
++        result = np.asarray(result, dtype=dtype)
++
++        if copy and result is self._ndarray:
+             result = result.copy()
+ 
+-        if na_value is not lib.no_default:
+-            result[self.isna()] = na_value
+-
+         return result
+ 
+     # ------------------------------------------------------------------------

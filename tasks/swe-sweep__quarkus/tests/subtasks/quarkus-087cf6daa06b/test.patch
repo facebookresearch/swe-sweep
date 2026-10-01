@@ -1,0 +1,38 @@
+diff --git a/integration-tests/kubernetes/quarkus-standard-way/src/test/java/io/quarkus/it/kubernetes/KubernetesWithSidecarAndJibTest.java b/integration-tests/kubernetes/quarkus-standard-way/src/test/java/io/quarkus/it/kubernetes/KubernetesWithSidecarAndJibTest.java
+index 9560575704d..6820b9aa0c7 100644
+--- a/integration-tests/kubernetes/quarkus-standard-way/src/test/java/io/quarkus/it/kubernetes/KubernetesWithSidecarAndJibTest.java
++++ b/integration-tests/kubernetes/quarkus-standard-way/src/test/java/io/quarkus/it/kubernetes/KubernetesWithSidecarAndJibTest.java
+@@ -10,6 +10,7 @@ import org.junit.jupiter.api.Test;
+ import org.junit.jupiter.api.extension.RegisterExtension;
+ 
+ import io.fabric8.kubernetes.api.model.HasMetadata;
++import io.fabric8.kubernetes.api.model.Quantity;
+ import io.fabric8.kubernetes.api.model.apps.Deployment;
+ import io.quarkus.builder.Version;
+ import io.quarkus.maven.dependency.Dependency;
+@@ -90,6 +91,12 @@ public class KubernetesWithSidecarAndJibTest {
+                         assertThat(e.getName()).isEqualTo("FOO");
+                         assertThat(e.getValue()).isEqualTo("bar");
+                     });
++                    assertThat(c.getResources()).satisfies(r -> {
++                        assertThat(r.getRequests().get("cpu")).isEqualTo(new Quantity("102m"));
++                        assertThat(r.getRequests().get("memory")).isEqualTo(new Quantity("201Mi"));
++                        assertThat(r.getLimits().get("cpu")).isEqualTo(new Quantity("100m"));
++                        assertThat(r.getLimits().get("memory")).isEqualTo(new Quantity("200Mi"));
++                    });
+                 });
+     }
+ }
+diff --git a/integration-tests/kubernetes/quarkus-standard-way/src/test/resources/kubernetes-with-sidecar-and-jib.properties b/integration-tests/kubernetes/quarkus-standard-way/src/test/resources/kubernetes-with-sidecar-and-jib.properties
+index 4eae1a7c435..45a41b5cc8c 100644
+--- a/integration-tests/kubernetes/quarkus-standard-way/src/test/resources/kubernetes-with-sidecar-and-jib.properties
++++ b/integration-tests/kubernetes/quarkus-standard-way/src/test/resources/kubernetes-with-sidecar-and-jib.properties
+@@ -9,3 +9,7 @@ quarkus.kubernetes.sidecars.sc.arguments=-l
+ quarkus.kubernetes.sidecars.sc.mounts.app-config.path=/deployments/config
+ quarkus.kubernetes.sidecars.sc.ports.http.container-port=3000
+ quarkus.kubernetes.sidecars.sc.env-vars.foo.value=bar
++quarkus.kubernetes.sidecars.sc.resources.requests.memory=201Mi
++quarkus.kubernetes.sidecars.sc.resources.limits.memory=200Mi
++quarkus.kubernetes.sidecars.sc.resources.requests.cpu=102m
++quarkus.kubernetes.sidecars.sc.resources.limits.cpu=100m
+\ No newline at end of file

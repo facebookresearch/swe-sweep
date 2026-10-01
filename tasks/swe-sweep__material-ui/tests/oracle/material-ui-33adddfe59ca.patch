@@ -1,0 +1,52 @@
+diff --git a/packages/mui-material/src/ToggleButton/toggleButtonClasses.ts b/packages/mui-material/src/ToggleButton/toggleButtonClasses.ts
+index 6ef6c053a1..16e1756429 100644
+--- a/packages/mui-material/src/ToggleButton/toggleButtonClasses.ts
++++ b/packages/mui-material/src/ToggleButton/toggleButtonClasses.ts
+@@ -20,6 +20,8 @@ export interface ToggleButtonClasses {
+   sizeMedium: string;
+   /** Styles applied to the root element if `size="large"`. */
+   sizeLarge: string;
++  /** Styles applied to the root element if `fullWidth={true}`. */
++  fullWidth: string;
+ }
+ 
+ export type ToggleButtonClassKey = keyof ToggleButtonClasses;
+@@ -38,6 +40,7 @@ const toggleButtonClasses: ToggleButtonClasses = generateUtilityClasses('MuiTogg
+   'sizeSmall',
+   'sizeMedium',
+   'sizeLarge',
++  'fullWidth',
+ ]);
+ 
+ export default toggleButtonClasses;
+diff --git a/packages/mui-material/src/ToggleButtonGroup/toggleButtonGroupClasses.ts b/packages/mui-material/src/ToggleButtonGroup/toggleButtonGroupClasses.ts
+index c14fdf8c15..ef4b714f78 100644
+--- a/packages/mui-material/src/ToggleButtonGroup/toggleButtonGroupClasses.ts
++++ b/packages/mui-material/src/ToggleButtonGroup/toggleButtonGroupClasses.ts
+@@ -14,6 +14,8 @@ export interface ToggleButtonGroupClasses {
+   groupedHorizontal: string;
+   /** Styles applied to the children if `orientation="vertical"`. */
+   groupedVertical: string;
++  /** Styles applied to the root element if `fullWidth={true}`. */
++  fullWidth: string;
+ }
+ 
+ export type ToggleButtonGroupClassKey = keyof ToggleButtonGroupClasses;
+@@ -24,7 +26,16 @@ export function getToggleButtonGroupUtilityClass(slot: string): string {
+ 
+ const toggleButtonGroupClasses: ToggleButtonGroupClasses = generateUtilityClasses(
+   'MuiToggleButtonGroup',
+-  ['root', 'selected', 'vertical', 'disabled', 'grouped', 'groupedHorizontal', 'groupedVertical'],
++  [
++    'root',
++    'selected',
++    'vertical',
++    'disabled',
++    'grouped',
++    'groupedHorizontal',
++    'groupedVertical',
++    'fullWidth',
++  ],
+ );
+ 
+ export default toggleButtonGroupClasses;

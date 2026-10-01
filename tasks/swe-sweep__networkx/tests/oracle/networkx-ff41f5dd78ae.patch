@@ -1,0 +1,13 @@
+diff --git a/networkx/algorithms/connectivity/edge_augmentation.py b/networkx/algorithms/connectivity/edge_augmentation.py
+index ed9bd7c33..c1215509e 100644
+--- a/networkx/algorithms/connectivity/edge_augmentation.py
++++ b/networkx/algorithms/connectivity/edge_augmentation.py
+@@ -68,7 +68,7 @@ def is_k_edge_connected(G, k):
+         if k == 1:
+             return nx.is_connected(G)
+         elif k == 2:
+-            return not nx.has_bridges(G)
++            return nx.is_connected(G) and not nx.has_bridges(G)
+         else:
+             return nx.edge_connectivity(G, cutoff=k) >= k
+ 

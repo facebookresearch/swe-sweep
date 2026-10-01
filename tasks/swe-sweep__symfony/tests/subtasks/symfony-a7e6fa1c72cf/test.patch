@@ -1,0 +1,130 @@
+diff --git a/src/Symfony/Component/VarDumper/Tests/Caster/ReflectionCasterTest.php b/src/Symfony/Component/VarDumper/Tests/Caster/ReflectionCasterTest.php
+index eac092f29f0..10fff190a37 100644
+--- a/src/Symfony/Component/VarDumper/Tests/Caster/ReflectionCasterTest.php
++++ b/src/Symfony/Component/VarDumper/Tests/Caster/ReflectionCasterTest.php
+@@ -18,6 +18,7 @@ use Symfony\Component\VarDumper\Tests\Fixtures\ExtendsReflectionTypeFixture;
+ use Symfony\Component\VarDumper\Tests\Fixtures\GeneratorDemo;
+ use Symfony\Component\VarDumper\Tests\Fixtures\LotsOfAttributes;
+ use Symfony\Component\VarDumper\Tests\Fixtures\NotLoadableClass;
++use Symfony\Component\VarDumper\Tests\Fixtures\Php82NullStandaloneReturnType;
+ use Symfony\Component\VarDumper\Tests\Fixtures\ReflectionIntersectionTypeFixture;
+ use Symfony\Component\VarDumper\Tests\Fixtures\ReflectionNamedTypeFixture;
+ use Symfony\Component\VarDumper\Tests\Fixtures\ReflectionUnionTypeFixture;
+@@ -95,7 +96,7 @@ Closure($x) {
+     $b: & 123
+   }
+   file: "%sReflectionCasterTest.php"
+-  line: "88 to 88"
++  line: "%s"
+ }
+ EOTXT
+             , $var
+@@ -406,6 +407,26 @@ EOTXT
+         );
+     }
+ 
++    /**
++     * @requires PHP 8.2
++     */
++    public function testNullReturnType()
++    {
++        $className = Php82NullStandaloneReturnType::class;
++
++        $this->assertDumpMatchesFormat(
++            <<<EOTXT
++{$className}::foo(null \$bar): null {
++  returnType: "null"
++  this: {$className} { …}
++  file: "%s"
++  line: "%s"
++}
++EOTXT
++            , (new Php82NullStandaloneReturnType())->foo(...)
++        );
++    }
++
+     public function testUnionReturnType()
+     {
+         $f = function (): int|float {};
+diff --git a/src/Symfony/Component/VarDumper/Tests/Fixtures/Php82NullStandaloneReturnType.php b/src/Symfony/Component/VarDumper/Tests/Fixtures/Php82NullStandaloneReturnType.php
+new file mode 100644
+index 00000000000..05e8385d39b
+--- /dev/null
++++ b/src/Symfony/Component/VarDumper/Tests/Fixtures/Php82NullStandaloneReturnType.php
+@@ -0,0 +1,20 @@
++<?php
++
++/*
++ * This file is part of the Symfony package.
++ *
++ * (c) Fabien Potencier <fabien@symfony.com>
++ *
++ * For the full copyright and license information, please view the LICENSE
++ * file that was distributed with this source code.
++ */
++
++namespace Symfony\Component\VarDumper\Tests\Fixtures;
++
++class Php82NullStandaloneReturnType
++{
++    public function foo(null $bar): null
++    {
++        return null;
++    }
++}
+diff --git a/src/Symfony/Component/VarExporter/Tests/Fixtures/LazyProxy/Php82NullStandaloneReturnType.php b/src/Symfony/Component/VarExporter/Tests/Fixtures/LazyProxy/Php82NullStandaloneReturnType.php
+new file mode 100644
+index 00000000000..f01f573f105
+--- /dev/null
++++ b/src/Symfony/Component/VarExporter/Tests/Fixtures/LazyProxy/Php82NullStandaloneReturnType.php
+@@ -0,0 +1,20 @@
++<?php
++
++/*
++ * This file is part of the Symfony package.
++ *
++ * (c) Fabien Potencier <fabien@symfony.com>
++ *
++ * For the full copyright and license information, please view the LICENSE
++ * file that was distributed with this source code.
++ */
++
++namespace Symfony\Component\VarExporter\Tests\Fixtures\LazyProxy;
++
++class Php82NullStandaloneReturnType
++{
++    public function foo(): null
++    {
++        return null;
++    }
++}
+diff --git a/src/Symfony/Component/VarExporter/Tests/ProxyHelperTest.php b/src/Symfony/Component/VarExporter/Tests/ProxyHelperTest.php
+index 806c5c967d2..c10f47d495d 100644
+--- a/src/Symfony/Component/VarExporter/Tests/ProxyHelperTest.php
++++ b/src/Symfony/Component/VarExporter/Tests/ProxyHelperTest.php
+@@ -14,6 +14,7 @@ namespace Symfony\Component\VarExporter\Tests;
+ use PHPUnit\Framework\TestCase;
+ use Symfony\Component\VarExporter\Exception\LogicException;
+ use Symfony\Component\VarExporter\ProxyHelper;
++use Symfony\Component\VarExporter\Tests\Fixtures\LazyProxy\Php82NullStandaloneReturnType;
+ use Symfony\Component\VarExporter\Tests\Fixtures\LazyProxy\StringMagicGetClass;
+ 
+ class ProxyHelperTest extends TestCase
+@@ -188,6 +189,17 @@ class ProxyHelperTest extends TestCase
+         $this->expectException(LogicException::class);
+         ProxyHelper::generateLazyGhost(new \ReflectionClass(StringMagicGetClass::class));
+     }
++
++    /**
++     * @requires PHP 8.2
++     */
++    public function testNullStandaloneReturnType()
++    {
++        self::assertStringContainsString(
++            'public function foo(): null',
++            ProxyHelper::generateLazyProxy(new \ReflectionClass(Php82NullStandaloneReturnType::class))
++        );
++    }
+ }
+ 
+ abstract class TestForProxyHelper

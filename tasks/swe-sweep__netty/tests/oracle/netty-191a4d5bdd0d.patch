@@ -1,0 +1,12 @@
+diff --git a/codec/src/main/java/io/netty/handler/codec/ByteToMessageDecoder.java b/codec/src/main/java/io/netty/handler/codec/ByteToMessageDecoder.java
+--- a/codec/src/main/java/io/netty/handler/codec/ByteToMessageDecoder.java
++++ b/codec/src/main/java/io/netty/handler/codec/ByteToMessageDecoder.java
+@@ -491,6 +491,8 @@ public abstract class ByteToMessageDecoder extends ChannelInboundHandlerAdapter {
+             boolean removePending = decodeState == STATE_HANDLER_REMOVED_PENDING;
+             decodeState = STATE_INIT;
+             if (removePending) {
++                fireChannelRead(ctx, out, out.size());
++                out.clear();
+                 handlerRemoved(ctx);
+             }
+         }

@@ -1,0 +1,22 @@
+diff --git a/modules/imgproc/test/test_approxpoly.cpp b/modules/imgproc/test/test_approxpoly.cpp
+index 2b07c1a7b5..347b03ae8a 100644
+--- a/modules/imgproc/test/test_approxpoly.cpp
++++ b/modules/imgproc/test/test_approxpoly.cpp
+@@ -355,4 +355,17 @@ _exit_:
+ 
+ TEST(Imgproc_ApproxPoly, accuracy) { CV_ApproxPolyTest test; test.safe_run(); }
+ 
++TEST(Imgproc_ApproxPoly, distace_between_point_and_segment)
++{
++    vector<Point2f> inputPoints = {
++        { {0.f, 0.f}, {4.f, 2.f}, {11.f, 1.f}, {8.f, 0.f} }
++    };
++    std::vector<Point2f> result;
++    approxPolyDP(inputPoints, result, 1.9, false);
++    vector<Point2f> expectedResult = {
++        { {0.f, 0.f}, {11.f, 1.f}, {8.f, 0.f} }
++    };
++    ASSERT_EQ(result, expectedResult);
++}
++
+ }} // namespace

@@ -1,0 +1,13 @@
+diff --git a/lib/model.js b/lib/model.js
+index 0269cb1fc..bf0325f8f 100644
+--- a/lib/model.js
++++ b/lib/model.js
+@@ -3807,7 +3807,7 @@ function handleSuccessfulWrite(document) {
+     }
+ 
+     document.$__reset();
+-    document.schema.s.hooks.execPost('save', document, {}, (err) => {
++    document.schema.s.hooks.execPost('save', document, [document], {}, (err) => {
+       if (err) {
+         reject(err);
+         return;

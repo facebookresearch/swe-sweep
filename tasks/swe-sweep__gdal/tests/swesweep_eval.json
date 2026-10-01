@@ -1,0 +1,717 @@
+{
+  "build_jobs": 4,
+  "container_repo": "/gdal",
+  "evaluation": {
+    "paths": "autotest",
+    "test_dirs": [
+      "autotest"
+    ]
+  },
+  "upstream_image": "pandora-maxbug-gdal:3.6.2",
+  "n_base_passing": 7853,
+  "n_base_test_ignore": 2808,
+  "oracle_digest": "8cf3abbd4ce160e29b2a1ad5851efe3f63229a7c5d88a58126ff78dee4c33e8b",
+  "oracle_pristine_paths": [],
+  "upstream_commit": "9f7399e15e6172900e0591deb5a57a45769d8205",
+  "reproduction": {
+    "build_cmd": "cmake --build /build -j $SWESWEEP_BUILD_JOBS",
+    "build_timeout": 1800,
+    "jobs_env": "SWESWEEP_BUILD_JOBS"
+  },
+  "schema": 2,
+  "subtasks": [
+    {
+      "f2p": [
+        "ogr.ogr_sdts::test_ogr_sdts_1"
+      ],
+      "id": "gdal-006b8e03a33f",
+      "target_files": [
+        "frmts/sdts/sdtslinereader.cpp"
+      ]
+    },
+    {
+      "f2p": [
+        "utilities.test_gdalwarp_lib::test_gdalwarp_te_srs_check_extent"
+      ],
+      "id": "gdal-00cc4be4d0a2",
+      "target_files": [
+        "apps/gdalwarp_lib.cpp"
+      ]
+    },
+    {
+      "f2p": [
+        "utilities.test_gdalinfo_lib::test_gdalinfo_lib_nodata_full_precision_float64"
+      ],
+      "id": "gdal-014fe459d126",
+      "target_files": [
+        "apps/gdalinfo_lib.cpp"
+      ]
+    },
+    {
+      "f2p": [
+        "ogr.ogr_geojson::test_ogr_geojson_mixed_type_promotion[properties0]",
+        "ogr.ogr_geojson::test_ogr_geojson_mixed_type_promotion[properties1]",
+        "ogr.ogr_geojson::test_ogr_geojson_mixed_type_promotion[properties2]"
+      ],
+      "id": "gdal-046bdf7ea2b1",
+      "target_files": [
+        "ogr/ogrsf_frmts/geojson/ogrgeojsonreader.cpp"
+      ]
+    },
+    {
+      "f2p": [
+        "__process_level_failure__"
+      ],
+      "id": "gdal-0f209f8114d9",
+      "target_files": [
+        "apps/gdal_translate_lib.cpp"
+      ]
+    },
+    {
+      "f2p": [
+        "gdrivers.pds4::test_pds4_read_right_to_left"
+      ],
+      "id": "gdal-0f92097b1f96",
+      "target_files": [
+        "frmts/pds/pds4dataset.cpp"
+      ]
+    },
+    {
+      "f2p": [
+        "ogr.ogr_dxf::test_ogr_dxf_12"
+      ],
+      "id": "gdal-117d4b5060bb",
+      "target_files": [
+        "ogr/ogrsf_frmts/dxf/ogr_dxf.h",
+        "ogr/ogrsf_frmts/dxf/ogrdxfwriterds.cpp",
+        "ogr/ogrsf_frmts/dxf/ogrdxfwriterlayer.cpp"
+      ]
+    },
+    {
+      "f2p": [
+        "gdrivers.mrf::test_mrf_setspatialref"
+      ],
+      "id": "gdal-142747db21b5",
+      "target_files": [
+        "frmts/mrf/marfa.h"
+      ]
+    },
+    {
+      "f2p": [
+        "utilities.test_gdalwarp_lib::test_gdalwarp_lib_135"
+      ],
+      "id": "gdal-1ed37a29feee",
+      "target_files": [
+        "alg/gdalwarpkernel.cpp",
+        "apps/gdalwarp_lib.cpp"
+      ]
+    },
+    {
+      "f2p": [
+        "utilities.test_gdalwarp_lib::test_gdalwarp_lib_working_data_type_with_source_dataset_of_different_types"
+      ],
+      "id": "gdal-1ffea4d064fb",
+      "target_files": [
+        "alg/gdalwarper.cpp"
+      ]
+    },
+    {
+      "f2p": [
+        "__process_level_failure__"
+      ],
+      "id": "gdal-21f4a3ec2ba2",
+      "target_files": [
+        "ogr/ogrsf_frmts/mitab/mitab_feature.cpp"
+      ]
+    },
+    {
+      "f2p": [
+        "ogr.ogr_openfilegdb::test_ogr_openfilegdb_ilike"
+      ],
+      "id": "gdal-2200f505acc5",
+      "target_files": [
+        "ogr/ogrsf_frmts/openfilegdb/filegdbindex.cpp",
+        "ogr/ogrsf_frmts/openfilegdb/filegdbtable.h",
+        "ogr/ogrsf_frmts/openfilegdb/ogropenfilegdblayer.cpp"
+      ]
+    },
+    {
+      "f2p": [
+        "gdrivers.png::test_png_read_interlace_16_bit"
+      ],
+      "id": "gdal-22389fee67bc",
+      "target_files": [
+        "frmts/png/pngdataset.cpp"
+      ]
+    },
+    {
+      "f2p": [
+        "ogr.ogr_xlsx::test_ogr_xlsx_write_sheet_without_row"
+      ],
+      "id": "gdal-231f5e1235cb",
+      "target_files": [
+        "ogr/ogrsf_frmts/xlsx/ogr_xlsx.h",
+        "ogr/ogrsf_frmts/xlsx/ogrxlsxdatasource.cpp"
+      ]
+    },
+    {
+      "f2p": [
+        "utilities.test_gdalmdiminfo_lib::test_gdalmdiminfo_lib_null_string"
+      ],
+      "id": "gdal-27110150de2c",
+      "target_files": [
+        "apps/gdalmdiminfo_lib.cpp"
+      ]
+    },
+    {
+      "f2p": [
+        "gcore.tiff_srs::test_tiff_srs_projection_method_unknown_of_geotiff_with_crs_code",
+        "gcore.tiff_srs::test_tiff_srs_projection_method_unknown_of_geotiff_without_crs_code"
+      ],
+      "id": "gdal-2ca07c262bf8",
+      "target_files": [
+        "frmts/gtiff/gtiffdataset_write.cpp"
+      ]
+    },
+    {
+      "f2p": [
+        "gdrivers.vrtovr::test_vrtovr_anonymous_vrt"
+      ],
+      "id": "gdal-2ded60d7a181",
+      "target_files": [
+        "frmts/vrt/vrtrasterband.cpp",
+        "gcore/gdaldriver.cpp"
+      ]
+    },
+    {
+      "f2p": [
+        "ogr.ogr_sql_test::test_ogr_sql_28"
+      ],
+      "id": "gdal-306b6a7740f5",
+      "target_files": [
+        "ogr/ogrsf_frmts/generic/ogr_gensql.cpp",
+        "ogr/swq_select.cpp"
+      ]
+    },
+    {
+      "f2p": [
+        "ogr.ogr_gpkg::test_ogr_gpkg_arrow_stream_numpy"
+      ],
+      "id": "gdal-3086778cd72a",
+      "target_files": [
+        "ogr/ogrsf_frmts/gpkg/ogrgeopackagelayer.cpp",
+        "ogr/ogrsf_frmts/gpkg/ogrgeopackagetablelayer.cpp"
+      ]
+    },
+    {
+      "f2p": [
+        "utilities.test_gdal_rasterize_lib::test_gdal_rasterize_lib_inverse_nested_polygons"
+      ],
+      "id": "gdal-35f0ff7f356c",
+      "target_files": [
+        "apps/gdal_rasterize_lib.cpp"
+      ]
+    },
+    {
+      "f2p": [
+        "ogr.ogr_shape::test_ogr_shape_75"
+      ],
+      "id": "gdal-3918a30cafcd",
+      "target_files": [
+        "ogr/ogrsf_frmts/shape/ogrshape.h",
+        "ogr/ogrsf_frmts/shape/ogrshapedatasource.cpp",
+        "ogr/ogrsf_frmts/shape/ogrshapelayer.cpp"
+      ]
+    },
+    {
+      "f2p": [
+        "gdrivers.png::test_png_read_interlace_16_bit"
+      ],
+      "id": "gdal-3bd8d57ad655",
+      "target_files": [
+        "frmts/png/pngdataset.cpp"
+      ]
+    },
+    {
+      "f2p": [
+        "gcore.bmp_write::test_bmp_create_empty"
+      ],
+      "id": "gdal-424d521138b6",
+      "target_files": [
+        "frmts/bmp/bmpdataset.cpp"
+      ]
+    },
+    {
+      "f2p": [
+        "__process_level_failure__"
+      ],
+      "id": "gdal-44e37a15a6cf",
+      "target_files": [
+        "ogr/ogrsf_frmts/mitab/mitab_feature.cpp"
+      ]
+    },
+    {
+      "f2p": [
+        "ogr.ogr_gpkg::test_ogr_gpkg_creation_fid"
+      ],
+      "id": "gdal-45f004851fda",
+      "target_files": [
+        "ogr/ogrsf_frmts/gpkg/ogrgeopackagetablelayer.cpp"
+      ]
+    },
+    {
+      "f2p": [
+        "ogr.ogr_gml_read::test_ogr_gml_SWAP_COORDINATES_no_srs"
+      ],
+      "id": "gdal-4682a0e8a013",
+      "target_files": [
+        "ogr/ogrsf_frmts/gmlutils/gmlutils.cpp"
+      ]
+    },
+    {
+      "f2p": [
+        "utilities.test_gdalwarp_lib::test_gdalwarp_lib_geographic_outside_180_no_crs_change"
+      ],
+      "id": "gdal-4c8aab140a64",
+      "target_files": [
+        "alg/gdaltransformer.cpp"
+      ]
+    },
+    {
+      "f2p": [
+        "ogr.ogr_geojson::test_ogr_geojson_coordinate_precision"
+      ],
+      "id": "gdal-4d9083882a78",
+      "target_files": [
+        "ogr/ogrsf_frmts/geojson/ogrgeojsonwritelayer.cpp"
+      ]
+    },
+    {
+      "f2p": [
+        "utilities.test_gdalwarp_lib::test_gdalwarp_lib_135"
+      ],
+      "id": "gdal-504022e1901c",
+      "target_files": [
+        "alg/gdalwarpkernel.cpp",
+        "apps/gdalwarp_lib.cpp"
+      ]
+    },
+    {
+      "f2p": [
+        "utilities.test_gdalinfo_lib::test_gdalinfo_lib_json_proj_shape"
+      ],
+      "id": "gdal-539e9769dc6c",
+      "target_files": [
+        "apps/gdalinfo_lib.cpp"
+      ]
+    },
+    {
+      "f2p": [
+        "utilities.test_gdalwarp_lib::test_gdalwarp_lib_working_data_type_with_source_dataset_of_different_types"
+      ],
+      "id": "gdal-57efa1e4b4ab",
+      "target_files": [
+        "alg/gdalwarper.cpp"
+      ]
+    },
+    {
+      "f2p": [
+        "ogr.ogr_gml_geom::test_gml_export_compound_crs"
+      ],
+      "id": "gdal-5ce400c64f69",
+      "target_files": [
+        "ogr/ogr2gmlgeometry.cpp"
+      ]
+    },
+    {
+      "f2p": [
+        "ogr.ogr_gml_read::test_ogr_gml_SWAP_COORDINATES_no_srs"
+      ],
+      "id": "gdal-5f6e44b21f5f",
+      "target_files": [
+        "ogr/ogrsf_frmts/gmlutils/gmlutils.cpp"
+      ]
+    },
+    {
+      "f2p": [
+        "alg.warp::test_warp_average_oversampling"
+      ],
+      "id": "gdal-6717ca55be0c",
+      "target_files": [
+        "alg/gdalwarpkernel.cpp"
+      ]
+    },
+    {
+      "f2p": [
+        "ogr.ogr_sql_test::test_ogr_sql_attribute_filter_on_top_of_non_forward_where_clause[OGRSQL]"
+      ],
+      "id": "gdal-6b4837eba1e5",
+      "target_files": [
+        "ogr/ogrsf_frmts/generic/ogr_gensql.cpp",
+        "ogr/ogrsf_frmts/generic/ogr_gensql.h"
+      ]
+    },
+    {
+      "f2p": [
+        "ogr.ogr_geojson::test_ogr_geojson_51"
+      ],
+      "id": "gdal-7105d81a6103",
+      "target_files": [
+        "frmts/netcdf/netcdfsgwriterutil.cpp",
+        "frmts/netcdf/netcdfsgwriterutil.h",
+        "ogr/ogrsf_frmts/geojson/ogrgeojsonreader.cpp"
+      ]
+    },
+    {
+      "f2p": [
+        "utilities.test_gdalwarp_lib::test_gdalwarplib_on_huge_raster"
+      ],
+      "id": "gdal-71288fa5574e",
+      "target_files": [
+        "alg/gdaltransformer.cpp"
+      ]
+    },
+    {
+      "f2p": [
+        "osr.osr_ct_proj::test_transform_bounds_polar_to_webmercator"
+      ],
+      "id": "gdal-7421035a3c5d",
+      "target_files": [
+        "ogr/ogrct.cpp"
+      ]
+    },
+    {
+      "f2p": [
+        "ogr.ogr_csv::test_ogr_csv_read_header_with_line_break"
+      ],
+      "id": "gdal-75db3ff298af",
+      "target_files": [
+        "ogr/ogrsf_frmts/csv/ogrcsvlayer.cpp"
+      ]
+    },
+    {
+      "f2p": [
+        "__process_level_failure__"
+      ],
+      "id": "gdal-773b9bc02944",
+      "target_files": [
+        "gcore/gdalmultidim.cpp"
+      ]
+    },
+    {
+      "f2p": [
+        "ogr.ogr_geojsonseq::test_ogr_geojsonseq_vsigzip"
+      ],
+      "id": "gdal-789c1b646394",
+      "target_files": [
+        "ogr/ogrsf_frmts/geojson/ogrgeojsonseqdriver.cpp"
+      ]
+    },
+    {
+      "f2p": [
+        "ogr.ogr_sql_sqlite::test_ogr_sql_sqlite_json_each"
+      ],
+      "id": "gdal-7bb604ce2c54",
+      "target_files": [
+        "ogr/ogrsf_frmts/sqlite/ogrsqliteexecutesql.cpp"
+      ]
+    },
+    {
+      "f2p": [
+        "ogr.ogr_mitab::test_ogr_mitab_write_LCC_2SP_non_metre_unit[mif]",
+        "ogr.ogr_mitab::test_ogr_mitab_write_LCC_2SP_non_metre_unit[tab]"
+      ],
+      "id": "gdal-7c8b34554508",
+      "target_files": [
+        "ogr/ogrsf_frmts/mitab/mitab_spatialref.cpp"
+      ]
+    },
+    {
+      "f2p": [
+        "ogr.ogr_xlsx::test_ogr_xlsx_write_sheet_without_row"
+      ],
+      "id": "gdal-7ccad1918967",
+      "target_files": [
+        "ogr/ogrsf_frmts/xlsx/ogr_xlsx.h",
+        "ogr/ogrsf_frmts/xlsx/ogrxlsxdatasource.cpp"
+      ]
+    },
+    {
+      "f2p": [
+        "ogr.ogr_gpkg::test_ogr_gpkg_creation_fid"
+      ],
+      "id": "gdal-829fbcf7cf22",
+      "target_files": [
+        "ogr/ogrsf_frmts/gpkg/ogrgeopackagetablelayer.cpp"
+      ]
+    },
+    {
+      "f2p": [
+        "utilities.test_gdalwarp_lib::test_gdalwarp_lib_average_ten_ten_to_one_one"
+      ],
+      "id": "gdal-83c5ce57a20c",
+      "target_files": [
+        "alg/gdalwarpkernel.cpp"
+      ]
+    },
+    {
+      "f2p": [
+        "gdrivers.mrf::test_mrf_setspatialref"
+      ],
+      "id": "gdal-8726ac905a3f",
+      "target_files": [
+        "frmts/mrf/marfa.h"
+      ]
+    },
+    {
+      "f2p": [
+        "gcore.tiff_srs::test_tiff_srs_write_projected_3d_built_as_pseudo_compound"
+      ],
+      "id": "gdal-8a4bee4f8d2a",
+      "target_files": [
+        "frmts/gtiff/gtiffdataset_write.cpp"
+      ]
+    },
+    {
+      "f2p": [
+        "ogr.ogr_shape::test_ogr_shape_75"
+      ],
+      "id": "gdal-8deb4e1a2bc1",
+      "target_files": [
+        "ogr/ogrsf_frmts/shape/ogrshape.h",
+        "ogr/ogrsf_frmts/shape/ogrshapedatasource.cpp",
+        "ogr/ogrsf_frmts/shape/ogrshapelayer.cpp"
+      ]
+    },
+    {
+      "f2p": [
+        "ogr.ogr_fielddomain::test_delete_domain_assigned_to_field"
+      ],
+      "id": "gdal-958621826b96",
+      "target_files": [
+        "ogr/ogrsf_frmts/sqlite/ogrsqlitevirtualogr.cpp"
+      ]
+    },
+    {
+      "f2p": [
+        "gcore.bmp_read::test_bmp_open[bmp/red_rgb_1x1]"
+      ],
+      "id": "gdal-98e23cb90122",
+      "target_files": [
+        "frmts/bmp/bmpdataset.cpp"
+      ]
+    },
+    {
+      "f2p": [
+        "utilities.test_gdal_translate_lib::test_gdal_translate_ovr_rpc"
+      ],
+      "id": "gdal-a4fe26122837",
+      "target_files": [
+        "apps/gdal_translate_lib.cpp"
+      ]
+    },
+    {
+      "f2p": [
+        "ogr.ogr_openfilegdb_write::test_ogr_openfilegdb_write_freelist_scenario_issue_7504"
+      ],
+      "id": "gdal-a7cb51debb42",
+      "target_files": [
+        "ogr/ogrsf_frmts/openfilegdb/filegdbtable_write.cpp"
+      ]
+    },
+    {
+      "f2p": [
+        "gcore.vsizip::test_vsizip_4"
+      ],
+      "id": "gdal-a859743432e2",
+      "target_files": [
+        "port/cpl_vsil.cpp"
+      ]
+    },
+    {
+      "f2p": [
+        "__process_level_failure__"
+      ],
+      "id": "gdal-af647aafa367",
+      "target_files": [
+        "alg/gdalchecksum.cpp"
+      ]
+    },
+    {
+      "f2p": [
+        "gdrivers.aaigrid::test_aaigrid_starting_with_nan"
+      ],
+      "id": "gdal-b04821ff327c",
+      "target_files": [
+        "frmts/aaigrid/aaigriddataset.cpp"
+      ]
+    },
+    {
+      "f2p": [
+        "alg.rasterize::test_rasterize_bugfix_gh8437[1-options0-clockwise]",
+        "alg.rasterize::test_rasterize_bugfix_gh8437[1-options0-counterclockwise]",
+        "alg.rasterize::test_rasterize_bugfix_gh8437[1-options0-linestring]",
+        "alg.rasterize::test_rasterize_bugfix_gh8437[1-options2-clockwise]",
+        "alg.rasterize::test_rasterize_bugfix_gh8437[1-options2-counterclockwise]",
+        "alg.rasterize::test_rasterize_bugfix_gh8437[1-options2-linestring]",
+        "alg.rasterize::test_rasterize_bugfix_gh8437[2-options0-clockwise]",
+        "alg.rasterize::test_rasterize_bugfix_gh8437[2-options0-counterclockwise]",
+        "alg.rasterize::test_rasterize_bugfix_gh8437[2-options0-linestring]",
+        "alg.rasterize::test_rasterize_bugfix_gh8437[2-options2-clockwise]",
+        "alg.rasterize::test_rasterize_bugfix_gh8437[2-options2-counterclockwise]",
+        "alg.rasterize::test_rasterize_bugfix_gh8437[2-options2-linestring]"
+      ],
+      "id": "gdal-b3b735d2a02d",
+      "target_files": [
+        "alg/gdal_alg_priv.h",
+        "alg/gdalrasterize.cpp",
+        "alg/llrasterize.cpp"
+      ]
+    },
+    {
+      "f2p": [
+        "gcore.vrtmisc::test_vrtmisc_nodata_float32"
+      ],
+      "id": "gdal-b8a53b432511",
+      "target_files": [
+        "frmts/vrt/vrtrasterband.cpp",
+        "frmts/vrt/vrtsources.cpp"
+      ]
+    },
+    {
+      "f2p": [
+        "gdrivers.zmap::test_zmap_nodata"
+      ],
+      "id": "gdal-bde706831cd5",
+      "target_files": [
+        "frmts/zmap/zmapdataset.cpp"
+      ]
+    },
+    {
+      "f2p": [
+        "__process_level_failure__"
+      ],
+      "id": "gdal-c38033143519",
+      "target_files": [
+        "apps/gdal_translate_lib.cpp"
+      ]
+    },
+    {
+      "f2p": [
+        "ogr.ogr_geom::test_ogr_geomtransfomer_wrapdateline_geometrycollection",
+        "ogr.ogr_geom::test_ogr_geomtransfomer_wrapdateline_multipoint"
+      ],
+      "id": "gdal-cd56e6d8ae7a",
+      "target_files": [
+        "ogr/ogrgeometryfactory.cpp"
+      ]
+    },
+    {
+      "f2p": [
+        "ogr.ogr_openfilegdb::test_ogr_openfilegdb_ilike"
+      ],
+      "id": "gdal-cefd3547d91a",
+      "target_files": [
+        "ogr/ogrsf_frmts/openfilegdb/filegdbindex.cpp",
+        "ogr/ogrsf_frmts/openfilegdb/filegdbtable.h",
+        "ogr/ogrsf_frmts/openfilegdb/ogropenfilegdblayer.cpp"
+      ]
+    },
+    {
+      "f2p": [
+        "gcore.vrt_read::test_vrt_read_top_and_bottom_strips_average"
+      ],
+      "id": "gdal-cf0c25eb9ec4",
+      "target_files": [
+        "frmts/vrt/vrtdataset.cpp",
+        "frmts/vrt/vrtdataset.h",
+        "frmts/vrt/vrtsourcedrasterband.cpp"
+      ]
+    },
+    {
+      "f2p": [
+        "gcore.rasterio::test_rasterio_overview_subpixel_resampling"
+      ],
+      "id": "gdal-d1937d5d1ad1",
+      "target_files": [
+        "gcore/rasterio.cpp"
+      ]
+    },
+    {
+      "f2p": [
+        "ogr.ogr_openfilegdb_write::test_ogr_openfilegdb_write_freelist_scenario_issue_7504"
+      ],
+      "id": "gdal-d424863f5f51",
+      "target_files": [
+        "ogr/ogrsf_frmts/openfilegdb/filegdbtable_write.cpp"
+      ]
+    },
+    {
+      "f2p": [
+        "gdrivers.wmts::test_wmts_clip_extent_with_union_of_tile_matrix_extent"
+      ],
+      "id": "gdal-d49547f1a1be",
+      "target_files": [
+        "frmts/wmts/wmtsdataset.cpp"
+      ]
+    },
+    {
+      "f2p": [
+        "gcore.tiff_read::test_tiff_read_multi_threaded[False-100-100-3-1-creation_options5]",
+        "gcore.tiff_read::test_tiff_read_multi_threaded[True-100-100-3-1-creation_options2]"
+      ],
+      "id": "gdal-d8a8cd51d51b",
+      "target_files": [
+        "frmts/gtiff/gtiffdataset_read.cpp"
+      ]
+    },
+    {
+      "f2p": [
+        "utilities.test_gdalwarp_lib::test_gdalwarp_lib_average_ten_ten_to_one_one"
+      ],
+      "id": "gdal-df22e12654b3",
+      "target_files": [
+        "alg/gdalwarpkernel.cpp"
+      ]
+    },
+    {
+      "f2p": [
+        "gdrivers.jpeg::test_jpeg_read_arcgis_metadata_geodataxform_gcp"
+      ],
+      "id": "gdal-e6d023672560",
+      "target_files": [
+        "gcore/gdalpamdataset.cpp"
+      ]
+    },
+    {
+      "f2p": [
+        "ogr.ogr_sqlite::test_ogr_sqlite_unique"
+      ],
+      "id": "gdal-eff6ab423ab1",
+      "target_files": [
+        "ogr/ogrsf_frmts/sqlite/ogrsqliteutility.cpp"
+      ]
+    },
+    {
+      "f2p": [
+        "ogr.ogr_gpkg::test_ogr_gpkg_arrow_stream_numpy"
+      ],
+      "id": "gdal-f079f407aa45",
+      "target_files": [
+        "ogr/ogrsf_frmts/gpkg/ogrgeopackagelayer.cpp",
+        "ogr/ogrsf_frmts/gpkg/ogrgeopackagetablelayer.cpp"
+      ]
+    },
+    {
+      "f2p": [
+        "gcore.vsizip::test_vsizip_4"
+      ],
+      "id": "gdal-f72f1eda99e3",
+      "target_files": [
+        "port/cpl_vsil.cpp"
+      ]
+    }
+  ],
+  "task": "gdal",
+  "version": "3.6.2"
+}

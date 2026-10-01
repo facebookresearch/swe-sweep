@@ -1,0 +1,47 @@
+diff --git a/lib/utils/isAfterSingleLineComment.mjs b/lib/utils/isAfterSingleLineComment.mjs
+index 6d543296a..23e353fef 100644
+--- a/lib/utils/isAfterSingleLineComment.mjs
++++ b/lib/utils/isAfterSingleLineComment.mjs
+@@ -7,10 +7,12 @@ import isSharedLineComment from './isSharedLineComment.mjs';
+ export default function isAfterSingleLineComment(node) {
+ 	const prevNode = node.prev();
+ 
++	// A comment on the same line as `node` is still the comment `node` follows,
++	// so it's only shared when it also belongs to a preceding node or a block start.
+ 	return (
+ 		prevNode !== undefined &&
+ 		prevNode.type === 'comment' &&
+-		!isSharedLineComment(prevNode) &&
++		!isSharedLineComment(prevNode, node) &&
+ 		prevNode.source !== undefined &&
+ 		prevNode.source.start !== undefined &&
+ 		prevNode.source.end !== undefined &&
+diff --git a/lib/utils/isSharedLineComment.mjs b/lib/utils/isSharedLineComment.mjs
+index 4de27a35c..a405313bf 100644
+--- a/lib/utils/isSharedLineComment.mjs
++++ b/lib/utils/isSharedLineComment.mjs
+@@ -17,9 +17,10 @@ function nodesShareLines(a, b) {
+ 
+ /**
+  * @param {PostcssNode} node
++ * @param {PostcssNode} [ignoredNode] - a node that doesn't count as sharing a line with `node`
+  * @returns {boolean}
+  */
+-export default function isSharedLineComment(node) {
++export default function isSharedLineComment(node, ignoredNode) {
+ 	if (!isComment(node)) {
+ 		return false;
+ 	}
+@@ -32,7 +33,11 @@ export default function isSharedLineComment(node) {
+ 
+ 	const nextNonSharedLineCommentNode = getNextNonSharedLineCommentNode(node);
+ 
+-	if (nextNonSharedLineCommentNode && nodesShareLines(node, nextNonSharedLineCommentNode)) {
++	if (
++		nextNonSharedLineCommentNode &&
++		nextNonSharedLineCommentNode !== ignoredNode &&
++		nodesShareLines(node, nextNonSharedLineCommentNode)
++	) {
+ 		return true;
+ 	}
+ 

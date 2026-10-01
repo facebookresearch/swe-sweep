@@ -1,0 +1,34 @@
+diff --git a/pandas/tests/frame/methods/test_truncate.py b/pandas/tests/frame/methods/test_truncate.py
+index 210e860675..f2d6024000 100644
+--- a/pandas/tests/frame/methods/test_truncate.py
++++ b/pandas/tests/frame/methods/test_truncate.py
+@@ -148,3 +148,13 @@ class TestDataFrameTruncate:
+             expected = expected["col"]
+ 
+         tm.assert_equal(result, expected)
++
++    def test_truncate_index_only_one_unique_value(self, frame_or_series):
++        # GH 42365
++        obj = Series(0, index=date_range("2021-06-30", "2021-06-30")).repeat(5)
++        if frame_or_series is DataFrame:
++            obj = obj.to_frame(name="a")
++
++        truncated = obj.truncate("2021-06-28", "2021-07-01")
++
++        tm.assert_equal(truncated, obj)
+diff --git a/pandas/tests/series/methods/test_truncate.py b/pandas/tests/series/methods/test_truncate.py
+index ca5c3e2639..a3a27a744b 100644
+--- a/pandas/tests/series/methods/test_truncate.py
++++ b/pandas/tests/series/methods/test_truncate.py
+@@ -55,3 +55,11 @@ class TestTruncate:
+ 
+         # the input Series and the expected Series are the same
+         tm.assert_series_equal(result, series)
++
++    def test_truncate_index_only_one_unique_value(self):
++        # GH 42365
++        obj = Series(0, index=date_range("2021-06-30", "2021-06-30")).repeat(5)
++
++        truncated = obj.truncate("2021-06-28", "2021-07-01")
++
++        tm.assert_series_equal(truncated, obj)

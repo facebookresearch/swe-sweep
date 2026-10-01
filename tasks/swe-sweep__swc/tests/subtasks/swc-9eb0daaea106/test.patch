@@ -1,0 +1,142 @@
+diff --git a/crates/swc/tests/projects.rs b/crates/swc/tests/projects.rs
+index 6bc574741d..1ac31c3d8d 100644
+--- a/crates/swc/tests/projects.rs
++++ b/crates/swc/tests/projects.rs
+@@ -6,8 +6,8 @@ use std::{
+ use rayon::prelude::*;
+ use swc::{
+     config::{
+-        BuiltInput, Config, IsModule, JscConfig, ModuleConfig, Options, SourceMapsConfig,
+-        TransformConfig,
++        BuiltInput, Config, FileMatcher, IsModule, JscConfig, ModuleConfig, Options,
++        SourceMapsConfig, TransformConfig,
+     },
+     Compiler, TransformOutput,
+ };
+@@ -972,3 +972,97 @@ fn bom() {
+ fn json_schema() {
+     project("tests/projects/json-schema")
+ }
++
++#[test]
++fn issue_6009() {
++    // any of the files to not be excluded should contains
++    // `export function hello(){`
++    let files_to_not_excludes = ["input.ts"];
++    // file to be excluded should contain the pattern `.*.spec.ts`
++    let files_to_exclude = ["input.spec.ts"];
++
++    testing::run_test2(false, |cm, handler| {
++        let c = swc::Compiler::new(cm.clone());
++
++        let get_fm = |file_name: &str| {
++            let full_path_str = format!("{}{}", "tests/projects/issue-6009/", file_name);
++            let file_path = Path::new(&full_path_str);
++            cm.load_file(file_path).expect("failed to load file")
++        };
++
++        let get_options = |exclude: Option<FileMatcher>| Options {
++            config: Config {
++                exclude,
++                jsc: JscConfig {
++                    syntax: Some(Syntax::Typescript(TsConfig {
++                        ..Default::default()
++                    })),
++                    ..Default::default()
++                },
++                ..Default::default()
++            },
++            ..Default::default()
++        };
++
++        for file in files_to_not_excludes {
++            let result = c.process_js_file(
++                get_fm(file),
++                &handler,
++                &get_options(Some(FileMatcher::Regex(".*\\.spec.ts$".into()))),
++            );
++
++            match result {
++                Ok(r) => {
++                    assert!(
++                        r.code.contains("export function hello() {"),
++                        "Failed to compile! it doesn't contain the right code! `export function \
++                         hello() {{`"
++                    );
++                }
++                Err(out) => panic!("Failed to compile where it should not!\nErr:{:?}", out),
++            }
++        }
++
++        for file in files_to_exclude {
++            let fm = get_fm(file);
++            let options = get_options(Some(FileMatcher::Regex(".*\\.spec.ts$".into())));
++
++            let result = c.process_js_file(fm.clone(), &handler, &options);
++
++            match result {
++                Ok(out) => {
++                    panic!(
++                        "Expected to return an error because the file is being excluded. And that \
++                         didn't happen!\nTransformOutput: {:?}",
++                        out
++                    );
++                }
++                Err(err) => {
++                    let expected_error_msg = "failed to process input file";
++
++                    assert!(
++                        err.to_string().contains(expected_error_msg),
++                        "Not expected error! received: {}, expected: {}",
++                        &err.to_string(),
++                        expected_error_msg
++                    )
++                }
++            }
++
++            // test parsing input
++            let config = c
++                .parse_js_as_input(fm.clone(), None, &handler, &options, &fm.name, None, |_| {
++                    noop()
++                })
++                .unwrap();
++
++            assert!(
++                config.is_none(),
++                "config should be None when file excluded. But got a no None value instead!"
++            );
++        }
++
++        Ok(())
++    })
++    .unwrap()
++}
+diff --git a/crates/swc/tests/projects/issue-6009/input.spec.ts b/crates/swc/tests/projects/issue-6009/input.spec.ts
+new file mode 100644
+index 0000000000..117e19504b
+--- /dev/null
++++ b/crates/swc/tests/projects/issue-6009/input.spec.ts
+@@ -0,0 +1,10 @@
++/**
++ * The whole files is about testing exclude and test file matching through options
++ */
++import { hello } from './input';
++
++describe('This file gonna be ignored', () => {
++  test('hello return', () => {
++    expect(hello()).toBe('Hello SWC!');
++  });
++});
+\ No newline at end of file
+diff --git a/crates/swc/tests/projects/issue-6009/input.ts b/crates/swc/tests/projects/issue-6009/input.ts
+new file mode 100644
+index 0000000000..59dd322be2
+--- /dev/null
++++ b/crates/swc/tests/projects/issue-6009/input.ts
+@@ -0,0 +1,6 @@
++/**
++ * The whole files is about testing exclude and test file matching through options
++ */
++export function hello() {
++    return 'Hello SWC!';
++}

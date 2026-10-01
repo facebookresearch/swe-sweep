@@ -1,0 +1,53 @@
+diff --git a/tests/format/flow/parenthesis-return-type/__snapshots__/format.test.js.snap b/tests/format/flow/parenthesis-return-type/__snapshots__/format.test.js.snap
+new file mode 100644
+index 000000000..d00bc43b2
+--- /dev/null
++++ b/tests/format/flow/parenthesis-return-type/__snapshots__/format.test.js.snap
+@@ -0,0 +1,27 @@
++// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
++
++exports[`optional.js format 1`] = `
++====================================options=====================================
++parsers: ["flow"]
++printWidth: 80
++                                                                                | printWidth
++=====================================input======================================
++fun = (a: number): (?(string => string)) => {
++  return a > 0 ? s => \`\${s}: \${a}\` : null;
++};
++
++fun = (a: number): ?((string => string)) => {
++  return a > 0 ? s => \`\${s}: \${a}\` : null;
++};
++
++=====================================output=====================================
++fun = (a: number): (?(string) => string) => {
++  return a > 0 ? (s) => \`\${s}: \${a}\` : null;
++};
++
++fun = (a: number): (?(string) => string) => {
++  return a > 0 ? (s) => \`\${s}: \${a}\` : null;
++};
++
++================================================================================
++`;
+diff --git a/tests/format/flow/parenthesis-return-type/format.test.js b/tests/format/flow/parenthesis-return-type/format.test.js
+new file mode 100644
+index 000000000..55c339883
+--- /dev/null
++++ b/tests/format/flow/parenthesis-return-type/format.test.js
+@@ -0,0 +1 @@
++runFormatTest(import.meta, ["flow"]);
+diff --git a/tests/format/flow/parenthesis-return-type/optional.js b/tests/format/flow/parenthesis-return-type/optional.js
+new file mode 100644
+index 000000000..0bb086ad9
+--- /dev/null
++++ b/tests/format/flow/parenthesis-return-type/optional.js
+@@ -0,0 +1,7 @@
++fun = (a: number): (?(string => string)) => {
++  return a > 0 ? s => `${s}: ${a}` : null;
++};
++
++fun = (a: number): ?((string => string)) => {
++  return a > 0 ? s => `${s}: ${a}` : null;
++};

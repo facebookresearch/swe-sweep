@@ -1,0 +1,24 @@
+diff --git a/pulsar-client/src/main/java/org/apache/pulsar/client/impl/schema/generic/GenericProtobufNativeSchema.java b/pulsar-client/src/main/java/org/apache/pulsar/client/impl/schema/generic/GenericProtobufNativeSchema.java
+index 4ae2a21929a..62a36fee351 100644
+--- a/pulsar-client/src/main/java/org/apache/pulsar/client/impl/schema/generic/GenericProtobufNativeSchema.java
++++ b/pulsar-client/src/main/java/org/apache/pulsar/client/impl/schema/generic/GenericProtobufNativeSchema.java
+@@ -20,6 +20,7 @@ package org.apache.pulsar.client.impl.schema.generic;
+ 
+ import static org.apache.pulsar.client.impl.schema.generic.MultiVersionGenericProtobufNativeReader.parseProtobufSchema;
+ import com.google.protobuf.Descriptors;
++import java.util.Optional;
+ import java.util.stream.Collectors;
+ import lombok.extern.slf4j.Slf4j;
+ import org.apache.pulsar.client.api.schema.Field;
+@@ -68,6 +69,11 @@ public class GenericProtobufNativeSchema extends AbstractGenericSchema {
+         return descriptor;
+     }
+ 
++    @Override
++    public Optional<Object> getNativeSchema() {
++        return Optional.of(descriptor);
++    }
++
+     @Override
+     public boolean supportSchemaVersioning() {
+         return true;

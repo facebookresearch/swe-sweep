@@ -1,0 +1,30 @@
+diff --git a/crates/ruff_linter/resources/test/fixtures/flake8_bandit/S607.py b/crates/ruff_linter/resources/test/fixtures/flake8_bandit/S607.py
+index 0bcb8cae0a..3da5e2ba26 100644
+--- a/crates/ruff_linter/resources/test/fixtures/flake8_bandit/S607.py
++++ b/crates/ruff_linter/resources/test/fixtures/flake8_bandit/S607.py
+@@ -42,3 +42,8 @@ os.system("./bin/ls")
+ os.system(["/bin/ls"])
+ os.system(["/bin/ls", "/tmp"])
+ os.system(r"C:\\bin\ls")
++
++# Regression for https://github.com/astral-sh/ruff/issues/24075
++# Check that "partial path" checks tuples too
++import subprocess
++subprocess.run(("echo", "foo"))
+diff --git a/crates/ruff_linter/src/rules/flake8_bandit/snapshots/ruff_linter__rules__flake8_bandit__tests__S607_S607.py.snap b/crates/ruff_linter/src/rules/flake8_bandit/snapshots/ruff_linter__rules__flake8_bandit__tests__S607_S607.py.snap
+index 5cf617e75e..07984c590e 100644
+--- a/crates/ruff_linter/src/rules/flake8_bandit/snapshots/ruff_linter__rules__flake8_bandit__tests__S607_S607.py.snap
++++ b/crates/ruff_linter/src/rules/flake8_bandit/snapshots/ruff_linter__rules__flake8_bandit__tests__S607_S607.py.snap
+@@ -219,4 +219,12 @@ S607.py:37:14: S607 Starting a process with a partial executable path
+    |              ^^^^^^ S607
+ 38 | 
+ 39 | # Check it does not fail for full paths.
+    |
++
++S607.py:49:16: S607 Starting a process with a partial executable path
++   |
++47 | # Check that "partial path" checks tuples too
++48 | import subprocess
++49 | subprocess.run(("echo", "foo"))
++   |                ^^^^^^^^^^^^^^^ S607
++   |

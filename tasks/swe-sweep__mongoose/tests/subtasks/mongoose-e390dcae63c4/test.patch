@@ -1,0 +1,32 @@
+diff --git a/test/document.test.js b/test/document.test.js
+index 1e6c9ef7a..7c46635df 100644
+--- a/test/document.test.js
++++ b/test/document.test.js
+@@ -11881,6 +11881,27 @@ describe('document', function() {
+     const addedDoc = await Model.findOne({ name: 'Test' });
+     assert.strictEqual(addedDoc.count, 1);
+   });
++
++  it('should allow storing keys with dots in name in mixed under nested (gh-13530)', async function() {
++    const TestModelSchema = new mongoose.Schema({
++      metadata:
++        {
++          labels: mongoose.Schema.Types.Mixed
++        }
++    });
++    const TestModel = db.model('Test', TestModelSchema);
++    const { _id } = await TestModel.create({
++      metadata: {
++        labels: { 'my.label.com': 'true' }
++      }
++    });
++    const doc = await TestModel.findById(_id).lean();
++    assert.deepStrictEqual(doc.metadata, {
++      labels: {
++        'my.label.com': 'true'
++      }
++    });
++  });
+ });
+ 
+ describe('Check if instance function that is supplied in schema option is availabe', function() {

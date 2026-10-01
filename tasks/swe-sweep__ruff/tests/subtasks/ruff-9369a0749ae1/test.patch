@@ -1,0 +1,93 @@
+diff --git a/crates/ruff_linter/resources/test/fixtures/flake8_type_checking/TC008_union_syntax_pre_py310.py b/crates/ruff_linter/resources/test/fixtures/flake8_type_checking/TC008_union_syntax_pre_py310.py
+new file mode 100644
+index 0000000000..f9229a1bd4
+--- /dev/null
++++ b/crates/ruff_linter/resources/test/fixtures/flake8_type_checking/TC008_union_syntax_pre_py310.py
+@@ -0,0 +1,12 @@
++from __future__ import annotations
++
++from typing import Annotated, TypeAlias, TYPE_CHECKING
++
++a: TypeAlias = 'int | None'  # OK
++b: TypeAlias = 'Annotated[int, 1 | 2]'  # False negative in runtime context
++
++if TYPE_CHECKING:
++    c: TypeAlias = 'int | None'  # OK
++    d: TypeAlias = 'Annotated[int, 1 | 2]'  # TC008
++    e: TypeAlias = 'Annotated[int, 1 + 2]'  # TC008
++    f: TypeAlias = 'dict[str, int | None]'  # OK
+diff --git a/crates/ruff_linter/src/rules/flake8_type_checking/mod.rs b/crates/ruff_linter/src/rules/flake8_type_checking/mod.rs
+index 3535901c90..ae376b3f14 100644
+--- a/crates/ruff_linter/src/rules/flake8_type_checking/mod.rs
++++ b/crates/ruff_linter/src/rules/flake8_type_checking/mod.rs
+@@ -81,6 +81,24 @@ mod tests {
+         Ok(())
+     }
+ 
++    #[test_case(Rule::QuotedTypeAlias, Path::new("TC008_union_syntax_pre_py310.py"))]
++    fn type_alias_rules_pre_py310(rule_code: Rule, path: &Path) -> Result<()> {
++        let snapshot = format!(
++            "pre_py310_{}_{}",
++            rule_code.as_ref(),
++            path.to_string_lossy()
++        );
++        let diagnostics = test_path(
++            Path::new("flake8_type_checking").join(path).as_path(),
++            &settings::LinterSettings {
++                target_version: settings::types::PythonVersion::Py39,
++                ..settings::LinterSettings::for_rule(rule_code)
++            },
++        )?;
++        assert_messages!(snapshot, diagnostics);
++        Ok(())
++    }
++
+     #[test_case(Rule::RuntimeImportInTypeCheckingBlock, Path::new("quote.py"))]
+     #[test_case(Rule::TypingOnlyThirdPartyImport, Path::new("quote.py"))]
+     #[test_case(Rule::RuntimeImportInTypeCheckingBlock, Path::new("quote2.py"))]
+diff --git a/crates/ruff_linter/src/rules/flake8_type_checking/snapshots/ruff_linter__rules__flake8_type_checking__tests__pre_py310_quoted-type-alias_TC008_union_syntax_pre_py310.py.snap b/crates/ruff_linter/src/rules/flake8_type_checking/snapshots/ruff_linter__rules__flake8_type_checking__tests__pre_py310_quoted-type-alias_TC008_union_syntax_pre_py310.py.snap
+new file mode 100644
+index 0000000000..3d1c97799b
+--- /dev/null
++++ b/crates/ruff_linter/src/rules/flake8_type_checking/snapshots/ruff_linter__rules__flake8_type_checking__tests__pre_py310_quoted-type-alias_TC008_union_syntax_pre_py310.py.snap
+@@ -0,0 +1,40 @@
++---
++source: crates/ruff_linter/src/rules/flake8_type_checking/mod.rs
++---
++TC008_union_syntax_pre_py310.py:10:20: TC008 [*] Remove quotes from type alias
++   |
++ 8 | if TYPE_CHECKING:
++ 9 |     c: TypeAlias = 'int | None'  # OK
++10 |     d: TypeAlias = 'Annotated[int, 1 | 2]'  # TC008
++   |                    ^^^^^^^^^^^^^^^^^^^^^^^ TC008
++11 |     e: TypeAlias = 'Annotated[int, 1 + 2]'  # TC008
++12 |     f: TypeAlias = 'dict[str, int | None]'  # OK
++   |
++   = help: Remove quotes
++
++ℹ Safe fix
++7  7  | 
++8  8  | if TYPE_CHECKING:
++9  9  |     c: TypeAlias = 'int | None'  # OK
++10    |-    d: TypeAlias = 'Annotated[int, 1 | 2]'  # TC008
++   10 |+    d: TypeAlias = Annotated[int, 1 | 2]  # TC008
++11 11 |     e: TypeAlias = 'Annotated[int, 1 + 2]'  # TC008
++12 12 |     f: TypeAlias = 'dict[str, int | None]'  # OK
++
++TC008_union_syntax_pre_py310.py:11:20: TC008 [*] Remove quotes from type alias
++   |
++ 9 |     c: TypeAlias = 'int | None'  # OK
++10 |     d: TypeAlias = 'Annotated[int, 1 | 2]'  # TC008
++11 |     e: TypeAlias = 'Annotated[int, 1 + 2]'  # TC008
++   |                    ^^^^^^^^^^^^^^^^^^^^^^^ TC008
++12 |     f: TypeAlias = 'dict[str, int | None]'  # OK
++   |
++   = help: Remove quotes
++
++ℹ Safe fix
++8  8  | if TYPE_CHECKING:
++9  9  |     c: TypeAlias = 'int | None'  # OK
++10 10 |     d: TypeAlias = 'Annotated[int, 1 | 2]'  # TC008
++11    |-    e: TypeAlias = 'Annotated[int, 1 + 2]'  # TC008
++   11 |+    e: TypeAlias = Annotated[int, 1 + 2]  # TC008
++12 12 |     f: TypeAlias = 'dict[str, int | None]'  # OK

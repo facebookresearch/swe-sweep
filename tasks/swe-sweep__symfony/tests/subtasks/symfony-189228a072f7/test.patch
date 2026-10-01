@@ -1,0 +1,22 @@
+diff --git a/src/Symfony/Component/Routing/Tests/Matcher/UrlMatcherTest.php b/src/Symfony/Component/Routing/Tests/Matcher/UrlMatcherTest.php
+index fcc2eda113c..12e09bdf139 100644
+--- a/src/Symfony/Component/Routing/Tests/Matcher/UrlMatcherTest.php
++++ b/src/Symfony/Component/Routing/Tests/Matcher/UrlMatcherTest.php
+@@ -22,6 +22,17 @@ use Symfony\Component\Routing\RouteCollection;
+ 
+ class UrlMatcherTest extends TestCase
+ {
++    public function testZero()
++    {
++        $coll = new RouteCollection();
++        $coll->add('index', new Route('/'));
++
++        $matcher = $this->getUrlMatcher($coll);
++
++        $this->expectException(ResourceNotFoundException::class);
++        $matcher->match('0');
++    }
++
+     public function testNoMethodSoAllowed()
+     {
+         $coll = new RouteCollection();

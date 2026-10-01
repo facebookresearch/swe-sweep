@@ -1,0 +1,44 @@
+diff --git a/xarray/tests/test_dataarray.py b/xarray/tests/test_dataarray.py
+index 04112a16..f3413ea4 100644
+--- a/xarray/tests/test_dataarray.py
++++ b/xarray/tests/test_dataarray.py
+@@ -29,6 +29,7 @@ from xarray.core.utils import is_scalar
+ from xarray.tests import (
+     ReturnItem,
+     assert_allclose,
++    InaccessibleArray,
+     assert_array_equal,
+     assert_chunks_equal,
+     assert_equal,
+@@ -4226,7 +4227,7 @@ class TestReduce1D(TestReduce):
+         with pytest.raises(ValueError):
+             xr.DataArray(5).idxmin()
+ 
+-        coordarr0 = xr.DataArray(ar0.coords["x"], dims=["x"])
++        coordarr0 = xr.DataArray(ar0.coords["x"].data, dims=["x"])
+         coordarr1 = coordarr0.copy()
+ 
+         hasna = np.isnan(minindex)
+@@ -4332,7 +4333,7 @@ class TestReduce1D(TestReduce):
+         with pytest.raises(ValueError):
+             xr.DataArray(5).idxmax()
+ 
+-        coordarr0 = xr.DataArray(ar0.coords["x"], dims=["x"])
++        coordarr0 = xr.DataArray(ar0.coords["x"].data, dims=["x"])
+         coordarr1 = coordarr0.copy()
+ 
+         hasna = np.isnan(maxindex)
+@@ -6760,3 +6761,13 @@ class TestStackEllipsis:
+         da = DataArray([[1, 2], [1, 2]], dims=("x", "y"))
+         with pytest.raises(ValueError):
+             da.stack(flat=...)
++
++
++def test_lazy_data_variable_not_loaded():
++    # GH8753
++    array = InaccessibleArray(np.array([1, 2, 3]))
++    v = Variable(data=array, dims="x")
++    # No data needs to be accessed, so no error should be raised
++    da = xr.DataArray(v)
++    # No data needs to be accessed, so no error should be raised
++    xr.DataArray(da)

@@ -1,0 +1,16 @@
+diff --git a/pandas/tests/frame/methods/test_combine_first.py b/pandas/tests/frame/methods/test_combine_first.py
+index 9b9c3f8827..156e50d50a 100644
+--- a/pandas/tests/frame/methods/test_combine_first.py
++++ b/pandas/tests/frame/methods/test_combine_first.py
+@@ -492,3 +492,11 @@ def test_combine_preserve_dtypes():
+     )
+     combined = df1.combine_first(df2)
+     tm.assert_frame_equal(combined, expected)
++
++
++def test_combine_first_empty_columns():
++    left = DataFrame(columns=["a", "b"])
++    right = DataFrame(columns=["a", "c"])
++    result = left.combine_first(right)
++    expected = DataFrame(columns=["a", "b", "c"])
++    tm.assert_frame_equal(result, expected)

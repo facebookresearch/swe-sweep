@@ -1,0 +1,53 @@
+diff --git a/tests/stdlib/tmarshal.nim b/tests/stdlib/tmarshal.nim
+index f972332a2..32991ccc9 100644
+--- a/tests/stdlib/tmarshal.nim
++++ b/tests/stdlib/tmarshal.nim
+@@ -1,4 +1,5 @@
+ import std/marshal
++import std/streams
+ 
+ # TODO: add static tests
+ 
+@@ -146,3 +147,42 @@ block:
+ 
+   let a: ref A = new(B)
+   doAssert $$a[] == "{}" # not "{f: 0}"
++
++# bug #16496
++block:
++  type
++    A = ref object
++      data: seq[int]
++
++    B = ref object
++      x: A
++  let o = A(data: @[1, 2, 3, 4])
++  let s1 = @[B(x: o), B(x: o)]
++  let m  = $$ s1
++  let s2 = to[seq[B]](m)
++  doAssert s2[0].x.data == s2[1].x.data
++  doAssert s1[0].x.data == s2[1].x.data
++
++
++block:
++  type
++    Obj = ref object
++      i: int
++      b: bool
++
++  let
++    strm = newStringStream()
++
++  var
++    o = Obj(i: 1, b: false)
++    t1 = @[o, o]
++    t2: seq[Obj]
++
++  doAssert t1[0] == t1[1]
++
++  strm.store(t1)
++  strm.setPosition(0)
++  strm.load(t2)
++  strm.close()
++
++  doAssert t2[0] == t2[1]

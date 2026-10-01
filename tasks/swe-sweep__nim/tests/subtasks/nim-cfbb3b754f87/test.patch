@@ -1,0 +1,19 @@
+diff --git a/tests/closure/tclosure.nim b/tests/closure/tclosure.nim
+index fa1f79ffe..401a71d40 100644
+--- a/tests/closure/tclosure.nim
++++ b/tests/closure/tclosure.nim
+@@ -491,3 +491,14 @@ block tnoclosure:
+       row = zip(row & @[0], @[0] & row).mapIt(it[0] + it[1])
+     echo row
+   pascal(10)
++
++block: # bug #22297
++  iterator f: int {.closure.} =
++    try:
++      yield 12
++    finally:
++      return 14
++
++  let s = f
++  doAssert s() == 12
++  doAssert s() == 14

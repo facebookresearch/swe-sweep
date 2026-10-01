@@ -1,0 +1,15 @@
+diff --git a/compiler/sempass2.nim b/compiler/sempass2.nim
+index fc9755aa2..b58d08a01 100644
+--- a/compiler/sempass2.nim
++++ b/compiler/sempass2.nim
+@@ -86,6 +86,9 @@ proc max(a, b: TLockLevel): TLockLevel {.borrow.}
+ 
+ proc createTypeBoundOps(tracked: PEffects, typ: PType; info: TLineInfo) =
+-  if typ == nil: return
++  if typ == nil or sfGeneratedOp in tracked.owner.flags:
++    # don't create type bound ops for anything in a function with a `nodestroy` pragma
++    # bug #21987
++    return
+   when false:
+     let realType = typ.skipTypes(abstractInst)
+     if realType.kind == tyRef and

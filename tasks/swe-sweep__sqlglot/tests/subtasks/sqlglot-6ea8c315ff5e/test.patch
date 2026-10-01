@@ -1,0 +1,12 @@
+diff --git a/tests/dialects/test_tsql.py b/tests/dialects/test_tsql.py
+index 7564317447..3f61493e42 100644
+--- a/tests/dialects/test_tsql.py
++++ b/tests/dialects/test_tsql.py
+@@ -19,6 +19,7 @@ class TestTSQL(Validator):
+ 
+         self.validate_identity("CREATE view a.b.c", "CREATE VIEW b.c")
+         self.validate_identity("DROP view a.b.c", "DROP VIEW b.c")
++        self.validate_identity("CEILING(2)")
+         self.validate_identity("ROUND(x, 1, 0)")
+         self.validate_identity("EXEC MyProc @id=7, @name='Lochristi'", check_command_warning=True)
+         self.validate_identity("SELECT TRIM('     test    ') AS Result")

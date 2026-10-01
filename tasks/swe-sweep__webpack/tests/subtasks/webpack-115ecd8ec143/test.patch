@@ -1,0 +1,32 @@
+diff --git a/test/configCases/parsing/issue-14545/index.js b/test/configCases/parsing/issue-14545/index.js
+new file mode 100644
+index 000000000..afaf9c0ba
+--- /dev/null
++++ b/test/configCases/parsing/issue-14545/index.js
+@@ -0,0 +1,4 @@
++it("should generate valid code when 'require' encounters object shorthand syntax", function() {
++	expect(require("./module").obj.require).toEqual(require("./module").obj.r);
++	expect(require("./module").obj.require).toBeTypeOf("function");
++});
+diff --git a/test/configCases/parsing/issue-14545/module.js b/test/configCases/parsing/issue-14545/module.js
+new file mode 100644
+index 000000000..0b7649cbf
+--- /dev/null
++++ b/test/configCases/parsing/issue-14545/module.js
+@@ -0,0 +1 @@
++export const obj = {require, r: require}
+diff --git a/test/configCases/parsing/issue-14545/webpack.config.js b/test/configCases/parsing/issue-14545/webpack.config.js
+new file mode 100644
+index 000000000..91e80ba3b
+--- /dev/null
++++ b/test/configCases/parsing/issue-14545/webpack.config.js
+@@ -0,0 +1,9 @@
++/** @type {import("../../../../").Configuration} */
++module.exports = {
++	module: {
++		unknownContextRegExp: /^\.\//,
++		unknownContextCritical: false,
++		exprContextRegExp: /^\.\//,
++		exprContextCritical: false
++	}
++};

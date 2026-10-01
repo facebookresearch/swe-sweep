@@ -1,0 +1,72 @@
+diff --git a/mypy/constraints.py b/mypy/constraints.py
+index a8fa114e6..cfb627e9f 100644
+--- a/mypy/constraints.py
++++ b/mypy/constraints.py
+@@ -816,7 +816,7 @@ class ConstraintBuilderVisitor(TypeVisitor[list[Constraint]]):
+         if isinstance(actual, Overloaded) and actual.fallback is not None:
+             actual = actual.fallback
+         if isinstance(actual, TypedDictType):
+-            actual = actual.as_anonymous().fallback
++            actual = actual.create_anonymous_fallback()
+         if isinstance(actual, LiteralType):
+             actual = actual.fallback
+         if isinstance(actual, Instance):
+diff --git a/mypy/meet.py b/mypy/meet.py
+index c11d7d5d1..365544d45 100644
+--- a/mypy/meet.py
++++ b/mypy/meet.py
+@@ -1263,7 +1263,7 @@ def typed_dict_mapping_overlap(
+     key_type, value_type = get_proper_types(other.args)
+ 
+     # TODO: is there a cleaner way to get str_type here?
+-    fallback = typed.as_anonymous().fallback
++    fallback = typed.create_anonymous_fallback()
+     str_type = fallback.type.bases[0].args[0]  # typing._TypedDict inherits Mapping[str, object]
+ 
+     # Special case: a TypedDict with no required keys overlaps with an empty dict.
+diff --git a/mypy/plugins/default.py b/mypy/plugins/default.py
+index 47387530d..a994a3a80 100644
+--- a/mypy/plugins/default.py
++++ b/mypy/plugins/default.py
+@@ -479,8 +479,9 @@ def typed_dict_update_signature_callback(ctx: MethodSigContext) -> CallableType:
+         arg_type = get_proper_type(signature.arg_types[0])
+         if not isinstance(arg_type, TypedDictType):
+             return signature
+-        arg_type = arg_type.as_anonymous()
+-        arg_type = arg_type.copy_modified(required_keys=set())
++        arg_type = ctx.type.copy_modified(
++            fallback=arg_type.create_anonymous_fallback(), required_keys=set()
++        )
+         if ctx.args and ctx.args[0]:
+             if signature.name in _TP_DICT_MUTATING_METHODS:
+                 # If we want to mutate this object in place, we need to set this flag,
+diff --git a/mypy/types.py b/mypy/types.py
+index 207e87984..494d65cd0 100644
+--- a/mypy/types.py
++++ b/mypy/types.py
+@@ -3080,11 +3080,11 @@ class TypedDictType(ProperType):
+     def is_anonymous(self) -> bool:
+         return self.fallback.type.fullname in TPDICT_FB_NAMES
+ 
+-    def as_anonymous(self) -> TypedDictType:
++    def create_anonymous_fallback(self) -> Instance:
+         if self.is_anonymous():
+-            return self
++            return self.fallback
+         assert self.fallback.type.typeddict_type is not None
+-        return self.fallback.type.typeddict_type.as_anonymous()
++        return self.fallback.type.typeddict_type.create_anonymous_fallback()
+ 
+     def copy_modified(
+         self,
+@@ -3110,10 +3110,6 @@ class TypedDictType(ProperType):
+             required_keys &= set(item_names)
+         return TypedDictType(items, required_keys, readonly_keys, fallback, self.line, self.column)
+ 
+-    def create_anonymous_fallback(self) -> Instance:
+-        anonymous = self.as_anonymous()
+-        return anonymous.fallback
+-
+     def names_are_wider_than(self, other: TypedDictType) -> bool:
+         return len(other.items.keys() - self.items.keys()) == 0
+ 

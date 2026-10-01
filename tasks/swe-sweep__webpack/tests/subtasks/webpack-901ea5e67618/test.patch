@@ -1,0 +1,21 @@
+diff --git a/test/cases/parsing/issue-14610/index.js b/test/cases/parsing/issue-14610/index.js
+new file mode 100644
+index 000000000..bdbeb6fbd
+--- /dev/null
++++ b/test/cases/parsing/issue-14610/index.js
+@@ -0,0 +1,4 @@
++it("should keep parentheses when replacing", () => {
++	// prettier-ignore
++	expect(new (require("./module")).Thing(42).property).toBe(42)
++});
+diff --git a/test/cases/parsing/issue-14610/module.js b/test/cases/parsing/issue-14610/module.js
+new file mode 100644
+index 000000000..d53236711
+--- /dev/null
++++ b/test/cases/parsing/issue-14610/module.js
+@@ -0,0 +1,5 @@
++export class Thing {
++	constructor(p) {
++		this.property = p;
++	}
++}

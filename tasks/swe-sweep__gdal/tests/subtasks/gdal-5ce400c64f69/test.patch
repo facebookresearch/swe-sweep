@@ -1,0 +1,33 @@
+diff --git a/autotest/ogr/ogr_gml_geom.py b/autotest/ogr/ogr_gml_geom.py
+index 39ea41c84f..0923106752 100755
+--- a/autotest/ogr/ogr_gml_geom.py
++++ b/autotest/ogr/ogr_gml_geom.py
+@@ -2841,3 +2841,28 @@
+     </gml:Surface>"""
+     )
+     assert g is not None
++
++
++###############################################################################
++#
++
++
++@pytest.mark.require_proj(8, 0)
++def test_gml_export_compound_crs():
++
++    srs = osr.SpatialReference()
++    srs.ImportFromEPSG(9518)  #  WGS 84 + EGM2008 height
++    wkt = "POINT (30 10 5)"
++    geometry = ogr.CreateGeometryFromWkt(wkt, srs)
++    gml = geometry.ExportToGML(
++        options=[
++            "FORMAT=GML32",
++            "SRSDIMENSION_LOC=GEOMETRY",
++            "SRSNAME_FORMAT=SHORT",
++            "GMLID=TestPoint-1",
++        ]
++    )
++    assert (
++        gml
++        == '<gml:Point srsName="EPSG:9518" srsDimension="3" gml:id="TestPoint-1"><gml:pos>30 10 5</gml:pos></gml:Point>'
++    )

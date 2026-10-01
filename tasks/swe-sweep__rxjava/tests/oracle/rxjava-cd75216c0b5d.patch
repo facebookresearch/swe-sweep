@@ -1,0 +1,78 @@
+diff --git a/src/main/java/io/reactivex/internal/operators/flowable/FlowableMergeWithCompletable.java b/src/main/java/io/reactivex/internal/operators/flowable/FlowableMergeWithCompletable.java
+index 271bd9c50..c65386bbb 100644
+--- a/src/main/java/io/reactivex/internal/operators/flowable/FlowableMergeWithCompletable.java
++++ b/src/main/java/io/reactivex/internal/operators/flowable/FlowableMergeWithCompletable.java
+@@ -86,7 +86,7 @@ public final class FlowableMergeWithCompletable<T> extends AbstractFlowableWithU
+ 
+         @Override
+         public void onError(Throwable ex) {
+-            SubscriptionHelper.cancel(mainSubscription);
++            DisposableHelper.dispose(otherObserver);
+             HalfSerializer.onError(downstream, ex, this, error);
+         }
+ 
+diff --git a/src/main/java/io/reactivex/internal/operators/flowable/FlowableMergeWithMaybe.java b/src/main/java/io/reactivex/internal/operators/flowable/FlowableMergeWithMaybe.java
+index a32a0c92f..1787d5fce 100644
+--- a/src/main/java/io/reactivex/internal/operators/flowable/FlowableMergeWithMaybe.java
++++ b/src/main/java/io/reactivex/internal/operators/flowable/FlowableMergeWithMaybe.java
+@@ -143,7 +143,7 @@ public final class FlowableMergeWithMaybe<T> extends AbstractFlowableWithUpstrea
+         @Override
+         public void onError(Throwable ex) {
+             if (error.addThrowable(ex)) {
+-                SubscriptionHelper.cancel(mainSubscription);
++                DisposableHelper.dispose(otherObserver);
+                 drain();
+             } else {
+                 RxJavaPlugins.onError(ex);
+diff --git a/src/main/java/io/reactivex/internal/operators/flowable/FlowableMergeWithSingle.java b/src/main/java/io/reactivex/internal/operators/flowable/FlowableMergeWithSingle.java
+index 586bc07c0..486cb73f8 100644
+--- a/src/main/java/io/reactivex/internal/operators/flowable/FlowableMergeWithSingle.java
++++ b/src/main/java/io/reactivex/internal/operators/flowable/FlowableMergeWithSingle.java
+@@ -143,7 +143,7 @@ public final class FlowableMergeWithSingle<T> extends AbstractFlowableWithUpstre
+         @Override
+         public void onError(Throwable ex) {
+             if (error.addThrowable(ex)) {
+-                SubscriptionHelper.cancel(mainSubscription);
++                DisposableHelper.dispose(otherObserver);
+                 drain();
+             } else {
+                 RxJavaPlugins.onError(ex);
+diff --git a/src/main/java/io/reactivex/internal/operators/observable/ObservableMergeWithCompletable.java b/src/main/java/io/reactivex/internal/operators/observable/ObservableMergeWithCompletable.java
+index fa020b6ae..3b9e64906 100644
+--- a/src/main/java/io/reactivex/internal/operators/observable/ObservableMergeWithCompletable.java
++++ b/src/main/java/io/reactivex/internal/operators/observable/ObservableMergeWithCompletable.java
+@@ -80,7 +80,7 @@ public final class ObservableMergeWithCompletable<T> extends AbstractObservableW
+ 
+         @Override
+         public void onError(Throwable ex) {
+-            DisposableHelper.dispose(mainDisposable);
++            DisposableHelper.dispose(otherObserver);
+             HalfSerializer.onError(downstream, ex, this, error);
+         }
+ 
+diff --git a/src/main/java/io/reactivex/internal/operators/observable/ObservableMergeWithMaybe.java b/src/main/java/io/reactivex/internal/operators/observable/ObservableMergeWithMaybe.java
+index 23b2532d9..e7caad3b2 100644
+--- a/src/main/java/io/reactivex/internal/operators/observable/ObservableMergeWithMaybe.java
++++ b/src/main/java/io/reactivex/internal/operators/observable/ObservableMergeWithMaybe.java
+@@ -106,7 +106,7 @@ public final class ObservableMergeWithMaybe<T> extends AbstractObservableWithUps
+         @Override
+         public void onError(Throwable ex) {
+             if (error.addThrowable(ex)) {
+-                DisposableHelper.dispose(mainDisposable);
++                DisposableHelper.dispose(otherObserver);
+                 drain();
+             } else {
+                 RxJavaPlugins.onError(ex);
+diff --git a/src/main/java/io/reactivex/internal/operators/observable/ObservableMergeWithSingle.java b/src/main/java/io/reactivex/internal/operators/observable/ObservableMergeWithSingle.java
+index 20c4d21b5..7332a29a2 100644
+--- a/src/main/java/io/reactivex/internal/operators/observable/ObservableMergeWithSingle.java
++++ b/src/main/java/io/reactivex/internal/operators/observable/ObservableMergeWithSingle.java
+@@ -106,7 +106,7 @@ public final class ObservableMergeWithSingle<T> extends AbstractObservableWithUp
+         @Override
+         public void onError(Throwable ex) {
+             if (error.addThrowable(ex)) {
+-                DisposableHelper.dispose(mainDisposable);
++                DisposableHelper.dispose(otherObserver);
+                 drain();
+             } else {
+                 RxJavaPlugins.onError(ex);

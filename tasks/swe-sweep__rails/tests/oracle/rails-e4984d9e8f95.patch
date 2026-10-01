@@ -1,0 +1,13 @@
+diff --git a/activerecord/lib/active_record/associations/collection_association.rb b/activerecord/lib/active_record/associations/collection_association.rb
+index 3d11116d405..2c88adb7b99 100644
+--- a/activerecord/lib/active_record/associations/collection_association.rb
++++ b/activerecord/lib/active_record/associations/collection_association.rb
+@@ -87,7 +87,7 @@ module ActiveRecord
+       def reset
+         super
+         @target = []
+-        @replaced_or_added_targets = Set.new
++        @replaced_or_added_targets = Set.new.compare_by_identity
+         @association_ids = nil
+       end
+ 

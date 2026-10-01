@@ -1,0 +1,62 @@
+diff --git a/modules/openapi-generator/src/main/java/org/openapitools/codegen/languages/SpringCodegen.java b/modules/openapi-generator/src/main/java/org/openapitools/codegen/languages/SpringCodegen.java
+index fedf18da115..d9900d22664 100644
+--- a/modules/openapi-generator/src/main/java/org/openapitools/codegen/languages/SpringCodegen.java
++++ b/modules/openapi-generator/src/main/java/org/openapitools/codegen/languages/SpringCodegen.java
+@@ -669,7 +669,12 @@ public class SpringCodegen extends AbstractJavaCodegen
+             additionalProperties.put(RESPONSE_WRAPPER, "CompletableFuture");
+         }
+         if (reactive) {
+-            additionalProperties.put(RESPONSE_WRAPPER, "Mono");
++            // The response wrapper when Reactive is enabled must depend on the return type:
++            // Flux<X> when X is an array
++            // Mono<X> otherwise
++            // But there are corner cases when also using response entity.
++            // When reactive is enabled, all this is managed in the mustache templates.
++            additionalProperties.put(RESPONSE_WRAPPER, "");
+         }
+ 
+         // Some well-known Spring or Spring-Cloud response wrappers
+diff --git a/modules/openapi-generator/src/main/resources/JavaSpring/libraries/spring-http-interface/api.mustache b/modules/openapi-generator/src/main/resources/JavaSpring/libraries/spring-http-interface/api.mustache
+index fecd5259ec1..33a1ec0b183 100644
+--- a/modules/openapi-generator/src/main/resources/JavaSpring/libraries/spring-http-interface/api.mustache
++++ b/modules/openapi-generator/src/main/resources/JavaSpring/libraries/spring-http-interface/api.mustache
+@@ -57,7 +57,7 @@ public interface {{classname}} {
+         accept = "{{{vendorExtensions.x-accepts}}}"{{/vendorExtensions.x-accepts}}{{#vendorExtensions.x-content-type}},
+         contentType = "{{{vendorExtensions.x-content-type}}}"{{/vendorExtensions.x-content-type}}
+     )
+-    {{#responseWrapper}}{{.}}<{{/responseWrapper}}ResponseEntity<{{>returnTypes}}>{{#responseWrapper}}>{{/responseWrapper}} {{operationId}}(
++    {{>responseType}} {{operationId}}(
+         {{#allParams}}{{>queryParams}}{{>pathParams}}{{>headerParams}}{{>bodyParams}}{{>formParams}}{{>cookieParams}}{{^-last}},
+         {{/-last}}{{/allParams}}
+     ){{#unhandledException}} throws Exception{{/unhandledException}};
+diff --git a/modules/openapi-generator/src/main/resources/JavaSpring/methodBody.mustache b/modules/openapi-generator/src/main/resources/JavaSpring/methodBody.mustache
+index df3c53532a1..bbbc66de397 100644
+--- a/modules/openapi-generator/src/main/resources/JavaSpring/methodBody.mustache
++++ b/modules/openapi-generator/src/main/resources/JavaSpring/methodBody.mustache
+@@ -50,7 +50,7 @@ Mono<Void> result = Mono.empty();
+ {{^examples}}
+         exchange.getResponse().setStatusCode({{#returnSuccessCode}}HttpStatus.OK{{/returnSuccessCode}}{{^returnSuccessCode}}HttpStatus.NOT_IMPLEMENTED{{/returnSuccessCode}});
+ {{/examples}}
+-        return result{{#allParams}}{{#isBodyParam}}{{^isArray}}{{#paramName}}.then({{.}}){{/paramName}}{{/isArray}}{{#isArray}}{{#paramName}}.thenMany({{.}}){{/paramName}}{{/isArray}}{{/isBodyParam}}{{/allParams}}.then(Mono.empty());
++        return result{{#allParams}}{{#isBodyParam}}{{^isArray}}{{#paramName}}.then({{.}}){{/paramName}}{{/isArray}}{{#isArray}}{{#paramName}}.thenMany({{.}}){{/paramName}}{{/isArray}}{{/isBodyParam}}{{/allParams}}{{#isArray}}{{#useResponseEntity}}.then(Mono.empty()){{/useResponseEntity}}{{^useResponseEntity}}.thenMany(Flux.empty()){{/useResponseEntity}}{{/isArray}}{{^isArray}}.then(Mono.empty()){{/isArray}};
+ {{/vendorExtensions.x-sse}}
+ {{#vendorExtensions.x-sse}}
+ exchange.getResponse().setStatusCode({{#returnSuccessCode}}HttpStatus.valueOf({{{statusCode}}}){{/returnSuccessCode}}{{^returnSuccessCode}}HttpStatus.NOT_IMPLEMENTED{{/returnSuccessCode}});
+diff --git a/modules/openapi-generator/src/main/resources/JavaSpring/responseType.mustache b/modules/openapi-generator/src/main/resources/JavaSpring/responseType.mustache
+index 4bea517eed6..a25da6310b5 100644
+--- a/modules/openapi-generator/src/main/resources/JavaSpring/responseType.mustache
++++ b/modules/openapi-generator/src/main/resources/JavaSpring/responseType.mustache
+@@ -1 +1 @@
+-{{^vendorExtensions.x-sse}}{{#responseWrapper}}{{.}}<{{/responseWrapper}}{{#useResponseEntity}}ResponseEntity<{{/useResponseEntity}}{{>returnTypes}}{{#useResponseEntity}}>{{/useResponseEntity}}{{#responseWrapper}}>{{/responseWrapper}}{{/vendorExtensions.x-sse}}{{#vendorExtensions.x-sse}}{{>returnTypes}}{{/vendorExtensions.x-sse}}
+\ No newline at end of file
++{{^vendorExtensions.x-sse}}{{#reactive}}{{#useResponseEntity}}Mono<ResponseEntity<{{#isArray}}Flux<{{/isArray}}{{>returnTypes}}{{#isArray}}>{{/isArray}}>>{{/useResponseEntity}}{{^useResponseEntity}}{{#isArray}}Flux{{/isArray}}{{^isArray}}Mono{{/isArray}}<{{>returnTypes}}>{{/useResponseEntity}}{{/reactive}}{{^reactive}}{{#responseWrapper}}{{.}}<{{/responseWrapper}}{{#useResponseEntity}}ResponseEntity<{{/useResponseEntity}}{{>returnTypes}}{{#useResponseEntity}}>{{/useResponseEntity}}{{#responseWrapper}}>{{/responseWrapper}}{{/reactive}}{{/vendorExtensions.x-sse}}{{#vendorExtensions.x-sse}}{{#isArray}}Flux{{/isArray}}{{^isArray}}Mono{{/isArray}}<{{>returnTypes}}>{{/vendorExtensions.x-sse}}
+\ No newline at end of file
+diff --git a/modules/openapi-generator/src/main/resources/JavaSpring/returnTypes.mustache b/modules/openapi-generator/src/main/resources/JavaSpring/returnTypes.mustache
+index 3e29bdcf7b7..70bad00b884 100644
+--- a/modules/openapi-generator/src/main/resources/JavaSpring/returnTypes.mustache
++++ b/modules/openapi-generator/src/main/resources/JavaSpring/returnTypes.mustache
+@@ -1 +1 @@
+-{{#isMap}}Map<String, {{{returnType}}}>{{/isMap}}{{#isArray}}{{#reactive}}Flux{{/reactive}}{{^reactive}}{{{returnContainer}}}{{/reactive}}<{{{returnType}}}>{{/isArray}}{{^returnContainer}}{{#useResponseEntity}}{{{returnType}}}{{/useResponseEntity}}{{^useResponseEntity}}{{#isDelegate}}{{#isVoid}}{{#responseWrapper}}{{{returnType}}}{{/responseWrapper}}{{^responseWrapper}}void{{/responseWrapper}}{{/isVoid}}{{^isVoid}}{{{returnType}}}{{/isVoid}}{{/isDelegate}}{{^isDelegate}}{{#async}}{{{returnType}}}{{/async}}{{^async}}{{#isVoid}}{{#responseWrapper}}{{{returnType}}}{{/responseWrapper}}{{^responseWrapper}}void{{/responseWrapper}}{{/isVoid}}{{^isVoid}}{{{returnType}}}{{/isVoid}}{{/async}}{{/isDelegate}}{{/useResponseEntity}}{{/returnContainer}}
+\ No newline at end of file
++{{#isMap}}Map<String, {{{returnType}}}>{{/isMap}}{{#isArray}}{{#reactive}}{{{returnType}}}{{/reactive}}{{^reactive}}{{{returnContainer}}}<{{{returnType}}}>{{/reactive}}{{/isArray}}{{^returnContainer}}{{#useResponseEntity}}{{{returnType}}}{{/useResponseEntity}}{{^useResponseEntity}}{{#isDelegate}}{{#isVoid}}{{#responseWrapper}}{{{returnType}}}{{/responseWrapper}}{{^responseWrapper}}void{{/responseWrapper}}{{/isVoid}}{{^isVoid}}{{{returnType}}}{{/isVoid}}{{/isDelegate}}{{^isDelegate}}{{#async}}{{{returnType}}}{{/async}}{{^async}}{{#isVoid}}{{#responseWrapper}}{{{returnType}}}{{/responseWrapper}}{{^responseWrapper}}void{{/responseWrapper}}{{/isVoid}}{{^isVoid}}{{{returnType}}}{{/isVoid}}{{/async}}{{/isDelegate}}{{/useResponseEntity}}{{/returnContainer}}
+\ No newline at end of file

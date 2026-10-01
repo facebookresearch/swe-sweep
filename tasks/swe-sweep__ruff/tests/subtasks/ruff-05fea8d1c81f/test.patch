@@ -1,0 +1,223 @@
+diff --git a/crates/ruff_linter/resources/test/fixtures/pylint/sys_exit_alias_13.py b/crates/ruff_linter/resources/test/fixtures/pylint/sys_exit_alias_13.py
+new file mode 100644
+index 0000000000..a461695a0c
+--- /dev/null
++++ b/crates/ruff_linter/resources/test/fixtures/pylint/sys_exit_alias_13.py
+@@ -0,0 +1,2 @@
++exit(code=2)
++
+diff --git a/crates/ruff_linter/resources/test/fixtures/pylint/sys_exit_alias_14.py b/crates/ruff_linter/resources/test/fixtures/pylint/sys_exit_alias_14.py
+new file mode 100644
+index 0000000000..172959e683
+--- /dev/null
++++ b/crates/ruff_linter/resources/test/fixtures/pylint/sys_exit_alias_14.py
+@@ -0,0 +1,2 @@
++code = {"code": 2}
++exit(**code)
+diff --git a/crates/ruff_linter/resources/test/fixtures/pylint/sys_exit_alias_15.py b/crates/ruff_linter/resources/test/fixtures/pylint/sys_exit_alias_15.py
+new file mode 100644
+index 0000000000..173cf421a1
+--- /dev/null
++++ b/crates/ruff_linter/resources/test/fixtures/pylint/sys_exit_alias_15.py
+@@ -0,0 +1,6 @@
++success = True
++if success:
++    code = 0
++else:
++    code = 1
++exit(code)
+diff --git a/crates/ruff_linter/resources/test/fixtures/pylint/sys_exit_alias_16.py b/crates/ruff_linter/resources/test/fixtures/pylint/sys_exit_alias_16.py
+new file mode 100644
+index 0000000000..9a85db81cb
+--- /dev/null
++++ b/crates/ruff_linter/resources/test/fixtures/pylint/sys_exit_alias_16.py
+@@ -0,0 +1,23 @@
++def test_case_1():
++    # comments preserved with a positional argument
++    exit(  # comment
++        1,  # 2
++    )  # 3
++
++
++def test_case_2():
++    # comments preserved with a single keyword argument
++    exit(  # comment
++        code=1,  # 2
++    )  # 3
++
++
++def test_case_3():
++    # no diagnostic for multiple arguments
++    exit(2, 3, 4)
++
++
++def test_case_4():
++    # this should now be fixable
++    codes = [1]
++    exit(*codes)
+diff --git a/crates/ruff_linter/src/rules/pylint/mod.rs b/crates/ruff_linter/src/rules/pylint/mod.rs
+index b2ea774201..32ec558580 100644
+--- a/crates/ruff_linter/src/rules/pylint/mod.rs
++++ b/crates/ruff_linter/src/rules/pylint/mod.rs
+@@ -64,6 +64,10 @@ mod tests {
+     #[test_case(Rule::SysExitAlias, Path::new("sys_exit_alias_10.py"))]
+     #[test_case(Rule::SysExitAlias, Path::new("sys_exit_alias_11.py"))]
+     #[test_case(Rule::SysExitAlias, Path::new("sys_exit_alias_12.py"))]
++    #[test_case(Rule::SysExitAlias, Path::new("sys_exit_alias_13.py"))]
++    #[test_case(Rule::SysExitAlias, Path::new("sys_exit_alias_14.py"))]
++    #[test_case(Rule::SysExitAlias, Path::new("sys_exit_alias_15.py"))]
++    #[test_case(Rule::SysExitAlias, Path::new("sys_exit_alias_16.py"))]
+     #[test_case(Rule::ContinueInFinally, Path::new("continue_in_finally.py"))]
+     #[test_case(Rule::GlobalStatement, Path::new("global_statement.py"))]
+     #[test_case(
+diff --git a/crates/ruff_linter/src/rules/pylint/snapshots/ruff_linter__rules__pylint__tests__PLR1722_sys_exit_alias_13.py.snap b/crates/ruff_linter/src/rules/pylint/snapshots/ruff_linter__rules__pylint__tests__PLR1722_sys_exit_alias_13.py.snap
+new file mode 100644
+index 0000000000..ecca433ff9
+--- /dev/null
++++ b/crates/ruff_linter/src/rules/pylint/snapshots/ruff_linter__rules__pylint__tests__PLR1722_sys_exit_alias_13.py.snap
+@@ -0,0 +1,15 @@
++---
++source: crates/ruff_linter/src/rules/pylint/mod.rs
++---
++sys_exit_alias_13.py:1:1: PLR1722 [*] Use `sys.exit()` instead of `exit`
++  |
++1 | exit(code=2)
++  | ^^^^ PLR1722
++  |
++  = help: Replace `exit` with `sys.exit()`
++
++ℹ Unsafe fix
++1   |-exit(code=2)
++  1 |+import sys
++  2 |+sys.exit(2)
++2 3 |
+diff --git a/crates/ruff_linter/src/rules/pylint/snapshots/ruff_linter__rules__pylint__tests__PLR1722_sys_exit_alias_14.py.snap b/crates/ruff_linter/src/rules/pylint/snapshots/ruff_linter__rules__pylint__tests__PLR1722_sys_exit_alias_14.py.snap
+new file mode 100644
+index 0000000000..208d3ee4f7
+--- /dev/null
++++ b/crates/ruff_linter/src/rules/pylint/snapshots/ruff_linter__rules__pylint__tests__PLR1722_sys_exit_alias_14.py.snap
+@@ -0,0 +1,10 @@
++---
++source: crates/ruff_linter/src/rules/pylint/mod.rs
++---
++sys_exit_alias_14.py:2:1: PLR1722 Use `sys.exit()` instead of `exit`
++  |
++1 | code = {"code": 2}
++2 | exit(**code)
++  | ^^^^ PLR1722
++  |
++  = help: Replace `exit` with `sys.exit()`
+diff --git a/crates/ruff_linter/src/rules/pylint/snapshots/ruff_linter__rules__pylint__tests__PLR1722_sys_exit_alias_15.py.snap b/crates/ruff_linter/src/rules/pylint/snapshots/ruff_linter__rules__pylint__tests__PLR1722_sys_exit_alias_15.py.snap
+new file mode 100644
+index 0000000000..f0c8b0d054
+--- /dev/null
++++ b/crates/ruff_linter/src/rules/pylint/snapshots/ruff_linter__rules__pylint__tests__PLR1722_sys_exit_alias_15.py.snap
+@@ -0,0 +1,21 @@
++---
++source: crates/ruff_linter/src/rules/pylint/mod.rs
++---
++sys_exit_alias_15.py:6:1: PLR1722 [*] Use `sys.exit()` instead of `exit`
++  |
++4 | else:
++5 |     code = 1
++6 | exit(code)
++  | ^^^^ PLR1722
++  |
++  = help: Replace `exit` with `sys.exit()`
++
++ℹ Unsafe fix
++  1 |+import sys
++1 2 | success = True
++2 3 | if success:
++3 4 |     code = 0
++4 5 | else:
++5 6 |     code = 1
++6   |-exit(code)
++  7 |+sys.exit(code)
+diff --git a/crates/ruff_linter/src/rules/pylint/snapshots/ruff_linter__rules__pylint__tests__PLR1722_sys_exit_alias_16.py.snap b/crates/ruff_linter/src/rules/pylint/snapshots/ruff_linter__rules__pylint__tests__PLR1722_sys_exit_alias_16.py.snap
+new file mode 100644
+index 0000000000..1e8b7d377f
+--- /dev/null
++++ b/crates/ruff_linter/src/rules/pylint/snapshots/ruff_linter__rules__pylint__tests__PLR1722_sys_exit_alias_16.py.snap
+@@ -0,0 +1,81 @@
++---
++source: crates/ruff_linter/src/rules/pylint/mod.rs
++---
++sys_exit_alias_16.py:3:5: PLR1722 [*] Use `sys.exit()` instead of `exit`
++  |
++1 | def test_case_1():
++2 |     # comments preserved with a positional argument
++3 |     exit(  # comment
++  |     ^^^^ PLR1722
++4 |         1,  # 2
++5 |     )  # 3
++  |
++  = help: Replace `exit` with `sys.exit()`
++
++ℹ Unsafe fix
++  1 |+import sys
++1 2 | def test_case_1():
++2 3 |     # comments preserved with a positional argument
++3   |-    exit(  # comment
++  4 |+    sys.exit(  # comment
++4 5 |         1,  # 2
++5 6 |     )  # 3
++6 7 | 
++
++sys_exit_alias_16.py:10:5: PLR1722 [*] Use `sys.exit()` instead of `exit`
++   |
++ 8 | def test_case_2():
++ 9 |     # comments preserved with a single keyword argument
++10 |     exit(  # comment
++   |     ^^^^ PLR1722
++11 |         code=1,  # 2
++12 |     )  # 3
++   |
++   = help: Replace `exit` with `sys.exit()`
++
++ℹ Unsafe fix
++   1  |+import sys
++1  2  | def test_case_1():
++2  3  |     # comments preserved with a positional argument
++3  4  |     exit(  # comment
++--------------------------------------------------------------------------------
++7  8  | 
++8  9  | def test_case_2():
++9  10 |     # comments preserved with a single keyword argument
++10    |-    exit(  # comment
++11    |-        code=1,  # 2
++   11 |+    sys.exit(  # comment
++   12 |+        1,  # 2
++12 13 |     )  # 3
++13 14 | 
++14 15 | 
++
++sys_exit_alias_16.py:17:5: PLR1722 Use `sys.exit()` instead of `exit`
++   |
++15 | def test_case_3():
++16 |     # no diagnostic for multiple arguments
++17 |     exit(2, 3, 4)
++   |     ^^^^ PLR1722
++   |
++   = help: Replace `exit` with `sys.exit()`
++
++sys_exit_alias_16.py:23:5: PLR1722 [*] Use `sys.exit()` instead of `exit`
++   |
++21 |     # this should now be fixable
++22 |     codes = [1]
++23 |     exit(*codes)
++   |     ^^^^ PLR1722
++   |
++   = help: Replace `exit` with `sys.exit()`
++
++ℹ Unsafe fix
++   1  |+import sys
++1  2  | def test_case_1():
++2  3  |     # comments preserved with a positional argument
++3  4  |     exit(  # comment
++--------------------------------------------------------------------------------
++20 21 | def test_case_4():
++21 22 |     # this should now be fixable
++22 23 |     codes = [1]
++23    |-    exit(*codes)
++   24 |+    sys.exit(*codes)

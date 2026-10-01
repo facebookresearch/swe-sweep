@@ -1,0 +1,12 @@
+diff --git a/compiler/src/dmd/parse.d b/compiler/src/dmd/parse.d
+index 06630b721f..edec44c90c 100644
+--- a/compiler/src/dmd/parse.d
++++ b/compiler/src/dmd/parse.d
+@@ -491,6 +491,7 @@ class Parser(AST, Lexer = dmd.lexer.Lexer) : Lexer
+                  */
+                 if (mod.isRoot() && (global.params.useUnitTests || global.params.ddoc.doOutput || global.params.dihdr.doOutput))
+                 {
++                    linkage = LINK.d; // unittests have D linkage
+                     s = parseUnitTest(pAttrs);
+                     if (*pLastDecl)
+                         (*pLastDecl).ddocUnittest = cast(AST.UnitTestDeclaration)s;

@@ -1,0 +1,23 @@
+diff --git a/pkg/analysis_server/test/src/services/correction/fix/add_explicit_cast_test.dart b/pkg/analysis_server/test/src/services/correction/fix/add_explicit_cast_test.dart
+index da38eecaba1..13711ff84a3 100644
+--- a/pkg/analysis_server/test/src/services/correction/fix/add_explicit_cast_test.dart
++++ b/pkg/analysis_server/test/src/services/correction/fix/add_explicit_cast_test.dart
+@@ -632,4 +632,18 @@ void foo(int a) {
+       },
+     );
+   }
++
++  Future<void> test_postfixIncrement_argumentNotAssignable() async {
++    List;
++    await resolveTestCode('''
++void f(A a) {
++  a++;
++}
++
++class A {
++  A operator +(String _) => this;
++}
++''');
++    await assertNoFix();
++  }
+ }

@@ -1,0 +1,13 @@
+diff --git a/src/parser/tableref/joinref.cpp b/src/parser/tableref/joinref.cpp
+index a7477a3f5e..9e9a70dda3 100644
+--- a/src/parser/tableref/joinref.cpp
++++ b/src/parser/tableref/joinref.cpp
+@@ -43,7 +43,7 @@ string JoinRef::ToString() const {
+ 			if (i > 0) {
+ 				result += ", ";
+ 			}
+-			result += using_columns[i];
++			result += KeywordHelper::WriteOptionallyQuoted(using_columns[i]);
+ 		}
+ 		result += ")";
+ 	}

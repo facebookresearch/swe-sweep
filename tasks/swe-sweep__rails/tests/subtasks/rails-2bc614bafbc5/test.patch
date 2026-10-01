@@ -1,0 +1,13 @@
+diff --git a/activerecord/test/cases/serialized_attribute_test.rb b/activerecord/test/cases/serialized_attribute_test.rb
+index 7b56f0491d9..8ece5b9479e 100644
+--- a/activerecord/test/cases/serialized_attribute_test.rb
++++ b/activerecord/test/cases/serialized_attribute_test.rb
+@@ -219,7 +219,7 @@ class SerializedAttributeTest < ActiveRecord::TestCase
+     settings = { "color" => "green" }
+     Topic.serialize(:content, Hash)
+     topic = Topic.create!(content: settings)
+-    assert_equal topic, Topic.where(content: [settings]).take
++    assert_equal topic, Topic.where(content: [settings, { "herring" => "red" }]).take
+   end
+ 
+   def test_serialized_default_class

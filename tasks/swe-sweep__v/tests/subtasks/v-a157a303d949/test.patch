@@ -1,0 +1,28 @@
+diff --git a/vlib/v/fmt/tests/extra_par_expr_expected.vv b/vlib/v/fmt/tests/extra_par_expr_expected.vv
+index 3c953d758..b0e6f762c 100644
+--- a/vlib/v/fmt/tests/extra_par_expr_expected.vv
++++ b/vlib/v/fmt/tests/extra_par_expr_expected.vv
+@@ -1,4 +1,9 @@
+ fn main() {
++	x := 3
++	_ := &x
++	_ := &x
++	_ := &x
++
+ 	_, _ := (22 > 11), (43 > 22)
+ 	_ := (10 + 11)
+ 	_ := (11 * 2)
+diff --git a/vlib/v/fmt/tests/extra_par_expr_input.vv b/vlib/v/fmt/tests/extra_par_expr_input.vv
+index 449071e3d..ffcd978b0 100644
+--- a/vlib/v/fmt/tests/extra_par_expr_input.vv
++++ b/vlib/v/fmt/tests/extra_par_expr_input.vv
+@@ -1,4 +1,9 @@
+ fn main() {
++	x := 3
++	_ := &((x))
++	_ := &(((x)))
++	_ := &((((x))))
++
+ 	_, _ := (((22 > 11))), (43 > 22)
+ 	_ := ((10 + 11))
+ 	_ := ((((((11 * 2))))))

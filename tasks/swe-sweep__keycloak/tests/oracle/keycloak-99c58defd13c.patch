@@ -1,0 +1,12 @@
+diff --git a/services/src/main/java/org/keycloak/services/clientpolicy/condition/ClientRolesCondition.java b/services/src/main/java/org/keycloak/services/clientpolicy/condition/ClientRolesCondition.java
+index 8dccc27fe6..c7fc19962f 100644
+--- a/services/src/main/java/org/keycloak/services/clientpolicy/condition/ClientRolesCondition.java
++++ b/services/src/main/java/org/keycloak/services/clientpolicy/condition/ClientRolesCondition.java
+@@ -90,6 +90,7 @@ public class ClientRolesCondition extends AbstractClientPolicyConditionProvider<
+             case BACKCHANNEL_TOKEN_RESPONSE:
+             case PUSHED_AUTHORIZATION_REQUEST:
+             case REGISTERED:
++            case UPDATE:
+             case UPDATED:
+             case SAML_AUTHN_REQUEST:
+             case SAML_LOGOUT_REQUEST:

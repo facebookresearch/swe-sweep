@@ -1,0 +1,17 @@
+diff --git a/src/theory/arith/arith_rewriter.cpp b/src/theory/arith/arith_rewriter.cpp
+index 266c432646..7ff5eb9b42 100644
+--- a/src/theory/arith/arith_rewriter.cpp
++++ b/src/theory/arith/arith_rewriter.cpp
+@@ -552,9 +552,9 @@ RewriteResponse ArithRewriter::rewriteDiv(TNode t, bool pre)
+     }
+     if (rewriter::isRAN(left))
+     {
+-      return RewriteResponse(
+-          REWRITE_DONE,
+-          nm->mkRealAlgebraicNumber(rewriter::getRAN(left) / den));
++      return RewriteResponse(REWRITE_DONE,
++                             rewriter::ensureReal(nm->mkRealAlgebraicNumber(
++                                 rewriter::getRAN(left) / den)));
+     }
+ 
+     Node result = nm->mkConstReal(den.inverse());

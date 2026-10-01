@@ -1,0 +1,49 @@
+diff --git a/src/Symfony/Component/Form/Tests/Extension/Core/DataMapper/DataMapperTest.php b/src/Symfony/Component/Form/Tests/Extension/Core/DataMapper/DataMapperTest.php
+index c119d665b85..c4a271cd03f 100644
+--- a/src/Symfony/Component/Form/Tests/Extension/Core/DataMapper/DataMapperTest.php
++++ b/src/Symfony/Component/Form/Tests/Extension/Core/DataMapper/DataMapperTest.php
+@@ -17,6 +17,8 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+ use Symfony\Component\Form\Extension\Core\DataAccessor\PropertyPathAccessor;
+ use Symfony\Component\Form\Extension\Core\DataMapper\DataMapper;
+ use Symfony\Component\Form\Extension\Core\Type\DateType;
++use Symfony\Component\Form\Extension\Core\Type\FormType;
++use Symfony\Component\Form\Extension\Core\Type\TextType;
+ use Symfony\Component\Form\Form;
+ use Symfony\Component\Form\FormConfigBuilder;
+ use Symfony\Component\Form\FormFactoryBuilder;
+@@ -419,6 +421,25 @@ class DataMapperTest extends TestCase
+ 
+         $this->assertEquals(['date' => new \DateTime('2022-08-04', new \DateTimeZone('UTC'))], $form->getData());
+     }
++
++    public function testMapFormToDataWithOnlyGetterConfigured()
++    {
++        $person = new DummyPerson('foo');
++        $form = (new FormFactoryBuilder())
++            ->getFormFactory()
++            ->createBuilder(FormType::class, $person)
++            ->add('name', TextType::class, [
++                'getter' => function (DummyPerson $person) {
++                    return $person->myName();
++                },
++            ])
++            ->getForm();
++        $form->submit([
++            'name' => 'bar',
++        ]);
++
++        $this->assertSame('bar', $person->myName());
++    }
+ }
+ 
+ class SubmittedForm extends Form
+@@ -455,4 +476,9 @@ class DummyPerson
+     {
+         $this->name = $name;
+     }
++
++    public function setName($name): void
++    {
++        $this->name = $name;
++    }
+ }

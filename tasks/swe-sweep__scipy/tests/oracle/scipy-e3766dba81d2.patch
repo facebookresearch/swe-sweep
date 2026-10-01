@@ -1,0 +1,12 @@
+diff --git a/scipy/sparse/lil.py b/scipy/sparse/lil.py
+index d0323a9c22..b559001038 100644
+--- a/scipy/sparse/lil.py
++++ b/scipy/sparse/lil.py
+@@ -362,6 +362,7 @@ class lil_matrix(spmatrix, IndexMixin):
+     def __truediv__(self, other):           # self / other
+         if isscalarlike(other):
+             new = self.copy()
++            new.dtype = np.result_type(self, other)
+             # Divide every element by this scalar
+             for j, rowvals in enumerate(new.data):
+                 new.data[j] = [val/other for val in rowvals]

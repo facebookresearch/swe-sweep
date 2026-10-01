@@ -1,0 +1,28 @@
+diff --git a/astropy/units/tests/test_format.py b/astropy/units/tests/test_format.py
+index 75f5a96b5b..a0a6398634 100644
+--- a/astropy/units/tests/test_format.py
++++ b/astropy/units/tests/test_format.py
+@@ -788,3 +788,23 @@ def test_parse_error_message_for_output_only_format(format_):
+ def test_unknown_parser():
+     with pytest.raises(ValueError, match=r"Unknown.*unicode'\] for output only"):
+         u.Unit("m", format="foo")
++
++
++@pytest.mark.parametrize(
++    "format_spec, expected_mantissa",
++    [
++        ("", "1"),
++        (".1g", "1"),
++        (".3g", "1"),
++        (".1e", "1.0"),
++        (".1f", "1.0"),
++        (".3e", "1.000"),
++    ],
++)
++def test_format_latex_one(format_spec, expected_mantissa):
++    # see https://github.com/astropy/astropy/issues/12571
++    from astropy.units.format.utils import split_mantissa_exponent
++
++    m, ex = split_mantissa_exponent(1, format_spec)
++    assert ex == ""
++    assert m == expected_mantissa

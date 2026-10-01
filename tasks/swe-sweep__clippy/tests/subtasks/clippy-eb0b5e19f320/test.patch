@@ -1,0 +1,151 @@
+diff --git a/tests/ui/borrow_deref_ref.fixed b/tests/ui/borrow_deref_ref.fixed
+index 765dd75fc..6d06fcc30 100644
+--- a/tests/ui/borrow_deref_ref.fixed
++++ b/tests/ui/borrow_deref_ref.fixed
+@@ -124,3 +124,50 @@ mod issue_11346 {
+         //~^ borrow_deref_ref
+     }
+ }
++
++fn issue_14934() {
++    let x: &'static str = "x";
++    let y = "y".to_string();
++    {
++        #[expect(clippy::toplevel_ref_arg)]
++        let ref mut x = &*x; // Do not lint
++        *x = &*y;
++    }
++    {
++        let mut x = x;
++        //~^ borrow_deref_ref
++        x = &*y;
++    }
++    {
++        #[expect(clippy::toplevel_ref_arg, clippy::needless_borrow)]
++        let ref x = x;
++        //~^ borrow_deref_ref
++    }
++    {
++        #[expect(clippy::toplevel_ref_arg)]
++        let ref mut x = std::convert::identity(x);
++        //~^ borrow_deref_ref
++        *x = &*y;
++    }
++    {
++        #[derive(Clone)]
++        struct S(&'static str);
++        let s = S("foo");
++        #[expect(clippy::toplevel_ref_arg)]
++        let ref mut x = &*s.0; // Do not lint
++        *x = "bar";
++        #[expect(clippy::toplevel_ref_arg)]
++        let ref mut x = s.clone().0;
++        //~^ borrow_deref_ref
++        *x = "bar";
++        #[expect(clippy::toplevel_ref_arg)]
++        let ref mut x = &*std::convert::identity(&s).0;
++        *x = "bar";
++    }
++    {
++        let y = &1;
++        #[expect(clippy::toplevel_ref_arg)]
++        let ref mut x = { y };
++        //~^ borrow_deref_ref
++    }
++}
+diff --git a/tests/ui/borrow_deref_ref.rs b/tests/ui/borrow_deref_ref.rs
+index 8ee66bfa8..b43f4c93b 100644
+--- a/tests/ui/borrow_deref_ref.rs
++++ b/tests/ui/borrow_deref_ref.rs
+@@ -124,3 +124,50 @@ mod issue_11346 {
+         //~^ borrow_deref_ref
+     }
+ }
++
++fn issue_14934() {
++    let x: &'static str = "x";
++    let y = "y".to_string();
++    {
++        #[expect(clippy::toplevel_ref_arg)]
++        let ref mut x = &*x; // Do not lint
++        *x = &*y;
++    }
++    {
++        let mut x = &*x;
++        //~^ borrow_deref_ref
++        x = &*y;
++    }
++    {
++        #[expect(clippy::toplevel_ref_arg, clippy::needless_borrow)]
++        let ref x = &*x;
++        //~^ borrow_deref_ref
++    }
++    {
++        #[expect(clippy::toplevel_ref_arg)]
++        let ref mut x = &*std::convert::identity(x);
++        //~^ borrow_deref_ref
++        *x = &*y;
++    }
++    {
++        #[derive(Clone)]
++        struct S(&'static str);
++        let s = S("foo");
++        #[expect(clippy::toplevel_ref_arg)]
++        let ref mut x = &*s.0; // Do not lint
++        *x = "bar";
++        #[expect(clippy::toplevel_ref_arg)]
++        let ref mut x = &*s.clone().0;
++        //~^ borrow_deref_ref
++        *x = "bar";
++        #[expect(clippy::toplevel_ref_arg)]
++        let ref mut x = &*std::convert::identity(&s).0;
++        *x = "bar";
++    }
++    {
++        let y = &1;
++        #[expect(clippy::toplevel_ref_arg)]
++        let ref mut x = { &*y };
++        //~^ borrow_deref_ref
++    }
++}
+diff --git a/tests/ui/borrow_deref_ref.stderr b/tests/ui/borrow_deref_ref.stderr
+index 3d55da25b..3a1f968b4 100644
+--- a/tests/ui/borrow_deref_ref.stderr
++++ b/tests/ui/borrow_deref_ref.stderr
+@@ -25,5 +25,35 @@ error: deref on an immutable reference
+ LL |         (&*s).foo();
+    |         ^^^^^ help: if you would like to reborrow, try removing `&*`: `s`
+ 
+-error: aborting due to 4 previous errors
++error: deref on an immutable reference
++  --> tests/ui/borrow_deref_ref.rs:137:21
++   |
++LL |         let mut x = &*x;
++   |                     ^^^ help: if you would like to reborrow, try removing `&*`: `x`
++
++error: deref on an immutable reference
++  --> tests/ui/borrow_deref_ref.rs:143:21
++   |
++LL |         let ref x = &*x;
++   |                     ^^^ help: if you would like to reborrow, try removing `&*`: `x`
++
++error: deref on an immutable reference
++  --> tests/ui/borrow_deref_ref.rs:148:25
++   |
++LL |         let ref mut x = &*std::convert::identity(x);
++   |                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^ help: if you would like to reborrow, try removing `&*`: `std::convert::identity(x)`
++
++error: deref on an immutable reference
++  --> tests/ui/borrow_deref_ref.rs:160:25
++   |
++LL |         let ref mut x = &*s.clone().0;
++   |                         ^^^^^^^^^^^^^ help: if you would like to reborrow, try removing `&*`: `s.clone().0`
++
++error: deref on an immutable reference
++  --> tests/ui/borrow_deref_ref.rs:170:27
++   |
++LL |         let ref mut x = { &*y };
++   |                           ^^^ help: if you would like to reborrow, try removing `&*`: `y`
++
++error: aborting due to 9 previous errors
+ 

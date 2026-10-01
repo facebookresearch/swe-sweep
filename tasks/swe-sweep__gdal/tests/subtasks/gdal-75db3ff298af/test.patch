@@ -1,0 +1,51 @@
+diff --git a/autotest/ogr/data/csv/header_with_line_break.csv b/autotest/ogr/data/csv/header_with_line_break.csv
+new file mode 100644
+index 0000000000..e56f470e18
+--- /dev/null
++++ b/autotest/ogr/data/csv/header_with_line_break.csv
+@@ -0,0 +1,6 @@
++Column one,Column two,"Column with a
++line break",Column three,"Another
++line break",Column four,Column five
++1,2,3,4,5,6,7
++4,5,6,7,8,9,10
++7,8,9,10,11,12,13
+diff --git a/autotest/ogr/ogr_csv.py b/autotest/ogr/ogr_csv.py
+index b8efff32ca..9008bec734 100755
+--- a/autotest/ogr/ogr_csv.py
++++ b/autotest/ogr/ogr_csv.py
+@@ -2748,3 +2748,34 @@ def test_ogr_csv_iter_and_set_feature():
+     gdal.Unlink("/vsimem/ogr_csv_iter_and_set_feature.csv")
+ 
+     assert count == 2
++
++
++###############################################################################
++
++
++def test_ogr_csv_read_header_with_line_break():
++
++    ds = ogr.Open("data/csv/header_with_line_break.csv")
++    lyr = ds.GetLayer(0)
++    lyr_defn = lyr.GetLayerDefn()
++    assert [
++        lyr_defn.GetFieldDefn(i).GetName() for i in range(lyr_defn.GetFieldCount())
++    ] == [
++        "Column one",
++        "Column two",
++        "Column with a\nline break",
++        "Column three",
++        "Another\nline break",
++        "Column four",
++        "Column five",
++    ]
++    f = lyr.GetNextFeature()
++    assert [f.GetField(i) for i in range(lyr_defn.GetFieldCount())] == [
++        "1",
++        "2",
++        "3",
++        "4",
++        "5",
++        "6",
++        "7",
++    ]

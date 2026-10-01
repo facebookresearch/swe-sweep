@@ -1,0 +1,14 @@
+diff --git a/compiler/src/dmd/escape.d b/compiler/src/dmd/escape.d
+index ce6947e572..0ab730637e 100644
+--- a/compiler/src/dmd/escape.d
++++ b/compiler/src/dmd/escape.d
+@@ -2475,6 +2475,9 @@ bool isReferenceToMutable(Type t)
+             }
+             break;
+ 
++        case Tnull:
++            return false;
++
+         default:
+             assert(0);
+     }

@@ -1,0 +1,20 @@
+diff --git a/test-data/unit/check-python312.test b/test-data/unit/check-python312.test
+index ba4104a50..2f3d5e08d 100644
+--- a/test-data/unit/check-python312.test
++++ b/test-data/unit/check-python312.test
+@@ -1874,2 +1874,15 @@ d2: Multi[float, str] = Multi[int, str]()  # E: Incompatible types in assignment
+ d3: Multi[str, int] = Multi[str, float]()
+ d4: Multi[str, float] = Multi[str, int]()  # E: Incompatible types in assignment (expression has type "Multi[str, int]", variable has type "Multi[str, float]")
++
++[case testPEP695MultipleUnpacksInBareApplicationNoCrash]
++# https://github.com/python/mypy/issues/18856
++class A[*Ts]: ...
++
++A[*tuple[int, ...], *tuple[int, ...]]  # E: More than one Unpack in a type is not allowed
++a: A[*tuple[int, ...], *tuple[int, ...]]  # E: More than one Unpack in a type is not allowed
++def foo(a: A[*tuple[int, ...], *tuple[int, ...]]): ...  # E: More than one Unpack in a type is not allowed
++
++tuple[*tuple[int, ...], *tuple[int, ...]]  # E: More than one Unpack in a type is not allowed
++b: tuple[*tuple[int, ...], *tuple[int, ...]]  # E: More than one Unpack in a type is not allowed
++[builtins fixtures/tuple.pyi]
++[typing fixtures/typing-full.pyi]

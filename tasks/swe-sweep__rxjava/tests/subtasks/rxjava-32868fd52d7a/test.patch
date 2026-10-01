@@ -1,0 +1,150 @@
+diff --git a/src/test/java/io/reactivex/testsupport/TimesteppingScheduler.java b/src/test/java/io/reactivex/testsupport/TimesteppingScheduler.java
+new file mode 100644
+index 0000000..43bc638
+--- /dev/null
++++ b/src/test/java/io/reactivex/testsupport/TimesteppingScheduler.java
+@@ -0,0 +1,66 @@
++/**
++ * Copyright (c) 2016-present, RxJava Contributors.
++ *
++ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in
++ * compliance with the License. You may obtain a copy of the License at
++ *
++ * http://www.apache.org/licenses/LICENSE-2.0
++ *
++ * Unless required by applicable law or agreed to in writing, software distributed under the License is
++ * distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See
++ * the License for the specific language governing permissions and limitations under the License.
++ */
++
++package io.reactivex.testsupport;
++
++import java.util.concurrent.TimeUnit;
++
++import io.reactivex.Scheduler;
++import io.reactivex.disposables.*;
++
++/**
++ * Basic scheduler that produces an ever increasing {@link #now(TimeUnit)} value.
++ * Use this scheduler only as a time source!
++ */
++public final class TimesteppingScheduler extends Scheduler {
++
++    final class TimesteppingWorker extends Worker {
++        @Override
++        public Disposable schedule(Runnable run, long delay, TimeUnit unit) {
++            run.run();
++            return Disposables.disposed();
++        }
++
++        @Override
++        public void dispose() {
++            // No-op
++        }
++
++        @Override
++        public boolean isDisposed() {
++            return false;
++        }
++
++        @Override
++        public long now(TimeUnit unit) {
++            return TimesteppingScheduler.this.now(unit);
++        }
++    }
++
++    public long time;
++
++    public boolean stepEnabled = true;
++
++    @Override
++    public Worker createWorker() {
++        return new TimesteppingWorker();
++    }
++
++    @Override
++    public long now(TimeUnit unit) {
++        if (stepEnabled) {
++            return time++;
++        }
++        return time;
++    }
++}
+diff --git a/src/test/java/io/reactivex/internal/operators/flowable/FlowableTakeLastTimedTest.java b/src/test/java/io/reactivex/internal/operators/flowable/FlowableTakeLastTimedTest.java
+index 4864cac..f2fc8b8 100644
+--- a/src/test/java/io/reactivex/internal/operators/flowable/FlowableTakeLastTimedTest.java
++++ b/src/test/java/io/reactivex/internal/operators/flowable/FlowableTakeLastTimedTest.java
+@@ -27,6 +27,7 @@ import io.reactivex.functions.Function;
+ import io.reactivex.processors.PublishProcessor;
+ import io.reactivex.schedulers.*;
+ import io.reactivex.subscribers.TestSubscriber;
++import io.reactivex.testsupport.*;
+ 
+ public class FlowableTakeLastTimedTest {
+ 
+@@ -336,4 +337,26 @@ public class FlowableTakeLastTimedTest {
+     public void badRequest() {
+         TestHelper.assertBadRequestReported(PublishProcessor.create().takeLast(1, TimeUnit.SECONDS));
+     }
++    @Test
++    public void lastWindowIsFixedInTime() {
++        TimesteppingScheduler scheduler = new TimesteppingScheduler();
++        scheduler.stepEnabled = false;
++
++        PublishProcessor<Integer> pp = PublishProcessor.create();
++
++        TestSubscriber<Integer> ts = pp
++        .takeLast(2, TimeUnit.SECONDS, scheduler)
++        .test();
++
++        pp.onNext(1);
++        pp.onNext(2);
++        pp.onNext(3);
++        pp.onNext(4);
++
++        scheduler.stepEnabled = true;
++
++        pp.onComplete();
++
++        ts.assertResult(1, 2, 3, 4);
++    }
+ }
+diff --git a/src/test/java/io/reactivex/internal/operators/observable/ObservableTakeLastTimedTest.java b/src/test/java/io/reactivex/internal/operators/observable/ObservableTakeLastTimedTest.java
+index bc933f9..b37cd32 100644
+--- a/src/test/java/io/reactivex/internal/operators/observable/ObservableTakeLastTimedTest.java
++++ b/src/test/java/io/reactivex/internal/operators/observable/ObservableTakeLastTimedTest.java
+@@ -26,6 +26,7 @@ import io.reactivex.exceptions.TestException;
+ import io.reactivex.observers.TestObserver;
+ import io.reactivex.schedulers.*;
+ import io.reactivex.subjects.PublishSubject;
++import io.reactivex.testsupport.*;
+ 
+ public class ObservableTakeLastTimedTest {
+ 
+@@ -276,4 +277,26 @@ public class ObservableTakeLastTimedTest {
+             TestHelper.race(r1, r2);
+         }
+     }
++    @Test
++    public void lastWindowIsFixedInTime() {
++        TimesteppingScheduler scheduler = new TimesteppingScheduler();
++        scheduler.stepEnabled = false;
++
++        PublishSubject<Integer> ps = PublishSubject.create();
++
++        TestObserver<Integer> to = ps
++        .takeLast(2, TimeUnit.SECONDS, scheduler)
++        .test();
++
++        ps.onNext(1);
++        ps.onNext(2);
++        ps.onNext(3);
++        ps.onNext(4);
++
++        scheduler.stepEnabled = true;
++
++        ps.onComplete();
++
++        to.assertResult(1, 2, 3, 4);
++    }
+ }

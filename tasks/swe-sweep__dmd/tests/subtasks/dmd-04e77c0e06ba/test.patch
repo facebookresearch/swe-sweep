@@ -1,0 +1,24 @@
+diff --git a/compiler/test/runnable/profilegc_stdout.d b/compiler/test/runnable/profilegc_stdout.d
+new file mode 100644
+index 0000000000..31f23ce117
+--- /dev/null
++++ b/compiler/test/runnable/profilegc_stdout.d
+@@ -0,0 +1,18 @@
++/*
++REQUIRED_ARGS: -profile=gc
++RUN_OUTPUT:
++---
++bytes allocated, allocations, type, function, file:line
++             96	              1	ubyte[] D main runnable/profilegc_stdout.d:17
++---
++*/
++
++import core.runtime;
++
++void main()
++{
++	// test that stdout output works
++	profilegc_setlogfilename("");
++
++	ubyte[] arr = new ubyte[64];
++}

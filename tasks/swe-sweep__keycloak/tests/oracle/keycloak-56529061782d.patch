@@ -1,0 +1,12 @@
+diff --git a/services/src/main/java/org/keycloak/services/resources/LoginActionsService.java b/services/src/main/java/org/keycloak/services/resources/LoginActionsService.java
+index a97e137149..268fd704fb 100755
+--- a/services/src/main/java/org/keycloak/services/resources/LoginActionsService.java
++++ b/services/src/main/java/org/keycloak/services/resources/LoginActionsService.java
+@@ -458,6 +458,7 @@ public class LoginActionsService {
+ 
+             }
+             authSession = createAuthenticationSessionForClient(clientId, redirectUri);
++            processLocaleParam(authSession);
+             return processResetCredentials(false, null, authSession, null);
+         }
+ 

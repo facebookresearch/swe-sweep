@@ -1,0 +1,21 @@
+diff --git a/test/sql/cast/test_bit_cast.test b/test/sql/cast/test_bit_cast.test
+index 421ce022e6..76582943af 100644
+--- a/test/sql/cast/test_bit_cast.test
++++ b/test/sql/cast/test_bit_cast.test
+@@ -196,6 +196,16 @@ SELECT '1111'::BIT::BLOB;
+ ----
+ \x0F
+ 
++query I
++select 'ab'::BLOB::BIT::BLOB;
++----
++ab
++
++query I
++select 'a'::BLOB::BIT::BLOB;
++----
++a
++
+ query I
+ SELECT bitstring('1111', 33)::BLOB;
+ ----

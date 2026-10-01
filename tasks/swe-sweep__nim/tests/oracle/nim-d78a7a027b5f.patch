@@ -1,0 +1,59 @@
+diff --git a/compiler/ast.nim b/compiler/ast.nim
+index 23d8cbbca..89bebe22b 100644
+--- a/compiler/ast.nim
++++ b/compiler/ast.nim
+@@ -2034,6 +2034,12 @@ proc isClosureIterator*(typ: PType): bool {.inline.} =
+ proc isClosure*(typ: PType): bool {.inline.} =
+   typ.kind == tyProc and typ.callConv == ccClosure
+ 
++proc isNimcall*(s: PSym): bool {.inline.} =
++  s.typ.callConv == ccNimCall
++
++proc isExplicitCallConv*(s: PSym): bool {.inline.} =
++  tfExplicitCallConv in s.typ.flags
++
+ proc isSinkParam*(s: PSym): bool {.inline.} =
+   s.kind == skParam and (s.typ.kind == tySink or tfHasOwned in s.typ.flags)
+ 
+diff --git a/compiler/lambdalifting.nim b/compiler/lambdalifting.nim
+index a622f6d0f..396b27d49 100644
+--- a/compiler/lambdalifting.nim
++++ b/compiler/lambdalifting.nim
+@@ -291,15 +291,17 @@ proc freshVarForClosureIter*(g: ModuleGraph; s: PSym; idgen: IdGenerator; owner:
+ proc markAsClosure(g: ModuleGraph; owner: PSym; n: PNode) =
+   let s = n.sym
++  let isEnv = s.name.id == getIdent(g.cache, ":env").id
+   if illegalCapture(s):
+     localError(g.config, n.info,
+       ("'$1' is of type <$2> which cannot be captured as it would violate memory" &
+        " safety, declared here: $3; using '-d:nimNoLentIterators' helps in some cases") %
+       [s.name.s, typeToString(s.typ), g.config$s.info])
+-  elif not (owner.typ.callConv == ccClosure or owner.typ.callConv == ccNimCall and tfExplicitCallConv notin owner.typ.flags):
++  elif not (owner.typ.isClosure or owner.isNimcall and not owner.isExplicitCallConv or isEnv):
+     localError(g.config, n.info, "illegal capture '$1' because '$2' has the calling convention: <$3>" %
+       [s.name.s, owner.name.s, $owner.typ.callConv])
+   incl(owner.typ.flags, tfCapturesEnv)
+-  owner.typ.callConv = ccClosure
++  if not isEnv:
++    owner.typ.callConv = ccClosure
+ 
+ type
+   DetectionPass = object
+@@ -442,6 +444,8 @@ proc detectCapturedVars(n: PNode; owner: PSym; c: var DetectionPass) =
+         let body = transformBody(c.graph, c.idgen, s, cache = true)
+         detectCapturedVars(body, s, c)
+     let ow = s.skipGenericOwner
++    let innerClosure = innerProc and s.typ.callConv == ccClosure and not s.isIterator
++    let interested = interestingVar(s)
+     if ow == owner:
+       if owner.isIterator:
+         c.somethingToDo = true
+@@ -458,7 +462,7 @@ proc detectCapturedVars(n: PNode; owner: PSym; c: var DetectionPass) =
+             else:
+               addField(obj, s, c.graph.cache, c.idgen)
+     # direct or indirect dependency:
+-    elif (innerProc and s.typ.callConv == ccClosure) or interestingVar(s):
++    elif innerClosure or interested:
+       discard """
+         proc outer() =
+           var x: int

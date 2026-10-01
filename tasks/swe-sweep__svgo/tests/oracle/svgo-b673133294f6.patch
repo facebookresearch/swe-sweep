@@ -1,0 +1,104 @@
+diff --git a/plugins/prefixIds.js b/plugins/prefixIds.js
+index 6676293..b60bbc8 100644
+--- a/plugins/prefixIds.js
++++ b/plugins/prefixIds.js
+@@ -69,7 +69,6 @@ const toAny = (value) => value;
+  * Prefixes identifiers
+  *
+  * @author strarsis <strarsis@gmail.com>
+- *
+  * @type {import('./plugins-types').Plugin<'prefixIds'>}
+  */
+ exports.fn = (_root, params, info) => {
+@@ -100,57 +99,46 @@ exports.fn = (_root, params, info) => {
+             return;
+           }
+ 
+-          // parse styles
+-          let cssText = '';
+-          if (
+-            node.children[0].type === 'text' ||
+-            node.children[0].type === 'cdata'
+-          ) {
+-            cssText = node.children[0].value;
+-          }
+-          /**
+-           * @type {null | csstree.CssNode}
+-           */
+-          let cssAst = null;
+-          try {
+-            cssAst = csstree.parse(cssText, {
+-              parseValue: true,
+-              parseCustomProperty: false,
+-            });
+-          } catch {
+-            return;
+-          }
++          for (const child of node.children) {
++            if (child.type !== 'text' && child.type !== 'cdata') {
++              continue;
++            }
+ 
+-          csstree.walk(cssAst, (node) => {
+-            // #ID, .class selectors
+-            if (
+-              (prefixIds && node.type === 'IdSelector') ||
+-              (prefixClassNames && node.type === 'ClassSelector')
+-            ) {
+-              node.name = prefixId(prefix, node.name);
++            const cssText = child.value;
++            /** @type {null | csstree.CssNode} */
++            let cssAst = null;
++            try {
++              cssAst = csstree.parse(cssText, {
++                parseValue: true,
++                parseCustomProperty: false,
++              });
++            } catch {
+               return;
+             }
+-            // url(...) references
+-            // csstree v2 changed this type
+-            if (node.type === 'Url' && toAny(node.value).length > 0) {
+-              const prefixed = prefixReference(
+-                prefix,
+-                unquote(toAny(node.value))
+-              );
+-              if (prefixed != null) {
+-                toAny(node).value = prefixed;
++
++            csstree.walk(cssAst, (node) => {
++              if (
++                (prefixIds && node.type === 'IdSelector') ||
++                (prefixClassNames && node.type === 'ClassSelector')
++              ) {
++                node.name = prefixId(prefix, node.name);
++                return;
+               }
+-            }
+-          });
++              // csstree v2 changed this type
++              if (node.type === 'Url' && toAny(node.value).length > 0) {
++                const prefixed = prefixReference(
++                  prefix,
++                  unquote(toAny(node.value))
++                );
++                if (prefixed != null) {
++                  toAny(node).value = prefixed;
++                }
++              }
++            });
+ 
+-          // update styles
+-          if (
+-            node.children[0].type === 'text' ||
+-            node.children[0].type === 'cdata'
+-          ) {
+-            node.children[0].value = csstree.generate(cssAst);
++            child.value = csstree.generate(cssAst);
++            return;
+           }
+-          return;
+         }
+ 
+         // prefix an ID attribute value

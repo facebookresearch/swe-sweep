@@ -1,0 +1,34 @@
+diff --git a/__tests__/__fixtures__/test-expandOid.git/objects/00/01c3e2753b03648b6c43dd74ba7fe2f21123d6 b/__tests__/__fixtures__/test-expandOid.git/objects/00/01c3e2753b03648b6c43dd74ba7fe2f21123d6
+new file mode 100644
+index 0000000000000000000000000000000000000000..298847453296f1e75e09891583252b7197709b04
+GIT binary patch
+literal 281
+zcmV+!0p|XA0V^p=O;s>9GGZ_^FfcPQQAp0u%}vZpDb~v>W_a^I*71z`hCQWDzA~$?
+zu<YzJhzd6`00OuwhHFi&U5j+<xwmE3O7DNkHO1wwAIzl8yp+@mkTD;Bd8qw9vbHXJ
+z|1QyX)#SCY?BA`RwgIh5OiwKW+tzi-VrfZN^A|Ji=B7=$vd7K{zLtX622;gQ==bZ~
+zvde202Aio&dH3q-?rJNs0GLVnDXBSNbL>rCrFbWDUa|fEL-I-f#Vap(_ML&616IRu
+zlg%sqd6}r)ssbmk3wHzl2N)(9K}{(w$%GgZ_9k)J3WmUk_njVUOK}CJvX%ZcfEWT+
+f!mwZZl*BKq{MR~uTNH)%l(?B3^)Chh-OPgzPnwMW
+
+literal 0
+HcmV?d00001
+
+diff --git a/__tests__/test-expandOid.js b/__tests__/test-expandOid.js
+index 2cc0c0c..c72f9b8 100644
+--- a/__tests__/test-expandOid.js
++++ b/__tests__/test-expandOid.js
+@@ -51,4 +51,14 @@ describe('expandOid', () => {
+     oid = await expandOid({ fs, gitdir, oid })
+     expect(oid).toEqual('5f1f014326b1d7e8079d00b87fa7a9913bd91324')
+   })
++
++  it('expand short oid from packfile and loose', async () => {
++    // Setup
++    const { fs, gitdir } = await makeFixture('test-expandOid')
++    // This object is in the pack file as well as being available loose
++    let oid = '0001c3'
++    // Test
++    oid = await expandOid({ fs, gitdir, oid })
++    expect(oid).toEqual('0001c3e2753b03648b6c43dd74ba7fe2f21123d6')
++  })
+ })

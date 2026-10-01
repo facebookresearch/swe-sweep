@@ -1,0 +1,684 @@
+{
+  "build_jobs": 4,
+  "container_repo": "/mongoose",
+  "evaluation": {
+    "suite": {
+      "suite": {
+        "all_files": [
+          "./test/*.test.js"
+        ],
+        "type": "mocha"
+      },
+      "type": "repro-eval"
+    },
+    "visible_timeout": 7200
+  },
+  "upstream_image": "pandora-maxbug-mongoose:6.6.2",
+  "n_base_passing": 3234,
+  "n_base_test_ignore": 48,
+  "oracle_digest": "630cfe6fef90b8a287205c13276a8ff7e756a0344293eedc24fc5f2d019c1aeb",
+  "oracle_pristine_paths": [],
+  "upstream_commit": "9f7399e15e6172900e0591deb5a57a45769d8205",
+  "reproduction": {
+    "needs_build": false,
+    "setup_cmd": "mongod --fork --logpath /var/log/mongod.log --bind_ip 127.0.0.1",
+    "suite": "mocha",
+    "test_timeout": 900
+  },
+  "schema": 2,
+  "subtasks": [
+    {
+      "f2p": [
+        "model: populate: github issues accessing populate virtual prop (gh-13189) (gh-8198)"
+      ],
+      "id": "mongoose-00a3e0bfde83",
+      "target_files": [
+        "lib/schema.js"
+      ]
+    },
+    {
+      "f2p": [
+        "prepareDiscriminatorPipeline handles case where initial $match includes the discriminator key (gh-12478)"
+      ],
+      "id": "mongoose-010189a03d91",
+      "target_files": [
+        "lib/helpers/aggregate/prepareDiscriminatorPipeline.js"
+      ]
+    },
+    {
+      "f2p": [
+        "types.documentarray gets correct path when underneath map (gh-12997)"
+      ],
+      "id": "mongoose-07bec9e3f23f",
+      "target_files": [
+        "lib/schema/documentarray.js"
+      ]
+    },
+    {
+      "f2p": [
+        "document avoids overwriting dotted paths in mixed path underneath nested path (gh-14178)"
+      ],
+      "id": "mongoose-07f082d5cf73",
+      "target_files": [
+        "lib/document.js",
+        "lib/helpers/path/flattenObjectWithDottedPaths.js"
+      ]
+    },
+    {
+      "f2p": [
+        "castexpr casts $round (gh-13881)"
+      ],
+      "id": "mongoose-0d97005e73bf",
+      "target_files": [
+        "lib/helpers/query/cast$expr.js"
+      ]
+    },
+    {
+      "f2p": [
+        "model: populate: github issues avoids calling `transform()` with `lean()` when no results (gh-12739)"
+      ],
+      "id": "mongoose-1d137e41ada4",
+      "target_files": [
+        "lib/helpers/populate/assignVals.js"
+      ]
+    },
+    {
+      "f2p": [
+        "Map handles required in maps"
+      ],
+      "id": "mongoose-1d1eebc959b6",
+      "target_files": [
+        "lib/document.js"
+      ]
+    },
+    {
+      "f2p": [
+        "model: populate: github issues handles multiple spaces in between paths to populate (gh-13951)"
+      ],
+      "id": "mongoose-24ba9f1c4022",
+      "target_files": [
+        "lib/utils.js"
+      ]
+    },
+    {
+      "f2p": [
+        "document.populate works when populating a nested document inside an array parent (gh-14435)"
+      ],
+      "id": "mongoose-2590e1e0170d",
+      "target_files": [
+        "lib/schema.js"
+      ]
+    },
+    {
+      "f2p": [
+        "utils merge should not skip schema merge when isDiscriminatorSchemaMerge is false (gh-9534)"
+      ],
+      "id": "mongoose-31cb707b7e2a",
+      "target_files": [
+        "lib/utils.js"
+      ]
+    },
+    {
+      "f2p": [
+        "document should allow null values in list in self assignment (gh-13859)"
+      ],
+      "id": "mongoose-31d64d75fd2d",
+      "target_files": [
+        "lib/document.js"
+      ]
+    },
+    {
+      "f2p": [
+        "document handles default embedded discriminator values (gh-13835)"
+      ],
+      "id": "mongoose-340bd45b1a58",
+      "target_files": [
+        "lib/helpers/discriminator/getConstructor.js",
+        "lib/schema/SubdocumentPath.js"
+      ]
+    },
+    {
+      "f2p": [
+        "types.documentarray bubbles up validation errors from doubly nested doc arrays (gh-14101)"
+      ],
+      "id": "mongoose-38b0a3f1a80a",
+      "target_files": [
+        "lib/schema.js"
+      ]
+    },
+    {
+      "f2p": [
+        "schema retains text index when caching indexes"
+      ],
+      "id": "mongoose-3bae25b1043e",
+      "target_files": [
+        "lib/helpers/schema/getIndexes.js"
+      ]
+    },
+    {
+      "f2p": [
+        "Query Map field with select: false is selected when explicitly requested (gh-12603)"
+      ],
+      "id": "mongoose-456b71d5b675",
+      "target_files": [
+        "lib/queryhelpers.js"
+      ]
+    },
+    {
+      "f2p": [
+        "model: populate: github issues doesnt insert empty document when lean populating a path within an underneath non-existent document array (gh-14098)"
+      ],
+      "id": "mongoose-4c79b4dc4bb1",
+      "target_files": [
+        "lib/helpers/populate/assignVals.js"
+      ]
+    },
+    {
+      "f2p": [
+        "model: findOneAndUpdate: allows setting paths with dots in non-strict paths (gh-13434) (gh-10200)"
+      ],
+      "id": "mongoose-4e0909130cd7",
+      "target_files": [
+        "lib/helpers/query/castUpdate.js"
+      ]
+    },
+    {
+      "f2p": [
+        "schema copies indexes when calling add() with schema instance (gh-12654)"
+      ],
+      "id": "mongoose-520e4f354729",
+      "target_files": [
+        "lib/helpers/schema/merge.js"
+      ]
+    },
+    {
+      "f2p": [
+        "document cleans up all array subdocs modified state on save (gh-13582)"
+      ],
+      "id": "mongoose-5750d41b4e4e",
+      "target_files": [
+        "lib/document.js",
+        "lib/helpers/populate/getModelsMapForPopulate.js",
+        "lib/helpers/populate/getSchemaTypes.js",
+        "lib/schema.js"
+      ]
+    },
+    {
+      "f2p": [
+        "document handles virtuals that are stored as objects but getter returns string with toJSON (gh-14446)"
+      ],
+      "id": "mongoose-5a20be3feab9",
+      "target_files": [
+        "lib/document.js"
+      ]
+    },
+    {
+      "f2p": [
+        "model: populate: avoids filtering out `null` values when applying match function (gh-14494)"
+      ],
+      "id": "mongoose-5e716081eb4f",
+      "target_files": [
+        "lib/helpers/populate/assignVals.js"
+      ]
+    },
+    {
+      "f2p": [
+        "cast:  uses schema-level strictQuery over schema-level strict (gh-12508)"
+      ],
+      "id": "mongoose-6732a5e8d46d",
+      "target_files": [
+        "lib/cast.js"
+      ]
+    },
+    {
+      "f2p": [
+        "document clears modified subpaths when setting deeply nested subdoc to null (gh-14952)"
+      ],
+      "id": "mongoose-6813ebece607",
+      "target_files": [
+        "lib/helpers/document/cleanModifiedSubpaths.js"
+      ]
+    },
+    {
+      "f2p": [
+        "utils deepEquals on sets"
+      ],
+      "id": "mongoose-71aa2f2c42e9",
+      "target_files": [
+        "lib/utils.js"
+      ]
+    },
+    {
+      "f2p": [
+        "QueryCursor handles skipMiddlewareFunction() (gh-13411)",
+        "QueryCursor throws if calling skipMiddlewareFunction() with non-empty array (gh-13411)"
+      ],
+      "id": "mongoose-78483763b5aa",
+      "target_files": [
+        "lib/cursor/QueryCursor.js"
+      ]
+    },
+    {
+      "f2p": [
+        "model: populate: handles ref() function that returns a model (gh-14249)"
+      ],
+      "id": "mongoose-792626202463",
+      "target_files": [
+        "lib/helpers/populate/getModelsMapForPopulate.js"
+      ]
+    },
+    {
+      "f2p": [
+        "document handles setting nested path to spread doc with extra properties (gh-14269)"
+      ],
+      "id": "mongoose-7b5b3594d495",
+      "target_files": [
+        "lib/document.js"
+      ]
+    },
+    {
+      "f2p": [
+        "document set() merge option with double nested"
+      ],
+      "id": "mongoose-7bc315ad9cb8",
+      "target_files": [
+        "lib/document.js"
+      ]
+    },
+    {
+      "f2p": [
+        "model: updateOne:  overwriteDiscriminatorKey allows changing discriminator key in update (gh-6087)"
+      ],
+      "id": "mongoose-7cbcd9390276",
+      "target_files": [
+        "lib/query.js"
+      ]
+    },
+    {
+      "f2p": [
+        "Model buildBulkWriteOperations() (gh-9673) saves changes in discriminators if calling `bulkSave()` on base model (gh-13907)"
+      ],
+      "id": "mongoose-7dff72056d29",
+      "target_files": [
+        "lib/model.js"
+      ]
+    },
+    {
+      "f2p": [
+        "model middleware post save error handler gets doc as param (gh-15480)"
+      ],
+      "id": "mongoose-7e11ce1e20fb",
+      "target_files": [
+        "lib/model.js"
+      ]
+    },
+    {
+      "f2p": [
+        "selectPopulatedFields adds refPath to projection if not deselected by user in exclusive projection",
+        "selectPopulatedFields selects refPath"
+      ],
+      "id": "mongoose-826e05c8757b",
+      "target_files": [
+        "lib/helpers/query/selectPopulatedFields.js"
+      ]
+    },
+    {
+      "f2p": [
+        "Model bulkwrite should not change updatedAt on subdocs when timestamps set to false (gh-13611)"
+      ],
+      "id": "mongoose-8452d1fc7568",
+      "target_files": [
+        "lib/helpers/model/castBulkWrite.js"
+      ]
+    },
+    {
+      "f2p": [
+        "model: update: bug fixes handles $set on document array in discriminator with runValidators (gh-12518)"
+      ],
+      "id": "mongoose-8487769f0405",
+      "target_files": [
+        "lib/schema/documentarray.js"
+      ]
+    },
+    {
+      "f2p": [
+        "schema remove() clone() avoids creating duplicate array constructors when cloning doc array underneath subdoc (gh-13626)"
+      ],
+      "id": "mongoose-876f8822e859",
+      "target_files": [
+        "lib/schema.js"
+      ]
+    },
+    {
+      "f2p": [
+        "model: findOneAndUpdate: throws error if filter is not an object (gh-13264)"
+      ],
+      "id": "mongoose-8905f8689d23",
+      "target_files": [
+        "lib/error/objectParameter.js",
+        "lib/query.js"
+      ]
+    },
+    {
+      "f2p": [
+        "model: populate: sets populated docs in correct order when populating virtual underneath document array with justOne (gh-14018)"
+      ],
+      "id": "mongoose-8b9427e23c0a",
+      "target_files": [
+        "lib/helpers/populate/assignRawDocsToIdStructure.js",
+        "lib/helpers/populate/assignVals.js"
+      ]
+    },
+    {
+      "f2p": [
+        "cast:  handles $in with discriminators if $in has exactly 1 element (gh-13492)"
+      ],
+      "id": "mongoose-8e20c36933f0",
+      "target_files": [
+        "lib/cast.js"
+      ]
+    },
+    {
+      "f2p": [
+        "utils merge should not skip schema merge when isDiscriminatorSchemaMerge is false (gh-9534)"
+      ],
+      "id": "mongoose-8f961d9afc05",
+      "target_files": [
+        "lib/utils.js"
+      ]
+    },
+    {
+      "f2p": [
+        "document does not modify array when calling getters (gh-13748)"
+      ],
+      "id": "mongoose-9031bc05b21b",
+      "target_files": [
+        "lib/document.js",
+        "lib/schema/array.js",
+        "lib/types/array/index.js"
+      ]
+    },
+    {
+      "f2p": [
+        "document clears child modified paths when parent mixed path is unset (gh-16252)"
+      ],
+      "id": "mongoose-994605eebf6b",
+      "target_files": [
+        "lib/document.js"
+      ]
+    },
+    {
+      "f2p": [
+        "model: populate: allows pushing to model populated in a query cursor (gh-13575)"
+      ],
+      "id": "mongoose-99d105445801",
+      "target_files": [
+        "lib/helpers/populate/getModelsMapForPopulate.js",
+        "lib/model.js",
+        "lib/types/array/methods/index.js"
+      ]
+    },
+    {
+      "f2p": [
+        "connections: with autoCreate = false after schema create (gh-12940)"
+      ],
+      "id": "mongoose-9a5382e67700",
+      "target_files": [
+        "lib/model.js"
+      ]
+    },
+    {
+      "f2p": [
+        "document saves single nested subdoc defaults (gh-12905)"
+      ],
+      "id": "mongoose-9ca1024591b0",
+      "target_files": [
+        "lib/helpers/document/applyDefaults.js"
+      ]
+    },
+    {
+      "f2p": [
+        "document can create document with document array and top-level key named `schema` (gh-12480)"
+      ],
+      "id": "mongoose-a0fe0901c0d1",
+      "target_files": [
+        "lib/types/DocumentArray/index.js"
+      ]
+    },
+    {
+      "f2p": [
+        "model: populate: calls setter on virtual populated path with populated doc (gh-14285)"
+      ],
+      "id": "mongoose-a141a20bf08d",
+      "target_files": [
+        "lib/helpers/populate/setPopulatedVirtualValue.js",
+        "lib/schema.js"
+      ]
+    },
+    {
+      "f2p": [
+        "document $shift() triggers $pop"
+      ],
+      "id": "mongoose-a1c6c44d8d6e",
+      "target_files": [
+        "lib/types/array/methods/index.js"
+      ]
+    },
+    {
+      "f2p": [
+        "connections: can re-open after close with useDb() (gh-15531)"
+      ],
+      "id": "mongoose-a4b0a0904a35",
+      "target_files": [
+        "lib/connection.js"
+      ]
+    },
+    {
+      "f2p": [
+        "applyWriteConcern should not overwrite user specified writeConcern options (gh-13592)"
+      ],
+      "id": "mongoose-a788d0714f10",
+      "target_files": [
+        "lib/helpers/schema/applyWriteConcern.js",
+        "lib/query.js"
+      ]
+    },
+    {
+      "f2p": [
+        "document applies defaults to pushed subdocs after initing document (gh-12515)"
+      ],
+      "id": "mongoose-a7ac301ae0c4",
+      "target_files": [
+        "lib/schema/SubdocumentPath.js"
+      ]
+    },
+    {
+      "f2p": [
+        "model: populate: github issues populate virtuals (gh-2562) in embedded array with sort and one result (gh-10552)",
+        "model: populate: handles virtual populate with `justOne` underneath document array and sort (gh-12730) (gh-10552)"
+      ],
+      "id": "mongoose-a81035b233ca",
+      "target_files": [
+        "lib/helpers/populate/assignRawDocsToIdStructure.js"
+      ]
+    },
+    {
+      "f2p": [
+        "Map handles setting then unsetting the same map (gh-15519)",
+        "Map handles setting then unsetting the same map of subdocs with a required field (gh-15519)"
+      ],
+      "id": "mongoose-b002bf3ee56b",
+      "target_files": [
+        "lib/document.js"
+      ]
+    },
+    {
+      "f2p": [
+        "model uses \"value\" over \"name\" for multi-dimensonal arrays (gh-13201)"
+      ],
+      "id": "mongoose-b5499777a732",
+      "target_files": [
+        "lib/schema/array.js"
+      ]
+    },
+    {
+      "f2p": [
+        "castexpr casts $switch (gh-14751)"
+      ],
+      "id": "mongoose-b9cef1f81982",
+      "target_files": [
+        "lib/helpers/query/cast$expr.js"
+      ]
+    },
+    {
+      "f2p": [
+        "schema should have the correct schema definition with array schemas (gh-14416)"
+      ],
+      "id": "mongoose-c5e9a0aadac6",
+      "target_files": [
+        "lib/schema.js"
+      ]
+    },
+    {
+      "f2p": [
+        "Model bug fixes bulkWrite casting handles array filters (gh-14978)"
+      ],
+      "id": "mongoose-c9c279c7ef48",
+      "target_files": [
+        "lib/helpers/model/castBulkWrite.js"
+      ]
+    },
+    {
+      "f2p": [
+        "document post deleteOne hook (gh-9885)"
+      ],
+      "id": "mongoose-ca3ef1d848ce",
+      "target_files": [
+        "lib/plugins/saveSubdocs.js",
+        "lib/types/subdocument.js"
+      ]
+    },
+    {
+      "f2p": [
+        "schema should allow timestamps on a sub document when having _id field in the main document gh-13343"
+      ],
+      "id": "mongoose-d7aa38df6e55",
+      "target_files": [
+        "lib/helpers/timestamps/setupTimestamps.js",
+        "lib/schema/SubdocumentPath.js"
+      ]
+    },
+    {
+      "f2p": [
+        "document.populate depopulate depopulates after pushing manually populated (gh-2509)"
+      ],
+      "id": "mongoose-d831e46b1167",
+      "target_files": [
+        "lib/document.js",
+        "lib/types/array/methods/index.js"
+      ]
+    },
+    {
+      "f2p": [
+        "document should not trigger isModified when setting a nested boolean to the same value as previously  (gh-12992)"
+      ],
+      "id": "mongoose-d8746f95a91e",
+      "target_files": [
+        "lib/document.js"
+      ]
+    },
+    {
+      "f2p": [
+        "model discriminator() findOneAndUpdate handles deeply nested paths with discriminators and arrayFilters (gh-16072)"
+      ],
+      "id": "mongoose-d87a1b2c0f86",
+      "target_files": [
+        "lib/helpers/query/getEmbeddedDiscriminatorPath.js"
+      ]
+    },
+    {
+      "f2p": [
+        "model query casting should not throw a cast error when dealing with an array of an array of strings in combination with $elemMach and $not (gh-13880)"
+      ],
+      "id": "mongoose-dcebecf3c1ff",
+      "target_files": [
+        "lib/cast.js"
+      ]
+    },
+    {
+      "f2p": [
+        "document should allow storing keys with dots in name in mixed under nested (gh-13530)"
+      ],
+      "id": "mongoose-e390dcae63c4",
+      "target_files": [
+        "lib/document.js",
+        "lib/helpers/path/flattenObjectWithDottedPaths.js"
+      ]
+    },
+    {
+      "f2p": [
+        "Model hooks post callback should receive parameter of type document after bulkSave (gh-13026)"
+      ],
+      "id": "mongoose-e6b3a67b2de6",
+      "target_files": [
+        "lib/model.js"
+      ]
+    },
+    {
+      "f2p": [
+        "eachAsync() avoids mutating document batch with parallel (gh-12652)"
+      ],
+      "id": "mongoose-e6b957398432",
+      "target_files": [
+        "lib/helpers/cursor/eachAsync.js"
+      ]
+    },
+    {
+      "f2p": [
+        "model field selection handles deselecting _id when other field has schema-level `select: false` (gh-12670)"
+      ],
+      "id": "mongoose-ef5cd6c13c3d",
+      "target_files": [
+        "lib/queryhelpers.js"
+      ]
+    },
+    {
+      "f2p": [
+        "mongoose module: global plugins with applyPluginsToChildSchemas (gh-13887)"
+      ],
+      "id": "mongoose-f69b897c934f",
+      "target_files": [
+        "lib/index.js"
+      ]
+    },
+    {
+      "f2p": [
+        "document bulkSave() picks up changes in pre(\"save\") middleware (gh-13799)"
+      ],
+      "id": "mongoose-f6e08f7d8bf8",
+      "target_files": [
+        "lib/model.js"
+      ]
+    },
+    {
+      "f2p": [
+        "model: updateOne:  casts using overwritten discriminator key schema (gh-15051)"
+      ],
+      "id": "mongoose-fa18ea36daa0",
+      "target_files": [
+        "lib/helpers/query/getEmbeddedDiscriminatorPath.js"
+      ]
+    },
+    {
+      "f2p": [
+        "model: updateOne:  handles embedded discriminators with $pull when discriminator key set in filter (gh-14675)"
+      ],
+      "id": "mongoose-fa4e67af7519",
+      "target_files": [
+        "lib/helpers/query/castUpdate.js"
+      ]
+    }
+  ],
+  "task": "mongoose",
+  "version": "6.6.2"
+}

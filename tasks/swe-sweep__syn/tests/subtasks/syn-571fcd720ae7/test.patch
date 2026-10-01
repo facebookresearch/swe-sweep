@@ -1,0 +1,31 @@
+diff --git a/tests/test_stmt.rs b/tests/test_stmt.rs
+index d68b47f..7947116 100644
+--- a/tests/test_stmt.rs
++++ b/tests/test_stmt.rs
+@@ -1,5 +1,6 @@
+ #[macro_use]
+ mod macros;
+ 
++use quote::quote;
+ use syn::Stmt;
+ 
+@@ -42,3 +43,19 @@
+ fn test_raw_invalid() {
+     assert!(syn::parse_str::<Stmt>("let _ = &raw x;").is_err());
+ }
++
++#[test]
++fn test_let_dot_dot() {
++    let tokens = quote! {
++        let .. = 10;
++    };
++
++    snapshot!(tokens as Stmt, @r###"
++    Local(Local {
++        pat: Pat::Rest,
++        init: Some(Expr::Lit {
++            lit: 10,
++        }),
++    })
++    "###);
++}

@@ -1,0 +1,13 @@
+diff --git a/actionview/lib/action_view/helpers/form_tag_helper.rb b/actionview/lib/action_view/helpers/form_tag_helper.rb
+index 7d08cf8d017..93a2bb32a40 100644
+--- a/actionview/lib/action_view/helpers/form_tag_helper.rb
++++ b/actionview/lib/action_view/helpers/form_tag_helper.rb
+@@ -131,7 +131,7 @@ module ActionView
+ 
+         # a little duplication to construct fewer strings
+         case
+-        when object_name.empty?
++        when object_name.blank?
+           "#{method_name}#{names}#{multiple ? "[]" : ""}"
+         when index
+           "#{object_name}[#{index}][#{method_name}]#{names}#{multiple ? "[]" : ""}"

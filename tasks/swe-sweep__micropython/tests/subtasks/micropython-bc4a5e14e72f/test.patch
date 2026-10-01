@@ -1,0 +1,26 @@
+diff --git a/tests/extmod/uctypes_error.py b/tests/extmod/uctypes_error.py
+index d42956261..f8aea94a7 100644
+--- a/tests/extmod/uctypes_error.py
++++ b/tests/extmod/uctypes_error.py
+@@ -8,6 +8,12 @@ except ImportError:
+ 
+ data = bytearray(b"01234567")
+ 
++# first argument isn't an integer
++try:
++    uctypes.struct(data, {})
++except TypeError:
++    print("TypeError")
++
+ # del subscr not supported
+ S = uctypes.struct(uctypes.addressof(data), {})
+ try:
+diff --git a/tests/extmod/uctypes_error.py.exp b/tests/extmod/uctypes_error.py.exp
+index f2e9c12f7..9910ced6c 100644
+--- a/tests/extmod/uctypes_error.py.exp
++++ b/tests/extmod/uctypes_error.py.exp
+@@ -3,3 +3,4 @@ TypeError
+ TypeError
+ TypeError
+ TypeError
++TypeError

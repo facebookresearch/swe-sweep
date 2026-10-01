@@ -1,0 +1,15 @@
+diff --git a/src/Symfony/Component/RateLimiter/Policy/TokenBucketLimiter.php b/src/Symfony/Component/RateLimiter/Policy/TokenBucketLimiter.php
+index fdfa3a1f9a0..8028f8ac3b6 100644
+--- a/src/Symfony/Component/RateLimiter/Policy/TokenBucketLimiter.php
++++ b/src/Symfony/Component/RateLimiter/Policy/TokenBucketLimiter.php
+@@ -65,6 +65,10 @@ final class TokenBucketLimiter implements LimiterInterface
+             $now = microtime(true);
+             $availableTokens = $bucket->getAvailableTokens($now);
+ 
++            if ($availableTokens > $this->maxBurst) {
++                $availableTokens = $this->maxBurst;
++            }
++
+             if ($availableTokens >= max(1, $tokens)) {
+                 // tokens are now available, update bucket
+                 $bucket->setTokens($availableTokens - $tokens);

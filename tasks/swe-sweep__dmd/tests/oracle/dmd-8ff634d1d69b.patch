@@ -1,0 +1,14 @@
+diff --git a/compiler/src/dmd/parse.d b/compiler/src/dmd/parse.d
+index 10f42a0d17..b7e07911cb 100644
+--- a/compiler/src/dmd/parse.d
++++ b/compiler/src/dmd/parse.d
+@@ -5026,7 +5026,8 @@ class Parser(AST, Lexer = dmd.lexer.Lexer) : Lexer
+                 stc = STC.ref_;
+                 nextToken();
+             }
+-            if (token.value != TOK.leftParenthesis && token.value != TOK.leftCurly)
++            if (token.value != TOK.leftParenthesis && token.value != TOK.leftCurly &&
++                token.value != TOK.goesTo)
+             {
+                 // function type (parameters) { statements... }
+                 // delegate type (parameters) { statements... }

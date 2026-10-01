@@ -1,0 +1,13 @@
+diff --git a/lib/elixir/lib/io/ansi/docs.ex b/lib/elixir/lib/io/ansi/docs.ex
+index fe3a04bc1..9ee62feab 100644
+--- a/lib/elixir/lib/io/ansi/docs.ex
++++ b/lib/elixir/lib/io/ansi/docs.ex
+@@ -673,7 +673,7 @@ defmodule IO.ANSI.Docs do
+ 
+   # Characters that can mark the beginning or the end of a word.
+   # Only support the most common ones at this moment.
+-  @delimiters [?\s, ?', ?", ?!, ?@, ?#, ?$, ?%, ?^, ?&] ++
++  @delimiters [?\s, ?', ?", ?!, ??, ?,, ?:, ?;, ?/, ?@, ?#, ?$, ?%, ?^, ?&] ++
+                 [?-, ?+, ?(, ?), ?[, ?], ?{, ?}, ?<, ?>, ?.]
+ 
+   ### Inline start

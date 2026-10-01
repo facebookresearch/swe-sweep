@@ -1,0 +1,32 @@
+diff --git a/sklearn/preprocessing/tests/test_data.py b/sklearn/preprocessing/tests/test_data.py
+index 8a30eba27c..5557562283 100644
+--- a/sklearn/preprocessing/tests/test_data.py
++++ b/sklearn/preprocessing/tests/test_data.py
+@@ -484,6 +484,26 @@ def test_standard_scaler_trasform_with_partial_fit():
+         # (i+1) because the Scaler has been already fitted
+         assert_equal((i + 1), scaler_incr.n_samples_seen_)
+ 
+ 
++def test_standard_check_array_of_inverse_transform():
++    # Check if StandardScaler inverse_transform is
++    # converting the integer array to float
++    x = np.array([
++        [1, 1, 1, 0, 1, 0],
++        [1, 1, 1, 0, 1, 0],
++        [0, 8, 0, 1, 0, 0],
++        [1, 4, 1, 1, 0, 0],
++        [0, 1, 0, 0, 1, 0],
++        [0, 4, 0, 1, 0, 1]], dtype=np.int32)
++
++    scaler = StandardScaler()
++    scaler.fit(x)
++
++    # The of inverse_transform should be converted
++    # to a float array.
++    # If not X *= self.scale_ will fail.
++    scaler.inverse_transform(x)
++
++
+ def test_min_max_scaler_iris():
+     X = iris.data
+     scaler = MinMaxScaler()

@@ -1,0 +1,15 @@
+diff --git a/tests/parser/t12274.nim b/tests/parser/t12274.nim
+new file mode 100644
+index 000000000..40c85f158
+--- /dev/null
++++ b/tests/parser/t12274.nim
+@@ -0,0 +1,9 @@
++var s: seq[int]
++s.add block:
++  let i = 1
++  i
++s.add try:
++  2
++except:
++  3
++doAssert s == @[1, 2]

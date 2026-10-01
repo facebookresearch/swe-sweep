@@ -1,0 +1,20 @@
+diff --git a/lib/rules/media-feature-name-no-unknown/__tests__/index.mjs b/lib/rules/media-feature-name-no-unknown/__tests__/index.mjs
+index 4ec90e1c0..39913ca4d 100644
+--- a/lib/rules/media-feature-name-no-unknown/__tests__/index.mjs
++++ b/lib/rules/media-feature-name-no-unknown/__tests__/index.mjs
+@@ -311,6 +311,15 @@ testRule({
+ 		{
+ 			code: '@media (10px < $feature < 100px) { }',
+ 		},
++		{
++			code: '@media ($feature < namespace.$var) { }',
++		},
++		{
++			code: '@media ($feature: namespace.$var) { }',
++		},
++		{
++			code: '@media (namespace.$min < width < namespace.$max) { }',
++		},
+ 	],
+ 
+ 	reject: [

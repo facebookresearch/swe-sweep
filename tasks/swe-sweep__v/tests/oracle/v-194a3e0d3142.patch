@@ -1,0 +1,43 @@
+diff --git a/vlib/v/ast/ast.v b/vlib/v/ast/ast.v
+index 2fddcef48..b9d36b557 100644
+--- a/vlib/v/ast/ast.v
++++ b/vlib/v/ast/ast.v
+@@ -379,11 +379,11 @@ pub:
+ 	generic_types []Type
+ 	is_pub        bool
+ 	// _pos fields for vfmt
+-	mut_pos      int // mut:
+-	pub_pos      int // pub:
+-	pub_mut_pos  int // pub mut:
+-	global_pos   int // __global:
+-	module_pos   int // module:
++	mut_pos      int = -1 // mut:
++	pub_pos      int = -1 // pub:
++	pub_mut_pos  int = -1 // pub mut:
++	global_pos   int = -1 // __global:
++	module_pos   int = -1 // module:
+ 	language     Language
+ 	is_union     bool
+ 	attrs        []Attr
+diff --git a/vlib/v/fmt/fmt.v b/vlib/v/fmt/fmt.v
+index 4b15f48fa..549e006a7 100644
+--- a/vlib/v/fmt/fmt.v
++++ b/vlib/v/fmt/fmt.v
+@@ -1502,6 +1502,17 @@ pub fn (mut f Fmt) alias_type_decl(node ast.AliasTypeDecl) {
+ 	if node.is_pub {
+ 		f.write('pub ')
+ 	}
++	// aliases of anon struct: `type foo = struct {}`
++	sym := f.table.sym(node.parent_type)
++	if sym.info is ast.Struct {
++		if sym.info.is_anon {
++			f.write('type ${node.name} = ')
++			f.write_anon_struct_field_decl(node.parent_type, ast.StructDecl{ fields: sym.info.fields })
++			f.comments(node.comments, has_nl: false)
++			f.mark_types_import_as_used(node.parent_type)
++			return
++		}
++	}
+ 	ptype := f.table.type_to_str_using_aliases(node.parent_type, f.mod2alias)
+ 	f.write('type ${node.name} = ${ptype}')
+ 

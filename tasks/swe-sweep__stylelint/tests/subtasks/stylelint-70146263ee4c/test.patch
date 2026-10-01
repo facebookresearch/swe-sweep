@@ -1,0 +1,24 @@
+diff --git a/lib/rules/function-linear-gradient-no-nonstandard-direction/__tests__/index.mjs b/lib/rules/function-linear-gradient-no-nonstandard-direction/__tests__/index.mjs
+index 00d13af56..1d60a4209 100644
+--- a/lib/rules/function-linear-gradient-no-nonstandard-direction/__tests__/index.mjs
++++ b/lib/rules/function-linear-gradient-no-nonstandard-direction/__tests__/index.mjs
+@@ -102,6 +102,19 @@ testRule({
+ 		{
+ 			code: '.foo { background: url(foo.png), -ms-linear-gradient(bottom, #fff, #000 ), url(bar.png); }',
+ 		},
++		// Test cases for CSS variables containing "stop" - should not trigger warnings
++		{
++			code: '.foo { background: linear-gradient(var(--stop)); }',
++		},
++		{
++			code: '.foo { background: linear-gradient(var(--tw-gradient-stops)); }',
++		},
++		{
++			code: '.foo { background: linear-gradient(var(--gradient-stop-1), var(--gradient-stop-2)); }',
++		},
++		{
++			code: '.foo { background: linear-gradient(var(--stop-color)); }',
++		},
+ 	],
+ 
+ 	reject: [

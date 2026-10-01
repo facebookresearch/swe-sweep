@@ -1,0 +1,17 @@
+diff --git a/packages/mui-material/src/Rating/Rating.test.js b/packages/mui-material/src/Rating/Rating.test.js
+index afd6b60d71..0f00907900 100644
+--- a/packages/mui-material/src/Rating/Rating.test.js
++++ b/packages/mui-material/src/Rating/Rating.test.js
+@@ -142,6 +142,12 @@ describe('<Rating />', () => {
+ 
+       expect(screen.getByRole('img')).toHaveAccessibleName('Stars: 2');
+     });
++
++    it('should have a correct label when no value is set', () => {
++      render(<Rating readOnly />);
++
++      expect(screen.getByRole('img')).toHaveAccessibleName('0 Stars');
++    });
+   });
+ 
+   describe('<form> integration', () => {

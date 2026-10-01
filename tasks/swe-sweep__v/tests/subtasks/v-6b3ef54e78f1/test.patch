@@ -1,0 +1,15 @@
+diff --git a/vlib/v/tests/in_op_array_fixed_test.v b/vlib/v/tests/in_op_array_fixed_test.v
+new file mode 100644
+index 000000000..3dde20417
+--- /dev/null
++++ b/vlib/v/tests/in_op_array_fixed_test.v
+@@ -0,0 +1,9 @@
++fn test_main() {
++	arr := [u8(1), 2, 3, 4]!
++	if arr != [4]u8{} || arr != [4]u8{init: 255} {
++		println('success')
++	}
++	if arr !in [[4]u8{}, [4]u8{init: 255}] {
++		println('success')
++	}
++}

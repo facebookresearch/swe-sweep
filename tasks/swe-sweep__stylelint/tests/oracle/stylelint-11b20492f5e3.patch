@@ -1,0 +1,24 @@
+diff --git a/lib/rules/custom-property-no-missing-var-function/index.cjs b/lib/rules/custom-property-no-missing-var-function/index.cjs
+index 00b40c462..af5743c15 100644
+--- a/lib/rules/custom-property-no-missing-var-function/index.cjs
++++ b/lib/rules/custom-property-no-missing-var-function/index.cjs
+@@ -25,6 +25,7 @@ const meta = {
+ const IGNORED_PROPERTIES = new Set([
+ 	'animation',
+ 	'animation-name',
++	'container-name',
+ 	'counter-increment',
+ 	'counter-reset',
+ 	'counter-set',
+diff --git a/lib/rules/custom-property-no-missing-var-function/index.mjs b/lib/rules/custom-property-no-missing-var-function/index.mjs
+index 73f77eb96..7b1f92e53 100644
+--- a/lib/rules/custom-property-no-missing-var-function/index.mjs
++++ b/lib/rules/custom-property-no-missing-var-function/index.mjs
+@@ -22,6 +22,7 @@ const meta = {
+ const IGNORED_PROPERTIES = new Set([
+ 	'animation',
+ 	'animation-name',
++	'container-name',
+ 	'counter-increment',
+ 	'counter-reset',
+ 	'counter-set',

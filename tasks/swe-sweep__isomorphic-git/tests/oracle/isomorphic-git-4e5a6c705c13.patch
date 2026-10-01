@@ -1,0 +1,12 @@
+diff --git a/src/commands/deleteBranch.js b/src/commands/deleteBranch.js
+index 3b764499..b00ce93f 100644
+--- a/src/commands/deleteBranch.js
++++ b/src/commands/deleteBranch.js
+@@ -12,6 +12,7 @@ import { GitRefManager } from '../managers/GitRefManager.js'
+  * @returns {Promise<void>}
+  */
+ export async function _deleteBranch({ fs, gitdir, ref }) {
++  ref = ref.startsWith('refs/heads/') ? ref : `refs/heads/${ref}`
+   const exist = await GitRefManager.exists({ fs, gitdir, ref })
+   if (!exist) {
+     throw new NotFoundError(ref)

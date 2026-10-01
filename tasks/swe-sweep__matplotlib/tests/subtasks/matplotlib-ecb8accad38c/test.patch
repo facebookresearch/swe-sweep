@@ -1,0 +1,16 @@
+diff --git a/lib/matplotlib/tests/test_axes.py b/lib/matplotlib/tests/test_axes.py
+--- a/lib/matplotlib/tests/test_axes.py
++++ b/lib/matplotlib/tests/test_axes.py
+@@ -3344,6 +3344,12 @@
+     ax.set_title("Simplest errorbars, 0.2 in x, 0.4 in y")
+ 
+ 
++def test_errorbar_mapview_kwarg():
++    D = {ii: ii for ii in range(10)}
++    fig, ax = plt.subplots()
++    ax.errorbar(x=D.keys(), y=D.values(), xerr=D.values())
++
++
+ def test_errorbar_colorcycle():
+ 
+     f, ax = plt.subplots()

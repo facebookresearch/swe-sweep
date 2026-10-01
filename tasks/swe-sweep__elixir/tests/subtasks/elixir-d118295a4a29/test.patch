@@ -1,0 +1,12 @@
+diff --git a/lib/elixir/test/elixir/kernel/parser_test.exs b/lib/elixir/test/elixir/kernel/parser_test.exs
+--- a/lib/elixir/test/elixir/kernel/parser_test.exs
++++ b/lib/elixir/test/elixir/kernel/parser_test.exs
+@@ -404,4 +404,8 @@ defmodule Kernel.ParserTest do
+       assert string_to_quoted.("foo(\n) do\nend") ==
+                {:foo, [do: [line: 2], end: [line: 3], newlines: 1, closing: [line: 2], line: 1],
+                 [[do: {:__block__, [], []}]]}
++
++      assert string_to_quoted.("foo(\n)(\n)") ==
++               {{:foo, [newlines: 1, closing: [line: 2], line: 1], []},
++                [newlines: 1, closing: [line: 3], line: 1], []}
+     end

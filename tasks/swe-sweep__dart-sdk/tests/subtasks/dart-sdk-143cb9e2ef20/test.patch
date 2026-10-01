@@ -1,0 +1,94 @@
+diff --git a/pkg/analysis_server/test/src/services/correction/fix/add_switch_case_break_test.dart b/pkg/analysis_server/test/src/services/correction/fix/add_switch_case_break_test.dart
+index 90a5543..8f5b964 100644
+--- a/pkg/analysis_server/test/src/services/correction/fix/add_switch_case_break_test.dart
++++ b/pkg/analysis_server/test/src/services/correction/fix/add_switch_case_break_test.dart
+@@ -21,31 +21,34 @@ class AddSwitchCaseBreakMultiTest extends FixProcessorTest {
+   @override
+   FixKind get kind => DartFixKind.ADD_SWITCH_CASE_BREAK_MULTI;
+ 
++  @override
++  String? get testPackageLanguageVersion => '2.19';
++
+   Future<void> test_singleFile() async {
+     await resolveTestCode('''
+-void f(int i) {
+-  switch(i) {
++void f(Object? x) {
++  switch (x) {
+     case 0:
+-      i++;
++      0;
+     case 1:
+-      i++;
++      1;
+     case 2:
+-      i++;
++      2;
+   }
+ }
+ ''');
+     await assertHasFixAllFix(
+         CompileTimeErrorCode.SWITCH_CASE_COMPLETES_NORMALLY, '''
+-void f(int i) {
+-  switch(i) {
++void f(Object? x) {
++  switch (x) {
+     case 0:
+-      i++;
++      0;
+       break;
+     case 1:
+-      i++;
++      1;
+       break;
+     case 2:
+-      i++;
++      2;
+   }
+ }
+ ''');
+@@ -57,25 +60,30 @@ class AddSwitchCaseBreakTest extends FixProcessorTest {
+   @override
+   FixKind get kind => DartFixKind.ADD_SWITCH_CASE_BREAK;
+ 
+-  Future<void> test_indentation() async {
++  @override
++  String? get testPackageLanguageVersion => '2.19';
++
++  Future<void> test_sharedCaseBody() async {
+     await resolveTestCode('''
+-void f(int i) {
+-    switch(i) {
+-        case 0:
+-            i++;
+-        case 1:
+-            i++;
++void f(Object? x) {
++  switch (x) {
++    case 0:
++    case 1:
++      0;
++    case 2:
++      2;
+   }
+ }
+ ''');
+     await assertHasFix('''
+-void f(int i) {
+-    switch(i) {
+-        case 0:
+-            i++;
+-            break;
+-        case 1:
+-            i++;
++void f(Object? x) {
++  switch (x) {
++    case 0:
++    case 1:
++      0;
++      break;
++    case 2:
++      2;
+   }
+ }
+ ''');

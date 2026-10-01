@@ -1,0 +1,110 @@
+diff --git a/modules/openapi-generator/src/test/java/org/openapitools/codegen/DefaultCodegenTest.java b/modules/openapi-generator/src/test/java/org/openapitools/codegen/DefaultCodegenTest.java
+index c750dbabed7..1d6a5978343 100644
+--- a/modules/openapi-generator/src/test/java/org/openapitools/codegen/DefaultCodegenTest.java
++++ b/modules/openapi-generator/src/test/java/org/openapitools/codegen/DefaultCodegenTest.java
+@@ -74,6 +74,16 @@ public class DefaultCodegenTest {
+         Assert.assertEquals(Sets.intersection(operation.imports, Sets.newHashSet("Person")).size(), 1);
+     }
+ 
++    @Test
++    public void testOptionalResponseImports() {
++        final DefaultCodegen codegen = new DefaultCodegen();
++        final OpenAPI openApi = TestUtils.parseFlattenSpec("src/test/resources/3_0/optionalResponse.yaml");
++        codegen.setOpenAPI(openApi);
++        PathItem path = openApi.getPaths().get("/api/Users/{userId}");
++        CodegenOperation operation = codegen.fromOperation("/api/Users/{userId}", "get", path.getGet(), path.getServers());
++        Assert.assertEquals(operation.isResponseOptional, true);
++    }
++
+     @Test
+     public void testEnumImports() {
+         final DefaultCodegen codegen = new DefaultCodegen();
+diff --git a/modules/openapi-generator/src/test/java/org/openapitools/codegen/typescript/fetch/TypeScriptFetchClientCodegenTest.java b/modules/openapi-generator/src/test/java/org/openapitools/codegen/typescript/fetch/TypeScriptFetchClientCodegenTest.java
+index a6bccbff1ac..31a67ed6190 100644
+--- a/modules/openapi-generator/src/test/java/org/openapitools/codegen/typescript/fetch/TypeScriptFetchClientCodegenTest.java
++++ b/modules/openapi-generator/src/test/java/org/openapitools/codegen/typescript/fetch/TypeScriptFetchClientCodegenTest.java
+@@ -1,11 +1,13 @@
+ package org.openapitools.codegen.typescript.fetch;
+ 
+ import io.swagger.v3.oas.models.OpenAPI;
++import io.swagger.v3.oas.models.PathItem;
+ import io.swagger.v3.oas.models.media.ArraySchema;
+ import io.swagger.v3.oas.models.media.MapSchema;
+ import io.swagger.v3.oas.models.media.Schema;
+ import io.swagger.v3.oas.models.media.StringSchema;
+ import org.openapitools.codegen.CodegenConstants;
++import org.openapitools.codegen.CodegenOperation;
+ import org.openapitools.codegen.SupportingFile;
+ import org.openapitools.codegen.TestUtils;
+ import org.openapitools.codegen.languages.AbstractTypeScriptClientCodegen;
+@@ -43,6 +45,16 @@ public class TypeScriptFetchClientCodegenTest {
+ 
+     }
+ 
++    @Test
++    public void testOptionalResponseImports() {
++        TypeScriptFetchClientCodegen codegen = new TypeScriptFetchClientCodegen();
++        final OpenAPI openApi = TestUtils.parseFlattenSpec("src/test/resources/3_0/optionalResponse.yaml");
++        codegen.setOpenAPI(openApi);
++        PathItem path = openApi.getPaths().get("/api/Users/{userId}");
++        CodegenOperation operation = codegen.fromOperation("/api/Users/{userId}", "get", path.getGet(), path.getServers());
++        Assert.assertEquals(operation.isResponseOptional, true);
++    }
++
+     @Test
+     public void testWithoutSnapshotVersion() {
+         OpenAPI api = TestUtils.createOpenAPI();
+diff --git a/modules/openapi-generator/src/test/resources/3_0/optionalResponse.yaml b/modules/openapi-generator/src/test/resources/3_0/optionalResponse.yaml
+new file mode 100644
+index 00000000000..650f7016795
+--- /dev/null
++++ b/modules/openapi-generator/src/test/resources/3_0/optionalResponse.yaml
+@@ -0,0 +1,48 @@
++openapi: 3.0.1
++info:
++  title: My Sample User API
++  version: '1.0'
++paths:
++  /api/Users/{userId}:
++    get:
++      tags:
++        - Users
++      summary: Get a specific user
++      operationId: GetUserById
++      parameters:
++        - name: userId
++          in: path
++          description: ID of the user
++          required: true
++          schema:
++            type: string
++            format: uuid
++      responses:
++        '200':
++          description: Success
++          content:
++            text/plain:
++              schema:
++                $ref: '#/components/schemas/UserDto'
++            application/json:
++              schema:
++                $ref: '#/components/schemas/UserDto'
++            text/json:
++              schema:
++                $ref: '#/components/schemas/UserDto'
++        '204':
++          description: No Content
++components:
++  schemas:
++    UserDto:
++      required:
++        - id
++      type: object
++      properties:
++        id:
++          type: string
++          format: uuid
++        name:
++          type: string
++          nullable: true
++      additionalProperties: false

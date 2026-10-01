@@ -1,0 +1,151 @@
+{
+  "build_jobs": 4,
+  "container_repo": "/luxon",
+  "evaluation": {
+    "suite": "reproduction",
+    "visible_timeout": 7200
+  },
+  "upstream_image": "pandora-maxbug-luxon:1.20.0",
+  "n_base_passing": 879,
+  "n_base_test_ignore": 2,
+  "oracle_digest": "ecec34fdd2ca6da58a3001429b5371fb8aaa432e98988155e0e7a9c8fb799366",
+  "oracle_pristine_paths": [],
+  "upstream_commit": "9f7399e15e6172900e0591deb5a57a45769d8205",
+  "reproduction": {
+    "needs_build": false,
+    "suite": "jest",
+    "test_timeout": 900
+  },
+  "schema": 2,
+  "subtasks": [
+    {
+      "f2p": [
+        "Interval.fromISO works with Settings.throwOnInvalid"
+      ],
+      "id": "luxon-05032aa9bdd0",
+      "target_files": [
+        "src/interval.js"
+      ]
+    },
+    {
+      "f2p": [
+        "DateTime.fromISO() accepts year-ordinalTtime+offset"
+      ],
+      "id": "luxon-15fca186c4b9",
+      "target_files": [
+        "src/impl/regexParser.js"
+      ]
+    },
+    {
+      "f2p": [
+        "Duration#normalize can convert all unit pairs"
+      ],
+      "id": "luxon-2067e91b61a0",
+      "target_files": [
+        "src/duration.js"
+      ]
+    },
+    {
+      "f2p": [
+        "DateTime#toISO() rounds fractional timezone minute offsets"
+      ],
+      "id": "luxon-28e97b123fc8",
+      "target_files": [
+        "src/impl/util.js"
+      ]
+    },
+    {
+      "f2p": [
+        "Duration.fromISO can parse a variety of ISO formats"
+      ],
+      "id": "luxon-4bd53bd0eb2f",
+      "target_files": [
+        "src/impl/regexParser.js"
+      ]
+    },
+    {
+      "f2p": [
+        "DateTime#isInDST() returns true for 1974 whole year in USA- from January 6th to October 27th"
+      ],
+      "id": "luxon-5f239ae6b8f3",
+      "target_files": [
+        "src/datetime.js"
+      ]
+    },
+    {
+      "f2p": [
+        "DateTime.fromHTTP() can parse RFC 850 on Wednesday"
+      ],
+      "id": "luxon-685caab6f4e3",
+      "target_files": [
+        "src/impl/regexParser.js"
+      ]
+    },
+    {
+      "f2p": [
+        "Info English lists are not mutable"
+      ],
+      "id": "luxon-74131e495ac8",
+      "target_files": [
+        "src/impl/english.js"
+      ]
+    },
+    {
+      "f2p": [
+        "DateTime#plus works across the 100 barrier when passing through February"
+      ],
+      "id": "luxon-851dc45e86a0",
+      "target_files": [
+        "src/impl/util.js"
+      ]
+    },
+    {
+      "f2p": [
+        "DateTime#toISODate() correctly pads negative years"
+      ],
+      "id": "luxon-8688e266d051",
+      "target_files": [
+        "src/impl/util.js"
+      ]
+    },
+    {
+      "f2p": [
+        "DateTime.fromRFC2822() can use the obsolete UT zone"
+      ],
+      "id": "luxon-9adc4479442e",
+      "target_files": [
+        "src/impl/regexParser.js"
+      ]
+    },
+    {
+      "f2p": [
+        "throwOnInvalid throws if year is too big"
+      ],
+      "id": "luxon-c4c48bc0ecc8",
+      "target_files": [
+        "src/datetime.js"
+      ]
+    },
+    {
+      "f2p": [
+        "A DateTime in an invalid FixedOffsetZone is itself invalid",
+        "FixedOffsetZone is invalid when constructed with a non-numeric offset"
+      ],
+      "id": "luxon-e125e09755fa",
+      "target_files": [
+        "src/zones/fixedOffsetZone.js"
+      ]
+    },
+    {
+      "f2p": [
+        "Interval#splitAt handles DST shifts"
+      ],
+      "id": "luxon-ff252b03cc95",
+      "target_files": [
+        "src/interval.js"
+      ]
+    }
+  ],
+  "task": "luxon",
+  "version": "1.20.0"
+}

@@ -1,0 +1,36 @@
+diff --git a/codec-http2/src/test/java/io/netty/handler/codec/http2/Http2FrameCodecTest.java b/codec-http2/src/test/java/io/netty/handler/codec/http2/Http2FrameCodecTest.java
+index 4d29f54..8a7dd0d 100644
+--- a/codec-http2/src/test/java/io/netty/handler/codec/http2/Http2FrameCodecTest.java
++++ b/codec-http2/src/test/java/io/netty/handler/codec/http2/Http2FrameCodecTest.java
+@@ -721,6 +721,31 @@ public class Http2FrameCodecTest {
+         return ByteBufUtil.writeUtf8(UnpooledByteBufAllocator.DEFAULT, s);
+     }
+ 
++    @Test
++    public void invalidPayloadLength() throws Exception {
++        // The first frame after the preface must be a SETTINGS frame.
++        channel.writeInbound(Unpooled.wrappedBuffer(new byte[]{
++                0, 0, 0, // length
++                4, // type: SETTINGS
++                0, // flags
++                0, 0, 0, 0 // stream id
++        }));
++        channel.writeInbound(Unpooled.wrappedBuffer(new byte[]{
++                0, 0, 4, // length
++                0, // type: DATA
++                9, // flags: PADDED, END_STREAM
++                1, 0, 0, 0, // stream id
++                4, // pad length
++                0, 0, 0 // not enough space for padding
++        }));
++        try {
++            inboundHandler.checkException();
++            fail();
++        } catch (Http2Exception expected) {
++            // expected
++        }
++    }
++
+     private static class VerifiableHttp2FrameWriter extends DefaultHttp2FrameWriter {
+         @Override
+         public ChannelFuture writeData(ChannelHandlerContext ctx, int streamId, ByteBuf data,

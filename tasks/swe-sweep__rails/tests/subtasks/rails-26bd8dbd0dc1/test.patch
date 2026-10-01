@@ -1,0 +1,16 @@
+diff --git a/activesupport/test/inflector_test.rb b/activesupport/test/inflector_test.rb
+index 5ff7559fb6f..0bfc30ea4f0 100644
+--- a/activesupport/test/inflector_test.rb
++++ b/activesupport/test/inflector_test.rb
+@@ -430,6 +430,11 @@ class InflectorTest < ActiveSupport::TestCase
+     assert_equal("LAX roundtrip to SFO", ActiveSupport::Inflector.humanize("Lax Roundtrip To Sfo", capitalize: false))
+   end
+ 
++  def test_humanize_with_international_characters
++    assert_equal("Áéíóú", ActiveSupport::Inflector.humanize("áÉÍÓÚ"))
++    assert_equal("Абвгде", ActiveSupport::Inflector.humanize("аБВГДЕ"))
++  end
++
+   def test_constantize
+     run_constantize_tests_on do |string|
+       ActiveSupport::Inflector.constantize(string)

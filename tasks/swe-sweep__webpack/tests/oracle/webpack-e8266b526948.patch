@@ -1,0 +1,15 @@
+diff --git a/lib/buildChunkGraph.js b/lib/buildChunkGraph.js
+index 0e9e2cc96..ecf6743c9 100644
+--- a/lib/buildChunkGraph.js
++++ b/lib/buildChunkGraph.js
+@@ -508,8 +508,9 @@ const visitModules = (
+ 							new AsyncDependencyToInitialChunkError(chunkName, module, b.loc)
+ 						);
+ 						c = chunkGroup;
++					} else {
++						c.addOptions(b.groupOptions);
+ 					}
+-					c.addOptions(b.groupOptions);
+ 					c.addOrigin(module, b.loc, b.request);
+ 				}
+ 				blockConnections.set(b, []);

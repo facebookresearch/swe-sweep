@@ -1,0 +1,39 @@
+diff --git a/packages/@aws-cdk/aws-apigateway/lib/usage-plan.ts b/packages/@aws-cdk/aws-apigateway/lib/usage-plan.ts
+index 4db28eb936..2f10071259 100644
+--- a/packages/@aws-cdk/aws-apigateway/lib/usage-plan.ts
++++ b/packages/@aws-cdk/aws-apigateway/lib/usage-plan.ts
+@@ -6,7 +6,7 @@ import { CfnUsagePlan, CfnUsagePlanKey } from './apigateway.generated';
+ import { Method } from './method';
+ import { IRestApi } from './restapi';
+ import { Stage } from './stage';
+-import { validateInteger } from './util';
++import { validateDouble, validateInteger } from './util';
+ 
+ /**
+  * Container for defining throttling parameters to API stages or methods.
+@@ -316,7 +316,7 @@ export class UsagePlan extends UsagePlanBase {
+       const burstLimit = props.burstLimit;
+       validateInteger(burstLimit, 'Throttle burst limit');
+       const rateLimit = props.rateLimit;
+-      validateInteger(rateLimit, 'Throttle rate limit');
++      validateDouble(rateLimit, 'Throttle rate limit');
+ 
+       ret = {
+         burstLimit: burstLimit,
+diff --git a/packages/@aws-cdk/aws-apigateway/lib/util.ts b/packages/@aws-cdk/aws-apigateway/lib/util.ts
+index 7facdc35bc..550250edcd 100644
+--- a/packages/@aws-cdk/aws-apigateway/lib/util.ts
++++ b/packages/@aws-cdk/aws-apigateway/lib/util.ts
+@@ -78,6 +78,12 @@ export function validateInteger(property: number | undefined, messagePrefix: str
+   }
+ }
+ 
++export function validateDouble(property: number | undefined, messagePrefix: string) {
++  if (property && isNaN(property) && isNaN(parseFloat(property.toString()))) {
++    throw new Error(`${messagePrefix} should be an double`);
++  }
++}
++
+ export class JsonSchemaMapper {
+   /**
+    * Transforms naming of some properties to prefix with a $, where needed

@@ -1,0 +1,296 @@
+{
+  "build_jobs": 4,
+  "container_repo": "/rxjava",
+  "evaluation": {
+    "suite": "reproduction",
+    "test_dirs": [
+      "src/test"
+    ],
+    "visible_timeout": 21600
+  },
+  "upstream_image": "pandora-maxbug-rxjava:2.2.5",
+  "n_base_passing": 10521,
+  "n_base_test_ignore": 241,
+  "oracle_digest": "444a0c108812f3179f1d5621a64402adbcb89fec4d53071517c1957919e3ee73",
+  "oracle_pristine_paths": [],
+  "upstream_commit": "9f7399e15e6172900e0591deb5a57a45769d8205",
+  "reproduction": {
+    "jobs_env": "SWESWEEP_BUILD_JOBS",
+    "needs_build": false,
+    "suite": {
+      "gradle_args": [
+        "--no-daemon"
+      ],
+      "gradlew": "./gradlew",
+      "test_task": "test",
+      "type": "gradle"
+    },
+    "test_timeout": 2700
+  },
+  "schema": 2,
+  "subtasks": [
+    {
+      "f2p": [
+        "io.reactivex.internal.operators.flowable.FlowableBufferTest.bufferExactFailingSupplier",
+        "io.reactivex.internal.operators.observable.ObservableBufferTest.bufferExactFailingSupplier"
+      ],
+      "id": "rxjava-006d701fb399",
+      "target_files": [
+        "src/main/java/io/reactivex/internal/operators/flowable/FlowableBufferTimed.java",
+        "src/main/java/io/reactivex/internal/operators/observable/ObservableBufferTimed.java"
+      ]
+    },
+    {
+      "f2p": [
+        "io.reactivex.internal.operators.maybe.MaybeAmbTest.noWinnerSuccessDispose"
+      ],
+      "id": "rxjava-1c8f5821ed8a",
+      "target_files": [
+        "src/main/java/io/reactivex/internal/operators/completable/CompletableAmb.java",
+        "src/main/java/io/reactivex/internal/operators/maybe/MaybeAmb.java",
+        "src/main/java/io/reactivex/internal/operators/single/SingleAmb.java"
+      ]
+    },
+    {
+      "f2p": [
+        "io.reactivex.internal.operators.observable.ObservableTakeLastTimedTest.lastWindowIsFixedInTime"
+      ],
+      "id": "rxjava-32868fd52d7a",
+      "target_files": [
+        "src/main/java/io/reactivex/rxjava3/internal/operators/observable/ObservableTakeLastTimed.java"
+      ]
+    },
+    {
+      "f2p": [
+        "io.reactivex.processors.MulticastProcessorTest.requestUpstreamPrefetchNonFused",
+        "io.reactivex.processors.MulticastProcessorTest.requestUpstreamPrefetchNonFused2"
+      ],
+      "id": "rxjava-354214272a97",
+      "target_files": [
+        "src/main/java/io/reactivex/processors/MulticastProcessor.java"
+      ]
+    },
+    {
+      "f2p": [
+        "io.reactivex.internal.operators.observable.ObservableObserveOnTest.fusedNoConcurrentCleanDueToCancel"
+      ],
+      "id": "rxjava-3f173c488095",
+      "target_files": [
+        "src/main/java/io/reactivex/internal/operators/flowable/FlowableObserveOn.java",
+        "src/main/java/io/reactivex/internal/operators/observable/ObservableObserveOn.java"
+      ]
+    },
+    {
+      "f2p": [
+        "io.reactivex.internal.operators.observable.ObservableAmbTest.singleIterableNotSubclassingObservable",
+        "io.reactivex.internal.operators.observable.ObservableCombineLatestTest.combineLatestIterableOfSourcesNotSubclassingObservable",
+        "io.reactivex.internal.operators.observable.ObservableZipTest.zipIterableNotSubclassingObservable"
+      ],
+      "id": "rxjava-472b6895ca6a",
+      "target_files": [
+        "src/main/java/io/reactivex/internal/operators/observable/ObservableAmb.java",
+        "src/main/java/io/reactivex/internal/operators/observable/ObservableCombineLatest.java",
+        "src/main/java/io/reactivex/internal/operators/observable/ObservableZip.java"
+      ]
+    },
+    {
+      "f2p": [
+        "io.reactivex.internal.operators.observable.ObservableFlatMapTest.mixedScalarAsync"
+      ],
+      "id": "rxjava-51dc457df08a",
+      "target_files": [
+        "src/main/java/io/reactivex/internal/operators/observable/ObservableFlatMap.java"
+      ]
+    },
+    {
+      "f2p": [
+        "io.reactivex.internal.util.MiscUtilTest.appendOnlyLinkedArrayListForEachWhileBiFullChunkNoNext"
+      ],
+      "id": "rxjava-542a8ed86420",
+      "target_files": [
+        "src/main/java/io/reactivex/rxjava4/internal/util/AppendOnlyLinkedArrayList.java"
+      ]
+    },
+    {
+      "f2p": [
+        "io.reactivex.internal.operators.flowable.FlowableOnBackpressureErrorTest.overflowCancels"
+      ],
+      "id": "rxjava-5afafee053d2",
+      "target_files": [
+        "src/main/java/io/reactivex/internal/operators/flowable/FlowableOnBackpressureError.java"
+      ]
+    },
+    {
+      "f2p": [
+        "io.reactivex.internal.operators.flowable.FlowableDebounceTest.debounceOnEmpty",
+        "io.reactivex.internal.operators.observable.ObservableDebounceTest.debounceOnEmpty"
+      ],
+      "id": "rxjava-69abca7810fd",
+      "target_files": [
+        "src/main/java/io/reactivex/internal/operators/flowable/FlowableDebounce.java",
+        "src/main/java/io/reactivex/internal/operators/observable/ObservableDebounce.java"
+      ]
+    },
+    {
+      "f2p": [
+        "io.reactivex.internal.operators.flowable.FlowableReplayTest.noBoundedRetentionViaThreadLocal",
+        "io.reactivex.internal.operators.observable.ObservableReplayTest.noBoundedRetentionViaThreadLocal"
+      ],
+      "id": "rxjava-6afb8d1452fd",
+      "target_files": [
+        "src/main/java/io/reactivex/internal/operators/flowable/FlowableReplay.java",
+        "src/main/java/io/reactivex/internal/operators/observable/ObservableReplay.java"
+      ]
+    },
+    {
+      "f2p": [
+        "io.reactivex.internal.operators.flowable.FlowableGroupByTest.issue6974"
+      ],
+      "id": "rxjava-75354b2e568f",
+      "target_files": [
+        "src/main/java/io/reactivex/rxjava3/internal/operators/flowable/FlowableGroupBy.java"
+      ]
+    },
+    {
+      "f2p": [
+        "io.reactivex.processors.MulticastProcessorTest.requestUpstreamPrefetchNonFused",
+        "io.reactivex.processors.MulticastProcessorTest.requestUpstreamPrefetchNonFused2"
+      ],
+      "id": "rxjava-793ac8017f8a",
+      "target_files": [
+        "src/main/java/io/reactivex/rxjava3/processors/MulticastProcessor.java"
+      ]
+    },
+    {
+      "f2p": [
+        "io.reactivex.internal.operators.flowable.FlowableMapTest.conditionalFusionNoNPE"
+      ],
+      "id": "rxjava-7a6f5b60d4a1",
+      "target_files": [
+        "src/main/java/io/reactivex/rxjava3/internal/operators/flowable/FlowableMap.java"
+      ]
+    },
+    {
+      "f2p": [
+        "io.reactivex.internal.operators.flowable.FlowableFlatMapTest.mainErrorsInnerCancelled"
+      ],
+      "id": "rxjava-8e92626c56c1",
+      "target_files": [
+        "src/main/java/io/reactivex/rxjava3/internal/operators/flowable/FlowableFlatMap.java"
+      ]
+    },
+    {
+      "f2p": [
+        "io.reactivex.internal.operators.observable.ObservableZipTest.firstErrorPreventsSecondSubscription"
+      ],
+      "id": "rxjava-8f6b1984020e",
+      "target_files": [
+        "src/main/java/io/reactivex/internal/operators/observable/ObservableZip.java"
+      ]
+    },
+    {
+      "f2p": [
+        "io.reactivex.internal.operators.flowable.FlowablePublishTest.splitCombineSubscriberChangeAfterOnNext"
+      ],
+      "id": "rxjava-9419632fd11a",
+      "target_files": [
+        "src/main/java/io/reactivex/internal/operators/flowable/FlowablePublish.java"
+      ]
+    },
+    {
+      "f2p": [
+        "io.reactivex.internal.operators.flowable.FlowableObserveOnTest.fusedNoConcurrentCleanDueToCancel",
+        "io.reactivex.internal.operators.observable.ObservableObserveOnTest.fusedNoConcurrentCleanDueToCancel"
+      ],
+      "id": "rxjava-958fe31f3f2c",
+      "target_files": [
+        "src/main/java/io/reactivex/rxjava3/internal/operators/flowable/FlowableObserveOn.java",
+        "src/main/java/io/reactivex/rxjava3/internal/operators/observable/ObservableObserveOn.java"
+      ]
+    },
+    {
+      "f2p": [
+        "io.reactivex.internal.operators.single.SingleTimeoutTest.timeoutWithZero"
+      ],
+      "id": "rxjava-a2157bd71de8",
+      "target_files": [
+        "src/main/java/io/reactivex/rxjava3/internal/operators/single/SingleTimeout.java"
+      ]
+    },
+    {
+      "f2p": [
+        "io.reactivex.internal.operators.flowable.FlowableConcatMapTest.delayErrorCallableTillTheEnd"
+      ],
+      "id": "rxjava-b7427efe479e",
+      "target_files": [
+        "src/main/java/io/reactivex/internal/operators/flowable/FlowableConcatMap.java"
+      ]
+    },
+    {
+      "f2p": [
+        "io.reactivex.internal.operators.flowable.FlowableMergeWithCompletableTest.cancelOtherOnMainError",
+        "io.reactivex.internal.operators.flowable.FlowableMergeWithMaybeTest.cancelOtherOnMainError",
+        "io.reactivex.internal.operators.flowable.FlowableMergeWithSingleTest.cancelOtherOnMainError",
+        "io.reactivex.internal.operators.observable.ObservableMergeWithCompletableTest.cancelOtherOnMainError",
+        "io.reactivex.internal.operators.observable.ObservableMergeWithMaybeTest.cancelOtherOnMainError",
+        "io.reactivex.internal.operators.observable.ObservableMergeWithSingleTest.cancelOtherOnMainError"
+      ],
+      "id": "rxjava-cd75216c0b5d",
+      "target_files": [
+        "src/main/java/io/reactivex/internal/operators/flowable/FlowableMergeWithCompletable.java",
+        "src/main/java/io/reactivex/internal/operators/flowable/FlowableMergeWithMaybe.java",
+        "src/main/java/io/reactivex/internal/operators/flowable/FlowableMergeWithSingle.java",
+        "src/main/java/io/reactivex/internal/operators/observable/ObservableMergeWithCompletable.java",
+        "src/main/java/io/reactivex/internal/operators/observable/ObservableMergeWithMaybe.java",
+        "src/main/java/io/reactivex/internal/operators/observable/ObservableMergeWithSingle.java"
+      ]
+    },
+    {
+      "f2p": [
+        "io.reactivex.internal.operators.flowable.FlowableConcatMapTest.delayErrorCallableTillTheEnd"
+      ],
+      "id": "rxjava-e6ca3c914584",
+      "target_files": [
+        "src/main/java/io/reactivex/internal/operators/flowable/FlowableConcatMap.java"
+      ]
+    },
+    {
+      "f2p": [
+        "io.reactivex.internal.operators.observable.ObservableSwitchTest.innerOnSubscribeOuterCancelRace"
+      ],
+      "id": "rxjava-e6e15f8b3680",
+      "target_files": [
+        "src/main/java/io/reactivex/rxjava3/internal/operators/observable/ObservableSwitchMap.java"
+      ]
+    },
+    {
+      "f2p": [
+        "io.reactivex.internal.operators.flowable.FlowableGroupByTest.fusedParallelGroupProcessing"
+      ],
+      "id": "rxjava-ecbb413031aa",
+      "target_files": [
+        "src/main/java/io/reactivex/internal/operators/flowable/FlowableGroupBy.java"
+      ]
+    },
+    {
+      "f2p": [
+        "io.reactivex.internal.operators.flowable.FlowableOnBackpressureErrorTest.overflowCancels"
+      ],
+      "id": "rxjava-eda731404e51",
+      "target_files": [
+        "src/main/java/io/reactivex/rxjava3/internal/operators/flowable/FlowableOnBackpressureError.java"
+      ]
+    },
+    {
+      "f2p": [
+        "io.reactivex.internal.operators.flowable.FlowableFlatMapTest.mainErrorsInnerCancelled"
+      ],
+      "id": "rxjava-f184cffc63a8",
+      "target_files": [
+        "src/main/java/io/reactivex/internal/operators/flowable/FlowableFlatMap.java"
+      ]
+    }
+  ],
+  "task": "rxjava",
+  "version": "2.2.5"
+}

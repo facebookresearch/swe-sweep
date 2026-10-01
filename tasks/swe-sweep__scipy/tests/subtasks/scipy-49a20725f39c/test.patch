@@ -1,0 +1,28 @@
+diff --git a/scipy/stats/tests/test_distributions.py b/scipy/stats/tests/test_distributions.py
+index aa3fffa4ad..cf4cfd8e12 100644
+--- a/scipy/stats/tests/test_distributions.py
++++ b/scipy/stats/tests/test_distributions.py
+@@ -3526,6 +3526,21 @@ def test_burr12_ppf_small_arg():
+     #   >>> float(((1-prob)**(-1/d) - 1)**(1/c))
+     #   5.7735026918962575e-09
+     assert_allclose(quantile, 5.7735026918962575e-09)
+ 
+ 
++def test_burr12_moments_edge():
++    # gh-18838 reported that burr12 moments could be invalid; see above.
++    # Check that this is resolved in an edge case where c*d == n, and
++    # compare the results against those produced by Mathematica, e.g.
++    # `SinghMaddalaDistribution[2, 2, 1]` at Wolfram Alpha.
++    c, d = 2, 2
++    mean = np.pi/4
++    var = 1 - np.pi**2/16
++    skew = np.pi**3/(32*var**1.5)
++    kurtosis = np.nan
++    ref = [mean, var, skew, kurtosis]
++    res = stats.burr12(c, d).stats('mvsk')
++    assert_allclose(res, ref, rtol=1e-14)
++
++
+ def test_crystalball_function():
+     """
+     All values are calculated using the independent implementation of the

@@ -1,0 +1,22 @@
+diff --git a/test-data/unit/check-newsemanal.test b/test-data/unit/check-newsemanal.test
+index b0b01ad3a..cfb59a9f8 100644
+--- a/test-data/unit/check-newsemanal.test
++++ b/test-data/unit/check-newsemanal.test
+@@ -3239,4 +3239,17 @@
+ [case testSelfReferentialSubscriptExpression]
+ x = x[1]  # E: Cannot resolve name "x" (possible cyclic definition)
+ y = 1[y]  # E: Value of type "int" is not indexable \
+           # E: Cannot determine type of "y"
++
++[case testNestedClassSelfNoPlaceholder]
++from typing import Generic, TypeVar
++
++def test() -> None:
++    T = TypeVar("T", bound="Model")
++
++    class Query(Generic[T]):
++        def filter(self, value: T) -> None:
++            ...
++
++    class Model:
++        pass

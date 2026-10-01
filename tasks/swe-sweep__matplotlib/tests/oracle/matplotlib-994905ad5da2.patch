@@ -1,0 +1,13 @@
+diff --git a/lib/matplotlib/widgets.py b/lib/matplotlib/widgets.py
+index d9a095f1a2..1fcc52198c 100644
+--- a/lib/matplotlib/widgets.py
++++ b/lib/matplotlib/widgets.py
+@@ -305,7 +305,7 @@ class SliderBase(AxesWidget):
+ 
+     def reset(self):
+         """Reset the slider to the initial value."""
+-        if self.val != self.valinit:
++        if np.any(self.val != self.valinit):
+             self.set_val(self.valinit)
+ 
+ 

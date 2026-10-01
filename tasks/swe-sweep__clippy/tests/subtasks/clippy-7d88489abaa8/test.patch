@@ -1,0 +1,77 @@
+diff --git a/tests/ui/empty_line_after/outer_attribute.1.fixed b/tests/ui/empty_line_after/outer_attribute.1.fixed
+index 36d80a2c9..e36e3c2ae 100644
+--- a/tests/ui/empty_line_after/outer_attribute.1.fixed
++++ b/tests/ui/empty_line_after/outer_attribute.1.fixed
+@@ -105,4 +105,13 @@ second line
+ ")]
+ pub struct Args;
+ 
++mod issue_14980 {
++    //~v empty_line_after_outer_attr
++    #[repr(align(536870912))]
++    enum Aligned {
++        Zero = 0,
++        One = 1,
++    }
++}
++
+ fn main() {}
+diff --git a/tests/ui/empty_line_after/outer_attribute.2.fixed b/tests/ui/empty_line_after/outer_attribute.2.fixed
+index 0e8e4129e..b0908fc72 100644
+--- a/tests/ui/empty_line_after/outer_attribute.2.fixed
++++ b/tests/ui/empty_line_after/outer_attribute.2.fixed
+@@ -108,4 +108,13 @@ second line
+ ")]
+ pub struct Args;
+ 
++mod issue_14980 {
++    //~v empty_line_after_outer_attr
++    #[repr(align(536870912))]
++    enum Aligned {
++        Zero = 0,
++        One = 1,
++    }
++}
++
+ fn main() {}
+diff --git a/tests/ui/empty_line_after/outer_attribute.rs b/tests/ui/empty_line_after/outer_attribute.rs
+index 1295088ac..4ae113c68 100644
+--- a/tests/ui/empty_line_after/outer_attribute.rs
++++ b/tests/ui/empty_line_after/outer_attribute.rs
+@@ -116,4 +116,14 @@ second line
+ ")]
+ pub struct Args;
+ 
++mod issue_14980 {
++    //~v empty_line_after_outer_attr
++    #[repr(align(536870912))]
++
++    enum Aligned {
++        Zero = 0,
++        One = 1,
++    }
++}
++
+ fn main() {}
+diff --git a/tests/ui/empty_line_after/outer_attribute.stderr b/tests/ui/empty_line_after/outer_attribute.stderr
+index 519ba6e67..331bc7c88 100644
+--- a/tests/ui/empty_line_after/outer_attribute.stderr
++++ b/tests/ui/empty_line_after/outer_attribute.stderr
+@@ -111,5 +111,16 @@ LL |   pub fn isolated_comment() {}
+    |
+    = help: if the empty lines are unintentional, remove them
+ 
+-error: aborting due to 9 previous errors
++error: empty line after outer attribute
++  --> tests/ui/empty_line_after/outer_attribute.rs:121:5
++   |
++LL | /     #[repr(align(536870912))]
++LL | |
++   | |_^
++LL |       enum Aligned {
++   |       ------------ the attribute applies to this enum
++   |
++   = help: if the empty line is unintentional, remove it
++
++error: aborting due to 10 previous errors
+ 

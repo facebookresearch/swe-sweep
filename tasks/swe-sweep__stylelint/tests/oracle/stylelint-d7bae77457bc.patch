@@ -1,0 +1,39 @@
+diff --git a/lib/rules/selector-pseudo-element-colon-notation/index.cjs b/lib/rules/selector-pseudo-element-colon-notation/index.cjs
+index 2008b1850..68abef4c0 100644
+--- a/lib/rules/selector-pseudo-element-colon-notation/index.cjs
++++ b/lib/rules/selector-pseudo-element-colon-notation/index.cjs
+@@ -2,6 +2,7 @@
+ // please instead edit the ESM counterpart and rebuild with Rollup (npm run build).
+ 'use strict';
+ 
++const getRuleSelector = require('../../utils/getRuleSelector.cjs');
+ const isStandardSyntaxRule = require('../../utils/isStandardSyntaxRule.cjs');
+ const selectors = require('../../reference/selectors.cjs');
+ const parseSelector = require('../../utils/parseSelector.cjs');
+@@ -52,7 +53,7 @@ const rule = (primary) => {
+ 				return;
+ 			}
+ 
+-			const selectorRoot = parseSelector(selector, result, ruleNode);
++			const selectorRoot = parseSelector(getRuleSelector(ruleNode), result, ruleNode);
+ 
+ 			if (!selectorRoot) return;
+ 
+diff --git a/lib/rules/selector-pseudo-element-colon-notation/index.mjs b/lib/rules/selector-pseudo-element-colon-notation/index.mjs
+index 616df7ce4..ecfbf42af 100644
+--- a/lib/rules/selector-pseudo-element-colon-notation/index.mjs
++++ b/lib/rules/selector-pseudo-element-colon-notation/index.mjs
+@@ -1,3 +1,4 @@
++import getRuleSelector from '../../utils/getRuleSelector.mjs';
+ import isStandardSyntaxRule from '../../utils/isStandardSyntaxRule.mjs';
+ import { levelOneAndTwoPseudoElements } from '../../reference/selectors.mjs';
+ import parseSelector from '../../utils/parseSelector.mjs';
+@@ -48,7 +49,7 @@ const rule = (primary) => {
+ 				return;
+ 			}
+ 
+-			const selectorRoot = parseSelector(selector, result, ruleNode);
++			const selectorRoot = parseSelector(getRuleSelector(ruleNode), result, ruleNode);
+ 
+ 			if (!selectorRoot) return;
+ 

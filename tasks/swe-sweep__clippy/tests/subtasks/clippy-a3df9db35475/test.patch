@@ -1,0 +1,57 @@
+diff --git a/tests/ui/or_then_unwrap.fixed b/tests/ui/or_then_unwrap.fixed
+index ba9beef57..9660b82fe 100644
+--- a/tests/ui/or_then_unwrap.fixed
++++ b/tests/ui/or_then_unwrap.fixed
+@@ -28,6 +28,12 @@ fn main() {
+     //
+     //~^^ or_then_unwrap
+ 
++    // Call with macro should preserve the macro call rather than expand it
++    let option: Option<Vec<&str>> = None;
++    let _ = option.unwrap_or(vec!["fallback"]); // should trigger lint
++    //
++    //~^^ or_then_unwrap
++
+     // as part of a method chain
+     let option: Option<&str> = None;
+     let _ = option.map(|v| v).unwrap_or("fallback").to_string().chars(); // should trigger lint
+diff --git a/tests/ui/or_then_unwrap.rs b/tests/ui/or_then_unwrap.rs
+index fac90249a..c38733521 100644
+--- a/tests/ui/or_then_unwrap.rs
++++ b/tests/ui/or_then_unwrap.rs
+@@ -28,6 +28,12 @@ fn main() {
+     //
+     //~^^ or_then_unwrap
+ 
++    // Call with macro should preserve the macro call rather than expand it
++    let option: Option<Vec<&str>> = None;
++    let _ = option.or(Some(vec!["fallback"])).unwrap(); // should trigger lint
++    //
++    //~^^ or_then_unwrap
++
+     // as part of a method chain
+     let option: Option<&str> = None;
+     let _ = option.map(|v| v).or(Some("fallback")).unwrap().to_string().chars(); // should trigger lint
+diff --git a/tests/ui/or_then_unwrap.stderr b/tests/ui/or_then_unwrap.stderr
+index 1160498c6..3e66b15ed 100644
+--- a/tests/ui/or_then_unwrap.stderr
++++ b/tests/ui/or_then_unwrap.stderr
+@@ -14,10 +14,16 @@ LL |     let _ = result.or::<&str>(Ok("fallback")).unwrap(); // should trigger l
+    |                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ help: try: `unwrap_or("fallback")`
+ 
+ error: found `.or(Some(…)).unwrap()`
+-  --> tests/ui/or_then_unwrap.rs:33:31
++  --> tests/ui/or_then_unwrap.rs:33:20
++   |
++LL |     let _ = option.or(Some(vec!["fallback"])).unwrap(); // should trigger lint
++   |                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ help: try: `unwrap_or(vec!["fallback"])`
++
++error: found `.or(Some(…)).unwrap()`
++  --> tests/ui/or_then_unwrap.rs:39:31
+    |
+ LL |     let _ = option.map(|v| v).or(Some("fallback")).unwrap().to_string().chars(); // should trigger lint
+    |                               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ help: try: `unwrap_or("fallback")`
+ 
+-error: aborting due to 3 previous errors
++error: aborting due to 4 previous errors
+ 

@@ -1,0 +1,123 @@
+diff --git a/test/browser.js b/test/browser.js
+index 2d65452..07f949b 100644
+--- a/test/browser.js
++++ b/test/browser.js
+@@ -3,6 +3,8 @@ const http = require('http');
+ const assert = require('assert');
+ const { chromium } = require('playwright');
+ 
++const PORT = 5001;
++
+ const fixture = `<svg xmlns="http://www.w3.org/2000/svg">
+     <g attr1="val1">
+         <g attr2="val2">
+@@ -49,13 +51,13 @@ const runTest = async () => {
+   const browser = await chromium.launch();
+   const context = await browser.newContext();
+   const page = await context.newPage();
+-  await page.goto('http://localhost:5000');
++  await page.goto(`http://localhost:${PORT}`);
+   const actual = await page.evaluate(() => globalThis.result);
+   assert.equal(actual, expected);
+   await browser.close();
+ };
+ 
+-server.listen(5000, async () => {
++server.listen(PORT, async () => {
+   try {
+     await runTest();
+     console.info('Tested successfully');
+diff --git a/test/plugins/removeEmptyContainers.06.svg b/test/plugins/removeEmptyContainers.06.svg
+new file mode 100644
+index 0000000..d3e6f87
+--- /dev/null
++++ b/test/plugins/removeEmptyContainers.06.svg
+@@ -0,0 +1,27 @@
++Empty <g> nodes should not be removed if they contain a filter, including
++filters applied via CSS.
++
++===
++
++<svg viewBox="0 0 50 50" xmlns="http://www.w3.org/2000/svg">
++    <filter id="a" x="0" y="0" width="50" height="50" filterUnits="userSpaceOnUse">
++        <feFlood flood-color="#aaa"/>
++    </filter>
++    <mask id="b" x="0" y="0" width="50" height="50">
++        <g style="filter: url(#a)"/>
++    </mask>
++    <text x="16" y="16" style="mask: url(#b)">•ᴗ•</text>
++</svg>
++
++
++@@@
++
++<svg viewBox="0 0 50 50" xmlns="http://www.w3.org/2000/svg">
++    <filter id="a" x="0" y="0" width="50" height="50" filterUnits="userSpaceOnUse">
++        <feFlood flood-color="#aaa"/>
++    </filter>
++    <mask id="b" x="0" y="0" width="50" height="50">
++        <g style="filter: url(#a)"/>
++    </mask>
++    <text x="16" y="16" style="mask: url(#b)">•ᴗ•</text>
++</svg>
+diff --git a/test/regression.js b/test/regression.js
+index 65fc3ba..2e7360e 100644
+--- a/test/regression.js
++++ b/test/regression.js
+@@ -8,6 +8,10 @@ const { PNG } = require('pngjs');
+ const pixelmatch = require('pixelmatch');
+ const { optimize } = require('../lib/svgo.js');
+ 
++const PORT = 5001;
++const WIDTH = 960;
++const HEIGHT = 720;
++
+ const chunkInto = (array, chunksCount) => {
+   // take upper bound to include tail
+   const chunkSize = Math.ceil(array.length / chunksCount);
+@@ -57,28 +61,26 @@ const runTests = async ({ list }) => {
+       skipped += 1;
+       return;
+     }
+-    const width = 960;
+-    const height = 720;
+-    await page.goto(`http://localhost:5000/original/${name}`);
+-    await page.setViewportSize({ width, height });
++    await page.goto(`http://localhost:${PORT}/original/${name}`);
++    await page.setViewportSize({ width: WIDTH, height: HEIGHT });
+     const originalBuffer = await page.screenshot({
+       omitBackground: true,
+-      clip: { x: 0, y: 0, width, height },
++      clip: { x: 0, y: 0, width: WIDTH, height: HEIGHT },
+     });
+-    await page.goto(`http://localhost:5000/optimized/${name}`);
++    await page.goto(`http://localhost:${PORT}/optimized/${name}`);
+     const optimizedBuffer = await page.screenshot({
+       omitBackground: true,
+-      clip: { x: 0, y: 0, width, height },
++      clip: { x: 0, y: 0, width: WIDTH, height: HEIGHT },
+     });
+     const originalPng = PNG.sync.read(originalBuffer);
+     const optimizedPng = PNG.sync.read(optimizedBuffer);
+-    const diff = new PNG({ width, height });
++    const diff = new PNG({ width: WIDTH, height: HEIGHT });
+     const matched = pixelmatch(
+       originalPng.data,
+       optimizedPng.data,
+       diff.data,
+-      width,
+-      height
++      WIDTH,
++      HEIGHT
+     );
+     // ignore small aliasing issues
+     if (matched <= 4) {
+@@ -186,7 +188,7 @@ const readdirRecursive = async (absolute, relative = '') => {
+       res.end();
+     });
+     await new Promise((resolve) => {
+-      server.listen(5000, resolve);
++      server.listen(PORT, resolve);
+     });
+     const passed = await runTests({ list });
+     server.close();

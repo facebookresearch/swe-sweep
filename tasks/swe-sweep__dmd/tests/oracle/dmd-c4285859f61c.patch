@@ -1,0 +1,12 @@
+diff --git a/compiler/src/dmd/dsymbolsem.d b/compiler/src/dmd/dsymbolsem.d
+index e0264369bb..89c02fe742 100644
+--- a/compiler/src/dmd/dsymbolsem.d
++++ b/compiler/src/dmd/dsymbolsem.d
+@@ -5197,7 +5197,6 @@ private extern(C++) final class DsymbolSemanticVisitor : Visitor
+                             cldec.baseClass.toChars(),
+                             cldec.baseClass.toParentLocal().toChars());
+                     }
+-                    cldec.enclosing = null;
+                 }
+                 if (cldec.vthis2)
+                 {

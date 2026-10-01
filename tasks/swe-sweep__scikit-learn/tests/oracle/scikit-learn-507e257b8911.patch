@@ -1,0 +1,13 @@
+diff --git a/sklearn/metrics/cluster/supervised.py b/sklearn/metrics/cluster/supervised.py
+index 146a7338b9..dde32dd3f2 100644
+--- a/sklearn/metrics/cluster/supervised.py
++++ b/sklearn/metrics/cluster/supervised.py
+@@ -610,7 +610,7 @@ def mutual_info_score(labels_true, labels_pred, contingency=None):
+     log_outer = -np.log(outer) + log(pi.sum()) + log(pj.sum())
+     mi = (contingency_nm * (log_contingency_nm - log(contingency_sum)) +
+           contingency_nm * log_outer)
+-    return mi.sum()
++    return np.clip(mi.sum(), 0.0, None)
+ 
+ 
+ def adjusted_mutual_info_score(labels_true, labels_pred):

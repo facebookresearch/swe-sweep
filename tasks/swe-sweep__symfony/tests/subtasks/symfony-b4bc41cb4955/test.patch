@@ -1,0 +1,25 @@
+diff --git a/src/Symfony/Component/Process/Tests/ProcessTest.php b/src/Symfony/Component/Process/Tests/ProcessTest.php
+index 0f302c2aabd..e9c7527c42c 100644
+--- a/src/Symfony/Component/Process/Tests/ProcessTest.php
++++ b/src/Symfony/Component/Process/Tests/ProcessTest.php
+@@ -540,6 +540,20 @@ class ProcessTest extends TestCase
+         $this->assertNull($process->getExitCodeText());
+     }
+ 
++    public function testStderrNotMixedWithStdout()
++    {
++        if (!Process::isPtySupported()) {
++            $this->markTestSkipped('PTY is not supported on this operating system.');
++        }
++
++        $process = $this->getProcess('echo "foo" && echo "bar" >&2');
++        $process->setPty(true);
++        $process->run();
++
++        $this->assertSame("foo\r\n", $process->getOutput());
++        $this->assertSame("bar\n", $process->getErrorOutput());
++    }
++
+     public function testPTYCommand()
+     {
+         if (!Process::isPtySupported()) {

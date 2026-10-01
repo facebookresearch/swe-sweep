@@ -1,0 +1,17 @@
+diff --git a/dask/array/tests/test_array_core.py b/dask/array/tests/test_array_core.py
+index ac0702bac..c5608958f 100644
+--- a/dask/array/tests/test_array_core.py
++++ b/dask/array/tests/test_array_core.py
+@@ -1584,6 +1584,12 @@ def test_slicing_flexible_type():
+     assert_eq(a[:, 0], b[:, 0])
+ 
+ 
++def test_slicing_with_object_dtype():
++    # https://github.com/dask/dask/issues/6892
++    d = da.from_array(np.array(["a", "b"], dtype=np.object), chunks=(1,))
++    assert d.dtype == d[(0,)].dtype
++
++
+ def test_dtype():
+     d = da.ones((4, 4), chunks=(2, 2))
+ 

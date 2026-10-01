@@ -1,0 +1,13 @@
+diff --git a/lib/js/asyncjs.nim b/lib/js/asyncjs.nim
+index 8e2f85156..045d1e6b5 100644
+--- a/lib/js/asyncjs.nim
++++ b/lib/js/asyncjs.nim
+@@ -90,6 +90,8 @@ proc replaceReturn(node: var NimNode) =
+       node[z] = nnkReturnStmt.newTree(value)
+     elif son.kind == nnkAsgn and son[0].kind == nnkIdent and $son[0] == "result":
+       node[z] = nnkAsgn.newTree(son[0], nnkCall.newTree(jsResolve, son[1]))
++    elif son.kind in RoutineNodes:
++      discard
+     else:
+       replaceReturn(son)
+     inc z

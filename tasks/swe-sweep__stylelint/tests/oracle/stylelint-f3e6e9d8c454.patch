@@ -1,0 +1,76 @@
+diff --git a/lib/rules/selector-pseudo-element-allowed-list/index.cjs b/lib/rules/selector-pseudo-element-allowed-list/index.cjs
+index aebdb2072..0b23974b0 100644
+--- a/lib/rules/selector-pseudo-element-allowed-list/index.cjs
++++ b/lib/rules/selector-pseudo-element-allowed-list/index.cjs
+@@ -3,6 +3,7 @@
+ 'use strict';
+ 
+ const validateTypes = require('../../utils/validateTypes.cjs');
++const getRuleSelector = require('../../utils/getRuleSelector.cjs');
+ const isStandardSyntaxRule = require('../../utils/isStandardSyntaxRule.cjs');
+ const matchesStringOrRegExp = require('../../utils/matchesStringOrRegExp.cjs');
+ const parseSelector = require('../../utils/parseSelector.cjs');
+@@ -44,7 +45,7 @@ const rule = (primary) => {
+ 				return;
+ 			}
+ 
+-			parseSelector(selector, result, ruleNode)?.walkPseudos((pseudoNode) => {
++			parseSelector(getRuleSelector(ruleNode), result, ruleNode)?.walkPseudos((pseudoNode) => {
+ 				const value = pseudoNode.value;
+ 
+ 				// Ignore pseudo-classes
+@@ -64,12 +65,15 @@ const rule = (primary) => {
+ 					return;
+ 				}
+ 
++				const index = pseudoNode.sourceIndex;
++				const endIndex = index + value.length;
++
+ 				report({
+-					index: pseudoNode.sourceIndex,
++					index,
++					endIndex,
+ 					message: messages.rejected,
+ 					messageArgs: [value],
+ 					node: ruleNode,
+-					word: value,
+ 					result,
+ 					ruleName,
+ 				});
+diff --git a/lib/rules/selector-pseudo-element-allowed-list/index.mjs b/lib/rules/selector-pseudo-element-allowed-list/index.mjs
+index db477c7da..775b32607 100644
+--- a/lib/rules/selector-pseudo-element-allowed-list/index.mjs
++++ b/lib/rules/selector-pseudo-element-allowed-list/index.mjs
+@@ -1,4 +1,5 @@
+ import { isRegExp, isString } from '../../utils/validateTypes.mjs';
++import getRuleSelector from '../../utils/getRuleSelector.mjs';
+ import isStandardSyntaxRule from '../../utils/isStandardSyntaxRule.mjs';
+ import matchesStringOrRegExp from '../../utils/matchesStringOrRegExp.mjs';
+ import parseSelector from '../../utils/parseSelector.mjs';
+@@ -40,7 +41,7 @@ const rule = (primary) => {
+ 				return;
+ 			}
+ 
+-			parseSelector(selector, result, ruleNode)?.walkPseudos((pseudoNode) => {
++			parseSelector(getRuleSelector(ruleNode), result, ruleNode)?.walkPseudos((pseudoNode) => {
+ 				const value = pseudoNode.value;
+ 
+ 				// Ignore pseudo-classes
+@@ -60,12 +61,15 @@ const rule = (primary) => {
+ 					return;
+ 				}
+ 
++				const index = pseudoNode.sourceIndex;
++				const endIndex = index + value.length;
++
+ 				report({
+-					index: pseudoNode.sourceIndex,
++					index,
++					endIndex,
+ 					message: messages.rejected,
+ 					messageArgs: [value],
+ 					node: ruleNode,
+-					word: value,
+ 					result,
+ 					ruleName,
+ 				});

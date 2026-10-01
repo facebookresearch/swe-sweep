@@ -1,0 +1,12 @@
+diff --git a/tests/dialects/test_duckdb.py b/tests/dialects/test_duckdb.py
+--- a/tests/dialects/test_duckdb.py
++++ b/tests/dialects/test_duckdb.py
+@@ -1446,4 +1446,8 @@ class TestDuckDB(Validator):
+         self.validate_identity(
+             "WITH t1 AS (FROM (FROM t2 SELECT foo1, foo2)) FROM t1",
+             "WITH t1 AS (SELECT * FROM (SELECT foo1, foo2 FROM t2)) SELECT * FROM t1",
+         )
++        self.validate_identity(
++            "SELECT SUM(x) OVER (ORDER BY x GROUPS BETWEEN 1 PRECEDING AND CURRENT ROW) FROM t"
++        )
++

@@ -1,0 +1,13 @@
+diff --git a/src/Symfony/Component/DependencyInjection/ParameterBag/ParameterBag.php b/src/Symfony/Component/DependencyInjection/ParameterBag/ParameterBag.php
+index 7ebc42f924d..d423617994a 100644
+--- a/src/Symfony/Component/DependencyInjection/ParameterBag/ParameterBag.php
++++ b/src/Symfony/Component/DependencyInjection/ParameterBag/ParameterBag.php
+@@ -37,6 +37,8 @@ class ParameterBag implements ParameterBagInterface
+     public function clear()
+     {
+         $this->parameters = [];
++        $this->deprecatedParameters = [];
++        $this->resolved = false;
+     }
+ 
+     /**

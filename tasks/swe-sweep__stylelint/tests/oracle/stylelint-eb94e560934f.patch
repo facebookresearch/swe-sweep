@@ -1,0 +1,28 @@
+diff --git a/lib/reference/keywords.cjs b/lib/reference/keywords.cjs
+index 65df3b01a..af287a341 100644
+--- a/lib/reference/keywords.cjs
++++ b/lib/reference/keywords.cjs
+@@ -26,6 +26,9 @@ const fontFamilyKeywords = uniteSets(basicKeywords, [
+ 	'ui-sans-serif',
+ 	'ui-monospace',
+ 	'ui-rounded',
++	'emoji',
++	'math',
++	'fangsong',
+ ]);
+ 
+ const appleSystemFonts = new Set([
+diff --git a/lib/reference/keywords.mjs b/lib/reference/keywords.mjs
+index e555451a4..7b8753d93 100644
+--- a/lib/reference/keywords.mjs
++++ b/lib/reference/keywords.mjs
+@@ -22,6 +22,9 @@ export const fontFamilyKeywords = uniteSets(basicKeywords, [
+ 	'ui-sans-serif',
+ 	'ui-monospace',
+ 	'ui-rounded',
++	'emoji',
++	'math',
++	'fangsong',
+ ]);
+ 
+ const appleSystemFonts = new Set([

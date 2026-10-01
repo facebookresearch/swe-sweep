@@ -1,0 +1,49 @@
+diff --git a/lib/dependencies/HarmonyExportDependencyParserPlugin.js b/lib/dependencies/HarmonyExportDependencyParserPlugin.js
+index b56b43a1b..c73bfa028 100644
+--- a/lib/dependencies/HarmonyExportDependencyParserPlugin.js
++++ b/lib/dependencies/HarmonyExportDependencyParserPlugin.js
+@@ -168,6 +168,13 @@ module.exports = class HarmonyExportDependencyParserPlugin {
+ 				}
+ 				dep.loc = Object.create(statement.loc);
+ 				dep.loc.index = idx;
++				const isAsiSafe = !parser.isAsiPosition(
++					/** @type {Range} */
++					(statement.range)[0]
++				);
++				if (!isAsiSafe) {
++					parser.setAsiPosition(/** @type {Range} */ (statement.range)[1]);
++				}
+ 				parser.state.current.addDependency(dep);
+ 				return true;
+ 			}
+diff --git a/lib/javascript/JavascriptParser.js b/lib/javascript/JavascriptParser.js
+index 214e66374..a1bda2a52 100644
+--- a/lib/javascript/JavascriptParser.js
++++ b/lib/javascript/JavascriptParser.js
+@@ -3468,6 +3468,14 @@ class JavascriptParser extends Parser {
+ 		);
+ 	}
+ 
++	/**
++	 * @param {number} pos source code position
++	 * @returns {void}
++	 */
++	setAsiPosition(pos) {
++		/** @type {Set<number>} */ (this.semicolons).add(pos);
++	}
++
+ 	/**
+ 	 * @param {number} pos source code position
+ 	 * @returns {void}
+diff --git a/types.d.ts b/types.d.ts
+index 1c42ffd0c..edc9cf084 100644
+--- a/types.d.ts
++++ b/types.d.ts
+@@ -5201,6 +5201,7 @@ declare class JavascriptParser extends Parser {
+ 	): boolean;
+ 	getComments(range?: any): any[];
+ 	isAsiPosition(pos: number): boolean;
++	setAsiPosition(pos: number): void;
+ 	unsetAsiPosition(pos: number): void;
+ 	isStatementLevelExpression(expr?: any): boolean;
+ 	getTagData(name?: any, tag?: any): any;

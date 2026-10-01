@@ -1,0 +1,37 @@
+diff --git a/testament/categories.nim b/testament/categories.nim
+index ee2da5bb8..eba1e3cb2 100644
+--- a/testament/categories.nim
++++ b/testament/categories.nim
+@@ -153,6 +153,7 @@ proc gcTests(r: var TResults, cat: Category, options: string) =
+   test "stackrefleak"
+   test "cyclecollector"
+   testWithoutBoehm "trace_globals"
++  test "tfinalizers"
+ 
+ # ------------------------- threading tests -----------------------------------
+ 
+diff --git a/tests/gc/tfinalizers.nim b/tests/gc/tfinalizers.nim
+new file mode 100644
+index 000000000..53295b71a
+--- /dev/null
++++ b/tests/gc/tfinalizers.nim
+@@ -0,0 +1,19 @@
++
++type
++  PNode = ref TNode
++  TNode = object
++    le: PNode
++
++proc finalizeNode(n: PNode) =
++  var s = @[0]
++
++proc returnTree() =
++  var cycle: PNode
++  new(cycle, finalizeNode)
++  cycle.le = cycle
++
++for i in 1..100:
++  returnTree()
++
++GC_fullCollect()
++GC_fullCollect()

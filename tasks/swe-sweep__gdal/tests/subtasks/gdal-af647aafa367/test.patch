@@ -1,0 +1,24 @@
+diff --git a/autotest/gcore/basic_test.py b/autotest/gcore/basic_test.py
+index 8f8399a283..72ad167e3a 100755
+--- a/autotest/gcore/basic_test.py
++++ b/autotest/gcore/basic_test.py
+@@ -751,3 +751,19 @@ def test_gdal_EscapeString_errors():
+ def test_gdal_DataTypeUnion():
+ 
+     assert gdal.DataTypeUnion(gdal.GDT_Byte, gdal.GDT_UInt16) == gdal.GDT_UInt16
++
++
++@pytest.mark.slow()
++def test_checksum_more_than_2billion_pixels():
++
++    filename = "/vsimem/test_checksum_more_than_2billion_pixels.tif"
++    ds = gdal.GetDriverByName("GTiff").Create(
++        filename,
++        50000,
++        50000,
++        options=["SPARSE_OK=YES"],
++    )
++    ds.GetRasterBand(1).SetNoDataValue(1)
++    assert ds.GetRasterBand(1).Checksum() == 63744
++    ds = None
++    gdal.Unlink(filename)

@@ -1,0 +1,26 @@
+diff --git a/lib/elixir/test/elixir/integer_test.exs b/lib/elixir/test/elixir/integer_test.exs
+index db94d6b07..a9ba693cc 100644
+--- a/lib/elixir/test/elixir/integer_test.exs
++++ b/lib/elixir/test/elixir/integer_test.exs
+@@ -282,7 +282,7 @@ defmodule IntegerTest do
+   end
+ 
+   test "extended_gcd" do
+-    # Poor's man properby based testing
++    # Poor's man property based testing
+     for _ <- 1..100 do
+       left = :rand.uniform(1000)
+       right = :rand.uniform(1000)
+@@ -290,5 +290,12 @@ defmodule IntegerTest do
+       assert Integer.gcd(left, right) == gcd
+       assert m * left + n * right == gcd
+     end
++
++    # zero cases
++    for {left, right} <- [{10, 0}, {0, 10}, {0, -10}, {-10, 0}] do
++      {gcd, m, n} = Integer.extended_gcd(left, right)
++      assert Integer.gcd(left, right) == gcd
++      assert m * left + n * right == gcd
++    end
+   end
+ end

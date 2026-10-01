@@ -1,0 +1,13 @@
+diff --git a/tests/ccgbugs/t10964.nim b/tests/ccgbugs/t10964.nim
+new file mode 100644
+index 000000000..a331b16cd
+--- /dev/null
++++ b/tests/ccgbugs/t10964.nim
+@@ -0,0 +1,6 @@
++func test*(input: var openArray[int32], start: int = 0, fin: int = input.len - 1) =
++    discard
++
++var someSeq = @[1'i32]
++
++test(someSeq)
+\ No newline at end of file

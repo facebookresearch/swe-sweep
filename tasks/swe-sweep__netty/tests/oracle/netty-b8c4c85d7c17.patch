@@ -1,0 +1,21 @@
+diff --git a/codec-http2/src/main/java/io/netty/handler/codec/http2/Http2MultiplexCodec.java b/codec-http2/src/main/java/io/netty/handler/codec/http2/Http2MultiplexCodec.java
+index aeeec3feb6..4972a044d5 100644
+--- a/codec-http2/src/main/java/io/netty/handler/codec/http2/Http2MultiplexCodec.java
++++ b/codec-http2/src/main/java/io/netty/handler/codec/http2/Http2MultiplexCodec.java
+@@ -886,12 +886,14 @@ public class Http2MultiplexCodec extends Http2FrameCodec {
+                         }
+                     }
+ 
++                    // The promise should be notified before we call fireChannelInactive().
++                    promise.setSuccess();
++                    closePromise.setSuccess();
++
+                     pipeline().fireChannelInactive();
+                     if (isRegistered()) {
+                         deregister(unsafe().voidPromise());
+                     }
+-                    promise.setSuccess();
+-                    closePromise.setSuccess();
+                 } finally {
+                     pendingClosePromise = null;
+                 }

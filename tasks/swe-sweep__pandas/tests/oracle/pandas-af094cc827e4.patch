@@ -1,0 +1,17 @@
+diff --git a/pandas/core/generic.py b/pandas/core/generic.py
+index bd1f105913..d770488e9c 100644
+--- a/pandas/core/generic.py
++++ b/pandas/core/generic.py
+@@ -1145,7 +1145,11 @@ class NDFrame(PandasObject, indexing.IndexingMixin):
+ 
+             # GH 13473
+             if not callable(replacements):
+-                indexer = ax.get_indexer_for(replacements)
++                if ax._is_multi and level is not None:
++                    indexer = ax.get_level_values(level).get_indexer_for(replacements)
++                else:
++                    indexer = ax.get_indexer_for(replacements)
++
+                 if errors == "raise" and len(indexer[indexer == -1]):
+                     missing_labels = [
+                         label

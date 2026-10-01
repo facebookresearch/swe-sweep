@@ -1,0 +1,66 @@
+diff --git a/src/common/tree_renderer.cpp b/src/common/tree_renderer.cpp
+index 0000000000..0000000000 100644
+--- a/src/common/tree_renderer.cpp
++++ b/src/common/tree_renderer.cpp
+@@ -377,29 +377,13 @@ struct TreeChildrenIterator {
+ 
+ template <>
+ bool TreeChildrenIterator::HasChildren(const PhysicalOperator &op) {
+-	switch (op.type) {
+-	case PhysicalOperatorType::LEFT_DELIM_JOIN:
+-	case PhysicalOperatorType::RIGHT_DELIM_JOIN:
+-	case PhysicalOperatorType::POSITIONAL_SCAN:
+-		return true;
+-	default:
+-		return !op.children.empty();
+-	}
++	return !op.GetChildren().empty();
+ }
+ template <>
+ void TreeChildrenIterator::Iterate(const PhysicalOperator &op,
+                                    const std::function<void(const PhysicalOperator &child)> &callback) {
+-	for (auto &child : op.children) {
+-		callback(*child);
+-	}
+-	if (op.type == PhysicalOperatorType::LEFT_DELIM_JOIN || op.type == PhysicalOperatorType::RIGHT_DELIM_JOIN) {
+-		auto &delim = op.Cast<PhysicalDelimJoin>();
+-		callback(*delim.join);
+-	} else if ((op.type == PhysicalOperatorType::POSITIONAL_SCAN)) {
+-		auto &pscan = op.Cast<PhysicalPositionalScan>();
+-		for (auto &table : pscan.child_tables) {
+-			callback(*table);
+-		}
++	for (auto &child : op.GetChildren()) {
++		callback(child);
+ 	}
+ }
+ 
+diff --git a/src/execution/operator/scan/physical_positional_scan.cpp b/src/execution/operator/scan/physical_positional_scan.cpp
+index e2a67505ae..2fad0493ac 100644
+--- a/src/execution/operator/scan/physical_positional_scan.cpp
++++ b/src/execution/operator/scan/physical_positional_scan.cpp
+@@ -208,4 +208,12 @@ bool PhysicalPositionalScan::Equals(const PhysicalOperator &other_p) const {
+ 	return true;
+ }
+ 
++vector<const_reference<PhysicalOperator>> PhysicalPositionalScan::GetChildren() const {
++	auto result = PhysicalOperator::GetChildren();
++	for (auto &entry : child_tables) {
++		result.push_back(*entry);
++	}
++	return result;
++}
++
+ } // namespace duckdb
+diff --git a/src/include/duckdb/execution/operator/scan/physical_positional_scan.hpp b/src/include/duckdb/execution/operator/scan/physical_positional_scan.hpp
+index c142009d22..00a4502377 100644
+--- a/src/include/duckdb/execution/operator/scan/physical_positional_scan.hpp
++++ b/src/include/duckdb/execution/operator/scan/physical_positional_scan.hpp
+@@ -30,6 +30,7 @@ public:
+ 
+ public:
+ 	bool Equals(const PhysicalOperator &other) const override;
++	vector<const_reference<PhysicalOperator>> GetChildren() const override;
+ 
+ public:
+ 	unique_ptr<LocalSourceState> GetLocalSourceState(ExecutionContext &context,

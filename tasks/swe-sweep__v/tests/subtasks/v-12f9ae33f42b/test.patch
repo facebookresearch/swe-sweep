@@ -1,0 +1,43 @@
+diff --git a/vlib/v/checker/tests/generic_eq_wrong_type.err.out b/vlib/v/checker/tests/generic_eq_wrong_type.err.out
+new file mode 100644
+index 000000000..e572b6f32
+--- /dev/null
++++ b/vlib/v/checker/tests/generic_eq_wrong_type.err.out
+@@ -0,0 +1,7 @@
++vlib/v/checker/tests/generic_eq_wrong_type.err.vv:9:13: error: infix expr: cannot use `string` (right expression) as `rune`
++    7 |         if ztest == `\n` {
++    8 |             println('${z}: \\n')
++    9 |         } else if ztest == '\r' {
++      |                   ~~~~~~~~~~~~~
++   10 |             println('${z}: \\r')
++   11 |         } else {
+diff --git a/vlib/v/checker/tests/generic_eq_wrong_type.err.vv b/vlib/v/checker/tests/generic_eq_wrong_type.err.vv
+new file mode 100644
+index 000000000..eec0b1ab5
+--- /dev/null
++++ b/vlib/v/checker/tests/generic_eq_wrong_type.err.vv
+@@ -0,0 +1,24 @@
++struct Scanner[T] {
++	contents []T
++}
++
++pub fn (s Scanner[T]) tokenize() {
++	for z, ztest in s.contents {
++		if ztest == `\n` {
++			println('${z}: \\n')
++		} else if ztest == '\r' {
++			println('${z}: \\r')
++		} else {
++			println('${z}: ${ztest}')
++		}
++	}
++}
++
++pub fn new_scanner[T](contents []T) Scanner[T] {
++	return Scanner[T]{contents}
++}
++
++fn main() {
++	s := new_scanner([`\n`, `b`])
++	s.tokenize()
++}

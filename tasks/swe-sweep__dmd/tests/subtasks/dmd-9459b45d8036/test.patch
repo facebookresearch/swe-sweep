@@ -1,0 +1,24 @@
+diff --git a/compiler/test/runnable/issue22481.d b/compiler/test/runnable/issue22481.d
+new file mode 100644
+index 0000000000..bbd0338f0e
+--- /dev/null
++++ b/compiler/test/runnable/issue22481.d
+@@ -0,0 +1,18 @@
++// REQUIRED_ARGS: -inline
++
++int v;
++
++void f()
++{
++   for (int i = 1; i < 5; i++)
++   {
++      v = i;
++      return;
++   }
++}
++
++void main()
++{
++   f();
++   assert(v == 1);
++}

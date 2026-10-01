@@ -1,0 +1,21 @@
+diff --git a/packages/mui-material/src/SwipeableDrawer/SwipeableDrawer.test.js b/packages/mui-material/src/SwipeableDrawer/SwipeableDrawer.test.js
+index 1aff83df7e..ebaaa79a16 100644
+--- a/packages/mui-material/src/SwipeableDrawer/SwipeableDrawer.test.js
++++ b/packages/mui-material/src/SwipeableDrawer/SwipeableDrawer.test.js
+@@ -500,6 +500,16 @@ describe('<SwipeableDrawer />', () => {
+       setProps({ variant: 'temporary' });
+       expect(document.querySelector('[class*=PrivateSwipeArea-root]')).not.to.equal(null);
+     });
++
++    it('should be able to attach paper ref passed through PaperProps', () => {
++      const ref = React.createRef();
++      render(
++        <SwipeableDrawer onOpen={() => {}} onClose={() => {}} PaperProps={{ ref }} open>
++          <div />
++        </SwipeableDrawer>,
++      );
++      expect(ref.current).not.to.equal(null);
++    });
+   });
+ 
+   describe('disableSwipeToOpen', () => {

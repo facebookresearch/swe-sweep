@@ -1,0 +1,19 @@
+diff --git a/src/language-js/comments/handle-comments.js b/src/language-js/comments/handle-comments.js
+index 213434f15..c0779edb0 100644
+--- a/src/language-js/comments/handle-comments.js
++++ b/src/language-js/comments/handle-comments.js
+@@ -840,10 +840,11 @@ function handleOnlyComments({ comment, enclosingNode, ast, isLastComment }) {
+   return false;
+ }
+ 
+-function handleForComments({ comment, enclosingNode }) {
++function handleForComments({ comment, enclosingNode, followingNode }) {
+   if (
+-    enclosingNode?.type === "ForInStatement" ||
+-    enclosingNode?.type === "ForOfStatement"
++    (enclosingNode?.type === "ForInStatement" ||
++      enclosingNode?.type === "ForOfStatement") &&
++    followingNode !== enclosingNode.body
+   ) {
+     addLeadingComment(enclosingNode, comment);
+     return true;

@@ -1,0 +1,11 @@
+diff --git a/tests/fixtures/identity.sql b/tests/fixtures/identity.sql
+index 2d5019e046..5cc7dc2ee5 100644
+--- a/tests/fixtures/identity.sql
++++ b/tests/fixtures/identity.sql
+@@ -882,3 +882,4 @@ GRANT SELECT ON nation TO alice WITH GRANT OPTION
+ GRANT DELETE ON SCHEMA finance TO bob
+ SELECT attach
+-SELECT detach
+\ No newline at end of file
++SELECT detach
++FOO(values.c)

@@ -1,0 +1,42 @@
+diff --git a/src/Compiler/TypedTree/TypedTree.fs b/src/Compiler/TypedTree/TypedTree.fs
+index b948e91fb6..b5e620c6bd 100644
+--- a/src/Compiler/TypedTree/TypedTree.fs
++++ b/src/Compiler/TypedTree/TypedTree.fs
+@@ -4358,6 +4358,12 @@ type NullnessVar() =
+ 
+     member nv.IsSolved = solution.IsSome
+ 
++    member nv.IsFullySolved = 
++        match solution with
++        | None -> false
++        | Some (Nullness.Known _) -> true
++        | Some (Nullness.Variable v) -> v.IsFullySolved
++
+     member nv.Set(nullness) = 
+        assert (not nv.IsSolved) 
+        solution <- Some nullness
+diff --git a/src/Compiler/TypedTree/TypedTree.fsi b/src/Compiler/TypedTree/TypedTree.fsi
+index d357895728..5f96fba226 100644
+--- a/src/Compiler/TypedTree/TypedTree.fsi
++++ b/src/Compiler/TypedTree/TypedTree.fsi
+@@ -3100,6 +3100,7 @@ type NullnessVar =
+     member Evaluate: unit -> NullnessInfo
+     member TryEvaluate: unit -> NullnessInfo voption
+     member IsSolved: bool
++    member IsFullySolved: bool
+     member Set: Nullness -> unit
+     member Unset: unit -> unit
+     member Solution: Nullness
+diff --git a/src/Compiler/TypedTree/TypedTreeBasics.fs b/src/Compiler/TypedTree/TypedTreeBasics.fs
+index c8268ffcf8..0ad62482b6 100644
+--- a/src/Compiler/TypedTree/TypedTreeBasics.fs
++++ b/src/Compiler/TypedTree/TypedTreeBasics.fs
+@@ -284,7 +284,7 @@ let tryAddNullnessToTy nullnessNew (ty:TType) =
+ let addNullnessToTy (nullness: Nullness) (ty:TType) =
+     match nullness with
+     | Nullness.Known NullnessInfo.WithoutNull -> ty
+-    | Nullness.Variable nv when nv.IsSolved && nv.Evaluate() = NullnessInfo.WithoutNull -> ty
++    | Nullness.Variable nv when nv.IsFullySolved && nv.TryEvaluate() = ValueSome NullnessInfo.WithoutNull -> ty
+     | _ -> 
+     match ty with
+     | TType_var (tp, nullnessOrig) -> TType_var (tp, combineNullness nullnessOrig nullness)

@@ -1,0 +1,14 @@
+diff --git a/lib/trino-parquet/src/main/java/io/trino/parquet/predicate/PredicateUtils.java b/lib/trino-parquet/src/main/java/io/trino/parquet/predicate/PredicateUtils.java
+index 8d960fa6b3d..26c131b5ffa 100644
+--- a/lib/trino-parquet/src/main/java/io/trino/parquet/predicate/PredicateUtils.java
++++ b/lib/trino-parquet/src/main/java/io/trino/parquet/predicate/PredicateUtils.java
+@@ -89,7 +89,8 @@ public final class PredicateUtils
+                 // Smallest long decimal type with 0 scale has broader range than representable in long, as used in ParquetLongStatistics
+                 return false;
+             }
+-            return BigDecimal.valueOf(min).compareTo(minimalValue(decimalType)) < 0 || BigDecimal.valueOf(max).compareTo(maximalValue(decimalType)) > 0;
++            return BigDecimal.valueOf(min, decimalType.getScale()).compareTo(minimalValue(decimalType)) < 0 ||
++                    BigDecimal.valueOf(max, decimalType.getScale()).compareTo(maximalValue(decimalType)) > 0;
+         }
+ 
+         throw new IllegalArgumentException("Unsupported type: " + type);

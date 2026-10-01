@@ -1,0 +1,23 @@
+diff --git a/test/regress/cli/CMakeLists.txt b/test/regress/cli/CMakeLists.txt
+index 2f88ca12e7..eb886c2634 100644
+--- a/test/regress/cli/CMakeLists.txt
++++ b/test/regress/cli/CMakeLists.txt
+@@ -2447,6 +2447,7 @@ set(regress_1_tests
+   regress1/quantifiers/issue8520-cegqi-nl-cov.smt2
+   regress1/quantifiers/issue8572-sygus-inst-ic-purify.smt2
+   regress1/quantifiers/issue8881-rd-types.smt2
++  regress1/quantifiers/issue9545-mini-agg.smt2
+   regress1/quantifiers/issue993.smt2
+   regress1/quantifiers/javafe.ast.StmtVec.009.smt2
+   regress1/quantifiers/lia-witness-div-pp.smt2
+diff --git a/test/regress/cli/regress1/quantifiers/issue9545-mini-agg.smt2 b/test/regress/cli/regress1/quantifiers/issue9545-mini-agg.smt2
+new file mode 100644
+index 0000000000..26c04d1b26
+--- /dev/null
++++ b/test/regress/cli/regress1/quantifiers/issue9545-mini-agg.smt2
+@@ -0,0 +1,5 @@
++; COMMAND-LINE: --miniscope-quant=agg
++; EXPECT: unknown
++(set-logic ALL)
++(assert (forall ((r Int) (r8 Int) (v (Array Int (Array Int Real)))) (or (= r r8) (= (select (select v 0) 0) (select (select v 0) r8)))))
++(check-sat)

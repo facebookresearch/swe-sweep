@@ -1,0 +1,40 @@
+diff --git a/packages/mui-material/src/OutlinedInput/OutlinedInput.test.js b/packages/mui-material/src/OutlinedInput/OutlinedInput.test.js
+index bd4f70ced5..9a1778fc91 100644
+--- a/packages/mui-material/src/OutlinedInput/OutlinedInput.test.js
++++ b/packages/mui-material/src/OutlinedInput/OutlinedInput.test.js
+@@ -1,6 +1,7 @@
+ import * as React from 'react';
+ import { expect } from 'chai';
+ import { createRenderer, describeConformance } from 'test/utils';
++import { ThemeProvider, createTheme } from '@mui/material/styles';
+ import OutlinedInput, { outlinedInputClasses as classes } from '@mui/material/OutlinedInput';
+ import InputBase from '@mui/material/InputBase';
+ 
+@@ -59,4 +60,27 @@ describe('<OutlinedInput />', () => {
+     );
+     expect(document.querySelector('[data-test=test]')).toHaveComputedStyle({ marginTop: '10px' });
+   });
++
++  it('should have ownerState in the theme style overrides', () => {
++    expect(() =>
++      render(
++        <ThemeProvider
++          theme={createTheme({
++            components: {
++              MuiOutlinedInput: {
++                styleOverrides: {
++                  root: ({ ownerState }) => ({
++                    // test that ownerState is not undefined
++                    ...(ownerState.disabled && {}),
++                  }),
++                },
++              },
++            },
++          })}
++        >
++          <OutlinedInput />
++        </ThemeProvider>,
++      ),
++    ).not.to.throw();
++  });
+ });

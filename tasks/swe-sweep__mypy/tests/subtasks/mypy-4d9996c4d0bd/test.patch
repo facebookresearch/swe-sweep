@@ -1,0 +1,24 @@
+diff --git a/test-data/unit/check-python312.test b/test-data/unit/check-python312.test
+index d275503dc..817184dc5 100644
+--- a/test-data/unit/check-python312.test
++++ b/test-data/unit/check-python312.test
+@@ -1873,3 +1873,19 @@ d1: Multi[int, str] = Multi[float, str]()  # E: Incompatible types in assignment
+ d2: Multi[float, str] = Multi[int, str]()  # E: Incompatible types in assignment (expression has type "Multi[int, str]", variable has type "Multi[float, str]")
+ d3: Multi[str, int] = Multi[str, float]()
+ d4: Multi[str, float] = Multi[str, int]()  # E: Incompatible types in assignment (expression has type "Multi[str, int]", variable has type "Multi[str, float]")
++
++[case testPEP695AliasDoesNotReferToFullname]
++# https://github.com/python/mypy/issues/19698
++from typing import TypeAliasType
++type D = dict
++type T = type
++type TA = TypeAliasType
++
++D()          # E: "TypeAliasType" not callable
++X = TA("Y")  # E: "TypeAliasType" not callable
++
++x: object
++if T(x) is str:     # E: "TypeAliasType" not callable
++    reveal_type(x)  # N: Revealed type is "builtins.object"
++[builtins fixtures/tuple.pyi]
++[typing fixtures/typing-full.pyi]

@@ -1,0 +1,11 @@
+diff --git a/scipy/linalg/tests/test_misc.py b/scipy/linalg/tests/test_misc.py
+new file mode 100644
+index 0000000000..1c10923e08
+--- /dev/null
++++ b/scipy/linalg/tests/test_misc.py
+@@ -0,0 +1,5 @@
++from scipy.linalg import norm
++
++
++def test_norm():
++    assert norm([]) == 0.0

@@ -1,0 +1,19 @@
+diff --git a/pandas/tests/arrays/masked/test_arithmetic.py b/pandas/tests/arrays/masked/test_arithmetic.py
+index ab6e511042..61775a2b94 100644
+--- a/pandas/tests/arrays/masked/test_arithmetic.py
++++ b/pandas/tests/arrays/masked/test_arithmetic.py
+@@ -60,8 +60,14 @@ def test_array_NA(data, all_arithmetic_operators):
+     scalar = pd.NA
+     scalar_array = pd.array([pd.NA] * len(data), dtype=data.dtype)
+ 
++    mask = data._mask.copy()
+     result = op(data, scalar)
++    # GH#45421 check op doesn't alter data._mask inplace
++    tm.assert_numpy_array_equal(mask, data._mask)
++
+     expected = op(data, scalar_array)
++    tm.assert_numpy_array_equal(mask, data._mask)
++
+     tm.assert_extension_array_equal(result, expected)
+ 
+ 

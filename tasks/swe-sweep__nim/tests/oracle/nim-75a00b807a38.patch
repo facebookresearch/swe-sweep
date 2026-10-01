@@ -1,0 +1,163 @@
+diff --git a/compiler/layouter.nim b/compiler/layouter.nim
+index 36c4e07a3..1e36b0f9e 100644
+--- a/compiler/layouter.nim
++++ b/compiler/layouter.nim
+@@ -510,7 +510,7 @@ proc emitTok*(em: var Emitter; L: Lexer; tok: Token) =
+     rememberSplit(splitComma)
+     wrSpace em
+   of openPars:
+-    if tok.strongSpaceA > 0 and not em.endsInWhite and
++    if tok.strongSpaceA and not em.endsInWhite and
+         (not em.wasExportMarker or tok.tokType == tkCurlyDotLe):
+       wrSpace em
+     wr(em, $tok.tokType, ltSomeParLe)
+@@ -528,7 +528,7 @@ proc emitTok*(em: var Emitter; L: Lexer; tok: Token) =
+     wr(em, $tok.tokType, ltOther)
+     if not em.inquote: wrSpace(em)
+   of tkOpr, tkDotDot:
+-    if em.inquote or ((tok.strongSpaceA == 0 and tok.strongSpaceB == 0) and
++    if em.inquote or (((not tok.strongSpaceA) and tok.strongSpaceB == 0) and
+         tok.ident.s notin ["<", ">", "<=", ">=", "==", "!="]):
+       # bug #9504: remember to not spacify a keyword:
+       lastTokWasTerse = true
+@@ -538,7 +538,7 @@ proc emitTok*(em: var Emitter; L: Lexer; tok: Token) =
+       if not em.endsInWhite: wrSpace(em)
+       wr(em, tok.ident.s, ltOpr)
+       template isUnary(tok): bool =
+-        tok.strongSpaceB == 0 and tok.strongSpaceA > 0
++        tok.strongSpaceB == 0 and tok.strongSpaceA
+ 
+       if not isUnary(tok):
+         rememberSplit(splitBinary)
+diff --git a/compiler/lexer.nim b/compiler/lexer.nim
+index dabb1c8fb..a82e99a47 100644
+--- a/compiler/lexer.nim
++++ b/compiler/lexer.nim
+@@ -102,7 +102,7 @@ type
+     fNumber*: BiggestFloat    # the parsed floating point literal
+     base*: NumericalBase      # the numerical base; only valid for int
+                               # or float literals
+-    strongSpaceA*: int8       # leading spaces of an operator
++    strongSpaceA*: bool       # leading spaces of an operator
+     strongSpaceB*: int8       # trailing spaces of an operator
+     literal*: string          # the parsed (string) literal; and
+                               # documentation comments are here too
+@@ -173,7 +173,7 @@ proc initToken*(L: var Token) =
+   L.tokType = tkInvalid
+   L.iNumber = 0
+   L.indent = 0
+-  L.strongSpaceA = 0
++  L.strongSpaceA = false
+   L.literal = ""
+   L.fNumber = 0.0
+   L.base = base10
+@@ -186,7 +186,7 @@ proc fillToken(L: var Token) =
+   L.tokType = tkInvalid
+   L.iNumber = 0
+   L.indent = 0
+-  L.strongSpaceA = 0
++  L.strongSpaceA = false
+   setLen(L.literal, 0)
+   L.fNumber = 0.0
+   L.base = base10
+@@ -958,7 +958,8 @@ proc getOperator(L: var Lexer, tok: var Token) =
+   tok.strongSpaceB = 0
+   while L.buf[pos] == ' ':
+     inc pos
+-    inc tok.strongSpaceB
++    if tok.strongSpaceB < 1:
++      inc(tok.strongSpaceB)
+   if L.buf[pos] in {CR, LF, nimlexbase.EndOfFile}:
+     tok.strongSpaceB = -1
+ 
+@@ -1147,7 +1148,7 @@ proc scanComment(L: var Lexer, tok: var Token) =
+ proc skip(L: var Lexer, tok: var Token) =
+   var pos = L.bufpos
+   tokenBegin(tok, pos)
+-  tok.strongSpaceA = 0
++  tok.strongSpaceA = false
+   when defined(nimpretty):
+     var hasComment = false
+     var commentIndent = L.currLineIndent
+@@ -1158,7 +1159,8 @@ proc skip(L: var Lexer, tok: var Token) =
+     case L.buf[pos]
+     of ' ':
+       inc(pos)
+-      inc(tok.strongSpaceA)
++      if not tok.strongSpaceA:
++        tok.strongSpaceA = true
+     of '\t':
+       if not L.allowTabs: lexMessagePos(L, errGenerated, pos, "tabs are not allowed, use spaces instead")
+       inc(pos)
+@@ -1180,7 +1182,7 @@ proc skip(L: var Lexer, tok: var Token) =
+           pos = L.bufpos
+         else:
+           break
+-      tok.strongSpaceA = 0
++      tok.strongSpaceA = false
+       when defined(nimpretty):
+         if L.buf[pos] == '#' and tok.line < 0: commentIndent = indent
+       if L.buf[pos] > ' ' and (L.buf[pos] != '#' or L.buf[pos+1] == '#'):
+diff --git a/compiler/parser.nim b/compiler/parser.nim
+index 5e9a742..237077a 100644
+--- a/compiler/parser.nim
++++ b/compiler/parser.nim
+@@ -301,13 +301,13 @@ proc isUnary(tok: Token): bool =
+   ## Check if the given token is a unary operator
+   tok.tokType in {tkOpr, tkDotDot} and
+   tok.strongSpaceB == 0 and
+-  tok.strongSpaceA > 0
++  tok.strongSpaceA
+ 
+ proc checkBinary(p: Parser) {.inline.} =
+   ## Check if the current parser token is a binary operator.
+   # we don't check '..' here as that's too annoying
+   if p.tok.tokType == tkOpr:
+-    if p.tok.strongSpaceB > 0 and p.tok.strongSpaceA == 0:
++    if p.tok.strongSpaceB > 0 and not p.tok.strongSpaceA:
+       parMessage(p, warnInconsistentSpacing, prettyTok(p.tok))
+ 
+ #| module = stmt ^* (';' / IND{=})
+@@ -477,7 +477,7 @@ proc dotExpr(p: var Parser, a: PNode): PNode =
+   optInd(p, result)
+   result.add(a)
+   result.add(parseSymbol(p, smAfterDot))
+-  if p.tok.tokType == tkBracketLeColon and p.tok.strongSpaceA <= 0:
++  if p.tok.tokType == tkBracketLeColon and not p.tok.strongSpaceA:
+     var x = newNodeI(nkBracketExpr, p.parLineInfo)
+     # rewrite 'x.y[:z]()' to 'y[z](x)'
+     x.add result[1]
+@@ -486,7 +486,7 @@ proc dotExpr(p: var Parser, a: PNode): PNode =
+     var y = newNodeI(nkCall, p.parLineInfo)
+     y.add x
+     y.add result[0]
+-    if p.tok.tokType == tkParLe and p.tok.strongSpaceA <= 0:
++    if p.tok.tokType == tkParLe and not p.tok.strongSpaceA:
+       exprColonEqExprListAux(p, tkParRi, y)
+     result = y
+ 
+@@ -835,7 +835,7 @@ proc primarySuffix(p: var Parser, r: PNode,
+     case p.tok.tokType
+     of tkParLe:
+       # progress guaranteed
+-      if p.tok.strongSpaceA > 0:
++      if p.tok.strongSpaceA:
+         # inside type sections, expressions such as `ref (int, bar)`
+         # are parsed as a nkCommand with a single tuple argument (nkPar)
+         if mode == pmTypeDef:
+@@ -854,13 +854,13 @@ proc primarySuffix(p: var Parser, r: PNode,
+       result = parseGStrLit(p, result)
+     of tkBracketLe:
+       # progress guaranteed
+-      if p.tok.strongSpaceA > 0:
++      if p.tok.strongSpaceA:
+         result = commandExpr(p, result, mode)
+         break
+       result = namedParams(p, result, nkBracketExpr, tkBracketRi)
+     of tkCurlyLe:
+       # progress guaranteed
+-      if p.tok.strongSpaceA > 0:
++      if p.tok.strongSpaceA:
+         result = commandExpr(p, result, mode)
+         break
+       result = namedParams(p, result, nkCurlyExpr, tkCurlyRi)

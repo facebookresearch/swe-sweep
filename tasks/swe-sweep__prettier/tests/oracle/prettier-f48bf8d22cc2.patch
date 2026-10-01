@@ -1,0 +1,38 @@
+diff --git a/src/language-js/needs-parens.js b/src/language-js/needs-parens.js
+index 503524e83..8e5031e8e 100644
+--- a/src/language-js/needs-parens.js
++++ b/src/language-js/needs-parens.js
+@@ -636,12 +636,31 @@ function needsParentheses(path, options) {
+       );
+     case "InferTypeAnnotation":
+     case "NullableTypeAnnotation":
+-      return (
++      if (
+         parent.type === "ArrayTypeAnnotation" ||
+         (key === "objectType" &&
+           (parent.type === "IndexedAccessType" ||
+             parent.type === "OptionalIndexedAccessType"))
+-      );
++      ) {
++        return true;
++      }
++
++      // If the return type is a nullable arrow function, then we need a paren
++      // otherwise the inner => can be assumed to be for the outer one.
++      if (
++        node.type === "NullableTypeAnnotation" &&
++        path.match(
++          undefined,
++          (node, key) =>
++            key === "typeAnnotation" && node.type === "TypeAnnotation",
++          (node, key) =>
++            key === "returnType" && node.type === "ArrowFunctionExpression",
++        )
++      ) {
++        return true;
++      }
++
++      break;
+ 
+     case "ComponentTypeAnnotation":
+     case "FunctionTypeAnnotation": {

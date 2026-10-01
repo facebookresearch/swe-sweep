@@ -1,0 +1,125 @@
+diff --git a/modules/openapi-generator/src/test/java/org/openapitools/codegen/DefaultGeneratorTest.java b/modules/openapi-generator/src/test/java/org/openapitools/codegen/DefaultGeneratorTest.java
+index 92fab8b73d9..1ba9a2c7c5c 100644
+--- a/modules/openapi-generator/src/test/java/org/openapitools/codegen/DefaultGeneratorTest.java
++++ b/modules/openapi-generator/src/test/java/org/openapitools/codegen/DefaultGeneratorTest.java
+@@ -671,6 +671,32 @@ public class DefaultGeneratorTest {
+         Assert.assertEquals(servers.get(2).url, "http://notrailingslash.io:80/v2");
+     }
+     
++    @Test
++    public void testHandlesRelativeUrlsWithSpecialChars() {
++        final Map<String, String> specToBasePath = Map.of(
++          "src/test/resources/3_0/relative-url-point.yaml", "/api/v4.0",
++          "src/test/resources/3_0/relative-url-dash.yaml", "/api-v3",
++          "src/test/resources/3_0/relative-url-tilde.yaml", "/~api/v5",
++          "src/test/resources/3_0/relative-url-at.yaml", "/api/@6"
++        );
++
++        specToBasePath.forEach((spec, expectedBasePath) -> {
++            OpenAPI openAPI = TestUtils.parseFlattenSpec(spec);
++            ClientOptInput opts = new ClientOptInput();
++            opts.openAPI(openAPI);
++            DefaultCodegen config = new DefaultCodegen();
++            config.setStrictSpecBehavior(false);
++            opts.config(config);
++            final DefaultGenerator generator = new DefaultGenerator();
++            generator.opts(opts);
++            generator.configureGeneratorProperties();
++
++            Map<String, Object> bundle = generator.buildSupportFileBundle(new ArrayList<>(), new ArrayList<>(), new ArrayList<>());
++            final String actualBasePath = (String) bundle.get("basePath");
++            Assert.assertEquals(actualBasePath, expectedBasePath);
++        });
++    }
++
+     @Test
+     public void testHandlesRelativeUrlsInServers() {
+         OpenAPI openAPI = TestUtils.parseFlattenSpec("src/test/resources/3_0/issue_10056.yaml");
+diff --git a/modules/openapi-generator/src/test/resources/3_0/relative-url-at.yaml b/modules/openapi-generator/src/test/resources/3_0/relative-url-at.yaml
+new file mode 100644
+index 00000000000..8dbe70ba081
+--- /dev/null
++++ b/modules/openapi-generator/src/test/resources/3_0/relative-url-at.yaml
+@@ -0,0 +1,15 @@
++openapi: 3.0.1
++info:
++  title: OpenAPI Petstore
++  description: "sample spec"
++  license:
++    name: Apache-2.0
++    url: https://www.apache.org/licenses/LICENSE-2.0.html
++  version: 1.0.0
++servers:
++  - url: /api/@6
++tags: []
++paths: {}
++components:
++  schemas: {}
++  securitySchemes: {}
+\ No newline at end of file
+diff --git a/modules/openapi-generator/src/test/resources/3_0/relative-url-dash.yaml b/modules/openapi-generator/src/test/resources/3_0/relative-url-dash.yaml
+new file mode 100644
+index 00000000000..6295b3f3fd9
+--- /dev/null
++++ b/modules/openapi-generator/src/test/resources/3_0/relative-url-dash.yaml
+@@ -0,0 +1,15 @@
++openapi: 3.0.1
++info:
++  title: OpenAPI Petstore
++  description: "sample spec"
++  license:
++    name: Apache-2.0
++    url: https://www.apache.org/licenses/LICENSE-2.0.html
++  version: 1.0.0
++servers:
++  - url: /api-v3
++tags: []
++paths: {}
++components:
++  schemas: {}
++  securitySchemes: {}
+\ No newline at end of file
+diff --git a/modules/openapi-generator/src/test/resources/3_0/relative-url-point.yaml b/modules/openapi-generator/src/test/resources/3_0/relative-url-point.yaml
+new file mode 100644
+index 00000000000..35db6758ad6
+--- /dev/null
++++ b/modules/openapi-generator/src/test/resources/3_0/relative-url-point.yaml
+@@ -0,0 +1,15 @@
++openapi: 3.0.1
++info:
++  title: OpenAPI Petstore
++  description: "sample spec"
++  license:
++    name: Apache-2.0
++    url: https://www.apache.org/licenses/LICENSE-2.0.html
++  version: 1.0.0
++servers:
++  - url: /api/v4.0
++tags: []
++paths: {}
++components:
++  schemas: {}
++  securitySchemes: {}
+\ No newline at end of file
+diff --git a/modules/openapi-generator/src/test/resources/3_0/relative-url-tilde.yaml b/modules/openapi-generator/src/test/resources/3_0/relative-url-tilde.yaml
+new file mode 100644
+index 00000000000..376700a3d64
+--- /dev/null
++++ b/modules/openapi-generator/src/test/resources/3_0/relative-url-tilde.yaml
+@@ -0,0 +1,15 @@
++openapi: 3.0.1
++info:
++  title: OpenAPI Petstore
++  description: "sample spec"
++  license:
++    name: Apache-2.0
++    url: https://www.apache.org/licenses/LICENSE-2.0.html
++  version: 1.0.0
++servers:
++  - url: /~api/v5
++tags: []
++paths: {}
++components:
++  schemas: {}
++  securitySchemes: {}
+\ No newline at end of file

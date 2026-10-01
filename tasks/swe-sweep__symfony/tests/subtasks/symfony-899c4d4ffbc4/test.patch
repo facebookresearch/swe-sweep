@@ -1,0 +1,118 @@
+diff --git a/src/Symfony/Component/HttpKernel/Tests/DataCollector/DataCollectorTest.php b/src/Symfony/Component/HttpKernel/Tests/DataCollector/DataCollectorTest.php
+index ae79a3c93c5..043affeda4d 100644
+--- a/src/Symfony/Component/HttpKernel/Tests/DataCollector/DataCollectorTest.php
++++ b/src/Symfony/Component/HttpKernel/Tests/DataCollector/DataCollectorTest.php
+@@ -15,6 +15,8 @@ use PHPUnit\Framework\TestCase;
+ use Symfony\Component\HttpFoundation\Request;
+ use Symfony\Component\HttpFoundation\Response;
+ use Symfony\Component\HttpKernel\Tests\Fixtures\DataCollector\CloneVarDataCollector;
++use Symfony\Component\HttpKernel\Tests\Fixtures\UsePropertyInDestruct;
++use Symfony\Component\HttpKernel\Tests\Fixtures\WithPublicObjectProperty;
+ use Symfony\Component\VarDumper\Cloner\VarCloner;
+ 
+ class DataCollectorTest extends TestCase
+@@ -35,4 +37,68 @@ class DataCollectorTest extends TestCase
+ 
+         $this->assertSame($filePath, $c->getData()[0]);
+     }
++
++    /**
++     * @requires PHP 8
++     */
++    public function testClassPublicObjectProperty()
++    {
++        $parent = new WithPublicObjectProperty();
++        $child = new WithPublicObjectProperty();
++
++        $child->parent = $parent;
++
++        $c = new CloneVarDataCollector($child);
++        $c->collect(new Request(), new Response());
++
++        $this->assertNotNull($c->getData()->parent);
++    }
++
++    /**
++     * @requires PHP 8
++     */
++    public function testClassPublicObjectPropertyAsReference()
++    {
++        $parent = new WithPublicObjectProperty();
++        $child = new WithPublicObjectProperty();
++
++        $child->parent = &$parent;
++
++        $c = new CloneVarDataCollector($child);
++        $c->collect(new Request(), new Response());
++
++        $this->assertNotNull($c->getData()->parent);
++    }
++
++    /**
++     * @requires PHP 8
++     */
++    public function testClassUsePropertyInDestruct()
++    {
++        $parent = new UsePropertyInDestruct();
++        $child = new UsePropertyInDestruct();
++
++        $child->parent = $parent;
++
++        $c = new CloneVarDataCollector($child);
++        $c->collect(new Request(), new Response());
++
++        $this->assertNotNull($c->getData()->parent);
++    }
++
++    /**
++     * @requires PHP 8
++     */
++    public function testClassUsePropertyAsReferenceInDestruct()
++    {
++        $parent = new UsePropertyInDestruct();
++        $child = new UsePropertyInDestruct();
++
++        $child->parent = &$parent;
++
++        $c = new CloneVarDataCollector($child);
++        $c->collect(new Request(), new Response());
++
++        $this->assertNotNull($c->getData()->parent);
++    }
+ }
+diff --git a/src/Symfony/Component/HttpKernel/Tests/Fixtures/UsePropertyInDestruct.php b/src/Symfony/Component/HttpKernel/Tests/Fixtures/UsePropertyInDestruct.php
+new file mode 100644
+index 00000000000..74225d355aa
+--- /dev/null
++++ b/src/Symfony/Component/HttpKernel/Tests/Fixtures/UsePropertyInDestruct.php
+@@ -0,0 +1,16 @@
++<?php
++
++namespace Symfony\Component\HttpKernel\Tests\Fixtures;
++
++class UsePropertyInDestruct
++{
++    public string $name;
++    public $parent = null;
++
++    public function __destruct()
++    {
++        if ($this->parent !== null) {
++            $this->parent->name = '';
++        }
++    }
++}
+diff --git a/src/Symfony/Component/HttpKernel/Tests/Fixtures/WithPublicObjectProperty.php b/src/Symfony/Component/HttpKernel/Tests/Fixtures/WithPublicObjectProperty.php
+new file mode 100644
+index 00000000000..92ebdb04dd4
+--- /dev/null
++++ b/src/Symfony/Component/HttpKernel/Tests/Fixtures/WithPublicObjectProperty.php
+@@ -0,0 +1,8 @@
++<?php
++
++namespace Symfony\Component\HttpKernel\Tests\Fixtures;
++
++class WithPublicObjectProperty
++{
++    public ?WithPublicObjectProperty $parent = null;
++}

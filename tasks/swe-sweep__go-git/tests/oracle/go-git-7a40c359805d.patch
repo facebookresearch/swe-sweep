@@ -1,0 +1,20 @@
+diff --git a/storage/filesystem/object.go b/storage/filesystem/object.go
+index e812fe93..91b4acea 100644
+--- a/storage/filesystem/object.go
++++ b/storage/filesystem/object.go
+@@ -431,13 +431,13 @@ func (s *ObjectStorage) getFromUnpacked(h plumbing.Hash) (obj plumbing.EncodedOb
+ 
+ 	defer ioutil.CheckClose(w, &err)
+ 
+-	s.objectCache.Put(obj)
+-
+ 	bufp := copyBufferPool.Get().(*[]byte)
+ 	buf := *bufp
+ 	_, err = io.CopyBuffer(w, r, buf)
+ 	copyBufferPool.Put(bufp)
+ 
++	s.objectCache.Put(obj)
++
+ 	return obj, err
+ }
+ 

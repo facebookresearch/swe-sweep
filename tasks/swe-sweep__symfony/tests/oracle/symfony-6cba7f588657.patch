@@ -1,0 +1,13 @@
+diff --git a/src/Symfony/Component/BrowserKit/AbstractBrowser.php b/src/Symfony/Component/BrowserKit/AbstractBrowser.php
+index c534e9e16c1..29a2c441ea2 100644
+--- a/src/Symfony/Component/BrowserKit/AbstractBrowser.php
++++ b/src/Symfony/Component/BrowserKit/AbstractBrowser.php
+@@ -656,7 +656,7 @@ abstract class AbstractBrowser
+             $uri = $path.$uri;
+         }
+ 
+-        return preg_replace('#^(.*?//[^/]+)\/.*$#', '$1', $currentUri).$uri;
++        return preg_replace('#^(.*?//[^/?]+)[/?].*$#', '$1', $currentUri).$uri;
+     }
+ 
+     /**

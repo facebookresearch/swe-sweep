@@ -1,0 +1,19 @@
+diff --git a/vlib/v/checker/check_types.v b/vlib/v/checker/check_types.v
+index b11814728..72959277c 100644
+--- a/vlib/v/checker/check_types.v
++++ b/vlib/v/checker/check_types.v
+@@ -910,7 +910,13 @@ fn (mut c Checker) infer_fn_generic_types(func ast.Fn, mut node ast.CallExpr) {
+ 				}
+ 				// resolve &T &&T ...
+ 				if param.typ.nr_muls() > 0 && typ.nr_muls() > 0 {
+-					typ = typ.set_nr_muls(0)
++					param_muls := param.typ.nr_muls()
++					arg_muls := typ.nr_muls()
++					typ = if arg_muls >= param_muls {
++						typ.set_nr_muls(arg_muls - param_muls)
++					} else {
++						typ.set_nr_muls(0)
++					}
+ 				}
+ 			} else if param.typ.has_flag(.generic) {
+ 				arg_sym := c.table.final_sym(arg.typ)

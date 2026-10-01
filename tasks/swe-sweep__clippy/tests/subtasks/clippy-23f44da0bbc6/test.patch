@@ -1,0 +1,51 @@
+diff --git a/tests/ui/manual_abs_diff.fixed b/tests/ui/manual_abs_diff.fixed
+index f1b1278ea..276694214 100644
+--- a/tests/ui/manual_abs_diff.fixed
++++ b/tests/ui/manual_abs_diff.fixed
+@@ -104,3 +104,7 @@ fn non_primitive_ty() {
+     let (a, b) = (S(10), S(20));
+     let _ = if a < b { b - a } else { a - b };
+ }
++
++fn issue15254(a: &usize, b: &usize) -> usize {
++    b.abs_diff(*a)
++}
+diff --git a/tests/ui/manual_abs_diff.rs b/tests/ui/manual_abs_diff.rs
+index 60ef819c1..2c408f2be 100644
+--- a/tests/ui/manual_abs_diff.rs
++++ b/tests/ui/manual_abs_diff.rs
+@@ -114,3 +114,12 @@ fn non_primitive_ty() {
+     let (a, b) = (S(10), S(20));
+     let _ = if a < b { b - a } else { a - b };
+ }
++
++fn issue15254(a: &usize, b: &usize) -> usize {
++    if a < b {
++        //~^ manual_abs_diff
++        b - a
++    } else {
++        a - b
++    }
++}
+diff --git a/tests/ui/manual_abs_diff.stderr b/tests/ui/manual_abs_diff.stderr
+index c14c1dc83..bb6d312b4 100644
+--- a/tests/ui/manual_abs_diff.stderr
++++ b/tests/ui/manual_abs_diff.stderr
+@@ -79,5 +79,16 @@ error: manual absolute difference pattern without using `abs_diff`
+ LL |     let _ = if a > b { (a - b) as u32 } else { (b - a) as u32 };
+    |             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ help: replace with `abs_diff`: `a.abs_diff(b)`
+ 
+-error: aborting due to 11 previous errors
++error: manual absolute difference pattern without using `abs_diff`
++  --> tests/ui/manual_abs_diff.rs:119:5
++   |
++LL | /     if a < b {
++LL | |
++LL | |         b - a
++LL | |     } else {
++LL | |         a - b
++LL | |     }
++   | |_____^ help: replace with `abs_diff`: `b.abs_diff(*a)`
++
++error: aborting due to 12 previous errors
+ 

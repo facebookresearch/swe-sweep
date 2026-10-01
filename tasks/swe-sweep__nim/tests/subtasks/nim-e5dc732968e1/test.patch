@@ -1,0 +1,28 @@
+diff --git a/tests/constr/a.nim b/tests/constr/a.nim
+new file mode 100644
+index 000000000..03788fc57
+--- /dev/null
++++ b/tests/constr/a.nim
+@@ -0,0 +1,2 @@
++type A* = object
++  a: uint8
+\ No newline at end of file
+diff --git a/tests/constr/b.nim b/tests/constr/b.nim
+new file mode 100644
+index 000000000..437dd0550
+--- /dev/null
++++ b/tests/constr/b.nim
+@@ -0,0 +1,2 @@
++type B* = object
++proc A*(a, b: float): B = discard
+\ No newline at end of file
+diff --git a/tests/constr/t18990.nim b/tests/constr/t18990.nim
+new file mode 100644
+index 000000000..2f60f3c2c
+--- /dev/null
++++ b/tests/constr/t18990.nim
+@@ -0,0 +1,3 @@
++import a, b
++discard A(1f, 1f) # works
++proc x(b = A(1f, 1f)) = discard # doesn't work
+\ No newline at end of file

@@ -1,0 +1,37 @@
+diff --git a/src/Symfony/Component/DependencyInjection/Tests/ContainerBuilderTest.php b/src/Symfony/Component/DependencyInjection/Tests/ContainerBuilderTest.php
+index 85693be..a04f54e7a9e 100644
+--- a/src/Symfony/Component/DependencyInjection/Tests/ContainerBuilderTest.php
++++ b/src/Symfony/Component/DependencyInjection/Tests/ContainerBuilderTest.php
+@@ -864,6 +864,7 @@ class ContainerBuilderTest extends TestCase
+         $container->setParameter('bar', '%% %env(DUMMY_ENV_VAR)% %env(DUMMY_SERVER_VAR)% %env(HTTP_DUMMY_VAR)%');
+         $container->setParameter('foo', '%env(FOO)%');
+         $container->setParameter('baz', '%foo%');
++        $container->setParameter('qux', '%%quux%%');
+         $container->setParameter('env(HTTP_DUMMY_VAR)', '123');
+         $container->register('teatime', 'stdClass')
+             ->setProperty('foo', '%env(DUMMY_ENV_VAR)%')
+@@ -1115,7 +1116,7 @@ class ContainerBuilderTest extends TestCase
+ 
+         $this->assertCount(1, $resources);
+ 
+-        /* @var $resource \Symfony\Component\Config\Resource\FileResource */
++        /** @var FileResource $resource */
+         $resource = end($resources);
+ 
+         $this->assertInstanceOf(FileResource::class, $resource);
+diff --git a/src/Symfony/Component/Translation/Tests/TranslatorCacheTest.php b/src/Symfony/Component/Translation/Tests/TranslatorCacheTest.php
+index 990caee1669..4199f596771 100644
+--- a/src/Symfony/Component/Translation/Tests/TranslatorCacheTest.php
++++ b/src/Symfony/Component/Translation/Tests/TranslatorCacheTest.php
+@@ -46,9 +46,9 @@ class TranslatorCacheTest extends TestCase
+                 continue;
+             }
+             if ($path->isDir()) {
+-                rmdir($path->__toString());
++                @rmdir($path->__toString());
+             } else {
+-                unlink($path->__toString());
++                @unlink($path->__toString());
+             }
+         }
+         rmdir($this->tmpDir);

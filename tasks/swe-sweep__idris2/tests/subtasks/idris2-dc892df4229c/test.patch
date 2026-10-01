@@ -1,0 +1,172 @@
+diff --git a/tests/Main.idr b/tests/Main.idr
+index 28669b184..33ff5cde9 100644
+--- a/tests/Main.idr
++++ b/tests/Main.idr
+@@ -207,7 +207,7 @@ idrisTests = MkTestPool "Misc" [] Nothing
+        "params001", "params002", "params003",
+        -- Packages and ipkg files
+        "pkg001", "pkg002", "pkg003", "pkg004", "pkg005", "pkg006", "pkg007",
+-       "pkg008", "pkg009", "pkg010",
++       "pkg008", "pkg009", "pkg010", "pkg011",
+        -- Larger programs arising from real usage. Typically things with
+        -- interesting interactions between features
+        "real001", "real002",
+diff --git a/tests/idris2/pkg011/dot-slash-dot/Main.idr b/tests/idris2/pkg011/dot-slash-dot/Main.idr
+new file mode 100644
+index 000000000..4bd334760
+--- /dev/null
++++ b/tests/idris2/pkg011/dot-slash-dot/Main.idr
+@@ -0,0 +1,4 @@
++module Main
++
++main : IO ()
++main = putStrLn "CouCou!"
+diff --git a/tests/idris2/pkg011/dot-slash-dot/testpkg.ipkg b/tests/idris2/pkg011/dot-slash-dot/testpkg.ipkg
+new file mode 100644
+index 000000000..5682ec108
+--- /dev/null
++++ b/tests/idris2/pkg011/dot-slash-dot/testpkg.ipkg
+@@ -0,0 +1,6 @@
++package testpkg
++
++sourcedir = "./."
++
++modules = Main
++opts = "--no-color --console-width 0"
+diff --git a/tests/idris2/pkg011/dot-slash-name-slash/src/Main.idr b/tests/idris2/pkg011/dot-slash-name-slash/src/Main.idr
+new file mode 100644
+index 000000000..4bd334760
+--- /dev/null
++++ b/tests/idris2/pkg011/dot-slash-name-slash/src/Main.idr
+@@ -0,0 +1,4 @@
++module Main
++
++main : IO ()
++main = putStrLn "CouCou!"
+diff --git a/tests/idris2/pkg011/dot-slash-name-slash/testpkg.ipkg b/tests/idris2/pkg011/dot-slash-name-slash/testpkg.ipkg
+new file mode 100644
+index 000000000..e14e7d674
+--- /dev/null
++++ b/tests/idris2/pkg011/dot-slash-name-slash/testpkg.ipkg
+@@ -0,0 +1,6 @@
++package testpkg
++
++sourcedir = "./src/"
++
++modules = Main
++opts = "--no-color --console-width 0"
+diff --git a/tests/idris2/pkg011/dot-slash/Main.idr b/tests/idris2/pkg011/dot-slash/Main.idr
+new file mode 100644
+index 000000000..4bd334760
+--- /dev/null
++++ b/tests/idris2/pkg011/dot-slash/Main.idr
+@@ -0,0 +1,4 @@
++module Main
++
++main : IO ()
++main = putStrLn "CouCou!"
+diff --git a/tests/idris2/pkg011/dot-slash/testpkg.ipkg b/tests/idris2/pkg011/dot-slash/testpkg.ipkg
+new file mode 100644
+index 000000000..d29760c92
+--- /dev/null
++++ b/tests/idris2/pkg011/dot-slash/testpkg.ipkg
+@@ -0,0 +1,6 @@
++package testpkg
++
++sourcedir = "./"
++
++modules = Main
++opts = "--no-color --console-width 0"
+diff --git a/tests/idris2/pkg011/dot/Main.idr b/tests/idris2/pkg011/dot/Main.idr
+new file mode 100644
+index 000000000..4bd334760
+--- /dev/null
++++ b/tests/idris2/pkg011/dot/Main.idr
+@@ -0,0 +1,4 @@
++module Main
++
++main : IO ()
++main = putStrLn "CouCou!"
+diff --git a/tests/idris2/pkg011/dot/testpkg.ipkg b/tests/idris2/pkg011/dot/testpkg.ipkg
+new file mode 100644
+index 000000000..556d70659
+--- /dev/null
++++ b/tests/idris2/pkg011/dot/testpkg.ipkg
+@@ -0,0 +1,6 @@
++package testpkg
++
++sourcedir = "."
++
++modules = Main
++opts = "--no-color --console-width 0"
+diff --git a/tests/idris2/pkg011/expected b/tests/idris2/pkg011/expected
+new file mode 100644
+index 000000000..bf754e281
+--- /dev/null
++++ b/tests/idris2/pkg011/expected
+@@ -0,0 +1,14 @@
++dot
++1/1: Building Main (./Main.idr)
++1/1: Building Main (Main.idr)
++dot-slash
++1/1: Building Main (./Main.idr)
++1/1: Building Main (Main.idr)
++dot-slash-dot
++1/1: Building Main (./Main.idr)
++1/1: Building Main (Main.idr)
++dot-slash-name-slash
++1/1: Building Main (./src/Main.idr)
++1/1: Building Main (src/Main.idr)
++sibling/pkg
++1/1: Building Main (../src/Main.idr)
+diff --git a/tests/idris2/pkg011/run b/tests/idris2/pkg011/run
+new file mode 100755
+index 000000000..320087b56
+--- /dev/null
++++ b/tests/idris2/pkg011/run
+@@ -0,0 +1,23 @@
++for t in dot dot-slash dot-slash-dot; do
++    cd $t
++    echo $t
++    $1 --build testpkg.ipkg
++    rm -rf  build/
++    $1 --check --find-ipkg Main.idr
++    rm -rf  build/
++    cd ..
++done
++
++echo dot-slash-name-slash
++cd dot-slash-name-slash
++$1 --build testpkg.ipkg
++rm -rf build/
++$1 --check --find-ipkg src/Main.idr
++rm -rf build/
++cd ..
++
++echo sibling/pkg
++cd sibling/pkg
++$1 --build testpkg.ipkg
++rm -rf build/
++cd ../..
+diff --git a/tests/idris2/pkg011/sibling/pkg/testpkg.ipkg b/tests/idris2/pkg011/sibling/pkg/testpkg.ipkg
+new file mode 100644
+index 000000000..3a5815967
+--- /dev/null
++++ b/tests/idris2/pkg011/sibling/pkg/testpkg.ipkg
+@@ -0,0 +1,6 @@
++package testpkg
++
++sourcedir = "../src"
++
++modules = Main
++opts = "--no-color --console-width 0"
+diff --git a/tests/idris2/pkg011/sibling/src/Main.idr b/tests/idris2/pkg011/sibling/src/Main.idr
+new file mode 100644
+index 000000000..4bd334760
+--- /dev/null
++++ b/tests/idris2/pkg011/sibling/src/Main.idr
+@@ -0,0 +1,4 @@
++module Main
++
++main : IO ()
++main = putStrLn "CouCou!"

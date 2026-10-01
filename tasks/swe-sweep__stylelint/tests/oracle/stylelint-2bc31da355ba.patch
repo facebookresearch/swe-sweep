@@ -1,0 +1,64 @@
+diff --git a/lib/rules/selector-max-specificity/index.cjs b/lib/rules/selector-max-specificity/index.cjs
+index 370489ce6..ed7e4a8d6 100644
+--- a/lib/rules/selector-max-specificity/index.cjs
++++ b/lib/rules/selector-max-specificity/index.cjs
+@@ -5,7 +5,7 @@
+ const selectorSpecificity = require('@csstools/selector-specificity');
+ const validateTypes = require('../../utils/validateTypes.cjs');
+ const flattenNestedSelectorsForRule = require('../../utils/flattenNestedSelectorsForRule.cjs');
+-const getSelectorSourceIndex = require('../../utils/getSelectorSourceIndex.cjs');
++const getStrippedSelectorSource = require('../../utils/getStrippedSelectorSource.cjs');
+ const isStandardSyntaxRule = require('../../utils/isStandardSyntaxRule.cjs');
+ const optionsMatches = require('../../utils/optionsMatches.cjs');
+ const report = require('../../utils/report.cjs');
+@@ -118,8 +118,7 @@ const rule = (primary, secondaryOptions) => {
+ 
+ 					// Check if the selector specificity exceeds the allowed maximum
+ 					if (selectorSpecificity.compare(specificity, maxSpecificity) > 0) {
+-						const index = getSelectorSourceIndex(selector);
+-						const selectorStr = selector.toString().trim();
++						const { index, endIndex, selector: selectorStr } = getStrippedSelectorSource(selector);
+ 
+ 						report({
+ 							ruleName,
+@@ -128,7 +127,7 @@ const rule = (primary, secondaryOptions) => {
+ 							message: messages.expected,
+ 							messageArgs: [selectorStr, primary],
+ 							index,
+-							endIndex: index + selectorStr.length,
++							endIndex,
+ 						});
+ 					}
+ 				});
+diff --git a/lib/rules/selector-max-specificity/index.mjs b/lib/rules/selector-max-specificity/index.mjs
+index f26dc0179..c9b55822f 100644
+--- a/lib/rules/selector-max-specificity/index.mjs
++++ b/lib/rules/selector-max-specificity/index.mjs
+@@ -2,7 +2,7 @@ import { compare, selectorSpecificity } from '@csstools/selector-specificity';
+ 
+ import { assertNumber, isRegExp, isString } from '../../utils/validateTypes.mjs';
+ import flattenNestedSelectorsForRule from '../../utils/flattenNestedSelectorsForRule.mjs';
+-import getSelectorSourceIndex from '../../utils/getSelectorSourceIndex.mjs';
++import getStrippedSelectorSource from '../../utils/getStrippedSelectorSource.mjs';
+ import isStandardSyntaxRule from '../../utils/isStandardSyntaxRule.mjs';
+ import optionsMatches from '../../utils/optionsMatches.mjs';
+ import report from '../../utils/report.mjs';
+@@ -115,8 +115,7 @@ const rule = (primary, secondaryOptions) => {
+ 
+ 					// Check if the selector specificity exceeds the allowed maximum
+ 					if (compare(specificity, maxSpecificity) > 0) {
+-						const index = getSelectorSourceIndex(selector);
+-						const selectorStr = selector.toString().trim();
++						const { index, endIndex, selector: selectorStr } = getStrippedSelectorSource(selector);
+ 
+ 						report({
+ 							ruleName,
+@@ -125,7 +124,7 @@ const rule = (primary, secondaryOptions) => {
+ 							message: messages.expected,
+ 							messageArgs: [selectorStr, primary],
+ 							index,
+-							endIndex: index + selectorStr.length,
++							endIndex,
+ 						});
+ 					}
+ 				});

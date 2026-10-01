@@ -1,0 +1,136 @@
+diff --git a/src/Symfony/Component/Routing/Tests/Fixtures/locale_and_host/route-with-hosts-expected-collection.php b/src/Symfony/Component/Routing/Tests/Fixtures/locale_and_host/route-with-hosts-expected-collection.php
+new file mode 100644
+index 00000000000..afff1f0bcdc
+--- /dev/null
++++ b/src/Symfony/Component/Routing/Tests/Fixtures/locale_and_host/route-with-hosts-expected-collection.php
+@@ -0,0 +1,23 @@
++<?php
++
++use Symfony\Component\Config\Resource\FileResource;
++use Symfony\Component\Routing\Route;
++use Symfony\Component\Routing\RouteCollection;
++
++return function (string $format) {
++    $expectedRoutes = new RouteCollection();
++    $expectedRoutes->add('static.en', $route = new Route('/example'));
++    $route->setHost('www.example.com');
++    $route->setRequirement('_locale', 'en');
++    $route->setDefault('_locale', 'en');
++    $route->setDefault('_canonical_route', 'static');
++    $expectedRoutes->add('static.nl', $route = new Route('/example'));
++    $route->setHost('www.example.nl');
++    $route->setRequirement('_locale', 'nl');
++    $route->setDefault('_locale', 'nl');
++    $route->setDefault('_canonical_route', 'static');
++
++    $expectedRoutes->addResource(new FileResource(__DIR__."/route-with-hosts.$format"));
++
++    return $expectedRoutes;
++};
+diff --git a/src/Symfony/Component/Routing/Tests/Fixtures/locale_and_host/route-with-hosts.php b/src/Symfony/Component/Routing/Tests/Fixtures/locale_and_host/route-with-hosts.php
+new file mode 100644
+index 00000000000..44472d77ae1
+--- /dev/null
++++ b/src/Symfony/Component/Routing/Tests/Fixtures/locale_and_host/route-with-hosts.php
+@@ -0,0 +1,10 @@
++<?php
++
++namespace Symfony\Component\Routing\Loader\Configurator;
++
++return function (RoutingConfigurator $routes) {
++    $routes->add('static', '/example')->host([
++        'nl' => 'www.example.nl',
++        'en' => 'www.example.com',
++    ]);
++};
+diff --git a/src/Symfony/Component/Routing/Tests/Fixtures/locale_and_host/route-with-hosts.xml b/src/Symfony/Component/Routing/Tests/Fixtures/locale_and_host/route-with-hosts.xml
+new file mode 100644
+index 00000000000..f4b16e4d807
+--- /dev/null
++++ b/src/Symfony/Component/Routing/Tests/Fixtures/locale_and_host/route-with-hosts.xml
+@@ -0,0 +1,10 @@
++<?xml version="1.0" encoding="UTF-8" ?>
++<routes xmlns="http://symfony.com/schema/routing"
++        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
++        xsi:schemaLocation="http://symfony.com/schema/routing
++        https://symfony.com/schema/routing/routing-1.0.xsd">
++    <route id="static" path="/example">
++        <host locale="nl">www.example.nl</host>
++        <host locale="en">www.example.com</host>
++    </route>
++</routes>
+diff --git a/src/Symfony/Component/Routing/Tests/Fixtures/locale_and_host/route-with-hosts.yml b/src/Symfony/Component/Routing/Tests/Fixtures/locale_and_host/route-with-hosts.yml
+new file mode 100644
+index 00000000000..c340f71ff01
+--- /dev/null
++++ b/src/Symfony/Component/Routing/Tests/Fixtures/locale_and_host/route-with-hosts.yml
+@@ -0,0 +1,6 @@
++---
++static:
++    path: /example
++    host:
++        nl: www.example.nl
++        en: www.example.com
+diff --git a/src/Symfony/Component/Routing/Tests/Loader/PhpFileLoaderTest.php b/src/Symfony/Component/Routing/Tests/Loader/PhpFileLoaderTest.php
+index dbe45bcf82e..2ec8bd04dda 100644
+--- a/src/Symfony/Component/Routing/Tests/Loader/PhpFileLoaderTest.php
++++ b/src/Symfony/Component/Routing/Tests/Loader/PhpFileLoaderTest.php
+@@ -317,6 +317,16 @@ class PhpFileLoaderTest extends TestCase
+         $this->assertEquals($expectedRoutes('php'), $routes);
+     }
+ 
++    public function testAddingRouteWithHosts()
++    {
++        $loader = new PhpFileLoader(new FileLocator([__DIR__.'/../Fixtures/locale_and_host']));
++        $routes = $loader->load('route-with-hosts.php');
++
++        $expectedRoutes = require __DIR__.'/../Fixtures/locale_and_host/route-with-hosts-expected-collection.php';
++
++        $this->assertEquals($expectedRoutes('php'), $routes);
++    }
++
+     public function testImportingAliases()
+     {
+         $loader = new PhpFileLoader(new FileLocator([__DIR__.'/../Fixtures/alias']));
+diff --git a/src/Symfony/Component/Routing/Tests/Loader/XmlFileLoaderTest.php b/src/Symfony/Component/Routing/Tests/Loader/XmlFileLoaderTest.php
+index 9e42db7a7e6..83859120e31 100644
+--- a/src/Symfony/Component/Routing/Tests/Loader/XmlFileLoaderTest.php
++++ b/src/Symfony/Component/Routing/Tests/Loader/XmlFileLoaderTest.php
+@@ -577,6 +577,16 @@ class XmlFileLoaderTest extends TestCase
+         $this->assertEquals($expectedRoutes('xml'), $routes);
+     }
+ 
++    public function testAddingRouteWithHosts()
++    {
++        $loader = new XmlFileLoader(new FileLocator([__DIR__.'/../Fixtures/locale_and_host']));
++        $routes = $loader->load('route-with-hosts.xml');
++
++        $expectedRoutes = require __DIR__.'/../Fixtures/locale_and_host/route-with-hosts-expected-collection.php';
++
++        $this->assertEquals($expectedRoutes('xml'), $routes);
++    }
++
+     public function testWhenEnv()
+     {
+         $loader = new XmlFileLoader(new FileLocator([__DIR__.'/../Fixtures']), 'some-env');
+diff --git a/src/Symfony/Component/Routing/Tests/Loader/YamlFileLoaderTest.php b/src/Symfony/Component/Routing/Tests/Loader/YamlFileLoaderTest.php
+index 6573fd0138a..1e34386818e 100644
+--- a/src/Symfony/Component/Routing/Tests/Loader/YamlFileLoaderTest.php
++++ b/src/Symfony/Component/Routing/Tests/Loader/YamlFileLoaderTest.php
+@@ -443,6 +443,16 @@ class YamlFileLoaderTest extends TestCase
+         $this->assertEquals($expectedRoutes('yml'), $routes);
+     }
+ 
++    public function testAddingRouteWithHosts()
++    {
++        $loader = new YamlFileLoader(new FileLocator([__DIR__.'/../Fixtures/locale_and_host']));
++        $routes = $loader->load('route-with-hosts.yml');
++
++        $expectedRoutes = require __DIR__.'/../Fixtures/locale_and_host/route-with-hosts-expected-collection.php';
++
++        $this->assertEquals($expectedRoutes('yml'), $routes);
++    }
++
+     public function testWhenEnv()
+     {
+         $loader = new YamlFileLoader(new FileLocator([__DIR__.'/../Fixtures']), 'some-env');

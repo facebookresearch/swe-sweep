@@ -1,0 +1,15 @@
+diff --git a/src/Symfony/Component/Finder/Iterator/RecursiveDirectoryIterator.php b/src/Symfony/Component/Finder/Iterator/RecursiveDirectoryIterator.php
+index 886dae58853..a1225fceeb1 100644
+--- a/src/Symfony/Component/Finder/Iterator/RecursiveDirectoryIterator.php
++++ b/src/Symfony/Component/Finder/Iterator/RecursiveDirectoryIterator.php
+@@ -70,8 +70,9 @@ class RecursiveDirectoryIterator extends \RecursiveDirectoryIterator
+             $subPathname .= $this->directorySeparator;
+         }
+         $subPathname .= $this->getFilename();
++        $basePath = $this->rootPath;
+ 
+-        if ('/' !== $basePath = $this->rootPath) {
++        if ('/' !== $basePath && !str_ends_with($basePath, $this->directorySeparator)) {
+             $basePath .= $this->directorySeparator;
+         }
+ 

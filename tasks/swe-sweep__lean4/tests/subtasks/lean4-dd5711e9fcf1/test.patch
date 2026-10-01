@@ -1,0 +1,28 @@
+diff --git a/tests/lean/4845.lean b/tests/lean/4845.lean
+new file mode 100644
+index 0000000000..f22af6301e
+--- /dev/null
++++ b/tests/lean/4845.lean
+@@ -0,0 +1,12 @@
++/-!
++  Generalize should not try to abstract the variable from hypotheses that are
++  implementation details. -/
++
++/-!
++  In this case, generalize tries to revert the lemma being defined to generalize
++  the 0 in it. -/
++
++example : 0 = 0 → True := by
++  intro H; generalize _H : 0 = z at *
++  trace_state
++  constructor
+diff --git a/tests/lean/4845.lean.expected.out b/tests/lean/4845.lean.expected.out
+new file mode 100644
+index 0000000000..7a20a98e30
+--- /dev/null
++++ b/tests/lean/4845.lean.expected.out
+@@ -0,0 +1,4 @@
++z : Nat
++_H : 0 = z
++H : z = z
++⊢ True

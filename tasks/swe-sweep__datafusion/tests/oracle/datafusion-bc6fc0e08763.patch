@@ -1,0 +1,25 @@
+diff --git a/datafusion/optimizer/src/analyzer/type_coercion.rs b/datafusion/optimizer/src/analyzer/type_coercion.rs
+--- a/datafusion/optimizer/src/analyzer/type_coercion.rs
++++ b/datafusion/optimizer/src/analyzer/type_coercion.rs
+@@ -920,10 +920,6 @@ fn coerce_arguments_for_signature_with_scalar_udf(
+     schema: &DFSchema,
+     func: &ScalarUDF,
+ ) -> Result<Vec<Expr>> {
+-    if expressions.is_empty() {
+-        return Ok(expressions);
+-    }
+-
+     let current_fields = expressions
+         .iter()
+         .map(|e| e.to_field(schema).map(|(_, f)| f))
+@@ -950,10 +946,6 @@ fn coerce_arguments_for_signature_with_aggregate_udf(
+     schema: &DFSchema,
+     func: &AggregateUDF,
+ ) -> Result<Vec<Expr>> {
+-    if expressions.is_empty() {
+-        return Ok(expressions);
+-    }
+-
+     let current_fields = expressions
+         .iter()
+         .map(|e| e.to_field(schema).map(|(_, f)| f))

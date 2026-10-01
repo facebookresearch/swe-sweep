@@ -1,0 +1,764 @@
+{
+  "build_jobs": 4,
+  "container_repo": "/scikit-learn",
+  "evaluation": {
+    "build_timeout": 3600,
+    "paths": "sklearn",
+    "test_timeout": 1800,
+    "visible_timeout": 10800
+  },
+  "upstream_image": "pandora-maxbug-scikit-learn:0.18",
+  "n_base_passing": 2256,
+  "n_base_test_ignore": 103,
+  "oracle_digest": "e7eaa5c0ae474769a38a1cda0fad8f3b041947d357ffd33a112d09130dc3fc83",
+  "oracle_pristine_paths": [],
+  "upstream_commit": "9f7399e15e6172900e0591deb5a57a45769d8205",
+  "reproduction": {
+    "build_jobs_env": [
+      "SKLEARN_BUILD_PARALLEL",
+      "NPY_NUM_BUILD_JOBS"
+    ],
+    "jobs_env": "SKLEARN_BUILD_PARALLEL",
+    "test_timeout": 1200
+  },
+  "schema": 2,
+  "subtasks": [
+    {
+      "f2p": [
+        "tests.test_weight_boosting::test_oneclass_adaboost_proba"
+      ],
+      "id": "scikit-learn-00468e868c34",
+      "target_files": [
+        "sklearn/ensemble/weight_boosting.py"
+      ]
+    },
+    {
+      "f2p": [
+        "tests.test_text::test_strip_accents"
+      ],
+      "id": "scikit-learn-04c114c3c3e4",
+      "target_files": [
+        "sklearn/feature_extraction/text.py"
+      ]
+    },
+    {
+      "f2p": [
+        "mixture.tests.test_gaussian_mixture::test_sample"
+      ],
+      "id": "scikit-learn-05abe2a6a81b",
+      "target_files": [
+        "sklearn/mixture/base.py"
+      ]
+    },
+    {
+      "f2p": [
+        "tests.test_bagging::test_set_oob_score_label_encoding"
+      ],
+      "id": "scikit-learn-060fe99b8a34",
+      "target_files": [
+        "sklearn/ensemble/bagging.py"
+      ]
+    },
+    {
+      "f2p": [
+        "tests.test_pipeline::test_fit_predict_on_pipeline"
+      ],
+      "id": "scikit-learn-0743df016b88",
+      "target_files": [
+        "sklearn/pipeline.py"
+      ]
+    },
+    {
+      "f2p": [
+        "feature_selection.tests.test_mutual_info::test_mutual_info_classif_mixed"
+      ],
+      "id": "scikit-learn-0dea4363709a",
+      "target_files": [
+        "sklearn/feature_selection/mutual_info_.py"
+      ]
+    },
+    {
+      "f2p": [
+        "cross_decomposition.tests.test_pls::test_pls_scaling"
+      ],
+      "id": "scikit-learn-0e244f84f981",
+      "target_files": [
+        "sklearn/cross_decomposition/pls_.py"
+      ]
+    },
+    {
+      "f2p": [
+        "tests.test_least_angle::test_lasso_lars_vs_R_implementation"
+      ],
+      "id": "scikit-learn-11f85992fcfe",
+      "target_files": [
+        "sklearn/linear_model/least_angle.py"
+      ]
+    },
+    {
+      "f2p": [
+        "model_selection.tests.test_search::test_transform_inverse_transform_round_trip"
+      ],
+      "id": "scikit-learn-15600a472187",
+      "target_files": [
+        "sklearn/model_selection/_search.py"
+      ]
+    },
+    {
+      "f2p": [
+        "tests.test_classification::test_precision_recall_f_extra_labels"
+      ],
+      "id": "scikit-learn-15b0e5c1aded",
+      "target_files": [
+        "sklearn/metrics/classification.py"
+      ]
+    },
+    {
+      "f2p": [
+        "neural_network.tests.test_mlp::test_shuffle"
+      ],
+      "id": "scikit-learn-1a4390a88037",
+      "target_files": [
+        "sklearn/neural_network/multilayer_perceptron.py"
+      ]
+    },
+    {
+      "f2p": [
+        "tests.test_logistic::test_logistic_cv_multinomial_score[neg_log_loss-multiclass_agg_list3]"
+      ],
+      "id": "scikit-learn-1e5a8ec59916",
+      "target_files": [
+        "sklearn/linear_model/logistic.py"
+      ]
+    },
+    {
+      "f2p": [
+        "tests.test_classification::test_hinge_loss_multiclass_missing_labels_only_two_unq_in_y_true"
+      ],
+      "id": "scikit-learn-1ef5c93d0d80",
+      "target_files": [
+        "sklearn/metrics/_classification.py"
+      ]
+    },
+    {
+      "f2p": [
+        "gaussian_process.tests.test_gpr::test_gpr_predict_input_not_modified"
+      ],
+      "id": "scikit-learn-2232eda81ecd",
+      "target_files": [
+        "sklearn/gaussian_process/_gpr.py"
+      ]
+    },
+    {
+      "f2p": [
+        "tests.test_base::test_clone_estimator_types"
+      ],
+      "id": "scikit-learn-24e42252fbe3",
+      "target_files": [
+        "sklearn/base.py"
+      ]
+    },
+    {
+      "f2p": [
+        "tests.test_dbscan::test_dbscan_precomputed_metric_with_initial_rows_zero"
+      ],
+      "id": "scikit-learn-253733381f51",
+      "target_files": [
+        "sklearn/cluster/dbscan_.py"
+      ]
+    },
+    {
+      "f2p": [
+        "tests.test_samples_generator::test_make_moons"
+      ],
+      "id": "scikit-learn-2581930a2b48",
+      "target_files": [
+        "sklearn/datasets/samples_generator.py"
+      ]
+    },
+    {
+      "f2p": [
+        "gaussian_process.tests.test_gaussian_process::test_batch_size"
+      ],
+      "id": "scikit-learn-278d27ce81ea",
+      "target_files": [
+        "sklearn/gaussian_process/gaussian_process.py"
+      ]
+    },
+    {
+      "f2p": [
+        "tests.test_naive_bayes::test_gnb_priors_sum_isclose"
+      ],
+      "id": "scikit-learn-2c0b541c4c7b",
+      "target_files": [
+        "sklearn/naive_bayes.py"
+      ]
+    },
+    {
+      "f2p": [
+        "preprocessing.tests.test_data::test_scaler_return_identity"
+      ],
+      "id": "scikit-learn-3190608847c6",
+      "target_files": [
+        "sklearn/preprocessing/data.py"
+      ]
+    },
+    {
+      "f2p": [
+        "tests.test_ranking::test_precision_recall_curve_toydata"
+      ],
+      "id": "scikit-learn-34e19d8886dc",
+      "target_files": [
+        "sklearn/metrics/base.py"
+      ]
+    },
+    {
+      "f2p": [
+        "mixture.tests.test_gaussian_mixture::test_gaussian_mixture_precisions_init_diag"
+      ],
+      "id": "scikit-learn-3a1dccea0372",
+      "target_files": [
+        "sklearn/mixture/_gaussian_mixture.py"
+      ]
+    },
+    {
+      "f2p": [
+        "preprocessing.tests.test_data::test_standard_check_array_of_inverse_transform"
+      ],
+      "id": "scikit-learn-3bcf171a5449",
+      "target_files": [
+        "sklearn/preprocessing/_data.py"
+      ]
+    },
+    {
+      "f2p": [
+        "tests.test_dict_learning::test_dict_learning_iter_offset"
+      ],
+      "id": "scikit-learn-424e917bbfa7",
+      "target_files": [
+        "sklearn/decomposition/_dict_learning.py"
+      ]
+    },
+    {
+      "f2p": [
+        "tests.test_hierarchical::test_affinity_passed_to_fix_connectivity"
+      ],
+      "id": "scikit-learn-474ad7fe9ea8",
+      "target_files": [
+        "sklearn/cluster/hierarchical.py"
+      ]
+    },
+    {
+      "f2p": [
+        "tests.test_svm::test_sparse_fit_support_vectors_empty"
+      ],
+      "id": "scikit-learn-4a48a2196222",
+      "target_files": [
+        "sklearn/svm/base.py"
+      ]
+    },
+    {
+      "f2p": [
+        "tests.test_calibration::test_calibration_less_classes",
+        "tests.test_calibration::test_calibration_prob_sum"
+      ],
+      "id": "scikit-learn-505e721d146f",
+      "target_files": [
+        "sklearn/calibration.py"
+      ]
+    },
+    {
+      "f2p": [
+        "tests.test_supervised::test_mutual_info_score_positive_constant_label[labels_true0-labels_pred0]",
+        "tests.test_supervised::test_mutual_info_score_positive_constant_label[labels_true1-labels_pred1]",
+        "tests.test_supervised::test_mutual_info_score_positive_constant_label[labels_true2-labels_pred2]",
+        "tests.test_supervised::test_mutual_info_score_positive_constant_label[labels_true3-labels_pred3]"
+      ],
+      "id": "scikit-learn-507e257b8911",
+      "target_files": [
+        "sklearn/metrics/cluster/_supervised.py"
+      ]
+    },
+    {
+      "f2p": [
+        "mixture.tests.test_mixture::test_gaussian_mixture_n_iter[estimator0]",
+        "mixture.tests.test_mixture::test_gaussian_mixture_n_iter[estimator1]"
+      ],
+      "id": "scikit-learn-520b71ceead5",
+      "target_files": [
+        "sklearn/mixture/base.py"
+      ]
+    },
+    {
+      "f2p": [
+        "tests.test_discriminant_analysis::test_lda_explained_variance_ratio"
+      ],
+      "id": "scikit-learn-5b82ec254b46",
+      "target_files": [
+        "sklearn/discriminant_analysis.py"
+      ]
+    },
+    {
+      "f2p": [
+        "feature_selection.tests.test_variance_threshold::test_zero_variance_floating_point_error"
+      ],
+      "id": "scikit-learn-5beb6a80f064",
+      "target_files": [
+        "sklearn/feature_selection/variance_threshold.py"
+      ]
+    },
+    {
+      "f2p": [
+        "tests.test_coordinate_descent::test_multi_task_lasso_and_enet"
+      ],
+      "id": "scikit-learn-5fc57e92be71",
+      "target_files": [
+        "sklearn/linear_model/coordinate_descent.py"
+      ]
+    },
+    {
+      "f2p": [
+        "tests.test_svm::test_ovr_decision_function"
+      ],
+      "id": "scikit-learn-6063db01c823",
+      "target_files": [
+        "sklearn/svm/base.py"
+      ]
+    },
+    {
+      "f2p": [
+        "tests.test_base::test_predict_proba_lr_large_values"
+      ],
+      "id": "scikit-learn-60efa742b790",
+      "target_files": [
+        "sklearn/linear_model/_base.py"
+      ]
+    },
+    {
+      "f2p": [
+        "tests.test_coordinate_descent::test_lasso_cv_with_some_model_selection"
+      ],
+      "id": "scikit-learn-642571134325",
+      "target_files": [
+        "sklearn/linear_model/coordinate_descent.py"
+      ]
+    },
+    {
+      "f2p": [
+        "tests.test_pca::test_pca_bad_solver"
+      ],
+      "id": "scikit-learn-6480fba1089a",
+      "target_files": [
+        "sklearn/decomposition/pca.py"
+      ]
+    },
+    {
+      "f2p": [
+        "model_selection.tests.test_search::test_search_train_scores_set_to_false"
+      ],
+      "id": "scikit-learn-64a7a1f9834e",
+      "target_files": [
+        "sklearn/model_selection/_search.py"
+      ]
+    },
+    {
+      "f2p": [
+        "tests.test_isomap::test_sparse_input"
+      ],
+      "id": "scikit-learn-665658494e9c",
+      "target_files": [
+        "sklearn/manifold/isomap.py",
+        "sklearn/manifold/locally_linear.py"
+      ]
+    },
+    {
+      "f2p": [
+        "tests.test_samples_generator::test_make_classification"
+      ],
+      "id": "scikit-learn-68dceaa4460f",
+      "target_files": [
+        "sklearn/datasets/samples_generator.py"
+      ]
+    },
+    {
+      "f2p": [
+        "gaussian_process.tests.test_gpr::test_no_fit_default_predict"
+      ],
+      "id": "scikit-learn-695ec9af74d1",
+      "target_files": [
+        "sklearn/gaussian_process/gpr.py"
+      ]
+    },
+    {
+      "f2p": [
+        "tests.test_pairwise::test_cosine_distances"
+      ],
+      "id": "scikit-learn-7270b2426675",
+      "target_files": [
+        "sklearn/metrics/pairwise.py"
+      ]
+    },
+    {
+      "f2p": [
+        "tests.test_image::test_grid_to_graph",
+        "tests.test_image::test_img_to_graph_sparse"
+      ],
+      "id": "scikit-learn-72b3a8cda943",
+      "target_files": [
+        "sklearn/feature_extraction/image.py"
+      ]
+    },
+    {
+      "f2p": [
+        "tests.test_kernel_approximation::test_nystroem_component_indices"
+      ],
+      "id": "scikit-learn-742483fa225a",
+      "target_files": [
+        "sklearn/kernel_approximation.py"
+      ]
+    },
+    {
+      "f2p": [
+        "tests.test_locally_linear::test_integer_input"
+      ],
+      "id": "scikit-learn-7839f40453fe",
+      "target_files": [
+        "sklearn/manifold/locally_linear.py"
+      ]
+    },
+    {
+      "f2p": [
+        "tests.test_dict_learning::test_dict_learning_online_readonly_initialization"
+      ],
+      "id": "scikit-learn-7938ba69a0ac",
+      "target_files": [
+        "sklearn/decomposition/dict_learning.py"
+      ]
+    },
+    {
+      "f2p": [
+        "cross_decomposition.tests.test_pls::test_pls"
+      ],
+      "id": "scikit-learn-7c1876559a39",
+      "target_files": [
+        "sklearn/cross_decomposition/pls_.py"
+      ]
+    },
+    {
+      "f2p": [
+        "tests.test_gradient_boosting_loss_functions::test_quantile_loss_function"
+      ],
+      "id": "scikit-learn-7d44778dddc2",
+      "target_files": [
+        "sklearn/ensemble/gradient_boosting.py"
+      ]
+    },
+    {
+      "f2p": [
+        "tests.test_incremental_pca::test_n_samples_equal_n_components"
+      ],
+      "id": "scikit-learn-809504eff0cc",
+      "target_files": [
+        "sklearn/decomposition/_incremental_pca.py"
+      ]
+    },
+    {
+      "f2p": [
+        "tests.test_gradient_boosting::test_min_impurity_split"
+      ],
+      "id": "scikit-learn-87439f6f15d0",
+      "target_files": [
+        "sklearn/ensemble/gradient_boosting.py"
+      ]
+    },
+    {
+      "f2p": [
+        "model_selection.tests.test_validation::test_validation_curve_clone_estimator",
+        "tests.test_learning_curve::test_validation_curve_clone_estimator"
+      ],
+      "id": "scikit-learn-895c99d7b2a5",
+      "target_files": [
+        "sklearn/learning_curve.py",
+        "sklearn/model_selection/_validation.py"
+      ]
+    },
+    {
+      "f2p": [
+        "tests.test_ridge::test_ridge_classifier_cv_store_cv_values"
+      ],
+      "id": "scikit-learn-89b0e5895823",
+      "target_files": [
+        "sklearn/linear_model/ridge.py"
+      ]
+    },
+    {
+      "f2p": [
+        "tests.test_iforest::test_iforest_subsampled_features"
+      ],
+      "id": "scikit-learn-8b11885ea39f",
+      "target_files": [
+        "sklearn/ensemble/iforest.py"
+      ]
+    },
+    {
+      "f2p": [
+        "tests.test_isotonic::test_isotonic_regression_with_ties_in_differently_sized_groups"
+      ],
+      "id": "scikit-learn-9ddb5a0709fd",
+      "target_files": [
+        "sklearn/_isotonic.pyx"
+      ]
+    },
+    {
+      "f2p": [
+        "tests.test_dummy::test_constant_strategy_regressor"
+      ],
+      "id": "scikit-learn-9eb2c6b7bbba",
+      "target_files": [
+        "sklearn/dummy.py"
+      ]
+    },
+    {
+      "f2p": [
+        "tests.test_voting_classifier::test_estimator_weights_format"
+      ],
+      "id": "scikit-learn-a31643aa3836",
+      "target_files": [
+        "sklearn/ensemble/voting_classifier.py"
+      ]
+    },
+    {
+      "f2p": [
+        "tests.test_grid_search::test_transform_inverse_transform_round_trip"
+      ],
+      "id": "scikit-learn-a4aa05311439",
+      "target_files": [
+        "sklearn/grid_search.py"
+      ]
+    },
+    {
+      "f2p": [
+        "tests.test_affinity_propagation::test_affinity_propagation_float32"
+      ],
+      "id": "scikit-learn-abad87cda7f2",
+      "target_files": [
+        "sklearn/cluster/_affinity_propagation.py"
+      ]
+    },
+    {
+      "f2p": [
+        "tests.test_tree::test_empty_leaf_infinite_threshold"
+      ],
+      "id": "scikit-learn-abeaaa3ed4f2",
+      "target_files": [
+        "sklearn/tree/_splitter.pyx"
+      ]
+    },
+    {
+      "f2p": [
+        "tests.test_class_weight::test_compute_sample_weight_more_than_32"
+      ],
+      "id": "scikit-learn-b0b9bc29e20b",
+      "target_files": [
+        "sklearn/utils/class_weight.py"
+      ]
+    },
+    {
+      "f2p": [
+        "tests.test_huber::test_huber_bool"
+      ],
+      "id": "scikit-learn-b63cf80c2ed2",
+      "target_files": [
+        "sklearn/linear_model/huber.py"
+      ]
+    },
+    {
+      "f2p": [
+        "tests.test_birch::test_both_subclusters_updated"
+      ],
+      "id": "scikit-learn-c6148e9e83e8",
+      "target_files": [
+        "sklearn/cluster/_birch.py"
+      ]
+    },
+    {
+      "f2p": [
+        "preprocessing.tests.test_label::test_sparse_output_multilabel_binarizer"
+      ],
+      "id": "scikit-learn-c6eba96a2eb5",
+      "target_files": [
+        "sklearn/preprocessing/label.py"
+      ]
+    },
+    {
+      "f2p": [
+        "tests.test_least_angle::test_multitarget"
+      ],
+      "id": "scikit-learn-c7bdaa2589c1",
+      "target_files": [
+        "sklearn/linear_model/least_angle.py"
+      ]
+    },
+    {
+      "f2p": [
+        "tests.test_image::test_extract_patch_same_size_image",
+        "tests.test_image::test_extract_patches_less_than_max_patches"
+      ],
+      "id": "scikit-learn-cf27cabc588e",
+      "target_files": [
+        "sklearn/feature_extraction/image.py"
+      ]
+    },
+    {
+      "f2p": [
+        "model_selection.tests.test_validation::test_permutation_test_score_pandas"
+      ],
+      "id": "scikit-learn-d1656a41d09a",
+      "target_files": [
+        "sklearn/cross_validation.py",
+        "sklearn/model_selection/_validation.py"
+      ]
+    },
+    {
+      "f2p": [
+        "tests.test_partial_dependence::test_partial_dependence_sample_weight"
+      ],
+      "id": "scikit-learn-d24d40578521",
+      "target_files": [
+        "sklearn/ensemble/_gradient_boosting.pyx"
+      ]
+    },
+    {
+      "f2p": [
+        "tests.test_ransac::test_ransac_max_trials"
+      ],
+      "id": "scikit-learn-d643577f6e2b",
+      "target_files": [
+        "sklearn/linear_model/ransac.py"
+      ]
+    },
+    {
+      "f2p": [
+        "tests.test_t_sne::test_accessible_kl_divergence"
+      ],
+      "id": "scikit-learn-dcee4f7d95fc",
+      "target_files": [
+        "sklearn/manifold/t_sne.py"
+      ]
+    },
+    {
+      "f2p": [
+        "tests.test_k_means::test_iter_attribute"
+      ],
+      "id": "scikit-learn-df66da71ca9b",
+      "target_files": [
+        "sklearn/cluster/_k_means_elkan.pyx",
+        "sklearn/cluster/k_means_.py"
+      ]
+    },
+    {
+      "f2p": [
+        "tests.test_birch::test_birch_n_clusters_long_int"
+      ],
+      "id": "scikit-learn-df75cbfaa665",
+      "target_files": [
+        "sklearn/cluster/_birch.py"
+      ]
+    },
+    {
+      "f2p": [
+        "tests.test_omp::test_estimator"
+      ],
+      "id": "scikit-learn-e2a448002fba",
+      "target_files": [
+        "sklearn/linear_model/omp.py"
+      ]
+    },
+    {
+      "f2p": [
+        "tests.test_coordinate_descent::test_coef_shape_not_zero"
+      ],
+      "id": "scikit-learn-e3d2da7c6e2d",
+      "target_files": [
+        "sklearn/linear_model/coordinate_descent.py"
+      ]
+    },
+    {
+      "f2p": [
+        "decomposition.tests.test_dict_learning::test_sparse_coder_parallel_mmap",
+        "linear_model.tests.test_omp::test_orthogonal_mp_gram_readonly"
+      ],
+      "id": "scikit-learn-e4ef8172d12d",
+      "target_files": [
+        "sklearn/linear_model/omp.py"
+      ]
+    },
+    {
+      "f2p": [
+        "tests.test_text::test_nonnegative_hashing_vectorizer_result_indices"
+      ],
+      "id": "scikit-learn-e65a5ab32929",
+      "target_files": [
+        "sklearn/feature_extraction/_hashing_fast.pyx"
+      ]
+    },
+    {
+      "f2p": [
+        "tests.test_pca::test_pca_score_with_different_solvers",
+        "tests.test_pca::test_pca_zero_noise_variance_edge_cases"
+      ],
+      "id": "scikit-learn-e88de4aafbaa",
+      "target_files": [
+        "sklearn/decomposition/pca.py"
+      ]
+    },
+    {
+      "f2p": [
+        "tests.test_pipeline::test_fit_predict_with_intermediate_fit_params"
+      ],
+      "id": "scikit-learn-ec16ab51767e",
+      "target_files": [
+        "sklearn/pipeline.py"
+      ]
+    },
+    {
+      "f2p": [
+        "tests.test_supervised::test_int_overflow_mutual_info_fowlkes_mallows_score"
+      ],
+      "id": "scikit-learn-ecb77a5eed3c",
+      "target_files": [
+        "sklearn/metrics/cluster/supervised.py"
+      ]
+    },
+    {
+      "f2p": [
+        "tests.test_huber::test_huber_max_iter"
+      ],
+      "id": "scikit-learn-ee70d7ef5327",
+      "target_files": [
+        "sklearn/linear_model/huber.py",
+        "sklearn/linear_model/logistic.py"
+      ]
+    },
+    {
+      "f2p": [
+        "tests.test_ranking::test_label_ranking_avg_precision_score_should_allow_csr_matrix_for_y_true_input"
+      ],
+      "id": "scikit-learn-ef4527ccb216",
+      "target_files": [
+        "sklearn/metrics/_ranking.py"
+      ]
+    },
+    {
+      "f2p": [
+        "tests.test_bayes::test_bayesian_ridge_parameter"
+      ],
+      "id": "scikit-learn-fd0188351b9c",
+      "target_files": [
+        "sklearn/linear_model/bayes.py"
+      ]
+    }
+  ],
+  "task": "scikit-learn",
+  "version": "0.18"
+}

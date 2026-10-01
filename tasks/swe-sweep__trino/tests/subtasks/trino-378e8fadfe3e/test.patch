@@ -1,0 +1,45 @@
+diff --git a/core/trino-main/src/test/java/io/trino/sql/planner/TestDynamicFilter.java b/core/trino-main/src/test/java/io/trino/sql/planner/TestDynamicFilter.java
+index cdabe8baad9..dc56b717590 100644
+--- a/core/trino-main/src/test/java/io/trino/sql/planner/TestDynamicFilter.java
++++ b/core/trino-main/src/test/java/io/trino/sql/planner/TestDynamicFilter.java
+@@ -367,6 +367,40 @@ public class TestDynamicFilter
+                                         tableScan("lineitem", ImmutableMap.of("L_EXTENDEDPRICE", "extendedprice")))))));
+     }
+ 
++    @Test
++    public void testNotDistinctFromLeftJoin()
++    {
++        // IS NOT DISTINCT FROM condition does not promote LEFT to INNER
++        assertPlan("SELECT 1 FROM (SELECT o.orderkey FROM nation n LEFT JOIN orders o ON n.nationkey = o.orderkey) o JOIN lineitem l ON o.orderkey IS NOT DISTINCT FROM l.orderkey",
++                anyTree(join(
++                        INNER,
++                        ImmutableList.of(),
++                        join(
++                                LEFT,
++                                ImmutableList.of(equiJoinClause("nationkey", "ORDERS_OK")),
++                                anyTree(
++                                        tableScan("nation", ImmutableMap.of("nationkey", "nationkey"))),
++                                anyTree(
++                                        tableScan("orders", ImmutableMap.of("ORDERS_OK", "orderkey")))),
++                        anyTree(
++                                tableScan("lineitem", ImmutableMap.of("LINEITEM_OK", "orderkey"))))));
++
++        // equi condition promotes LEFT to INNER
++        assertPlan("SELECT 1 FROM (SELECT o.orderkey FROM nation n LEFT JOIN orders o ON n.nationkey = o.orderkey) o JOIN lineitem l ON o.orderkey = l.orderkey",
++                anyTree(join(
++                        INNER,
++                        ImmutableList.of(equiJoinClause("nationkey", "LINEITEM_OK")),
++                        join(
++                                INNER,
++                                ImmutableList.of(equiJoinClause("nationkey", "ORDERS_OK")),
++                                anyTree(
++                                        tableScan("nation", ImmutableMap.of("nationkey", "nationkey"))),
++                                anyTree(
++                                        tableScan("orders", ImmutableMap.of("ORDERS_OK", "orderkey")))),
++                        anyTree(
++                                tableScan("lineitem", ImmutableMap.of("LINEITEM_OK", "orderkey"))))));
++    }
++
+     @Test
+     public void testJoinOnCast()
+     {

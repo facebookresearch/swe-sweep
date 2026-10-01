@@ -1,0 +1,13 @@
+diff --git a/pkg/analyzer_plugin/lib/src/utilities/completion/optype.dart b/pkg/analyzer_plugin/lib/src/utilities/completion/optype.dart
+index 080af053a23..b7311964761 100644
+--- a/pkg/analyzer_plugin/lib/src/utilities/completion/optype.dart
++++ b/pkg/analyzer_plugin/lib/src/utilities/completion/optype.dart
+@@ -1718,6 +1718,8 @@ class _OpTypeAstVisitor extends GeneralizingAstVisitor<void> {
+       return 'operator';
+     } else if (node is IndexExpression) {
+       return 'index';
++    } else if (node is RecordLiteral) {
++      return 'recordLiteral';
+     }
+     throw ArgumentError(
+         'Unknown parent of ${node.runtimeType}: ${node?.parent.runtimeType}');

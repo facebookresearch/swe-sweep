@@ -1,0 +1,17 @@
+diff --git a/lib/dependencies/CommonJsFullRequireDependency.js b/lib/dependencies/CommonJsFullRequireDependency.js
+index 2c0c9677a..23df311e3 100644
+--- a/lib/dependencies/CommonJsFullRequireDependency.js
++++ b/lib/dependencies/CommonJsFullRequireDependency.js
+@@ -117,7 +117,11 @@ CommonJsFullRequireDependency.Template = class CommonJsFullRequireDependencyTemp
+ 				const comment = equals(usedImported, ids)
+ 					? ""
+ 					: Template.toNormalComment(propertyAccess(ids)) + " ";
+-				requireExpr += `${comment}${propertyAccess(usedImported)}`;
++				const access = `${comment}${propertyAccess(usedImported)}`;
++				requireExpr =
++					dep.asiSafe === true
++						? `(${requireExpr}${access})`
++						: `${requireExpr}${access})`;
+ 			}
+ 		}
+ 		source.replace(dep.range[0], dep.range[1] - 1, requireExpr);

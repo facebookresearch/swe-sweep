@@ -1,0 +1,14 @@
+diff --git a/src/lua/init.c b/src/lua/init.c
+index d3a265eb8c..ee132ca493 100644
+--- a/src/lua/init.c
++++ b/src/lua/init.c
+@@ -936,7 +936,8 @@ run_script_f(va_list ap)
+ 			goto luajit_error;
+ 		if (lua_main(L, argc, argv) != 0)
+ 			goto error;
+-	} else if (!is_a_tty || (path && strcmp(path, "-") == 0)) {
++	} else if ((!interactive && !is_a_tty) ||
++			(path && strcmp(path, "-") == 0)) {
+ 		/* Execute stdin */
+ 		if (luaL_loadfile(L, NULL) != 0)
+ 			goto luajit_error;

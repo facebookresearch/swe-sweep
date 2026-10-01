@@ -1,0 +1,38 @@
+diff --git a/lib/rules/font-family-no-missing-generic-family-keyword/index.cjs b/lib/rules/font-family-no-missing-generic-family-keyword/index.cjs
+index 106179956..4d584183c 100644
+--- a/lib/rules/font-family-no-missing-generic-family-keyword/index.cjs
++++ b/lib/rules/font-family-no-missing-generic-family-keyword/index.cjs
+@@ -62,11 +62,12 @@ const rule = (primary, secondaryOptions) => {
+ 			return;
+ 		}
+ 
++		const ignoredAtRules = new Set(['font-face', 'font-palette-values']);
++
+ 		root.walkDecls(/^font(-family)?$/i, (decl) => {
+-			// Ignore @font-face
+ 			const parent = decl.parent;
+ 
+-			if (parent && typeGuards.isAtRule(parent) && parent.name.toLowerCase() === 'font-face') {
++			if (parent && typeGuards.isAtRule(parent) && ignoredAtRules.has(parent.name.toLowerCase())) {
+ 				return;
+ 			}
+ 
+diff --git a/lib/rules/font-family-no-missing-generic-family-keyword/index.mjs b/lib/rules/font-family-no-missing-generic-family-keyword/index.mjs
+index b70a5bab3..1421f2567 100644
+--- a/lib/rules/font-family-no-missing-generic-family-keyword/index.mjs
++++ b/lib/rules/font-family-no-missing-generic-family-keyword/index.mjs
+@@ -59,11 +59,12 @@ const rule = (primary, secondaryOptions) => {
+ 			return;
+ 		}
+ 
++		const ignoredAtRules = new Set(['font-face', 'font-palette-values']);
++
+ 		root.walkDecls(/^font(-family)?$/i, (decl) => {
+-			// Ignore @font-face
+ 			const parent = decl.parent;
+ 
+-			if (parent && isAtRule(parent) && parent.name.toLowerCase() === 'font-face') {
++			if (parent && isAtRule(parent) && ignoredAtRules.has(parent.name.toLowerCase())) {
+ 				return;
+ 			}
+ 

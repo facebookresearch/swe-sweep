@@ -1,0 +1,70 @@
+diff --git a/src/Symfony/Component/Cache/Tests/Adapter/FilesystemTagAwareAdapterTest.php b/src/Symfony/Component/Cache/Tests/Adapter/FilesystemTagAwareAdapterTest.php
+index 393210e16e7..9c4f17c5f11 100644
+--- a/src/Symfony/Component/Cache/Tests/Adapter/FilesystemTagAwareAdapterTest.php
++++ b/src/Symfony/Component/Cache/Tests/Adapter/FilesystemTagAwareAdapterTest.php
+@@ -13,6 +13,7 @@ namespace Symfony\Component\Cache\Tests\Adapter;
+ 
+ use Psr\Cache\CacheItemPoolInterface;
+ use Symfony\Component\Cache\Adapter\FilesystemTagAwareAdapter;
++use Symfony\Component\Cache\Tests\Fixtures\FailingTagFilesystemAdapter;
+ 
+ /**
+  * @group time-sensitive
+@@ -25,4 +26,19 @@ class FilesystemTagAwareAdapterTest extends FilesystemAdapterTest
+     {
+         return new FilesystemTagAwareAdapter('', $defaultLifetime);
+     }
++
++    public function testCommitDoesNotFailWhenTagSaveFails()
++    {
++        $adapter = new FailingTagFilesystemAdapter();
++
++        $item = $adapter->getItem('foo');
++        $item->set('bar');
++        $item->tag(['tag1']);
++        $adapter->saveDeferred($item);
++
++        // Should not throw "Undefined array key" when tag save fails
++        $result = $adapter->commit();
++
++        $this->assertFalse($result, 'Commit should return false when tag save fails');
++    }
+ }
+diff --git a/src/Symfony/Component/Cache/Tests/Fixtures/FailingTagFilesystemAdapter.php b/src/Symfony/Component/Cache/Tests/Fixtures/FailingTagFilesystemAdapter.php
+new file mode 100644
+index 00000000000..812f766d5b5
+--- /dev/null
++++ b/src/Symfony/Component/Cache/Tests/Fixtures/FailingTagFilesystemAdapter.php
+@@ -0,0 +1,32 @@
++<?php
++
++/*
++ * This file is part of the Symfony package.
++ *
++ * (c) Fabien Potencier <fabien@symfony.com>
++ *
++ * For the full copyright and license information, please view the LICENSE
++ * file that was distributed with this source code.
++ */
++
++namespace Symfony\Component\Cache\Tests\Fixtures;
++
++use Symfony\Component\Cache\Adapter\FilesystemTagAwareAdapter;
++
++/**
++ * Adapter that simulates a failure when saving tags.
++ */
++class FailingTagFilesystemAdapter extends FilesystemTagAwareAdapter
++{
++    protected function doSave(array $values, int $lifetime, array $addTagData = [], array $removeTagData = []): array
++    {
++        $failed = parent::doSave($values, $lifetime, $addTagData, $removeTagData);
++
++        // Simulate tag save failure by returning tag IDs as failed
++        foreach ($addTagData as $tagId => $ids) {
++            $failed[] = $tagId;
++        }
++
++        return $failed;
++    }
++}

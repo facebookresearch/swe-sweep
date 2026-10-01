@@ -1,0 +1,127 @@
+diff --git a/test/input/source-maps/expect.js b/test/input/source-maps/expect.js
+index b911f3f8..ad0e23e5 100644
+--- a/test/input/source-maps/expect.js
++++ b/test/input/source-maps/expect.js
+@@ -1,2 +1,2 @@
+-function _toConsumableArray(arr){if(Array.isArray(arr)){for(var i=0,arr2=Array(arr.length);i<arr.length;i++){arr2[i]=arr[i]}return arr2}else{return Array.from(arr)}}var _require=require("bar"),foo=_require.foo;var _require2=require("world"),hello=_require2.hello;foo.x.apply(foo,_toConsumableArray(foo.y(hello.z)));
+-//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJzb3VyY2VzIjpbImlucHV0Mi5qcyJdLCJuYW1lcyI6WyJyZXF1aXJlIiwiYXJyIl0sIm1hcHBpbmdzIjoiMEpBQWNBLEtBQVFDIiwic291cmNlc0NvbnRlbnQiOlsiY29uc3Qge2Zvb30gPSByZXF1aXJlKFwiYmFyXCIpO1xuY29uc3Qge2hlbGxvfSA9IHJlcXVpcmUoXCJ3b3JsZFwiKTtcblxuZm9vLngoLi4uZm9vLnkoaGVsbG8ueikpO1xuIl19
++"use strict";var __awaiter=this&&this.__awaiter||function(thisArg,_arguments,P,generator){function adopt(value){return value instanceof P?value:new P((function(resolve){resolve(value)}))}return new(P||(P=Promise))((function(resolve,reject){function fulfilled(value){try{step(generator.next(value))}catch(e){reject(e)}}function rejected(value){try{step(generator["throw"](value))}catch(e){reject(e)}}function step(result){result.done?resolve(result.value):adopt(result.value).then(fulfilled,rejected)}step((generator=generator.apply(thisArg,_arguments||[])).next())}))};function somePromiseFn(){return __awaiter(this,void 0,void 0,(function*(){let value="promise-value";return value}))}somePromiseFn().then((d=>console.info(d)));
++//# sourceMappingURL=data:application/json;charset=utf-8;base64,eyJ2ZXJzaW9uIjozLCJuYW1lcyI6WyJzb21lUHJvbWlzZUZuIiwidmFsdWUiLCJ0aGVuIiwiZCIsImNvbnNvbGUiLCJpbmZvIl0sInNvdXJjZXMiOlsiaW5wdXQudHN4Il0sInNvdXJjZXNDb250ZW50IjpbImFzeW5jIGZ1bmN0aW9uIHNvbWVQcm9taXNlRm4oKTogUHJvbWlzZTxzdHJpbmc+IHtcbiAgbGV0IHZhbHVlID0gJ3Byb21pc2UtdmFsdWUnO1xuICByZXR1cm4gdmFsdWU7IFxufVxuXG5zb21lUHJvbWlzZUZuKCkudGhlbihkID0+IGNvbnNvbGUuaW5mbyhkKSk7Il0sIm1hcHBpbmdzIjoieWpCQUFBLFNBQWVBLGdCLGlEQUNiLElBQUlDLE1BQVEsZ0JBQ1osT0FBT0EsU0FHVEQsZ0JBQWdCRSxNQUFLQyxHQUFLQyxRQUFRQyxLQUFLRiJ9
+diff --git a/test/input/source-maps/input.js b/test/input/source-maps/input.js
+index 39397953..8a488fcc 100644
+--- a/test/input/source-maps/input.js
++++ b/test/input/source-maps/input.js
+@@ -1,11 +1,17 @@
+-function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
+-
+-var _require = require("bar"),
+-    foo = _require.foo;
+-
+-var _require2 = require("world"),
+-    hello = _require2.hello;
+-
+-foo.x.apply(foo, _toConsumableArray(foo.y(hello.z)));
+-
+-//# sourceMappingURL=input.js.map
++"use strict";
++var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
++    function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
++    return new (P || (P = Promise))(function (resolve, reject) {
++        function fulfilled(value) { try { step(generator.next(value)); } catch (e) { reject(e); } }
++        function rejected(value) { try { step(generator["throw"](value)); } catch (e) { reject(e); } }
++        function step(result) { result.done ? resolve(result.value) : adopt(result.value).then(fulfilled, rejected); }
++        step((generator = generator.apply(thisArg, _arguments || [])).next());
++    });
++};
++function somePromiseFn() {
++    return __awaiter(this, void 0, void 0, function* () {
++        let value = 'promise-value';
++        return value;
++    });
++}
++somePromiseFn().then(d => console.info(d));
+diff --git a/test/input/source-maps/input.js.map b/test/input/source-maps/input.js.map
+index 7c619df9..2f3a9df4 100644
+--- a/test/input/source-maps/input.js.map
++++ b/test/input/source-maps/input.js.map
+@@ -1 +1,13 @@
+-{"version":3,"sources":["input2.js"],"names":["require","foo","hello","x","apply","_toConsumableArray","y","z"],"mappings":"kLAAcA,QAAQ,OAAfC,aAAAA,kBACSD,QAAQ,SAAjBE,gBAAAA,MAEPD,IAAIE,EAAJC,MAAAH,IAAAI,mBAASJ,IAAIK,EAAEJ,MAAMK","sourcesContent":["const {foo} = require(\"bar\");\nconst {hello} = require(\"world\");\n\nfoo.x(...foo.y(hello.z));\n"]}
++{
++  "version": 3,
++  "file": "input.js",
++  "sourceRoot": "",
++  "sources": [
++    "input.tsx"
++  ],
++  "names": [],
++  "mappings": ";;;;;;;;;;AAAA,SAAe,aAAa;;QAC1B,IAAI,KAAK,GAAG,eAAe,CAAC;QAC5B,OAAO,KAAK,CAAC;IACf,CAAC;CAAA;AAED,aAAa,EAAE,CAAC,IAAI,CAAC,CAAC,CAAC,EAAE,CAAC,OAAO,CAAC,IAAI,CAAC,CAAC,CAAC,CAAC",
++  "sourcesContent": [
++    "async function somePromiseFn(): Promise<string> {\n  let value = 'promise-value';\n  return value; \n}\n\nsomePromiseFn().then(d => console.info(d));"
++  ]
++}
+diff --git a/test/mocha/input-sourcemaps.js b/test/mocha/input-sourcemaps.js
+index 55d624cb..e0bffb43 100644
+--- a/test/mocha/input-sourcemaps.js
++++ b/test/mocha/input-sourcemaps.js
+@@ -2,7 +2,7 @@ import assert from "assert";
+ import { minify } from "../../main.js";
+ import source_map from "source-map"
+ 
+-const { SourceMapConsumer } = source_map
++const { SourceMapConsumer, SourceMapGenerator } = source_map
+ 
+ describe("input sourcemaps", function() {
+     var transpilemap, map;
+@@ -65,4 +65,52 @@ describe("input sourcemaps", function() {
+             assert.ok(pos.line <= 2, msg);
+         })
+     });
++
++    it("Should preserve unmapped segments in output source map", async function() {
++        var generator = new SourceMapGenerator();
++
++        generator.addMapping({
++            source: "source.ts",
++            generated: {line: 1, column: 0},
++            original: {line: 1, column: 0},
++        });
++        generator.addMapping({
++            source: null,
++            generated: {line: 1, column: 37},
++            original: null,
++        });
++
++        generator.addMapping({
++            source: "source.ts",
++            generated: {line: 1, column: 50},
++            original: {line: 2, column: 0},
++        });
++
++        generator.setSourceContent("source.ts",
++            `function say(msg) {console.log(msg)};say('hello');\nprocess.exit(1);`)
++
++        // Everything except the "say('hello');" part is mapped to "source.ts". The "say"
++        // function call is not mapped to any original source location. e.g. this can
++        // happen when a code transformer inserts generated code in between existing code.
++        var inputFile = "function say(msg) {console.log(msg)};say('hello');process.exit(1);";
++        var result = await minify(inputFile, {
++            sourceMap: {
++                content: JSON.parse(generator.toString()),
++                url: 'inline'
++            }
++        });
++
++        var transformedMap = await new SourceMapConsumer(result.map);
++        var hasMappedSource = true;
++
++        for (let i = 0; i < result.code.length; i++) {
++            var info = transformedMap.originalPositionFor({line: 1, column: i});
++            hasMappedSource = hasMappedSource && !!info.source;
++        }
++
++        assert.equal(hasMappedSource, false, "Expected transformed source map to preserve the " +
++            "mapping without original source location");
++
++        assert.doesNotThrow(() => SourceMapGenerator.fromSourceMap(transformedMap));
++    });
+ });

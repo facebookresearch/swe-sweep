@@ -1,0 +1,33 @@
+diff --git a/test/model.populate.test.js b/test/model.populate.test.js
+index 58c808c..5c1537a 100644
+--- a/test/model.populate.test.js
++++ b/test/model.populate.test.js
+@@ -3429,6 +3429,28 @@ describe('model: populate:', function() {
+       });
+     });
+ 
++    it('handles multiple spaces in between paths to populate (gh-13951)', async function() {
++      const BlogPost = db.model('BlogPost', new Schema({
++        title: String,
++        user: { type: ObjectId, ref: 'User' },
++        fans: [{ type: ObjectId, ref: 'User' }]
++      }));
++      const User = db.model('User', new Schema({ name: String }));
++
++      const fans = await User.create([{ name: 'Fan 1' }]);
++      const posts = [
++        { title: 'Test 1', user: fans[0]._id, fans: [fans[0]._id] }
++      ];
++      await BlogPost.create(posts);
++      const blogPost = await BlogPost.
++        findOne({ title: 'Test 1' }).
++        populate('user   \t fans');
++
++      assert.equal(blogPost.user.name, 'Fan 1');
++      assert.equal(blogPost.fans[0].name, 'Fan 1');
++      assert.equal(blogPost.title, 'Test 1');
++    });
++
+     it('maps results back to correct document (gh-1444)', async function() {
+       const articleSchema = new Schema({
+         body: String,

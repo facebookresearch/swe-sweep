@@ -1,0 +1,22 @@
+diff --git a/compiler/src/dmd/cparse.d b/compiler/src/dmd/cparse.d
+index 8e4585ecbc..95eb488f21 100644
+--- a/compiler/src/dmd/cparse.d
++++ b/compiler/src/dmd/cparse.d
+@@ -2250,8 +2250,15 @@ final class CParser(AST) : Parser!AST
+                      *    struct-or-union gnu-attributes (opt) identifier (opt) { struct-declaration-list } gnu-attributes (opt)
+                      *    struct-or-union gnu-attribute (opt) identifier
+                      */
+-                    if (token.value == TOK.__attribute__)
+-                        cparseGnuAttributes(specifier);
++                    while (1)
++                    {
++                        if (token.value == TOK.__attribute__)
++                            cparseGnuAttributes(specifier);
++                        else if (token.value == TOK.__declspec)
++                            cparseDeclspec(specifier);
++                        else
++                            break;
++                    }
+ 
+                     t = cparseStruct(sloc, structOrUnion, symbols);
+                     tkwx = TKW.xtag;

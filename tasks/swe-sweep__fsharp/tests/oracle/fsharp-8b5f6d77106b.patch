@@ -1,0 +1,21 @@
+diff --git a/src/Compiler/Checking/ConstraintSolver.fs b/src/Compiler/Checking/ConstraintSolver.fs
+index 6c79c33be9..6d59c68c7e 100644
+--- a/src/Compiler/Checking/ConstraintSolver.fs
++++ b/src/Compiler/Checking/ConstraintSolver.fs
+@@ -1035,7 +1035,6 @@ and SolveTypMeetsTyparConstraints (csenv: ConstraintSolverEnv) ndeep m2 trace ty
+ 
+ and shouldWarnUselessNullCheck (csenv:ConstraintSolverEnv) =
+     csenv.g.checkNullness &&
+-    csenv.IsSpeculativeForMethodOverloading = false &&
+     csenv.SolverState.WarnWhenUsingWithoutNullOnAWithNullTarget.IsSome    
+ 
+ // nullness1: actual
+@@ -1102,7 +1101,7 @@ and SolveNullnessSubsumesNullness (csenv: ConstraintSolverEnv) m2 (trace: Option
+         | NullnessInfo.WithNull, NullnessInfo.WithoutNull ->             
+             CompleteD
+         | NullnessInfo.WithoutNull, NullnessInfo.WithNull -> 
+-            if csenv.g.checkNullness && not csenv.IsSpeculativeForMethodOverloading then               
++            if csenv.g.checkNullness then               
+                  WarnD(ConstraintSolverNullnessWarningWithTypes(csenv.DisplayEnv, ty1, ty2, n1, n2, csenv.m, m2)) 
+             else
+                 CompleteD

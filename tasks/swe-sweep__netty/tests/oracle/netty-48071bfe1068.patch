@@ -1,0 +1,50 @@
+diff --git a/buffer/src/main/java/io/netty/buffer/AbstractUnpooledSlicedByteBuf.java b/buffer/src/main/java/io/netty/buffer/AbstractUnpooledSlicedByteBuf.java
+index f1863ff320..56f2d89b72 100644
+--- a/buffer/src/main/java/io/netty/buffer/AbstractUnpooledSlicedByteBuf.java
++++ b/buffer/src/main/java/io/netty/buffer/AbstractUnpooledSlicedByteBuf.java
+@@ -215,7 +215,12 @@ abstract class AbstractUnpooledSlicedByteBuf extends AbstractDerivedByteBuf {
+ 
+     @Override
+     public ByteBuf duplicate() {
+-        return unwrap().duplicate().setIndex(idx(readerIndex()), idx(writerIndex()));
++        return slice(0, capacity()).setIndex(readerIndex(), writerIndex());
++    }
++
++    @Override
++    public ByteBuf retainedDuplicate() {
++        return retainedSlice(0, capacity()).setIndex(readerIndex(), writerIndex());
+     }
+ 
+     @Override
+diff --git a/buffer/src/main/java/io/netty/buffer/PooledSlicedByteBuf.java b/buffer/src/main/java/io/netty/buffer/PooledSlicedByteBuf.java
+index 054b637c93..20bfc09292 100644
+--- a/buffer/src/main/java/io/netty/buffer/PooledSlicedByteBuf.java
++++ b/buffer/src/main/java/io/netty/buffer/PooledSlicedByteBuf.java
+@@ -115,12 +115,12 @@ final class PooledSlicedByteBuf extends AbstractPooledDerivedByteBuf {
+ 
+     @Override
+     public ByteBuf duplicate() {
+-        return duplicate0().setIndex(idx(readerIndex()), idx(writerIndex()));
++        return slice(0, capacity()).setIndex(readerIndex(), writerIndex());
+     }
+ 
+     @Override
+     public ByteBuf retainedDuplicate() {
+-        return PooledDuplicatedByteBuf.newInstance(unwrap(), this, idx(readerIndex()), idx(writerIndex()));
++        return retainedSlice(0, capacity()).setIndex(readerIndex(), writerIndex());
+     }
+ 
+     @Override
+diff --git a/buffer/src/main/java/io/netty/buffer/ReadOnlyByteBuf.java b/buffer/src/main/java/io/netty/buffer/ReadOnlyByteBuf.java
+index cf3a83d885..1ac0ff29f1 100644
+--- a/buffer/src/main/java/io/netty/buffer/ReadOnlyByteBuf.java
++++ b/buffer/src/main/java/io/netty/buffer/ReadOnlyByteBuf.java
+@@ -285,7 +285,7 @@ public class ReadOnlyByteBuf extends AbstractDerivedByteBuf {
+ 
+     @Override
+     public ByteBuf duplicate() {
+-        return new ReadOnlyByteBuf(this);
++        return slice(0, capacity()).setIndex(readerIndex(), writerIndex());
+     }
+ 
+     @Override

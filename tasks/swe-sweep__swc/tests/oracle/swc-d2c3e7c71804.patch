@@ -1,0 +1,13 @@
+diff --git a/crates/swc_ecma_parser/src/parser/typescript.rs b/crates/swc_ecma_parser/src/parser/typescript.rs
+index b3ae8ea6ca..4a4c990120 100644
+--- a/crates/swc_ecma_parser/src/parser/typescript.rs
++++ b/crates/swc_ecma_parser/src/parser/typescript.rs
+@@ -355,7 +355,7 @@ impl<I: Tokens> Parser<I> {
+             .map(From::from)?
+         };
+ 
+-        let type_args = if is!(self, '<') {
++        let type_args = if !self.input.had_line_break_before_cur() && is!(self, '<') {
+             Some(self.parse_ts_type_args()?)
+         } else {
+             None

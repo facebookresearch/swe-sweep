@@ -1,0 +1,56 @@
+diff --git a/test/cases/mjs/namespace-object-lazy/cjs-dynamic.js b/test/cases/mjs/namespace-object-lazy/cjs-dynamic.js
+new file mode 100644
+index 000000000..1aaa6e03d
+--- /dev/null
++++ b/test/cases/mjs/namespace-object-lazy/cjs-dynamic.js
+@@ -0,0 +1 @@
++module.exports = Promise.resolve(1);
+diff --git a/test/cases/mjs/namespace-object-lazy/index.mjs b/test/cases/mjs/namespace-object-lazy/index.mjs
+index 088acd55a..63405d836 100644
+--- a/test/cases/mjs/namespace-object-lazy/index.mjs
++++ b/test/cases/mjs/namespace-object-lazy/index.mjs
+@@ -26,6 +26,16 @@ it("should receive a namespace object when importing commonjs with __esModule",
+ 		.catch(done);
+ });
+ 
++it("should resolve the promise returned by the imported dynamic commonjs", function (done) {
++	const post = "dynamic.js";
++	import(/* webpackMode: "eager" */ "./cjs-" + post) // context module
++		.then(function (result) {
++			expect(result).toBe(1);
++			done();
++		})
++		.catch(done);
++});
++
+ function contextCJS(name) {
+ 	return Promise.all([
+ 		import(`./dir-cjs/${name}.js`),
+diff --git a/test/cases/mjs/non-mjs-namespace-object-lazy/cjs-dynamic.js b/test/cases/mjs/non-mjs-namespace-object-lazy/cjs-dynamic.js
+new file mode 100644
+index 000000000..1aaa6e03d
+--- /dev/null
++++ b/test/cases/mjs/non-mjs-namespace-object-lazy/cjs-dynamic.js
+@@ -0,0 +1 @@
++module.exports = Promise.resolve(1);
+diff --git a/test/cases/mjs/non-mjs-namespace-object-lazy/index.js b/test/cases/mjs/non-mjs-namespace-object-lazy/index.js
+index 1059b4dc9..dc8315840 100644
+--- a/test/cases/mjs/non-mjs-namespace-object-lazy/index.js
++++ b/test/cases/mjs/non-mjs-namespace-object-lazy/index.js
+@@ -12,6 +12,16 @@ it("should receive a namespace object when importing commonjs with __esModule",
+ 	}).catch(done);
+ });
+ 
++it("should resolve the promise returned by the imported dynamic commonjs", function (done) {
++	const post = "dynamic.js";
++	import(/* webpackMode: "eager" */ "./cjs-" + post) // context module
++		.then(function (result) {
++			expect(result).toBe(1);
++			done();
++		})
++		.catch(done);
++});
++
+ function contextCJS(name) {
+ 	return Promise.all([
+ 		import(`./dir-cjs/${name}`),

@@ -1,0 +1,52 @@
+diff --git a/crates/ruff_linter/resources/test/fixtures/flake8_errmsg/EM.py b/crates/ruff_linter/resources/test/fixtures/flake8_errmsg/EM.py
+index fbf6eb464a..432005bc44 100644
+--- a/crates/ruff_linter/resources/test/fixtures/flake8_errmsg/EM.py
++++ b/crates/ruff_linter/resources/test/fixtures/flake8_errmsg/EM.py
+@@ -88,3 +88,25 @@ def f_multi_line_string2():
+             example="example"
+         )
+     )
++
++
++def raise_typing_cast_exception():
++    import typing
++    raise typing.cast("Exception", None)
++
++
++def f_typing_cast_excluded():
++    from typing import cast
++    raise cast(RuntimeError, "This should not trigger EM101")
++
++
++def f_typing_cast_excluded_import():
++    import typing
++    raise typing.cast(RuntimeError, "This should not trigger EM101")
++
++
++def f_typing_cast_excluded_aliased():
++    from typing import cast as my_cast
++    raise my_cast(RuntimeError, "This should not trigger EM101")
++
++
+diff --git a/crates/ruff_linter/src/rules/flake8_errmsg/snapshots/ruff_linter__rules__flake8_errmsg__tests__custom.snap b/crates/ruff_linter/src/rules/flake8_errmsg/snapshots/ruff_linter__rules__flake8_errmsg__tests__custom.snap
+index bb2dfde20b..ca47a2e7f7 100644
+--- a/crates/ruff_linter/src/rules/flake8_errmsg/snapshots/ruff_linter__rules__flake8_errmsg__tests__custom.snap
++++ b/crates/ruff_linter/src/rules/flake8_errmsg/snapshots/ruff_linter__rules__flake8_errmsg__tests__custom.snap
+@@ -278,3 +278,6 @@ EM.py:84:9: EM103 [*] Exception must not use a `.format()` string directly, assi
+    91 |+    raise RuntimeError(
+    92 |+        msg
+    93 |+    )
++91 94 | 
++92 95 | 
++93 96 | def raise_typing_cast_exception():
+diff --git a/crates/ruff_linter/src/rules/flake8_errmsg/snapshots/ruff_linter__rules__flake8_errmsg__tests__defaults.snap b/crates/ruff_linter/src/rules/flake8_errmsg/snapshots/ruff_linter__rules__flake8_errmsg__tests__defaults.snap
+index 42e9f41250..07fece4a7f 100644
+--- a/crates/ruff_linter/src/rules/flake8_errmsg/snapshots/ruff_linter__rules__flake8_errmsg__tests__defaults.snap
++++ b/crates/ruff_linter/src/rules/flake8_errmsg/snapshots/ruff_linter__rules__flake8_errmsg__tests__defaults.snap
+@@ -343,3 +343,6 @@ EM.py:84:9: EM103 [*] Exception must not use a `.format()` string directly, assi
+    91 |+    raise RuntimeError(
+    92 |+        msg
+    93 |+    )
++91 94 | 
++92 95 | 
++93 96 | def raise_typing_cast_exception():

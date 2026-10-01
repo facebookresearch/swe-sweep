@@ -1,0 +1,14 @@
+diff --git a/packages/mui-material/src/ButtonBase/TouchRipple.js b/packages/mui-material/src/ButtonBase/TouchRipple.js
+index 76fc08a1b9..e192ea8f19 100644
+--- a/packages/mui-material/src/ButtonBase/TouchRipple.js
++++ b/packages/mui-material/src/ButtonBase/TouchRipple.js
+@@ -218,7 +218,8 @@ const TouchRipple = React.forwardRef(function TouchRipple(inProps, ref) {
+         rippleX = Math.round(rect.width / 2);
+         rippleY = Math.round(rect.height / 2);
+       } else {
+-        const { clientX, clientY } = event.touches ? event.touches[0] : event;
++        const { clientX, clientY } =
++          event.touches && event.touches.length > 0 ? event.touches[0] : event;
+         rippleX = Math.round(clientX - rect.left);
+         rippleY = Math.round(clientY - rect.top);
+       }

@@ -1,0 +1,21 @@
+diff --git a/src/Symfony/Component/DependencyInjection/Compiler/CheckTypeDeclarationsPass.php b/src/Symfony/Component/DependencyInjection/Compiler/CheckTypeDeclarationsPass.php
+index e542a2f4970..b783a21f315 100644
+--- a/src/Symfony/Component/DependencyInjection/Compiler/CheckTypeDeclarationsPass.php
++++ b/src/Symfony/Component/DependencyInjection/Compiler/CheckTypeDeclarationsPass.php
+@@ -142,13 +142,14 @@ final class CheckTypeDeclarationsPass extends AbstractRecursivePass
+             if (!$p->hasType() || $p->isVariadic()) {
+                 continue;
+             }
++            $key = $i;
+             if (\array_key_exists($p->name, $values)) {
+-                $i = $p->name;
++                $key = $p->name;
+             } elseif (!\array_key_exists($i, $values)) {
+                 continue;
+             }
+ 
+-            $this->checkType($checkedDefinition, $values[$i], $p, $envPlaceholderUniquePrefix);
++            $this->checkType($checkedDefinition, $values[$key], $p, $envPlaceholderUniquePrefix);
+         }
+ 
+         if ($reflectionFunction->isVariadic() && ($lastParameter = end($reflectionParameters))->hasType()) {

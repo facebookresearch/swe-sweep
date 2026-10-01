@@ -1,0 +1,12 @@
+diff --git a/src/Symfony/Component/DependencyInjection/ParameterBag/ParameterBag.php b/src/Symfony/Component/DependencyInjection/ParameterBag/ParameterBag.php
+index 7ebc42f924d..831a8d7f175 100644
+--- a/src/Symfony/Component/DependencyInjection/ParameterBag/ParameterBag.php
++++ b/src/Symfony/Component/DependencyInjection/ParameterBag/ParameterBag.php
+@@ -112,6 +112,7 @@ class ParameterBag implements ParameterBagInterface
+         }
+ 
+         $this->parameters[$name] = $value;
++        $this->resolved = false;
+     }
+ 
+     /**

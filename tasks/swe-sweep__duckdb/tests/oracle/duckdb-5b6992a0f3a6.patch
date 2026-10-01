@@ -1,0 +1,27 @@
+diff --git a/src/planner/binder/query_node/plan_subquery.cpp b/src/planner/binder/query_node/plan_subquery.cpp
+index 16f0c8fdd8..1aaaf8b0c1 100644
+--- a/src/planner/binder/query_node/plan_subquery.cpp
++++ b/src/planner/binder/query_node/plan_subquery.cpp
+@@ -128,6 +128,11 @@ static unique_ptr<Expression> PlanUncorrelatedSubquery(Binder &binder, BoundSubq
+ 		cond.right = BoundCastExpression::AddDefaultCastToType(
+ 		    make_uniq<BoundColumnRefExpression>(expr.child_type, plan_columns[0]), expr.child_target);
+ 		cond.comparison = expr.comparison_type;
++
++		// push collations
++		ExpressionBinder::PushCollation(binder.context, cond.left, cond.left->return_type);
++		ExpressionBinder::PushCollation(binder.context, cond.right, cond.right->return_type);
++
+ 		join->conditions.push_back(std::move(cond));
+ 		root = std::move(join);
+ 
+@@ -320,6 +325,10 @@ static unique_ptr<Expression> PlanCorrelatedSubquery(Binder &binder, BoundSubque
+ 		compare_cond.right = BoundCastExpression::AddDefaultCastToType(
+ 		    make_uniq<BoundColumnRefExpression>(expr.child_type, plan_columns[0]), expr.child_target);
+ 		compare_cond.comparison = expr.comparison_type;
++
++		// push collations
++		ExpressionBinder::PushCollation(binder.context, compare_cond.left, compare_cond.left->return_type);
++		ExpressionBinder::PushCollation(binder.context, compare_cond.right, compare_cond.right->return_type);
+ 		delim_join->conditions.push_back(std::move(compare_cond));
+ 
+ 		delim_join->AddChild(std::move(dependent_join));

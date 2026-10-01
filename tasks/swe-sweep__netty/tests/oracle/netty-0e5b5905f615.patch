@@ -1,0 +1,21 @@
+diff --git a/codec-http/src/main/java/io/netty/handler/codec/http/HttpContentEncoder.java b/codec-http/src/main/java/io/netty/handler/codec/http/HttpContentEncoder.java
+--- a/codec-http/src/main/java/io/netty/handler/codec/http/HttpContentEncoder.java
++++ b/codec-http/src/main/java/io/netty/handler/codec/http/HttpContentEncoder.java
+@@ -17,6 +17,7 @@ package io.netty.handler.codec.http;
+ 
+ import io.netty.buffer.ByteBuf;
+ import io.netty.buffer.ByteBufHolder;
++import io.netty.buffer.Unpooled;
+ import io.netty.channel.ChannelHandlerContext;
+ import io.netty.channel.embedded.EmbeddedChannel;
+ import io.netty.handler.codec.MessageToMessageCodec;
+@@ -193,6 +194,9 @@ public abstract class HttpContentEncoder extends MessageToMessageCodec<HttpReque
+                 ensureContent(msg);
+                 if (encodeContent((HttpContent) msg, out)) {
+                     state = State.AWAIT_HEADERS;
++                } else if (out.isEmpty()) {
++                    // MessageToMessageCodec needs at least one output message
++                    out.add(new DefaultHttpContent(Unpooled.EMPTY_BUFFER));
+                 }
+                 break;
+             }

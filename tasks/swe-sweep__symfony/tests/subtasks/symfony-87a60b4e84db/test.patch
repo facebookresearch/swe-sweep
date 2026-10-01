@@ -1,0 +1,24 @@
+diff --git a/src/Symfony/Component/Translation/Tests/Dumper/PoFileDumperTest.php b/src/Symfony/Component/Translation/Tests/Dumper/PoFileDumperTest.php
+index ad6f47d98bd..0f552db3988 100644
+--- a/src/Symfony/Component/Translation/Tests/Dumper/PoFileDumperTest.php
++++ b/src/Symfony/Component/Translation/Tests/Dumper/PoFileDumperTest.php
+@@ -46,6 +46,19 @@ class PoFileDumperTest extends TestCase
+         $this->assertStringEqualsFile(__DIR__.'/../Fixtures/resources.po', $dumper->formatCatalogue($catalogue, 'messages'));
+     }
+ 
++    public function testDumpIntlDomainKeepsPipes()
++    {
++        $id = '{{subject}} must not be an instance of {{class|quote}}';
++        $catalogue = new MessageCatalogue('en');
++        $catalogue->set($id, $id, 'messages'.MessageCatalogue::INTL_DOMAIN_SUFFIX);
++
++        $dumper = new PoFileDumper();
++        $dump = $dumper->formatCatalogue($catalogue, 'messages'.MessageCatalogue::INTL_DOMAIN_SUFFIX);
++
++        $this->assertStringContainsString(\sprintf('msgid "%s"', $id), $dump);
++        $this->assertStringNotContainsString('msgid_plural', $dump);
++    }
++
+     public function testDumpPlurals()
+     {
+         $catalogue = new MessageCatalogue('en');

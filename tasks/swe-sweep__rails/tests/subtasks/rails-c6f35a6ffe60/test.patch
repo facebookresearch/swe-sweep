@@ -1,0 +1,106 @@
+diff --git a/activerecord/test/cases/associations/has_many_through_associations_test.rb b/activerecord/test/cases/associations/has_many_through_associations_test.rb
+index 4865141af07..a2ac9bc1145 100644
+--- a/activerecord/test/cases/associations/has_many_through_associations_test.rb
++++ b/activerecord/test/cases/associations/has_many_through_associations_test.rb
+@@ -1429,6 +1429,28 @@ class HasManyThroughAssociationsTest < ActiveRecord::TestCase
+     assert_equal 2, post.lazy_people_unscope_skimmers.to_a.size
+   end
+ 
++  def test_has_many_through_unscope_respects_join_model_default_scope
++    author = authors(:david)
++
++    active_post = PostWithWhereDefaultScope.create!(
++      author: author,
++      title: "test post",
++      body: "this is an active post"
++    )
++    deleted_post = PostWithWhereDefaultScope.create!(
++      author: author,
++      title: "test post 2",
++      body: "this is a deleted post",
++      deleted_at: Time.now
++    )
++
++    CommentOnPostWithWhereDefaultScope.create!(body: "hi!", post: active_post)
++    CommentOnPostWithWhereDefaultScope.create!(body: "hi!", post: active_post, deleted_at: Time.now)
++    CommentOnPostWithWhereDefaultScope.create!(body: "hi!", post: deleted_post, deleted_at: Time.now)
++
++    assert_equal 2, author.comments_on_posts_with_where_default_scope.count
++  end
++
+   def test_has_many_through_add_with_sti_middle_relation
+     club = SuperClub.create!(name: "Fight Club")
+     member = Member.create!(name: "Tyler Durden")
+diff --git a/activerecord/test/cases/relation/select_test.rb b/activerecord/test/cases/relation/select_test.rb
+index 784d9ffc97e..aa339e67d96 100644
+--- a/activerecord/test/cases/relation/select_test.rb
++++ b/activerecord/test/cases/relation/select_test.rb
+@@ -188,7 +188,7 @@ module ActiveRecord
+       posts = Post.select("posts.*").joins(:comments).includes(:comments)
+       assert_equal %w(
+         id author_id title body type legacy_comments_count taggings_with_delete_all_count taggings_with_destroy_count
+-        tags_count indestructible_tags_count tags_with_destroy_count tags_with_nullify_count
++        tags_count indestructible_tags_count tags_with_destroy_count tags_with_nullify_count deleted_at
+       ), posts.first.attributes.keys
+     end
+ 
+diff --git a/activerecord/test/models/author.rb b/activerecord/test/models/author.rb
+index 67dda485b12..9c1a05c3d37 100644
+--- a/activerecord/test/models/author.rb
++++ b/activerecord/test/models/author.rb
+@@ -97,6 +97,9 @@ class Author < ActiveRecord::Base
+   has_many :special_post_comments, through: :special_posts, source: :comments
+   has_many :special_posts_with_default_scope, class_name: "SpecialPostWithDefaultScope"
+ 
++  has_many :posts_with_where_default_scope, class_name: "PostWithWhereDefaultScope"
++  has_many :comments_on_posts_with_where_default_scope, through: :posts_with_where_default_scope, source: :comments
++
+   has_many :sti_posts, class_name: "StiPost"
+   has_many :sti_post_comments, through: :sti_posts, source: :comments
+ 
+diff --git a/activerecord/test/models/comment.rb b/activerecord/test/models/comment.rb
+index d37e10a1772..6cf053ce001 100644
+--- a/activerecord/test/models/comment.rb
++++ b/activerecord/test/models/comment.rb
+@@ -99,3 +99,9 @@ class CommentWithAfterCreateUpdate < Comment
+     update(body: "bar")
+   end
+ end
++
++class CommentOnPostWithWhereDefaultScope < Comment
++  default_scope { where(deleted_at: nil) }
++
++  belongs_to :post, class_name: "PostWithWhereDefaultScope", foreign_key: :post_id
++end
+diff --git a/activerecord/test/models/post.rb b/activerecord/test/models/post.rb
+index 54b247dffd2..319892b97d6 100644
+--- a/activerecord/test/models/post.rb
++++ b/activerecord/test/models/post.rb
+@@ -282,6 +282,15 @@ class PostWithDefaultScope < ActiveRecord::Base
+   default_scope { order(:title) }
+ end
+ 
++class PostWithWhereDefaultScope < ActiveRecord::Base
++  self.inheritance_column = :disabled
++  self.table_name = "posts"
++  default_scope { where(deleted_at: nil) }
++
++  belongs_to :author
++  has_many :comments, -> { unscope(where: :deleted_at) }, class_name: "CommentOnPostWithWhereDefaultScope", foreign_key: :post_id
++end
++
+ class PostWithPreloadDefaultScope < ActiveRecord::Base
+   self.table_name = "posts"
+ 
+diff --git a/activerecord/test/schema/schema.rb b/activerecord/test/schema/schema.rb
+index 5c38b19d8d9..b6bcb0028fa 100644
+--- a/activerecord/test/schema/schema.rb
++++ b/activerecord/test/schema/schema.rb
+@@ -1005,6 +1005,7 @@ ActiveRecord::Schema.define do
+     t.integer :indestructible_tags_count, default: 0
+     t.integer :tags_with_destroy_count, default: 0
+     t.integer :tags_with_nullify_count, default: 0
++    t.datetime :deleted_at
+   end
+ 
+   create_table :postesques, force: true do |t|

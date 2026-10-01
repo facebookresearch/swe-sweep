@@ -1,0 +1,33 @@
+diff --git a/src/preprocessing/passes/learned_rewrite.cpp b/src/preprocessing/passes/learned_rewrite.cpp
+index 674ea79c3e..38abc38bfe 100644
+--- a/src/preprocessing/passes/learned_rewrite.cpp
++++ b/src/preprocessing/passes/learned_rewrite.cpp
+@@ -150,6 +150,7 @@ PreprocessingPassResult LearnedRewrite::applyInternal(
+     Node e = rewriteLearnedRec(prev, binfer, learnedLits, llrw, visited);
+     if (e != prev)
+     {
++      e = rewrite(e);
+       Trace("learned-rewrite-assert")
+           << ".......................: " << e << std::endl;
+       assertionsToPreprocess->replace(i, e);
+@@ -164,6 +165,7 @@ PreprocessingPassResult LearnedRewrite::applyInternal(
+     Node llc = nm->mkAnd(llrvec);
+     Trace("learned-rewrite-assert")
+         << "Re-add rewritten learned conjunction: " << llc << std::endl;
++    llc = rewrite(llc);
+     assertionsToPreprocess->push_back(llc);
+   }
+ 
+diff --git a/src/preprocessing/passes/non_clausal_simp.cpp b/src/preprocessing/passes/non_clausal_simp.cpp
+index cf02c1df2b..b1e89fe180 100644
+--- a/src/preprocessing/passes/non_clausal_simp.cpp
++++ b/src/preprocessing/passes/non_clausal_simp.cpp
+@@ -85,7 +85,7 @@ PreprocessingPassResult NonClausalSimp::applyInternal(
+   for (size_t i = 0, size = assertionsToPreprocess->size(); i < size; ++i)
+   {
+     Assert(rewrite((*assertionsToPreprocess)[i])
+-           == (*assertionsToPreprocess)[i]);
++           == (*assertionsToPreprocess)[i]) << (*assertionsToPreprocess)[i];
+     // Don't reprocess substitutions
+     if (assertionsToPreprocess->isSubstsIndex(i))
+     {

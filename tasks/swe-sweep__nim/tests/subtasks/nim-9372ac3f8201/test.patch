@@ -1,0 +1,20 @@
+diff --git a/tests/vm/tquote.nim b/tests/vm/tquote.nim
+new file mode 100644
+index 000000000..3b4c52051
+--- /dev/null
++++ b/tests/vm/tquote.nim
+@@ -0,0 +1,13 @@
++discard """
++  joinable: false
++"""
++
++import std/macros
++
++static:
++  discard quote:
++    a and b
++
++var x {.compileTime.} : NimNode = 
++  quote do:
++    echo "xxx"
+\ No newline at end of file

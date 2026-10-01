@@ -1,0 +1,26 @@
+diff --git a/scipy/cluster/vq.py b/scipy/cluster/vq.py
+index 627b980c4e..f4b5179ce5 100644
+--- a/scipy/cluster/vq.py
++++ b/scipy/cluster/vq.py
+@@ -552,7 +552,11 @@ def _kpp(data, k):
+        on Discrete Algorithms, 2007.
+     """
+ 
+-    dims = data.shape[1] if len(data.shape) > 1 else 1
++    ndim = len(data.shape)
++    if ndim == 1:
++        data = data[:, None]
++
++    dims = data.shape[1]
+     init = np.ndarray((k, dims))
+ 
+     for i in range(k):
+@@ -568,6 +572,8 @@ def _kpp(data, k):
+             r = np.random.rand()
+             init[i, :] = data[np.searchsorted(cumprobs, r)]
+ 
++    if ndim == 1:
++        init = init[:, 0]
+     return init
+ 
+ 

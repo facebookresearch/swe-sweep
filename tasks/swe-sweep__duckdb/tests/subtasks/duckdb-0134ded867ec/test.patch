@@ -1,0 +1,43 @@
+diff --git a/test/sql/sample/same_seed_same_sample.test b/test/sql/sample/same_seed_same_sample.test
+index f0aa486e13..0e6141b9e5 100644
+--- a/test/sql/sample/same_seed_same_sample.test
++++ b/test/sql/sample/same_seed_same_sample.test
+@@ -42,4 +42,36 @@ query III nosort result_2
+ SELECT * from t1 using sample reservoir(6000) repeatable (1) order by a;
+ ----
+ 
+-endloop
+\ No newline at end of file
++endloop
++
++statement ok
++CREATE or replace TABLE t1 as select range a, [1, a, 2] b, a::VARCHAR || 'ducktastic' c, get_current_time() c from range(1000000);
++
++loop i 1 8
++
++query III nosort result_3
++SELECT * from t1 using sample reservoir(60) repeatable (1) order by a;
++----
++
++
++query III nosort result_3
++SELECT * from t1 using sample reservoir(60) repeatable (1) order by a;
++----
++
++endloop
++
++# with no repeatable, then sample is not the same
++
++statement ok
++create table sample1 as SELECT * from t1 using sample reservoir(10) order by a;
++
++statement ok
++create table sample2 as SELECT * from t1 using sample reservoir(10) order by a;
++
++query I
++select count(*) < 10 from (select * from sample1 intersect select * from sample2);
++----
++true
++
++
++

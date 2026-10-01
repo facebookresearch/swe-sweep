@@ -1,0 +1,24 @@
+diff --git a/src/Symfony/Component/AssetMapper/Tests/ImportMap/ImportMapRendererTest.php b/src/Symfony/Component/AssetMapper/Tests/ImportMap/ImportMapRendererTest.php
+index 62bfdcbb019..f6ea04659de 100644
+--- a/src/Symfony/Component/AssetMapper/Tests/ImportMap/ImportMapRendererTest.php
++++ b/src/Symfony/Component/AssetMapper/Tests/ImportMap/ImportMapRendererTest.php
+@@ -204,4 +204,19 @@ class ImportMapRendererTest extends TestCase
+         $this->assertSame(['as' => 'style'], $linkProvider->getLinks()[0]->getAttributes());
+         $this->assertSame('/assets/styles/app-preload-d1g35t.css', $linkProvider->getLinks()[0]->getHref());
+     }
++
++    public function testEmptyImportMapRendersAsJsonObject()
++    {
++        $importMapGenerator = $this->createMock(ImportMapGenerator::class);
++        $importMapGenerator->expects($this->once())
++            ->method('getImportMapData')
++            ->with([])
++            ->willReturn([]);
++
++        $renderer = new ImportMapRenderer($importMapGenerator);
++        $html = $renderer->render([]);
++
++        $this->assertStringContainsString('"imports": {}', $html);
++        $this->assertStringNotContainsString('"imports": []', $html);
++    }
+ }

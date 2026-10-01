@@ -1,0 +1,51 @@
+diff --git a/tests/ui/unnecessary_semicolon.edition2021.fixed b/tests/ui/unnecessary_semicolon.edition2021.fixed
+index f10d804c8..797f1505f 100644
+--- a/tests/ui/unnecessary_semicolon.edition2021.fixed
++++ b/tests/ui/unnecessary_semicolon.edition2021.fixed
+@@ -63,3 +63,12 @@ fn issue14100() -> bool {
+     // cast into the `bool` function return type.
+     if return true {};
+ }
++
++fn issue15426(x: u32) {
++    // removing the `;` would turn the stmt into an expr, but attrs aren't allowed on exprs
++    #[rustfmt::skip]
++    match x {
++        0b00 => {}  0b01 => {}
++        0b11 => {}  _    => {}
++    };
++}
+diff --git a/tests/ui/unnecessary_semicolon.edition2024.fixed b/tests/ui/unnecessary_semicolon.edition2024.fixed
+index 32a3bb9b4..d2609cea0 100644
+--- a/tests/ui/unnecessary_semicolon.edition2024.fixed
++++ b/tests/ui/unnecessary_semicolon.edition2024.fixed
+@@ -63,3 +63,12 @@ fn issue14100() -> bool {
+     // cast into the `bool` function return type.
+     if return true {};
+ }
++
++fn issue15426(x: u32) {
++    // removing the `;` would turn the stmt into an expr, but attrs aren't allowed on exprs
++    #[rustfmt::skip]
++    match x {
++        0b00 => {}  0b01 => {}
++        0b11 => {}  _    => {}
++    };
++}
+diff --git a/tests/ui/unnecessary_semicolon.rs b/tests/ui/unnecessary_semicolon.rs
+index 91b282180..55f1ec84c 100644
+--- a/tests/ui/unnecessary_semicolon.rs
++++ b/tests/ui/unnecessary_semicolon.rs
+@@ -63,3 +63,12 @@ fn issue14100() -> bool {
+     // cast into the `bool` function return type.
+     if return true {};
+ }
++
++fn issue15426(x: u32) {
++    // removing the `;` would turn the stmt into an expr, but attrs aren't allowed on exprs
++    #[rustfmt::skip]
++    match x {
++        0b00 => {}  0b01 => {}
++        0b11 => {}  _    => {}
++    };
++}

@@ -1,0 +1,16 @@
+diff --git a/pandas/tests/frame/methods/test_interpolate.py b/pandas/tests/frame/methods/test_interpolate.py
+index 2b54c34096..057561aa1d 100644
+--- a/pandas/tests/frame/methods/test_interpolate.py
++++ b/pandas/tests/frame/methods/test_interpolate.py
+@@ -354,3 +354,11 @@ class TestDataFrameInterpolate:
+             result = df.interpolate("pad", 0)
+         expected = DataFrame({"a": [1, 2, 3]})
+         tm.assert_frame_equal(result, expected)
++
++    def test_interpolate_empty_df(self):
++        # GH#53199
++        df = DataFrame()
++        expected = df.copy()
++        result = df.interpolate(inplace=True)
++        assert result is None
++        tm.assert_frame_equal(df, expected)

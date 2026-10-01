@@ -1,0 +1,52 @@
+diff --git a/vlib/v/checker/tests/generics_undefined_operation_2.out b/vlib/v/checker/tests/generics_undefined_operation_2.out
+new file mode 100644
+index 000000000..1a7ea045c
+--- /dev/null
++++ b/vlib/v/checker/tests/generics_undefined_operation_2.out
+@@ -0,0 +1,7 @@
++vlib/v/checker/tests/generics_undefined_operation_2.vv:23:18: error: undefined operation `&INode` < `&INode`
++   21 | fn (mut h IHeap[T]) percolateup(hl u64, mut element T) {
++   22 |     mut hole := hl
++   23 |     for hole > 1 && element < h.array[hole / 2] {
++      |                     ~~~~~~~~~~~~~~~~~~~~~~~~~~~
++   24 |         // ^ Notice that '<' was not defined
++   25 |         println("didnt define '<' for the INode")
+diff --git a/vlib/v/checker/tests/generics_undefined_operation_2.vv b/vlib/v/checker/tests/generics_undefined_operation_2.vv
+new file mode 100644
+index 000000000..41a0bbde8
+--- /dev/null
++++ b/vlib/v/checker/tests/generics_undefined_operation_2.vv
+@@ -0,0 +1,33 @@
++pub struct INode {
++mut:
++	heapindex u64
++}
++
++pub struct IHeap[T] {
++mut:
++	array []&T
++	size  u64
++}
++
++pub fn create_iheap[T](capacity int) &IHeap[T] {
++	mut h := &IHeap[T]{
++		array: []&T{cap: capacity}
++		size: 0
++	}
++	h.array << &T(unsafe { nil })
++	return h
++}
++
++fn (mut h IHeap[T]) percolateup(hl u64, mut element T) {
++	mut hole := hl
++	for hole > 1 && element < h.array[hole / 2] {
++		// ^ Notice that '<' was not defined
++		println("didnt define '<' for the INode")
++		hole /= 2
++	}
++}
++
++fn main() {
++	heap := create_iheap[INode](3000000)
++	println(heap)
++}

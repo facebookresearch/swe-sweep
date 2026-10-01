@@ -1,0 +1,250 @@
+diff --git a/ogr/ogrsf_frmts/openfilegdb/filegdbindex.cpp b/ogr/ogrsf_frmts/openfilegdb/filegdbindex.cpp
+--- a/ogr/ogrsf_frmts/openfilegdb/filegdbindex.cpp
++++ b/ogr/ogrsf_frmts/openfilegdb/filegdbindex.cpp
+@@ -874,6 +874,8 @@ static const char *FileGDBSQLOpToStr(FileGDBSQLOp op)
+             return ">=";
+         case FGSO_GT:
+             return ">";
++        case FGSO_ILIKE:
++            return "ILIKE";
+     }
+     return "unknown_op";
+ }
+@@ -971,10 +973,36 @@ int FileGDBIndexIterator::SetConstraint(int nFieldIdx, FileGDBSQLOp op,
+                   eFieldType != FGFT_STRING && eFieldType != FGFT_DATETIME &&
+                   eFieldType != FGFT_GUID && eFieldType != FGFT_GLOBALID);
+ 
+-    const char *pszAtxName = CPLFormFilename(
+-        CPLGetPath(poParent->GetFilename().c_str()),
+-        CPLGetBasename(poParent->GetFilename().c_str()),
+-        CPLSPrintf("%s.atx", poField->GetIndex()->GetIndexName().c_str()));
++    const auto poIndex = poField->GetIndex();
++
++    // Only supports ILIKE on a field string if the index expression starts
++    // with LOWER() and the string to compare with is only ASCII without
++    // wildcards
++    if (eOGRFieldType == OFTString &&
++        STARTS_WITH_CI(poIndex->GetExpression().c_str(), "LOWER("))
++    {
++        if (eOp == FGSO_ILIKE)
++        {
++            if (!CPLIsASCII(psValue->String, strlen(psValue->String)) ||
++                strchr(psValue->String, '%') || strchr(psValue->String, '_'))
++            {
++                return FALSE;
++            }
++        }
++        else if (eOp != FGSO_ISNOTNULL)
++        {
++            return FALSE;
++        }
++    }
++    else if (eOp == FGSO_ILIKE)
++    {
++        return FALSE;
++    }
++
++    const char *pszAtxName =
++        CPLFormFilename(CPLGetPath(poParent->GetFilename().c_str()),
++                        CPLGetBasename(poParent->GetFilename().c_str()),
++                        CPLSPrintf("%s.atx", poIndex->GetIndexName().c_str()));
+ 
+     if (!ReadTrailer(pszAtxName))
+         return FALSE;
+@@ -1106,13 +1134,23 @@ static int FileGDBUTF16StrCompare(const GUInt16 *pasFirst,
+ /************************************************************************/
+ 
+ static int FileGDBUTF16StrCompare(const GUInt16 *pasFirst,
+-                                  const GUInt16 *pasSecond, int nStrLen)
++                                  const GUInt16 *pasSecond, int nStrLen,
++                                  bool bCaseInsensitive)
+ {
+     for (int i = 0; i < nStrLen; i++)
+     {
+-        if (pasFirst[i] < pasSecond[i])
++        GUInt16 chA = pasFirst[i];
++        GUInt16 chB = pasSecond[i];
++        if (bCaseInsensitive)
++        {
++            if (chA >= 'a' && chA <= 'z')
++                chA -= 'a' - 'A';
++            if (chB >= 'a' && chB <= 'z')
++                chB -= 'a' - 'A';
++        }
++        if (chA < chB)
+             return -1;
+-        if (pasFirst[i] > pasSecond[i])
++        if (chA > chB)
+             return 1;
+     }
+     return 0;
+@@ -1248,12 +1286,17 @@ bool FileGDBIndexIterator::FindPages(int iLevel, int nPage)
+                 pasMax = (GUInt16 *)(abyPage[iLevel] + nOffsetFirstValInPage +
+                                      nStrLen * sizeof(GUInt16) * i);
+ #endif
++                // Note: we have an inconsistency. OGR SQL equality operator
++                // is advertized to be case insensitive, but we have always
++                // implemented FGSO_EQ as case sensitive.
+ #ifdef DEBUG_INDEX_CONSISTENCY
+-                returnErrorIf(i > 0 && FileGDBUTF16StrCompare(pasMax, asLastMax,
+-                                                              nStrLen) < 0);
++                returnErrorIf(i > 0 &&
++                              FileGDBUTF16StrCompare(pasMax, asLastMax, nStrLen,
++                                                     eOp == FGSO_ILIKE) < 0);
+                 memcpy(asLastMax, pasMax, nStrLen * 2);
+ #endif
+-                nComp = FileGDBUTF16StrCompare(asUTF16Str, pasMax, nStrLen);
++                nComp = FileGDBUTF16StrCompare(asUTF16Str, pasMax, nStrLen,
++                                               eOp == FGSO_ILIKE);
+                 break;
+             }
+ 
+@@ -1301,6 +1344,7 @@ bool FileGDBIndexIterator::FindPages(int iLevel, int nPage)
+                 break;
+ 
+             case FGSO_EQ:
++            case FGSO_ILIKE:
+                 if (iFirstPageIdx[iLevel] < 0)
+                 {
+                     if (nComp <= 0)
+@@ -1340,7 +1384,7 @@ bool FileGDBIndexIterator::FindPages(int iLevel, int nPage)
+                 }
+                 break;
+ 
+-            default:
++            case FGSO_ISNOTNULL:
+                 CPLAssert(false);
+                 break;
+         }
+@@ -1596,13 +1640,20 @@ int64_t FileGDBIndexIterator::GetNextRow()
+                            nStrLen * 2);
+                     for (int j = 0; j < nStrLen; j++)
+                         CPL_LSBPTR16(&asVal[j]);
+-                    nComp = FileGDBUTF16StrCompare(asUTF16Str, asVal, nStrLen);
++                    // Note: we have an inconsistency. OGR SQL equality operator
++                    // is advertized to be case insensitive, but we have always
++                    // implemented FGSO_EQ as case sensitive.
++                    nComp = FileGDBUTF16StrCompare(asUTF16Str, asVal, nStrLen,
++                                                   eOp == FGSO_ILIKE);
+ #else
+-                    nComp = FileGDBUTF16StrCompare(
+-                        asUTF16Str,
+-                        (GUInt16 *)(abyPageFeature + nOffsetFirstValInPage +
+-                                    nStrLen * 2 * iCurFeatureInPage),
+-                        nStrLen);
++                    // Note: we have an inconsistency. OGR SQL equality operator
++                    // is advertized to be case insensitive, but we have always
++                    // implemented FGSO_EQ as case sensitive.
++                    nComp = FileGDBUTF16StrCompare(
++                        asUTF16Str,
++                        (GUInt16 *)(abyPageFeature + nOffsetFirstValInPage +
++                                    nStrLen * 2 * iCurFeatureInPage),
++                        nStrLen, eOp == FGSO_ILIKE);
+ #endif
+                     break;
+                 }
+@@ -1646,6 +1697,7 @@ int64_t FileGDBIndexIterator::GetNextRow()
+                     break;
+ 
+                 case FGSO_EQ:
++                case FGSO_ILIKE:
+                     if (nComp < 0 && bAscending)
+                     {
+                         bEOF = true;
+@@ -1662,7 +1714,7 @@ int64_t FileGDBIndexIterator::GetNextRow()
+                     bMatch = nComp < 0;
+                     break;
+ 
+-                default:
++                case FGSO_ISNOTNULL:
+                     CPLAssert(false);
+                     break;
+             }
+diff --git a/ogr/ogrsf_frmts/openfilegdb/filegdbtable.h b/ogr/ogrsf_frmts/openfilegdb/filegdbtable.h
+--- a/ogr/ogrsf_frmts/openfilegdb/filegdbtable.h
++++ b/ogr/ogrsf_frmts/openfilegdb/filegdbtable.h
+@@ -668,7 +668,8 @@ typedef enum
+     FGSO_LE,
+     FGSO_EQ,
+     FGSO_GE,
+-    FGSO_GT
++    FGSO_GT,
++    FGSO_ILIKE
+ } FileGDBSQLOp;
+ 
+ /************************************************************************/
+diff --git a/ogr/ogrsf_frmts/openfilegdb/ogropenfilegdblayer.cpp b/ogr/ogrsf_frmts/openfilegdb/ogropenfilegdblayer.cpp
+--- a/ogr/ogrsf_frmts/openfilegdb/ogropenfilegdblayer.cpp
++++ b/ogr/ogrsf_frmts/openfilegdb/ogropenfilegdblayer.cpp
+@@ -1290,6 +1290,7 @@ OGROpenFileGDBLayer::BuildIteratorFromExprNode(swq_expr_node *poNode)
+ 
+     else if (poNode->eNodeType == SNT_OPERATION &&
+-             OGROpenFileGDBIsComparisonOp(poNode->nOperation) &&
++             (OGROpenFileGDBIsComparisonOp(poNode->nOperation) ||
++              poNode->nOperation == SWQ_ILIKE) &&
+              poNode->nSubExprCount == 2)
+     {
+         swq_expr_node *poColumn = GetColumnSubNode(poNode);
+@@ -1333,6 +1334,9 @@ OGROpenFileGDBLayer::BuildIteratorFromExprNode(swq_expr_node *poNode)
+                             case SWQ_GT:
+                                 eOp = FGSO_GT;
+                                 break;
++                            case SWQ_ILIKE:
++                                eOp = FGSO_ILIKE;
++                                break;
+                             default:
+                                 CPLAssert(false);
+                                 break;
+@@ -1362,6 +1366,9 @@ OGROpenFileGDBLayer::BuildIteratorFromExprNode(swq_expr_node *poNode)
+                             case SWQ_GT:
+                                 eOp = FGSO_LT;
+                                 break;
++                            case SWQ_ILIKE:
++                                eOp = FGSO_ILIKE;
++                                break;
+                             default:
+                                 CPLAssert(false);
+                                 break;
+@@ -1374,10 +1381,31 @@ OGROpenFileGDBLayer::BuildIteratorFromExprNode(swq_expr_node *poNode)
+                     if (poField->GetType() == FGFT_STRING &&
+                         poFieldDefn->GetType() == OFTString)
+                     {
++                        // If we have an equality comparison, but the index
++                        // uses LOWER(), transform it to a ILIKE comparison
++                        if (eOp == FGSO_EQ && poField->HasIndex() &&
++                            STARTS_WITH_CI(
++                                poField->GetIndex()->GetExpression().c_str(),
++                                "LOWER("))
++                        {
++                            // Note: FileGDBIndexIterator::SetConstraint()
++                            // checks that the string to compare with has no
++                            // wildcard
++                            eOp = FGSO_ILIKE;
++
++                            // In theory, a ILIKE is not sufficient as it is
++                            // case insensitive, whereas one could expect
++                            // equality testing to be case sensitive... but
++                            // it is not in OGR SQL...
++                            // So we can comment the below line
++                            // bIteratorSufficient = false;
++                        }
++
+                         // As the index use ' ' as padding value, we cannot
+                         // fully trust the index.
+-                        if ((eOp == FGSO_EQ && poNode->nOperation != SWQ_NE) ||
+-                            eOp == FGSO_GE)
++                        else if ((eOp == FGSO_EQ &&
++                                  poNode->nOperation != SWQ_NE) ||
++                                 eOp == FGSO_GE)
+                             bIteratorSufficient = false;
+                         else
+                             return nullptr;
+@@ -1410,6 +1438,8 @@ OGROpenFileGDBLayer::BuildIteratorFromExprNode(swq_expr_node *poNode)
+                             }
+                         }
+                     }
++                    else if (eOp == FGSO_ILIKE)
++                        return nullptr;
+ 
+                     FileGDBIterator *poIter = FileGDBIterator::Build(
+                         m_poLyrTable, nTableColIdx, TRUE, eOp,

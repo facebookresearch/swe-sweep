@@ -1,0 +1,55 @@
+diff --git a/common/src/main/java/com/alibaba/nacos/common/utils/VersionUtils.java b/common/src/main/java/com/alibaba/nacos/common/utils/VersionUtils.java
+index fe234d2b6..7a47b190d 100644
+--- a/common/src/main/java/com/alibaba/nacos/common/utils/VersionUtils.java
++++ b/common/src/main/java/com/alibaba/nacos/common/utils/VersionUtils.java
+@@ -17,8 +17,6 @@
+ package com.alibaba.nacos.common.utils;
+ 
+ import java.io.InputStream;
+-import java.util.Comparator;
+-import java.util.Objects;
+ import java.util.Properties;
+ 
+ /**
+@@ -57,8 +55,6 @@ public class VersionUtils {
+         }
+     }
+     
+-    private static final Comparator<String> STRING_COMPARATOR = String::compareTo;
+-    
+     /**
+      * compare two version who is latest.
+      *
+@@ -73,15 +69,25 @@ public class VersionUtils {
+         if (sA.length != expectSize || sB.length != expectSize) {
+             throw new IllegalArgumentException("version must be like x.y.z(-beta)");
+         }
+-        int first = Objects.compare(sA[0], sB[0], STRING_COMPARATOR);
+-        if (first != 0) {
+-            return first;
++        int major = Integer.compare(parseVersionPart(sA[0], versionA), parseVersionPart(sB[0], versionB));
++        if (major != 0) {
++            return major;
+         }
+-        int second = Objects.compare(sA[1], sB[1], STRING_COMPARATOR);
+-        if (second != 0) {
+-            return second;
++        int minor = Integer.compare(parseVersionPart(sA[1], versionA), parseVersionPart(sB[1], versionB));
++        if (minor != 0) {
++            return minor;
++        }
++        int patchA = parseVersionPart(sA[2].split("-")[0], versionA);
++        int patchB = parseVersionPart(sB[2].split("-")[0], versionB);
++        return Integer.compare(patchA, patchB);
++    }
++
++    private static int parseVersionPart(String part, String originalVersion) {
++        try {
++            return Integer.parseInt(part);
++        } catch (NumberFormatException e) {
++            throw new IllegalArgumentException("version must be like x.y.z(-beta), got: " + originalVersion, e);
+         }
+-        return Objects.compare(sA[2].split("-")[0], sB[2].split("-")[0], STRING_COMPARATOR);
+     }
+     
+     public static String getFullClientVersion() {

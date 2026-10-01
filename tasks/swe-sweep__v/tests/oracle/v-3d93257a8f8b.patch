@@ -1,0 +1,14 @@
+diff --git a/vlib/v/fmt/fmt.v b/vlib/v/fmt/fmt.v
+index 9254e9b2d..4c950cae1 100644
+--- a/vlib/v/fmt/fmt.v
++++ b/vlib/v/fmt/fmt.v
+@@ -1806,6 +1806,9 @@ fn (mut f Fmt) write_generic_call_if_require(node ast.CallExpr) {
+ 			} else if tsym.language == .js && !tsym.name.starts_with('JS.') {
+ 				name = 'JS.' + name
+ 			}
++			if tsym.language == .c {
++				name = 'C.' + name
++			}
+ 			f.write(name)
+ 			f.mark_import_as_used(name)
+ 			if i != node.concrete_types.len - 1 {

@@ -1,0 +1,11 @@
+diff --git a/tests/errmsgs/t23419.nim b/tests/errmsgs/t23419.nim
+new file mode 100644
+index 000000000..59a72f081
+--- /dev/null
++++ b/tests/errmsgs/t23419.nim
+@@ -0,0 +1,5 @@
++discard """
++  errormsg: "invalid type: 'void' in this context: '(array[0..-1, void],)' for var"
++"""
++
++var a: (array[0, void], )

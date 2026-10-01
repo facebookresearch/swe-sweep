@@ -1,0 +1,42 @@
+diff --git a/activesupport/lib/active_support/deprecation/disallowed.rb b/activesupport/lib/active_support/deprecation/disallowed.rb
+index 096ecaae853..a3ae98b9bfe 100644
+--- a/activesupport/lib/active_support/deprecation/disallowed.rb
++++ b/activesupport/lib/active_support/deprecation/disallowed.rb
+@@ -27,7 +27,7 @@ module ActiveSupport
+           disallowed = ActiveSupport::Deprecation.disallowed_warnings
+           return false if explicitly_allowed?(message)
+           return true if disallowed == :all
+-          disallowed.any? do |rule|
++          message && disallowed.any? do |rule|
+             case rule
+             when String, Symbol
+               message.include?(rule.to_s)
+@@ -41,8 +41,7 @@ module ActiveSupport
+           allowances = @explicitly_allowed_warnings.value
+           return false unless allowances
+           return true if allowances == :all
+-          allowances = [allowances] unless allowances.kind_of?(Array)
+-          allowances.any? do |rule|
++          message && Array(allowances).any? do |rule|
+             case rule
+             when String, Symbol
+               message.include?(rule.to_s)
+diff --git a/activesupport/lib/active_support/deprecation/reporting.rb b/activesupport/lib/active_support/deprecation/reporting.rb
+index aeea40d2889..dd7c83918ab 100644
+--- a/activesupport/lib/active_support/deprecation/reporting.rb
++++ b/activesupport/lib/active_support/deprecation/reporting.rb
+@@ -19,11 +19,11 @@ module ActiveSupport
+         return if silenced
+ 
+         callstack ||= caller_locations(2)
+-        deprecation_message(callstack, message).tap do |m|
++        deprecation_message(callstack, message).tap do |full_message|
+           if deprecation_disallowed?(message)
+-            disallowed_behavior.each { |b| b.call(m, callstack, deprecation_horizon, gem_name) }
++            disallowed_behavior.each { |b| b.call(full_message, callstack, deprecation_horizon, gem_name) }
+           else
+-            behavior.each { |b| b.call(m, callstack, deprecation_horizon, gem_name) }
++            behavior.each { |b| b.call(full_message, callstack, deprecation_horizon, gem_name) }
+           end
+         end
+       end

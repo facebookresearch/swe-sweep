@@ -1,0 +1,12 @@
+diff --git a/mpmath/tests/test_functions2.py b/mpmath/tests/test_functions2.py
+index 188327fc..610f7ca9 100644
+--- a/mpmath/tests/test_functions2.py
++++ b/mpmath/tests/test_functions2.py
+@@ -2382,3 +2382,7 @@ def test_bessel_zeros_extra():
+             assert besselyzero(v,m).ae(yn_small_zeros[v][m-1])
+             assert besselyzero(v,m,1).ae(ynp_small_zeros[v][m-1])
+             assert besselyzero(v,m,1).ae(ynp_small_zeros[v][m-1])
++
++def test_issue_637():
++    assert hankel1(1, 1 + 30j).ae(-7.25495e-15 - 1.17346e-14j)
++    assert hankel2(1, 1 - 30j).ae(-7.25495e-15 + 1.17346e-14j)

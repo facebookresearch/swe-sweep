@@ -1,0 +1,14 @@
+diff --git a/numpy/core/src/multiarray/convert_datatype.c b/numpy/core/src/multiarray/convert_datatype.c
+index 0390c92fc3..6c1958e720 100644
+--- a/numpy/core/src/multiarray/convert_datatype.c
++++ b/numpy/core/src/multiarray/convert_datatype.c
+@@ -1419,8 +1419,7 @@ PyArray_PromoteTypes(PyArray_Descr *type1, PyArray_Descr *type2)
+             }
+             break;
+         case NPY_TIMEDELTA:
+-            if (PyTypeNum_ISINTEGER(type_num1) ||
+-                            PyTypeNum_ISFLOAT(type_num1)) {
++            if (PyTypeNum_ISINTEGER(type_num1)) {
+                 return ensure_dtype_nbo(type2);
+             }
+             break;

@@ -1,0 +1,38 @@
+diff --git a/test/coa/_index.test.js b/test/coa/_index.test.js
+index 6e22578..78ac1dd 100644
+--- a/test/coa/_index.test.js
++++ b/test/coa/_index.test.js
+@@ -64,6 +64,23 @@ describe('coa', function () {
+       );
+   }
+ 
++  it('should generate correct datauri', async () => {
++    const outfilePath = tempFolder + '/test.svg';
++    await runProgram([
++      '-i',
++      path.resolve(__dirname, 'testSvgDatauri') + '/test.svg',
++      '-o',
++      outfilePath,
++      '--datauri',
++      'enc',
++      '--quiet',
++    ]);
++    const outData = fs.readFileSync(outfilePath, 'utf8');
++    expect(outData).toBe(
++      'data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%3E%3Ctext%20x%3D%225%22%20y%3D%2215%22%3ETEST%3C%2Ftext%3E%3C%2Fsvg%3E',
++    );
++  });
++
+   it('should optimize folder', async () => {
+     const initWeight = calcFolderSvgWeight(svgFolderPath);
+     await runProgram([
+diff --git a/test/coa/testSvgDatauri/test.svg b/test/coa/testSvgDatauri/test.svg
+new file mode 100644
+index 0000000..c776899
+--- /dev/null
++++ b/test/coa/testSvgDatauri/test.svg
+@@ -0,0 +1,3 @@
++<svg xmlns="http://www.w3.org/2000/svg">
++  <text x="5" y="15">TEST</text>
++</svg>
+\ No newline at end of file

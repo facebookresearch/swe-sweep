@@ -1,0 +1,54 @@
+diff --git a/vlib/v/checker/check_types.v b/vlib/v/checker/check_types.v
+index d61e93f2a..8587566fb 100644
+--- a/vlib/v/checker/check_types.v
++++ b/vlib/v/checker/check_types.v
+@@ -4,6 +4,7 @@
+ module checker
+ 
+ import v.ast
++import v.token
+ 
+ // TODO: promote(), check_types(), symmetric_check() and check() overlap - should be rearranged
+ fn (mut c Checker) check_types(got ast.Type, expected ast.Type) bool {
+@@ -274,6 +275,9 @@ fn (mut c Checker) check_expected_call_arg(got ast.Type, expected_ ast.Type, lan
+ 	} else {
+ 		got_typ_sym := c.table.sym(c.unwrap_generic(got))
+ 		expected_typ_sym := c.table.sym(c.unwrap_generic(expected_))
++		if expected_typ_sym.kind == .interface_ && c.type_implements(got, expected_, token.Pos{}) {
++			return
++		}
+ 
+ 		// Check on Generics types, there are some case where we have the following case
+ 		// `&Type[int] == &Type[]`. This is a common case we are implementing a function
+diff --git a/vlib/v/checker/fn.v b/vlib/v/checker/fn.v
+index b0f00cc53..cfb70ae18 100644
+--- a/vlib/v/checker/fn.v
++++ b/vlib/v/checker/fn.v
+@@ -2519,6 +2519,9 @@ fn (mut c Checker) array_builtin_method_call(mut node ast.CallExpr, left_type as
+ 				c.error('${err.msg()} in argument 1 to `.index()`', node.args[0].pos)
+ 			}
+ 		}
++		for i, arg in node.args {
++			node.args[i].typ = c.expr(arg.expr)
++		}
+ 		node.return_type = ast.int_type
+ 	} else if method_name in ['first', 'last', 'pop'] {
+ 		if node.args.len != 0 {
+diff --git a/vlib/v/gen/c/array.v b/vlib/v/gen/c/array.v
+index c4974a5fc..38b76e731 100644
+--- a/vlib/v/gen/c/array.v
++++ b/vlib/v/gen/c/array.v
+@@ -986,7 +986,12 @@ fn (mut g Gen) gen_array_index(node ast.CallExpr) {
+ 	if node.args[0].expr.is_auto_deref_var() {
+ 		g.write('*')
+ 	}
+-	g.expr(node.args[0].expr)
++	elem_typ := g.table.sym(node.left_type).array_info().elem_type
++	if g.table.sym(elem_typ).kind in [.interface_, .sum_type] {
++		g.expr_with_cast(node.args[0].expr, node.args[0].typ, elem_typ)
++	} else {
++		g.expr(node.args[0].expr)
++	}
+ 	g.write(')')
+ }
+ 

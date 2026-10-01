@@ -1,0 +1,98 @@
+diff --git a/ogr/ogrsf_frmts/shape/ogrshape.h b/ogr/ogrsf_frmts/shape/ogrshape.h
+index 80bde7839c..47426424fd 100644
+--- a/ogr/ogrsf_frmts/shape/ogrshape.h
++++ b/ogr/ogrsf_frmts/shape/ogrshape.h
+@@ -227,7 +227,8 @@ class OGRShapeLayer final : public OGRAbstractProxiedLayer
+ 
+     OGRShapeLayer(OGRShapeDataSource *poDSIn, const char *pszName,
+                   SHPHandle hSHP, DBFHandle hDBF,
+-                  const OGRSpatialReference *poSRS, bool bSRSSet, bool bUpdate,
++                  const OGRSpatialReference *poSRS, bool bSRSSet,
++                  const std::string &osPrjFilename, bool bUpdate,
+                   OGRwkbGeometryType eReqType,
+                   char **papszCreateOptions = nullptr);
+     virtual ~OGRShapeLayer();
+diff --git a/ogr/ogrsf_frmts/shape/ogrshapedatasource.cpp b/ogr/ogrsf_frmts/shape/ogrshapedatasource.cpp
+index af53f53663..2dca468ef2 100644
+--- a/ogr/ogrsf_frmts/shape/ogrshapedatasource.cpp
++++ b/ogr/ogrsf_frmts/shape/ogrshapedatasource.cpp
+@@ -509,7 +509,10 @@ bool OGRShapeDataSource::OpenFile(const char *pszNewName, bool bUpdate)
+     /*      Create the layer object.                                        */
+     /* -------------------------------------------------------------------- */
+     OGRShapeLayer *poLayer = new OGRShapeLayer(
+-        this, pszNewName, hSHP, hDBF, nullptr, false, bUpdate, wkbNone);
++        this, pszNewName, hSHP, hDBF,
++        /* poSRS = */ nullptr,
++        /* bSRSSet = */ false,
++        /* osPrjFilename = */ std::string(), bUpdate, wkbNone);
+     poLayer->SetModificationDate(
+         CSLFetchNameValue(papszOpenOptions, "DBF_DATE_LAST_UPDATE"));
+     poLayer->SetAutoRepack(CPLFetchBool(papszOpenOptions, "AUTO_REPACK", true));
+@@ -884,26 +887,23 @@ OGRLayer *OGRShapeDataSource::ICreateLayer(const char *pszLayerName,
+     /* -------------------------------------------------------------------- */
+     /*      Create the .prj file, if required.                              */
+     /* -------------------------------------------------------------------- */
++    std::string osPrjFilename;
+     if (poSRS != nullptr)
+     {
+-        CPLString osPrjFile =
+-            CPLFormFilename(nullptr, pszFilenameWithoutExt, "prj");
+-
++        osPrjFilename = CPLFormFilename(nullptr, pszFilenameWithoutExt, "prj");
+         poSRS = poSRS->Clone();
+-        poSRS->morphToESRI();
+ 
+         char *pszWKT = nullptr;
+         VSILFILE *fp = nullptr;
+-        if (poSRS->exportToWkt(&pszWKT) == OGRERR_NONE &&
+-            (fp = VSIFOpenL(osPrjFile, "wt")) != nullptr)
++        const char *const apszOptions[] = {"FORMAT=WKT1_ESRI", nullptr};
++        if (poSRS->exportToWkt(&pszWKT, apszOptions) == OGRERR_NONE &&
++            (fp = VSIFOpenL(osPrjFilename.c_str(), "wt")) != nullptr)
+         {
+             VSIFWriteL(pszWKT, strlen(pszWKT), 1, fp);
+             VSIFCloseL(fp);
+         }
+ 
+         CPLFree(pszWKT);
+-
+-        poSRS->morphFromESRI();
+     }
+ 
+     /* -------------------------------------------------------------------- */
+@@ -915,8 +915,10 @@ OGRLayer *OGRShapeDataSource::ICreateLayer(const char *pszLayerName,
+     pszFilename =
+         CPLStrdup(CPLFormFilename(nullptr, pszFilenameWithoutExt, "shp"));
+ 
+-    OGRShapeLayer *poLayer = new OGRShapeLayer(this, pszFilename, hSHP, hDBF,
+-                                               poSRS, true, true, eType);
++    OGRShapeLayer *poLayer =
++        new OGRShapeLayer(this, pszFilename, hSHP, hDBF, poSRS,
++                          /* bSRSSet = */ true, osPrjFilename,
++                          /* bUpdate = */ true, eType);
+     if (poSRS != nullptr)
+     {
+         poSRS->Release();
+diff --git a/ogr/ogrsf_frmts/shape/ogrshapelayer.cpp b/ogr/ogrsf_frmts/shape/ogrshapelayer.cpp
+index 0ee01c21ab..936f37857b 100644
+--- a/ogr/ogrsf_frmts/shape/ogrshapelayer.cpp
++++ b/ogr/ogrsf_frmts/shape/ogrshapelayer.cpp
+@@ -65,7 +65,8 @@ OGRShapeLayer::OGRShapeLayer(OGRShapeDataSource *poDSIn,
+                              const char *pszFullNameIn, SHPHandle hSHPIn,
+                              DBFHandle hDBFIn,
+                              const OGRSpatialReference *poSRSIn, bool bSRSSetIn,
+-                             bool bUpdate, OGRwkbGeometryType eReqType,
++                             const std::string &osPrjFilename, bool bUpdate,
++                             OGRwkbGeometryType eReqType,
+                              char **papszCreateOptions)
+     : OGRAbstractProxiedLayer(poDSIn->GetPool()), poDS(poDSIn),
+       poFeatureDefn(nullptr), iNextShapeId(0), nTotalShapeCount(0),
+@@ -218,6 +219,8 @@ OGRShapeLayer::OGRShapeLayer(OGRShapeDataSource *poDSIn,
+         }
+         auto poGeomFieldDefn = cpl::make_unique<OGRShapeGeomFieldDefn>(
+             pszFullName, eType, bSRSSetIn, poSRSClone);
++        if (!osPrjFilename.empty())
++            poGeomFieldDefn->SetPrjFilename(osPrjFilename);
+         if (poSRSClone)
+             poSRSClone->Release();
+         poFeatureDefn->SetGeomType(wkbNone);

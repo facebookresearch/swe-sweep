@@ -1,0 +1,25 @@
+diff --git a/test-data/unit/check-dataclasses.test b/test-data/unit/check-dataclasses.test
+index 3cc4a03ff..b12d12393 100644
+--- a/test-data/unit/check-dataclasses.test
++++ b/test-data/unit/check-dataclasses.test
+@@ -1606,6 +1606,20 @@ class PublishedMessages:
+     left: int
+ [builtins fixtures/dataclasses.pyi]
+ 
++[case testDataclassSlotsWithDeferredBase]
++# flags: --python-version 3.10
++from dataclasses import dataclass
++
++@dataclass
++class A(B): ...
++
++@dataclass
++class B: ...
++
++@dataclass(slots=True)
++class C: ...
++[builtins fixtures/dataclasses.pyi]
++
+ [case testDataclassesAnyInherit]
+ from dataclasses import dataclass
+ from typing import Any

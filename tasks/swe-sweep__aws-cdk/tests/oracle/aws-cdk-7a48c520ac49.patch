@@ -1,0 +1,21 @@
+diff --git a/packages/@aws-cdk/aws-rds/lib/instance.ts b/packages/@aws-cdk/aws-rds/lib/instance.ts
+--- a/packages/@aws-cdk/aws-rds/lib/instance.ts
++++ b/packages/@aws-cdk/aws-rds/lib/instance.ts
+@@ -8,7 +8,7 @@
+ import * as logs from '@aws-cdk/aws-logs';
+ import * as s3 from '@aws-cdk/aws-s3';
+ import * as secretsmanager from '@aws-cdk/aws-secretsmanager';
+-import { Duration, IResource, Lazy, RemovalPolicy, Resource, Stack, Token } from '@aws-cdk/core';
++import { Duration, IResource, Lazy, RemovalPolicy, Resource, Stack, Token, Tokenization } from '@aws-cdk/core';
+ import { Construct } from 'constructs';
+ import { DatabaseSecret } from './database-secret';
+ import { Endpoint } from './endpoint';
+@@ -124,7 +124,7 @@
+       });
+       public readonly instanceIdentifier = attrs.instanceIdentifier;
+       public readonly dbInstanceEndpointAddress = attrs.instanceEndpointAddress;
+-      public readonly dbInstanceEndpointPort = attrs.port.toString();
++      public readonly dbInstanceEndpointPort = Tokenization.stringifyNumber(attrs.port);
+       public readonly instanceEndpoint = new Endpoint(attrs.instanceEndpointAddress, attrs.port);
+       public readonly engine = attrs.engine;
+       protected enableIamAuthentication = true;

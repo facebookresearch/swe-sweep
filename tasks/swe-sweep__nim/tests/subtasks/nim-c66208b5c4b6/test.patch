@@ -1,0 +1,15 @@
+diff --git a/tests/vm/topenarrays.nim b/tests/vm/topenarrays.nim
+new file mode 100644
+index 000000000..000000000
+--- /dev/null
++++ b/tests/vm/topenarrays.nim
+@@ -0,0 +1,9 @@
++
++block: # bug #24630
++  func f(a: static openArray[int]): int =
++    12
++
++  func g(a: static openArray[int]) =
++    const b = f(a)
++
++  g(@[1,2,3])

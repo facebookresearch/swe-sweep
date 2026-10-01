@@ -1,0 +1,11 @@
+diff --git a/sqlglot/dialects/clickhouse.py b/sqlglot/dialects/clickhouse.py
+--- a/sqlglot/dialects/clickhouse.py
++++ b/sqlglot/dialects/clickhouse.py
+@@ -351,6 +351,7 @@
+             "quantile",
+             "quantiles",
+             "quantileExact",
++            "quantileExactInclusive",
+             "quantilesExact",
+             "quantileExactLow",
+             "quantilesExactLow",

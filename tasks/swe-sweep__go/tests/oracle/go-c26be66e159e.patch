@@ -1,0 +1,13 @@
+diff --git a/src/go/printer/nodes.go b/src/go/printer/nodes.go
+index 0a693b6667..a4651e0608 100644
+--- a/src/go/printer/nodes.go
++++ b/src/go/printer/nodes.go
+@@ -1658,7 +1658,7 @@ func (p *printer) genDecl(d *ast.GenDecl) {
+ 	p.setComment(d.Doc)
+ 	p.print(d.Pos(), d.Tok, blank)
+ 
+-	if d.Lparen.IsValid() || len(d.Specs) > 1 {
++	if d.Lparen.IsValid() || len(d.Specs) != 1 {
+ 		// group of parenthesized declarations
+ 		p.print(d.Lparen, token.LPAREN)
+ 		if n := len(d.Specs); n > 0 {

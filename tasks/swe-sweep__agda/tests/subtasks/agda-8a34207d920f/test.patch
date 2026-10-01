@@ -1,0 +1,20 @@
+diff --git a/test/Succeed/Issue7187.agda b/test/Succeed/Issue7187.agda
+new file mode 100644
+index 0000000000..bdd5b433d2
+--- /dev/null
++++ b/test/Succeed/Issue7187.agda
+@@ -0,0 +1,14 @@
++open import Agda.Builtin.Reflection renaming (bindTC to _>>=_)
++open import Agda.Builtin.Unit
++open import Agda.Builtin.Nat
++open import Agda.Builtin.List
++
++macro
++  `Nat : Term → TC ⊤
++  `Nat hole = do
++    ty ← inferType hole
++    _  ← debugPrint "tactic" 10 (termErr ty ∷ [])
++    unify hole (def (quote Nat) [])
++
++boom : `Nat
++boom = 1

@@ -1,0 +1,26 @@
+diff --git a/test-data/unit/check-classes.test b/test-data/unit/check-classes.test
+index 3d99ccb30..1b3de5356 100644
+--- a/test-data/unit/check-classes.test
++++ b/test-data/unit/check-classes.test
+@@ -8054,3 +8054,21 @@ class C:
+     def f(self) -> None:
+         __module__  # E: Name "__module__" is not defined
+         __qualname__  # E: Name "__qualname__" is not defined
++
++[case testCorrectConstructorTypeWithAnyFallback]
++from typing import Generic, TypeVar
++
++class B(Unknown):  # type: ignore
++    def __init__(self) -> None: ...
++class C(B): ...
++
++reveal_type(C)  # N: Revealed type is "def () -> __main__.C"
++
++T = TypeVar("T")
++class BG(Generic[T], Unknown):  # type: ignore
++    def __init__(self) -> None: ...
++class CGI(BG[int]): ...
++class CGT(BG[T]): ...
++
++reveal_type(CGI)  # N: Revealed type is "def () -> __main__.CGI"
++reveal_type(CGT)  # N: Revealed type is "def [T] () -> __main__.CGT[T`1]"

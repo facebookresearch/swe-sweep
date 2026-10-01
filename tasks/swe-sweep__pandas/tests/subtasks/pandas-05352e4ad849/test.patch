@@ -1,0 +1,31 @@
+diff --git a/pandas/tests/reshape/merge/test_merge.py b/pandas/tests/reshape/merge/test_merge.py
+index 50a534ad36..02d7e2059e 100644
+--- a/pandas/tests/reshape/merge/test_merge.py
++++ b/pandas/tests/reshape/merge/test_merge.py
+@@ -2487,3 +2487,26 @@ def test_mergeerror_on_left_index_mismatched_dtypes():
+     df_2 = DataFrame(data=["X"], columns=["C"], index=[999])
+     with pytest.raises(MergeError, match="Can only pass argument"):
+         merge(df_1, df_2, on=["C"], left_index=True)
++
++
++def test_merge_ea_int_and_float_numpy():
++    # GH#46178
++    df1 = DataFrame([1.0, np.nan], dtype=pd.Int64Dtype())
++    df2 = DataFrame([1.5])
++    expected = DataFrame(columns=[0], dtype="Int64")
++
++    with tm.assert_produces_warning(UserWarning, match="You are merging"):
++        result = df1.merge(df2)
++    tm.assert_frame_equal(result, expected)
++
++    with tm.assert_produces_warning(UserWarning, match="You are merging"):
++        result = df2.merge(df1)
++    tm.assert_frame_equal(result, expected.astype("float64"))
++
++    df2 = DataFrame([1.0])
++    expected = DataFrame([1], columns=[0], dtype="Int64")
++    result = df1.merge(df2)
++    tm.assert_frame_equal(result, expected)
++
++    result = df2.merge(df1)
++    tm.assert_frame_equal(result, expected.astype("float64"))

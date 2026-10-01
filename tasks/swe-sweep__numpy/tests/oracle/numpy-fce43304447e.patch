@@ -1,0 +1,21 @@
+diff --git a/numpy/random/mtrand/mtrand.pyx b/numpy/random/mtrand/mtrand.pyx
+index 7733a07f82..08312da552 100644
+--- a/numpy/random/mtrand/mtrand.pyx
++++ b/numpy/random/mtrand/mtrand.pyx
+@@ -4418,6 +4418,7 @@ def multivariate_normal(self, mean, cov, size=None, check_valid='warn',
+             Behavior when the covariance matrix is not positive semidefinite.
+         tol : float, optional
+             Tolerance when checking the singular values in covariance matrix.
++            cov is cast to double before the check.
+ 
+         Returns
+         -------
+@@ -4529,6 +4530,8 @@ def multivariate_normal(self, mean, cov, size=None, check_valid='warn',
+         # not zero. We continue to use the SVD rather than Cholesky in
+         # order to preserve current outputs.
+ 
++        # GH10839, ensure double to make tol meaningful
++        cov = cov.astype(np.double)
+         (u, s, v) = svd(cov)
+ 
+         if check_valid != 'ignore':

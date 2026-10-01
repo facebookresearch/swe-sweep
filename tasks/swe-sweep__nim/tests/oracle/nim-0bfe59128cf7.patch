@@ -1,0 +1,16 @@
+diff --git a/compiler/ccgcalls.nim b/compiler/ccgcalls.nim
+index 607f6d51e..155800582 100644
+--- a/compiler/ccgcalls.nim
++++ b/compiler/ccgcalls.nim
+@@ -158,7 +158,10 @@ proc genOpenArraySlice(p: BProc; q: PNode; formalType, destType: PType): (Rope, Rope) =
+   # but first produce the required index checks:
+   if optBoundsCheck in p.options:
+     genBoundsCheck(p, a, b, c)
+-  let ty = skipTypes(a.t, abstractVar+{tyPtr})
++  # bug #23321: In the function mapType, ptrs (tyPtr, tyVar, tyLent, tyRef)
++  # are mapped into ctPtrToArray, the dereference of which is skipped
++  # in the `genref`. We need to skip these ptrs here
++  let ty = skipTypes(a.t, abstractVar+{tyPtr, tyRef})
+   let dest = getTypeDesc(p.module, destType)
+   let lengthExpr = "($1)-($2)+1" % [rdLoc(c), rdLoc(b)]
+   case ty.kind

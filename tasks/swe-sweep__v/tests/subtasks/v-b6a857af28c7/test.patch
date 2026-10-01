@@ -1,0 +1,18 @@
+diff --git a/vlib/v/tests/fn_call_interface_args_test.v b/vlib/v/tests/fn_call_interface_args_test.v
+new file mode 100644
+index 000000000..f5e44138f
+--- /dev/null
++++ b/vlib/v/tests/fn_call_interface_args_test.v
+@@ -0,0 +1,12 @@
++interface Foo {}
++
++fn has_interface_args(mut a Foo, b &Foo, c Foo) {
++	assert a == &Foo(1)
++	assert b == &Foo(1)
++	assert c == Foo(1)
++}
++
++fn test_fn_call_interface_args() {
++	mut arg := Foo(1)
++	has_interface_args(mut arg, arg, arg)
++}

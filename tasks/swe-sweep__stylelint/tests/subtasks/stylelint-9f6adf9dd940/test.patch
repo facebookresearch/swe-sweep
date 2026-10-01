@@ -1,0 +1,20 @@
+diff --git a/lib/rules/named-grid-areas-no-invalid/__tests__/index.mjs b/lib/rules/named-grid-areas-no-invalid/__tests__/index.mjs
+index faad843a1..c70a3f094 100644
+--- a/lib/rules/named-grid-areas-no-invalid/__tests__/index.mjs
++++ b/lib/rules/named-grid-areas-no-invalid/__tests__/index.mjs
+@@ -68,6 +68,15 @@ testRule({
+ 						"b c c" 40px
+ 						"b c c" 40px / 1fr 1fr 1fr;
+ 				}`,
++		},
++		{
++			code: stripIndent`
++				.test-grid {
++					grid-template:
++						"a a a"
++						"b b\tb";
++				}`,
++			description: 'Issue #8134 - tabs should be treated as valid whitespace separators',
+ 		},
+ 	],
+ 

@@ -1,0 +1,13 @@
+diff --git a/mock/mock.go b/mock/mock.go
+index 5d445c6..853da6c 100644
+--- a/mock/mock.go
++++ b/mock/mock.go
+@@ -728,7 +728,7 @@ func (f argumentMatcher) Matches(argument interface{}) bool {
+ }
+ 
+ func (f argumentMatcher) String() string {
+-	return fmt.Sprintf("func(%s) bool", f.fn.Type().In(0).Name())
++	return fmt.Sprintf("func(%s) bool", f.fn.Type().In(0).String())
+ }
+ 
+ // MatchedBy can be used to match a mock call based on only certain properties

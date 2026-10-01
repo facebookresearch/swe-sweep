@@ -1,0 +1,38 @@
+diff --git a/src/function/table/system/duckdb_columns.cpp b/src/function/table/system/duckdb_columns.cpp
+index cee5e1f..b831854 100644
+--- a/src/function/table/system/duckdb_columns.cpp
++++ b/src/function/table/system/duckdb_columns.cpp
+@@ -7,6 +7,7 @@
+ #include "duckdb/main/client_context.hpp"
+ #include "duckdb/main/client_data.hpp"
+ #include "duckdb/parser/constraints/not_null_constraint.hpp"
++#include "duckdb/main/query_result.hpp"
+ 
+ #include <set>
+ 
+@@ -157,6 +158,8 @@ private:
+ class ViewColumnHelper : public ColumnHelper {
+ public:
+ 	explicit ViewColumnHelper(ViewCatalogEntry &entry) : entry(entry) {
++		column_names = entry.names;
++		QueryResult::DeduplicateColumns(column_names);
+ 	}
+ 
+ 	StandardEntry &Entry() override {
+@@ -166,7 +169,7 @@ public:
+ 		return entry.types.size();
+ 	}
+ 	const string &ColumnName(idx_t col) override {
+-		return col < entry.aliases.size() ? entry.aliases[col] : entry.names[col];
++		return col < entry.aliases.size() ? entry.aliases[col] : column_names[col];
+ 	}
+ 	const LogicalType &ColumnType(idx_t col) override {
+ 		return entry.types[col];
+@@ -183,6 +186,7 @@ public:
+ 
+ private:
+ 	ViewCatalogEntry &entry;
++	vector<string> column_names;
+ };
+ 
+ unique_ptr<ColumnHelper> ColumnHelper::Create(CatalogEntry &entry) {

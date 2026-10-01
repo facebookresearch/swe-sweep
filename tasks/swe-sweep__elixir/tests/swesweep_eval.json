@@ -1,0 +1,468 @@
+{
+  "build_jobs": 4,
+  "container_repo": "/elixir",
+  "evaluation": {
+    "suite": {
+      "eval_apps": [
+        "elixir",
+        "eex",
+        "ex_unit",
+        "iex",
+        "logger",
+        "mix"
+      ],
+      "node_name": "primary",
+      "type": "exunit"
+    },
+    "test_dirs": [],
+    "visible_timeout": 10800
+  },
+  "upstream_image": "pandora-maxbug-elixir:1.15.7",
+  "n_base_passing": 3,
+  "n_base_test_ignore": 3,
+  "oracle_digest": "67d76eddb490ffed3678db6802f8311351c80cde23cf73db4e7ef77ad03332cc",
+  "oracle_pristine_paths": [],
+  "upstream_commit": "9f7399e15e6172900e0591deb5a57a45769d8205",
+  "reproduction": {
+    "build_cmd": "elixir-build",
+    "build_timeout": 1800,
+    "suite": {
+      "node_name": "primary",
+      "type": "exunit"
+    },
+    "test_timeout": 900
+  },
+  "schema": 2,
+  "subtasks": [
+    {
+      "f2p": [
+        "elixir::test/elixir/code_formatter/containers_test.exs"
+      ],
+      "id": "elixir-02ff5d83715a",
+      "target_files": [
+        "lib/elixir/lib/code/formatter.ex"
+      ]
+    },
+    {
+      "f2p": [
+        "ex_unit::test/ex_unit/formatter_test.exs"
+      ],
+      "id": "elixir-0caec80c737d",
+      "target_files": [
+        "lib/ex_unit/lib/ex_unit/formatter.ex"
+      ]
+    },
+    {
+      "f2p": [
+        "elixir::test/elixir/partition_supervisor_test.exs"
+      ],
+      "id": "elixir-0e63f3f07a25",
+      "target_files": [
+        "lib/elixir/lib/partition_supervisor.ex"
+      ]
+    },
+    {
+      "f2p": [
+        "elixir::test/elixir/range_test.exs"
+      ],
+      "id": "elixir-10f031700492",
+      "target_files": [
+        "lib/elixir/lib/range.ex"
+      ]
+    },
+    {
+      "f2p": [
+        "elixir::test/elixir/uri_test.exs"
+      ],
+      "id": "elixir-25d5cc76a005",
+      "target_files": [
+        "lib/elixir/lib/uri.ex"
+      ]
+    },
+    {
+      "f2p": [
+        "ex_unit::test/ex_unit/diff_test.exs"
+      ],
+      "id": "elixir-2c0decfe4034",
+      "target_files": [
+        "lib/ex_unit/lib/ex_unit/diff.ex"
+      ]
+    },
+    {
+      "f2p": [
+        "mix::test/mix/tasks/deps_test.exs"
+      ],
+      "id": "elixir-35d6b238c6b3",
+      "target_files": [
+        "lib/mix/lib/mix/dep/loader.ex"
+      ]
+    },
+    {
+      "f2p": [
+        "elixir::test/elixir/system_test.exs"
+      ],
+      "id": "elixir-373928b7a6a1",
+      "target_files": [
+        "lib/elixir/lib/system.ex"
+      ]
+    },
+    {
+      "f2p": [
+        "elixir::test/elixir/file_test.exs"
+      ],
+      "id": "elixir-3cd524ee15ba",
+      "target_files": [
+        "lib/elixir/lib/file.ex"
+      ]
+    },
+    {
+      "f2p": [
+        "elixir::test/elixir/float_test.exs"
+      ],
+      "id": "elixir-41c5efa5e5a0",
+      "target_files": [
+        "lib/elixir/lib/float.ex"
+      ]
+    },
+    {
+      "f2p": [
+        "elixir::test/elixir/kernel/binary_test.exs"
+      ],
+      "id": "elixir-430132f5bdcf",
+      "target_files": [
+        "lib/elixir/src/elixir_bitstring.erl"
+      ]
+    },
+    {
+      "f2p": [
+        "elixir::test/elixir/calendar/datetime_test.exs",
+        "elixir::test/elixir/calendar/naive_datetime_test.exs"
+      ],
+      "id": "elixir-47e828b7ab3f",
+      "target_files": [
+        "lib/elixir/lib/calendar/datetime.ex",
+        "lib/elixir/lib/calendar/naive_datetime.ex"
+      ]
+    },
+    {
+      "f2p": [
+        "elixir::test/elixir/calendar/naive_datetime_test.exs"
+      ],
+      "id": "elixir-4e462fef470f",
+      "target_files": [
+        "lib/elixir/lib/calendar/naive_datetime.ex"
+      ]
+    },
+    {
+      "f2p": [
+        "elixir::test/elixir/file_test.exs"
+      ],
+      "id": "elixir-55ad96a3d3ee",
+      "target_files": [
+        "lib/elixir/lib/file.ex"
+      ]
+    },
+    {
+      "f2p": [
+        "elixir::test/elixir/exception_test.exs"
+      ],
+      "id": "elixir-617cdbc0a38c",
+      "target_files": [
+        "lib/elixir/lib/exception.ex"
+      ]
+    },
+    {
+      "f2p": [
+        "elixir::test/elixir/code_normalizer/quoted_ast_test.exs"
+      ],
+      "id": "elixir-6363b270e376",
+      "target_files": [
+        "lib/elixir/lib/code/normalizer.ex"
+      ]
+    },
+    {
+      "f2p": [
+        "elixir::test/elixir/io/ansi/docs_test.exs"
+      ],
+      "id": "elixir-6ea7232ea789",
+      "target_files": [
+        "lib/elixir/lib/io/ansi/docs.ex"
+      ]
+    },
+    {
+      "f2p": [
+        "elixir::test/elixir/macro_test.exs",
+        "ex_unit::test/ex_unit/assertions_test.exs"
+      ],
+      "id": "elixir-72ba8dec8a9f",
+      "target_files": [
+        "lib/elixir/lib/macro.ex"
+      ]
+    },
+    {
+      "f2p": [
+        "elixir::test/elixir/option_parser_test.exs"
+      ],
+      "id": "elixir-75cc2594dfe7",
+      "target_files": [
+        "lib/elixir/lib/option_parser.ex"
+      ]
+    },
+    {
+      "f2p": [
+        "elixir::test/elixir/uri_test.exs"
+      ],
+      "id": "elixir-785906908ef8",
+      "target_files": [
+        "lib/elixir/lib/uri.ex"
+      ]
+    },
+    {
+      "f2p": [
+        "elixir::test/elixir/path_test.exs"
+      ],
+      "id": "elixir-7ff301c5e13a",
+      "target_files": [
+        "lib/elixir/lib/path.ex"
+      ]
+    },
+    {
+      "f2p": [
+        "elixir::test/elixir/kernel/expansion_test.exs"
+      ],
+      "id": "elixir-88aafb2da6a5",
+      "target_files": [
+        "lib/elixir/src/elixir_clauses.erl",
+        "lib/elixir/src/elixir_expand.erl"
+      ]
+    },
+    {
+      "f2p": [
+        "elixir::test/elixir/enum_test.exs"
+      ],
+      "id": "elixir-8a456026ba61",
+      "target_files": [
+        "lib/elixir/lib/enum.ex"
+      ]
+    },
+    {
+      "f2p": [
+        "elixir::test/elixir/calendar/date_range_test.exs"
+      ],
+      "id": "elixir-8a6c05aab410",
+      "target_files": [
+        "lib/elixir/lib/calendar/date.ex"
+      ]
+    },
+    {
+      "f2p": [
+        "elixir::test/elixir/typespec_test.exs"
+      ],
+      "id": "elixir-90f6942d879e",
+      "target_files": [
+        "lib/elixir/lib/code/typespec.ex"
+      ]
+    },
+    {
+      "f2p": [
+        "elixir::test/elixir/calendar/date_range_test.exs"
+      ],
+      "id": "elixir-9badc13f54f3",
+      "target_files": [
+        "lib/elixir/lib/calendar/date_range.ex",
+        "lib/elixir/lib/enum.ex"
+      ]
+    },
+    {
+      "f2p": [
+        "elixir::test/elixir/file/stream_test.exs"
+      ],
+      "id": "elixir-9c8096293644",
+      "target_files": [
+        "lib/elixir/lib/file/stream.ex"
+      ]
+    },
+    {
+      "f2p": [
+        "mix::test/mix/tasks/deps.git_test.exs"
+      ],
+      "id": "elixir-9cc8245e4a0a",
+      "target_files": [
+        "lib/mix/lib/mix/scm/git.ex"
+      ]
+    },
+    {
+      "f2p": [
+        "elixir::test/elixir/calendar/date_range_test.exs"
+      ],
+      "id": "elixir-9d7bfbe388de",
+      "target_files": [
+        "lib/elixir/lib/calendar/date_range.ex"
+      ]
+    },
+    {
+      "f2p": [
+        "elixir::test/elixir/kernel/expansion_test.exs"
+      ],
+      "id": "elixir-a72f3a27bc7e",
+      "target_files": [
+        "lib/elixir/src/elixir_fn.erl"
+      ]
+    },
+    {
+      "f2p": [
+        "elixir::test/elixir/enum_test.exs"
+      ],
+      "id": "elixir-a9b8d31b3294",
+      "target_files": [
+        "lib/elixir/lib/enum.ex"
+      ]
+    },
+    {
+      "f2p": [
+        "elixir::test/elixir/kernel/expansion_test.exs"
+      ],
+      "id": "elixir-b64f7cac91d0",
+      "target_files": [
+        "lib/elixir/src/elixir_expand.erl"
+      ]
+    },
+    {
+      "f2p": [
+        "elixir::test/elixir/code_formatter/calls_test.exs"
+      ],
+      "id": "elixir-b8fd0360ebc4",
+      "target_files": [
+        "lib/elixir/lib/inspect/algebra.ex"
+      ]
+    },
+    {
+      "f2p": [
+        "elixir::test/elixir/uri_test.exs"
+      ],
+      "id": "elixir-bffc005d4666",
+      "target_files": [
+        "lib/elixir/lib/uri.ex"
+      ]
+    },
+    {
+      "f2p": [
+        "elixir::test/elixir/io/ansi/docs_test.exs"
+      ],
+      "id": "elixir-c03c137239b0",
+      "target_files": [
+        "lib/elixir/lib/io/ansi/docs.ex"
+      ]
+    },
+    {
+      "f2p": [
+        "elixir::test/elixir/integer_test.exs"
+      ],
+      "id": "elixir-c2161621d14a",
+      "target_files": [
+        "lib/elixir/lib/integer.ex"
+      ]
+    },
+    {
+      "f2p": [
+        "elixir::test/elixir/uri_test.exs"
+      ],
+      "id": "elixir-c27bca195cf1",
+      "target_files": [
+        "lib/elixir/lib/uri.ex"
+      ]
+    },
+    {
+      "f2p": [
+        "logger::test/logger_test.exs"
+      ],
+      "id": "elixir-c315567408a8",
+      "target_files": [
+        "lib/logger/lib/logger.ex"
+      ]
+    },
+    {
+      "f2p": [
+        "elixir::test/elixir/range_test.exs"
+      ],
+      "id": "elixir-cd8bd47e764a",
+      "target_files": [
+        "lib/elixir/lib/range.ex"
+      ]
+    },
+    {
+      "f2p": [
+        "elixir::test/elixir/kernel/parser_test.exs"
+      ],
+      "id": "elixir-d118295a4a29",
+      "target_files": [
+        "lib/elixir/src/elixir_parser.yrl"
+      ]
+    },
+    {
+      "f2p": [
+        "elixir::test/elixir/uri_test.exs"
+      ],
+      "id": "elixir-d75507982e39",
+      "target_files": [
+        "lib/elixir/lib/uri.ex"
+      ]
+    },
+    {
+      "f2p": [
+        "elixir::test/elixir/calendar/date_test.exs"
+      ],
+      "id": "elixir-e39e05f639bd",
+      "target_files": [
+        "lib/elixir/lib/calendar/date.ex"
+      ]
+    },
+    {
+      "f2p": [
+        "logger::test/logger_test.exs"
+      ],
+      "id": "elixir-e4d3ea17626a",
+      "target_files": [
+        "lib/logger/lib/logger.ex"
+      ]
+    },
+    {
+      "f2p": [
+        "elixir::test/elixir/integer_test.exs"
+      ],
+      "id": "elixir-eae516adcc38",
+      "target_files": [
+        "lib/elixir/lib/integer.ex"
+      ]
+    },
+    {
+      "f2p": [
+        "elixir::test/elixir/calendar_test.exs"
+      ],
+      "id": "elixir-eb2d224e515c",
+      "target_files": [
+        "lib/elixir/lib/calendar.ex"
+      ]
+    },
+    {
+      "f2p": [
+        "iex::test/iex/autocomplete_test.exs"
+      ],
+      "id": "elixir-eb717ad14266",
+      "target_files": [
+        "lib/iex/lib/iex/autocomplete.ex"
+      ]
+    },
+    {
+      "f2p": [
+        "elixir::test/elixir/code_normalizer/quoted_ast_test.exs"
+      ],
+      "id": "elixir-f8b485412338",
+      "target_files": [
+        "lib/elixir/lib/code/normalizer.ex"
+      ]
+    }
+  ],
+  "task": "elixir",
+  "version": "1.15.7"
+}

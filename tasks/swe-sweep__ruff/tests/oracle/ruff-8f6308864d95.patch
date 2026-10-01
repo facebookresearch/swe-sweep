@@ -1,0 +1,56 @@
+diff --git a/crates/ruff_linter/src/rules/pylint/rules/duplicate_bases.rs b/crates/ruff_linter/src/rules/pylint/rules/duplicate_bases.rs
+index 9be4a8c628..e195b3f11a 100644
+--- a/crates/ruff_linter/src/rules/pylint/rules/duplicate_bases.rs
++++ b/crates/ruff_linter/src/rules/pylint/rules/duplicate_bases.rs
+@@ -1,7 +1,7 @@
+ use ruff_python_ast::{self as ast, Arguments, Expr};
+ use rustc_hash::{FxBuildHasher, FxHashSet};
+ 
+-use ruff_diagnostics::{Diagnostic, Fix, FixAvailability, Violation};
++use ruff_diagnostics::{Applicability, Diagnostic, Fix, FixAvailability, Violation};
+ use ruff_macros::{derive_message_formats, ViolationMetadata};
+ use ruff_text_size::Ranged;
+ 
+@@ -34,6 +34,23 @@ use crate::fix::edits::{remove_argument, Parentheses};
+ ///     pass
+ /// ```
+ ///
++/// ## Fix safety
++/// This rule's fix is marked as unsafe if there's comments in the
++/// base classes, as comments may be removed..
++///
++/// For example, the fix would be marked as unsafe in the following case:
++/// ```python
++/// class Foo:
++///     pass
++///
++///
++/// class Bar(
++///     Foo,  # comment
++///     Foo,
++/// ):
++///     pass
++/// ```
++///
+ /// ## References
+ /// - [Python documentation: Class definitions](https://docs.python.org/3/reference/compound_stmts.html#class-definitions)
+ #[derive(ViolationMetadata)]
+@@ -80,7 +97,16 @@ pub(crate) fn duplicate_bases(checker: &mut Checker, name: &str, arguments: Optio
+                         arguments,
+                         Parentheses::Remove,
+                         checker.locator().contents(),
+                     )
+-                    .map(Fix::safe_edit)
++                    .map(|edit| {
++                        Fix::applicable_edit(
++                            edit,
++                            if checker.comment_ranges().intersects(arguments.range()) {
++                                Applicability::Unsafe
++                            } else {
++                                Applicability::Safe
++                            },
++                        )
++                    })
+                 });
+                 checker.diagnostics.push(diagnostic);
+             }

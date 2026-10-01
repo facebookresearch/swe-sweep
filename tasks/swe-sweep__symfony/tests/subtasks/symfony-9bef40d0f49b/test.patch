@@ -1,0 +1,58 @@
+diff --git a/src/Symfony/Component/Config/Tests/Definition/FloatNodeTest.php b/src/Symfony/Component/Config/Tests/Definition/FloatNodeTest.php
+index 9d18b589968..ee9c597cffb 100644
+--- a/src/Symfony/Component/Config/Tests/Definition/FloatNodeTest.php
++++ b/src/Symfony/Component/Config/Tests/Definition/FloatNodeTest.php
+@@ -14,6 +14,7 @@ namespace Symfony\Component\Config\Tests\Definition;
+ use PHPUnit\Framework\TestCase;
+ use Symfony\Component\Config\Definition\Exception\InvalidTypeException;
+ use Symfony\Component\Config\Definition\FloatNode;
++use Symfony\Component\Config\Definition\NumericNode;
+ 
+ class FloatNodeTest extends TestCase
+ {
+@@ -76,4 +77,16 @@ class FloatNodeTest extends TestCase
+             [new \stdClass()],
+         ];
+     }
++
++    public function testFinalizeAcceptsEnvPlaceholderBelowMin()
++    {
++        $node = new FloatNode('multiplier', null, 1);
++        NumericNode::setPlaceholder('env_FOO', ['float' => 0.0]);
++
++        try {
++            $this->assertSame('env_FOO', $node->finalize('env_FOO'));
++        } finally {
++            NumericNode::resetPlaceholders();
++        }
++    }
+ }
+diff --git a/src/Symfony/Component/Config/Tests/Definition/IntegerNodeTest.php b/src/Symfony/Component/Config/Tests/Definition/IntegerNodeTest.php
+index 6ab60032d23..b7a66af13aa 100644
+--- a/src/Symfony/Component/Config/Tests/Definition/IntegerNodeTest.php
++++ b/src/Symfony/Component/Config/Tests/Definition/IntegerNodeTest.php
+@@ -14,6 +14,7 @@ namespace Symfony\Component\Config\Tests\Definition;
+ use PHPUnit\Framework\TestCase;
+ use Symfony\Component\Config\Definition\Exception\InvalidTypeException;
+ use Symfony\Component\Config\Definition\IntegerNode;
++use Symfony\Component\Config\Definition\NumericNode;
+ 
+ class IntegerNodeTest extends TestCase
+ {
+@@ -73,4 +74,16 @@ class IntegerNodeTest extends TestCase
+             [new \stdClass()],
+         ];
+     }
++
++    public function testFinalizeAcceptsEnvPlaceholderBelowMin()
++    {
++        $node = new IntegerNode('max_retries', null, 1);
++        NumericNode::setPlaceholder('env_BAR', ['int' => 0]);
++
++        try {
++            $this->assertSame('env_BAR', $node->finalize('env_BAR'));
++        } finally {
++            NumericNode::resetPlaceholders();
++        }
++    }
+ }

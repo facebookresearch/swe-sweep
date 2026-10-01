@@ -1,0 +1,13 @@
+diff --git a/mypy/stubtest.py b/mypy/stubtest.py
+index ac0378cc5..e63e109d5 100644
+--- a/mypy/stubtest.py
++++ b/mypy/stubtest.py
+@@ -1851,7 +1851,7 @@ def is_probably_a_function(runtime: Any) -> bool:
+ 
+ 
+ def is_read_only_property(runtime: object) -> bool:
+-    return isinstance(runtime, property) and runtime.fset is None
++    return isinstance(runtime, property) and runtime.fset is None and runtime.fdel is None
+ 
+ 
+ def safe_inspect_signature(runtime: Any) -> inspect.Signature | None:

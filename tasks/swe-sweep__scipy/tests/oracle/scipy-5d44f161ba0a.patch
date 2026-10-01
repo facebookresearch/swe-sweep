@@ -1,0 +1,13 @@
+diff --git a/scipy/stats/morestats.py b/scipy/stats/morestats.py
+index cdae4c57e6..b0942618f0 100644
+--- a/scipy/stats/morestats.py
++++ b/scipy/stats/morestats.py
+@@ -1647,6 +1647,8 @@ def shapiro(x):
+     if N < 3:
+         raise ValueError("Data must be at least length 3.")
+ 
++    x -= np.median(x)
++
+     a = zeros(N, 'f')
+     init = 0
+ 

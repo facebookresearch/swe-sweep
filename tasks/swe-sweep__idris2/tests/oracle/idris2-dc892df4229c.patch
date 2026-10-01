@@ -1,0 +1,21 @@
+diff --git a/src/Core/Directory.idr b/src/Core/Directory.idr
+--- a/src/Core/Directory.idr
++++ b/src/Core/Directory.idr
+@@ -122,11 +122,15 @@
+ mbPathToNS : String -> Maybe String -> String -> Maybe ModuleIdent
+ mbPathToNS wdir sdir fname =
+   let
+-    sdir = fromMaybe "" sdir
++    cleanPath : String -> String
++      := show
++       . the (Path -> Path) { hasTrailSep := False, body $= filter (/= CurDir) }
++       . parse
++    sdir = fromMaybe "" sdir
+     base = if isAbsolute fname then wdir </> sdir else sdir
+   in
+     unsafeFoldModuleIdent . reverse . splitPath . Path.dropExtension
+-      <$> Path.dropBase base fname
++      <$> (Path.dropBase `on` cleanPath) base fname
+ 
+ export
+ corePathToNS : String -> Maybe String -> String -> Core ModuleIdent

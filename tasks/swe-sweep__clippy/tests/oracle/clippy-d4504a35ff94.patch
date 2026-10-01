@@ -1,0 +1,51 @@
+diff --git a/clippy_lints/src/methods/obfuscated_if_else.rs b/clippy_lints/src/methods/obfuscated_if_else.rs
+index 1cc56de..6c86725 100644
+--- a/clippy_lints/src/methods/obfuscated_if_else.rs
++++ b/clippy_lints/src/methods/obfuscated_if_else.rs
+@@ -2,7 +2,7 @@ use super::OBFUSCATED_IF_ELSE;
+ use clippy_utils::diagnostics::span_lint_and_sugg;
+ use clippy_utils::eager_or_lazy::switch_to_eager_eval;
+ use clippy_utils::get_parent_expr;
+-use clippy_utils::source::snippet_with_applicability;
++use clippy_utils::source::snippet_with_context;
+ use clippy_utils::sugg::Sugg;
+ use rustc_errors::Applicability;
+ use rustc_hir as hir;
+@@ -33,22 +33,22 @@ pub(super) fn check<'tcx>(
+ 
+         let if_then = match then_method_name {
+-            "then" if let ExprKind::Closure(closure) = then_arg.kind => {
++            "then" if let ExprKind::Closure(closure) = then_arg.kind => {
+                 let body = cx.tcx.hir_body(closure.body);
+-                snippet_with_applicability(cx, body.value.span, "..", &mut applicability)
++                snippet_with_context(cx, body.value.span, expr.span.ctxt(), "..", &mut applicability).0
+             },
+-            "then_some" => snippet_with_applicability(cx, then_arg.span, "..", &mut applicability),
++            "then_some" => snippet_with_context(cx, then_arg.span, expr.span.ctxt(), "..", &mut applicability).0,
+             _ => return,
+         };
+ 
+         // FIXME: Add `unwrap_or_else` and `unwrap_or_default` symbol
+         let els = match unwrap_method_name {
+-            "unwrap_or" => snippet_with_applicability(cx, unwrap_arg.unwrap().span, "..", &mut applicability),
++            "unwrap_or" => snippet_with_context(cx, unwrap_arg.unwrap().span, expr.span.ctxt(), "..", &mut applicability).0,
+             "unwrap_or_else" if let ExprKind::Closure(closure) = unwrap_arg.unwrap().kind => {
+                 let body = cx.tcx.hir_body(closure.body);
+-                snippet_with_applicability(cx, body.value.span, "..", &mut applicability)
++                snippet_with_context(cx, body.value.span, expr.span.ctxt(), "..", &mut applicability).0
+             },
+             "unwrap_or_else" if let ExprKind::Path(_) = unwrap_arg.unwrap().kind => {
+-                snippet_with_applicability(cx, unwrap_arg.unwrap().span, "_", &mut applicability) + "()"
++                snippet_with_context(cx, unwrap_arg.unwrap().span, expr.span.ctxt(), "_", &mut applicability).0 + "()"
+             },
+             "unwrap_or_default" => "Default::default()".into(),
+             _ => return,
+         };
+ 
+         let sugg = format!(
+             "if {} {{ {} }} else {{ {} }}",
+-            Sugg::hir_with_applicability(cx, then_recv, "..", &mut applicability),
++            Sugg::hir_with_context(cx, then_recv, expr.span.ctxt(), "..", &mut applicability),
+             if_then,
+             els
+         );

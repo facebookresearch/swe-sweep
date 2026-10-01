@@ -1,0 +1,25 @@
+diff --git a/client/trino-jdbc/src/test/java/io/trino/jdbc/TestJdbcPreparedStatement.java b/client/trino-jdbc/src/test/java/io/trino/jdbc/TestJdbcPreparedStatement.java
+index 77dc2ff8d50..8314f130aa1 100644
+--- a/client/trino-jdbc/src/test/java/io/trino/jdbc/TestJdbcPreparedStatement.java
++++ b/client/trino-jdbc/src/test/java/io/trino/jdbc/TestJdbcPreparedStatement.java
+@@ -750,5 +750,10 @@ public class TestJdbcPreparedStatement
+         assertBind((ps, i) -> ps.setBigDecimal(i, BigDecimal.valueOf(123))).roundTripsAs(Types.DECIMAL, BigDecimal.valueOf(123));
+         assertBind((ps, i) -> ps.setObject(i, BigDecimal.valueOf(123))).roundTripsAs(Types.DECIMAL, BigDecimal.valueOf(123));
++        // BigDecimal values such that BigDecimal.toString() produces scientific notation (e.g. "0E-10") which currently isn't valid Trino decimal literal
++        assertThat(new BigDecimal("0E-10").toString()).contains("E-10");
++        assertThat(new BigDecimal("1E+2").toString()).contains("E+2");
++        assertBind((ps, i) -> ps.setBigDecimal(i, new BigDecimal("0E-10"))).roundTripsAs(Types.DECIMAL, new BigDecimal("0.0000000000"));
++        assertBind((ps, i) -> ps.setBigDecimal(i, new BigDecimal("1E+2"))).roundTripsAs(Types.DECIMAL, new BigDecimal("100"));
+ 
+         for (int type : asList(Types.DECIMAL, Types.NUMERIC)) {
+             assertBind((ps, i) -> ps.setObject(i, (byte) 123, type)).roundTripsAs(Types.DECIMAL, BigDecimal.valueOf(123));
+@@ -763,6 +768,9 @@ public class TestJdbcPreparedStatement
+             assertBind((ps, i) -> ps.setObject(i, "123", type)).roundTripsAs(Types.DECIMAL, BigDecimal.valueOf(123));
+             assertBind((ps, i) -> ps.setObject(i, true, type)).roundTripsAs(Types.DECIMAL, BigDecimal.valueOf(1));
+             assertBind((ps, i) -> ps.setObject(i, false, type)).roundTripsAs(Types.DECIMAL, BigDecimal.valueOf(0));
++            // BigDecimal values such that BigDecimal.toString() produces scientific notation (e.g. "0E-10") which currently isn't valid Trino decimal literal
++            assertBind((ps, i) -> ps.setObject(i, new BigDecimal("0E-10"), type)).roundTripsAs(Types.DECIMAL, new BigDecimal("0.0000000000"));
++            assertBind((ps, i) -> ps.setObject(i, new BigDecimal("1E+2"), type)).roundTripsAs(Types.DECIMAL, new BigDecimal("100"));
+         }
+     }
+ 

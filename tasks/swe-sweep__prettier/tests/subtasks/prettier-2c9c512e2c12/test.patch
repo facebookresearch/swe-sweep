@@ -1,0 +1,26 @@
+diff --git a/tests/format/js/comments/__snapshots__/format.test.js.snap b/tests/format/js/comments/__snapshots__/format.test.js.snap
+index 8b1c8a8..9bce878 100644
+--- a/tests/format/js/comments/__snapshots__/format.test.js.snap
++++ b/tests/format/js/comments/__snapshots__/format.test.js.snap
+@@ -1588,8 +1588,8 @@ export {
+ }
+ 
+ =====================================output=====================================
+-export //comment
+- {}
++//comment
++export {}
+ 
+ export /* comment */ {}
+ 
+@@ -1678,8 +1678,8 @@ export {
+ }
+ 
+ =====================================output=====================================
+-export //comment
+- {};
++//comment
++export {};
+ 
+ export /* comment */ {};
+ 

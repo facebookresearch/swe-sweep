@@ -1,0 +1,39 @@
+diff --git a/model/storage-private/src/main/java/org/keycloak/storage/datastore/DefaultExportImportManager.java b/model/storage-private/src/main/java/org/keycloak/storage/datastore/DefaultExportImportManager.java
+index 01ab451dcb..c3c3485c0e 100644
+--- a/model/storage-private/src/main/java/org/keycloak/storage/datastore/DefaultExportImportManager.java
++++ b/model/storage-private/src/main/java/org/keycloak/storage/datastore/DefaultExportImportManager.java
+@@ -419,6 +419,13 @@ public class DefaultExportImportManager implements ExportImportManager {
+             newRealm.setBrowserSecurityHeaders(BrowserSecurityHeaders.realmDefaultHeaders);
+         }
+ 
++        if (rep.getGroups() != null) {
++            importGroups(newRealm, rep);
++            if (rep.getDefaultGroups() != null) {
++                KeycloakModelUtils.setDefaultGroups(session, newRealm, rep.getDefaultGroups().stream());
++            }
++        }
++
+         if (rep.getComponents() != null) {
+             MultivaluedHashMap<String, ComponentExportRepresentation> components = rep.getComponents();
+             String parentId = newRealm.getId();
+@@ -427,12 +434,6 @@ public class DefaultExportImportManager implements ExportImportManager {
+ 
+         importUserFederationProvidersAndMappers(session, rep, newRealm);
+ 
+-        if (rep.getGroups() != null) {
+-            importGroups(newRealm, rep);
+-            if (rep.getDefaultGroups() != null) {
+-                KeycloakModelUtils.setDefaultGroups(session, newRealm, rep.getDefaultGroups().stream());
+-            }
+-        }
+ 
+ 
+         // create users and their role mappings and social mappings
+@@ -663,7 +664,6 @@ public class DefaultExportImportManager implements ExportImportManager {
+         }
+     }
+ 
+-
+     public static void renameRealm(RealmModel realm, String name) {
+         if (name.equals(realm.getName())) {
+             return;

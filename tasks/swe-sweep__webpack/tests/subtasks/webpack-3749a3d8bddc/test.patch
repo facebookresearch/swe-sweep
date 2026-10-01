@@ -1,0 +1,58 @@
+diff --git a/test/configCases/source-map/resource-path/index.js b/test/configCases/source-map/resource-path/index.js
+new file mode 100644
+index 000000000..9868bd906
+--- /dev/null
++++ b/test/configCases/source-map/resource-path/index.js
+@@ -0,0 +1,14 @@
++it("should not include layer or type in absoluteResourcePath", function () {
++	var fs = require("fs");
++	var path = require("path");
++	var source = fs.readFileSync(__filename + ".map", "utf-8");
++	var map = JSON.parse(source);
++	expect(map.sources).toContain(
++		path.resolve(
++			__dirname,
++			"../../../..//configCases/source-map/resource-path/test.js"
++		)
++	);
++});
++
++if (Math.random() < 0) require("./test.js");
+diff --git a/test/configCases/source-map/resource-path/test.js b/test/configCases/source-map/resource-path/test.js
+new file mode 100644
+index 000000000..d336df4c8
+--- /dev/null
++++ b/test/configCases/source-map/resource-path/test.js
+@@ -0,0 +1,3 @@
++var foo = {};
++
++module.exports = foo;
+\ No newline at end of file
+diff --git a/test/configCases/source-map/resource-path/webpack.config.js b/test/configCases/source-map/resource-path/webpack.config.js
+new file mode 100644
+index 000000000..e68ec19f7
+--- /dev/null
++++ b/test/configCases/source-map/resource-path/webpack.config.js
+@@ -0,0 +1,22 @@
++/** @type {import("../../../../").Configuration} */
++module.exports = {
++	node: {
++		__dirname: false,
++		__filename: false
++	},
++	experiments: {
++		layers: true
++	},
++	devtool: "source-map",
++	entry: {
++		main: {
++			import: "./index",
++			layer: "something"
++		}
++	},
++	output: {
++		devtoolModuleFilenameTemplate(info) {
++			return info.absoluteResourcePath;
++		}
++	}
++};

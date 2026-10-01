@@ -1,0 +1,45 @@
+diff --git a/plugin/trino-hive/src/test/java/io/trino/plugin/hive/TestHiveConnectorTest.java b/plugin/trino-hive/src/test/java/io/trino/plugin/hive/TestHiveConnectorTest.java
+index 85a50af7145..eb7fd16960f 100644
+--- a/plugin/trino-hive/src/test/java/io/trino/plugin/hive/TestHiveConnectorTest.java
++++ b/plugin/trino-hive/src/test/java/io/trino/plugin/hive/TestHiveConnectorTest.java
+@@ -35,5 +35,6 @@ import io.trino.spi.connector.ColumnMetadata;
+ import io.trino.spi.connector.Constraint;
+ import io.trino.spi.security.Identity;
+ import io.trino.spi.security.SelectedRole;
++import io.trino.spi.type.ArrayType;
+ import io.trino.spi.type.DateType;
+ import io.trino.spi.type.TimestampType;
+@@ -1268,8 +1268,33 @@ public class TestHiveConnectorTest
+ 
+             assertUpdate("DROP TABLE test_types_table");
+         }
+     }
+ 
++    @Test
++    public void testIoExplainWithStructuralTypes()
++    {
++        assertUpdate("CREATE TABLE io_explain_test_structural_type(array_col ARRAY(int)) WITH (format='PARQUET')");
++        EstimatedStatsAndCost estimate = new EstimatedStatsAndCost(0.0, 0.0, 0.0, 0.0, 0.0);
++        assertThat(getIoPlanCodec().fromJson((String) getOnlyElement(computeActual("EXPLAIN (TYPE IO, FORMAT JSON) SELECT * FROM io_explain_test_structural_type WHERE array_col = ARRAY[1]").getOnlyColumnAsSet())))
++                .isEqualTo(new IoPlan(
++                        ImmutableSet.of(new TableColumnInfo(
++                                new CatalogSchemaTableName(catalog, "tpch", "io_explain_test_structural_type"),
++                                ImmutableSet.of(
++                                        new ColumnConstraint(
++                                                "array_col",
++                                                new ArrayType(INTEGER),
++                                                new FormattedDomain(
++                                                        false,
++                                                        ImmutableSet.of(
++                                                                new FormattedRange(
++                                                                        new FormattedMarker(Optional.of("<UNREPRESENTABLE VALUE>"), EXACTLY),
++                                                                        new FormattedMarker(Optional.of("<UNREPRESENTABLE VALUE>"), EXACTLY)))))),
++                                estimate)),
++                        Optional.empty(),
++                        estimate));
++        assertUpdate("DROP TABLE io_explain_test_structural_type");
++    }
++
+     @Test
+     public void testReadNoColumns()
+     {

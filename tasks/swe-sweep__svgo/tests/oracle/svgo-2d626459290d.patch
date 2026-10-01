@@ -1,0 +1,14 @@
+diff --git a/plugins/removeEmptyContainers.js b/plugins/removeEmptyContainers.js
+index d803fc9..bff3ab9 100644
+--- a/plugins/removeEmptyContainers.js
++++ b/plugins/removeEmptyContainers.js
+@@ -49,6 +49,9 @@ exports.fn = () => {
+         if (node.name === 'mask' && node.attributes.id != null) {
+           return;
+         }
++        if (parentNode.type === 'element' && parentNode.name === 'switch') {
++          return;
++        }
+         detachNodeFromParent(node, parentNode);
+       },
+     },

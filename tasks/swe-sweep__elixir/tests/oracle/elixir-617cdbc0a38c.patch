@@ -1,0 +1,13 @@
+diff --git a/lib/elixir/lib/exception.ex b/lib/elixir/lib/exception.ex
+index fab805194..8aeb2f52c 100644
+--- a/lib/elixir/lib/exception.ex
++++ b/lib/elixir/lib/exception.ex
+@@ -2718,7 +2718,7 @@ defmodule ErlangError do
+           {:ok, reason, IO.iodata_to_binary([":\n\n" | Enum.map(args_errors, &arg_error/1)])}
+ 
+         general = extra[:general] ->
+-          {:ok, reason, ": " <> general}
++          {:ok, reason, ": " <> IO.chardata_to_string(general)}
+ 
+         true ->
+           :error

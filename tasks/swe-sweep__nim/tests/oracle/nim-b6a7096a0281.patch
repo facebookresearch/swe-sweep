@@ -1,0 +1,42 @@
+diff --git a/compiler/semexprs.nim b/compiler/semexprs.nim
+index 4b958c823..05021e069 100644
+--- a/compiler/semexprs.nim
++++ b/compiler/semexprs.nim
+@@ -853,12 +853,15 @@ proc evalAtCompileTime(c: PContext, n: PNode): PNode =
+     #  echo "SUCCESS evaluated at compile time: ", call.renderTree
+ 
+ proc semStaticExpr(c: PContext, n: PNode): PNode =
++  let oldErrorCount = c.config.errorCounter
+   inc c.inStaticContext
+   openScope(c)
+   let a = semExprWithType(c, n)
+   closeScope(c)
+   dec c.inStaticContext
+-  if a.findUnresolvedStatic != nil: return a
++  if a.findUnresolvedStatic != nil or
++      c.config.errorCounter != oldErrorCount:
++    return a
+   result = evalStaticExpr(c.module, c.idgen, c.graph, a, c.p.owner)
+   if result.isNil:
+     localError(c.config, n.info, errCannotInterpretNodeX % renderTree(n))
+diff --git a/compiler/semstmts.nim b/compiler/semstmts.nim
+index 380c50ce5..d31bb5a9a 100644
+--- a/compiler/semstmts.nim
++++ b/compiler/semstmts.nim
+@@ -2919,13 +2919,15 @@ proc semPragmaBlock(c: PContext, n: PNode; expectedType: PType = nil): PNode =
+ proc semStaticStmt(c: PContext, n: PNode): PNode =
+   #echo "semStaticStmt"
+   #writeStackTrace()
++  let oldErrorCount = c.config.errorCounter
+   inc c.inStaticContext
+   openScope(c)
+   let a = semStmt(c, n[0], {})
+   closeScope(c)
+   dec c.inStaticContext
+   n[0] = a
+-  evalStaticStmt(c.module, c.idgen, c.graph, a, c.p.owner)
++  if c.config.errorCounter == oldErrorCount:
++    evalStaticStmt(c.module, c.idgen, c.graph, a, c.p.owner)
+   when false:
+     # for incremental replays, keep the AST as required for replays:
+     result = n

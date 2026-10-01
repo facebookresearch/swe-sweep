@@ -1,0 +1,26 @@
+diff --git a/modules/imgproc/test/test_color.cpp b/modules/imgproc/test/test_color.cpp
+index e1fb21bd40..450cf57923 100644
+--- a/modules/imgproc/test/test_color.cpp
++++ b/modules/imgproc/test/test_color.cpp
+@@ -3062,4 +3062,21 @@ TEST(ImgProc_BGR2RGBA, 3ch24ch)
+     EXPECT_DOUBLE_EQ(cvtest::norm(expected - dst, NORM_INF), 0.);
+ }
+ 
++TEST(ImgProc_cvtColorTwoPlane, missing_check_17036)  // test can be removed if required feature is implemented
++{
++    std::vector<uchar> y_data(700 * 480);
++    std::vector<uchar> uv_data(640 * 240);
++
++    Mat y_plane_padding(480, 640, CV_8UC1, y_data.data(), 700);  // with stride
++    Mat uv_plane(240, 320, CV_8UC2, uv_data.data());
++
++    Mat result;
++
++    EXPECT_THROW(
++        cvtColorTwoPlane(y_plane_padding, uv_plane, result, COLOR_YUV2RGB_NV21);
++        , cv::Exception
++    );
++}
++
++
+ }} // namespace

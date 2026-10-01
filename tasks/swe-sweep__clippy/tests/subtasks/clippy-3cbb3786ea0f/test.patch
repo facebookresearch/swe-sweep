@@ -1,0 +1,57 @@
+diff --git a/tests/ui/neg_multiply.fixed b/tests/ui/neg_multiply.fixed
+index ff6e08300..32d466e88 100644
+--- a/tests/ui/neg_multiply.fixed
++++ b/tests/ui/neg_multiply.fixed
+@@ -82,3 +82,15 @@ fn float() {
+ 
+     -1.0 * -1.0; // should be ok
+ }
++
++struct Y {
++    delta: f64,
++}
++
++fn nested() {
++    let a = Y { delta: 1.0 };
++    let b = Y { delta: 1.0 };
++    let _ = (-(a.delta - 0.5).abs()).total_cmp(&1.0);
++    //~^ neg_multiply
++    let _ = (-(a.delta - 0.5).abs()).total_cmp(&1.0);
++}
+diff --git a/tests/ui/neg_multiply.rs b/tests/ui/neg_multiply.rs
+index b0f4e85c7..241a72c6d 100644
+--- a/tests/ui/neg_multiply.rs
++++ b/tests/ui/neg_multiply.rs
+@@ -82,3 +82,15 @@ fn float() {
+ 
+     -1.0 * -1.0; // should be ok
+ }
++
++struct Y {
++    delta: f64,
++}
++
++fn nested() {
++    let a = Y { delta: 1.0 };
++    let b = Y { delta: 1.0 };
++    let _ = ((a.delta - 0.5).abs() * -1.0).total_cmp(&1.0);
++    //~^ neg_multiply
++    let _ = (-(a.delta - 0.5).abs()).total_cmp(&1.0);
++}
+diff --git a/tests/ui/neg_multiply.stderr b/tests/ui/neg_multiply.stderr
+index 2ef7e32ce..f4fb6d3ce 100644
+--- a/tests/ui/neg_multiply.stderr
++++ b/tests/ui/neg_multiply.stderr
+@@ -97,5 +97,11 @@ error: this multiplication by -1 can be written more succinctly
+ LL |     (3.0_f32 as f64) * -1.0;
+    |     ^^^^^^^^^^^^^^^^^^^^^^^ help: consider using: `-(3.0_f32 as f64)`
+ 
+-error: aborting due to 16 previous errors
++error: this multiplication by -1 can be written more succinctly
++  --> tests/ui/neg_multiply.rs:93:13
++   |
++LL |     let _ = ((a.delta - 0.5).abs() * -1.0).total_cmp(&1.0);
++   |             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ help: consider using: `(-(a.delta - 0.5).abs())`
++
++error: aborting due to 17 previous errors
+ 

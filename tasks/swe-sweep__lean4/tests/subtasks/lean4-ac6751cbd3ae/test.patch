@@ -1,0 +1,22 @@
+diff --git a/tests/lean/run/3146.lean b/tests/lean/run/3146.lean
+new file mode 100644
+index 0000000000..1facd54b12
+--- /dev/null
++++ b/tests/lean/run/3146.lean
+@@ -0,0 +1,13 @@
++/-
++  Verifies that `let`-bodies are reduced accordingly when trying to construct default fields.
++  Fixes `#3146`
++-/
++
++def Product (m₁ : Type → Type) (m₂ : Type → Type) (α : Type) := m₁ α × m₂ α
++
++instance [Monad m₁] [Monad m₂] : Monad (Product m₁ m₂) where
++  pure x := (pure x, pure x)
++  bind o f :=
++    let y₁ := do f (← o.1) |>.1
++    let y₂ := do f (← o.2) |>.2
++    (y₁, y₂)
+diff --git a/tests/lean/run/3146.lean.expected.out b/tests/lean/run/3146.lean.expected.out
+new file mode 100644
+index 0000000000..e69de29bb2

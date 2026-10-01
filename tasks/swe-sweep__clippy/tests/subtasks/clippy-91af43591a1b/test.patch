@@ -1,0 +1,61 @@
+diff --git a/tests/ui/crashes/missing_const_for_fn_14774.fixed b/tests/ui/crashes/missing_const_for_fn_14774.fixed
+new file mode 100644
+index 000000000..9c85c4b84
+--- /dev/null
++++ b/tests/ui/crashes/missing_const_for_fn_14774.fixed
+@@ -0,0 +1,13 @@
++//@compile-flags: -Z validate-mir
++#![warn(clippy::missing_const_for_fn)]
++
++static BLOCK_FN_DEF: fn(usize) -> usize = {
++    //~v missing_const_for_fn
++    const fn foo(a: usize) -> usize {
++        a + 10
++    }
++    foo
++};
++struct X;
++
++fn main() {}
+diff --git a/tests/ui/crashes/missing_const_for_fn_14774.rs b/tests/ui/crashes/missing_const_for_fn_14774.rs
+new file mode 100644
+index 000000000..6519be612
+--- /dev/null
++++ b/tests/ui/crashes/missing_const_for_fn_14774.rs
+@@ -0,0 +1,13 @@
++//@compile-flags: -Z validate-mir
++#![warn(clippy::missing_const_for_fn)]
++
++static BLOCK_FN_DEF: fn(usize) -> usize = {
++    //~v missing_const_for_fn
++    fn foo(a: usize) -> usize {
++        a + 10
++    }
++    foo
++};
++struct X;
++
++fn main() {}
+diff --git a/tests/ui/crashes/missing_const_for_fn_14774.stderr b/tests/ui/crashes/missing_const_for_fn_14774.stderr
+new file mode 100644
+index 000000000..a407376d0
+--- /dev/null
++++ b/tests/ui/crashes/missing_const_for_fn_14774.stderr
+@@ -0,0 +1,17 @@
++error: this could be a `const fn`
++  --> tests/ui/crashes/missing_const_for_fn_14774.rs:6:5
++   |
++LL | /     fn foo(a: usize) -> usize {
++LL | |         a + 10
++LL | |     }
++   | |_____^
++   |
++   = note: `-D clippy::missing-const-for-fn` implied by `-D warnings`
++   = help: to override `-D warnings` add `#[allow(clippy::missing_const_for_fn)]`
++help: make the function `const`
++   |
++LL |     const fn foo(a: usize) -> usize {
++   |     +++++
++
++error: aborting due to 1 previous error
++

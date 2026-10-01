@@ -1,0 +1,22 @@
+diff --git a/codec-dns/src/main/java/io/netty/handler/codec/dns/AbstractDnsRecord.java b/codec-dns/src/main/java/io/netty/handler/codec/dns/AbstractDnsRecord.java
+index 9584ee9b76..ff38c967c0 100644
+--- a/codec-dns/src/main/java/io/netty/handler/codec/dns/AbstractDnsRecord.java
++++ b/codec-dns/src/main/java/io/netty/handler/codec/dns/AbstractDnsRecord.java
+@@ -129,7 +129,7 @@ public abstract class AbstractDnsRecord implements DnsRecord {
+ 
+         return type().intValue() == that.type().intValue() &&
+                dnsClass() == that.dnsClass() &&
+-               name().equals(that.name());
++               name().equalsIgnoreCase(that.name());
+     }
+ 
+     @Override
+@@ -139,7 +139,7 @@ public abstract class AbstractDnsRecord implements DnsRecord {
+             return hashCode;
+         }
+ 
+-        return this.hashCode = name.hashCode() * 31 + type().intValue() * 31 + dnsClass();
++        return this.hashCode = name.toLowerCase().hashCode() * 31 + type().intValue() * 31 + dnsClass();
+     }
+ 
+     @Override

@@ -1,0 +1,19 @@
+diff --git a/src/Symfony/Component/Workflow/Workflow.php b/src/Symfony/Component/Workflow/Workflow.php
+index 1bad55e3584..818fbc2f7b5 100644
+--- a/src/Symfony/Component/Workflow/Workflow.php
++++ b/src/Symfony/Component/Workflow/Workflow.php
+@@ -391,7 +391,13 @@ class Workflow implements WorkflowInterface
+         $this->dispatcher->dispatch($event, WorkflowEvents::ENTERED);
+         $this->dispatcher->dispatch($event, sprintf('workflow.%s.entered', $this->name));
+ 
+-        foreach ($marking->getPlaces() as $placeName => $nbToken) {
++        $placeNames = [];
++        if ($transition) {
++            $placeNames = $transition->getTos();
++        } elseif ($this->definition->getInitialPlaces()) {
++            $placeNames = $this->definition->getInitialPlaces();
++        }
++        foreach ($placeNames as $placeName) {
+             $this->dispatcher->dispatch($event, sprintf('workflow.%s.entered.%s', $this->name, $placeName));
+         }
+     }

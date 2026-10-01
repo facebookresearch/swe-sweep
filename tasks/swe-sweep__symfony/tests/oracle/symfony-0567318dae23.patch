@@ -1,0 +1,13 @@
+diff --git a/src/Symfony/Component/HttpKernel/DependencyInjection/RegisterControllerArgumentLocatorsPass.php b/src/Symfony/Component/HttpKernel/DependencyInjection/RegisterControllerArgumentLocatorsPass.php
+index 65bf1ef4c8b..7d13c223a6a 100644
+--- a/src/Symfony/Component/HttpKernel/DependencyInjection/RegisterControllerArgumentLocatorsPass.php
++++ b/src/Symfony/Component/HttpKernel/DependencyInjection/RegisterControllerArgumentLocatorsPass.php
+@@ -159,7 +159,7 @@ class RegisterControllerArgumentLocatorsPass implements CompilerPassInterface
+                         continue;
+                     } elseif (!$autowire || (!($autowireAttributes ??= $p->getAttributes(Autowire::class, \ReflectionAttribute::IS_INSTANCEOF)) && (!$type || '\\' !== $target[0]))) {
+                         continue;
+-                    } elseif (is_subclass_of($type, \UnitEnum::class)) {
++                    } elseif (!$autowireAttributes && is_subclass_of($type, \UnitEnum::class)) {
+                         // do not attempt to register enum typed arguments if not already present in bindings
+                         continue;
+                     } elseif (!$p->allowsNull()) {

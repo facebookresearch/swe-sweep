@@ -1,0 +1,131 @@
+{
+  "build_jobs": 4,
+  "container_repo": "/fasthttp",
+  "evaluation": {
+    "suite": {
+      "eval_roots": [
+        "."
+      ],
+      "type": "go"
+    },
+    "test_dirs": [
+      "examples",
+      "fuzzit",
+      "testdata"
+    ],
+    "test_timeout": 600
+  },
+  "upstream_image": "pandora-maxbug-fasthttp:v1.71.0",
+  "n_base_passing": 852,
+  "n_base_test_ignore": 26,
+  "oracle_digest": "7a48c7086b119988e7bedce03b2bf5cc72fff17f00d5c9b0a7de5c1c3d0c13e4",
+  "oracle_pristine_paths": [],
+  "upstream_commit": "9f7399e15e6172900e0591deb5a57a45769d8205",
+  "reproduction": {
+    "needs_build": false,
+    "suite": {
+      "eval_roots": [
+        "."
+      ],
+      "type": "go"
+    }
+  },
+  "schema": 2,
+  "subtasks": [
+    {
+      "f2p": [
+        ".::TestServeFSDoesNotLeakCacheCleaner"
+      ],
+      "id": "fasthttp-1f6c046e880e",
+      "target_files": [
+        "fs.go"
+      ]
+    },
+    {
+      "f2p": [
+        ".::TestFSCompressTmpFileSymlink"
+      ],
+      "id": "fasthttp-60b32f488664",
+      "target_files": [
+        "fs.go"
+      ]
+    },
+    {
+      "f2p": [
+        ".::TestServeConnCountsConcurrencyOnce"
+      ],
+      "id": "fasthttp-7e99b2571873",
+      "target_files": [
+        "server.go"
+      ]
+    },
+    {
+      "f2p": [
+        "fasthttpadaptor::TestConvertRequestPreservesDuplicateHeaders"
+      ],
+      "id": "fasthttp-81051054a7bb",
+      "target_files": [
+        "fasthttpadaptor/request.go"
+      ]
+    },
+    {
+      "f2p": [
+        ".::TestCloseIdleConnsKeepsTimestampOwnedByItsConn"
+      ],
+      "id": "fasthttp-9b727a3d45e2",
+      "target_files": [
+        "server.go"
+      ]
+    },
+    {
+      "f2p": [
+        ".::TestRequestHeaderKeySettersSanitizeNewlines",
+        ".::TestRequestHeaderKeySettersSanitizeNewlines/Add",
+        ".::TestRequestHeaderKeySettersSanitizeNewlines/Set",
+        ".::TestRequestHeaderKeySettersSanitizeNewlines/SetBytesKV",
+        ".::TestRequestHeaderKeySettersSanitizeNewlines/SetBytesV",
+        ".::TestResponseHeaderKeySettersSanitizeNewlines",
+        ".::TestResponseHeaderKeySettersSanitizeNewlines/Add",
+        ".::TestResponseHeaderKeySettersSanitizeNewlines/Set",
+        ".::TestResponseHeaderKeySettersSanitizeNewlines/SetBytesKV",
+        ".::TestResponseHeaderKeySettersSanitizeNewlines/SetBytesV"
+      ],
+      "id": "fasthttp-ac23017e1217",
+      "target_files": [
+        "header.go"
+      ]
+    },
+    {
+      "f2p": [
+        ".::TestRequestHeaderReadError"
+      ],
+      "id": "fasthttp-b86b7c7cb0e0",
+      "target_files": [
+        "header.go"
+      ]
+    },
+    {
+      "f2p": [
+        ".::TestClientRedirect303DropsBodyFramingHeaders",
+        ".::TestClientRedirectMethodSwitch",
+        ".::TestClientRedirectMethodSwitch/GET_/redirect-303",
+        ".::TestClientRedirectMethodSwitch/POST_/redirect-303"
+      ],
+      "id": "fasthttp-ea09506c5879",
+      "target_files": [
+        "client.go"
+      ]
+    },
+    {
+      "f2p": [
+        ".::TestURIUpdate"
+      ],
+      "id": "fasthttp-ff27d096e7ce",
+      "target_files": [
+        "uri.go"
+      ]
+    }
+  ],
+  "task": "fasthttp",
+  "version": "v1.71.0"
+}

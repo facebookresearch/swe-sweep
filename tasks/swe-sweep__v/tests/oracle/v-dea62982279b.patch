@@ -1,0 +1,110 @@
+diff --git a/vlib/v/ast/ast.v b/vlib/v/ast/ast.v
+index 257760773..5bcf7a7ac 100644
+--- a/vlib/v/ast/ast.v
++++ b/vlib/v/ast/ast.v
+@@ -265,15 +265,16 @@ pub:
+ 	mut_pos    token.Pos
+ 	next_token token.Kind
+ pub mut:
+-	expr                Expr // expr.field_name
+-	expr_type           Type // type of `Foo` in `Foo.bar`
+-	typ                 Type // type of the entire thing (`Foo.bar`)
+-	name_type           Type // T in `T.name` or typeof in `typeof(expr).name`
+-	or_block            OrExpr
+-	gkind_field         GenericKindField // `T.name` => ast.GenericKindField.name, `T.typ` => ast.GenericKindField.typ, or .unknown
+-	scope               &Scope = unsafe { nil }
+-	from_embed_types    []Type // holds the type of the embed that the method is called from
+-	has_hidden_receiver bool
++	expr                     Expr // expr.field_name
++	expr_type                Type // type of `Foo` in `Foo.bar`
++	typ                      Type // type of the entire thing (`Foo.bar`)
++	name_type                Type // T in `T.name` or typeof in `typeof(expr).name`
++	or_block                 OrExpr
++	gkind_field              GenericKindField // `T.name` => ast.GenericKindField.name, `T.typ` => ast.GenericKindField.typ, or .unknown
++	scope                    &Scope = unsafe { nil }
++	from_embed_types         []Type   // holds the type of the embed that the method is called from
++	generic_from_embed_types [][]Type // holds the types of the embeds for each generic instance when the same generic method is called.
++	has_hidden_receiver      bool
+ }
+ 
+ // root_ident returns the origin ident where the selector started.
+diff --git a/vlib/v/checker/checker.v b/vlib/v/checker/checker.v
+index 1230b6141..d354d0263 100644
+--- a/vlib/v/checker/checker.v
++++ b/vlib/v/checker/checker.v
+@@ -1409,6 +1409,7 @@ fn (mut c Checker) selector_expr(mut node ast.SelectorExpr) ast.Type {
+ 					ast.StructField{}, []ast.Type{}
+ 				}
+ 				node.from_embed_types = embed_types
++				node.generic_from_embed_types << embed_types
+ 			}
+ 		}
+ 	}
+diff --git a/vlib/v/gen/c/cgen.v b/vlib/v/gen/c/cgen.v
+index a6e103ce1..9bde8cf53 100644
+--- a/vlib/v/gen/c/cgen.v
++++ b/vlib/v/gen/c/cgen.v
+@@ -3601,20 +3601,26 @@ fn (mut g Gen) selector_expr(node ast.SelectorExpr) {
+ 	}
+ 	// struct embedding
+ 	if sym.info in [ast.Struct, ast.Aggregate] {
+-		for i, embed in node.from_embed_types {
+-			embed_sym := g.table.sym(embed)
+-			embed_name := embed_sym.embed_name()
+-			is_left_ptr := if i == 0 {
+-				node.expr_type.is_ptr()
++		if node.generic_from_embed_types.len > 0 && sym.info is ast.Struct {
++			if sym.info.embeds.len > 0 {
++				mut is_find := false
++				for arr_val in node.generic_from_embed_types {
++					if arr_val.len > 0 {
++						if arr_val[0] == sym.info.embeds[0] {
++							g.write_selector_expr_embed_name(node, arr_val)
++							is_find = true
++							break
++						}
++					}
++				}
++				if !is_find {
++					g.write_selector_expr_embed_name(node, node.from_embed_types)
++				}
+ 			} else {
+-				node.from_embed_types[i - 1].is_ptr()
++				g.write_selector_expr_embed_name(node, node.from_embed_types)
+ 			}
+-			if is_left_ptr {
+-				g.write('->')
+-			} else {
+-				g.write('.')
+-			}
+-			g.write(embed_name)
++		} else {
++			g.write_selector_expr_embed_name(node, node.from_embed_types)
+ 		}
+ 	}
+ 	alias_to_ptr := sym.info is ast.Alias && (sym.info as ast.Alias).parent_type.is_ptr()
+@@ -3639,6 +3645,24 @@ fn (mut g Gen) selector_expr(node ast.SelectorExpr) {
+ 	if sym.kind in [.interface_, .sum_type] {
+ 		g.write('))')
+ 	}
++}
++
++fn (mut g Gen) write_selector_expr_embed_name(node ast.SelectorExpr, embed_types []ast.Type) {
++	for i, embed in embed_types {
++		embed_sym := g.table.sym(embed)
++		embed_name := embed_sym.embed_name()
++		is_left_ptr := if i == 0 {
++			node.expr_type.is_ptr()
++		} else {
++			embed_types[i - 1].is_ptr()
++		}
++		if is_left_ptr {
++			g.write('->')
++		} else {
++			g.write('.')
++		}
++		g.write(embed_name)
++	}
+ }
+ 
+ fn (mut g Gen) enum_decl(node ast.EnumDecl) {

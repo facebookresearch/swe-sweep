@@ -1,0 +1,26 @@
+diff --git a/src/bytes/bytes_test.go b/src/bytes/bytes_test.go
+index 985aa0b147..b407fe8a2d 100644
+--- a/src/bytes/bytes_test.go
++++ b/src/bytes/bytes_test.go
+@@ -723,6 +723,8 @@ var splittests = []SplitTest{
+ 	{"1 2", " ", 3, []string{"1", "2"}},
+ 	{"123", "", 2, []string{"1", "23"}},
+ 	{"123", "", 17, []string{"1", "2", "3"}},
++	{"\xff-\xff", "", -1, []string{"\xff", "-", "\xff"}},
++	{"\xff-\xff", "-", -1, []string{"\xff", "\xff"}},
+ }
+ 
+ func TestSplit(t *testing.T) {
+diff --git a/src/strings/strings_test.go b/src/strings/strings_test.go
+index 9e7fb85ddf..a1604c2c47 100644
+--- a/src/strings/strings_test.go
++++ b/src/strings/strings_test.go
+@@ -402,6 +402,8 @@ var splittests = []SplitTest{
+ 	{faces, "~", -1, []string{faces}},
+ 	{"1 2 3 4", " ", 3, []string{"1", "2", "3 4"}},
+ 	{"1 2", " ", 3, []string{"1", "2"}},
++	{"\xff-\xff", "", -1, []string{"\xff", "-", "\xff"}},
++	{"\xff-\xff", "-", -1, []string{"\xff", "\xff"}},
+ }
+ 
+ func TestSplit(t *testing.T) {

@@ -1,0 +1,32 @@
+diff --git a/lib/elixir/test/elixir/code_formatter/calls_test.exs b/lib/elixir/test/elixir/code_formatter/calls_test.exs
+index 9705b78bf..6dc9925ef 100644
+--- a/lib/elixir/test/elixir/code_formatter/calls_test.exs
++++ b/lib/elixir/test/elixir/code_formatter/calls_test.exs
+@@ -165,6 +165,11 @@ defmodule Code.Formatter.CallsTest do
+ 
+       assert_format bad, good, @short_length
+     end
++
++    test "for maps" do
++      assert_same "a(%{x: 1})", @short_length
++      assert_format "ab(%{x: 1})", "ab(%{\n  x: 1\n})", @short_length
++    end
+   end
+ 
+   describe "local calls" do
+diff --git a/lib/elixir/test/elixir/config/provider_test.exs b/lib/elixir/test/elixir/config/provider_test.exs
+index d46a09b5f..460274366 100644
+--- a/lib/elixir/test/elixir/config/provider_test.exs
++++ b/lib/elixir/test/elixir/config/provider_test.exs
+@@ -41,8 +41,9 @@ defmodule Config.ProviderTest do
+              {:elixir, [:unknown, :nested, :key], {:ok, :value}}
+            ]) == :ok
+ 
+-    assert Config.Provider.validate_compile_env([{:elixir, [:unknown, :nested, :unknown], :error}]) ==
+-             :ok
++    assert Config.Provider.validate_compile_env([
++             {:elixir, [:unknown, :nested, :unknown], :error}
++           ]) == :ok
+ 
+     assert {:error, msg} =
+              Config.Provider.validate_compile_env([{:elixir, [:unknown, :nested], :error}])

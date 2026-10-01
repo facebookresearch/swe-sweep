@@ -1,0 +1,45 @@
+diff --git a/tests/ui/cmp_null.fixed b/tests/ui/cmp_null.fixed
+index 140ddb10a..04b8ec501 100644
+--- a/tests/ui/cmp_null.fixed
++++ b/tests/ui/cmp_null.fixed
+@@ -33,3 +33,9 @@ fn main() {
+     let _ = (x as *const ()).is_null();
+     //~^ cmp_null
+ }
++
++fn issue15010() {
++    let f: *mut i32 = std::ptr::null_mut();
++    debug_assert!(!f.is_null());
++    //~^ cmp_null
++}
+diff --git a/tests/ui/cmp_null.rs b/tests/ui/cmp_null.rs
+index 16ed17765..6f7762e6a 100644
+--- a/tests/ui/cmp_null.rs
++++ b/tests/ui/cmp_null.rs
+@@ -33,3 +33,9 @@ fn main() {
+     let _ = x as *const () == ptr::null();
+     //~^ cmp_null
+ }
++
++fn issue15010() {
++    let f: *mut i32 = std::ptr::null_mut();
++    debug_assert!(f != std::ptr::null_mut());
++    //~^ cmp_null
++}
+diff --git a/tests/ui/cmp_null.stderr b/tests/ui/cmp_null.stderr
+index 6821846d0..8a75b0501 100644
+--- a/tests/ui/cmp_null.stderr
++++ b/tests/ui/cmp_null.stderr
+@@ -31,5 +31,11 @@ error: comparing with null is better expressed by the `.is_null()` method
+ LL |     let _ = x as *const () == ptr::null();
+    |             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ help: try: `(x as *const ()).is_null()`
+ 
+-error: aborting due to 5 previous errors
++error: comparing with null is better expressed by the `.is_null()` method
++  --> tests/ui/cmp_null.rs:39:19
++   |
++LL |     debug_assert!(f != std::ptr::null_mut());
++   |                   ^^^^^^^^^^^^^^^^^^^^^^^^^ help: try: `!f.is_null()`
++
++error: aborting due to 6 previous errors
+ 

@@ -1,0 +1,64 @@
+diff --git a/test/configCases/sharing/consume-module/index.js b/test/configCases/sharing/consume-module/index.js
+index e5b826490..442fdecde 100644
+--- a/test/configCases/sharing/consume-module/index.js
++++ b/test/configCases/sharing/consume-module/index.js
+@@ -193,6 +193,15 @@ it("should handle version matching correctly in strict and singleton mode", async
+ 		singleton: {
+ 			"1.1.1": {
+ 				get: () => () => "shared singleton"
++			}
++		},
++		singletonWithoutVersion: {
++			"1.0.0": {
++				get: () => () => "shared singleton v1.0.0",
++				loaded: true
++			},
++			"2.0.0": {
++				get: () => () => "shared singleton v2.0.0"
+ 			}
+ 		}
+ 	};
+@@ -233,3 +242,21 @@ it("should handle version matching correctly in strict and singleton mode", async
+ 		);
+ 	}
+ });
++
++it("should not instantiate multiple singletons even if a higher version exists", async () => {
++	__webpack_share_scopes__["default"] = {
++		singletonWithoutVersion: {
++			"1.0.0": {
++				get: () => () => "shared singleton v1.0.0",
++				loaded: true
++			},
++			"2.0.0": {
++				get: () => () => "shared singleton v2.0.0"
++			}
++		}
++	};
++	{
++		const result = await import("singletonWithoutVersion");
++		expect(result.default).toBe("shared singleton v1.0.0");
++	}
++});
+diff --git a/test/configCases/sharing/consume-module/node_modules/singletonWithoutVersion.js b/test/configCases/sharing/consume-module/node_modules/singletonWithoutVersion.js
+new file mode 100644
+index 000000000..eb02ddc06
+--- /dev/null
++++ b/test/configCases/sharing/consume-module/node_modules/singletonWithoutVersion.js
+@@ -0,0 +1 @@
++module.exports = "singleton without version";
+diff --git a/test/configCases/sharing/consume-module/webpack.config.js b/test/configCases/sharing/consume-module/webpack.config.js
+index 5354e8f8d..e64023cbe 100644
+--- a/test/configCases/sharing/consume-module/webpack.config.js
++++ b/test/configCases/sharing/consume-module/webpack.config.js
+@@ -54,6 +54,10 @@ module.exports = {
+ 					requiredVersion: "1.1.0",
+ 					singleton: true,
+ 					strictVersion: false
++				},
++				singletonWithoutVersion: {
++					requiredVersion: false,
++					singleton: true
+ 				}
+ 			}
+ 		})

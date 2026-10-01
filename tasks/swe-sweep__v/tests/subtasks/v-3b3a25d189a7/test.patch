@@ -1,0 +1,19 @@
+diff --git a/vlib/v/tests/option_map_fn_type_value_test.v b/vlib/v/tests/option_map_fn_type_value_test.v
+new file mode 100644
+index 000000000..2ba561109
+--- /dev/null
++++ b/vlib/v/tests/option_map_fn_type_value_test.v
+@@ -0,0 +1,13 @@
++const mouse_action_to_function_map = {
++	1: handle_mouse_down_signal
++}
++
++fn handle_mouse_down_signal() string {
++	return 'hello'
++}
++
++fn test_option_map_fn_type_value() {
++	t := mouse_action_to_function_map[1] or { return }
++	println(t())
++	assert t() == 'hello'
++}

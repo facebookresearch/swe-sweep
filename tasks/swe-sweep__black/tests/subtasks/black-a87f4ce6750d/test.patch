@@ -1,0 +1,41 @@
+diff --git a/tests/data/simple_cases/bytes_docstring.py b/tests/data/simple_cases/bytes_docstring.py
+new file mode 100644
+index 00000000..2326e952
+--- /dev/null
++++ b/tests/data/simple_cases/bytes_docstring.py
+@@ -0,0 +1,34 @@
++def bitey():
++    b" not a docstring"
++
++def bitey2():
++    b' also not a docstring'
++
++def triple_quoted_bytes():
++    b""" not a docstring"""
++
++def triple_quoted_bytes2():
++    b''' also not a docstring'''
++
++def capitalized_bytes():
++    B" NOT A DOCSTRING"
++
++# output
++def bitey():
++    b" not a docstring"
++
++
++def bitey2():
++    b" also not a docstring"
++
++
++def triple_quoted_bytes():
++    b""" not a docstring"""
++
++
++def triple_quoted_bytes2():
++    b""" also not a docstring"""
++
++
++def capitalized_bytes():
++    b" NOT A DOCSTRING"
+\ No newline at end of file

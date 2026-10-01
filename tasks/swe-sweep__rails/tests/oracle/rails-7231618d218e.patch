@@ -1,0 +1,20 @@
+diff --git a/activerecord/lib/active_record/log_subscriber.rb b/activerecord/lib/active_record/log_subscriber.rb
+index c45b9dab3e8..b5c2942fdfc 100644
+--- a/activerecord/lib/active_record/log_subscriber.rb
++++ b/activerecord/lib/active_record/log_subscriber.rb
+@@ -51,7 +51,14 @@ module ActiveRecord
+ 
+         binds = []
+         payload[:binds].each_with_index do |attr, i|
+-          attribute_name = attr.respond_to?(:name) ? attr.name : attr[i].name
++          attribute_name = if attr.respond_to?(:name)
++            attr.name
++          elsif attr.respond_to?(:[]) && attr[i].respond_to?(:name)
++            attr[i].name
++          else
++            nil
++          end
++
+           filtered_params = filter(attribute_name, casted_params[i])
+ 
+           binds << render_bind(attr, filtered_params)

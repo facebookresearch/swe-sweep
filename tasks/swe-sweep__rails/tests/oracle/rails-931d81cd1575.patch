@@ -1,0 +1,15 @@
+diff --git a/activesupport/lib/active_support/core_ext/enumerable.rb b/activesupport/lib/active_support/core_ext/enumerable.rb
+index fb5a6d48fdf..c996b154b3f 100644
+--- a/activesupport/lib/active_support/core_ext/enumerable.rb
++++ b/activesupport/lib/active_support/core_ext/enumerable.rb
+@@ -144,8 +144,8 @@ module Enumerable
+   def many?
+     cnt = 0
+     if block_given?
+-      any? do |element|
+-        cnt += 1 if yield element
++      any? do |element, *args|
++        cnt += 1 if yield element, *args
+         cnt > 1
+       end
+     else

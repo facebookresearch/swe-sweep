@@ -1,0 +1,34 @@
+diff --git a/gix-discover/src/path.rs b/gix-discover/src/path.rs
+index 969b8427b..ea3cf7e1b 100644
+--- a/gix-discover/src/path.rs
++++ b/gix-discover/src/path.rs
+@@ -72,6 +72,9 @@ fn read_plain_file_content(path: &std::path::Path) -> Option<std::io::Result<Vec
+ /// Return `None` if `git_dir` isn't called `.git` or isn't within `.git/worktrees` or `.git/modules`, or if it's
+ /// a `.git` suffix like in `foo.git`.
+ /// The check for markers is case-sensitive under the assumption that nobody meddles with standard directories.
++///
++/// As this considers only the path, it cannot recognize linked worktrees of repositories whose Git directory isn't
++/// named `.git`, such as natively bare repositories. Inspect the worktree's `commondir` file to identify those.
+ pub fn repository_kind(git_dir: &Path) -> Option<RepositoryKind> {
+     if git_dir.file_name() == Some(OsStr::new(DOT_GIT_DIR)) {
+         return Some(RepositoryKind::Common);
+diff --git a/gix/src/repository/location.rs b/gix/src/repository/location.rs
+index 50f0ca99a..07d281ca1 100644
+--- a/gix/src/repository/location.rs
++++ b/gix/src/repository/location.rs
+@@ -127,9 +127,14 @@ impl crate::Repository {
+     pub fn kind(&self) -> crate::repository::Kind {
+         use gix_discover::path::RepositoryKind::*;
+         match gix_discover::path::repository_kind(self.git_dir()) {
+-            None | Some(Common) => crate::repository::Kind::Common,
+             Some(Submodule) => crate::repository::Kind::Submodule,
+             Some(LinkedWorktree) => crate::repository::Kind::LinkedWorkTree,
++            // Opening a linked worktree resolves its `commondir` file, making its private Git directory
++            // differ from the shared one. This also detects worktrees of natively bare repositories, whose
++            // private Git directory isn't below a directory named `.git` and thus isn't recognized by the path
++            // heuristic in `repository_kind()`.
++            None if self.git_dir() != self.common_dir() => crate::repository::Kind::LinkedWorkTree,
++            None | Some(Common) => crate::repository::Kind::Common,
+         }
+     }
+ 

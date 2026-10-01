@@ -1,0 +1,31 @@
+diff --git a/plugin/trino-hive/src/test/java/io/trino/plugin/hive/TestShowStats.java b/plugin/trino-hive/src/test/java/io/trino/plugin/hive/TestShowStats.java
+index 971522b9675..1076e3a5536 100644
+--- a/plugin/trino-hive/src/test/java/io/trino/plugin/hive/TestShowStats.java
++++ b/plugin/trino-hive/src/test/java/io/trino/plugin/hive/TestShowStats.java
+@@ -227,6 +227,26 @@ public class TestShowStats
+                         "   (null, null, null, null, 15.0, null, null)");
+     }
+ 
++    @Test
++    public void testShowStatsWithBoolean()
++    {
++        assertQuery(
++                "SHOW STATS FOR (VALUES true)",
++                "VALUES " +
++                        "   ('_col0', null, 1, 0, null, 'true', 'true'), " +
++                        "   (null, null, null, null, 1, null, null)");
++        assertQuery(
++                "SHOW STATS FOR (VALUES false)",
++                "VALUES " +
++                        "   ('_col0', null, 1, 0, null, 'false', 'false'), " +
++                        "   (null, null, null, null, 1, null, null)");
++        assertQuery(
++                "SHOW STATS FOR (VALUES true, false)",
++                "VALUES " +
++                        "   ('_col0', null, 2, 0, null, 'false', 'true'), " +
++                        "   (null, null, null, null, 2, null, null)");
++    }
++
+     @Test
+     public void testShowStatsWithTimestamp()
+     {

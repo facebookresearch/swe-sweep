@@ -1,0 +1,43 @@
+diff --git a/tests/test_item.rs b/tests/test_item.rs
+index 74ac4ba..ec6c502 100644
+--- a/tests/test_item.rs
++++ b/tests/test_item.rs
+@@ -43,3 +43,38 @@ fn test_macro_variable_attr() {
+     }
+     "###);
+ }
++
++#[test]
++fn test_impl_trait_trailing_plus() {
++    let tokens = quote! {
++        fn f() -> impl Sized + {}
++    };
++
++    snapshot!(tokens as Item, @r###"
++    Item::Fn {
++        vis: Inherited,
++        sig: Signature {
++            ident: "f",
++            generics: Generics,
++            output: Type(
++                Type::ImplTrait {
++                    bounds: [
++                        Trait(TraitBound {
++                            modifier: None,
++                            path: Path {
++                                segments: [
++                                    PathSegment {
++                                        ident: "Sized",
++                                        arguments: None,
++                                    },
++                                ],
++                            },
++                        }),
++                    ],
++                },
++            ),
++        },
++        block: Block,
++    }
++    "###);
++}

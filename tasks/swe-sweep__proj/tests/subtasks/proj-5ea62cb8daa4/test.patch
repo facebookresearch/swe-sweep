@@ -1,0 +1,17 @@
+diff --git a/test/unit/test_datum.cpp b/test/unit/test_datum.cpp
+index 423438cca..b06d5dbc1 100644
+--- a/test/unit/test_datum.cpp
++++ b/test/unit/test_datum.cpp
+@@ -124,6 +124,12 @@ TEST(datum, ellipsoid_from_inverse_flattening) {
+ 
+     EXPECT_FALSE(Ellipsoid::WGS84->isEquivalentTo(
+         Ellipsoid::GRS1980.get(), IComparable::Criterion::EQUIVALENT));
++
++    auto sphere = Ellipsoid::createSphere(PropertyMap(), Length(6378137));
++    EXPECT_FALSE(Ellipsoid::WGS84->isEquivalentTo(
++        sphere.get(), IComparable::Criterion::EQUIVALENT));
++    EXPECT_FALSE(sphere->isEquivalentTo(Ellipsoid::WGS84.get(),
++                                        IComparable::Criterion::EQUIVALENT));
+ }
+ 
+ // ---------------------------------------------------------------------------

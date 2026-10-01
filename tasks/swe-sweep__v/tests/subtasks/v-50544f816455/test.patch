@@ -1,0 +1,21 @@
+diff --git a/vlib/v/tests/selectorexpt_field_name_test.v b/vlib/v/tests/selectorexpt_field_name_test.v
+new file mode 100644
+index 000000000..68fa25be2
+--- /dev/null
++++ b/vlib/v/tests/selectorexpt_field_name_test.v
+@@ -0,0 +1,15 @@
++// for issue 20436
++// phenomenon:
++// close_scope() is lost when selectexpr has two special names: sort and sorted.
++// This problem can be tested using closure arguments.
++struct Foo {
++	sort []int
++}
++
++fn test_main() {
++	f := Foo{}
++
++	fn [f] () {
++		assert f.sort.len == 0
++	}()
++}

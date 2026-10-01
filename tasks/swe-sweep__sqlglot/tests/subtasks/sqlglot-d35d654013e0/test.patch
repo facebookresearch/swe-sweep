@@ -1,0 +1,18 @@
+diff --git a/tests/dialects/test_presto.py b/tests/dialects/test_presto.py
+index 1d9145add1..c066634c14 100644
+--- a/tests/dialects/test_presto.py
++++ b/tests/dialects/test_presto.py
+@@ -1082,6 +1082,13 @@ class TestPresto(Validator):
+                 "snowflake": "CURRENT_USER()",
+             },
+         )
++        self.validate_all(
++            "SELECT NULLABLE FROM system.jdbc.types",
++            read={
++                "presto": "SELECT NULLABLE FROM system.jdbc.types",
++                "trino": "SELECT NULLABLE FROM system.jdbc.types",
++            },
++        )
+ 
+     def test_encode_decode(self):
+         self.validate_identity("FROM_UTF8(x, y)")

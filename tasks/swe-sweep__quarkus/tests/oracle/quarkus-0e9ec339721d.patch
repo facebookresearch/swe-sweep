@@ -1,0 +1,13 @@
+diff --git a/independent-projects/resteasy-reactive/server/runtime/src/main/java/org/jboss/resteasy/reactive/server/core/startup/RuntimeResourceDeployment.java b/independent-projects/resteasy-reactive/server/runtime/src/main/java/org/jboss/resteasy/reactive/server/core/startup/RuntimeResourceDeployment.java
+index 8040becfe51..b8697b15158 100644
+--- a/independent-projects/resteasy-reactive/server/runtime/src/main/java/org/jboss/resteasy/reactive/server/core/startup/RuntimeResourceDeployment.java
++++ b/independent-projects/resteasy-reactive/server/runtime/src/main/java/org/jboss/resteasy/reactive/server/core/startup/RuntimeResourceDeployment.java
+@@ -529,6 +529,8 @@ public class RuntimeResourceDeployment {
+                     Type genericType = genericArguments[0];
+                     if (genericType instanceof Class) {
+                         genericTypeClassName = ((Class<?>) genericType).getName();
++                    } else if (genericType instanceof ParameterizedType) {
++                        genericTypeClassName = ((ParameterizedType) genericType).getRawType().getTypeName();
+                     } else if (genericType instanceof WildcardType) {
+                         WildcardType genericTypeWildcardType = (WildcardType) genericType;
+                         Type[] upperBounds = genericTypeWildcardType.getUpperBounds();

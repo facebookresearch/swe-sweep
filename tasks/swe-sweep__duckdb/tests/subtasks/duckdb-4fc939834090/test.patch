@@ -1,0 +1,17 @@
+diff --git a/test/sql/function/list/list_zip.test b/test/sql/function/list/list_zip.test
+index 243b14b1df..52f3810e0a 100644
+--- a/test/sql/function/list/list_zip.test
++++ b/test/sql/function/list/list_zip.test
+@@ -290,4 +290,12 @@ query I
+ SELECT list_zip([{'a': 1}, {'a': 5}, {'a': 3}])
+ ----
+ [({'a': 1}), ({'a': 5}), ({'a': 3})]
+ 
++statement error
++SELECT list_zip(FALSE)
++----
++
++statement error
++SELECT list_zip(TRUE)
++----
++

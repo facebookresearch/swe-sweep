@@ -1,0 +1,26 @@
+diff --git a/scipy/interpolate/tests/test_fitpack2.py b/scipy/interpolate/tests/test_fitpack2.py
+index ed73dbaaab..4b7da1d9ce 100644
+--- a/scipy/interpolate/tests/test_fitpack2.py
++++ b/scipy/interpolate/tests/test_fitpack2.py
+@@ -495,6 +495,21 @@ class TestRectSphereBivariateSpline(object):
+         assert_allclose(lut(x, y, dtheta=1, dphi=1, grid=False),
+                         _numdiff_2d(lambda x,y: lut(x,y,grid=False), x, y, dx=1, dy=1, eps=1e-6),
+                         rtol=1e-3, atol=1e-3)
++
++    def test_negative_evaluation(self):
++        lats = np.array([25, 30, 35, 40, 45])
++        lons = np.array([-90, -85, -80, -75, 70])
++        mesh = np.meshgrid(lats, lons)
++        data = mesh[0] + mesh[1]  # lon + lat value
++        lat_r = np.radians(lats)
++        lon_r = np.radians(lons)
++        interpolator = RectSphereBivariateSpline(lat_r, lon_r, data)
++        query_lat = np.radians(np.array([35, 37.5]))
++        query_lon = np.radians(np.array([-80, -77.5]))
++        data_interp = interpolator(query_lat, query_lon)
++        ans = np.array([[-45.0, -42.480862],
++                        [-49.0625, -46.54315]])
++        assert_array_almost_equal(data_interp, ans)
+ 
+ 
+ def _numdiff_2d(func, x, y, dx=0, dy=0, eps=1e-8):

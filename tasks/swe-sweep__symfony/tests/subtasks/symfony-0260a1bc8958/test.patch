@@ -1,0 +1,92 @@
+diff --git a/src/Symfony/Component/HttpKernel/Tests/HttpCache/HttpCacheTest.php b/src/Symfony/Component/HttpKernel/Tests/HttpCache/HttpCacheTest.php
+index 9f72723e515..2f0e3ec9864 100644
+--- a/src/Symfony/Component/HttpKernel/Tests/HttpCache/HttpCacheTest.php
++++ b/src/Symfony/Component/HttpKernel/Tests/HttpCache/HttpCacheTest.php
+@@ -13,6 +13,7 @@ namespace Symfony\Component\HttpKernel\Tests\HttpCache;
+ 
+ use Symfony\Bridge\PhpUnit\ExpectDeprecationTrait;
+ use Symfony\Component\EventDispatcher\EventDispatcher;
++use Symfony\Component\HttpFoundation\BinaryFileResponse;
+ use Symfony\Component\HttpFoundation\Request;
+ use Symfony\Component\HttpFoundation\Response;
+ use Symfony\Component\HttpKernel\Event\TerminateEvent;
+@@ -589,6 +590,41 @@ class HttpCacheTest extends HttpCacheTestCase
+         $this->assertTraceNotContains('store');
+     }
+ 
++    public function testDoesNotCacheBinaryFileResponses()
++    {
++        $file = tempnam(sys_get_temp_dir(), 'sf_binary_file_');
++        file_put_contents($file, 'Hello World');
++
++        $this->kernel = new class($file) extends TestHttpKernel {
++            public function __construct(private string $file)
++            {
++                parent::__construct(null, 200, []);
++            }
++
++            public function callController(Request $request): Response
++            {
++                $this->called = true;
++
++                return (new BinaryFileResponse($this->file, 200, ['Content-Type' => 'text/plain']))->setMaxAge(10);
++            }
++        };
++
++        $this->request('GET', '/');
++        $this->assertHttpKernelIsCalled();
++        $this->assertEquals(200, $this->response->getStatusCode());
++
++        $this->request('GET', '/');
++        $this->assertHttpKernelIsCalled();
++        $this->assertTraceNotContains('fresh');
++        $this->assertInstanceOf(BinaryFileResponse::class, $this->response);
++
++        ob_start();
++        $this->response->sendContent();
++        $this->assertSame('Hello World', ob_get_clean());
++
++        unlink($file);
++    }
++
+     public function testCachesResponsesWithExplicitNoCacheDirective()
+     {
+         $time = \DateTimeImmutable::createFromFormat('U', time() + 5);
+diff --git a/src/Symfony/Component/HttpKernel/Tests/HttpCache/StoreTest.php b/src/Symfony/Component/HttpKernel/Tests/HttpCache/StoreTest.php
+index 3dc68b6e1f8..0ccd0cfd482 100644
+--- a/src/Symfony/Component/HttpKernel/Tests/HttpCache/StoreTest.php
++++ b/src/Symfony/Component/HttpKernel/Tests/HttpCache/StoreTest.php
+@@ -12,9 +12,11 @@
+ namespace Symfony\Component\HttpKernel\Tests\HttpCache;
+ 
+ use PHPUnit\Framework\TestCase;
++use Symfony\Component\HttpFoundation\BinaryFileResponse;
+ use Symfony\Component\HttpFoundation\Cookie;
+ use Symfony\Component\HttpFoundation\Request;
+ use Symfony\Component\HttpFoundation\Response;
++use Symfony\Component\HttpFoundation\StreamedResponse;
+ use Symfony\Component\HttpKernel\HttpCache\HttpCache;
+ use Symfony\Component\HttpKernel\HttpCache\Store;
+ 
+@@ -322,6 +324,21 @@ class StoreTest extends TestCase
+         $this->assertNotEmpty($response->headers->getCookies());
+     }
+ 
++    public function testDoesNotStoreResponsesWithUnreadableContent()
++    {
++        $request = Request::create('https://example.com/file');
++        $this->store->write($request, new BinaryFileResponse(__FILE__, 200, ['Cache-Control' => 'max-age=420']));
++
++        $this->assertEmpty($this->getStoreMetadata($request));
++        $this->assertNull($this->store->lookup($request));
++
++        $request = Request::create('https://example.com/stream');
++        $this->store->write($request, new StreamedResponse(static function () { echo 'foo'; }, 200, ['Cache-Control' => 'max-age=420']));
++
++        $this->assertEmpty($this->getStoreMetadata($request));
++        $this->assertNull($this->store->lookup($request));
++    }
++
+     public function testDiscardsInvalidBodyEval()
+     {
+         $request = Request::create('https://example.com/foo');

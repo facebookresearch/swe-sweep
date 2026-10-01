@@ -1,0 +1,13 @@
+diff --git a/plumbing/format/gitignore/pattern.go b/plumbing/format/gitignore/pattern.go
+index 098cb502..450b3cdf 100644
+--- a/plumbing/format/gitignore/pattern.go
++++ b/plumbing/format/gitignore/pattern.go
+@@ -39,6 +39,8 @@ type pattern struct {
+ 
+ // ParsePattern parses a gitignore pattern string into the Pattern structure.
+ func ParsePattern(p string, domain []string) Pattern {
++	// storing domain, copy it to ensure it isn't changed externally
++	domain = append([]string(nil), domain...)
+ 	res := pattern{domain: domain}
+ 
+ 	if strings.HasPrefix(p, inclusionPrefix) {

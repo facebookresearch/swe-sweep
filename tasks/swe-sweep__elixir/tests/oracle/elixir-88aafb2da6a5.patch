@@ -1,0 +1,28 @@
+diff --git a/lib/elixir/src/elixir_clauses.erl b/lib/elixir/src/elixir_clauses.erl
+index 847d68b25..b55f58e6b 100644
+--- a/lib/elixir/src/elixir_clauses.erl
++++ b/lib/elixir/src/elixir_clauses.erl
+@@ -257,6 +257,9 @@ expand_clauses_with_stacktrace(Meta, Fun, Clauses, S, E) ->
+   {Ret, SE} = expand_clauses(Meta, 'try', Fun, Clauses, SS, E),
+   {Ret, SE#elixir_ex{stacktrace=OldStacktrace}}.
+ 
++expand_catch(Meta, [{'when', _, [_, _, _, _ | _]}], _, E) ->
++  Error = {wrong_number_of_args_for_clause, "one or two args", origin(Meta, 'try'), 'catch'},
++  file_error(Meta, E, ?MODULE, Error);
+ expand_catch(_Meta, [_] = Args, S, E) ->
+   head(Args, S, E);
+ expand_catch(_Meta, [_, _] = Args, S, E) ->
+diff --git a/lib/elixir/src/elixir_expand.erl b/lib/elixir/src/elixir_expand.erl
+index 7abc33276..df555f96a 100644
+--- a/lib/elixir/src/elixir_expand.erl
++++ b/lib/elixir/src/elixir_expand.erl
+@@ -812,6 +812,9 @@ expand_for_do_block(_Meta, Expr, S, E, false) ->
+   expand(Expr, S, E);
+ expand_for_do_block(Meta, [{'->', _, _} | _] = Clauses, S, E, {reduce, _}) ->
+   Transformer = fun
++    ({_, _, [[{'when', _, [_, _, _ | _]}], _]}, _) ->
++      file_error(Meta, E, ?MODULE, for_with_reduce_bad_block);
++
+     ({_, _, [[_], _]} = Clause, SA) ->
+       SReset = elixir_env:reset_unused_vars(SA),
+ 

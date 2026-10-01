@@ -1,0 +1,13 @@
+diff --git a/packages/jest-circus/src/run.ts b/packages/jest-circus/src/run.ts
+index 562a49aa38..4d1f69a4e6 100644
+--- a/packages/jest-circus/src/run.ts
++++ b/packages/jest-circus/src/run.ts
+@@ -147,7 +147,7 @@ const _runTest = async (
+   const isSkipped =
+     parentSkipped ||
+     test.mode === 'skip' ||
+-    (hasFocusedTests && test.mode !== 'only') ||
++    (hasFocusedTests && test.mode === undefined) ||
+     (testNamePattern && !testNamePattern.test(getTestID(test)));
+ 
+   if (isSkipped) {

@@ -1,0 +1,13 @@
+diff --git a/lib/rules/no-invalid-position-at-import-rule/index.mjs b/lib/rules/no-invalid-position-at-import-rule/index.mjs
+index e648281b0..16c917c45 100644
+--- a/lib/rules/no-invalid-position-at-import-rule/index.mjs
++++ b/lib/rules/no-invalid-position-at-import-rule/index.mjs
+@@ -46,7 +46,7 @@ const rule = (primary, secondaryOptions) => {
+ 				(isAtRule(node) &&
+ 					nodeName !== 'charset' &&
+ 					nodeName !== 'import' &&
+-					nodeName !== 'layer' &&
++					!(nodeName === 'layer' && typeof node.nodes === 'undefined') &&
+ 					!optionsMatches(secondaryOptions, 'ignoreAtRules', node.name) &&
+ 					isStandardSyntaxAtRule(node)) ||
+ 				(node.type === 'rule' && isStandardSyntaxRule(node))

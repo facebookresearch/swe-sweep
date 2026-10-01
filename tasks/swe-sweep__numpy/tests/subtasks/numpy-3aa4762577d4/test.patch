@@ -1,0 +1,27 @@
+diff --git a/numpy/core/tests/test_multiarray.py b/numpy/core/tests/test_multiarray.py
+index bd8c51ab78f..2df92ee652b 100644
+--- a/numpy/core/tests/test_multiarray.py
++++ b/numpy/core/tests/test_multiarray.py
+@@ -7460,6 +7460,22 @@ class TestArange(object):
+         assert_raises(ZeroDivisionError, np.arange, 0, 0, 0)
+         assert_raises(ZeroDivisionError, np.arange, 0.0, 0.0, 0.0)
+ 
++    def test_require_range(self):
++        assert_raises(TypeError, np.arange)
++        assert_raises(TypeError, np.arange, step=3)
++        assert_raises(TypeError, np.arange, dtype='int64')
++        assert_raises(TypeError, np.arange, start=4)
++
++    def test_start_stop_kwarg(self):
++        keyword_stop = np.arange(stop=3)
++        keyword_zerotostop = np.arange(start=0, stop=3)
++        keyword_start_stop = np.arange(start=3, stop=9)
++
++        assert len(keyword_stop) == 3
++        assert len(keyword_zerotostop) == 3
++        assert len(keyword_start_stop) == 6
++        assert_array_equal(keyword_stop, keyword_zerotostop)
++
+ 
+ class TestArrayFinalize(object):
+     """ Tests __array_finalize__ """

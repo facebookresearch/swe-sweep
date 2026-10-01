@@ -1,0 +1,152 @@
+{
+  "build_jobs": 4,
+  "container_repo": "/nacos",
+  "evaluation": {
+    "suite": "reproduction",
+    "visible_timeout": 14400
+  },
+  "upstream_image": "pandora-maxbug-nacos:3.0.2",
+  "n_base_passing": 325,
+  "n_base_test_ignore": 3,
+  "oracle_digest": "84d3ed757934f52f8c207070b2ad1736fc355b9ccc17d599decf255bfd48aadc",
+  "oracle_pristine_paths": [],
+  "upstream_commit": "9f7399e15e6172900e0591deb5a57a45769d8205",
+  "reproduction": {
+    "jobs_env": "SWESWEEP_BUILD_JOBS",
+    "needs_build": false,
+    "suite": {
+      "goal": "install",
+      "mvn_args": [
+        "-Dcheckstyle.skip=true",
+        "-Dpmd.skip=true",
+        "-Dmaven.javadoc.skip=true",
+        "-Denforcer.skip=true",
+        "-Dmaven.source.skip=true",
+        "-Dlicense.skip=true",
+        "-Drat.skip=true"
+      ],
+      "type": "maven"
+    },
+    "test_timeout": 1800
+  },
+  "schema": 2,
+  "subtasks": [
+    {
+      "f2p": [
+        "com.alibaba.nacos.ai.index.PlainMcpServerIndexTest.searchMcpServerByNameWithMultiplePagesLastPage",
+        "com.alibaba.nacos.ai.index.PlainMcpServerIndexTest.searchMcpServerByNameWithMultiplePagesSecondPage"
+      ],
+      "id": "nacos-07c5632d571e",
+      "target_files": [
+        "ai/src/main/java/com/alibaba/nacos/ai/index/PlainMcpServerIndex.java"
+      ]
+    },
+    {
+      "f2p": [
+        "com.alibaba.nacos.client.config.impl.ConfigFuzzyWatchContextTest.testGetKeepsWaitingOnSpuriousWakeup"
+      ],
+      "id": "nacos-0db50f9c4488",
+      "target_files": [
+        "client/src/main/java/com/alibaba/nacos/client/config/impl/ConfigFuzzyWatchContext.java"
+      ]
+    },
+    {
+      "f2p": [
+        "com.alibaba.nacos.plugin.datasource.impl.mysql.ConfigInfoMapperByMySqlTest.testFindConfigInfoBaseLikeFetchRowsWithGroupKeepsPlaceholderAndParamsAligned"
+      ],
+      "id": "nacos-1c39d132c1d1",
+      "target_files": [
+        "plugin-default-impl/nacos-default-datasource-plugin/nacos-datasource-plugin-base/src/main/java/com/alibaba/nacos/plugin/datasource/impl/base/BaseConfigInfoMapper.java"
+      ]
+    },
+    {
+      "f2p": [
+        "com.alibaba.nacos.common.utils.VersionUtilsTest.testVersionCompareNonNumericPartIsRejected",
+        "com.alibaba.nacos.common.utils.VersionUtilsTest.testVersionCompareTwoDigitMajorIsGreaterThanSingleDigit",
+        "com.alibaba.nacos.common.utils.VersionUtilsTest.testVersionCompareTwoDigitMinorIsGreaterThanSingleDigit",
+        "com.alibaba.nacos.common.utils.VersionUtilsTest.testVersionCompareTwoDigitPatchIsGreaterThanSingleDigit"
+      ],
+      "id": "nacos-4efadd93c699",
+      "target_files": [
+        "common/src/main/java/com/alibaba/nacos/common/utils/VersionUtils.java"
+      ]
+    },
+    {
+      "f2p": [
+        "com.alibaba.nacos.console.controller.v3.config.ConsoleConfigControllerTest.testExportConfigV2WithoutIds"
+      ],
+      "id": "nacos-5102d77f10d8",
+      "target_files": [
+        "console/src/main/java/com/alibaba/nacos/console/controller/v3/config/ConsoleConfigController.java"
+      ]
+    },
+    {
+      "f2p": [
+        "com.alibaba.nacos.maintainer.client.utils.ParamUtilTest.testInitConnectionTimeoutWithException",
+        "com.alibaba.nacos.maintainer.client.utils.ParamUtilTest.testInitMaxRetryTimesWithException",
+        "com.alibaba.nacos.maintainer.client.utils.ParamUtilTest.testInitReadTimeoutWithException",
+        "com.alibaba.nacos.maintainer.client.utils.ParamUtilTest.testInitRefreshIntervalMillsWithException"
+      ],
+      "id": "nacos-7e3dc42b936a",
+      "target_files": [
+        "maintainer-client/src/main/java/com/alibaba/nacos/maintainer/client/utils/ParamUtil.java"
+      ]
+    },
+    {
+      "f2p": [
+        "com.alibaba.nacos.naming.core.HealthOperatorV2ImplTest.testUpdateHealthStatusForPersistentInstance"
+      ],
+      "id": "nacos-81c38aefd8cb",
+      "target_files": [
+        "naming/src/main/java/com/alibaba/nacos/naming/core/HealthOperatorV2Impl.java"
+      ]
+    },
+    {
+      "f2p": [
+        "com.alibaba.nacos.api.naming.utils.NamingUtilsTest.testGetServiceNameTrailingSpliter"
+      ],
+      "id": "nacos-8ac778bb80b4",
+      "target_files": [
+        "api/src/main/java/com/alibaba/nacos/api/naming/utils/NamingUtils.java"
+      ]
+    },
+    {
+      "f2p": [
+        "com.alibaba.nacos.naming.core.InstanceOperatorClientImplTest.testUpdateInstanceWithNullValue"
+      ],
+      "id": "nacos-8dcb0868aadc",
+      "target_files": [
+        "naming/src/main/java/com/alibaba/nacos/naming/core/InstanceOperatorClientImpl.java"
+      ]
+    },
+    {
+      "f2p": [
+        "com.alibaba.nacos.console.handler.impl.inner.config.ConfigInnerHandlerTest.importAndPublishConfigWithNullMetadataItem"
+      ],
+      "id": "nacos-afe165c24cc5",
+      "target_files": [
+        "console/src/main/java/com/alibaba/nacos/console/handler/impl/inner/config/ConfigInnerHandler.java"
+      ]
+    },
+    {
+      "f2p": [
+        "com.alibaba.nacos.plugin.auth.impl.configuration.AuthConfigsTest.testGetAuthPluginPropertiesNeverReturnsNullDuringConcurrentRefresh"
+      ],
+      "id": "nacos-b397c9e96f75",
+      "target_files": [
+        "plugin-default-impl/nacos-default-auth-plugin/src/main/java/com/alibaba/nacos/plugin/auth/impl/configuration/AuthConfigs.java"
+      ]
+    },
+    {
+      "f2p": [
+        "com.alibaba.nacos.config.server.configuration.ConfigChangeConfigsTest.testGetPluginPropertiesNeverReturnsNullDuringConcurrentRefresh"
+      ],
+      "id": "nacos-d236b75085ab",
+      "target_files": [
+        "config/src/main/java/com/alibaba/nacos/config/server/configuration/ConfigChangeConfigs.java"
+      ]
+    }
+  ],
+  "task": "nacos",
+  "version": "3.0.2"
+}

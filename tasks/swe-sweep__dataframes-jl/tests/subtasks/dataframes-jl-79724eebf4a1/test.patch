@@ -1,0 +1,25 @@
+diff --git a/test/dataframe.jl b/test/dataframe.jl
+--- a/test/dataframe.jl
++++ b/test/dataframe.jl
+@@ -620,6 +620,20 @@
+         @test delete!(df, inds) === df
+         @test df == DataFrame(x1=[2], x2=[2])
+     end
+ 
++    df = DataFrame(a=[false, true, true], b=1:3, c=4:6)
++    @test delete!(df, df.a) == DataFrame(a=false, b=1, c=4)
++    df = DataFrame(a=1:3, b=[false, true, true], c=4:6)
++    @test delete!(df, df.b) == DataFrame(a=1, b=false, c=4)
++    df = DataFrame(a=1:3, b=4:6, c=[false, true, true])
++    @test delete!(df, df.c) == DataFrame(a=1, b=4, c=false)
++
++    df = DataFrame(a=[1, 2, 3], b=4:6, c=7:9)
++    @test isempty(delete!(df, df.a))
++    df = DataFrame(a=4:6, b=[1, 2, 3], c=7:9)
++    @test isempty(delete!(df, df.b))
++    df = DataFrame(a=4:6, b=7:9, c=[1, 2, 3])
++    @test isempty(delete!(df, df.c))
++
+     df = DataFrame(a=1, b=2)
+     push!(df.b, 3)
+     @test_throws AssertionError delete!(df, 1)

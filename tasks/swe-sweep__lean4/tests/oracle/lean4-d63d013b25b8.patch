@@ -1,0 +1,34 @@
+diff --git a/src/Init/Data/Float.lean b/src/Init/Data/Float.lean
+index 1469c6a888..f31f76164e 100644
+--- a/src/Init/Data/Float.lean
++++ b/src/Init/Data/Float.lean
+@@ -101,13 +101,13 @@ Returns an undefined value if `x` is not finite.
+ instance : ToString Float where
+   toString := Float.toString
+ 
++@[extern "lean_uint64_to_float"] opaque UInt64.toFloat (n : UInt64) : Float
++
+ instance : Repr Float where
+-  reprPrec n _ := Float.toString n
++  reprPrec n prec := if n < UInt64.toFloat 0 then Repr.addAppParen (toString n) prec else toString n
+ 
+ instance : ReprAtom Float  := ⟨⟩
+ 
+-@[extern "lean_uint64_to_float"] opaque UInt64.toFloat (n : UInt64) : Float
+-
+ @[extern "sin"] opaque Float.sin : Float → Float
+ @[extern "cos"] opaque Float.cos : Float → Float
+ @[extern "tan"] opaque Float.tan : Float → Float
+diff --git a/src/Init/Data/Repr.lean b/src/Init/Data/Repr.lean
+index bfcfbac8e8..2c45dc14c2 100644
+--- a/src/Init/Data/Repr.lean
++++ b/src/Init/Data/Repr.lean
+@@ -230,7 +230,7 @@ protected def Int.repr : Int → String
+     | negSucc m => "-" ++ Nat.repr (succ m)
+ 
+ instance : Repr Int where
+-  reprPrec i _ := i.repr
++  reprPrec i prec := if i < 0 then Repr.addAppParen i.repr prec else i.repr
+ 
+ def hexDigitRepr (n : Nat) : String :=
+   String.singleton <| Nat.digitChar n

@@ -1,0 +1,23 @@
+diff --git a/pulsar-functions/utils/src/test/java/org/apache/pulsar/functions/utils/FunctionConfigUtilsTest.java b/pulsar-functions/utils/src/test/java/org/apache/pulsar/functions/utils/FunctionConfigUtilsTest.java
+index ef4e72dc8d0..8f46199e8ff 100644
+--- a/pulsar-functions/utils/src/test/java/org/apache/pulsar/functions/utils/FunctionConfigUtilsTest.java
++++ b/pulsar-functions/utils/src/test/java/org/apache/pulsar/functions/utils/FunctionConfigUtilsTest.java
+@@ -158,6 +158,18 @@ public class FunctionConfigUtilsTest {
+         );
+     }
+ 
++    @Test
++    public void testConvertBatchBuilder() {
++        FunctionConfig functionConfig = createFunctionConfig();
++        functionConfig.setBatchBuilder("KEY_BASED");
++
++        Function.FunctionDetails functionDetails = FunctionConfigUtils.convert(functionConfig, (ClassLoader) null);
++        assertEquals(functionDetails.getSink().getProducerSpec().getBatchBuilder(), "KEY_BASED");
++
++        FunctionConfig convertedConfig = FunctionConfigUtils.convertFromDetails(functionDetails);
++        assertEquals(convertedConfig.getProducerConfig().getBatchBuilder(), "KEY_BASED");
++    }
++
+     @Test
+     public void testMergeEqual() {
+         FunctionConfig functionConfig = createFunctionConfig();

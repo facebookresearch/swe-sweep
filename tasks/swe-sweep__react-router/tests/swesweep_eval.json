@@ -1,0 +1,167 @@
+{
+  "build_jobs": 4,
+  "container_repo": "/react-router",
+  "evaluation": {
+    "suite": "reproduction",
+    "visible_timeout": 7200
+  },
+  "upstream_image": "pandora-maxbug-react-router:7.7.1",
+  "n_base_passing": 2271,
+  "n_base_test_ignore": 15,
+  "oracle_digest": "7ce46b6c2b75ea0698abd5674d95c345c8c3e94014a32a3bc0e09c44dd90417b",
+  "oracle_pristine_paths": [],
+  "upstream_commit": "9f7399e15e6172900e0591deb5a57a45769d8205",
+  "reproduction": {
+    "jobs_env": "SWESWEEP_BUILD_JOBS",
+    "needs_build": false,
+    "suite": "jest",
+    "test_timeout": 900
+  },
+  "schema": 2,
+  "subtasks": [
+    {
+      "f2p": [
+        "special character tests when matching as param values handles encoded hashes in ancestor splat route segments",
+        "special character tests when matching as param values handles encoded question marks in ancestor splat route segments"
+      ],
+      "id": "react-router-157812e64924",
+      "target_files": [
+        "packages/react-router/lib/hooks.tsx"
+      ]
+    },
+    {
+      "f2p": [
+        "context/middleware middleware - client side ordering runs middleware even if no loaders exist"
+      ],
+      "id": "react-router-2729e88f146e",
+      "target_files": [
+        "packages/react-router/lib/router/router.ts"
+      ]
+    },
+    {
+      "f2p": [
+        "fetchers navigating with inflight fetchers properly ignores aborted action revalidation fetchers when a navigation triggers revalidations"
+      ],
+      "id": "react-router-3c3264707164",
+      "target_files": [
+        "packages/react-router/lib/router/router.ts"
+      ]
+    },
+    {
+      "f2p": [
+        "Router: <DataBrowserRouter> handles race conditions if router initialization completes prior to the layout effect router.subscribe() call",
+        "Router: <DataHashRouter> handles race conditions if router initialization completes prior to the layout effect router.subscribe() call"
+      ],
+      "id": "react-router-5768a3fa0ced",
+      "target_files": [
+        "packages/react-router/lib/components.tsx"
+      ]
+    },
+    {
+      "f2p": [
+        "path matching with optional segments optional static segment in nested absolute routes (middle)",
+        "path matching with optional segments optional static segments in nested absolute routes (leading)"
+      ],
+      "id": "react-router-579a545249be",
+      "target_files": [
+        "packages/react-router/lib/router/utils.ts"
+      ]
+    },
+    {
+      "f2p": [
+        "matchPath optional segments should NOT match optional param when pathname has extra characters after base",
+        "matchPath optional segments should NOT match when pathname extends base path without separator",
+        "matchPath optional segments should NOT match when pathname extends base path without separator (middle optional param)"
+      ],
+      "id": "react-router-5fb158f0901c",
+      "target_files": [
+        "packages/react-router/lib/router/utils.ts"
+      ]
+    },
+    {
+      "f2p": [
+        "navigation blocking on history push revalidation while blocked preserves a 'blocked' blocker through a revalidation"
+      ],
+      "id": "react-router-82b30b108777",
+      "target_files": [
+        "packages/react-router/lib/router/router.ts"
+      ]
+    },
+    {
+      "f2p": [
+        "NavLink using a data router applies the 'pending' className to a NavLink whose 'to' has a trailing slash"
+      ],
+      "id": "react-router-9db1d7f6b03a",
+      "target_files": [
+        "packages/react-router/lib/dom/lib.tsx"
+      ]
+    },
+    {
+      "f2p": [
+        "Lazy Route Discovery (Fog of War) discovers child routes at a depth >1 when a separate matching param route exists (GET navigation)",
+        "Lazy Route Discovery (Fog of War) discovers child routes at a depth >1 when a separate matching param route exists (POST navigation)"
+      ],
+      "id": "react-router-b385a49d10f3",
+      "target_files": [
+        "packages/react-router/lib/router/router.ts"
+      ]
+    },
+    {
+      "f2p": [
+        "generatePath with params followed by static text handles multiple extensions",
+        "generatePath with params followed by static text interpolates params with file extensions",
+        "useParams maintains compatibility with generatePath"
+      ],
+      "id": "react-router-c3d313e077ea",
+      "target_files": [
+        "packages/react-router/lib/router/utils.ts"
+      ]
+    },
+    {
+      "f2p": [
+        "Lazy Route Discovery (Fog of War) errors handles errors thrown from patchRoutesOnNavigation() when there are no partial matches (GET navigation)",
+        "Lazy Route Discovery (Fog of War) errors handles errors thrown from patchRoutesOnNavigation() when there are no partial matches (POST navigation)"
+      ],
+      "id": "react-router-c49ebeff94ff",
+      "target_files": [
+        "packages/react-router/lib/router/router.ts"
+      ]
+    },
+    {
+      "f2p": [
+        "special character tests when matching as param values handles encoded percent signs in ancestor splat route segments"
+      ],
+      "id": "react-router-c8602710da4e",
+      "target_files": [
+        "packages/react-router/lib/hooks.tsx"
+      ]
+    },
+    {
+      "f2p": [
+        "matchPath optional static segments should match multiple optional segments and none are provided",
+        "matchPath optional static segments should match multiple optional segments and one is provided",
+        "matchPath optional static segments should match when end optional segment is *not* provided",
+        "matchPath optional static segments should match when middle optional segment is *not* provided",
+        "matchPath optional static segments should match when optional segment is *not* provided"
+      ],
+      "id": "react-router-d595e1c1ceb2",
+      "target_files": [
+        "packages/react-router/lib/router/utils.ts"
+      ]
+    },
+    {
+      "f2p": [
+        "Router: <DataBrowserRouter> submit() with relative=\"path\" submits relative to the URL for fetchers",
+        "Router: <DataBrowserRouter> submit() with relative=\"path\" submits relative to the URL for navigations",
+        "Router: <DataHashRouter> submit() with relative=\"path\" submits relative to the URL for fetchers",
+        "Router: <DataHashRouter> submit() with relative=\"path\" submits relative to the URL for navigations"
+      ],
+      "id": "react-router-e09909079888",
+      "target_files": [
+        "packages/react-router/lib/dom/lib.tsx"
+      ]
+    }
+  ],
+  "task": "react-router",
+  "version": "7.7.1"
+}

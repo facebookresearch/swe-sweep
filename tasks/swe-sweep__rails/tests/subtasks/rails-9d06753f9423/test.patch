@@ -1,0 +1,52 @@
+diff --git a/activerecord/test/cases/associations/has_many_associations_test.rb b/activerecord/test/cases/associations/has_many_associations_test.rb
+index b09a74ed0ac..078a316b90d 100644
+--- a/activerecord/test/cases/associations/has_many_associations_test.rb
++++ b/activerecord/test/cases/associations/has_many_associations_test.rb
+@@ -116,7 +116,7 @@ class HasManyAssociationsTest < ActiveRecord::TestCase
+   fixtures :accounts, :categories, :companies, :developers, :projects,
+            :developers_projects, :topics, :authors, :author_addresses, :comments,
+            :posts, :readers, :taggings, :cars, :tags,
+-           :categorizations, :zines, :interests
++           :categorizations, :zines, :interests, :humans
+ 
+   def setup
+     Client.destroyed_client_ids.clear
+@@ -2555,6 +2555,14 @@ class HasManyAssociationsTest < ActiveRecord::TestCase
+     assert_equal post, image.imageable
+   end
+ 
++  def test_joining_through_a_polymorphic_association_with_a_where_clause
++    writer   = humans(:gordon)
++    category = categories(:general)
++    TypedEssay.create! category: category, writer: writer
++
++    assert_equal 1, Category.joins(:human_writers_of_typed_essays).count
++  end
++
+   def test_build_with_polymorphic_has_many_does_not_allow_to_override_type_and_id
+     welcome = posts(:welcome)
+     tagging = welcome.taggings.build(taggable_id: 99, taggable_type: "ShouldNotChange")
+diff --git a/activerecord/test/models/category.rb b/activerecord/test/models/category.rb
+index 46725272717..fcdf8b6d31a 100644
+--- a/activerecord/test/models/category.rb
++++ b/activerecord/test/models/category.rb
+@@ -30,6 +30,9 @@ class Category < ActiveRecord::Base
+   has_many :authors, through: :categorizations
+   has_many :authors_with_select, -> { select "authors.*, categorizations.post_id" }, through: :categorizations, source: :author
+ 
++  has_many :essays, primary_key: :name
++  has_many :human_writers_of_typed_essays, -> { where(essays: { type: TypedEssay.name }) }, through: :essays, source: :writer, source_type: "Human", primary_key: :name
++
+   scope :general, -> { where(name: "General") }
+ 
+   # Should be delegated `ast` and `locked` to `arel`.
+diff --git a/activerecord/test/models/essay.rb b/activerecord/test/models/essay.rb
+index 2c616545cec..eb2fb51f1f1 100644
+--- a/activerecord/test/models/essay.rb
++++ b/activerecord/test/models/essay.rb
+@@ -9,3 +9,5 @@ end
+ 
+ class EssaySpecial < Essay
+ end
++class TypedEssay < Essay
++end

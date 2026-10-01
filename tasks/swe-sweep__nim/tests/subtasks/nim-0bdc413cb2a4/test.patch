@@ -1,0 +1,13 @@
+diff --git a/tests/arc/tarcmisc.nim b/tests/arc/tarcmisc.nim
+index 567daf982..3160d8a4d 100644
+--- a/tests/arc/tarcmisc.nim
++++ b/tests/arc/tarcmisc.nim
+@@ -124,7 +124,7 @@ proc test(count: int) =
+ test(3)
+ 
+ proc test2(count: int) =
+-  #block: #XXX: Fails with block currently
++  block: #XXX: Fails with block currently
+     var v {.global.} = newVariable(20)
+ 
+     var count = count - 1

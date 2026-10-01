@@ -1,0 +1,13 @@
+diff --git a/modules/core/src/persistence_xml.cpp b/modules/core/src/persistence_xml.cpp
+index 6141fade2d..ed699758fc 100644
+--- a/modules/core/src/persistence_xml.cpp
++++ b/modules/core/src/persistence_xml.cpp
+@@ -737,6 +737,8 @@ public:
+                 if( c != '\"' && c != '\'' )
+                 {
+                     ptr = skipSpaces( ptr, CV_XML_INSIDE_TAG );
++                    if(!ptr)
++                        CV_PARSE_ERROR_CPP("Invalid attribute value");
+                     if( *ptr != '\"' && *ptr != '\'' )
+                         CV_PARSE_ERROR_CPP( "Attribute value should be put into single or double quotes" );
+                 }

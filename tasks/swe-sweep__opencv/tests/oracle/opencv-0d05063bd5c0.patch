@@ -1,0 +1,13 @@
+diff --git a/modules/core/src/kmeans.cpp b/modules/core/src/kmeans.cpp
+index bca8b9bd79..544882ef1d 100644
+--- a/modules/core/src/kmeans.cpp
++++ b/modules/core/src/kmeans.cpp
+@@ -143,6 +143,8 @@ static void generateCentersPP(const Mat& data, Mat& _out_centers,
+                 std::swap(tdist, tdist2);
+             }
+         }
++        if (bestCenter < 0)
++            CV_Error(Error::StsNoConv, "kmeans: can't update cluster center (check input for huge or NaN values)");
+         centers[k] = bestCenter;
+         sum0 = bestSum;
+         std::swap(dist, tdist);

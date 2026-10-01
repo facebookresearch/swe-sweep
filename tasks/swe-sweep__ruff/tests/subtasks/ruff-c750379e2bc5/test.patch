@@ -1,0 +1,10 @@
+diff --git a/crates/ruff_linter/resources/test/fixtures/refurb/FURB161.py b/crates/ruff_linter/resources/test/fixtures/refurb/FURB161.py
+index a18600c8b7..0736b9dc3a 100644
+--- a/crates/ruff_linter/resources/test/fixtures/refurb/FURB161.py
++++ b/crates/ruff_linter/resources/test/fixtures/refurb/FURB161.py
+@@ -20,3 +20,5 @@ count = 0xA.bit_count()  # OK
+ count = 0o12.bit_count()  # OK
+ count = (0x10 + 0x1000).bit_count()  # OK
+ count = ten().bit_count()  # OK
++count = bin(*[123]).count("1")  # OK
++count = bin(*(123)).count("1")  # OK

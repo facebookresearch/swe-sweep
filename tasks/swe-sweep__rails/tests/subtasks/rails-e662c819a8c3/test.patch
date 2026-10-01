@@ -1,0 +1,15 @@
+diff --git a/activerecord/test/cases/base_test.rb b/activerecord/test/cases/base_test.rb
+index 67a630a0706..9614ae3aeea 100644
+--- a/activerecord/test/cases/base_test.rb
++++ b/activerecord/test/cases/base_test.rb
+@@ -524,6 +524,10 @@ class BasicsTest < ActiveRecord::TestCase
+     assert_equal "posts", PostRecord.table_name
+   end
+ 
++  def test_table_name_for_base_class
++    assert_nil ActiveRecord::Base.table_name
++  end
++
+   def test_null_fields
+     assert_nil Topic.find(1).parent_id
+     assert_nil Topic.create("title" => "Hey you").parent_id

@@ -1,0 +1,12 @@
+diff --git a/scipy/optimize/_trustregion_exact.py b/scipy/optimize/_trustregion_exact.py
+index c0d48d4165..da33f2513d 100644
+--- a/scipy/optimize/_trustregion_exact.py
++++ b/scipy/optimize/_trustregion_exact.py
+@@ -366,6 +366,7 @@ class IterativeSubproblem(BaseQuadraticSubproblem):
+                         # Update damping factor
+                         lambda_current = lambda_new
+                         already_factorized = True
++                        U = c
+                     else:  # Unsuccessful factorization
+                         # Update uncertanty bounds
+                         lambda_lb = max(lambda_lb, lambda_new)

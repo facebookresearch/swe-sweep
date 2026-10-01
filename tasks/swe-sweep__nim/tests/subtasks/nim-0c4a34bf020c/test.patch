@@ -1,0 +1,44 @@
+diff --git a/tests/stdlib/ttasks.nim b/tests/stdlib/ttasks.nim
+index 75fed9f..cd65b66 100644
+--- a/tests/stdlib/ttasks.nim
++++ b/tests/stdlib/ttasks.nim
+@@ -504,3 +504,39 @@ block:
+       b.invoke()
+ 
+     doAssert called == 36
++
++
++block: # bug #23635
++  block:
++    type
++      Store = object
++        run: proc (a: int) {.nimcall, gcsafe.}
++
++    block:
++      var count = 0
++      proc hello(a: int) =
++        inc count, a
++
++      var store = Store()
++      store.run = hello
++
++      let b = toTask store.run(13)
++      b.invoke()
++      doAssert count == 13
++
++  block:
++    type
++      Store = object
++        run: proc () {.nimcall, gcsafe.}
++
++    block:
++      var count = 0
++      proc hello() =
++        inc count, 1
++
++      var store = Store()
++      store.run = hello
++
++      let b = toTask store.run()
++      b.invoke()
++      doAssert count == 1

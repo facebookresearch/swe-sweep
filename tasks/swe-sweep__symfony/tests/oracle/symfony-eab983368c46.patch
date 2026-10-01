@@ -1,0 +1,12 @@
+diff --git a/src/Symfony/Component/Validator/Constraints/Cascade.php b/src/Symfony/Component/Validator/Constraints/Cascade.php
+index 05de8c78bd0..2a339612893 100644
+--- a/src/Symfony/Component/Validator/Constraints/Cascade.php
++++ b/src/Symfony/Component/Validator/Constraints/Cascade.php
+@@ -29,6 +29,7 @@ class Cascade extends Constraint
+     {
+         if (\is_array($exclude) && !array_is_list($exclude)) {
+             $options = array_merge($exclude, $options ?? []);
++            $options['exclude'] = array_flip((array) ($options['exclude'] ?? []));
+         } else {
+             $this->exclude = array_flip((array) $exclude);
+         }

@@ -1,0 +1,32 @@
+diff --git a/compiler/sempass2.nim b/compiler/sempass2.nim
+index 9a27d14..6e17a7e 100644
+--- a/compiler/sempass2.nim
++++ b/compiler/sempass2.nim
+@@ -915,6 +915,7 @@ proc trackCall(tracked: PEffects; n: PNode) =
+ type
+   PragmaBlockContext = object
+     oldLocked: int
++    oldInEnforcedGcSafe, oldInEnforcedNoSideEffects: bool
+     oldLockLevel: TLockLevel
+     enforcedGcSafety, enforceNoSideEffects: bool
+     oldExc, oldTags: int
+@@ -924,6 +925,8 @@ proc createBlockContext(tracked: PEffects): PragmaBlockContext =
+   result = PragmaBlockContext(oldLocked: tracked.locked.len,
+     oldLockLevel: tracked.currLockLevel,
+     enforcedGcSafety: false, enforceNoSideEffects: false,
++    oldInEnforcedGcSafe: tracked.inEnforcedGcSafe,
++    oldInEnforcedNoSideEffects: tracked.inEnforcedNoSideEffects,
+     oldExc: tracked.exc.len, oldTags: tracked.tags.len)
+ 
+ proc applyBlockContext(tracked: PEffects, bc: PragmaBlockContext) =
+@@ -931,8 +934,8 @@ proc applyBlockContext(tracked: PEffects, bc: PragmaBlockContext) =
+   if bc.enforceNoSideEffects: tracked.inEnforcedNoSideEffects = true
+ 
+ proc unapplyBlockContext(tracked: PEffects; bc: PragmaBlockContext) =
+-  if bc.enforcedGcSafety: tracked.inEnforcedGcSafe = false
+-  if bc.enforceNoSideEffects: tracked.inEnforcedNoSideEffects = false
++  if bc.enforcedGcSafety: tracked.inEnforcedGcSafe = bc.oldInEnforcedGcSafe
++  if bc.enforceNoSideEffects: tracked.inEnforcedNoSideEffects = bc.oldInEnforcedNoSideEffects
+   setLen(tracked.locked, bc.oldLocked)
+   tracked.currLockLevel = bc.oldLockLevel
+   if bc.exc != nil:

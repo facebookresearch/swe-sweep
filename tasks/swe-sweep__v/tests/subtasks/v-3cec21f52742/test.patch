@@ -1,0 +1,18 @@
+diff --git a/vlib/v/tests/generics_with_embed_generics_structs_test.v b/vlib/v/tests/generics_with_embed_generics_structs_test.v
+new file mode 100644
+index 000000000..88353f94a
+--- /dev/null
++++ b/vlib/v/tests/generics_with_embed_generics_structs_test.v
+@@ -0,0 +1,12 @@
++struct Foo[T] {
++	field T
++}
++
++struct MainStruct[T] {
++	Foo[T]
++}
++
++fn test_main() {
++	m := MainStruct[int]{}
++	assert m.field == 0
++}

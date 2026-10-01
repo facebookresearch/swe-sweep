@@ -1,0 +1,27 @@
+diff --git a/vlib/v/checker/tests/fn_mismatch_option_return_err.out b/vlib/v/checker/tests/fn_mismatch_option_return_err.out
+new file mode 100644
+index 000000000..2845ea542
+--- /dev/null
++++ b/vlib/v/checker/tests/fn_mismatch_option_return_err.out
+@@ -0,0 +1,7 @@
++vlib/v/checker/tests/fn_mismatch_option_return_err.vv:4:15: error: cannot use `?time.Duration` as type `time.Duration` in return argument
++    2 | 
++    3 | fn foo() time.Duration {
++    4 |     return ?time.Duration(0)
++      |                  ~~~~~~~~~~~
++    5 | }
++    6 |
+diff --git a/vlib/v/checker/tests/fn_mismatch_option_return_err.vv b/vlib/v/checker/tests/fn_mismatch_option_return_err.vv
+new file mode 100644
+index 000000000..1217d6d44
+--- /dev/null
++++ b/vlib/v/checker/tests/fn_mismatch_option_return_err.vv
+@@ -0,0 +1,7 @@
++import time
++
++fn foo() time.Duration {
++	return ?time.Duration(0)
++}
++
++println(foo())
+\ No newline at end of file

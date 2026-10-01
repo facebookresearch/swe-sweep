@@ -1,0 +1,13 @@
+diff --git a/crates/swc_ecma_codegen/src/text_writer/semicolon.rs b/crates/swc_ecma_codegen/src/text_writer/semicolon.rs
+index 582783c92b..1d7d6f3ef5 100644
+--- a/crates/swc_ecma_codegen/src/text_writer/semicolon.rs
++++ b/crates/swc_ecma_codegen/src/text_writer/semicolon.rs
+@@ -68,7 +68,7 @@ impl<W: WriteJs> WriteJs for OmitTrailingSemi<W> {
+ 
+     fn write_punct(&mut self, span: Option<Span>, s: &'static str) -> Result {
+         match s {
+-            "\"" | "'" | "[" | "!" | "/" | "{" | "(" | "~" | "-" | "+" | "#" | "`" => {
++            "\"" | "'" | "[" | "!" | "/" | "{" | "(" | "~" | "-" | "+" | "#" | "`" | "*" => {
+                 self.commit_pending_semi()?;
+             }
+ 

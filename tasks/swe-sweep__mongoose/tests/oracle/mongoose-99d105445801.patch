@@ -1,0 +1,36 @@
+diff --git a/lib/helpers/populate/getModelsMapForPopulate.js b/lib/helpers/populate/getModelsMapForPopulate.js
+--- a/lib/helpers/populate/getModelsMapForPopulate.js
++++ b/lib/helpers/populate/getModelsMapForPopulate.js
+@@ -537,6 +537,7 @@ function addModelNamesToMap(model, map, available, modelNames, options, data, re
+       // Used internally for checking what model was used to populate this
+       // path.
+       options[populateModelSymbol] = Model;
++      currentOptions[populateModelSymbol] = Model;
+ 
+       available[modelName] = {
+         model: Model,
+diff --git a/lib/model.js b/lib/model.js
+--- a/lib/model.js
++++ b/lib/model.js
+@@ -4623,7 +4623,7 @@ const excludeIdReg = /\s?-_id\s?/;
+ const excludeIdRegGlobal = /\s?-_id\s?/g;
+ 
+ function populate(model, docs, options, callback) {
+-  const populateOptions = { ...options };
++  const populateOptions = options;
+   if (options.strictPopulate == null) {
+     if (options._localModel != null && options._localModel.schema._userProvidedOptions.strictPopulate != null) {
+       populateOptions.strictPopulate = options._localModel.schema._userProvidedOptions.strictPopulate;
+diff --git a/lib/types/array/methods/index.js b/lib/types/array/methods/index.js
+--- a/lib/types/array/methods/index.js
++++ b/lib/types/array/methods/index.js
+@@ -224,6 +224,9 @@
+     if (populated && value !== null && value !== undefined) {
+       // cast to the populated Models schema
+       Model = populated.options[populateModelSymbol];
++      if (Model == null) {
++        throw new MongooseError('No populated model found for path `' + this[arrayPathSymbol] + '`. This is likely a bug in Mongoose, please report an issue on github.com/Automattic/mongoose.');
++      }
+ 
+       // only objects are permitted so we can safely assume that
+       // non-objects are to be interpreted as _id

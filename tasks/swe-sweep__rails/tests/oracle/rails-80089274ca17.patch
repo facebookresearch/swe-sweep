@@ -1,0 +1,13 @@
+diff --git a/actionpack/lib/action_dispatch/http/url.rb b/actionpack/lib/action_dispatch/http/url.rb
+index e7fecc7b756..dfb25a599cc 100644
+--- a/actionpack/lib/action_dispatch/http/url.rb
++++ b/actionpack/lib/action_dispatch/http/url.rb
+@@ -181,7 +181,7 @@ module ActionDispatch
+         private
+           def add_params(path, params)
+             params = { params: params } unless params.is_a?(Hash)
+-            params.reject! { |_, v| v.to_param.nil? }
++            params = params.reject { |_, v| v.to_param.nil? }
+             query = params.to_query
+             path << "?#{query}" unless query.empty?
+           end

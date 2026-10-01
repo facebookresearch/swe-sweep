@@ -1,0 +1,55 @@
+diff --git a/src/Compiler/Driver/GraphChecking/DependencyResolution.fs b/src/Compiler/Driver/GraphChecking/DependencyResolution.fs
+index 11ba984ca5..1425ec0f9e 100644
+--- a/src/Compiler/Driver/GraphChecking/DependencyResolution.fs
++++ b/src/Compiler/Driver/GraphChecking/DependencyResolution.fs
+@@ -117,7 +117,7 @@ let rec processStateEntry (trie: TrieNode) (state: FileContentQueryState) (entry
+             FoundDependencies = foundDependencies
+         }
+ 
+-    | ModuleName name ->
++    | FileContentEntry.ModuleName name ->
+         // We need to check if the module name is a hit in the Trie.
+         let state' =
+             let queryResult = queryTrie trie [ name ]
+diff --git a/src/Compiler/Driver/GraphChecking/FileContentMapping.fs b/src/Compiler/Driver/GraphChecking/FileContentMapping.fs
+index 13ee0c312f..c1f6ce8ddb 100644
+--- a/src/Compiler/Driver/GraphChecking/FileContentMapping.fs
++++ b/src/Compiler/Driver/GraphChecking/FileContentMapping.fs
+@@ -9,6 +9,13 @@ type Continuations = ((FileContentEntry list -> FileContentEntry list) -> FileCo
+ let collectFromOption (mapping: 'T -> 'U list) (t: 'T option) : 'U list = List.collect mapping (Option.toList t)
+ 
+ let longIdentToPath (skipLast: bool) (longId: LongIdent) : LongIdentifier =
++
++    // We always skip the "special" `global` identifier.
++    let longId =
++        match longId with
++        | h :: t when h.idText = "`global`" -> t
++        | _ -> longId
++
+     match skipLast, longId with
+     | true, _ :: _ -> List.take (longId.Length - 1) longId
+     | _ -> longId
+diff --git a/src/Compiler/Driver/GraphChecking/Types.fs b/src/Compiler/Driver/GraphChecking/Types.fs
+index c667a573f6..7443df5820 100644
+--- a/src/Compiler/Driver/GraphChecking/Types.fs
++++ b/src/Compiler/Driver/GraphChecking/Types.fs
+@@ -61,6 +61,7 @@ type internal TrieNode =
+ 
+ /// A significant construct found in the syntax tree of a file.
+ /// This construct needs to be processed in order to deduce potential links to other files in the project.
++[<RequireQualifiedAccess; NoComparison; NoEquality>]
+ type internal FileContentEntry =
+     /// Any toplevel namespace a file might have.
+     /// In case a file has `module X.Y.Z`, then `X.Y` is considered to be the toplevel namespace
+diff --git a/src/Compiler/Driver/GraphChecking/Types.fsi b/src/Compiler/Driver/GraphChecking/Types.fsi
+index 096719b6be..5f075a1bad 100644
+--- a/src/Compiler/Driver/GraphChecking/Types.fsi
++++ b/src/Compiler/Driver/GraphChecking/Types.fsi
+@@ -55,6 +55,7 @@ type internal TrieNode =
+ 
+ /// A significant construct found in the syntax tree of a file.
+ /// This construct needs to be processed in order to deduce potential links to other files in the project.
++[<RequireQualifiedAccess; NoComparison; NoEquality>]
+ type internal FileContentEntry =
+     /// Any toplevel namespace a file might have.
+     /// In case a file has `module X.Y.Z`, then `X.Y` is considered to be the toplevel namespace

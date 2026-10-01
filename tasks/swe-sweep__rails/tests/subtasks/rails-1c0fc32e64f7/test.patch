@@ -1,0 +1,26 @@
+diff --git a/actionmailer/test/test_helper_test.rb b/actionmailer/test/test_helper_test.rb
+index de1c3861a96..3ecdac08974 100644
+--- a/actionmailer/test/test_helper_test.rb
++++ b/actionmailer/test/test_helper_test.rb
+@@ -345,6 +345,21 @@ class TestHelperMailerTest < ActionMailer::TestCase
+     end
+   end
+ 
++  def test_assert_enqueued_email_with_when_queue_name_prefix_is_configured
++    previous_prefix = ActiveJob::Base.queue_name_prefix
++    ActiveJob::Base.queue_name_prefix = "prefix"
++
++    assert_nothing_raised do
++      assert_enqueued_email_with TestHelperMailer, :test do
++        silence_stream($stdout) do
++          TestHelperMailer.test.deliver_later
++        end
++      end
++    end
++  ensure
++    ActiveJob::Base.queue_name_prefix = previous_prefix
++  end
++
+   def test_assert_enqueued_email_with_when_mailer_has_custom_delivery_job
+     assert_nothing_raised do
+       assert_enqueued_email_with CustomDeliveryMailer, :test do

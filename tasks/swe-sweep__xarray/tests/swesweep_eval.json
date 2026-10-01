@@ -1,0 +1,339 @@
+{
+  "build_jobs": 4,
+  "container_repo": "/xarray",
+  "evaluation": {
+    "paths": "xarray",
+    "visible_timeout": 7200
+  },
+  "upstream_image": "pandora-maxbug-xarray:2022.03.0",
+  "n_base_passing": 12067,
+  "n_base_test_ignore": 857,
+  "oracle_digest": "9c5a5cdb2599ae98993bc44cf25db338ab56601d2b230e89e8d33b4d66492521",
+  "oracle_pristine_paths": [],
+  "upstream_commit": "9f7399e15e6172900e0591deb5a57a45769d8205",
+  "reproduction": {
+    "needs_build": false,
+    "test_timeout": 900
+  },
+  "schema": 2,
+  "subtasks": [
+    {
+      "f2p": [
+        "xarray.tests.test_concat.TestConcatDataset::test_concat_errors"
+      ],
+      "id": "xarray-078a450ea003",
+      "target_files": [
+        "xarray/core/concat.py"
+      ]
+    },
+    {
+      "f2p": [
+        "xarray.tests.test_calendar_ops::test_convert_calendar_dataset"
+      ],
+      "id": "xarray-08a4e7da2c97",
+      "target_files": [
+        "xarray/coding/calendar_ops.py"
+      ]
+    },
+    {
+      "f2p": [
+        "xarray.tests.test_conventions::test_decode_cf_variable_cftime",
+        "xarray.tests.test_conventions::test_decode_cf_variable_datetime64",
+        "xarray.tests.test_conventions::test_decode_cf_variable_timedelta64"
+      ],
+      "id": "xarray-18155e91b71c",
+      "target_files": [
+        "xarray/conventions.py",
+        "xarray/core/common.py"
+      ]
+    },
+    {
+      "f2p": [
+        "xarray.tests.test_conventions.TestEncodeCFVariable::test_var_with_coord_attr"
+      ],
+      "id": "xarray-1832c6455568",
+      "target_files": [
+        "xarray/conventions.py"
+      ]
+    },
+    {
+      "f2p": [
+        "xarray.tests.test_plot.TestPlotStep::test_drawstyle_steps_with_where[mid]",
+        "xarray.tests.test_plot.TestPlotStep::test_drawstyle_steps_with_where[post]",
+        "xarray.tests.test_plot.TestPlotStep::test_drawstyle_steps_with_where[pre]",
+        "xarray.tests.test_plot.TestPlotStep::test_step_with_hue",
+        "xarray.tests.test_plot.TestPlotStep::test_step_with_hue_and_where[mid]",
+        "xarray.tests.test_plot.TestPlotStep::test_step_with_hue_and_where[post]",
+        "xarray.tests.test_plot.TestPlotStep::test_step_with_hue_and_where[pre]"
+      ],
+      "id": "xarray-1b98ce4c4ea9",
+      "target_files": [
+        "xarray/plot/utils.py"
+      ]
+    },
+    {
+      "f2p": [
+        "xarray.tests.test_conventions.TestDecodeCFVariableWithArrayUnits::test_decode_cf_variable_with_array_units"
+      ],
+      "id": "xarray-20bb4b09e783",
+      "target_files": [
+        "xarray/coding/times.py"
+      ]
+    },
+    {
+      "f2p": [
+        "xarray.tests.test_dataarray::test_rolling_dask_dtype[float32]"
+      ],
+      "id": "xarray-246350d43745",
+      "target_files": [
+        "xarray/core/rolling.py"
+      ]
+    },
+    {
+      "f2p": [
+        "xarray.tests.test_coding_times::test_decode_0size_datetime[False]",
+        "xarray.tests.test_coding_times::test_decode_0size_datetime[True]"
+      ],
+      "id": "xarray-31b690edf761",
+      "target_files": [
+        "xarray/coding/times.py"
+      ]
+    },
+    {
+      "f2p": [
+        "xarray.tests.test_dataset.TestDataset::test_sortby_descending_nans",
+        "xarray.tests.test_dataset.TestDataset::test_sortby_descending_nans_multi_key"
+      ],
+      "id": "xarray-370c36d275cb",
+      "target_files": [
+        "xarray/core/dataset.py"
+      ]
+    },
+    {
+      "f2p": [
+        "xarray.tests.test_dataset.TestDataset::test_chunks_does_not_load_data"
+      ],
+      "id": "xarray-37ab15907308",
+      "target_files": [
+        "xarray/core/common.py"
+      ]
+    },
+    {
+      "f2p": [
+        "xarray.tests.test_computation::test_where_attrs"
+      ],
+      "id": "xarray-44ba8861aa35",
+      "target_files": [
+        "xarray/core/computation.py"
+      ]
+    },
+    {
+      "f2p": [
+        "xarray.tests.test_plot.TestPlot::test_label_from_attrs"
+      ],
+      "id": "xarray-47a489fc3116",
+      "target_files": [
+        "xarray/plot/utils.py"
+      ]
+    },
+    {
+      "f2p": [
+        "xarray.tests.test_groupby::test_groupby_transpose"
+      ],
+      "id": "xarray-4a81eee23af2",
+      "target_files": [
+        "xarray/core/dataarray.py"
+      ]
+    },
+    {
+      "f2p": [
+        "xarray.tests.test_missing::test_interpolate_na_2d[coords1]",
+        "xarray.tests.test_missing::test_interpolate_na_nan_block_lengths[y0-lengths_expected0]",
+        "xarray.tests.test_missing::test_interpolate_na_nan_block_lengths[y1-lengths_expected1]",
+        "xarray.tests.test_missing::test_interpolate_na_nan_block_lengths[y2-lengths_expected2]"
+      ],
+      "id": "xarray-51daf1ac38c5",
+      "target_files": [
+        "xarray/core/missing.py"
+      ]
+    },
+    {
+      "f2p": [
+        "xarray.tests.test_coarsen.TestCoarsenConstruct::test_coarsen_construct_keeps_all_coords"
+      ],
+      "id": "xarray-58e3d4ae5da4",
+      "target_files": [
+        "xarray/core/rolling.py"
+      ]
+    },
+    {
+      "f2p": [
+        "xarray.tests.test_coding_times::test_scalar_unit",
+        "xarray.tests.test_conventions::test_scalar_units"
+      ],
+      "id": "xarray-5d9738162260",
+      "target_files": [
+        "xarray/coding/times.py",
+        "xarray/conventions.py"
+      ]
+    },
+    {
+      "f2p": [
+        "xarray.tests.test_backends::test_source_encoding_always_present_with_pathlib"
+      ],
+      "id": "xarray-5f714659d7b5",
+      "target_files": [
+        "xarray/backends/api.py"
+      ]
+    },
+    {
+      "f2p": [
+        "xarray.tests.test_dataarray.TestDataArray::test_setitem_vectorized",
+        "xarray.tests.test_dataset.TestDataset::test_setitem_vectorized"
+      ],
+      "id": "xarray-628a5dc00b83",
+      "target_files": [
+        "xarray/core/dataarray.py"
+      ]
+    },
+    {
+      "f2p": [
+        "xarray.tests.test_plot.TestDatasetStreamplotPlots::test_facetgrid"
+      ],
+      "id": "xarray-694aa055aac7",
+      "target_files": [
+        "xarray/plot/dataset_plot.py"
+      ]
+    },
+    {
+      "f2p": [
+        "xarray.tests.test_dataset.TestDataset::test_polyfit_weighted"
+      ],
+      "id": "xarray-82b1c3ed7572",
+      "target_files": [
+        "xarray/core/dataset.py"
+      ]
+    },
+    {
+      "f2p": [
+        "xarray.tests.test_backends_locks::test_combined_lock_locked_returns_false_when_no_locks_acquired",
+        "xarray.tests.test_backends_locks::test_combined_lock_locked_returns_true_when_all_locks_acquired",
+        "xarray.tests.test_backends_locks::test_combined_lock_locked_returns_true_when_one_lock_acquired",
+        "xarray.tests.test_backends_locks::test_combined_lock_locked_with_context_manager",
+        "xarray.tests.test_backends_locks::test_combined_lock_locked_with_serializable_locks"
+      ],
+      "id": "xarray-8ac941e396b8",
+      "target_files": [
+        "xarray/backends/locks.py"
+      ]
+    },
+    {
+      "f2p": [
+        "xarray.tests.test_plot.TestPlot::test_multiplot_over_length_one_dim"
+      ],
+      "id": "xarray-8e6cf210d1cc",
+      "target_files": [
+        "xarray/plot/dataarray_plot.py"
+      ]
+    },
+    {
+      "f2p": [
+        "xarray.tests.test_dataarray::test_rolling_wrapped_bottleneck[1-numpy-1-False-argmax]",
+        "xarray.tests.test_dataarray::test_rolling_wrapped_bottleneck[1-numpy-1-False-argmin]",
+        "xarray.tests.test_dataarray::test_rolling_wrapped_bottleneck[1-numpy-1-None-argmax]",
+        "xarray.tests.test_dataarray::test_rolling_wrapped_bottleneck[1-numpy-1-None-argmin]",
+        "xarray.tests.test_dataarray::test_rolling_wrapped_bottleneck[1-numpy-1-True-argmax]",
+        "xarray.tests.test_dataarray::test_rolling_wrapped_bottleneck[1-numpy-1-True-argmin]",
+        "xarray.tests.test_dataarray::test_rolling_wrapped_bottleneck[1-numpy-None-False-argmax]",
+        "xarray.tests.test_dataarray::test_rolling_wrapped_bottleneck[1-numpy-None-False-argmin]",
+        "xarray.tests.test_dataarray::test_rolling_wrapped_bottleneck[1-numpy-None-None-argmax]",
+        "xarray.tests.test_dataarray::test_rolling_wrapped_bottleneck[1-numpy-None-None-argmin]",
+        "xarray.tests.test_dataarray::test_rolling_wrapped_bottleneck[1-numpy-None-True-argmax]",
+        "xarray.tests.test_dataarray::test_rolling_wrapped_bottleneck[1-numpy-None-True-argmin]"
+      ],
+      "id": "xarray-9d67f7e1e62b",
+      "target_files": [
+        "xarray/core/rolling.py"
+      ]
+    },
+    {
+      "f2p": [
+        "xarray.tests.test_duck_array_ops::test_mean_over_long_spanning_datetime64[False]",
+        "xarray.tests.test_duck_array_ops::test_mean_over_long_spanning_datetime64[True]"
+      ],
+      "id": "xarray-aacc030f5e7a",
+      "target_files": [
+        "xarray/core/duck_array_ops.py"
+      ]
+    },
+    {
+      "f2p": [
+        "xarray.tests.test_dataset.TestDataset::test_where_drop"
+      ],
+      "id": "xarray-cc3b7ca9eed6",
+      "target_files": [
+        "xarray/core/common.py"
+      ]
+    },
+    {
+      "f2p": [
+        "xarray.tests.test_backends.TestZarrDictStore::test_with_chunkstore"
+      ],
+      "id": "xarray-cd608fb63dba",
+      "target_files": [
+        "xarray/backends/zarr.py"
+      ]
+    },
+    {
+      "f2p": [
+        "xarray.tests.test_plot::test_get_axis[figsize_kwargs]",
+        "xarray.tests.test_plot::test_get_axis[size_kwargs]"
+      ],
+      "id": "xarray-d2f11b8163bb",
+      "target_files": [
+        "xarray/plot/plot.py",
+        "xarray/plot/utils.py"
+      ]
+    },
+    {
+      "f2p": [
+        "xarray.tests.test_dataarray::test_lazy_data_variable_not_loaded"
+      ],
+      "id": "xarray-d6be572ccf3d",
+      "target_files": [
+        "xarray/core/variable.py"
+      ]
+    },
+    {
+      "f2p": [
+        "xarray.tests.test_coding_times::test_decode_cf_datetime_uint[uint16]",
+        "xarray.tests.test_coding_times::test_decode_cf_datetime_uint[uint32]",
+        "xarray.tests.test_coding_times::test_decode_cf_datetime_uint[uint8]"
+      ],
+      "id": "xarray-dad8e8de1bca",
+      "target_files": [
+        "xarray/coding/times.py"
+      ]
+    },
+    {
+      "f2p": [
+        "xarray.tests.test_dataset.TestDataset::test_unstack_fill_value"
+      ],
+      "id": "xarray-e50fd4059ba3",
+      "target_files": [
+        "xarray/core/dataset.py"
+      ]
+    },
+    {
+      "f2p": [
+        "xarray.tests.test_variable.TestAsCompatibleData::test_masked_array"
+      ],
+      "id": "xarray-edc6ce6a7155",
+      "target_files": [
+        "xarray/core/variable.py"
+      ]
+    }
+  ],
+  "task": "xarray",
+  "version": "2022.03.0"
+}

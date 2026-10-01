@@ -1,0 +1,14 @@
+diff --git a/pandas/_libs/intervaltree.pxi.in b/pandas/_libs/intervaltree.pxi.in
+index e7a310513d..0d7c96a6f2 100644
+--- a/pandas/_libs/intervaltree.pxi.in
++++ b/pandas/_libs/intervaltree.pxi.in
+@@ -81,7 +81,8 @@ cdef class IntervalTree(IntervalMixin):
+         """How to sort the left labels; this is used for binary search
+         """
+         if self._left_sorter is None:
+-            self._left_sorter = np.argsort(self.left)
++            values = [self.right, self.left]
++            self._left_sorter = np.lexsort(values)
+         return self._left_sorter
+ 
+     @property

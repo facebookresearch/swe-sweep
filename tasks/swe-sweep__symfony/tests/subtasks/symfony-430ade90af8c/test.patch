@@ -1,0 +1,41 @@
+diff --git a/src/Symfony/Component/Yaml/Tests/InlineTest.php b/src/Symfony/Component/Yaml/Tests/InlineTest.php
+index d4275f48b94..71d2b7d216f 100644
+--- a/src/Symfony/Component/Yaml/Tests/InlineTest.php
++++ b/src/Symfony/Component/Yaml/Tests/InlineTest.php
+@@ -334,6 +334,7 @@ class InlineTest extends TestCase
+             ['123.45_67', 123.4567],
+             ['0x4D2', 0x4D2],
+             ['0x_4_D_2_', 0x4D2],
++            ['0X4D2', '0X4D2'],
+             ['0o2333', 02333],
+             ['0o_2_3_3_3', 02333],
+             ['.Inf', -log(0)],
+@@ -499,6 +500,7 @@ class InlineTest extends TestCase
+             ['1234', 0x4D2],
+             ['1243', 02333],
+             ["'0x_4_D_2_'", '0x_4_D_2_'],
++            ['0X4D2', '0X4D2'],
+             ["'0_2_3_3_3'", '0_2_3_3_3'],
+             ['.Inf', -log(0)],
+             ['-.Inf', log(0)],
+diff --git a/src/Symfony/Component/Yaml/Tests/ParserTest.php b/src/Symfony/Component/Yaml/Tests/ParserTest.php
+index 1e6d9a3380c..e8da33d5c11 100644
+--- a/src/Symfony/Component/Yaml/Tests/ParserTest.php
++++ b/src/Symfony/Component/Yaml/Tests/ParserTest.php
+@@ -1228,6 +1228,16 @@ class ParserTest extends TestCase
+         $this->parser->parse($yaml);
+     }
+ 
++    public function testUppercaseHexadecimalPrefixKeys()
++    {
++        $yaml = <<<'EOF'
++            0X4D2: foo
++            0x4D2: bar
++            EOF;
++
++        $this->assertSame(['0X4D2' => 'foo', 1234 => 'bar'], $this->parser->parse($yaml));
++    }
++
+     public function testExplicitStringCasting()
+     {
+         $yaml = <<<'EOF'

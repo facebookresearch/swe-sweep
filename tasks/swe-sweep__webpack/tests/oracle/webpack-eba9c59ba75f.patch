@@ -1,0 +1,14 @@
+diff --git a/lib/util/semver.js b/lib/util/semver.js
+index b74800797..3207ff179 100644
+--- a/lib/util/semver.js
++++ b/lib/util/semver.js
+@@ -153,6 +153,9 @@ exports.parseRange = str => {
+ 				}
+ 				return [1, ...remainder.slice(1)];
+ 			case "~":
++				if (remainder.length === 2 && remainder[0] === 0) {
++					return [1, ...remainder.slice(1)];
++				}
+ 				return [2, ...remainder.slice(1)];
+ 			case ">=":
+ 				return remainder;

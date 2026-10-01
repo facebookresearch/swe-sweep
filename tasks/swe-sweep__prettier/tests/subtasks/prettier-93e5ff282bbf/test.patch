@@ -1,0 +1,66 @@
+diff --git a/tests/format/js/comments/16398.js b/tests/format/js/comments/16398.js
+new file mode 100644
+index 000000000..38588282a
+--- /dev/null
++++ b/tests/format/js/comments/16398.js
+@@ -0,0 +1,5 @@
++if (foo) a = b;
++/* foo */ else foo.split;
++
++if (foo) a = b;
++else /* foo */ foo.split;
+diff --git a/tests/format/js/comments/__snapshots__/format.test.js.snap b/tests/format/js/comments/__snapshots__/format.test.js.snap
+index 1232832c9..9fcdf2ba9 100644
+--- a/tests/format/js/comments/__snapshots__/format.test.js.snap
++++ b/tests/format/js/comments/__snapshots__/format.test.js.snap
+@@ -1,5 +1,50 @@
+ // Jest Snapshot v1, https://goo.gl/fbAQLP
+ 
++exports[`16398.js - {"semi":false} format 1`] = `
++====================================options=====================================
++parsers: ["babel", "flow", "typescript"]
++printWidth: 80
++semi: false
++                                                                                | printWidth
++=====================================input======================================
++if (foo) a = b;
++/* foo */ else foo.split;
++
++if (foo) a = b;
++else /* foo */ foo.split;
++
++=====================================output=====================================
++if (foo) a = b
++/* foo */ else foo.split
++
++if (foo) a = b
++else /* foo */ foo.split
++
++================================================================================
++`;
++
++exports[`16398.js format 1`] = `
++====================================options=====================================
++parsers: ["babel", "flow", "typescript"]
++printWidth: 80
++                                                                                | printWidth
++=====================================input======================================
++if (foo) a = b;
++/* foo */ else foo.split;
++
++if (foo) a = b;
++else /* foo */ foo.split;
++
++=====================================output=====================================
++if (foo) a = b;
++/* foo */ else foo.split;
++
++if (foo) a = b;
++else /* foo */ foo.split;
++
++================================================================================
++`;
++
+ exports[`arrow.js - {"semi":false} format 1`] = `
+ ====================================options=====================================
+ parsers: ["babel", "flow", "typescript"]

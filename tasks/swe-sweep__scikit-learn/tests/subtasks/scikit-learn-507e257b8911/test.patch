@@ -1,0 +1,25 @@
+diff --git a/sklearn/metrics/cluster/tests/test_supervised.py b/sklearn/metrics/cluster/tests/test_supervised.py
+index d2d2dd6faa..65b585894d 100644
+--- a/sklearn/metrics/cluster/tests/test_supervised.py
++++ b/sklearn/metrics/cluster/tests/test_supervised.py
+@@ -1,4 +1,5 @@
+ import numpy as np
++import pytest
+ from nose.tools import assert_almost_equal
+ from nose.tools import assert_equal
+ from numpy.testing import assert_array_almost_equal
+@@ -236,3 +237,14 @@ def test_fowlkes_mallows_score():
+     worst_score = fowlkes_mallows_score([0, 0, 0, 0, 0, 0],
+                                         [0, 1, 2, 3, 4, 5])
+     assert_almost_equal(worst_score, 0.)
++
++
++@pytest.mark.parametrize('labels_true, labels_pred', [
++    (['a'] * 6, [1, 1, 0, 0, 1, 1]),
++    ([1] * 6, [1, 1, 0, 0, 1, 1]),
++    ([1, 1, 0, 0, 1, 1], ['a'] * 6),
++    ([1, 1, 0, 0, 1, 1], [1] * 6),
++])
++def test_mutual_info_score_positive_constant_label(labels_true, labels_pred):
++    # non-regression test for #16355
++    assert mutual_info_score(labels_true, labels_pred) >= 0

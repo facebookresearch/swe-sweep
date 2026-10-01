@@ -1,0 +1,41 @@
+diff --git a/tests/associations_has_many_test.go b/tests/associations_has_many_test.go
+index b8e8ff5..db397eb 100644
+--- a/tests/associations_has_many_test.go
++++ b/tests/associations_has_many_test.go
+@@ -471,3 +471,15 @@ func TestHasManyAssociationUnscoped(t *testing.T) {
+ 	DB.Model(&users).Association("Toys").Clear()
+ 	AssertAssociationCount(t, users, "Toys", 0, "After Clear")
+ }
++
++func TestHasManyAssociationReplaceWithNonValidValue(t *testing.T) {
++	user := User{Name: "jinzhu", Languages: []Language{{Name: "EN"}}}
++
++	if err := DB.Create(&user).Error; err != nil {
++		t.Fatalf("errors happened when create: %v", err)
++	}
++
++	if err := DB.Model(&user).Association("Languages").Replace(Language{Name: "DE"}, Language{Name: "FR"}); err == nil {
++		t.Error("expected association error to be not nil")
++	}
++}
+diff --git a/tests/associations_has_one_test.go b/tests/associations_has_one_test.go
+index a2c0750..78290ce 100644
+--- a/tests/associations_has_one_test.go
++++ b/tests/associations_has_one_test.go
+@@ -254,4 +254,16 @@ func TestPolymorphicHasOneAssociationForSlice(t *testing.T) {
+ 	// Clear
+ 	DB.Model(&pets).Association("Toy").Clear()
+ 	AssertAssociationCount(t, pets, "Toy", 0, "After Clear")
+ }
++
++func TestHasOneAssociationReplaceWithNonValidValue(t *testing.T) {
++	user := User{Name: "jinzhu", Account: Account{Number: "1"}}
++
++	if err := DB.Create(&user).Error; err != nil {
++		t.Fatalf("errors happened when create: %v", err)
++	}
++
++	if err := DB.Model(&user).Association("Languages").Replace(Account{Number: "2"}); err == nil {
++		t.Error("expected association error to be not nil")
++	}
++}

@@ -1,0 +1,22 @@
+diff --git a/scipy/optimize/tests/test_slsqp.py b/scipy/optimize/tests/test_slsqp.py
+index 9176425642..b291a3b7dc 100644
+--- a/scipy/optimize/tests/test_slsqp.py
++++ b/scipy/optimize/tests/test_slsqp.py
+@@ -509,3 +509,17 @@ class TestSLSQP(object):
+ 
+         problem = NestedProblem()
+         problem.solve()
++
++    def test_gh9640(self):
++        np.random.seed(10)
++        cons = ({'type': 'ineq', 'fun': lambda x: -x[0] - x[1] - 3},
++                {'type': 'ineq', 'fun': lambda x: x[1] + x[2] - 2})
++        bnds = ((-2, 2), (-2, 2), (-2, 2))
++
++        target = lambda x: 1
++        x0 = [-1.8869783504471584, -0.640096352696244, -0.8174212253407696]
++        res = minimize(target, x0, method='SLSQP', bounds=bnds, constraints=cons,
++                       options={'disp':False, 'maxiter':10000})
++
++        # The problem is infeasible, so it cannot succeed
++        assert not res.success

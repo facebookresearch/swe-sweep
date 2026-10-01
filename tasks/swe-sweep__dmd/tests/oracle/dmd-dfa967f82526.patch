@@ -1,0 +1,26 @@
+diff --git a/compiler/src/dmd/toobj.d b/compiler/src/dmd/toobj.d
+index b855d95e02..e93cd6c2c8 100644
+--- a/compiler/src/dmd/toobj.d
++++ b/compiler/src/dmd/toobj.d
+@@ -587,7 +587,7 @@ void toObjFile(Dsymbol ds, bool multiobj)
+                 vd.error("size overflow");
+                 return;
+             }
+-            if (sz64 >= target.maxStaticDataSize)
++            if (sz64 > target.maxStaticDataSize)
+             {
+                 vd.error("size of 0x%llx exceeds max allowed size 0x%llx", sz64, target.maxStaticDataSize);
+             }
+diff --git a/compiler/src/dmd/typesem.d b/compiler/src/dmd/typesem.d
+index 3a2705d0f9..b6d460ba43 100644
+--- a/compiler/src/dmd/typesem.d
++++ b/compiler/src/dmd/typesem.d
+@@ -593,7 +593,7 @@ extern(C++) Type typeSemantic(Type type, const ref Loc loc, Scope* sc)
+                  * run on them for the size, since they may be forward referenced.
+                  */
+                 bool overflow = false;
+-                if (mulu(tbn.size(loc), d2, overflow) >= target.maxStaticDataSize || overflow)
++                if (mulu(tbn.size(loc), d2, overflow) > target.maxStaticDataSize || overflow)
+                     return overflowError();
+             }
+         }

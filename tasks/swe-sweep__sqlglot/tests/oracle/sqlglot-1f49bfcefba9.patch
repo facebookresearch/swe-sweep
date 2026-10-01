@@ -1,0 +1,13 @@
+diff --git a/sqlglot/parser.py b/sqlglot/parser.py
+index edd4f8b19a..f103cf2f0e 100644
+--- a/sqlglot/parser.py
++++ b/sqlglot/parser.py
+@@ -1364,7 +1364,7 @@ class Parser(metaclass=_Parser):
+ 
+     NULL_TOKENS = {TokenType.NULL}
+ 
+-    UNNEST_OFFSET_ALIAS_TOKENS = ID_VAR_TOKENS - SET_OPERATIONS
++    UNNEST_OFFSET_ALIAS_TOKENS = TABLE_ALIAS_TOKENS - SET_OPERATIONS
+ 
+     SELECT_START_TOKENS = {TokenType.L_PAREN, TokenType.WITH, TokenType.SELECT}
+ 

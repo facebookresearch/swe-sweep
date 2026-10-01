@@ -1,0 +1,37 @@
+diff --git a/compiler/test/compilable/issue23391.d b/compiler/test/compilable/issue23391.d
+new file mode 100644
+index 0000000000..d33242ded3
+--- /dev/null
++++ b/compiler/test/compilable/issue23391.d
+@@ -0,0 +1,31 @@
++struct MyTuple {
++    string s;
++}
++
++inout(string) myfront(inout(string)[] a)
++{
++    return a[0];
++}
++
++MyTuple[] myarray(MyZip r)
++{
++    MyTuple[] result;
++    foreach (e; r)
++        result ~= e;
++    return result;
++}
++
++struct MyZip
++{
++    bool empty = false;
++    MyTuple front()
++    {
++        return MyTuple([""].myfront);
++    }
++    void popFront()
++    {
++        empty = true;
++    }
++}
++
++static foreach(t; MyZip().myarray) {}

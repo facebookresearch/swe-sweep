@@ -1,0 +1,15 @@
+diff --git a/lib/query.js b/lib/query.js
+index 7a9b5f87a..df86ff55e 100644
+--- a/lib/query.js
++++ b/lib/query.js
+@@ -5100,7 +5100,9 @@ Query.prototype._castUpdate = function _castUpdate(obj, overwrite) {
+   if (this._mongooseOptions.overwriteDiscriminatorKey &&
+       obj[discriminatorKey] != null &&
+       baseSchema.discriminators) {
+-    const _schema = baseSchema.discriminators[obj[discriminatorKey]];
++    const _schema = Object.values(baseSchema.discriminators).find(
++      discriminator => discriminator.discriminatorMapping.value === obj[discriminatorKey]
++    );
+     if (_schema != null) {
+       schema = _schema;
+     }

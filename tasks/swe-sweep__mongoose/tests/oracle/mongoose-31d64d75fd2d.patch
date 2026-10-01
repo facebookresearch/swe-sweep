@@ -1,0 +1,17 @@
+diff --git a/lib/document.js b/lib/document.js
+index abaf97582..ac08b78ad 100644
+--- a/lib/document.js
++++ b/lib/document.js
+@@ -1670,7 +1670,11 @@ Document.prototype.$__set = function(pathToMark, path, options, constructing, pa
+     val[arrayAtomicsSymbol] = priorVal[arrayAtomicsSymbol];
+     val[arrayAtomicsBackupSymbol] = priorVal[arrayAtomicsBackupSymbol];
+     if (utils.isMongooseDocumentArray(val)) {
+-      val.forEach(doc => { doc.isNew = false; });
++      val.forEach(doc => {
++        if (doc != null) {
++          doc.$isNew = false;
++        }
++      });
+     }
+   }
+ 

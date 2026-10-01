@@ -1,0 +1,25 @@
+diff --git a/numpy/core/tests/test_indexing.py b/numpy/core/tests/test_indexing.py
+--- a/numpy/core/tests/test_indexing.py
++++ b/numpy/core/tests/test_indexing.py
+@@ -519,6 +519,21 @@ class TestIndexing:
+         arr[slices] = 10
+         assert_array_equal(arr, 10.)
+ 
++    @pytest.mark.parametrize("index",
++            [True, False, np.array([0])])
++    @pytest.mark.parametrize("num", [32, 40])
++    @pytest.mark.parametrize("original_ndim", [1, 32])
++    def test_too_many_advanced_indices(self, index, num, original_ndim):
++        # These are limitations based on the number of arguments we can process.
++        # For `num=32` (and all boolean cases), the result is actually define;
++        # but the use of NpyIter (NPY_MAXARGS) limits it for technical reasons.
++        arr = np.ones((1,) * original_ndim)
++        with pytest.raises(IndexError):
++            arr[(index,) * num]
++        with pytest.raises(IndexError):
++            arr[(index,) * num] = 1.
++
++
+ class TestFieldIndexing(object):
+     def test_scalar_return_type(self):
+         # Field access on an array should return an array, even if it

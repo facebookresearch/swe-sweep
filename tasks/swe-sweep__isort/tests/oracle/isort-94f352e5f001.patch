@@ -1,0 +1,14 @@
+diff --git a/isort/core.py b/isort/core.py
+index ff8a5c9a..9824c23b 100644
+--- a/isort/core.py
++++ b/isort/core.py
+@@ -420,7 +420,8 @@ def process(
+ 
+                     if indent:
+                         import_section = "".join(
+-                            line[len(indent) :] for line in import_section.splitlines(keepends=True)
++                            line[len(indent) :] if line.startswith(indent) else line
++                            for line in import_section.splitlines(keepends=True)
+                         )
+ 
+                     parsed_content = parse.file_contents(import_section, config=config)

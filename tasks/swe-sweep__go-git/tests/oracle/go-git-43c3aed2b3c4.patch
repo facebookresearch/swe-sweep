@@ -1,0 +1,34 @@
+diff --git a/utils/merkletrie/change.go b/utils/merkletrie/change.go
+index 450feb4b..c3fd49e3 100644
+--- a/utils/merkletrie/change.go
++++ b/utils/merkletrie/change.go
+@@ -148,7 +148,7 @@ func (l *Changes) addRecursive(root noder.Path, ctor noderToChangeFn) error {
+ 			}
+ 			return err
+ 		}
+-		if current.IsDir() {
++		if current.IsDir() || current.Skip() {
+ 			continue
+ 		}
+ 		l.Add(ctor(current))
+diff --git a/utils/merkletrie/index/node.go b/utils/merkletrie/index/node.go
+index c1809f7e..5bc63f8b 100644
+--- a/utils/merkletrie/index/node.go
++++ b/utils/merkletrie/index/node.go
+@@ -36,7 +36,15 @@ func NewRootNode(idx *index.Index) noder.Noder {
+ 			parent := fullpath
+ 			fullpath = path.Join(fullpath, part)
+ 
+-			if _, ok := m[fullpath]; ok {
++			// It's possible that the first occurrence of subdirectory is skipped.
++			// The parent node can be created with SkipWorktree set to true, but
++			// if any future children do not skip their subtree, the entire lineage
++			// of the tree needs to have this value set to false so that subdirectories
++			// are not ignored.
++			if parentNode, ok := m[fullpath]; ok {
++				if e.SkipWorktree == false {
++					parentNode.skip = false
++				}
+ 				continue
+ 			}
+ 

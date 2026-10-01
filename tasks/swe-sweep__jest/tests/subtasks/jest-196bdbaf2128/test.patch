@@ -1,0 +1,28 @@
+diff --git a/packages/jest-core/src/__tests__/collectHandles.test.js b/packages/jest-core/src/__tests__/collectHandles.test.js
+index 229ccb9a2c..db56aeff21 100644
+--- a/packages/jest-core/src/__tests__/collectHandles.test.js
++++ b/packages/jest-core/src/__tests__/collectHandles.test.js
+@@ -10,6 +10,7 @@ import * as crypto from 'crypto';
+ import {promises as dns} from 'dns';
+ import http from 'http';
+ import {PerformanceObserver} from 'perf_hooks';
++import {TLSSocket} from 'tls';
+ import zlib from 'zlib';
+ import collectHandles from '../collectHandles';
+ 
+@@ -134,4 +135,15 @@ describe('collectHandles', () => {
+       expect.objectContaining({message: 'TCPSERVERWRAP'}),
+     );
+   });
++
++  it('should not be false positives for some special objects such as `TLSWRAP`', async () => {
++    const handleCollector = collectHandles();
++
++    const socket = new TLSSocket();
++    socket.destroy();
++
++    const openHandles = await handleCollector();
++
++    expect(openHandles).toHaveLength(0);
++  });
+ });

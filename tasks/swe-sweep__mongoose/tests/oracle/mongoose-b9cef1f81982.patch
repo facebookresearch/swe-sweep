@@ -1,0 +1,19 @@
+diff --git a/lib/helpers/query/cast$expr.js b/lib/helpers/query/cast$expr.js
+index 9889d47ad..8e84011b2 100644
+--- a/lib/helpers/query/cast$expr.js
++++ b/lib/helpers/query/cast$expr.js
+@@ -93,8 +93,12 @@ function _castExpression(val, schema, strictQuery) {
+   } else if (val.$ifNull != null) {
+     val.$ifNull.map(v => _castExpression(v, schema, strictQuery));
+   } else if (val.$switch != null) {
+-    val.branches.map(v => _castExpression(v, schema, strictQuery));
+-    val.default = _castExpression(val.default, schema, strictQuery);
++    if (Array.isArray(val.$switch.branches)) {
++      val.$switch.branches = val.$switch.branches.map(v => _castExpression(v, schema, strictQuery));
++    }
++    if ('default' in val.$switch) {
++      val.$switch.default = _castExpression(val.$switch.default, schema, strictQuery);
++    }
+   }
+ 
+   const keys = Object.keys(val);

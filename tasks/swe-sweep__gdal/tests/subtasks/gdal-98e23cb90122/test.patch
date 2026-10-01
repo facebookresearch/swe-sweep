@@ -1,0 +1,22 @@
+diff --git a/autotest/gcore/bmp_read.py b/autotest/gcore/bmp_read.py
+index bfb099f..7fd75b1 100755
+--- a/autotest/gcore/bmp_read.py
++++ b/autotest/gcore/bmp_read.py
+@@ -35,6 +35,7 @@ init_list = [
+     ("4bit_pal.bmp", 2587),
+     ("8bit_pal.bmp", 4672),
+     ("byte_rle8.bmp", 4672),
++    ("bmp/red_rgb_1x1.bmp", 3),
+ ]
+ 
+ 
+diff --git a/autotest/gcore/data/bmp/red_rgb_1x1.bmp b/autotest/gcore/data/bmp/red_rgb_1x1.bmp
+new file mode 100644
+index 0000000000000000000000000000000000000000..858b4571d495bcd180df02cb88ce316428182251
+GIT binary patch
+literal 142
+jcmZ?r?PGv|E+AC{#Eft(0hV9^lET~&3>Kgn@t*+zN(uvh
+
+literal 0
+HcmV?d00001
+

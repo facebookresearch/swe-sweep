@@ -1,0 +1,30 @@
+diff --git a/src/Symfony/Component/HtmlSanitizer/Visitor/DomVisitor.php b/src/Symfony/Component/HtmlSanitizer/Visitor/DomVisitor.php
+index 8cda8cf2a8b..c28db52e1fa 100644
+--- a/src/Symfony/Component/HtmlSanitizer/Visitor/DomVisitor.php
++++ b/src/Symfony/Component/HtmlSanitizer/Visitor/DomVisitor.php
+@@ -120,7 +120,7 @@ final class DomVisitor
+ 
+         // Force configured attributes
+         foreach ($this->forcedAttributes[$domNodeName] ?? [] as $attribute => $value) {
+-            $node->setAttribute($attribute, $value);
++            $node->setAttribute($attribute, $value, true);
+         }
+ 
+         $cursor->node->addChild($node);
+diff --git a/src/Symfony/Component/HtmlSanitizer/Visitor/Node/Node.php b/src/Symfony/Component/HtmlSanitizer/Visitor/Node/Node.php
+index 46a6b17a443..002b8e808da 100644
+--- a/src/Symfony/Component/HtmlSanitizer/Visitor/Node/Node.php
++++ b/src/Symfony/Component/HtmlSanitizer/Visitor/Node/Node.php
+@@ -58,10 +58,10 @@ final class Node implements NodeInterface
+         return $this->attributes[$name] ?? null;
+     }
+ 
+-    public function setAttribute(string $name, ?string $value): void
++    public function setAttribute(string $name, ?string $value, bool $override = false): void
+     {
+         // Always use only the first declaration (ease sanitization)
+-        if (!\array_key_exists($name, $this->attributes)) {
++        if ($override || !\array_key_exists($name, $this->attributes)) {
+             $this->attributes[$name] = $value;
+         }
+     }

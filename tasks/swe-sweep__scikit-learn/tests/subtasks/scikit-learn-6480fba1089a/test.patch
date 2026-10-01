@@ -1,0 +1,14 @@
+diff --git a/sklearn/decomposition/tests/test_pca.py b/sklearn/decomposition/tests/test_pca.py
+index 5a9bcb756c..ea321089d7 100644
+--- a/sklearn/decomposition/tests/test_pca.py
++++ b/sklearn/decomposition/tests/test_pca.py
+@@ -508,3 +508,9 @@ def test_deprecation_randomized_pca():
+     assert_warns_message(DeprecationWarning, depr_message, fit_deprecated, X)
+     Y_pca = PCA(svd_solver='randomized', random_state=0).fit_transform(X)
+     assert_array_almost_equal(Y, Y_pca)
++
++
++def test_pca_bad_solver():
++    X = np.random.RandomState(0).rand(5, 4)
++    pca = PCA(n_components=3, svd_solver='bad_argument')
++    assert_raises(ValueError, pca.fit, X)

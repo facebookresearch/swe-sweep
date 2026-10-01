@@ -1,0 +1,18 @@
+diff --git a/pandas/tests/io/test_stata.py b/pandas/tests/io/test_stata.py
+index 377b8758c2..f06bf0035c 100644
+--- a/pandas/tests/io/test_stata.py
++++ b/pandas/tests/io/test_stata.py
+@@ -1786,11 +1786,11 @@ the string values returned are correct."""
+                 [2.0, 2, "ᴮ", ""],
+                 [3.0, 3, "ᴰ", None],
+             ],
+-            columns=["a", "β", "ĉ", "strls"],
++            columns=["Å", "β", "ĉ", "strls"],
+         )
+         data["ᴐᴬᵀ"] = cat
+         variable_labels = {
+-            "a": "apple",
++            "Å": "apple",
+             "β": "ᵈᵉᵊ",
+             "ĉ": "ᴎტჄႲႳႴႶႺ",
+             "strls": "Long Strings",

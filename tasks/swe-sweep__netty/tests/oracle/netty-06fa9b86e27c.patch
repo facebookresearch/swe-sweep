@@ -1,0 +1,20 @@
+diff --git a/codec-http/src/main/java/io/netty/handler/codec/http/multipart/AbstractDiskHttpData.java b/codec-http/src/main/java/io/netty/handler/codec/http/multipart/AbstractDiskHttpData.java
+index ce578efca7..e0a16b352a 100644
+--- a/codec-http/src/main/java/io/netty/handler/codec/http/multipart/AbstractDiskHttpData.java
++++ b/codec-http/src/main/java/io/netty/handler/codec/http/multipart/AbstractDiskHttpData.java
+@@ -198,12 +198,13 @@ public abstract class AbstractDiskHttpData extends AbstractHttpData {
+ 
+     @Override
+     public void setContent(File file) throws IOException {
++        long size = file.length();
++        checkSize(size);
++        this.size = size;
+         if (this.file != null) {
+             delete();
+         }
+         this.file = file;
+-        size = file.length();
+-        checkSize(size);
+         isRenamed = true;
+         setCompleted();
+     }

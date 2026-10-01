@@ -1,0 +1,13 @@
+diff --git a/server-spi-private/src/main/java/org/keycloak/migration/ModelVersion.java b/server-spi-private/src/main/java/org/keycloak/migration/ModelVersion.java
+index 69d415f401..1eaa1ba0af 100755
+--- a/server-spi-private/src/main/java/org/keycloak/migration/ModelVersion.java
++++ b/server-spi-private/src/main/java/org/keycloak/migration/ModelVersion.java
+@@ -94,7 +94,7 @@ public class ModelVersion {
+ 
+         if (micro < version.micro) {
+             return true;
+-        } else if (minor > version.minor) {
++        } else if (micro > version.micro) {
+             return false;
+         }
+ 

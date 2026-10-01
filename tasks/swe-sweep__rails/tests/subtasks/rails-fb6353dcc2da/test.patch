@@ -1,0 +1,16 @@
+diff --git a/activerecord/test/cases/core_test.rb b/activerecord/test/cases/core_test.rb
+index 626c89fa997..2368a0d2de1 100644
+--- a/activerecord/test/cases/core_test.rb
++++ b/activerecord/test/cases/core_test.rb
+@@ -35,6 +35,10 @@ class CoreTest < ActiveRecord::TestCase
+   def test_inspect_new_instance
+     assert_match(/Topic id: nil/, Topic.new.inspect)
+   end
+ 
++  def test_inspect_singleton_instance
++    assert_match(/#<Class:#<Topic:\w+>>/, Topic.new.singleton_class.inspect)
++  end
++
+   def test_inspect_limited_select_instance
+     assert_equal %(#<Topic id: 1>), Topic.all.merge!(select: "id", where: "id = 1").first.inspect
+     assert_equal %(#<Topic id: 1, title: "The First Topic">), Topic.all.merge!(select: "id, title", where: "id = 1").first.inspect

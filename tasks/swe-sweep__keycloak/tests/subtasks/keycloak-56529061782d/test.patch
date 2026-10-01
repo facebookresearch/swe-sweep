@@ -1,0 +1,67 @@
+diff --git a/testsuite/integration-arquillian/tests/base/src/test/java/org/keycloak/testsuite/forms/ResetPasswordTest.java b/testsuite/integration-arquillian/tests/base/src/test/java/org/keycloak/testsuite/forms/ResetPasswordTest.java
+index 868c0aee65..6dfc7b98e3 100644
+--- a/testsuite/integration-arquillian/tests/base/src/test/java/org/keycloak/testsuite/forms/ResetPasswordTest.java
++++ b/testsuite/integration-arquillian/tests/base/src/test/java/org/keycloak/testsuite/forms/ResetPasswordTest.java
+@@ -50,3 +50,4 @@ import org.keycloak.testsuite.pages.LoginPasswordResetPage;
+ import org.keycloak.testsuite.pages.LoginPasswordUpdatePage;
+ import org.keycloak.testsuite.pages.LogoutConfirmPage;
++import org.keycloak.testsuite.pages.PageUtils;
+ import org.keycloak.testsuite.pages.VerifyEmailPage;
+@@ -73,5 +74,6 @@ import java.util.Collections;
+ import java.util.HashMap;
+ import java.util.Map;
++import java.util.Set;
+ import java.util.concurrent.atomic.AtomicInteger;
+ 
+ import org.junit.*;
+@@ -85,4 +87,5 @@ import static org.hamcrest.MatcherAssert.assertThat;
+ import static org.hamcrest.Matchers.endsWith;
++import static org.hamcrest.Matchers.is;
+ import static org.junit.Assert.*;
+ 
+ /**
+@@ -1106,6 +1109,44 @@ public class ResetPasswordTest extends AbstractTestRealmKeycloakTest {
+         }
+     }
+ 
++
++    @Test
++    public void resetPasswordLinkOpenedInNewBrowserWithDifferentLcoales() {
++        // given
++        String resetUri = oauth.AUTH_SERVER_ROOT + "/realms/test/login-actions/reset-credentials";
++        RealmRepresentation realmRep = testRealm().toRepresentation();
++
++        String origDefaultLocale = realmRep.getDefaultLocale();
++        Set<String> origSupportedLocales = realmRep.getSupportedLocales();
++        try {
++            realmRep.setDefaultLocale("en");
++            realmRep.addSupportedLocales("de");
++            realmRep.addSupportedLocales("it");
++            testRealm().update(realmRep);
++
++            // when
++            driver.navigate().to(resetUri);
++            // then
++            assertThat(PageUtils.getPageTitle(driver), is("Forgot Your Password?"));
++
++            // when
++            driver.manage().deleteAllCookies();
++            driver.navigate().to(resetUri + "?kc_locale=de");
++            // then
++            assertThat(PageUtils.getPageTitle(driver), is("Passwort vergessen?"));
++
++            // when
++            driver.manage().deleteAllCookies();
++            driver.navigate().to(resetUri + "?kc_locale=it");
++            // then
++            assertThat(PageUtils.getPageTitle(driver), is("Password dimenticata?"));
++        } finally {
++            realmRep.setDefaultLocale(origDefaultLocale);
++            realmRep.setSupportedLocales(origSupportedLocales);
++            testRealm().update(realmRep);
++        }
++    }
++
+     @Test
+     public void resetPasswordLinkOpenedInNewBrowser() throws IOException, MessagingException {
+         resetPasswordLinkOpenedInNewBrowser(Constants.ACCOUNT_MANAGEMENT_CLIENT_ID);

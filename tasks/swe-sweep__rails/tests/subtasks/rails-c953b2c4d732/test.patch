@@ -1,0 +1,57 @@
+diff --git a/activerecord/test/cases/calculations_test.rb b/activerecord/test/cases/calculations_test.rb
+--- a/activerecord/test/cases/calculations_test.rb
++++ b/activerecord/test/cases/calculations_test.rb
+@@ -19,6 +19,7 @@ require "models/developer"
+ require "models/post"
+ require "models/comment"
+ require "models/rating"
++require "models/too_long_table_name"
+ require "support/stubs/strong_parameters"
+ 
+ class CalculationsTest < ActiveRecord::TestCase
+@@ -132,6 +133,19 @@ class CalculationsTest < ActiveRecord::TestCase
+     [ [nil, 50], [1, 50], [6, 50], [6, 55], [9, 53], [2, 60] ].each { |firm_and_limit| assert_includes c.keys, firm_and_limit }
+   end
+ 
++  def test_should_group_by_multiple_fields_when_table_name_is_too_long
++    2.times do
++      TooLongTableName.create!(
++        toooooooo_long_a_id: 1,
++        toooooooo_long_b_id: 2
++      )
++    end
++
++    res = TooLongTableName.group(:toooooooo_long_a_id, :toooooooo_long_b_id).count
++
++    assert_equal({ [1, 2] => 2 }, res)
++  end
++
+   def test_should_group_by_multiple_fields_having_functions
+     c = Topic.group(:author_name, "COALESCE(type, title)").count(:all)
+     assert_equal 1, c[["Carl", "The Third Topic of the day"]]
+diff --git a/activerecord/test/models/too_long_table_name.rb b/activerecord/test/models/too_long_table_name.rb
+new file mode 100644
+index 00000000000..ce793e7d36d
+--- /dev/null
++++ b/activerecord/test/models/too_long_table_name.rb
+@@ -0,0 +1,5 @@
++# frozen_string_literal: true
++
++class TooLongTableName < ActiveRecord::Base
++  self.table_name = "toooooooooooooooooooooooooooooooooo_long_table_names"
++end
+diff --git a/activerecord/test/schema/schema.rb b/activerecord/test/schema/schema.rb
+--- a/activerecord/test/schema/schema.rb
++++ b/activerecord/test/schema/schema.rb
+@@ -1283,6 +1283,11 @@ ActiveRecord::Schema.define do
+     t.integer :id
+     t.datetime :created_at
+   end
++
++  create_table :toooooooooooooooooooooooooooooooooo_long_table_names, force: true do |t|
++    t.bigint :toooooooo_long_a_id, null: false
++    t.bigint :toooooooo_long_b_id, null: false
++  end
+ end
+ 
+ Course.connection.create_table :courses, force: true do |t|

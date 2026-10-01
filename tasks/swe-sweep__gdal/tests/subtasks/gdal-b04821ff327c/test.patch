@@ -1,0 +1,197 @@
+diff --git a/autotest/gcore/aaigrid_read.py b/autotest/gcore/aaigrid_read.py
+deleted file mode 100755
+index cad2e1b83c..0000000000
+--- a/autotest/gcore/aaigrid_read.py
++++ /dev/null
+@@ -1,47 +0,0 @@
+-#!/usr/bin/env pytest
+-###############################################################################
+-# $Id$
+-#
+-# Project:  GDAL/OGR Test Suite
+-# Purpose:  Test basic read support for Arc/Info ASCII grid (AAIGrid) file.
+-# Author:   Andrey Kiselev, dron@remotesensing.org
+-#
+-###############################################################################
+-# Copyright (c) 2003, Andrey Kiselev <dron@remotesensing.org>
+-#
+-# This library is free software; you can redistribute it and/or
+-# modify it under the terms of the GNU Library General Public
+-# License as published by the Free Software Foundation; either
+-# version 2 of the License, or (at your option) any later version.
+-#
+-# This library is distributed in the hope that it will be useful,
+-# but WITHOUT ANY WARRANTY; without even the implied warranty of
+-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+-# Library General Public License for more details.
+-#
+-# You should have received a copy of the GNU Library General Public
+-# License along with this library; if not, write to the
+-# Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+-# Boston, MA 02111-1307, USA.
+-###############################################################################
+-
+-import gdaltest
+-import pytest
+-
+-###############################################################################
+-# When imported build a list of units based on the files available.
+-
+-init_list = [
+-    ("byte.tif.grd", 4672),
+-]
+-
+-
+-@pytest.mark.parametrize(
+-    "filename,checksum",
+-    init_list,
+-    ids=[tup[0].split(".")[0] for tup in init_list],
+-)
+-@pytest.mark.require_driver("AAIGrid")
+-def test_aaigrid_open(filename, checksum):
+-    ut = gdaltest.GDALTest("AAIGrid", filename, 1, checksum)
+-    ut.testOpen()
+diff --git a/autotest/gcore/aaigrid_write.py b/autotest/gcore/aaigrid_write.py
+deleted file mode 100755
+index e4028b2898..0000000000
+--- a/autotest/gcore/aaigrid_write.py
++++ /dev/null
+@@ -1,52 +0,0 @@
+-#!/usr/bin/env pytest
+-###############################################################################
+-# $Id$
+-#
+-# Project:  GDAL/OGR Test Suite
+-# Purpose:  Test read/write functionality for Arc/Info ASCII grid
+-#           (AAIGrid) driver
+-# Author:   Andrey Kiselev, dron@remotesensing.org
+-#
+-###############################################################################
+-# Copyright (c) 2003, Andrey Kiselev <dron@remotesensing.org>
+-#
+-# This library is free software; you can redistribute it and/or
+-# modify it under the terms of the GNU Library General Public
+-# License as published by the Free Software Foundation; either
+-# version 2 of the License, or (at your option) any later version.
+-#
+-# This library is distributed in the hope that it will be useful,
+-# but WITHOUT ANY WARRANTY; without even the implied warranty of
+-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+-# Library General Public License for more details.
+-#
+-# You should have received a copy of the GNU Library General Public
+-# License along with this library; if not, write to the
+-# Free Software Foundation, Inc., 59 Temple Place - Suite 330,
+-# Boston, MA 02111-1307, USA.
+-###############################################################################
+-
+-import gdaltest
+-import pytest
+-
+-###############################################################################
+-# When imported build a list of units based on the files available.
+-
+-init_list = [
+-    ("byte.tif", 4672),
+-    ("int16.tif", 4672),
+-    ("uint16.tif", 4672),
+-    ("float32.tif", 4672),
+-    ("utmsmall.tif", 50054),
+-]
+-
+-
+-@pytest.mark.parametrize(
+-    "filename,checksum",
+-    init_list,
+-    ids=[tup[0].split(".")[0] for tup in init_list],
+-)
+-@pytest.mark.require_driver("AAIGrid")
+-def test_aaigrid_create(filename, checksum):
+-    ut = gdaltest.GDALTest("AAIGrid", filename, 1, checksum)
+-    ut.testCreateCopy()
+diff --git a/autotest/gdrivers/aaigrid.py b/autotest/gdrivers/aaigrid.py
+index 26632ff187..a719e4618f 100755
+--- a/autotest/gdrivers/aaigrid.py
++++ b/autotest/gdrivers/aaigrid.py
+@@ -39,6 +39,15 @@ import pytest
+ 
+ from osgeo import gdal
+ 
++###############################################################################
++
++
++def test_aaigrid_read_byte_tif_grd():
++
++    ds = gdal.Open("data/aaigrid/byte.tif.grd")
++    assert ds.GetRasterBand(1).Checksum() == 4672
++
++
+ ###############################################################################
+ # Perform simple read test.
+ 
+@@ -49,6 +59,30 @@ def test_aaigrid_1():
+     return tst.testOpen()
+ 
+ 
++###############################################################################
++# CreateCopy tests
++
++init_list = [
++    ("byte.tif", 4672),
++    ("int16.tif", 4672),
++    ("uint16.tif", 4672),
++    ("float32.tif", 4672),
++    ("utmsmall.tif", 50054),
++]
++
++
++@pytest.mark.parametrize(
++    "filename,checksum",
++    init_list,
++    ids=[tup[0].split(".")[0] for tup in init_list],
++)
++def test_aaigrid_createcopy(filename, checksum):
++    ut = gdaltest.GDALTest(
++        "AAIGrid", "../gcore/data/" + filename, 1, checksum, filename_absolute=True
++    )
++    ut.testCreateCopy()
++
++
+ ###############################################################################
+ # Verify some auxiliary data.
+ 
+@@ -478,3 +512,14 @@ def test_aaigrid_write_south_up_raster():
+     gdal.GetDriverByName("AAIGRID").Delete(
+         "/vsimem/test_aaigrid_write_south_up_raster.asc"
+     )
++
++
++###############################################################################
++# Test reading a file starting with nan (https://github.com/OSGeo/gdal/issues/9666)
++
++
++def test_aaigrid_starting_with_nan():
++
++    ds = gdal.Open("data/aaigrid/starting_with_nan.asc")
++    assert ds.GetRasterBand(1).DataType == gdal.GDT_Float32
++    assert ds.GetRasterBand(1).Checksum() == 65300
+diff --git a/autotest/gcore/data/byte.tif.grd b/autotest/gdrivers/data/aaigrid/byte.tif.grd
+similarity index 100%
+rename from autotest/gcore/data/byte.tif.grd
+rename to autotest/gdrivers/data/aaigrid/byte.tif.grd
+diff --git a/autotest/gdrivers/data/aaigrid/starting_with_nan.asc b/autotest/gdrivers/data/aaigrid/starting_with_nan.asc
+new file mode 100644
+index 0000000000..dd8d09ac6f
+--- /dev/null
++++ b/autotest/gdrivers/data/aaigrid/starting_with_nan.asc
+@@ -0,0 +1,10 @@
++ncols        5
++nrows        5
++xllcorner    0
++yllcorner    0
++cellsize     1
++nan nan nan nan nan
++nan nan nan nan nan
++nan nan 1.0 nan nan
++nan nan nan nan nan
++nan nan nan nan nan

@@ -1,0 +1,81 @@
+diff --git a/numpy/core/src/multiarray/item_selection.c b/numpy/core/src/multiarray/item_selection.c
+index 141b2d9..0740238 100644
+--- a/numpy/core/src/multiarray/item_selection.c
++++ b/numpy/core/src/multiarray/item_selection.c
+@@ -2182,8 +2182,12 @@ PyArray_Nonzero(PyArrayObject *self)
+     PyArrayObject *ret = NULL;
+     PyObject *ret_tuple;
+     npy_intp ret_dims[2];
+-    PyArray_NonzeroFunc *nonzero = PyArray_DESCR(self)->f->nonzero;
++
++    PyArray_NonzeroFunc *nonzero;
++    PyArray_Descr *dtype;
++
+     npy_intp nonzero_count;
++    int needs_api;
+ 
+     NpyIter *iter;
+     NpyIter_IterNextFunc *iternext;
+@@ -2191,6 +2195,10 @@ PyArray_Nonzero(PyArrayObject *self)
+     char **dataptr;
+     int is_empty = 0;
+ 
++    dtype = PyArray_DESCR(self);
++    nonzero = dtype->f->nonzero;
++    needs_api = PyDataType_FLAGCHK(dtype, NPY_NEEDS_PYAPI);
++
+     /*
+      * First count the number of non-zeros in 'self'.
+      */
+@@ -2223,7 +2231,9 @@ PyArray_Nonzero(PyArrayObject *self)
+             goto finish;
+         }
+ 
+-        NPY_BEGIN_THREADS_THRESHOLDED(count);
++        if (!needs_api) {
++            NPY_BEGIN_THREADS_THRESHOLDED(count);
++        }
+ 
+         /* avoid function call for bool */
+         if (PyArray_ISBOOL(self)) {
+@@ -2261,6 +2271,9 @@ PyArray_Nonzero(PyArrayObject *self)
+                 if (nonzero(data, self)) {
+                     *multi_index++ = j;
+                 }
++                if (needs_api && PyErr_Occurred()) {
++                    break;
++                }
+                 data += stride;
+             }
+         }
+@@ -2302,6 +2315,8 @@ PyArray_Nonzero(PyArrayObject *self)
+             return NULL;
+         }
+ 
++        needs_api = NpyIter_IterationNeedsAPI(iter);
++
+         NPY_BEGIN_THREADS_NDITER(iter);
+ 
+         dataptr = NpyIter_GetDataPtrArray(iter);
+@@ -2324,6 +2339,9 @@ PyArray_Nonzero(PyArrayObject *self)
+                     get_multi_index(iter, multi_index);
+                     multi_index += ndim;
+                 }
++                if (needs_api && PyErr_Occurred()) {
++                    break;
++                }
+             } while(iternext(iter));
+         }
+ 
+@@ -2333,6 +2351,11 @@ PyArray_Nonzero(PyArrayObject *self)
+     NpyIter_Deallocate(iter);
+ 
+ finish:
++    if (PyErr_Occurred()) {
++        Py_DECREF(ret);
++        return NULL;
++    }
++
+     /* Treat zero-dimensional as shape (1,) */
+     if (ndim == 0) {
+         ndim = 1;

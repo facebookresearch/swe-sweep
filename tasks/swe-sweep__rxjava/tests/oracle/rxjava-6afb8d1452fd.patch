@@ -1,0 +1,50 @@
+diff --git a/src/main/java/io/reactivex/internal/operators/flowable/FlowableReplay.java b/src/main/java/io/reactivex/internal/operators/flowable/FlowableReplay.java
+index 21b1b1d39..7a02482b4 100644
+--- a/src/main/java/io/reactivex/internal/operators/flowable/FlowableReplay.java
++++ b/src/main/java/io/reactivex/internal/operators/flowable/FlowableReplay.java
+@@ -566,6 +566,8 @@ public final class FlowableReplay<T> extends ConnectableFlowable<T> implements H
+                 // the others had non-zero. By removing this 'blocking' child, the others
+                 // are now free to receive events
+                 parent.manageRequests();
++                // make sure the last known node is not retained
++                index = null;
+             }
+         }
+         /**
+@@ -824,6 +826,7 @@ public final class FlowableReplay<T> extends ConnectableFlowable<T> implements H
+             }
+             for (;;) {
+                 if (output.isDisposed()) {
++                    output.index = null;
+                     return;
+                 }
+ 
+@@ -864,6 +867,7 @@ public final class FlowableReplay<T> extends ConnectableFlowable<T> implements H
+                         break;
+                     }
+                     if (output.isDisposed()) {
++                        output.index = null;
+                         return;
+                     }
+                 }
+diff --git a/src/main/java/io/reactivex/internal/operators/observable/ObservableReplay.java b/src/main/java/io/reactivex/internal/operators/observable/ObservableReplay.java
+index 89db184d6..197ada970 100644
+--- a/src/main/java/io/reactivex/internal/operators/observable/ObservableReplay.java
++++ b/src/main/java/io/reactivex/internal/operators/observable/ObservableReplay.java
+@@ -453,6 +453,8 @@ public final class ObservableReplay<T> extends ConnectableObservable<T> implemen
+                 cancelled = true;
+                 // remove this from the parent
+                 parent.remove(this);
++                // make sure the last known node is not retained
++                index = null;
+             }
+         }
+         /**
+@@ -686,6 +688,7 @@ public final class ObservableReplay<T> extends ConnectableObservable<T> implemen
+ 
+                 for (;;) {
+                     if (output.isDisposed()) {
++                        output.index = null;
+                         return;
+                     }
+ 

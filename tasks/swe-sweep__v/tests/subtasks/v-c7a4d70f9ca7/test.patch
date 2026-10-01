@@ -1,0 +1,27 @@
+diff --git a/vlib/v/tests/generic_call_mixing_args_test.v b/vlib/v/tests/generic_call_mixing_args_test.v
+new file mode 100644
+index 000000000..4a410680f
+--- /dev/null
++++ b/vlib/v/tests/generic_call_mixing_args_test.v
+@@ -0,0 +1,21 @@
++struct MyStruct {
++	text string
++}
++
++struct App {}
++
++fn pre_send[T, N](app T, params N) {
++	send(params, app)
++}
++
++fn send[T, N](params T, app N) { // app now is second argument
++	println(params)
++}
++
++fn test_main() {
++	params := MyStruct{'hello'}
++	app := App{}
++
++	pre_send(app, params)
++	assert true
++}

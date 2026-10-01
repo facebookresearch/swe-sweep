@@ -1,0 +1,42 @@
+diff --git a/src/black/linegen.py b/src/black/linegen.py
+index 1ee9f6a6..52ef2cf0 100644
+--- a/src/black/linegen.py
++++ b/src/black/linegen.py
+@@ -48,6 +48,7 @@ from black.nodes import (
+     is_rpar_token,
+     is_stub_body,
+     is_stub_suite,
++    is_tuple,
+     is_tuple_containing_walrus,
+     is_vararg,
+     is_walrus_assignment,
+@@ -1347,6 +1348,7 @@ def maybe_make_parens_invisible_in_atom(
+         node.type != syms.atom
+         or is_empty_tuple(node)
+         or is_one_tuple(node)
++        or (is_tuple(node) and parent.type == syms.asexpr_test)
+         or (is_yield(node) and parent.type != syms.expr_stmt)
+         or (
+             # This condition tries to prevent removing non-optional brackets
+diff --git a/src/black/nodes.py b/src/black/nodes.py
+index 3b74e2db..665cb15d 100644
+--- a/src/black/nodes.py
++++ b/src/black/nodes.py
+@@ -563,6 +563,17 @@ def is_one_tuple(node: LN) -> bool:
+     )
+ 
+ 
++def is_tuple(node: LN) -> bool:
++    """Return True if `node` holds a tuple."""
++    if node.type != syms.atom:
++        return False
++    gexp = unwrap_singleton_parenthesis(node)
++    if gexp is None or gexp.type != syms.testlist_gexp:
++        return False
++
++    return True
++
++
+ def is_tuple_containing_walrus(node: LN) -> bool:
+     """Return True if `node` holds a tuple that contains a walrus operator."""
+     if node.type != syms.atom:

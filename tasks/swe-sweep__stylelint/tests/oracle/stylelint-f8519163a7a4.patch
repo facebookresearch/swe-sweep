@@ -1,0 +1,142 @@
+diff --git a/lib/rules/selector-nested-pattern/index.cjs b/lib/rules/selector-nested-pattern/index.cjs
+index c49fa3d1b..c2387c8be 100644
+--- a/lib/rules/selector-nested-pattern/index.cjs
++++ b/lib/rules/selector-nested-pattern/index.cjs
+@@ -3,11 +3,16 @@
+ 'use strict';
+ 
+ const validateTypes = require('../../utils/validateTypes.cjs');
++const getRuleSelector = require('../../utils/getRuleSelector.cjs');
++const getStrippedSelectorSource = require('../../utils/getStrippedSelectorSource.cjs');
+ const isStandardSyntaxRule = require('../../utils/isStandardSyntaxRule.cjs');
++const parseSelector = require('../../utils/parseSelector.cjs');
+ const report = require('../../utils/report.cjs');
+ const ruleMessages = require('../../utils/ruleMessages.cjs');
+ const validateOptions = require('../../utils/validateOptions.cjs');
+ 
++/** @import { Rule } from 'postcss' */
++
+ const ruleName = 'selector-nested-pattern';
+ 
+ const messages = ruleMessages(ruleName, {
+@@ -53,23 +58,38 @@ const rule = (primary, secondaryOptions) => {
+ 				return;
+ 			}
+ 
+-			const selectors = splitList ? ruleNode.selectors : [ruleNode.selector];
++			const selectors = getRuleSelector(ruleNode);
+ 
+-			for (const selector of selectors) {
+-				if (normalizedPattern.test(selector)) {
+-					continue;
+-				}
++			if (splitList) {
++				parseSelector(selectors, result, ruleNode)?.each((selector) => {
++					const { index, endIndex, selector: selectorStr } = getStrippedSelectorSource(selector);
+ 
+-				report({
+-					result,
+-					ruleName,
+-					message: messages.expected,
+-					messageArgs: [selector, primary],
+-					node: ruleNode,
+-					word: selector,
++					check(ruleNode, selectorStr, index, endIndex);
+ 				});
++			} else {
++				check(ruleNode, selectors, 0, selectors.length);
+ 			}
+ 		});
++
++		/**
++		 * @param {Rule} ruleNode
++		 * @param {string} selectorStr
++		 * @param {number} index
++		 * @param {number} endIndex
++		 */
++		function check(ruleNode, selectorStr, index, endIndex) {
++			if (normalizedPattern.test(selectorStr)) return;
++
++			report({
++				result,
++				ruleName,
++				message: messages.expected,
++				messageArgs: [selectorStr, primary],
++				node: ruleNode,
++				index,
++				endIndex,
++			});
++		}
+ 	};
+ };
+ 
+diff --git a/lib/rules/selector-nested-pattern/index.mjs b/lib/rules/selector-nested-pattern/index.mjs
+index 78ec0e2ad..d619feeeb 100644
+--- a/lib/rules/selector-nested-pattern/index.mjs
++++ b/lib/rules/selector-nested-pattern/index.mjs
+@@ -1,9 +1,14 @@
+ import { isBoolean, isRegExp, isString } from '../../utils/validateTypes.mjs';
++import getRuleSelector from '../../utils/getRuleSelector.mjs';
++import getStrippedSelectorSource from '../../utils/getStrippedSelectorSource.mjs';
+ import isStandardSyntaxRule from '../../utils/isStandardSyntaxRule.mjs';
++import parseSelector from '../../utils/parseSelector.mjs';
+ import report from '../../utils/report.mjs';
+ import ruleMessages from '../../utils/ruleMessages.mjs';
+ import validateOptions from '../../utils/validateOptions.mjs';
+ 
++/** @import { Rule } from 'postcss' */
++
+ const ruleName = 'selector-nested-pattern';
+ 
+ const messages = ruleMessages(ruleName, {
+@@ -49,23 +54,38 @@ const rule = (primary, secondaryOptions) => {
+ 				return;
+ 			}
+ 
+-			const selectors = splitList ? ruleNode.selectors : [ruleNode.selector];
++			const selectors = getRuleSelector(ruleNode);
+ 
+-			for (const selector of selectors) {
+-				if (normalizedPattern.test(selector)) {
+-					continue;
+-				}
++			if (splitList) {
++				parseSelector(selectors, result, ruleNode)?.each((selector) => {
++					const { index, endIndex, selector: selectorStr } = getStrippedSelectorSource(selector);
+ 
+-				report({
+-					result,
+-					ruleName,
+-					message: messages.expected,
+-					messageArgs: [selector, primary],
+-					node: ruleNode,
+-					word: selector,
++					check(ruleNode, selectorStr, index, endIndex);
+ 				});
++			} else {
++				check(ruleNode, selectors, 0, selectors.length);
+ 			}
+ 		});
++
++		/**
++		 * @param {Rule} ruleNode
++		 * @param {string} selectorStr
++		 * @param {number} index
++		 * @param {number} endIndex
++		 */
++		function check(ruleNode, selectorStr, index, endIndex) {
++			if (normalizedPattern.test(selectorStr)) return;
++
++			report({
++				result,
++				ruleName,
++				message: messages.expected,
++				messageArgs: [selectorStr, primary],
++				node: ruleNode,
++				index,
++				endIndex,
++			});
++		}
+ 	};
+ };
+ 

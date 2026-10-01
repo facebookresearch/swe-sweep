@@ -1,0 +1,18 @@
+diff --git a/tests/ui/bit_masks.rs b/tests/ui/bit_masks.rs
+index 87dcdb308..bca5b2ec3 100644
+--- a/tests/ui/bit_masks.rs
++++ b/tests/ui/bit_masks.rs
+@@ -89,3 +89,13 @@ fn ineffective() {
+     x | 3 > 4; // not an error (yet), better written as x >= 4
+     x | 4 <= 19;
+ }
++
++mod issue16781 {
++    fn unsigned(x: u8) -> bool {
++        x & 0xf0 == 0x11 << 4
++    }
++
++    fn signed(x: i8) -> bool {
++        x & 0x70 == 0x11 << 4
++    }
++}

@@ -1,0 +1,26 @@
+diff --git a/compiler/semexprs.nim b/compiler/semexprs.nim
+index 114f6b69b..245c3bbd3 100644
+--- a/compiler/semexprs.nim
++++ b/compiler/semexprs.nim
+@@ -1157,7 +1157,9 @@ proc readTypeParameter(c: PContext, typ: PType,
+             # This seems semantically correct and then we'll be able
+             # to return the section symbol directly here
+             let foundType = makeTypeDesc(c, def[2].typ)
+-            return newSymNode(copySym(def[0].sym, nextSymId c.idgen).linkTo(foundType), info)
++            let s = copySym(def[0].sym, nextSymId c.idgen)
++            s.typ = foundType
++            return newSymNode(s, info)
+ 
+       of nkConstSection:
+         for def in statement:
+@@ -1182,7 +1184,9 @@ proc readTypeParameter(c: PContext, typ: PType,
+             return c.graph.emptyNode
+         else:
+           let foundTyp = makeTypeDesc(c, rawTyp)
+-          return newSymNode(copySym(tParam.sym, nextSymId c.idgen).linkTo(foundTyp), info)
++          let s = copySym(tParam.sym, nextSymId c.idgen)
++          s.typ = foundTyp
++          return newSymNode(s, info)
+ 
+   return nil
+ 

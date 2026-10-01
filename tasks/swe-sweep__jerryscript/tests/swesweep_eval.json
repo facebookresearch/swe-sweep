@@ -1,0 +1,198 @@
+{
+  "build_jobs": 4,
+  "container_repo": "/jerryscript",
+  "evaluation": {
+    "needs_build": false,
+    "suite": {
+      "build_dir": "/build",
+      "cmake_args": [
+        "-DUNITTESTS=ON",
+        "-DJERRY_CMDLINE=ON",
+        "-DENABLE_LTO=OFF"
+      ],
+      "engine": "bin/jerry",
+      "js_dirs": [
+        "tests/jerry",
+        "tests/jerry-test-suite"
+      ],
+      "type": "jerry",
+      "unit_dirs": [
+        "tests/unit-core",
+        "tests/unit-ext"
+      ]
+    },
+    "test_timeout": 3600,
+    "visible_timeout": 14400
+  },
+  "upstream_image": "pandora-maxbug-jerryscript:v2.2.0",
+  "n_base_passing": 2030,
+  "n_base_test_ignore": 470,
+  "oracle_digest": "ad0eef51febc38708df5239152c91d6040b9034c97da069632cf1f01dfc9e5a4",
+  "oracle_pristine_paths": [],
+  "upstream_commit": "9f7399e15e6172900e0591deb5a57a45769d8205",
+  "reproduction": {
+    "needs_build": false,
+    "suite": {
+      "build_dir": "/build",
+      "cmake_args": [
+        "-DUNITTESTS=ON",
+        "-DJERRY_CMDLINE=ON",
+        "-DENABLE_LTO=OFF"
+      ],
+      "engine": "bin/jerry",
+      "js_dirs": [
+        "tests/jerry",
+        "tests/jerry-test-suite"
+      ],
+      "type": "jerry",
+      "unit_dirs": [
+        "tests/unit-core",
+        "tests/unit-ext"
+      ]
+    },
+    "test_timeout": 1800
+  },
+  "schema": 2,
+  "subtasks": [
+    {
+      "f2p": [
+        "tests/jerry/json-stringify.js"
+      ],
+      "id": "jerryscript-042a8ceedc15",
+      "target_files": [
+        "jerry-core/ecma/builtin-objects/ecma-builtin-json.c"
+      ]
+    },
+    {
+      "f2p": [
+        "tests/jerry/es.next/regression-test-issue-4532.js"
+      ],
+      "id": "jerryscript-072dcea299cd",
+      "target_files": [
+        "jerry-core/parser/js/js-parser.c"
+      ]
+    },
+    {
+      "f2p": [
+        "tests/jerry/array.js"
+      ],
+      "id": "jerryscript-1eb47ad8b475",
+      "target_files": [
+        "jerry-core/ecma/operations/ecma-array-object.c",
+        "jerry-core/ecma/operations/ecma-array-object.h"
+      ]
+    },
+    {
+      "f2p": [
+        "tests/jerry/date-setters.js"
+      ],
+      "id": "jerryscript-25396dc4b88b",
+      "target_files": [
+        "jerry-core/ecma/builtin-objects/ecma-builtin-helpers-date.c"
+      ]
+    },
+    {
+      "f2p": [
+        "tests/jerry/strict2.js"
+      ],
+      "id": "jerryscript-2b0230207b47",
+      "target_files": [
+        "jerry-core/parser/js/js-parser-statm.c",
+        "jerry-core/parser/js/js-scanner-ops.c"
+      ]
+    },
+    {
+      "f2p": [
+        "tests/jerry/es2015/regression-test-issue-3589.js"
+      ],
+      "id": "jerryscript-32f5320c7e4d",
+      "target_files": [
+        "jerry-core/parser/js/js-parser-expr.c"
+      ]
+    },
+    {
+      "f2p": [
+        "tests/jerry/arithmetic-parse.js"
+      ],
+      "id": "jerryscript-4afcc94994c8",
+      "target_files": [
+        "jerry-core/parser/js/js-parser-expr.c"
+      ]
+    },
+    {
+      "f2p": [
+        "tests/jerry/regression-test-issue-3813.js"
+      ],
+      "id": "jerryscript-5144355d084f",
+      "target_files": [
+        "jerry-core/ecma/builtin-objects/ecma-builtin-json.c"
+      ]
+    },
+    {
+      "f2p": [
+        "tests/jerry/regression-test-issue-3553.js",
+        "tests/jerry/regression-test-issue-3608.js"
+      ],
+      "id": "jerryscript-5ca8de954fce",
+      "target_files": [
+        "jerry-core/parser/js/js-parser-expr.c"
+      ]
+    },
+    {
+      "f2p": [
+        "tests/jerry/es5.1/try-catch.js"
+      ],
+      "id": "jerryscript-63583f11d059",
+      "target_files": [
+        "jerry-core/parser/js/js-scanner-util.c"
+      ]
+    },
+    {
+      "f2p": [
+        "tests/jerry/regression-test-issue-4777.js"
+      ],
+      "id": "jerryscript-662bbee88446",
+      "target_files": [
+        "jerry-core/ecma/builtin-objects/ecma-builtin-array-prototype.c"
+      ]
+    },
+    {
+      "f2p": [
+        "tests/jerry/regression-test-issue-3878.js"
+      ],
+      "id": "jerryscript-9bf98944df1f",
+      "target_files": [
+        "jerry-core/ecma/builtin-objects/ecma-builtin-date-prototype.c"
+      ]
+    },
+    {
+      "f2p": [
+        "tests/jerry/regression-test-issue-3761.js"
+      ],
+      "id": "jerryscript-bf72a9ea61e4",
+      "target_files": [
+        "jerry-core/ecma/base/ecma-helpers-number.c"
+      ]
+    },
+    {
+      "f2p": [
+        "unit-test-api-property"
+      ],
+      "id": "jerryscript-df8c37f98e76",
+      "target_files": [
+        "jerry-core/api/jerry.c"
+      ]
+    },
+    {
+      "f2p": [
+        "tests/jerry/number-prototype-to-fixed.js"
+      ],
+      "id": "jerryscript-edaaae2dd276",
+      "target_files": [
+        "jerry-core/ecma/builtin-objects/ecma-builtin-number-prototype.c"
+      ]
+    }
+  ],
+  "task": "jerryscript",
+  "version": "v2.2.0"
+}

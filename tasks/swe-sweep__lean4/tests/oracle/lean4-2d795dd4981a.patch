@@ -1,0 +1,13 @@
+diff --git a/src/Lean/Meta/Match/MatchEqs.lean b/src/Lean/Meta/Match/MatchEqs.lean
+index 77897e731d..1186d2ccb9 100644
+--- a/src/Lean/Meta/Match/MatchEqs.lean
++++ b/src/Lean/Meta/Match/MatchEqs.lean
+@@ -74,7 +74,7 @@ where
+           matchConstRec f (fun _ => return none) fun recVal _ => do
+             if recVal.getMajorIdx >= args.size then
+               return none
+-            let major := args[recVal.getMajorIdx]!
++            let major := args[recVal.getMajorIdx]!.consumeMData
+             if major.isFVar then
+               return some major.fvarId!
+             else

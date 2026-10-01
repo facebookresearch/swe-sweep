@@ -1,0 +1,16 @@
+diff --git a/numpy/ma/extras.py b/numpy/ma/extras.py
+index b3016da5ae0..9111355055b 100644
+--- a/numpy/ma/extras.py
++++ b/numpy/ma/extras.py
+@@ -681,7 +681,10 @@ def median(a, axis=None, out=None, overwrite_input=False, keepdims=False):
+            fill_value = 1e+20)
+ 
+     """
+-    if not hasattr(a, 'mask'):
++
++    a = np.ma.asarray(a)
++
++    if a.mask is np.ma.nomask:
+         m = np.median(getdata(a, subok=True), axis=axis,
+                       out=out, overwrite_input=overwrite_input,
+                       keepdims=keepdims)

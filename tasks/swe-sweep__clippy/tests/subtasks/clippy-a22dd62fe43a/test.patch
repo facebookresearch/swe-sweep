@@ -1,0 +1,66 @@
+diff --git a/tests/ui/needless_match.fixed b/tests/ui/needless_match.fixed
+index b2c2bbfaa..41acf4402 100644
+--- a/tests/ui/needless_match.fixed
++++ b/tests/ui/needless_match.fixed
+@@ -301,4 +301,16 @@ pub fn issue13574() -> Option<()> {
+     None
+ }
+ 
++fn issue14754(t: Result<i32, &'static str>) -> Result<i32, &'static str> {
++    let _ = match t {
++        Ok(v) => Ok::<_, &'static str>(v),
++        err @ Err(_) => return err,
++    };
++    println!("Still here");
++    let x = t;
++    //~^^^^ needless_match
++    println!("Still here");
++    x
++}
++
+ fn main() {}
+diff --git a/tests/ui/needless_match.rs b/tests/ui/needless_match.rs
+index 1cb670edc..936653b96 100644
+--- a/tests/ui/needless_match.rs
++++ b/tests/ui/needless_match.rs
+@@ -364,4 +364,19 @@ pub fn issue13574() -> Option<()> {
+     None
+ }
+ 
++fn issue14754(t: Result<i32, &'static str>) -> Result<i32, &'static str> {
++    let _ = match t {
++        Ok(v) => Ok::<_, &'static str>(v),
++        err @ Err(_) => return err,
++    };
++    println!("Still here");
++    let x = match t {
++        Ok(v) => Ok::<_, &'static str>(v),
++        err @ Err(_) => err,
++    };
++    //~^^^^ needless_match
++    println!("Still here");
++    x
++}
++
+ fn main() {}
+diff --git a/tests/ui/needless_match.stderr b/tests/ui/needless_match.stderr
+index 719b0ef88..5195ecdfa 100644
+--- a/tests/ui/needless_match.stderr
++++ b/tests/ui/needless_match.stderr
+@@ -151,5 +151,15 @@ LL | |             None
+ LL | |         }
+    | |_________^ help: replace it with: `A`
+ 
+-error: aborting due to 14 previous errors
++error: this match expression is unnecessary
++  --> tests/ui/needless_match.rs:373:13
++   |
++LL |       let x = match t {
++   |  _____________^
++LL | |         Ok(v) => Ok::<_, &'static str>(v),
++LL | |         err @ Err(_) => err,
++LL | |     };
++   | |_____^ help: replace it with: `t`
++
++error: aborting due to 15 previous errors
+ 

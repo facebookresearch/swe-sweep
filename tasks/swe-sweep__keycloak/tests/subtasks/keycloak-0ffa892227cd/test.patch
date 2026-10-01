@@ -1,0 +1,25 @@
+diff --git a/testsuite/integration-arquillian/tests/base/src/test/java/org/keycloak/testsuite/actions/AppInitiatedActionTest.java b/testsuite/integration-arquillian/tests/base/src/test/java/org/keycloak/testsuite/actions/AppInitiatedActionTest.java
+index ecc3aa630b..48c6377796 100644
+--- a/testsuite/integration-arquillian/tests/base/src/test/java/org/keycloak/testsuite/actions/AppInitiatedActionTest.java
++++ b/testsuite/integration-arquillian/tests/base/src/test/java/org/keycloak/testsuite/actions/AppInitiatedActionTest.java
+@@ -61,6 +61,20 @@ public class AppInitiatedActionTest extends AbstractTestRealmKeycloakTest {
+         assertEquals("error", kcActionStatus);
+     }
+ 
++    // Issue 37526
++    @Test
++    public void executeUnknownActionAfterBeingAuthenticated() {
++        oauth.openLoginForm();
++        loginPage.login("test-user@localhost", "password");
++        assertTrue(appPage.isCurrent());
++
++        oauth.kcAction("nosuch").openLoginForm();
++        assertTrue(appPage.isCurrent());
++
++        String kcActionStatus = oauth.getCurrentQuery().get("kc_action_status");
++        assertEquals("error", kcActionStatus);
++    }
++
+     @Test
+     public void executeUnsupportedAction() {
+         oauth.kcAction(TermsAndConditions.PROVIDER_ID).openLoginForm();

@@ -1,0 +1,14 @@
+diff --git a/buffer/src/main/java/io/netty/buffer/ByteBufInputStream.java b/buffer/src/main/java/io/netty/buffer/ByteBufInputStream.java
+index 038cd8db45..c0b116c148 100644
+--- a/buffer/src/main/java/io/netty/buffer/ByteBufInputStream.java
++++ b/buffer/src/main/java/io/netty/buffer/ByteBufInputStream.java
+@@ -163,7 +163,8 @@ public class ByteBufInputStream extends InputStream implements DataInput {
+ 
+     @Override
+     public int read() throws IOException {
+-        if (!buffer.isReadable()) {
++        int available = available();
++        if (available == 0) {
+             return -1;
+         }
+         return buffer.readByte() & 0xff;

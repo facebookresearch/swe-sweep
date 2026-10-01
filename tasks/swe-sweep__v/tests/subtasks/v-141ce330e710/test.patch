@@ -1,0 +1,20 @@
+diff --git a/vlib/v/tests/match_array_of_reference_sumtype_test.v b/vlib/v/tests/match_array_of_reference_sumtype_test.v
+new file mode 100644
+index 000000000..3ac9c05c9
+--- /dev/null
++++ b/vlib/v/tests/match_array_of_reference_sumtype_test.v
+@@ -0,0 +1,14 @@
++type MySumType = []&MyStructA | []&MyStructB
++
++struct MyStructA {}
++
++struct MyStructB {}
++
++fn test_match_branch_with_array_expression() {
++	t := MySumType([&MyStructA{}, &MyStructA{}])
++	ret := match t {
++		[]&MyStructA { '[]&MyStructA' }
++		[]&MyStructB { '[]&MyStructB' }
++	}
++	assert ret == '[]&MyStructA'
++}

@@ -1,0 +1,16 @@
+diff --git a/numpy/core/tests/test_nditer.py b/numpy/core/tests/test_nditer.py
+index 943c25cdaa13..d2fc69a03b5f 100644
+--- a/numpy/core/tests/test_nditer.py
++++ b/numpy/core/tests/test_nditer.py
+@@ -2795,4 +2795,11 @@ def test_iter_too_large_with_multiindex():
+             with assert_raises(ValueError):
+                 _multiarray_tests.test_nditer_too_large(arrays, i*2 + 1, mode)
+ 
++
++def test_invalid_call_of_enable_external_loop():
++    with pytest.raises(ValueError,
++                       match='Iterator flag EXTERNAL_LOOP cannot be used'):
++        np.nditer(([[1], [2]], [3, 4]), ['multi_index']).enable_external_loop()
++
++
+ def test_writebacks():

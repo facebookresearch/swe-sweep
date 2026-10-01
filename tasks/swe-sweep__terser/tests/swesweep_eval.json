@@ -1,0 +1,81 @@
+{
+  "build_jobs": 4,
+  "container_repo": "/terser",
+  "evaluation": {
+    "suite": "reproduction",
+    "test_dirs": [
+      "test"
+    ],
+    "visible_timeout": 7200
+  },
+  "upstream_image": "pandora-maxbug-terser:v5.8.0",
+  "n_base_passing": 2570,
+  "n_base_test_ignore": 3,
+  "oracle_digest": "ea628a22ecd05871e019d01375d3d2a2fe148a25266474d419d5a028ae3796f1",
+  "oracle_pristine_paths": [],
+  "upstream_commit": "9f7399e15e6172900e0591deb5a57a45769d8205",
+  "reproduction": {
+    "needs_build": false,
+    "suite": "terser-compress",
+    "test_timeout": 1200
+  },
+  "schema": 2,
+  "subtasks": [
+    {
+      "f2p": [
+        "input sourcemaps Should preserve unmapped segments in output source map"
+      ],
+      "id": "terser-31052ef879a6",
+      "target_files": [
+        "lib/sourcemap.js"
+      ]
+    },
+    {
+      "f2p": [
+        "inline.js::inline_using_correct_arguments"
+      ],
+      "id": "terser-9431973dd25b",
+      "target_files": [
+        "lib/compress/index.js"
+      ]
+    },
+    {
+      "f2p": [
+        "no-mutate-input does not modify the options object"
+      ],
+      "id": "terser-a77d701b5240",
+      "target_files": [
+        "lib/minify.js"
+      ]
+    },
+    {
+      "f2p": [
+        "new.js::new_prefixed_template_string"
+      ],
+      "id": "terser-a8a3a0c3d020",
+      "target_files": [
+        "lib/output.js"
+      ]
+    },
+    {
+      "f2p": [
+        "input sourcemaps Should preserve unmapped segments in output source map"
+      ],
+      "id": "terser-abce9162dcb3",
+      "target_files": [
+        "lib/sourcemap.js"
+      ]
+    },
+    {
+      "f2p": [
+        "spidermonkey export/import sanity test should correctly minify spidermonkey AST with condition and inlineable const variable declaration"
+      ],
+      "id": "terser-af9d2e0b3acc",
+      "target_files": [
+        "lib/mozilla-ast.js"
+      ]
+    }
+  ],
+  "task": "terser",
+  "version": "v5.8.0"
+}

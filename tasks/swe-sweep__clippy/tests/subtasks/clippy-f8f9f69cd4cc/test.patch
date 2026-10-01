@@ -1,0 +1,30 @@
+diff --git a/tests/ui/four_forward_slashes.fixed b/tests/ui/four_forward_slashes.fixed
+index 43cded644..2a860a493 100644
+--- a/tests/ui/four_forward_slashes.fixed
++++ b/tests/ui/four_forward_slashes.fixed
+@@ -47,3 +47,10 @@ with_span! {
+     //// don't lint me bozo
+     fn f() {}
+ }
++
++// Regression test for #16168: an inner doc comment (`//!`) inside the body must not
++// drag the `////` scan down into the body and flag a regular comment there.
++fn inner_doc() {
++    //// I am not a doc comment!
++    //! inner doc comment
++}
+diff --git a/tests/ui/four_forward_slashes.rs b/tests/ui/four_forward_slashes.rs
+index 4ff0c3afa..2aeffb193 100644
+--- a/tests/ui/four_forward_slashes.rs
++++ b/tests/ui/four_forward_slashes.rs
+@@ -47,3 +47,10 @@ with_span! {
+     //// don't lint me bozo
+     fn f() {}
+ }
++
++// Regression test for #16168: an inner doc comment (`//!`) inside the body must not
++// drag the `////` scan down into the body and flag a regular comment there.
++fn inner_doc() {
++    //// I am not a doc comment!
++    //! inner doc comment
++}

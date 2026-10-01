@@ -1,0 +1,34 @@
+diff --git a/astropy/io/fits/hdu/base.py b/astropy/io/fits/hdu/base.py
+index c26ae1bf26..a9fef1c2e4 100644
+--- a/astropy/io/fits/hdu/base.py
++++ b/astropy/io/fits/hdu/base.py
+@@ -879,16 +879,7 @@ class _NonstandardHDU(_BaseHDU, _Verify):
+ 
+         # The SIMPLE keyword must be in the first card
+         card = header.cards[0]
+-
+-        # The check that 'GROUPS' is missing is a bit redundant, since the
+-        # match_header for GroupsHDU will always be called before this one.
+-        if card.keyword == "SIMPLE":
+-            if "GROUPS" not in header and card.value is False:
+-                return True
+-            else:
+-                raise InvalidHDUException
+-        else:
+-            return False
++        return card.keyword == "SIMPLE" and card.value is False
+ 
+     @property
+     def size(self):
+diff --git a/astropy/io/fits/hdu/image.py b/astropy/io/fits/hdu/image.py
+index 45d9f6e0e2..5465d88640 100644
+--- a/astropy/io/fits/hdu/image.py
++++ b/astropy/io/fits/hdu/image.py
+@@ -1158,6 +1158,6 @@ class PrimaryHDU(_ImageBaseHDU):
+         return (
+             card.keyword == "SIMPLE"
+-            and ("GROUPS" not in header or header["GROUPS"] != True)  # noqa: E712
++            and ("GROUPS" not in header or header["GROUPS"] is not True)
+             and card.value
+         )
+ 

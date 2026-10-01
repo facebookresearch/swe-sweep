@@ -1,0 +1,35 @@
+diff --git a/vlib/v/tests/options/modules/mymod/mod.v b/vlib/v/tests/options/modules/mymod/mod.v
+new file mode 100644
+index 000000000..2b845ae56
+--- /dev/null
++++ b/vlib/v/tests/options/modules/mymod/mod.v
+@@ -0,0 +1,16 @@
++// mod.v
++
++module mymod
++
++import math.big
++
++pub struct BigintRange {
++pub mut:
++	start big.Integer
++	end   big.Integer
++}
++
++pub const range = BigintRange{
++	start: big.integer_from_string('338288524927261089654018896841347694592')!
++	end:   big.integer_from_string('338620831926207318622244848606417780735')!
++}
+diff --git a/vlib/v/tests/options/modules/mymod/mod_test.v b/vlib/v/tests/options/modules/mymod/mod_test.v
+new file mode 100644
+index 000000000..526f94deb
+--- /dev/null
++++ b/vlib/v/tests/options/modules/mymod/mod_test.v
+@@ -0,0 +1,7 @@
++// mod_test.v
++
++module mymod
++
++fn test_dummy() {
++	assert range != BigintRange{}
++}

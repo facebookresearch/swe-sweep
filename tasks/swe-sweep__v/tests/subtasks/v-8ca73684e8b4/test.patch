@@ -1,0 +1,46 @@
+diff --git a/vlib/v/fmt/tests/empty_lines_expected.vv b/vlib/v/fmt/tests/empty_lines_expected.vv
+index 605c552c0..164661a4b 100644
+--- a/vlib/v/fmt/tests/empty_lines_expected.vv
++++ b/vlib/v/fmt/tests/empty_lines_expected.vv
+@@ -10,6 +10,8 @@ fn squash_multiple_empty_lines() {
+ 
+ 	println('b')
+ 
++	dump('c')
++
+ 	c := 0
+ 
+ 	d := 0
+diff --git a/vlib/v/fmt/tests/empty_lines_input.vv b/vlib/v/fmt/tests/empty_lines_input.vv
+index f8eee66b9..4430f646c 100644
+--- a/vlib/v/fmt/tests/empty_lines_input.vv
++++ b/vlib/v/fmt/tests/empty_lines_input.vv
+@@ -8,6 +8,8 @@ fn squash_multiple_empty_lines() {
+ 
+ 	println('b')
+ 
++	dump('c')
++
+ 
+ 	c := 0
+ 
+diff --git a/vlib/v/fmt/tests/empty_lines_keep.vv b/vlib/v/fmt/tests/empty_lines_keep.vv
+index f0272789a..d62ca129e 100644
+--- a/vlib/v/fmt/tests/empty_lines_keep.vv
++++ b/vlib/v/fmt/tests/empty_lines_keep.vv
+@@ -33,12 +33,15 @@ fn keep_single_empty_line() {
+ 
+ 	println('c')
+ 
++	dump('d')
++
+ 	d := 0
+ 
+ 	if true {
+ 		println('e')
+ 	}
+ 
++	dump('f')
+ 	f := 0
+ 	arr << MyStruct{}
+ 

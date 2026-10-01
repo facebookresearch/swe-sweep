@@ -1,0 +1,18 @@
+diff --git a/numpy/core/tests/test_dtype.py b/numpy/core/tests/test_dtype.py
+index 27fbb10..f5a030d 100644
+--- a/numpy/core/tests/test_dtype.py
++++ b/numpy/core/tests/test_dtype.py
+@@ -444,6 +444,13 @@ class TestSubarray(object):
+         t2 = np.dtype('2i4', align=True)
+         assert_equal(t1.alignment, t2.alignment)
+ 
++    def test_aligned_empty(self):
++        # Mainly regression test for gh-19696: construction failed completely
++        dt = np.dtype([], align=True)
++        assert dt == np.dtype([])
++        dt = np.dtype({"names": [], "formats": [], "itemsize": 0}, align=True)
++        assert dt == np.dtype([])
++
+ 
+ class TestMonsterType(object):
+     """Test deeply nested subtypes."""

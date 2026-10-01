@@ -1,0 +1,63 @@
+diff --git a/pendulum/tz/timezone.py b/pendulum/tz/timezone.py
+index a79242e..46a07cb 100644
+--- a/pendulum/tz/timezone.py
++++ b/pendulum/tz/timezone.py
+@@ -108,7 +108,7 @@ class Timezone(tzinfo):
+                 # We set the fold attribute for later
+                 if dst_rule == POST_TRANSITION:
+                     fold = 1
+-            else:
++            elif transition.previous is not None:
+                 transition = transition.previous
+ 
+         if transition.is_ambiguous(sec):
+@@ -149,7 +149,7 @@ class Timezone(tzinfo):
+             transition = dt.tzinfo._lookup_transition(stamp)
+             offset = transition.ttype.offset
+ 
+-            if stamp < transition.local:
++            if stamp < transition.local and transition.previous is not None:
+                 if (
+                     transition.previous.is_ambiguous(stamp)
+                     and getattr(dt, "fold", 1) == 0
+@@ -161,7 +161,7 @@ class Timezone(tzinfo):
+         stamp -= offset
+ 
+         transition = self._lookup_transition(stamp, is_utc=True)
+-        if stamp < transition.at:
++        if stamp < transition.at and transition.previous is not None:
+             transition = transition.previous
+ 
+         offset = transition.ttype.offset
+@@ -257,7 +257,7 @@ class Timezone(tzinfo):
+ 
+             transition = self._lookup_transition(stamp)
+ 
+-            if stamp < transition.local:
++            if stamp < transition.local and transition.previous is not None:
+                 fold = getattr(dt, "fold", 1)
+                 if transition.is_ambiguous(stamp):
+                     if fold == 0:
+@@ -273,7 +273,7 @@ class Timezone(tzinfo):
+         stamp = timestamp(dt)
+ 
+         transition = self._lookup_transition(stamp, is_utc=True)
+-        if stamp < transition.at:
++        if stamp < transition.at and transition.previous is not None:
+             transition = transition.previous
+ 
+         stamp += transition.ttype.offset
+diff --git a/pendulum/tz/zoneinfo/transition.py b/pendulum/tz/zoneinfo/transition.py
+index 1ba93a4..dcbd5d3 100644
+--- a/pendulum/tz/zoneinfo/transition.py
++++ b/pendulum/tz/zoneinfo/transition.py
+@@ -70,6 +70,9 @@ class Transition:
+         return self._utcoffset
+ 
+     def __contains__(self, stamp):  # type: () -> bool
++        if self.previous is None:
++            return stamp < self.local
++
+         return self.previous.local <= stamp < self.local
+ 
+     def __repr__(self):  # type: () -> str

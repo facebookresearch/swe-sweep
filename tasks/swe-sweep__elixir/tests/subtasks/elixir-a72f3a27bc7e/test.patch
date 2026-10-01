@@ -1,0 +1,33 @@
+diff --git a/lib/elixir/test/elixir/kernel/expansion_test.exs b/lib/elixir/test/elixir/kernel/expansion_test.exs
+index f7042dfde..4e08384a5 100644
+--- a/lib/elixir/test/elixir/kernel/expansion_test.exs
++++ b/lib/elixir/test/elixir/kernel/expansion_test.exs
+@@ -1127,6 +1127,11 @@ defmodule Kernel.ExpansionTest do
+       assert expand(quote(do: &unknown(&1, &2))) == {:&, [], [{:/, [], [{:unknown, [], nil}, 2]}]}
+     end
+ 
++    test "removes no_parens when expanding 0-arity capture to fn" do
++      assert expand(quote(do: &foo().bar/0)) ==
++               quote(do: fn -> foo().bar() end)
++    end
++
+     test "expands remotes" do
+       assert expand(quote(do: &List.flatten/2)) ==
+                quote(do: &:"Elixir.List".flatten/2)
+diff --git a/lib/elixir/test/elixir/kernel/fn_test.exs b/lib/elixir/test/elixir/kernel/fn_test.exs
+index 1304d7535..0d0e84719 100644
+--- a/lib/elixir/test/elixir/kernel/fn_test.exs
++++ b/lib/elixir/test/elixir/kernel/fn_test.exs
+@@ -95,6 +95,12 @@ defmodule Kernel.FnTest do
+     assert (&mod.flatten/1) == (&List.flatten/1)
+   end
+ 
++  test "capture with module from local call" do
++    assert (&math_mod().pi/0).() == :math.pi()
++  end
++
++  defp math_mod, do: :math
++
+   test "local partial application" do
+     assert (&atb(&1, :utf8)).(:a) == "a"
+     assert (&atb(List.to_atom(&1), :utf8)).(~c"a") == "a"

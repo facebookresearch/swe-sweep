@@ -1,0 +1,23 @@
+diff --git a/src/Symfony/Component/Routing/Tests/RouteCollectionTest.php b/src/Symfony/Component/Routing/Tests/RouteCollectionTest.php
+index 7625bcf54eb..16ab7f6f269 100644
+--- a/src/Symfony/Component/Routing/Tests/RouteCollectionTest.php
++++ b/src/Symfony/Component/Routing/Tests/RouteCollectionTest.php
+@@ -385,4 +385,18 @@ class RouteCollectionTest extends TestCase
+ 
+         $this->assertSame($expected, $collection3->all());
+     }
++
++    public function testAddNamePrefixDoesNotBreakExternalAliases()
++    {
++        $collection = new RouteCollection();
++        $collection->add('local_route', new Route('/local'));
++        $collection->addAlias('alias_to_local', 'local_route');
++        $collection->addAlias('alias_to_external', 'external_route');
++        $collection->addNamePrefix('prefix_');
++
++        $aliases = $collection->getAliases();
++
++        $this->assertEquals('prefix_local_route', $aliases['prefix_alias_to_local']->getId(), 'Alias to local route should have its target prefixed');
++        $this->assertEquals('external_route', $aliases['prefix_alias_to_external']->getId(), 'Alias to external route should NOT have its target prefixed');
++    }
+ }

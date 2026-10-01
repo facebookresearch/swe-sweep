@@ -1,0 +1,13 @@
+diff --git a/activerecord/lib/active_record/query_cache.rb b/activerecord/lib/active_record/query_cache.rb
+index 08db278880f..3765986567f 100644
+--- a/activerecord/lib/active_record/query_cache.rb
++++ b/activerecord/lib/active_record/query_cache.rb
+@@ -41,7 +41,7 @@ module ActiveRecord
+     end
+ 
+     def self.complete(pools)
+-      pools.each { |pool| pool.disable_query_cache! }
++      pools.each { |pool| pool.disable_query_cache! unless pool.discarded? }
+ 
+       if ActiveRecord.legacy_connection_handling
+         ActiveRecord::Base.connection_handlers.each do |_, handler|

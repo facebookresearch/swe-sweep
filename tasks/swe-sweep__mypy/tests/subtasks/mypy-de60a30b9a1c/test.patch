@@ -1,0 +1,100 @@
+diff --git a/test-data/unit/check-inference.test b/test-data/unit/check-inference.test
+index a98597e6e..381f73ed9 100644
+--- a/test-data/unit/check-inference.test
++++ b/test-data/unit/check-inference.test
+@@ -3851,3 +3851,95 @@ def a4(x: List[str], y: List[Never]) -> None:
+     reveal_type(z2)  # N: Revealed type is "builtins.list[builtins.object]"
+     z1[1].append("asdf")  # E: "object" has no attribute "append"
+ [builtins fixtures/dict.pyi]
++
++[case testInferWalrusAssignmentAttrInCondition]
++class Foo:
++    def __init__(self, value: bool) -> None:
++        self.value = value
++
++def check_and(maybe: bool) -> None:
++    foo = None
++    if maybe and (foo := Foo(True)).value:
++        reveal_type(foo)  # N: Revealed type is "__main__.Foo"
++    else:
++        reveal_type(foo)  # N: Revealed type is "Union[__main__.Foo, None]"
++
++def check_and_nested(maybe: bool) -> None:
++    foo = None
++    bar = None
++    baz = None
++    if maybe and (foo := (bar := (baz := Foo(True)))).value:
++        reveal_type(foo)  # N: Revealed type is "__main__.Foo"
++        reveal_type(bar)  # N: Revealed type is "__main__.Foo"
++        reveal_type(baz)  # N: Revealed type is "__main__.Foo"
++    else:
++        reveal_type(foo)  # N: Revealed type is "Union[__main__.Foo, None]"
++        reveal_type(bar)  # N: Revealed type is "Union[__main__.Foo, None]"
++        reveal_type(baz)  # N: Revealed type is "Union[__main__.Foo, None]"
++
++def check_or(maybe: bool) -> None:
++    foo = None
++    if maybe or (foo := Foo(True)).value:
++        reveal_type(foo)  # N: Revealed type is "Union[__main__.Foo, None]"
++    else:
++        reveal_type(foo)  # N: Revealed type is "__main__.Foo"
++
++def check_or_nested(maybe: bool) -> None:
++    foo = None
++    bar = None
++    baz = None
++    if maybe and (foo := (bar := (baz := Foo(True)))).value:
++        reveal_type(foo)  # N: Revealed type is "__main__.Foo"
++        reveal_type(bar)  # N: Revealed type is "__main__.Foo"
++        reveal_type(baz)  # N: Revealed type is "__main__.Foo"
++    else:
++        reveal_type(foo)  # N: Revealed type is "Union[__main__.Foo, None]"
++        reveal_type(bar)  # N: Revealed type is "Union[__main__.Foo, None]"
++        reveal_type(baz)  # N: Revealed type is "Union[__main__.Foo, None]"
++
++[case testInferWalrusAssignmentIndexInCondition]
++def check_and(maybe: bool) -> None:
++    foo = None
++    bar = None
++    if maybe and (foo := [1])[(bar := 0)]:
++        reveal_type(foo)  # N: Revealed type is "builtins.list[builtins.int]"
++        reveal_type(bar)  # N: Revealed type is "builtins.int"
++    else:
++        reveal_type(foo)  # N: Revealed type is "Union[builtins.list[builtins.int], None]"
++        reveal_type(bar)  # N: Revealed type is "Union[builtins.int, None]"
++
++def check_and_nested(maybe: bool) -> None:
++    foo = None
++    bar = None
++    baz = None
++    if maybe and (foo := (bar := (baz := [1])))[0]:
++        reveal_type(foo)  # N: Revealed type is "builtins.list[builtins.int]"
++        reveal_type(bar)  # N: Revealed type is "builtins.list[builtins.int]"
++        reveal_type(baz)  # N: Revealed type is "builtins.list[builtins.int]"
++    else:
++        reveal_type(foo)  # N: Revealed type is "Union[builtins.list[builtins.int], None]"
++        reveal_type(bar)  # N: Revealed type is "Union[builtins.list[builtins.int], None]"
++        reveal_type(baz)  # N: Revealed type is "Union[builtins.list[builtins.int], None]"
++
++def check_or(maybe: bool) -> None:
++    foo = None
++    bar = None
++    if maybe or (foo := [1])[(bar := 0)]:
++        reveal_type(foo)  # N: Revealed type is "Union[builtins.list[builtins.int], None]"
++        reveal_type(bar)  # N: Revealed type is "Union[builtins.int, None]"
++    else:
++        reveal_type(foo)  # N: Revealed type is "builtins.list[builtins.int]"
++        reveal_type(bar)  # N: Revealed type is "builtins.int"
++
++def check_or_nested(maybe: bool) -> None:
++    foo = None
++    bar = None
++    baz = None
++    if maybe or (foo := (bar := (baz := [1])))[0]:
++        reveal_type(foo)  # N: Revealed type is "Union[builtins.list[builtins.int], None]"
++        reveal_type(bar)  # N: Revealed type is "Union[builtins.list[builtins.int], None]"
++        reveal_type(baz)  # N: Revealed type is "Union[builtins.list[builtins.int], None]"
++    else:
++        reveal_type(foo)  # N: Revealed type is "builtins.list[builtins.int]"
++        reveal_type(bar)  # N: Revealed type is "builtins.list[builtins.int]"
++        reveal_type(baz)  # N: Revealed type is "builtins.list[builtins.int]"

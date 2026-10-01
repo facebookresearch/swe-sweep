@@ -1,0 +1,12 @@
+diff --git a/crates/ruff_linter/src/rules/flake8_bugbear/rules/loop_iterator_mutation.rs b/crates/ruff_linter/src/rules/flake8_bugbear/rules/loop_iterator_mutation.rs
+index 83094305b8..6a617a147d 100644
+--- a/crates/ruff_linter/src/rules/flake8_bugbear/rules/loop_iterator_mutation.rs
++++ b/crates/ruff_linter/src/rules/flake8_bugbear/rules/loop_iterator_mutation.rs
+@@ -293,7 +293,6 @@ impl<'a> Visitor<'a> for LoopMutationsVisitor<'a> {
+                 if let Some(mutations) = self.mutations.get_mut(&self.branch) {
+                     mutations.clear();
+                 }
+-                visitor::walk_stmt(self, stmt);
+             }
+ 
+             // Avoid recursion for class and function definitions.

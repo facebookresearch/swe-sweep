@@ -1,0 +1,30 @@
+diff --git a/packages/babel-parser/src/plugins/estree.js b/packages/babel-parser/src/plugins/estree.js
+index 38e7e2e01c..d36e254bff 100644
+--- a/packages/babel-parser/src/plugins/estree.js
++++ b/packages/babel-parser/src/plugins/estree.js
+@@ -208,7 +208,7 @@
+         isGenerator,
+         isAsync,
+         isConstructor,
+-        "MethodDefinition",
++        "ClassMethod",
+       );
+       if (method.typeParameters) {
+         // $FlowIgnore
+@@ -273,13 +273,15 @@
+         funcNode,
+         isGenerator,
+         isAsync,
+         isConstructor,
+-        "FunctionExpression",
++        type,
+       );
++      funcNode.type = "FunctionExpression";
+       delete funcNode.kind;
+       // $FlowIgnore
+       node.value = funcNode;
+
++      type = type === "ClassMethod" ? "MethodDefinition" : type;
+       return this.finishNode(node, type);
+     }
+

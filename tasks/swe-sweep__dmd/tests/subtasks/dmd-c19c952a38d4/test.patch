@@ -1,0 +1,12 @@
+diff --git a/compiler/test/compilable/traits.d b/compiler/test/compilable/traits.d
+index 3c65dac093..d5e2cb0f22 100644
+--- a/compiler/test/compilable/traits.d
++++ b/compiler/test/compilable/traits.d
+@@ -316,3 +316,7 @@ extern(C++, `inst`)
+ mixin GetNamespaceTestTemplatedMixin!() GNTT;
+ 
+ static assert (__traits(getCppNamespaces, GNTT.foo) == Seq!(`inst`,/*`decl`,*/ `f`));
++
++int[1] arr;
++// test that index assignment parses as an expression, not a type
++enum _ = __traits(compiles, arr[0] = 0);

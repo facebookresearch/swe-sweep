@@ -1,0 +1,17 @@
+diff --git a/test/reshape.jl b/test/reshape.jl
+index c32f383d..09841e85 100644
+--- a/test/reshape.jl
++++ b/test/reshape.jl
+@@ -654,4 +654,12 @@ end
+     @test IndexStyle(DataFrames.StackedVector) == IndexLinear()
+ end
+ 
++@testset "empty unstack" begin
++    df = DataFrame(a = [], b = [], c = [])
++    dfu = unstack(df, :b, :c)
++    @test isempty(dfu)
++    @test names(dfu) == ["a"]
++    @test dfu.a isa Vector{Any}
++end
++
+ end # module

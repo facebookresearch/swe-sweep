@@ -1,0 +1,13 @@
+diff --git a/packages/mui-material/src/FormControl/FormControl.js b/packages/mui-material/src/FormControl/FormControl.js
+index 26cc6deb42..497e708653 100644
+--- a/packages/mui-material/src/FormControl/FormControl.js
++++ b/packages/mui-material/src/FormControl/FormControl.js
+@@ -143,7 +143,7 @@ const FormControl = React.forwardRef(function FormControl(inProps, ref) {
+           return;
+         }
+ 
+-        if (isFilled(child.props, true)) {
++        if (isFilled(child.props, true) || isFilled(child.props.inputProps, true)) {
+           initialFilled = true;
+         }
+       });

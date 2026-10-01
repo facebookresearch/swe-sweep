@@ -1,0 +1,20 @@
+diff --git a/tests/dialects/test_snowflake.py b/tests/dialects/test_snowflake.py
+index f5b36d7d50..852896052f 100644
+--- a/tests/dialects/test_snowflake.py
++++ b/tests/dialects/test_snowflake.py
+@@ -1016,4 +1016,7 @@ class TestSnowflake(Validator):
+         self.validate_identity("SELECT * FROM @namespace.%table_name/path/to/file.json.gz")
++        self.validate_identity(
++            "SELECT $1, $2, metadata$filename FROM @mystage (PATTERN => '.*data-100.*')"
++        )
+         self.validate_identity("SELECT * FROM '@external/location' (FILE_FORMAT => 'path.to.csv')")
+         self.validate_identity("PUT file:///dir/tmp.csv @%table", check_command_warning=True)
+         self.validate_identity("SELECT * FROM (SELECT a FROM @foo)")
+@@ -1041,7 +1044,6 @@ class TestSnowflake(Validator):
+             "SELECT * FROM @foo/bar (PATTERN => 'test', FILE_FORMAT => ds_sandbox.test.my_csv_format) AS bla",
+             "SELECT * FROM @foo/bar (FILE_FORMAT => ds_sandbox.test.my_csv_format, PATTERN => 'test') AS bla",
+         )
+-
+         self.validate_identity(
+             "SELECT * FROM @test.public.thing/location/somefile.csv( FILE_FORMAT => 'fmt' )",
+             "SELECT * FROM @test.public.thing/location/somefile.csv (FILE_FORMAT => 'fmt')",

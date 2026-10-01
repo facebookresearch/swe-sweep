@@ -1,0 +1,12 @@
+diff --git a/independent-projects/resteasy-reactive/server/jackson/src/main/java/org/jboss/resteasy/reactive/server/jackson/JacksonMessageBodyWriterUtil.java b/independent-projects/resteasy-reactive/server/jackson/src/main/java/org/jboss/resteasy/reactive/server/jackson/JacksonMessageBodyWriterUtil.java
+index d5e9f631a2b..3b004d2236a 100644
+--- a/independent-projects/resteasy-reactive/server/jackson/src/main/java/org/jboss/resteasy/reactive/server/jackson/JacksonMessageBodyWriterUtil.java
++++ b/independent-projects/resteasy-reactive/server/jackson/src/main/java/org/jboss/resteasy/reactive/server/jackson/JacksonMessageBodyWriterUtil.java
+@@ -28,6 +28,7 @@ public final class JacksonMessageBodyWriterUtil {
+         if (JacksonMessageBodyWriterUtil.needsNewFactory(jsonFactory)) {
+             jsonFactory = jsonFactory.copy();
+             JacksonMessageBodyWriterUtil.setNecessaryJsonFactoryConfig(jsonFactory);
++            jsonFactory.setCodec(mapper);
+             return mapper.writer().with(jsonFactory);
+         } else {
+             return mapper.writer();

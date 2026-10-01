@@ -1,0 +1,110 @@
+{
+  "build_jobs": 4,
+  "container_repo": "/distributions",
+  "evaluation": {
+    "suite": "julia-eval"
+  },
+  "upstream_image": "pandora-maxbug-distributions-jl:0.21.6",
+  "n_base_passing": 177,
+  "n_base_test_ignore": 2,
+  "oracle_digest": "9e4f29814e5a1f5a762f638ee500298e2961e348d1ea7070e0748996a757a104",
+  "oracle_pristine_paths": [],
+  "upstream_commit": "9f7399e15e6172900e0591deb5a57a45769d8205",
+  "reproduction": {
+    "needs_build": false,
+    "suite": "julia",
+    "test_timeout": 1800
+  },
+  "schema": 2,
+  "subtasks": [
+    {
+      "f2p": [
+        "Test mvnormal/MvNormal: Sampling with integer-valued parameters (#1004)",
+        "Test normal/Normal: Sampling with integer-valued parameters"
+      ],
+      "id": "distributions-jl-05b9cf48447c",
+      "target_files": [
+        "src/matrixvariates.jl",
+        "src/multivariate/mvnormal.jl",
+        "src/multivariates.jl",
+        "src/univariate/continuous/normal.jl",
+        "src/univariates.jl"
+      ]
+    },
+    {
+      "f2p": [
+        "Test multinomial"
+      ],
+      "id": "distributions-jl-24dd285c9574",
+      "target_files": [
+        "src/multivariate/multinomial.jl"
+      ]
+    },
+    {
+      "f2p": [
+        "Test chi"
+      ],
+      "id": "distributions-jl-2a48f71a4cab",
+      "target_files": [
+        "src/univariate/continuous/chi.jl"
+      ]
+    },
+    {
+      "f2p": [
+        "Test chi"
+      ],
+      "id": "distributions-jl-41f757af1ddb",
+      "target_files": [
+        "src/univariate/continuous/chi.jl"
+      ]
+    },
+    {
+      "f2p": [
+        "Test truncnormal/Truncated normal, mean and variance"
+      ],
+      "id": "distributions-jl-a5d3af551b14",
+      "target_files": [
+        "src/truncated/normal.jl"
+      ]
+    },
+    {
+      "f2p": [
+        "Test vonmisesfisher/Testing VonMisesFisher argument promotions"
+      ],
+      "id": "distributions-jl-b39265eb1edc",
+      "target_files": [
+        "src/multivariate/vonmisesfisher.jl"
+      ]
+    },
+    {
+      "f2p": [
+        "Test vonmisesfisher/Testing VonMisesFisher with rand(...)/Testing VonMisesFisher with rand(...) at (2, 1000.0)",
+        "Test vonmisesfisher/Testing VonMisesFisher with rand(rng, ...)/Testing VonMisesFisher with rand(rng, ...) at (2, 1000.0)"
+      ],
+      "id": "distributions-jl-cafa5a430428",
+      "target_files": [
+        "src/multivariate/vonmisesfisher.jl"
+      ]
+    },
+    {
+      "f2p": [
+        "Test functionals"
+      ],
+      "id": "distributions-jl-ec9a5706657e",
+      "target_files": [
+        "src/functionals.jl"
+      ]
+    },
+    {
+      "f2p": [
+        "Test bernoulli"
+      ],
+      "id": "distributions-jl-eef6cd45307a",
+      "target_files": [
+        "src/univariate/discrete/bernoulli.jl"
+      ]
+    }
+  ],
+  "task": "distributions-jl",
+  "version": "0.21.6"
+}

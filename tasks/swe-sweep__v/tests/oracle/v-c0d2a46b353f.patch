@@ -1,0 +1,66 @@
+diff --git a/vlib/v/ast/table.v b/vlib/v/ast/table.v
+index 01dbbcee6..2c28b9e08 100644
+--- a/vlib/v/ast/table.v
++++ b/vlib/v/ast/table.v
+@@ -1691,6 +1691,9 @@ pub fn (mut t Table) resolve_generic_to_concrete(generic_type Type, generic_name
+ 						t_generic_names, t_concrete_types)
+ 					{
+ 						gts := t.sym(ct)
++						if ct.is_ptr() {
++							nrt += '&'
++						}
+ 						nrt += gts.name
+ 						rnrt += gts.name
+ 						if i != sym.info.generic_types.len - 1 {
+@@ -1867,6 +1870,9 @@ pub fn (mut t Table) unwrap_generic_type(typ Type, generic_names []string, concr
+ 					t_concrete_types)
+ 				{
+ 					gts := t.sym(ct)
++					if ct.is_ptr() {
++						nrt += '&'
++					}
+ 					nrt += gts.name
+ 					c_nrt += gts.cname
+ 					if i != ts.info.generic_types.len - 1 {
+diff --git a/vlib/v/gen/c/if.v b/vlib/v/gen/c/if.v
+index 6b143de92..f5d1b68b7 100644
+--- a/vlib/v/gen/c/if.v
++++ b/vlib/v/gen/c/if.v
+@@ -184,20 +184,22 @@ fn (mut g Gen) if_expr(node ast.IfExpr) {
+ 	mut cur_line := ''
+ 	mut raw_state := false
+ 	if needs_tmp_var {
++		mut styp := g.typ(node.typ)
+ 		if node.typ.has_flag(.option) {
+ 			raw_state = g.inside_if_option
+ 			defer {
+ 				g.inside_if_option = raw_state
+ 			}
+ 			g.inside_if_option = true
++			styp = styp.replace('*', '_ptr')
+ 		} else if node.typ.has_flag(.result) {
+ 			raw_state = g.inside_if_result
+ 			defer {
+ 				g.inside_if_result = raw_state
+ 			}
+ 			g.inside_if_result = true
++			styp = styp.replace('*', '_ptr')
+ 		}
+-		styp := g.typ(node.typ)
+ 		cur_line = g.go_before_stmt(0)
+ 		g.empty_line = true
+ 		g.writeln('${styp} ${tmp}; /* if prepend */')
+diff --git a/vlib/v/parser/parse_type.v b/vlib/v/parser/parse_type.v
+index 0b29fe217..7ef1f1c7a 100644
+--- a/vlib/v/parser/parse_type.v
++++ b/vlib/v/parser/parse_type.v
+@@ -763,6 +763,9 @@ fn (mut p Parser) parse_generic_inst_type(name string) ast.Type {
+ 		if gts.kind == .multi_return {
+ 			p.error_with_pos('cannot use multi return as generic concrete type', type_pos)
+ 		}
++		if gt.is_ptr() {
++			bs_name += '&'
++		}
+ 		bs_name += gts.name
+ 		bs_cname += gts.cname
+ 		concrete_types << gt

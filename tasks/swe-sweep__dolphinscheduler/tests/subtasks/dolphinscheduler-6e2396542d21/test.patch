@@ -1,0 +1,42 @@
+diff --git a/dolphinscheduler-common/src/test/java/org/apache/dolphinscheduler/common/sql/ClasspathSqlScriptParserTest.java b/dolphinscheduler-common/src/test/java/org/apache/dolphinscheduler/common/sql/ClasspathSqlScriptParserTest.java
+index 3cc625c71f..5eea77e72d 100644
+--- a/dolphinscheduler-common/src/test/java/org/apache/dolphinscheduler/common/sql/ClasspathSqlScriptParserTest.java
++++ b/dolphinscheduler-common/src/test/java/org/apache/dolphinscheduler/common/sql/ClasspathSqlScriptParserTest.java
+@@ -48,4 +48,13 @@ class ClasspathSqlScriptParserTest {
+         List<String> allSql = classpathSqlScriptParser.getAllSql();
+         Assertions.assertEquals("ALTER TABLE t_ds_process_definition DROP tenant_id;", allSql.get(0));
+     }
++
++    @Test
++    void testIndentedLicenseHeaderSql() throws IOException {
++        ClasspathSqlScriptParser classpathSqlScriptParser =
++                new ClasspathSqlScriptParser("sql/indented_license_header.sql");
++        List<String> allSql = classpathSqlScriptParser.getAllSql();
++        Assertions.assertEquals(1, allSql.size());
++        Assertions.assertEquals("SELECT 1;", allSql.get(0));
++    }
+ }
+diff --git a/dolphinscheduler-common/src/test/resources/sql/indented_license_header.sql b/dolphinscheduler-common/src/test/resources/sql/indented_license_header.sql
+new file mode 100644
+index 0000000000..af9e1ea53f
+--- /dev/null
++++ b/dolphinscheduler-common/src/test/resources/sql/indented_license_header.sql
+@@ -0,0 +1,18 @@
++/*
++ * Licensed to the Apache Software Foundation (ASF) under one or more
++ * contributor license agreements.  See the NOTICE file distributed with
++ * this work for additional information regarding copyright ownership.
++ * The ASF licenses this file to You under the Apache License, Version 2.0
++ * (the "License"); you may not use this file except in compliance with
++ * the License.  You may obtain a copy of the License at
++ *
++ *    http://www.apache.org/licenses/LICENSE-2.0
++ *
++ * Unless required by applicable law or agreed to in writing, software
++ * distributed under the License is distributed on an "AS IS" BASIS,
++ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++ * See the License for the specific language governing permissions and
++ * limitations under the License.
++ */
++
++SELECT 1;

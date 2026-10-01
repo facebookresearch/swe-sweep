@@ -1,0 +1,466 @@
+{
+  "build_jobs": 4,
+  "container_repo": "/opencv",
+  "evaluation": {
+    "suite": {
+      "bin_dir": "/build/bin",
+      "binary_fmt": "opencv_test_%s",
+      "binary_re": "^modules/([^/]+)/(?:test|misc/[^/]+/test)/.*\\.cpp$",
+      "build_dir": "/build",
+      "type": "gtest"
+    }
+  },
+  "upstream_image": "pandora-maxbug-opencv:4.0.1",
+  "n_base_passing": 5914,
+  "n_base_test_ignore": 2,
+  "oracle_digest": "5bc2e2cb3ce06e2553ad65b8defe09a27b7b2174fafe409f621ed2d260cbfc15",
+  "oracle_pristine_paths": [],
+  "upstream_commit": "9f7399e15e6172900e0591deb5a57a45769d8205",
+  "reproduction": {
+    "build_cmd": "cmake --build /build -j $SWESWEEP_BUILD_JOBS",
+    "build_timeout": 5400,
+    "jobs_env": "SWESWEEP_BUILD_JOBS",
+    "suite": {
+      "bin_dir": "/build/bin",
+      "binary_fmt": "opencv_test_%s",
+      "binary_re": "^modules/([^/]+)/(?:test|misc/[^/]+/test)/.*\\.cpp$",
+      "build_dir": "/build",
+      "type": "gtest"
+    }
+  },
+  "schema": 2,
+  "subtasks": [
+    {
+      "f2p": [
+        "Calib3d_DecomposeProjectionMatrix.bug_23733"
+      ],
+      "id": "opencv-03814c751e45",
+      "target_files": [
+        "modules/calib3d/src/calibration.cpp"
+      ]
+    },
+    {
+      "f2p": [
+        "Core_OutputArrayCreate._13772"
+      ],
+      "id": "opencv-065ab5cc0087",
+      "target_files": [
+        "modules/core/src/matrix_wrap.cpp"
+      ]
+    },
+    {
+      "f2p": [
+        "HoughLines.regression_21983"
+      ],
+      "id": "opencv-08979782855f",
+      "target_files": [
+        "modules/imgproc/include/opencv2/imgproc.hpp",
+        "modules/imgproc/src/hough.cpp"
+      ]
+    },
+    {
+      "f2p": [
+        "__process_level_failure__"
+      ],
+      "id": "opencv-0d05063bd5c0",
+      "target_files": [
+        "modules/core/src/kmeans.cpp"
+      ]
+    },
+    {
+      "f2p": [
+        "Imgproc_ApproxPoly.distace_between_point_and_segment"
+      ],
+      "id": "opencv-0d3161877178",
+      "target_files": [
+        "modules/imgproc/src/approx.cpp"
+      ]
+    },
+    {
+      "f2p": [
+        "UMat.resize_Mat_issue_13577"
+      ],
+      "id": "opencv-140d51577a07",
+      "target_files": [
+        "modules/imgproc/src/resize.cpp"
+      ]
+    },
+    {
+      "f2p": [
+        "Imgproc_Subdiv2D.issue_25696"
+      ],
+      "id": "opencv-174d41f7934b",
+      "target_files": [
+        "modules/imgproc/src/subdivision2d.cpp"
+      ]
+    },
+    {
+      "f2p": [
+        "Core_MatExpr.issue_16689"
+      ],
+      "id": "opencv-1974f51bd214",
+      "target_files": [
+        "modules/core/src/matrix_expressions.cpp"
+      ]
+    },
+    {
+      "f2p": [
+        "Imgproc_Remap.issue_23562"
+      ],
+      "id": "opencv-1d1387aa8e47",
+      "target_files": [
+        "modules/imgproc/src/imgwarp.cpp"
+      ]
+    },
+    {
+      "f2p": [
+        "Calib3d_initUndistortRectifyMap.regression_14467"
+      ],
+      "id": "opencv-212cd1521af9",
+      "target_files": [
+        "modules/imgproc/src/undistort.avx2.cpp"
+      ]
+    },
+    {
+      "f2p": [
+        "__process_level_failure__"
+      ],
+      "id": "opencv-35e95d5fef31",
+      "target_files": [
+        "modules/core/src/persistence.cpp"
+      ]
+    },
+    {
+      "f2p": [
+        "ML_DTrees.load_bad_categorical_split"
+      ],
+      "id": "opencv-3ddefc7290c5",
+      "target_files": [
+        "modules/ml/src/tree.cpp"
+      ]
+    },
+    {
+      "f2p": [
+        "Imgproc_BoundingRect.bug_24217"
+      ],
+      "id": "opencv-41e8688ee2f5",
+      "target_files": [
+        "modules/imgproc/src/shapedescr.cpp"
+      ]
+    },
+    {
+      "f2p": [
+        "Core_InputOutput.FileStorage_YAML_parse_multiple_documents"
+      ],
+      "id": "opencv-4320d091f246",
+      "target_files": [
+        "modules/core/src/persistence.cpp"
+      ]
+    },
+    {
+      "f2p": [
+        "HoughLines.regression_25038_even",
+        "HoughLines.regression_25038_horizontal",
+        "HoughLines.regression_25038_vertical"
+      ],
+      "id": "opencv-4344998a81e0",
+      "target_files": [
+        "modules/imgproc/src/hough.cpp"
+      ]
+    },
+    {
+      "f2p": [
+        "__process_level_failure__"
+      ],
+      "id": "opencv-5cb9cd581ef5",
+      "target_files": [
+        "modules/dnn/src/dnn.cpp"
+      ]
+    },
+    {
+      "f2p": [
+        "Resize.nearest_regression_15075"
+      ],
+      "id": "opencv-5ff1b89640bd",
+      "target_files": [
+        "modules/imgproc/src/resize.cpp"
+      ]
+    },
+    {
+      "f2p": [
+        "EstimateAffine2D.issue_14259_dont_change_inputs",
+        "EstimateAffinePartial2D.issue_14259_dont_change_inputs"
+      ],
+      "id": "opencv-6a1bdf8d7893",
+      "target_files": [
+        "modules/calib3d/src/ptsetreg.cpp"
+      ]
+    },
+    {
+      "f2p": [
+        "Imgproc_LSD_Common.drawSegmentsEmpty"
+      ],
+      "id": "opencv-6c432b0cd808",
+      "target_files": [
+        "modules/imgproc/src/lsd.cpp"
+      ]
+    },
+    {
+      "f2p": [
+        "Imgproc_RotatedRectangleIntersection.regression_18520"
+      ],
+      "id": "opencv-72b6a063e735",
+      "target_files": [
+        "modules/imgproc/src/intersection.cpp"
+      ]
+    },
+    {
+      "f2p": [
+        "Drawing.regression_16308"
+      ],
+      "id": "opencv-77dbf1631b69",
+      "target_files": [
+        "modules/imgproc/src/drawing.cpp"
+      ]
+    },
+    {
+      "f2p": [
+        "__process_level_failure__"
+      ],
+      "id": "opencv-78a11e75834c",
+      "target_files": [
+        "modules/features2d/src/matchers.cpp"
+      ]
+    },
+    {
+      "f2p": [
+        "Core_MatExpr.issue_16655"
+      ],
+      "id": "opencv-836aa6f1bcdb",
+      "target_files": [
+        "modules/core/src/matrix_expressions.cpp"
+      ]
+    },
+    {
+      "f2p": [
+        "__process_level_failure__"
+      ],
+      "id": "opencv-83d848ddf557",
+      "target_files": [
+        "modules/core/include/opencv2/core/persistence.hpp",
+        "modules/core/src/persistence.cpp"
+      ]
+    },
+    {
+      "f2p": [
+        "Core_InputOutput.FileStorage_json_key_backslash"
+      ],
+      "id": "opencv-849409d58b10",
+      "target_files": [
+        "modules/core/src/persistence_json.cpp"
+      ]
+    },
+    {
+      "f2p": [
+        "Imgproc_PhaseCorrelatorTest.float32_overflow"
+      ],
+      "id": "opencv-898ee6013960",
+      "target_files": [
+        "modules/imgproc/src/phasecorr.cpp"
+      ]
+    },
+    {
+      "f2p": [
+        "Core_EigenNonSymmetric.convergence"
+      ],
+      "id": "opencv-8c7ec21f40f2",
+      "target_files": [
+        "modules/core/src/lda.cpp"
+      ]
+    },
+    {
+      "f2p": [
+        "Photo_SeamlessClone_normal.regression"
+      ],
+      "id": "opencv-9147e633a50f",
+      "target_files": [
+        "modules/photo/src/seamless_cloning.cpp"
+      ]
+    },
+    {
+      "f2p": [
+        "__process_level_failure__"
+      ],
+      "id": "opencv-9a698f046e06",
+      "target_files": [
+        "modules/core/src/persistence_types.cpp"
+      ]
+    },
+    {
+      "f2p": [
+        "ML_RTrees.bug_12974_throw_exception_when_predict_different_feature_count"
+      ],
+      "id": "opencv-a3f10a0641a3",
+      "target_files": [
+        "modules/ml/src/boost.cpp",
+        "modules/ml/src/rtrees.cpp"
+      ]
+    },
+    {
+      "f2p": [
+        "Calib3d_DecomposeHomography.issue_4978"
+      ],
+      "id": "opencv-a841d77e12fa",
+      "target_files": [
+        "modules/calib3d/src/homography_decomp.cpp"
+      ]
+    },
+    {
+      "f2p": [
+        "Imgproc_PyrUp.pyrUp_regression_22184"
+      ],
+      "id": "opencv-a868f91ec13f",
+      "target_files": [
+        "modules/imgproc/src/pyramids.cpp"
+      ]
+    },
+    {
+      "f2p": [
+        "__process_level_failure__"
+      ],
+      "id": "opencv-b27a0cb90aed",
+      "target_files": [
+        "modules/core/src/persistence_xml.cpp"
+      ]
+    },
+    {
+      "f2p": [
+        "Mat.regression_cvReshapeMatND_continuous"
+      ],
+      "id": "opencv-b7c9f43a731b",
+      "target_files": [
+        "modules/core/src/array.cpp"
+      ]
+    },
+    {
+      "f2p": [
+        "Calib3d_EstimateAffine3D.regression_16007"
+      ],
+      "id": "opencv-b95e3c7e7f80",
+      "target_files": [
+        "modules/calib3d/src/ptsetreg.cpp"
+      ]
+    },
+    {
+      "f2p": [
+        "Features2D_ORB.regression_16197"
+      ],
+      "id": "opencv-c4f59cf36a65",
+      "target_files": [
+        "modules/features2d/src/orb.cpp"
+      ]
+    },
+    {
+      "f2p": [
+        "Drawing.fillpoly_circle"
+      ],
+      "id": "opencv-c4fd47005bde",
+      "target_files": [
+        "modules/imgproc/src/drawing.cpp"
+      ]
+    },
+    {
+      "f2p": [
+        "Features2D_ORB.MaskValue"
+      ],
+      "id": "opencv-cb9f44f5771a",
+      "target_files": [
+        "modules/features2d/src/orb.cpp"
+      ]
+    },
+    {
+      "f2p": [
+        "Imgcodecs_Tiff.readWrite_predictor"
+      ],
+      "id": "opencv-cef786b62d8e",
+      "target_files": [
+        "modules/imgcodecs/src/grfmt_tiff.cpp"
+      ]
+    },
+    {
+      "f2p": [
+        "Imgproc_FindContours.regression_4363_shared_nbd"
+      ],
+      "id": "opencv-cfc1dfc23f11",
+      "target_files": [
+        "modules/imgproc/src/contours.cpp"
+      ]
+    },
+    {
+      "f2p": [
+        "ImgProc_cvtColorTwoPlane.missing_check_17036"
+      ],
+      "id": "opencv-d97911c694c2",
+      "target_files": [
+        "modules/imgproc/src/color_yuv.dispatch.cpp"
+      ]
+    },
+    {
+      "f2p": [
+        "__process_level_failure__"
+      ],
+      "id": "opencv-da1a55ec7dbb",
+      "target_files": [
+        "modules/imgproc/src/color_lab.cpp"
+      ]
+    },
+    {
+      "f2p": [
+        "Calib3d_DecomposeProjectionMatrix.degenerate_cases"
+      ],
+      "id": "opencv-dcdb346f556f",
+      "target_files": [
+        "modules/calib3d/src/calibration.cpp"
+      ]
+    },
+    {
+      "f2p": [
+        "Imgproc_DistanceTransform.large_square_22732",
+        "Imgproc_DistanceTransform.wide_image_22732"
+      ],
+      "id": "opencv-eb23b61a6803",
+      "target_files": [
+        "modules/imgproc/src/distransform.cpp"
+      ]
+    },
+    {
+      "f2p": [
+        "Drawing.fillpoly_fully"
+      ],
+      "id": "opencv-f418aa091479",
+      "target_files": [
+        "modules/imgproc/src/drawing.cpp"
+      ]
+    },
+    {
+      "f2p": [
+        "__process_level_failure__"
+      ],
+      "id": "opencv-f624dc51adf5",
+      "target_files": [
+        "modules/core/src/arithm.cpp"
+      ]
+    },
+    {
+      "f2p": [
+        "__process_level_failure__"
+      ],
+      "id": "opencv-ff66d0af4e7e",
+      "target_files": [
+        "modules/core/src/persistence.cpp"
+      ]
+    }
+  ],
+  "task": "opencv",
+  "version": "4.0.1"
+}

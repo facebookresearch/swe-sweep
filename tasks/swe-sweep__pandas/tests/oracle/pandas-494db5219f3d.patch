@@ -1,0 +1,48 @@
+diff --git a/pandas/_libs/tslib.pyx b/pandas/_libs/tslib.pyx
+index 2883c910b3..5c852e85ef 100644
+--- a/pandas/_libs/tslib.pyx
++++ b/pandas/_libs/tslib.pyx
+@@ -506,6 +506,9 @@ cpdef array_to_datetime(
+                 elif isinstance(val, str):
+                     # string
+                     seen_string = True
++                    if type(val) is not str:
++                        # GH#32264 np.str_ object
++                        val = str(val)
+ 
+                     if len(val) == 0 or val in nat_strings:
+                         iresult[i] = NPY_NAT
+@@ -735,6 +738,10 @@ cdef _array_to_datetime_object(
+             # GH 25978. No need to parse NaT-like or datetime-like vals
+             oresult[i] = val
+         elif isinstance(val, str):
++            if type(val) is not str:
++                # GH#32264 np.str_ objects
++                val = str(val)
++
+             if len(val) == 0 or val in nat_strings:
+                 oresult[i] = 'NaT'
+                 continue
+diff --git a/pandas/_libs/tslibs/parsing.pyx b/pandas/_libs/tslibs/parsing.pyx
+index f2b480642e..559c56992f 100644
+--- a/pandas/_libs/tslibs/parsing.pyx
++++ b/pandas/_libs/tslibs/parsing.pyx
+@@ -239,6 +239,9 @@ cdef inline bint does_string_look_like_time(str parse_string):
+ 
+ 
+ def parse_datetime_string(
++    # NB: This will break with np.str_ (GH#32264) even though
++    #  isinstance(npstrobj, str) evaluates to True, so caller must ensure
++    #  the argument is *exactly* 'str'
+     str date_string,
+     bint dayfirst=False,
+     bint yearfirst=False,
+@@ -254,7 +257,7 @@ def parse_datetime_string(
+     """
+ 
+     cdef:
+-        object dt
++        datetime dt
+ 
+     if not _does_string_look_like_datetime(date_string):
+         raise ValueError('Given date string not likely a datetime.')

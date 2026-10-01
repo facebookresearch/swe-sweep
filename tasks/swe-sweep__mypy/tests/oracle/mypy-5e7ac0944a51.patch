@@ -1,0 +1,24 @@
+diff --git a/mypy/stubdoc.py b/mypy/stubdoc.py
+index 89db6cb33..8f984037f 100644
+--- a/mypy/stubdoc.py
++++ b/mypy/stubdoc.py
+@@ -233,6 +233,19 @@ class DocStringParser:
+             self.accumulator = ""
+             self.state.append(STATE_ARGUMENT_TYPE)
+ 
++        elif (
++            token.type == tokenize.OP
++            and token.string == ":"
++            and self.state[-1] == STATE_ARGUMENT_TYPE
++            and self.accumulator == ""
++        ):
++            # We thought we were after the colon of an "arg_name: arg_type"
++            # stanza, so we were expecting an "arg_type" now. However, we ended
++            # up with "arg_name::" (with two colons). That's a C++ type name,
++            # not an argument name followed by a Python type. This function
++            # signature is malformed / invalid.
++            self.reset()
++
+         elif (
+             token.type == tokenize.OP
+             and token.string == "="

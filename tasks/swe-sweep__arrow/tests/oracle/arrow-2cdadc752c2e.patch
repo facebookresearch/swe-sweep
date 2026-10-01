@@ -1,0 +1,77 @@
+diff --git a/cpp/src/arrow/compute/exec/expression_internal.h b/cpp/src/arrow/compute/exec/expression_internal.h
+index 083756dc5f..2048ef9665 100644
+--- a/cpp/src/arrow/compute/exec/expression_internal.h
++++ b/cpp/src/arrow/compute/exec/expression_internal.h
+@@ -278,9 +278,12 @@ struct FlattenedAssociativeChain {
+ 
+ inline Result<std::shared_ptr<compute::Function>> GetFunction(
+     const Expression::Call& call, compute::ExecContext* exec_context) {
+-  if (call.function_name != "cast") {
+-    return exec_context->func_registry()->GetFunction(call.function_name);
++  ARROW_ASSIGN_OR_RAISE(auto function,
++                        exec_context->func_registry()->GetFunction(call.function_name));
++  if (function.get() != exec_context->func_registry()->cast_function()) {
++    return function;
+   }
++
+   // XXX this special case is strange; why not make "cast" a ScalarFunction?
+   const TypeHolder& to_type =
+       ::arrow::internal::checked_cast<const compute::CastOptions&>(*call.options).to_type;
+diff --git a/cpp/src/arrow/compute/registry.cc b/cpp/src/arrow/compute/registry.cc
+index 7a54f78a03..0f535eb373 100644
+--- a/cpp/src/arrow/compute/registry.cc
++++ b/cpp/src/arrow/compute/registry.cc
+@@ -122,6 +122,8 @@ class FunctionRegistry::FunctionRegistryImpl {
+            static_cast<int>(name_to_function_.size());
+   }
+ 
++  const Function* cast_function() { return cast_function_; }
++
+  private:
+   // must not acquire mutex
+   Status CanAddFunctionName(const std::string& name, bool allow_overwrite) {
+@@ -167,6 +169,9 @@ class FunctionRegistry::FunctionRegistryImpl {
+     RETURN_NOT_OK(CanAddFunctionName(name, allow_overwrite));
+     if (add) {
+       name_to_function_[name] = std::move(function);
++      if (name == "cast") {
++        cast_function_ = name_to_function_[name].get();
++      }
+     }
+     return Status::OK();
+   }
+@@ -203,7 +208,9 @@ class FunctionRegistry::FunctionRegistryImpl {
+   FunctionRegistryImpl* parent_;
+   std::mutex lock_;
+   std::unordered_map<std::string, std::shared_ptr<Function>> name_to_function_;
+   std::unordered_map<std::string, const FunctionOptionsType*> name_to_options_type_;
++
++  const Function* cast_function_;
+ };
+ 
+ std::unique_ptr<FunctionRegistry> FunctionRegistry::Make() {
+@@ -268,6 +275,8 @@ Result<const FunctionOptionsType*> FunctionRegistry::GetFunctionOptionsType(
+ 
+ int FunctionRegistry::num_functions() const { return impl_->num_functions(); }
+ 
++const Function* FunctionRegistry::cast_function() const { return impl_->cast_function(); }
++
+ namespace internal {
+ 
+ static std::unique_ptr<FunctionRegistry> CreateBuiltInRegistry() {
+diff --git a/cpp/src/arrow/compute/registry.h b/cpp/src/arrow/compute/registry.h
+index afd9f2007b..f31c4c1ba5 100644
+--- a/cpp/src/arrow/compute/registry.h
++++ b/cpp/src/arrow/compute/registry.h
+@@ -107,6 +107,11 @@ class ARROW_EXPORT FunctionRegistry {
+   /// \brief The number of currently registered functions.
+   int num_functions() const;
+ 
++  /// \brief The cast function object registered in AddFunction.
++  ///
++  /// Helpful for get cast function as needed.
++  const Function* cast_function() const;
++
+  private:
+   FunctionRegistry();
+ 

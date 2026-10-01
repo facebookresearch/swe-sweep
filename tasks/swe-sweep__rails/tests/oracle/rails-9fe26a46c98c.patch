@@ -1,0 +1,12 @@
+diff --git a/activerecord/lib/active_record/validations/uniqueness.rb b/activerecord/lib/active_record/validations/uniqueness.rb
+index 495e1ce42cc..d661cc4029f 100644
+--- a/activerecord/lib/active_record/validations/uniqueness.rb
++++ b/activerecord/lib/active_record/validations/uniqueness.rb
+@@ -14,6 +14,7 @@ module ActiveRecord
+         end
+         super
+         @klass = options[:class]
++        @klass = @klass.superclass if @klass.singleton_class?
+       end
+ 
+       def validate_each(record, attribute, value)

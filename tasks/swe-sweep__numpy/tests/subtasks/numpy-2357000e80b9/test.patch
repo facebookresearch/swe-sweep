@@ -1,0 +1,16 @@
+diff --git a/numpy/random/tests/test_random.py b/numpy/random/tests/test_random.py
+index d0bb92a738..d4721bc62c 100644
+--- a/numpy/random/tests/test_random.py
++++ b/numpy/random/tests/test_random.py
+@@ -440,6 +440,11 @@ class TestRandomDist(object):
+         assert_equal(np.random.choice(6, s, replace=False, p=p).shape, s)
+         assert_equal(np.random.choice(np.arange(6), s, replace=True).shape, s)
+ 
++    def test_choice_nan_probabilities(self):
++        a = np.array([42, 1, 2])
++        p = [None, None, None]
++        assert_raises(ValueError, np.random.choice, a, p=p)
++
+     def test_bytes(self):
+         np.random.seed(self.seed)
+         actual = np.random.bytes(10)

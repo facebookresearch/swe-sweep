@@ -1,0 +1,14 @@
+diff --git a/actionview/test/template/text_helper_test.rb b/actionview/test/template/text_helper_test.rb
+index b422e2bee98..9d593a96ae5 100644
+--- a/actionview/test/template/text_helper_test.rb
++++ b/actionview/test/template/text_helper_test.rb
+@@ -359,6 +359,9 @@ class TextHelperTest < ActionView::TestCase
+     options = { separator: "\n", radius: 1 }
+     assert_equal("...very\nvery long\nstring", excerpt("my very\nvery\nvery long\nstring", "long", options))
+ 
++    options = { separator: "_" }
++    assert_equal("foo", excerpt("foo", "foo", options))
++
+     assert_equal excerpt("This is a beautiful morning", "a"),
+                  excerpt("This is a beautiful morning", "a", separator: nil)
+   end

@@ -1,0 +1,92 @@
+diff --git a/src/math/lp/dioph_eq.cpp b/src/math/lp/dioph_eq.cpp
+index 714eabc3a..5058bfaf3 100644
+--- a/src/math/lp/dioph_eq.cpp
++++ b/src/math/lp/dioph_eq.cpp
+@@ -238,18 +238,13 @@ namespace lp {
+                 r.c() -= b.c();
+                 return r;
+             }
+-#if Z3DEBUG
+-            friend bool operator==(const term_o& a, const term_o& b) {
++            
++            friend bool eq(const term_o& a, const term_o& b) {
+                 term_o t = a.clone();
+                 t += mpq(-1) * b;
+                 return t.c() == mpq(0) && t.size() == 0;
+             }
+ 
+-            friend bool operator!=(const term_o& a, const term_o& b) {
+-                return ! (a  == b);
+-            }
+-
+-#endif
+             term_o& operator+=(const term_o& t) {
+                 for (const auto& p : t) {
+                     add_monomial(p.coeff(), p.j());
+@@ -1541,7 +1536,7 @@ namespace lp {
+             term_o t1 = open_ml(t0);
+             t1.add_monomial(mpq(1), j);
+             term_o rs = fix_vars(t1);
+-            if (ls != rs) {
++            if (!eq(ls, rs)) {
+                 TRACE(dio, tout << "ls:"; print_term_o(ls, tout) << "\n";
+                       tout << "rs:"; print_term_o(rs, tout) << "\n";);
+                 return false;
+@@ -2351,7 +2346,7 @@ namespace lp {
+ 
+                 return false;
+             }
+-            bool ret = ls == fix_vars(open_ml(m_l_matrix.m_rows[ei]));
++            bool ret = eq(ls, fix_vars(open_ml(m_l_matrix.m_rows[ei])));
+             if (!ret) {
+                 CTRACE(dio, !ret,
+                    {
+diff --git a/src/math/lp/lar_solver.cpp b/src/math/lp/lar_solver.cpp
+index 6e689c004..ff5ff973e 100644
+--- a/src/math/lp/lar_solver.cpp
++++ b/src/math/lp/lar_solver.cpp
+@@ -36,7 +36,12 @@ namespace lp {
+ 
+         struct term_comparer {
+             bool operator()(const lar_term& a, const lar_term& b) const {
+-                return a == b;
++                if (a.size() != b.size()) return false;
++                for (const auto& p : a) {
++                    auto const* e = b.coeffs().find_core(p.j());
++                    if (!e || e->get_data().m_value != p.coeff()) return false;
++                }
++                return true;
+             }
+         };
+ 
+diff --git a/src/math/lp/lar_term.h b/src/math/lp/lar_term.h
+index cca541801..b2d777493 100644
+--- a/src/math/lp/lar_term.h
++++ b/src/math/lp/lar_term.h
+@@ -129,8 +129,8 @@ public:
+         add_monomial(a, v1);
+         add_monomial(b, v2);
+     }
+-    bool operator==(const lar_term & a) const {  return false; } // take care not to create identical terms
+-    bool operator!=(const lar_term & a) const {  return ! (*this == a);}
++    bool operator==(const lar_term & a) const = delete; //  take care not to create identical terms
++    bool operator!=(const lar_term & a) const = delete;  
+     // some terms get used in add constraint
+     // it is the same as the offset in the m_constraints
+ 
+diff --git a/src/math/lp/nla_types.h b/src/math/lp/nla_types.h
+index 401e4eb62..89823e4dc 100644
+--- a/src/math/lp/nla_types.h
++++ b/src/math/lp/nla_types.h
+@@ -41,9 +41,8 @@ namespace nla {
+         ineq(const lp::lar_term& term, lp::lconstraint_kind cmp, const rational& rs) : m_cmp(cmp), m_term(term), m_rs(rs) {}
+         ineq(lpvar v, lp::lconstraint_kind cmp, int i): m_cmp(cmp), m_term(v), m_rs(rational(i)) {}
+         ineq(lpvar v, lp::lconstraint_kind cmp, rational const& r): m_cmp(cmp), m_term(v), m_rs(r) {}
+-        bool operator==(const ineq& a) const {
+-            return m_cmp == a.m_cmp && m_term == a.m_term && m_rs == a.m_rs;
+-        }
++        bool operator==(const ineq& a) const = delete;
++        bool operator!=(const ineq& a) const = delete;
+         const lp::lar_term& term() const { return m_term; };
+         lp::lconstraint_kind cmp() const { return m_cmp;  };
+         const rational& rs() const { return m_rs; };

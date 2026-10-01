@@ -1,0 +1,12 @@
+diff --git a/tests/fixtures/identity.sql b/tests/fixtures/identity.sql
+index b32bc896f4..1d3e0b9a15 100644
+--- a/tests/fixtures/identity.sql
++++ b/tests/fixtures/identity.sql
+@@ -881,4 +881,5 @@ GRANT SELECT ON orders TO ROLE PUBLIC
+ GRANT SELECT ON nation TO alice WITH GRANT OPTION
+ GRANT DELETE ON SCHEMA finance TO bob
+ SELECT attach
+-SELECT detach
+\ No newline at end of file
++SELECT detach
++WITH UNNEST AS (SELECT 1 AS UNNEST) SELECT UNNEST FROM UNNEST

@@ -1,0 +1,13 @@
+diff --git a/conans/client/graph/graph_error.py b/conans/client/graph/graph_error.py
+index cf2497e35..a438b87be 100644
+--- a/conans/client/graph/graph_error.py
++++ b/conans/client/graph/graph_error.py
+@@ -70,7 +70,7 @@ class GraphProvidesError(GraphError):
+ 
+     def __str__(self):
+         return f"Provide Conflict: Both '{self.node.ref}' and '{self.conflicting_node.ref}' " \
+-               f"provide '{self.node.conanfile.provides}'."
++               f"provide '{self.node.conanfile.provides or self.conflicting_node.conanfile.provides}'."
+ 
+ 
+ class GraphRuntimeError(GraphError):

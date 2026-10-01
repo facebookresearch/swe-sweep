@@ -1,0 +1,215 @@
+diff --git a/tests/ui/manual_let_else_match.fixed b/tests/ui/manual_let_else_match.fixed
+index 588ba5edd..15f604aec 100644
+--- a/tests/ui/manual_let_else_match.fixed
++++ b/tests/ui/manual_let_else_match.fixed
+@@ -137,3 +137,48 @@ fn not_fire() {
+ fn issue11579() {
+     let Some(msg) = Some("hi") else { unreachable!("can't happen") };
+ }
++
++#[derive(Clone, Copy)]
++struct Issue9939<T> {
++    avalanche: T,
++}
++
++fn issue9939() {
++    let issue = Some(Issue9939 { avalanche: 1 });
++    let Some(Issue9939 { avalanche: tornado }) = issue else { unreachable!("can't happen") };
++    let issue = Some(Issue9939 { avalanche: true });
++    let Some(Issue9939 { avalanche: acid_rain }) = issue else { unreachable!("can't happen") };
++    assert_eq!(tornado, 1);
++    assert!(acid_rain);
++
++    // without shadowing
++    let _x @ Some(Issue9939 { avalanche: _y }) = issue else { unreachable!("can't happen") };
++
++    // with shadowing
++    let Some(Issue9939 { avalanche: _x }) = issue else { unreachable!("can't happen") };
++}
++
++#[derive(Clone, Copy)]
++struct Issue9939b<T, U> {
++    earthquake: T,
++    hurricane: U,
++}
++
++fn issue9939b() {
++    let issue = Some(Issue9939b {
++        earthquake: true,
++        hurricane: 1,
++    });
++    let issue @ Some(Issue9939b { earthquake: flood, hurricane: drought }) = issue else { unreachable!("can't happen") };
++    assert_eq!(drought, 1);
++    assert!(flood);
++    assert!(issue.is_some());
++
++    // without shadowing
++    let _x @ Some(Issue9939b { earthquake: erosion, hurricane: _y }) = issue else { unreachable!("can't happen") };
++    assert!(erosion);
++
++    // with shadowing
++    let Some(Issue9939b { earthquake: erosion, hurricane: _x }) = issue else { unreachable!("can't happen") };
++    assert!(erosion);
++}
+diff --git a/tests/ui/manual_let_else_match.rs b/tests/ui/manual_let_else_match.rs
+index 6416753ba..44a044b14 100644
+--- a/tests/ui/manual_let_else_match.rs
++++ b/tests/ui/manual_let_else_match.rs
+@@ -177,3 +177,76 @@ fn issue11579() {
+         _ => unreachable!("can't happen"),
+     };
+ }
++
++#[derive(Clone, Copy)]
++struct Issue9939<T> {
++    avalanche: T,
++}
++
++fn issue9939() {
++    let issue = Some(Issue9939 { avalanche: 1 });
++    let tornado = match issue {
++        //~^ manual_let_else
++        Some(Issue9939 { avalanche }) => avalanche,
++        _ => unreachable!("can't happen"),
++    };
++    let issue = Some(Issue9939 { avalanche: true });
++    let acid_rain = match issue {
++        //~^ manual_let_else
++        Some(Issue9939 { avalanche: tornado }) => tornado,
++        _ => unreachable!("can't happen"),
++    };
++    assert_eq!(tornado, 1);
++    assert!(acid_rain);
++
++    // without shadowing
++    let _y = match issue {
++        //~^ manual_let_else
++        _x @ Some(Issue9939 { avalanche }) => avalanche,
++        None => unreachable!("can't happen"),
++    };
++
++    // with shadowing
++    let _x = match issue {
++        //~^ manual_let_else
++        _x @ Some(Issue9939 { avalanche }) => avalanche,
++        None => unreachable!("can't happen"),
++    };
++}
++
++#[derive(Clone, Copy)]
++struct Issue9939b<T, U> {
++    earthquake: T,
++    hurricane: U,
++}
++
++fn issue9939b() {
++    let issue = Some(Issue9939b {
++        earthquake: true,
++        hurricane: 1,
++    });
++    let (issue, drought, flood) = match issue {
++        //~^ manual_let_else
++        flood @ Some(Issue9939b { earthquake, hurricane }) => (flood, hurricane, earthquake),
++        None => unreachable!("can't happen"),
++    };
++    assert_eq!(drought, 1);
++    assert!(flood);
++    assert!(issue.is_some());
++
++    // without shadowing
++    let (_y, erosion) = match issue {
++        //~^ manual_let_else
++        _x @ Some(Issue9939b { earthquake, hurricane }) => (hurricane, earthquake),
++        None => unreachable!("can't happen"),
++    };
++    assert!(erosion);
++
++    // with shadowing
++    let (_x, erosion) = match issue {
++        //~^ manual_let_else
++        _x @ Some(Issue9939b { earthquake, hurricane }) => (hurricane, earthquake),
++        None => unreachable!("can't happen"),
++    };
++    assert!(erosion);
++}
+diff --git a/tests/ui/manual_let_else_match.stderr b/tests/ui/manual_let_else_match.stderr
+index 393562c62..ed6117ebf 100644
+--- a/tests/ui/manual_let_else_match.stderr
++++ b/tests/ui/manual_let_else_match.stderr
+@@ -101,5 +101,75 @@ LL | |         _ => unreachable!("can't happen"),
+ LL | |     };
+    | |______^ help: consider writing: `let Some(msg) = Some("hi") else { unreachable!("can't happen") };`
+ 
+-error: aborting due to 10 previous errors
++error: this could be rewritten as `let...else`
++  --> tests/ui/manual_let_else_match.rs:188:5
++   |
++LL | /     let tornado = match issue {
++LL | |
++LL | |         Some(Issue9939 { avalanche }) => avalanche,
++LL | |         _ => unreachable!("can't happen"),
++LL | |     };
++   | |______^ help: consider writing: `let Some(Issue9939 { avalanche: tornado }) = issue else { unreachable!("can't happen") };`
++
++error: this could be rewritten as `let...else`
++  --> tests/ui/manual_let_else_match.rs:194:5
++   |
++LL | /     let acid_rain = match issue {
++LL | |
++LL | |         Some(Issue9939 { avalanche: tornado }) => tornado,
++LL | |         _ => unreachable!("can't happen"),
++LL | |     };
++   | |______^ help: consider writing: `let Some(Issue9939 { avalanche: acid_rain }) = issue else { unreachable!("can't happen") };`
++
++error: this could be rewritten as `let...else`
++  --> tests/ui/manual_let_else_match.rs:203:5
++   |
++LL | /     let _y = match issue {
++LL | |
++LL | |         _x @ Some(Issue9939 { avalanche }) => avalanche,
++LL | |         None => unreachable!("can't happen"),
++LL | |     };
++   | |______^ help: consider writing: `let _x @ Some(Issue9939 { avalanche: _y }) = issue else { unreachable!("can't happen") };`
++
++error: this could be rewritten as `let...else`
++  --> tests/ui/manual_let_else_match.rs:210:5
++   |
++LL | /     let _x = match issue {
++LL | |
++LL | |         _x @ Some(Issue9939 { avalanche }) => avalanche,
++LL | |         None => unreachable!("can't happen"),
++LL | |     };
++   | |______^ help: consider writing: `let Some(Issue9939 { avalanche: _x }) = issue else { unreachable!("can't happen") };`
++
++error: this could be rewritten as `let...else`
++  --> tests/ui/manual_let_else_match.rs:228:5
++   |
++LL | /     let (issue, drought, flood) = match issue {
++LL | |
++LL | |         flood @ Some(Issue9939b { earthquake, hurricane }) => (flood, hurricane, earthquake),
++LL | |         None => unreachable!("can't happen"),
++LL | |     };
++   | |______^ help: consider writing: `let issue @ Some(Issue9939b { earthquake: flood, hurricane: drought }) = issue else { unreachable!("can't happen") };`
++
++error: this could be rewritten as `let...else`
++  --> tests/ui/manual_let_else_match.rs:238:5
++   |
++LL | /     let (_y, erosion) = match issue {
++LL | |
++LL | |         _x @ Some(Issue9939b { earthquake, hurricane }) => (hurricane, earthquake),
++LL | |         None => unreachable!("can't happen"),
++LL | |     };
++   | |______^ help: consider writing: `let _x @ Some(Issue9939b { earthquake: erosion, hurricane: _y }) = issue else { unreachable!("can't happen") };`
++
++error: this could be rewritten as `let...else`
++  --> tests/ui/manual_let_else_match.rs:246:5
++   |
++LL | /     let (_x, erosion) = match issue {
++LL | |
++LL | |         _x @ Some(Issue9939b { earthquake, hurricane }) => (hurricane, earthquake),
++LL | |         None => unreachable!("can't happen"),
++LL | |     };
++   | |______^ help: consider writing: `let Some(Issue9939b { earthquake: erosion, hurricane: _x }) = issue else { unreachable!("can't happen") };`
++
++error: aborting due to 17 previous errors
+ 

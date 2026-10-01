@@ -1,0 +1,64 @@
+diff --git a/lib/rules/selector-max-attribute/index.cjs b/lib/rules/selector-max-attribute/index.cjs
+index 167c747c1..dfd6c81a1 100644
+--- a/lib/rules/selector-max-attribute/index.cjs
++++ b/lib/rules/selector-max-attribute/index.cjs
+@@ -5,7 +5,7 @@
+ const selectorParser = require('postcss-selector-parser');
+ const validateTypes = require('../../utils/validateTypes.cjs');
+ const flattenNestedSelectorsForRule = require('../../utils/flattenNestedSelectorsForRule.cjs');
+-const getSelectorSourceIndex = require('../../utils/getSelectorSourceIndex.cjs');
++const getStrippedSelectorSource = require('../../utils/getStrippedSelectorSource.cjs');
+ const isContextFunctionalPseudoClass = require('../../utils/isContextFunctionalPseudoClass.cjs');
+ const isNonNegativeInteger = require('../../utils/isNonNegativeInteger.cjs');
+ const isStandardSyntaxRule = require('../../utils/isStandardSyntaxRule.cjs');
+@@ -75,8 +75,7 @@ const rule = (primary, secondaryOptions) => {
+ 			}, 0);
+ 
+ 			if (count > primary) {
+-				const index = getSelectorSourceIndex(selectorNode);
+-				const selectorStr = selectorNode.toString().trim();
++				const { index, endIndex, selector: selectorStr } = getStrippedSelectorSource(selectorNode);
+ 
+ 				report({
+ 					ruleName,
+@@ -85,7 +84,7 @@ const rule = (primary, secondaryOptions) => {
+ 					message: messages.expected,
+ 					messageArgs: [selectorStr, primary],
+ 					index,
+-					endIndex: index + selectorStr.length,
++					endIndex,
+ 				});
+ 			}
+ 		}
+diff --git a/lib/rules/selector-max-attribute/index.mjs b/lib/rules/selector-max-attribute/index.mjs
+index 79a0d2978..d5550e206 100644
+--- a/lib/rules/selector-max-attribute/index.mjs
++++ b/lib/rules/selector-max-attribute/index.mjs
+@@ -3,7 +3,7 @@ const { isRoot, isSelector } = selectorParser;
+ 
+ import { isRegExp, isString } from '../../utils/validateTypes.mjs';
+ import flattenNestedSelectorsForRule from '../../utils/flattenNestedSelectorsForRule.mjs';
+-import getSelectorSourceIndex from '../../utils/getSelectorSourceIndex.mjs';
++import getStrippedSelectorSource from '../../utils/getStrippedSelectorSource.mjs';
+ import isContextFunctionalPseudoClass from '../../utils/isContextFunctionalPseudoClass.mjs';
+ import isNonNegativeInteger from '../../utils/isNonNegativeInteger.mjs';
+ import isStandardSyntaxRule from '../../utils/isStandardSyntaxRule.mjs';
+@@ -71,8 +71,7 @@ const rule = (primary, secondaryOptions) => {
+ 			}, 0);
+ 
+ 			if (count > primary) {
+-				const index = getSelectorSourceIndex(selectorNode);
+-				const selectorStr = selectorNode.toString().trim();
++				const { index, endIndex, selector: selectorStr } = getStrippedSelectorSource(selectorNode);
+ 
+ 				report({
+ 					ruleName,
+@@ -81,7 +80,7 @@ const rule = (primary, secondaryOptions) => {
+ 					message: messages.expected,
+ 					messageArgs: [selectorStr, primary],
+ 					index,
+-					endIndex: index + selectorStr.length,
++					endIndex,
+ 				});
+ 			}
+ 		}

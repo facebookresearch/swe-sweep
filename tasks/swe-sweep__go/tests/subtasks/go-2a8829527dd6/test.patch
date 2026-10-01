@@ -1,0 +1,16 @@
+diff --git a/src/net/http/header_test.go b/src/net/http/header_test.go
+index 57d16f51a5..0b13d311ac 100644
+--- a/src/net/http/header_test.go
++++ b/src/net/http/header_test.go
+@@ -248,6 +248,11 @@ func TestCloneOrMakeHeader(t *testing.T) {
+ 			in:   Header{"foo": {"bar"}},
+ 			want: Header{"foo": {"bar"}},
+ 		},
++		{
++			name: "nil value",
++			in:   Header{"foo": nil},
++			want: Header{"foo": nil},
++		},
+ 	}
+ 
+ 	for _, tt := range tests {

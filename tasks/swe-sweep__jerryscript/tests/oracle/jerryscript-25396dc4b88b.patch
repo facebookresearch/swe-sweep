@@ -1,0 +1,19 @@
+diff --git a/jerry-core/ecma/builtin-objects/ecma-builtin-helpers-date.c b/jerry-core/ecma/builtin-objects/ecma-builtin-helpers-date.c
+index 356e49c9..467df302 100644
+--- a/jerry-core/ecma/builtin-objects/ecma-builtin-helpers-date.c
++++ b/jerry-core/ecma/builtin-objects/ecma-builtin-helpers-date.c
+@@ -72,7 +72,13 @@ ecma_date_time_within_day (ecma_number_t time) /**< time value */
+ {
+   JERRY_ASSERT (!ecma_number_is_nan (time));
+ 
+-  return (ecma_number_t) fmod (time, ECMA_DATE_MS_PER_DAY);
++  ecma_number_t modulo = fmod (time, ECMA_DATE_MS_PER_DAY);
++  if (modulo < 0)
++  {
++    modulo += ECMA_DATE_MS_PER_DAY;
++  }
++
++  return modulo;
+ } /* ecma_date_time_within_day */
+ 
+ /**

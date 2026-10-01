@@ -1,0 +1,76 @@
+diff --git a/tests/ui/match_as_ref.fixed b/tests/ui/match_as_ref.fixed
+index 8c07076af..a39f0c929 100644
+--- a/tests/ui/match_as_ref.fixed
++++ b/tests/ui/match_as_ref.fixed
+@@ -41,3 +41,33 @@ fn main() {
+         None => None,
+     };
+ }
++
++mod issue15691 {
++    use std::ops::{Deref, DerefMut};
++
++    struct A(B);
++    struct B;
++
++    impl Deref for A {
++        type Target = B;
++        fn deref(&self) -> &Self::Target {
++            &self.0
++        }
++    }
++
++    impl DerefMut for A {
++        fn deref_mut(&mut self) -> &mut Self::Target {
++            &mut self.0
++        }
++    }
++
++    fn func() {
++        let mut a = Some(A(B));
++        let mut b = Some(B);
++        // Do not lint, we don't have `None => None`
++        let _ = match b {
++            Some(ref mut x) => Some(x),
++            None => a.as_deref_mut(),
++        };
++    }
++}
+diff --git a/tests/ui/match_as_ref.rs b/tests/ui/match_as_ref.rs
+index 3a5b12273..049928167 100644
+--- a/tests/ui/match_as_ref.rs
++++ b/tests/ui/match_as_ref.rs
+@@ -53,3 +53,33 @@ fn main() {
+         None => None,
+     };
+ }
++
++mod issue15691 {
++    use std::ops::{Deref, DerefMut};
++
++    struct A(B);
++    struct B;
++
++    impl Deref for A {
++        type Target = B;
++        fn deref(&self) -> &Self::Target {
++            &self.0
++        }
++    }
++
++    impl DerefMut for A {
++        fn deref_mut(&mut self) -> &mut Self::Target {
++            &mut self.0
++        }
++    }
++
++    fn func() {
++        let mut a = Some(A(B));
++        let mut b = Some(B);
++        // Do not lint, we don't have `None => None`
++        let _ = match b {
++            Some(ref mut x) => Some(x),
++            None => a.as_deref_mut(),
++        };
++    }
++}

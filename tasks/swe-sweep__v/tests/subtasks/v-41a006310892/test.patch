@@ -1,0 +1,27 @@
+diff --git a/vlib/v/tests/modules/consts_with_or_blocks_in_different_files/config.v b/vlib/v/tests/modules/consts_with_or_blocks_in_different_files/config.v
+new file mode 100644
+index 000000000..95c788c5c
+--- /dev/null
++++ b/vlib/v/tests/modules/consts_with_or_blocks_in_different_files/config.v
+@@ -0,0 +1,5 @@
++module consts_with_or_blocks_in_different_files
++
++import os
++
++const a_const = os.config_dir() or { panic(err) } + '/a'
+diff --git a/vlib/v/tests/modules/consts_with_or_blocks_in_different_files/consts_should_not_conflict_test.v b/vlib/v/tests/modules/consts_with_or_blocks_in_different_files/consts_should_not_conflict_test.v
+new file mode 100644
+index 000000000..c4442e51d
+--- /dev/null
++++ b/vlib/v/tests/modules/consts_with_or_blocks_in_different_files/consts_should_not_conflict_test.v
+@@ -0,0 +1,10 @@
++module consts_with_or_blocks_in_different_files
++
++import os
++
++const b_const = os.config_dir() or { panic(err) } + '/b'
++
++// Just to test the two files in this folder are compiled normally
++fn test_consts_with_or_blocks_in_different_files() {
++	assert true
++}

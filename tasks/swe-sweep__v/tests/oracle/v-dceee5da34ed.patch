@@ -1,0 +1,15 @@
+diff --git a/vlib/v/gen/c/assign.v b/vlib/v/gen/c/assign.v
+index 7609b9f07..c9d3ef9e8 100644
+--- a/vlib/v/gen/c/assign.v
++++ b/vlib/v/gen/c/assign.v
+@@ -520,7 +520,9 @@ fn (mut g Gen) assign_stmt(node_ ast.AssignStmt) {
+ 					g.expr(left)
+ 					g.write(' ${extracted_op} ')
+ 					g.expr(val)
+-					g.write(';')
++					if !g.inside_for_c_stmt {
++						g.write(';')
++					}
+ 					return
+ 				} else {
+ 					g.write(' = ${styp}_${util.replace_op(extracted_op)}(')

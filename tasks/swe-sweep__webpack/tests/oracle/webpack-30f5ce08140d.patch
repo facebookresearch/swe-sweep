@@ -1,0 +1,13 @@
+diff --git a/lib/util/fs.js b/lib/util/fs.js
+index 3a1c3ab8f..4551522a7 100644
+--- a/lib/util/fs.js
++++ b/lib/util/fs.js
+@@ -625,7 +625,7 @@ const lstatReadlinkAbsolute = (fs, p, callback) => {
+ 				// we retry 2 times to catch this case before throwing the error
+ 				return doStat();
+ 			}
+-			if (err || !target) return doStat();
++			if (err) return callback(err);
+ 			const value = target.toString();
+ 			callback(null, join(fs, dirname(fs, p), value));
+ 		});

@@ -1,0 +1,20 @@
+diff --git a/tokio/tests/io_chain.rs b/tokio/tests/io_chain.rs
+index e2d59411..70398295 100644
+--- a/tokio/tests/io_chain.rs
++++ b/tokio/tests/io_chain.rs
+@@ -14,3 +14,15 @@ async fn chain() {
+     assert_ok!(rd.read_to_end(&mut buf).await);
+     assert_eq!(buf, b"hello world");
+ }
++
++#[tokio::test]
++async fn empty_read_does_not_skip_first() {
++    let mut buf = Vec::new();
++    let rd1: &[u8] = b"hello ";
++    let rd2: &[u8] = b"world";
++
++    let mut rd = rd1.chain(rd2);
++    assert_eq!(assert_ok!(rd.read(&mut []).await), 0);
++    assert_ok!(rd.read_to_end(&mut buf).await);
++    assert_eq!(buf, b"hello world");
++}

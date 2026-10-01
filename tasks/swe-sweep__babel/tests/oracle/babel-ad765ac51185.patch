@@ -1,0 +1,20 @@
+diff --git a/packages/babel-parser/src/plugins/flow.js b/packages/babel-parser/src/plugins/flow.js
+index 6382c1f6f3..cd250e9ad0 100644
+--- a/packages/babel-parser/src/plugins/flow.js
++++ b/packages/babel-parser/src/plugins/flow.js
+@@ -638,12 +638,15 @@ export default (superClass: Class<Parser>): Class<Parser> =>
+       this.state.inType = true;
+ 
+       this.expectRelational("<");
++      const oldNoAnonFunctionType = this.state.noAnonFunctionType;
++      this.state.noAnonFunctionType = false;
+       while (!this.isRelational(">")) {
+         node.params.push(this.flowParseType());
+         if (!this.isRelational(">")) {
+           this.expect(tt.comma);
+         }
+       }
++      this.state.noAnonFunctionType = oldNoAnonFunctionType;
+       this.expectRelational(">");
+ 
+       this.state.inType = oldInType;

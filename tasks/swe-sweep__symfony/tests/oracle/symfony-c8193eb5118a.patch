@@ -1,0 +1,15 @@
+diff --git a/src/Symfony/Bundle/FrameworkBundle/Controller/AbstractController.php b/src/Symfony/Bundle/FrameworkBundle/Controller/AbstractController.php
+index a5ab48b59b6..b4744981686 100644
+--- a/src/Symfony/Bundle/FrameworkBundle/Controller/AbstractController.php
++++ b/src/Symfony/Bundle/FrameworkBundle/Controller/AbstractController.php
+@@ -157,6 +157,10 @@ abstract class AbstractController implements ServiceSubscriberInterface
+             return new JsonResponse($json, $status, $headers, true);
+         }
+ 
++        if (null === $data) {
++            return new JsonResponse('null', $status, $headers, true);
++        }
++
+         return new JsonResponse($data, $status, $headers);
+     }
+ 

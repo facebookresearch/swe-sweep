@@ -1,0 +1,128 @@
+{
+  "build_jobs": 4,
+  "container_repo": "/dayjs",
+  "evaluation": {
+    "suite": "reproduction",
+    "visible_timeout": 7200
+  },
+  "upstream_image": "pandora-maxbug-dayjs:1.8.32",
+  "n_base_passing": 508,
+  "n_base_test_ignore": 1,
+  "oracle_digest": "66d21ecafdc20ff1aba8997ae6031c6c95e5ae86f5b4aa5b3a2fd31f7bb7f943",
+  "oracle_pristine_paths": [],
+  "upstream_commit": "9f7399e15e6172900e0591deb5a57a45769d8205",
+  "reproduction": {
+    "needs_build": false,
+    "suite": "jest",
+    "test_timeout": 900
+  },
+  "schema": 2,
+  "subtasks": [
+    {
+      "f2p": [
+        "meridiem locale AM",
+        "meridiem locale PM"
+      ],
+      "id": "dayjs-3a929ee0ab06",
+      "target_files": [
+        "src/plugin/customParseFormat/index.js"
+      ]
+    },
+    {
+      "f2p": [
+        "Creating milliseconds"
+      ],
+      "id": "dayjs-5084c32dd590",
+      "target_files": [
+        "src/plugin/duration/index.js"
+      ]
+    },
+    {
+      "f2p": [
+        "Format Day of Month Do 1 - 31"
+      ],
+      "id": "dayjs-57968643d477",
+      "target_files": [
+        "src/locale/nl.js"
+      ]
+    },
+    {
+      "f2p": [
+        "Diff"
+      ],
+      "id": "dayjs-5b82d534b748",
+      "target_files": [
+        "src/utils.js"
+      ]
+    },
+    {
+      "f2p": [
+        "Convert format Z"
+      ],
+      "id": "dayjs-6ac2bc23656b",
+      "target_files": [
+        "src/plugin/timezone/index.js"
+      ]
+    },
+    {
+      "f2p": [
+        "Year 1 formatted with YYYY should pad with zeroes",
+        "Year 1 formatting matches moment format"
+      ],
+      "id": "dayjs-6b7e9cb4d7ed",
+      "target_files": [
+        "src/index.js"
+      ]
+    },
+    {
+      "f2p": [
+        "parse with special separator characters Output is NaN for a specific date format"
+      ],
+      "id": "dayjs-733ee352a78d",
+      "target_files": [
+        "src/plugin/customParseFormat/index.js"
+      ]
+    },
+    {
+      "f2p": [
+        "yearStart: 4"
+      ],
+      "id": "dayjs-b24c255c0b29",
+      "target_files": [
+        "src/plugin/weekYear/index.js"
+      ]
+    },
+    {
+      "f2p": [
+        "Global localeData",
+        "Instance localeData"
+      ],
+      "id": "dayjs-dac3102f65a0",
+      "target_files": [
+        "src/plugin/localeData/index.js",
+        "src/plugin/localizedFormat/index.js"
+      ]
+    },
+    {
+      "f2p": [
+        "Add duration",
+        "Subtract duration"
+      ],
+      "id": "dayjs-e226f183b0ce",
+      "target_files": [
+        "src/plugin/duration/index.js"
+      ]
+    },
+    {
+      "f2p": [
+        "Parse parse timestamp, js Date, Day.js object"
+      ],
+      "id": "dayjs-f9d6b109fbdf",
+      "target_files": [
+        "src/plugin/timezone/index.js"
+      ]
+    }
+  ],
+  "task": "dayjs",
+  "version": "1.8.32"
+}

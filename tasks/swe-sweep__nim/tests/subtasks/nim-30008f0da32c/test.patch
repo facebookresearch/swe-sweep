@@ -1,0 +1,56 @@
+diff --git a/tests/stdlib/tdeques.nim b/tests/stdlib/tdeques.nim
+index 7d379a597..e1ad50a84 100644
+--- a/tests/stdlib/tdeques.nim
++++ b/tests/stdlib/tdeques.nim
+@@ -241,3 +241,12 @@ proc main() =
+ 
+ static: main()
+ main()
++
++# https://github.com/nim-lang/Nim/issues/18583
++# $ separator must be emitted even when the item's string repr is empty
++type EmptyStr18583 = object
++proc `$`(x: EmptyStr18583): string = ""
++
++block:
++  var d = [EmptyStr18583(), EmptyStr18583()].toDeque
++  doAssert $d == "[, ]", "got: " & $d
+diff --git a/tests/stdlib/theapqueue.nim b/tests/stdlib/theapqueue.nim
+index afb09c7e3..92964c564 100644
+--- a/tests/stdlib/theapqueue.nim
++++ b/tests/stdlib/theapqueue.nim
+@@ -104,3 +104,15 @@ template main() =
+ 
+ static: main()
+ main()
++
++# https://github.com/nim-lang/Nim/issues/18583
++type EmptyStr18583HeapQ = object
++proc `$`(x: EmptyStr18583HeapQ): string = ""
++proc `<`(a, b: EmptyStr18583HeapQ): bool = false
++
++block:
++  var h = initHeapQueue[EmptyStr18583HeapQ]()
++  push(h, EmptyStr18583HeapQ())
++  push(h, EmptyStr18583HeapQ())
++  let s = $h
++  doAssert s == "[, ]", "got: " & s
+diff --git a/tests/stdlib/tlists.nim b/tests/stdlib/tlists.nim
+index 9339a6df0..cffb00d58 100644
+--- a/tests/stdlib/tlists.nim
++++ b/tests/stdlib/tlists.nim
+@@ -287,3 +287,14 @@ template main =
+ 
+ static: main()
+ main()
++
++# https://github.com/nim-lang/Nim/issues/18583
++type EmptyStr18583List = object
++proc `$`(x: EmptyStr18583List): string = ""
++
++block:
++  var L: SinglyLinkedList[EmptyStr18583List]
++  L.prepend(EmptyStr18583List())
++  L.prepend(EmptyStr18583List())
++  let s = $L
++  doAssert s == "[, ]", "got: " & s

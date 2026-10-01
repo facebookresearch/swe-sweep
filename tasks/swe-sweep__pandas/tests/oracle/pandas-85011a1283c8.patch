@@ -1,0 +1,26 @@
+diff --git a/pandas/core/arrays/masked.py b/pandas/core/arrays/masked.py
+index b11b11ded2..1797f1aff4 100644
+--- a/pandas/core/arrays/masked.py
++++ b/pandas/core/arrays/masked.py
+@@ -487,6 +487,21 @@ class BaseMaskedArray(OpsMixin, ExtensionArray):
+ 
+         return Series(counts, index=index)
+ 
++    @doc(ExtensionArray.equals)
++    def equals(self, other) -> bool:
++        if type(self) != type(other):
++            return False
++        if other.dtype != self.dtype:
++            return False
++
++        # GH#44382 if e.g. self[1] is np.nan and other[1] is pd.NA, we are NOT
++        #  equal.
++        return np.array_equal(self._mask, other._mask) and np.array_equal(
++            self._data[~self._mask],
++            other._data[~other._mask],
++            equal_nan=True,
++        )
++
+     def _reduce(self, name: str, *, skipna: bool = True, **kwargs):
+         data = self._data
+         mask = self._mask

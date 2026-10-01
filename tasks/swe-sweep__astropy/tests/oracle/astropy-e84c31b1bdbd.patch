@@ -1,0 +1,13 @@
+diff --git a/astropy/units/si.py b/astropy/units/si.py
+index f6a91dc1b1..08aaefdd41 100644
+--- a/astropy/units/si.py
++++ b/astropy/units/si.py
+@@ -372,7 +372,7 @@ def_unit(
+     namespace=_ns,
+     prefixes=True,
+     doc="Ohm: electrical resistance",
+-    format={"latex": r"\Omega", "unicode": "Ω"},
++    format={"latex": r"\Omega", "ogip": "ohm", "unicode": "Ω"},
+ )
+ def_unit(
+     ["S", "Siemens", "siemens"],

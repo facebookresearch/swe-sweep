@@ -1,0 +1,622 @@
+{
+  "build_jobs": 4,
+  "container_repo": "/lean4",
+  "evaluation": {
+    "suite": "reproduction",
+    "test_dirs": [
+      "tests",
+      "src/lake/tests"
+    ],
+    "visible_timeout": 14400
+  },
+  "upstream_image": "pandora-maxbug-lean4:4.8.0",
+  "n_base_passing": 1999,
+  "n_base_test_ignore": 2,
+  "oracle_digest": "09a1f77e3fc766e47eef3e89998f269adfeede6ffcf021c2073ef520d90d1718",
+  "oracle_pristine_paths": [],
+  "upstream_commit": "9f7399e15e6172900e0591deb5a57a45769d8205",
+  "reproduction": {
+    "needs_build": false,
+    "suite": {
+      "build_cmd": "lean4-build",
+      "build_dir": "/lean4/build/release/stage1",
+      "build_timeout": 7200,
+      "type": "lean-ctest"
+    },
+    "test_timeout": 3600
+  },
+  "schema": 2,
+  "subtasks": [
+    {
+      "f2p": [
+        "leantest_242.lean"
+      ],
+      "id": "lean4-029888f0b5af",
+      "target_files": [
+        "src/Lean/Elab/Syntax.lean"
+      ]
+    },
+    {
+      "f2p": [
+        "leaninteractivetest_issue5597.lean"
+      ],
+      "id": "lean4-15d464960236",
+      "target_files": [
+        "src/Init/Meta.lean"
+      ]
+    },
+    {
+      "f2p": [
+        "leanruntest_issue5630.lean"
+      ],
+      "id": "lean4-19bf3a37d794",
+      "target_files": [
+        "src/Lean/Meta/Tactic/Simp/BuiltinSimprocs/Fin.lean"
+      ]
+    },
+    {
+      "f2p": [
+        "leanruntest_4251.lean"
+      ],
+      "id": "lean4-1afe849a81fc",
+      "target_files": [
+        "src/Lean/Elab/Tactic/Simp.lean",
+        "src/Lean/Meta/Match/MatchEqsExt.lean"
+      ]
+    },
+    {
+      "f2p": [
+        "leanruntest_2899.lean"
+      ],
+      "id": "lean4-240fff17f75a",
+      "target_files": [
+        "src/Lean/Elab/DeclModifiers.lean",
+        "src/Lean/Elab/Declaration.lean",
+        "src/Lean/Elab/DefView.lean",
+        "src/Lean/Elab/PreDefinition/Basic.lean",
+        "src/Lean/Elab/PreDefinition/WF/Main.lean",
+        "src/Lean/Elab/Structure.lean"
+      ]
+    },
+    {
+      "f2p": [
+        "leantest_syntheticOpaqueReadOnly.lean"
+      ],
+      "id": "lean4-247f3e5f6c3d",
+      "target_files": [
+        "src/Lean/Meta/Basic.lean"
+      ]
+    },
+    {
+      "f2p": [
+        "leanlaketest_precompileArgs"
+      ],
+      "id": "lean4-254dc0aaa828",
+      "target_files": [
+        "src/lake/Lake/Build/Module.lean",
+        "src/lake/examples/precompile/test.sh"
+      ]
+    },
+    {
+      "f2p": [
+        "leanruntest_4851.lean"
+      ],
+      "id": "lean4-2a6547ca1e63",
+      "target_files": [
+        "src/Lean/Meta/Tactic/Contradiction.lean"
+      ]
+    },
+    {
+      "f2p": [
+        "leanruntest_6789.lean"
+      ],
+      "id": "lean4-2d795dd4981a",
+      "target_files": [
+        "src/Lean/Meta/Match/MatchEqs.lean"
+      ]
+    },
+    {
+      "f2p": [
+        "leanruntest_4406.lean"
+      ],
+      "id": "lean4-2ec212005234",
+      "target_files": [
+        "src/Lean/PrettyPrinter/Delaborator/Options.lean",
+        "src/Lean/Server/FileWorker/WidgetRequests.lean",
+        "src/Lean/Util/PPExt.lean",
+        "src/Lean/Widget/InteractiveCode.lean"
+      ]
+    },
+    {
+      "f2p": [
+        "leanruntest_dsimpNatLitIssue.lean"
+      ],
+      "id": "lean4-31c473c788d2",
+      "target_files": [
+        "src/Lean/Meta/Tactic/Simp/Main.lean",
+        "src/Lean/Meta/Transform.lean"
+      ]
+    },
+    {
+      "f2p": [
+        "leantest_4309.lean"
+      ],
+      "id": "lean4-32221b13c5ba",
+      "target_files": [
+        "src/Lean/Elab/Term.lean"
+      ]
+    },
+    {
+      "f2p": [
+        "leanruntest_2710.lean"
+      ],
+      "id": "lean4-372bfb3273db",
+      "target_files": [
+        "src/Lean/Elab/Structure.lean"
+      ]
+    },
+    {
+      "f2p": [
+        "leanruntest_caseTacInMacros.lean"
+      ],
+      "id": "lean4-4a4aaa3c95e9",
+      "target_files": [
+        "src/Lean/Elab/Tactic/BuiltinTactic.lean"
+      ]
+    },
+    {
+      "f2p": [
+        "leanruntest_renameSelf.lean"
+      ],
+      "id": "lean4-4a70d1cefc68",
+      "target_files": [
+        "src/Lean/Elab/Tactic/ElabTerm.lean"
+      ]
+    },
+    {
+      "f2p": [
+        "leanruntest_2901.lean"
+      ],
+      "id": "lean4-4ad0b5782e8c",
+      "target_files": [
+        "src/library/compiler/lcnf.cpp"
+      ]
+    },
+    {
+      "f2p": [
+        "leanruntest_2044.lean"
+      ],
+      "id": "lean4-4c3eda91bde7",
+      "target_files": [
+        "src/Lean/Elab/DeclNameGen.lean",
+        "src/Lean/Server/Rpc/Deriving.lean"
+      ]
+    },
+    {
+      "f2p": [
+        "leanruntest_4306.lean"
+      ],
+      "id": "lean4-4c65dca1dafb",
+      "target_files": [
+        "src/Lean/Compiler/ConstFolding.lean"
+      ]
+    },
+    {
+      "f2p": [
+        "leanruntest_subscript_parser.lean"
+      ],
+      "id": "lean4-4c865152884c",
+      "target_files": [
+        "src/Init/Meta.lean"
+      ]
+    },
+    {
+      "f2p": [
+        "leanruntest_binop.lean"
+      ],
+      "id": "lean4-51acc920a5b9",
+      "target_files": [
+        "src/Lean/Elab/Extra.lean"
+      ]
+    },
+    {
+      "f2p": [
+        "leanruntest_4761.lean"
+      ],
+      "id": "lean4-540b80bbbd52",
+      "target_files": [
+        "src/Lean/Elab/App.lean"
+      ]
+    },
+    {
+      "f2p": [
+        "leaninteractivetest_builtinCodeactions.lean"
+      ],
+      "id": "lean4-5793fb9caf57",
+      "target_files": [
+        "src/Init/Tactics.lean"
+      ]
+    },
+    {
+      "f2p": [
+        "leanruntest_3079.lean"
+      ],
+      "id": "lean4-69f2f8434b45",
+      "target_files": [
+        "src/Lean/Elab/Term.lean"
+      ]
+    },
+    {
+      "f2p": [
+        "leanruntest_5064.lean"
+      ],
+      "id": "lean4-6e27162a7af3",
+      "target_files": [
+        "src/Lean/Meta/CtorRecognizer.lean"
+      ]
+    },
+    {
+      "f2p": [
+        "leanruntest_2689.lean",
+        "leanruntest_level.lean"
+      ],
+      "id": "lean4-72223353a834",
+      "target_files": [
+        "src/Lean/Level.lean"
+      ]
+    },
+    {
+      "f2p": [
+        "leanruntest_name_eq_bug.lean"
+      ],
+      "id": "lean4-785d83b273dd",
+      "target_files": [
+        "src/runtime/object.cpp"
+      ]
+    },
+    {
+      "f2p": [
+        "leanruntest_issue10792.lean"
+      ],
+      "id": "lean4-7bde02941db2",
+      "target_files": [
+        "src/Lean/Meta/Match/Match.lean"
+      ]
+    },
+    {
+      "f2p": [
+        "leanruntest_6999.lean"
+      ],
+      "id": "lean4-80ae952553e3",
+      "target_files": [
+        "src/Init/Tactics.lean"
+      ]
+    },
+    {
+      "f2p": [
+        "leanruntest_issue8098.lean"
+      ],
+      "id": "lean4-87531515470e",
+      "target_files": [
+        "src/Lean/Parser/Do.lean"
+      ]
+    },
+    {
+      "f2p": [
+        "leanruntest_4213.lean"
+      ],
+      "id": "lean4-8b841010dfdd",
+      "target_files": [
+        "src/Lean/Meta/SynthInstance.lean"
+      ]
+    },
+    {
+      "f2p": [
+        "leanruntest_4561.lean"
+      ],
+      "id": "lean4-91142ecc2037",
+      "target_files": [
+        "src/Lean/PrettyPrinter/Formatter.lean"
+      ]
+    },
+    {
+      "f2p": [
+        "leanruntest_4670.lean"
+      ],
+      "id": "lean4-9539d589521e",
+      "target_files": [
+        "src/Lean/Elab/Print.lean",
+        "src/Lean/PrettyPrinter/Delaborator/FieldNotation.lean"
+      ]
+    },
+    {
+      "f2p": [
+        "leantest_linterUnusedVariables.lean"
+      ],
+      "id": "lean4-987284d18b74",
+      "target_files": [
+        "src/Lean/Elab/Match.lean"
+      ]
+    },
+    {
+      "f2p": [
+        "leanruntest_indUsingLet.lean"
+      ],
+      "id": "lean4-99e84188e117",
+      "target_files": [
+        "src/Lean/Elab/Tactic/Induction.lean"
+      ]
+    },
+    {
+      "f2p": [
+        "leanruntest_3091.lean"
+      ],
+      "id": "lean4-a5c984c5421d",
+      "target_files": [
+        "src/Lean/Meta/Eval.lean"
+      ]
+    },
+    {
+      "f2p": [
+        "leanruntest_3146.lean"
+      ],
+      "id": "lean4-ac6751cbd3ae",
+      "target_files": [
+        "src/Lean/Elab/StructInst.lean"
+      ]
+    },
+    {
+      "f2p": [
+        "leanruntest_6065.lean"
+      ],
+      "id": "lean4-b5c881890c54",
+      "target_files": [
+        "src/Lean/Meta/Match/MatchEqs.lean"
+      ]
+    },
+    {
+      "f2p": [
+        "leanruntest_3242.lean"
+      ],
+      "id": "lean4-bb533d27315b",
+      "target_files": [
+        "src/Lean/Elab/Inductive.lean"
+      ]
+    },
+    {
+      "f2p": [
+        "leanruntest_4339.lean"
+      ],
+      "id": "lean4-bf9629eed269",
+      "target_files": [
+        "src/Lean/Meta/Tactic/Simp/Types.lean"
+      ]
+    },
+    {
+      "f2p": [
+        "leanruntest_cceScoping.lean"
+      ],
+      "id": "lean4-c0847136b9b6",
+      "target_files": [
+        "src/library/compiler/cse.cpp"
+      ]
+    },
+    {
+      "f2p": [
+        "leanruntest_abstractMVars.lean"
+      ],
+      "id": "lean4-c1483426593d",
+      "target_files": [
+        "src/Lean/Meta/AbstractMVars.lean"
+      ]
+    },
+    {
+      "f2p": [
+        "leanruntest_5176.lean"
+      ],
+      "id": "lean4-c6643040a7ee",
+      "target_files": [
+        "src/Lean/Elab/Tactic/BuiltinTactic.lean"
+      ]
+    },
+    {
+      "f2p": [
+        "leanruntest_2186.lean"
+      ],
+      "id": "lean4-c6a50a4eda88",
+      "target_files": [
+        "src/Lean/Elab/StructInst.lean"
+      ]
+    },
+    {
+      "f2p": [
+        "leanruntest_6086.lean"
+      ],
+      "id": "lean4-c7626de9f171",
+      "target_files": [
+        "src/Lean/Compiler/ConstFolding.lean",
+        "src/include/lean/lean.h"
+      ]
+    },
+    {
+      "f2p": [
+        "leanruntest_4462.lean"
+      ],
+      "id": "lean4-d378b35c39dc",
+      "target_files": [
+        "src/Lean/Meta/Tactic/Simp/Main.lean"
+      ]
+    },
+    {
+      "f2p": [
+        "leaninteractivetest_rwElabConst.lean"
+      ],
+      "id": "lean4-d4a3f9e7a21b",
+      "target_files": [
+        "src/Lean/Elab/Tactic/Rewrite.lean"
+      ]
+    },
+    {
+      "f2p": [
+        "leanruntest_4677.lean"
+      ],
+      "id": "lean4-d63d013b25b8",
+      "target_files": [
+        "src/Init/Data/Float.lean",
+        "src/Init/Data/Repr.lean"
+      ]
+    },
+    {
+      "f2p": [
+        "leanruntest_4381.lean"
+      ],
+      "id": "lean4-d783c8cc48b0",
+      "target_files": [
+        "src/Lean/Meta/Tactic/Rewrite.lean"
+      ]
+    },
+    {
+      "f2p": [
+        "__process_level_failure__"
+      ],
+      "id": "lean4-d843c2140d80",
+      "target_files": [
+        "src/CMakeLists.txt",
+        "src/runtime/process.cpp",
+        "src/shell/CMakeLists.txt"
+      ]
+    },
+    {
+      "f2p": [
+        "leantest_4845.lean"
+      ],
+      "id": "lean4-dd5711e9fcf1",
+      "target_files": [
+        "src/Lean/Elab/Tactic/Generalize.lean"
+      ]
+    },
+    {
+      "f2p": [
+        "leanruntest_sharecommon.lean"
+      ],
+      "id": "lean4-e00c14cadee6",
+      "target_files": [
+        "src/runtime/sharecommon.cpp"
+      ]
+    },
+    {
+      "f2p": [
+        "leanruntest_omega.lean"
+      ],
+      "id": "lean4-e9019e84f9ca",
+      "target_files": [
+        "src/Lean/Elab/Tactic/Omega/Frontend.lean"
+      ]
+    },
+    {
+      "f2p": [
+        "leanruntest_3519.lean"
+      ],
+      "id": "lean4-ebbbdfe47d29",
+      "target_files": [
+        "src/Lean/Elab/Tactic/SimpTrace.lean"
+      ]
+    },
+    {
+      "f2p": [
+        "leanruntest_3386.lean"
+      ],
+      "id": "lean4-ec1410155d00",
+      "target_files": [
+        "src/Lean/Meta/Injective.lean"
+      ]
+    },
+    {
+      "f2p": [
+        "leantest_split_mvars_target.lean"
+      ],
+      "id": "lean4-ee1f59a62ee1",
+      "target_files": [
+        "src/Lean/Meta/Tactic/Apply.lean",
+        "src/Lean/Meta/Tactic/Split.lean"
+      ]
+    },
+    {
+      "f2p": [
+        "leanruntest_issue5027.lean"
+      ],
+      "id": "lean4-f3e30d72dcce",
+      "target_files": [
+        "src/Init/Data/Array/Mem.lean",
+        "src/Init/Data/List/BasicAux.lean"
+      ]
+    },
+    {
+      "f2p": [
+        "leaninteractivetest_10898.lean"
+      ],
+      "id": "lean4-f6a90ea72a72",
+      "target_files": [
+        "src/Lean/Elab/Tactic/Location.lean"
+      ]
+    },
+    {
+      "f2p": [
+        "leantest_4375.lean"
+      ],
+      "id": "lean4-fa769eebd845",
+      "target_files": [
+        "src/Lean/MetavarContext.lean"
+      ]
+    },
+    {
+      "f2p": [
+        "leanruntest_2649.lean"
+      ],
+      "id": "lean4-fbf945f72aba",
+      "target_files": [
+        "src/Lean/Elab/BuiltinNotation.lean"
+      ]
+    },
+    {
+      "f2p": [
+        "leanruntest_omega.lean"
+      ],
+      "id": "lean4-fd462d587fa7",
+      "target_files": [
+        "src/Lean/Elab/Tactic/Omega/OmegaM.lean"
+      ]
+    },
+    {
+      "f2p": [
+        "leantest_4591.lean"
+      ],
+      "id": "lean4-fde9be457c14",
+      "target_files": [
+        "src/Lean/Elab/Tactic/Simp.lean",
+        "src/Lean/ResolveName.lean"
+      ]
+    },
+    {
+      "f2p": [
+        "leanruntest_4636.lean"
+      ],
+      "id": "lean4-fee6cfc4705a",
+      "target_files": [
+        "src/Lean/Elab/App.lean",
+        "src/Lean/Elab/Term.lean"
+      ]
+    },
+    {
+      "f2p": [
+        "leanruntest_4768.lean"
+      ],
+      "id": "lean4-ff66f31d50a5",
+      "target_files": [
+        "src/Lean/Parser/Term.lean"
+      ]
+    }
+  ],
+  "task": "lean4",
+  "version": "4.8.0"
+}

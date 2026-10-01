@@ -1,0 +1,769 @@
+{
+  "build_jobs": 4,
+  "container_repo": "/matplotlib",
+  "evaluation": {
+    "paths": [
+      "lib/matplotlib/tests",
+      "lib/mpl_toolkits/tests"
+    ],
+    "visible_timeout": 10800
+  },
+  "upstream_image": "pandora-maxbug-matplotlib:3.4.3",
+  "n_base_passing": 7894,
+  "n_base_test_ignore": 211,
+  "oracle_digest": "0feeae98e22915d33c60d6e6807afa5fb388a13b5c3f44e97a6c7f93c4488c59",
+  "oracle_pristine_paths": [],
+  "upstream_commit": "9f7399e15e6172900e0591deb5a57a45769d8205",
+  "reproduction": {
+    "build_cmd": "cd /matplotlib && python -m pip install --no-build-isolation --no-deps -e .",
+    "build_jobs_env": [
+      "SWESWEEP_BUILD_JOBS"
+    ],
+    "build_timeout": 1800,
+    "suite": "pytest",
+    "test_timeout": 1800
+  },
+  "schema": 2,
+  "subtasks": [
+    {
+      "f2p": [
+        "lib.matplotlib.tests.test_contour::test_subfigure_clabel"
+      ],
+      "id": "matplotlib-01f565c319a5",
+      "target_files": [
+        "lib/matplotlib/figure.py"
+      ]
+    },
+    {
+      "f2p": [
+        "lib.matplotlib.tests.test_collections::test_scatter_empty_linestyle_pdf[ ]",
+        "lib.matplotlib.tests.test_collections::test_scatter_empty_linestyle_pdf[]",
+        "lib.matplotlib.tests.test_collections::test_scatter_empty_linestyle_pdf[none]"
+      ],
+      "id": "matplotlib-02f91e8adde9",
+      "target_files": [
+        "lib/matplotlib/lines.py"
+      ]
+    },
+    {
+      "f2p": [
+        "lib.matplotlib.tests.test_axes::test_hexbin_empty[png]"
+      ],
+      "id": "matplotlib-0357ee0f0b11",
+      "target_files": [
+        "lib/matplotlib/axes/_axes.py"
+      ]
+    },
+    {
+      "f2p": [
+        "lib.matplotlib.tests.test_simplification::test_clipping_out_of_bounds"
+      ],
+      "id": "matplotlib-07ef228a681e",
+      "target_files": [
+        "src/_backend_agg.h",
+        "src/_path.h"
+      ]
+    },
+    {
+      "f2p": [
+        "lib.matplotlib.tests.test_collections::test_set_offset_units"
+      ],
+      "id": "matplotlib-0a6c212adfe3",
+      "target_files": [
+        "lib/matplotlib/collections.py"
+      ]
+    },
+    {
+      "f2p": [
+        "lib.matplotlib.tests.test_axes::test_acorr_integers[png]"
+      ],
+      "id": "matplotlib-0d849b1efc3a",
+      "target_files": [
+        "lib/matplotlib/axes/_axes.py"
+      ]
+    },
+    {
+      "f2p": [
+        "lib.matplotlib.tests.test_axes::test_eventplot_units_list[png]"
+      ],
+      "id": "matplotlib-1105d6ce6594",
+      "target_files": [
+        "lib/matplotlib/axes/_axes.py"
+      ]
+    },
+    {
+      "f2p": [
+        "lib.matplotlib.tests.test_image::test_imsave_pil_kwargs_tiff"
+      ],
+      "id": "matplotlib-117e47eba3fb",
+      "target_files": [
+        "lib/matplotlib/image.py"
+      ]
+    },
+    {
+      "f2p": [
+        "lib.matplotlib.tests.test_transforms.TestBasicTransform::test_contains_branch"
+      ],
+      "id": "matplotlib-13d4b242dbe9",
+      "target_files": [
+        "lib/matplotlib/transforms.py"
+      ]
+    },
+    {
+      "f2p": [
+        "lib.matplotlib.tests.test_axis::test_tick_labelcolor_array"
+      ],
+      "id": "matplotlib-223da3646896",
+      "target_files": [
+        "lib/matplotlib/axis.py"
+      ]
+    },
+    {
+      "f2p": [
+        "lib.matplotlib.tests.test_axes::test_eventplot_units_list[png]"
+      ],
+      "id": "matplotlib-2fa4b01f898c",
+      "target_files": [
+        "lib/matplotlib/axes/_axes.py"
+      ]
+    },
+    {
+      "f2p": [
+        "lib.matplotlib.tests.test_collections::test_set_offset_units"
+      ],
+      "id": "matplotlib-35c5be141977",
+      "target_files": [
+        "lib/matplotlib/collections.py"
+      ]
+    },
+    {
+      "f2p": [
+        "lib.matplotlib.tests.test_axes::test_bar_datetime_start"
+      ],
+      "id": "matplotlib-368ff3a14416",
+      "target_files": [
+        "lib/matplotlib/axes/_axes.py"
+      ]
+    },
+    {
+      "f2p": [
+        "lib.matplotlib.tests.test_axes::test_label_shift"
+      ],
+      "id": "matplotlib-3be312dc2348",
+      "target_files": [
+        "lib/matplotlib/axes/_base.py"
+      ]
+    },
+    {
+      "f2p": [
+        "lib.matplotlib.tests.test_axes::test_errorbar_dashes[png]"
+      ],
+      "id": "matplotlib-3cc27a3e63a8",
+      "target_files": [
+        "lib/matplotlib/axes/_axes.py"
+      ]
+    },
+    {
+      "f2p": [
+        "lib.matplotlib.tests.test_ticker.TestLogLocator::test_tick_values_not_empty"
+      ],
+      "id": "matplotlib-46b97150fdfe",
+      "target_files": [
+        "lib/matplotlib/ticker.py"
+      ]
+    },
+    {
+      "f2p": [
+        "lib.matplotlib.tests.test_text::test_mathwrap"
+      ],
+      "id": "matplotlib-4c50f4354b5c",
+      "target_files": [
+        "lib/matplotlib/text.py"
+      ]
+    },
+    {
+      "f2p": [
+        "lib.matplotlib.tests.test_pyplot::test_polar_second_call"
+      ],
+      "id": "matplotlib-4c8f8e8aa8b3",
+      "target_files": [
+        "lib/matplotlib/pyplot.py"
+      ]
+    },
+    {
+      "f2p": [
+        "lib.matplotlib.tests.test_axes::test_acorr_integers[png]"
+      ],
+      "id": "matplotlib-4db7467db1b5",
+      "target_files": [
+        "lib/matplotlib/axes/_axes.py"
+      ]
+    },
+    {
+      "f2p": [
+        "lib.matplotlib.tests.test_cbook::test_reshape2d"
+      ],
+      "id": "matplotlib-4e8b1d2cc3e5",
+      "target_files": [
+        "lib/matplotlib/cbook/__init__.py"
+      ]
+    },
+    {
+      "f2p": [
+        "lib.matplotlib.tests.test_marker::test_text_marker[png]"
+      ],
+      "id": "matplotlib-5622c518ec84",
+      "target_files": [
+        "lib/matplotlib/markers.py"
+      ]
+    },
+    {
+      "f2p": [
+        "lib.matplotlib.tests.test_colorbar::test_colorbar_single_ax_panchor_east[standard]",
+        "lib.matplotlib.tests.test_colorbar::test_colorbar_single_ax_panchor_false"
+      ],
+      "id": "matplotlib-581c2b5b1b56",
+      "target_files": [
+        "lib/matplotlib/colorbar.py"
+      ]
+    },
+    {
+      "f2p": [
+        "lib.matplotlib.tests.test_agg::test_draw_path_collection_error_handling"
+      ],
+      "id": "matplotlib-5b2cd19828ac",
+      "target_files": [
+        "src/_backend_agg_wrapper.cpp",
+        "src/_path_wrapper.cpp",
+        "src/py_adaptors.h",
+        "src/py_converters.cpp",
+        "src/py_converters.h"
+      ]
+    },
+    {
+      "f2p": [
+        "lib.matplotlib.tests.test_axes::test_errorbar_remove"
+      ],
+      "id": "matplotlib-5c30ecd76c3b",
+      "target_files": [
+        "lib/matplotlib/axes/_axes.py"
+      ]
+    },
+    {
+      "f2p": [
+        "lib.matplotlib.tests.test_collections::test_capstyle"
+      ],
+      "id": "matplotlib-5d956bde3032",
+      "target_files": [
+        "lib/matplotlib/collections.py"
+      ]
+    },
+    {
+      "f2p": [
+        "lib.matplotlib.tests.test_image::test_imsave_rgba_origin[lower]"
+      ],
+      "id": "matplotlib-5f5eee03401c",
+      "target_files": [
+        "lib/matplotlib/image.py"
+      ]
+    },
+    {
+      "f2p": [
+        "lib.matplotlib.tests.test_triangulation::test_triplot_with_ls[pdf]",
+        "lib.matplotlib.tests.test_triangulation::test_triplot_with_ls[png]",
+        "lib.matplotlib.tests.test_triangulation::test_triplot_with_ls[svg]"
+      ],
+      "id": "matplotlib-64f45dacbee5",
+      "target_files": [
+        "lib/matplotlib/tri/triplot.py"
+      ]
+    },
+    {
+      "f2p": [
+        "lib.matplotlib.tests.test_ticker.TestSymmetricalLogLocator::test_values[-1-1-expected1]",
+        "lib.matplotlib.tests.test_ticker.TestSymmetricalLogLocator::test_values[0-1-expected0]"
+      ],
+      "id": "matplotlib-652f97957c26",
+      "target_files": [
+        "lib/matplotlib/ticker.py"
+      ]
+    },
+    {
+      "f2p": [
+        "lib.matplotlib.tests.test_legend::test_setting_alpha_keeps_polycollection_color"
+      ],
+      "id": "matplotlib-66b22028cc4a",
+      "target_files": [
+        "lib/matplotlib/legend_handler.py"
+      ]
+    },
+    {
+      "f2p": [
+        "lib.matplotlib.tests.test_lines::test_no_subslice_with_transform[png]"
+      ],
+      "id": "matplotlib-677964a28dc4",
+      "target_files": [
+        "lib/matplotlib/lines.py"
+      ]
+    },
+    {
+      "f2p": [
+        "lib.matplotlib.tests.test_offsetbox::test_zorder"
+      ],
+      "id": "matplotlib-681d6066e436",
+      "target_files": [
+        "lib/matplotlib/offsetbox.py"
+      ]
+    },
+    {
+      "f2p": [
+        "lib.matplotlib.tests.test_backend_bases::test_widgetlock_zoompan"
+      ],
+      "id": "matplotlib-7698b1492263",
+      "target_files": [
+        "lib/matplotlib/backend_bases.py"
+      ]
+    },
+    {
+      "f2p": [
+        "lib.matplotlib.tests.test_lines::test_axline_small_slope"
+      ],
+      "id": "matplotlib-797998c0c48d",
+      "target_files": [
+        "lib/matplotlib/lines.py"
+      ]
+    },
+    {
+      "f2p": [
+        "lib.matplotlib.tests.test_colors::test_to_rgba_array_none_color_with_alpha_param"
+      ],
+      "id": "matplotlib-7b009e1457e3",
+      "target_files": [
+        "lib/matplotlib/colors.py"
+      ]
+    },
+    {
+      "f2p": [
+        "lib.matplotlib.tests.test_axes::test_errorbar_dashes[png]"
+      ],
+      "id": "matplotlib-7e987883cacb",
+      "target_files": [
+        "lib/matplotlib/axes/_axes.py"
+      ]
+    },
+    {
+      "f2p": [
+        "lib.matplotlib.tests.test_axes::test_twin_respects_position_after_set_position[x]",
+        "lib.matplotlib.tests.test_axes::test_twin_respects_position_after_set_position[y]"
+      ],
+      "id": "matplotlib-810aa3cebef8",
+      "target_files": [
+        "lib/matplotlib/axes/_base.py"
+      ]
+    },
+    {
+      "f2p": [
+        "lib.matplotlib.tests.test_axes::test_hexbin_log_clim"
+      ],
+      "id": "matplotlib-831d69e85b19",
+      "target_files": [
+        "lib/matplotlib/axes/_axes.py"
+      ]
+    },
+    {
+      "f2p": [
+        "lib.matplotlib.tests.test_cycles::test_valid_input_forms"
+      ],
+      "id": "matplotlib-8e2cbcb1a65b",
+      "target_files": [
+        "lib/matplotlib/rcsetup.py"
+      ]
+    },
+    {
+      "f2p": [
+        "lib.matplotlib.tests.test_rcparams::test_rcparams_legend_loc"
+      ],
+      "id": "matplotlib-93524d8a921c",
+      "target_files": [
+        "lib/matplotlib/rcsetup.py"
+      ]
+    },
+    {
+      "f2p": [
+        "lib.matplotlib.tests.test_polar::test_polar_default_log_lims"
+      ],
+      "id": "matplotlib-93f1c7ba6c90",
+      "target_files": [
+        "lib/matplotlib/projections/polar.py"
+      ]
+    },
+    {
+      "f2p": [
+        "lib.matplotlib.tests.test_backend_bases::test_grab_clear"
+      ],
+      "id": "matplotlib-94cac43c9d89",
+      "target_files": [
+        "lib/matplotlib/figure.py"
+      ]
+    },
+    {
+      "f2p": [
+        "lib.matplotlib.tests.test_axes::test_stackplot[pdf]",
+        "lib.matplotlib.tests.test_axes::test_stackplot[png]",
+        "lib.matplotlib.tests.test_axes::test_stackplot[svg]"
+      ],
+      "id": "matplotlib-9738ce6e501d",
+      "target_files": [
+        "lib/matplotlib/stackplot.py"
+      ]
+    },
+    {
+      "f2p": [
+        "lib.matplotlib.tests.test_axes::test_set_ticks_inverted"
+      ],
+      "id": "matplotlib-99411e6b837a",
+      "target_files": [
+        "lib/matplotlib/axis.py"
+      ]
+    },
+    {
+      "f2p": [
+        "lib.matplotlib.tests.test_widgets::test_range_slider[horizontal]",
+        "lib.matplotlib.tests.test_widgets::test_range_slider[vertical]"
+      ],
+      "id": "matplotlib-994905ad5da2",
+      "target_files": [
+        "lib/matplotlib/widgets.py"
+      ]
+    },
+    {
+      "f2p": [
+        "lib.matplotlib.tests.test_mlab.TestSpectral::test_psd_window_flattop[Fs4-default-complex]",
+        "lib.matplotlib.tests.test_mlab.TestSpectral::test_psd_window_flattop[Fs4-default-real]",
+        "lib.matplotlib.tests.test_mlab.TestSpectral::test_psd_window_flattop[Fs4-onesided-complex]",
+        "lib.matplotlib.tests.test_mlab.TestSpectral::test_psd_window_flattop[Fs4-onesided-real]",
+        "lib.matplotlib.tests.test_mlab.TestSpectral::test_psd_window_flattop[Fs4-twosided-complex]",
+        "lib.matplotlib.tests.test_mlab.TestSpectral::test_psd_window_flattop[Fs4-twosided-real]",
+        "lib.matplotlib.tests.test_mlab.TestSpectral::test_psd_window_flattop[FsAll-default-complex]",
+        "lib.matplotlib.tests.test_mlab.TestSpectral::test_psd_window_flattop[FsAll-default-real]",
+        "lib.matplotlib.tests.test_mlab.TestSpectral::test_psd_window_flattop[FsAll-onesided-complex]",
+        "lib.matplotlib.tests.test_mlab.TestSpectral::test_psd_window_flattop[FsAll-onesided-real]",
+        "lib.matplotlib.tests.test_mlab.TestSpectral::test_psd_window_flattop[FsAll-twosided-complex]",
+        "lib.matplotlib.tests.test_mlab.TestSpectral::test_psd_window_flattop[FsAll-twosided-real]"
+      ],
+      "id": "matplotlib-9ddfd1e31c1f",
+      "target_files": [
+        "lib/matplotlib/mlab.py"
+      ]
+    },
+    {
+      "f2p": [
+        "lib.matplotlib.tests.test_image::test_imsave_python_sequences"
+      ],
+      "id": "matplotlib-a023f234b0cf",
+      "target_files": [
+        "lib/matplotlib/image.py"
+      ]
+    },
+    {
+      "f2p": [
+        "lib.matplotlib.tests.test_determinism::test_determinism_check[mhip-svg-False]",
+        "lib.matplotlib.tests.test_determinism::test_determinism_check[mhip-svg-True]",
+        "lib.matplotlib.tests.test_determinism::test_determinism_check[p-svg-False]"
+      ],
+      "id": "matplotlib-a29a20b011fb",
+      "target_files": [
+        "lib/matplotlib/backends/backend_svg.py"
+      ]
+    },
+    {
+      "f2p": [
+        "lib.matplotlib.tests.test_table::test_table_fontsize"
+      ],
+      "id": "matplotlib-a9522ab4b3cf",
+      "target_files": [
+        "lib/matplotlib/table.py"
+      ]
+    },
+    {
+      "f2p": [
+        "lib.matplotlib.tests.test_transforms::test_bbox_frozen_copies_minpos"
+      ],
+      "id": "matplotlib-ac1a14524861",
+      "target_files": [
+        "lib/matplotlib/transforms.py"
+      ]
+    },
+    {
+      "f2p": [
+        "lib.matplotlib.tests.test_backend_ps::test_no_duplicate_definition"
+      ],
+      "id": "matplotlib-ada7b8f1102f",
+      "target_files": [
+        "lib/matplotlib/backends/backend_ps.py"
+      ]
+    },
+    {
+      "f2p": [
+        "lib.matplotlib.tests.test_legend::test_setting_alpha_keeps_polycollection_color"
+      ],
+      "id": "matplotlib-af47147ae3ef",
+      "target_files": [
+        "lib/matplotlib/legend_handler.py"
+      ]
+    },
+    {
+      "f2p": [
+        "lib.matplotlib.tests.test_simplification::test_simplify_closepoly"
+      ],
+      "id": "matplotlib-afd2f6bd5791",
+      "target_files": [
+        "src/path_converters.h"
+      ]
+    },
+    {
+      "f2p": [
+        "lib.matplotlib.tests.test_rcparams::test_validator_invalid[validate_cycler-cycler('c', [j.\\t__class__(j) for j in ['r', 'b']])-ValueError]",
+        "lib.matplotlib.tests.test_rcparams::test_validator_invalid[validate_cycler-cycler('c', [j.\\x0c__class__(j) for j in ['r', 'b']])-ValueError]"
+      ],
+      "id": "matplotlib-b03534a1b1ec",
+      "target_files": [
+        "lib/matplotlib/rcsetup.py"
+      ]
+    },
+    {
+      "f2p": [
+        "lib.matplotlib.tests.test_axes::test_clim"
+      ],
+      "id": "matplotlib-b1a9ae8e283d",
+      "target_files": [
+        "lib/matplotlib/axes/_axes.py"
+      ]
+    },
+    {
+      "f2p": [
+        "lib.matplotlib.tests.test_axes::test_label_shift"
+      ],
+      "id": "matplotlib-b392186c281e",
+      "target_files": [
+        "lib/matplotlib/axes/_base.py"
+      ]
+    },
+    {
+      "f2p": [
+        "__process_level_failure__"
+      ],
+      "id": "matplotlib-b46d17fd3815",
+      "target_files": [
+        "src/_backend_agg.h"
+      ]
+    },
+    {
+      "f2p": [
+        "lib.matplotlib.tests.test_backend_bases::test_grab_clear"
+      ],
+      "id": "matplotlib-b52f608f8957",
+      "target_files": [
+        "lib/matplotlib/figure.py"
+      ]
+    },
+    {
+      "f2p": [
+        "lib.matplotlib.tests.test_path::test_path_shallowcopy"
+      ],
+      "id": "matplotlib-b61e0eb76699",
+      "target_files": [
+        "lib/matplotlib/path.py"
+      ]
+    },
+    {
+      "f2p": [
+        "lib.matplotlib.tests.test_axes::test_twin_units[x]",
+        "lib.matplotlib.tests.test_axes::test_twin_units[y]"
+      ],
+      "id": "matplotlib-b9295f867e80",
+      "target_files": [
+        "lib/matplotlib/axes/_base.py"
+      ]
+    },
+    {
+      "f2p": [
+        "lib.matplotlib.tests.test_axes::test_fill_between_axes_limits"
+      ],
+      "id": "matplotlib-bb3abbdef3f1",
+      "target_files": [
+        "lib/matplotlib/axes/_axes.py"
+      ]
+    },
+    {
+      "f2p": [
+        "lib.matplotlib.tests.test_mathtext::test_mathtext_single_char_super_with_prime[$x^2'$]",
+        "lib.matplotlib.tests.test_mathtext::test_mathtext_single_char_super_with_prime[$x^2''$]",
+        "lib.matplotlib.tests.test_mathtext::test_mathtext_single_char_super_with_prime[$x^\\\\alpha'$]",
+        "lib.matplotlib.tests.test_mathtext::test_mathtext_single_char_super_with_prime[$x^a'$]"
+      ],
+      "id": "matplotlib-bf41c742addf",
+      "target_files": [
+        "lib/matplotlib/_mathtext.py"
+      ]
+    },
+    {
+      "f2p": [
+        "lib.matplotlib.tests.test_contour::test_subfigure_clabel"
+      ],
+      "id": "matplotlib-bfeb5ab7bcfa",
+      "target_files": [
+        "lib/matplotlib/figure.py"
+      ]
+    },
+    {
+      "f2p": [
+        "lib.matplotlib.tests.test_table::test_table_bbox[png]"
+      ],
+      "id": "matplotlib-c12a018461a9",
+      "target_files": [
+        "lib/matplotlib/table.py"
+      ]
+    },
+    {
+      "f2p": [
+        "lib.matplotlib.tests.test_lines::test_no_subslice_with_transform[png]"
+      ],
+      "id": "matplotlib-c5fd021cd0f6",
+      "target_files": [
+        "lib/matplotlib/lines.py"
+      ]
+    },
+    {
+      "f2p": [
+        "lib.matplotlib.tests.test_lines::test_nan_is_sorted"
+      ],
+      "id": "matplotlib-d3fa81d32cdc",
+      "target_files": [
+        "src/_path_wrapper.cpp"
+      ]
+    },
+    {
+      "f2p": [
+        "lib.matplotlib.tests.test_offsetbox::test_packers[bottom]",
+        "lib.matplotlib.tests.test_offsetbox::test_packers[top]"
+      ],
+      "id": "matplotlib-d6c2b0a45800",
+      "target_files": [
+        "lib/matplotlib/offsetbox.py"
+      ]
+    },
+    {
+      "f2p": [
+        "lib.matplotlib.tests.test_axes::test_boxplot_masked[png]"
+      ],
+      "id": "matplotlib-d8de43eb1768",
+      "target_files": [
+        "lib/matplotlib/cbook.py"
+      ]
+    },
+    {
+      "f2p": [
+        "lib.matplotlib.tests.test_backend_pgf::test_png_transparency"
+      ],
+      "id": "matplotlib-db74adf1b17a",
+      "target_files": [
+        "lib/matplotlib/__init__.py",
+        "lib/matplotlib/backends/backend_pgf.py"
+      ]
+    },
+    {
+      "f2p": [
+        "lib.matplotlib.tests.test_image::test_imshow_float16"
+      ],
+      "id": "matplotlib-dc771b90ee37",
+      "target_files": [
+        "lib/matplotlib/image.py"
+      ]
+    },
+    {
+      "f2p": [
+        "lib.matplotlib.tests.test_ticker.TestScalarFormatter::test_set_use_offset_int"
+      ],
+      "id": "matplotlib-ddf93d5d0dbe",
+      "target_files": [
+        "lib/matplotlib/ticker.py"
+      ]
+    },
+    {
+      "f2p": [
+        "lib.matplotlib.tests.test_image::test_get_window_extent_for_AxisImage"
+      ],
+      "id": "matplotlib-ea3f5555934f",
+      "target_files": [
+        "lib/matplotlib/image.py"
+      ]
+    },
+    {
+      "f2p": [
+        "lib.matplotlib.tests.test_axes::test_errorbar_mapview_kwarg"
+      ],
+      "id": "matplotlib-ecb8accad38c",
+      "target_files": [
+        "lib/matplotlib/__init__.py"
+      ]
+    },
+    {
+      "f2p": [
+        "lib.matplotlib.tests.test_spines::test_spine_class"
+      ],
+      "id": "matplotlib-ef04450b2842",
+      "target_files": [
+        "lib/matplotlib/spines.py"
+      ]
+    },
+    {
+      "f2p": [
+        "lib.matplotlib.tests.test_axes::test_errorbar_remove"
+      ],
+      "id": "matplotlib-ef222029baed",
+      "target_files": [
+        "lib/matplotlib/axes/_axes.py"
+      ]
+    },
+    {
+      "f2p": [
+        "lib.matplotlib.tests.test_backend_ps::test_colored_hatch_zero_linewidth[eps]"
+      ],
+      "id": "matplotlib-f715bbcedc62",
+      "target_files": [
+        "lib/matplotlib/backends/backend_ps.py"
+      ]
+    },
+    {
+      "f2p": [
+        "lib.matplotlib.tests.test_lines::test_markevery[png-figure]",
+        "lib.matplotlib.tests.test_lines::test_markevery_figure_line_unsupported_relsize"
+      ],
+      "id": "matplotlib-f96d9c6f27f1",
+      "target_files": [
+        "lib/matplotlib/lines.py"
+      ]
+    },
+    {
+      "f2p": [
+        "lib.matplotlib.tests.test_image::test_imsave_python_sequences"
+      ],
+      "id": "matplotlib-fec3b4ad0278",
+      "target_files": [
+        "lib/matplotlib/image.py"
+      ]
+    },
+    {
+      "f2p": [
+        "lib.matplotlib.tests.test_sankey::test_sankey2"
+      ],
+      "id": "matplotlib-ff98b785817c",
+      "target_files": [
+        "lib/matplotlib/sankey.py"
+      ]
+    }
+  ],
+  "task": "matplotlib",
+  "version": "3.4.3"
+}

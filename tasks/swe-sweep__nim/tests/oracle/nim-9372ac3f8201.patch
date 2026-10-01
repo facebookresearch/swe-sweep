@@ -1,0 +1,11 @@
+diff --git a/compiler/vmdef.nim b/compiler/vmdef.nim
+index 4554fbc..d8c4220 100644
+--- a/compiler/vmdef.nim
++++ b/compiler/vmdef.nim
+@@ -293,5 +293,5 @@ proc newCtx*(module: PSym; cache: IdentCache; g: ModuleGraph; idgen: IdGenerator
+     prc: PProc(blocks: @[]), module: module, loopIterations: g.config.maxLoopIterationsVM,
+     comesFromHeuristic: unknownLineInfo, callbacks: @[], errorFlag: "",
+-    cache: cache, config: g.config, graph: g, idgen: idgen)
++    cache: cache, config: g.config, graph: g, idgen: idgen, templInstCounter: new int)
+ 
+ proc refresh*(c: PCtx, module: PSym; idgen: IdGenerator) =

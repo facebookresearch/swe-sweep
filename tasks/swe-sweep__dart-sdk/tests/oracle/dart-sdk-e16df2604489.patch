@@ -1,0 +1,51 @@
+diff --git a/pkg/analysis_server/lib/src/services/correction/dart/add_super_parameter.dart b/pkg/analysis_server/lib/src/services/correction/dart/add_super_parameter.dart
+index 72bd5c3..954f354 100644
+--- a/pkg/analysis_server/lib/src/services/correction/dart/add_super_parameter.dart
++++ b/pkg/analysis_server/lib/src/services/correction/dart/add_super_parameter.dart
+@@ -61,9 +61,10 @@ class AddSuperParameter extends CorrectionProducer {
+             i >= superPositionalParameters.length ||
+             parameter.name.lexeme != superPositionalParameters[i].name) {
+           arePositionalOrdered = false;
+-          break;
+         }
+         lastPositionalParameter = parameter;
++      } else {
++        break;
+       }
+     }
+ 
+@@ -85,13 +86,11 @@ class AddSuperParameter extends CorrectionProducer {
+           _writePositional(builder, missingPositionalParameters,
+               needsInitialComma: false);
+ 
+-          if (missingNamedParameters.isNotEmpty) {
+-            _writeNamed(
+-              builder,
+-              missingNamedParameters,
+-              needsInitialComma: missingPositionalParameters.isNotEmpty,
+-            );
+-          }
++          _writeNamed(
++            builder,
++            missingNamedParameters,
++            needsInitialComma: missingPositionalParameters.isNotEmpty,
++          );
+         });
+       });
+     } else {
+@@ -145,6 +144,7 @@ class AddSuperParameter extends CorrectionProducer {
+     FormalParameter? lastNamedParameter,
+     required bool needsInitialComma,
+   }) {
++    if (parameters.isEmpty) return;
+     var firstParameter = true;
+     void writeComma() {
+       if (firstParameter) {
+@@ -185,6 +185,7 @@ class AddSuperParameter extends CorrectionProducer {
+     List<ParameterElement> parameters, {
+     required bool needsInitialComma,
+   }) {
++    if (parameters.isEmpty) return;
+     var firstParameter = true;
+     void writeComma() {
+       if (firstParameter && !needsInitialComma) {

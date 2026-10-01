@@ -1,0 +1,38 @@
+diff --git a/features/readwrite-splitting/core/src/test/java/org/apache/shardingsphere/readwritesplitting/algorithm/loadbalance/FixedReplicaWeightReadQueryLoadBalanceAlgorithmTest.java b/features/readwrite-splitting/core/src/test/java/org/apache/shardingsphere/readwritesplitting/algorithm/loadbalance/FixedReplicaWeightReadQueryLoadBalanceAlgorithmTest.java
+index 22cb076b98b..76b7c31c38e 100644
+--- a/features/readwrite-splitting/core/src/test/java/org/apache/shardingsphere/readwritesplitting/algorithm/loadbalance/FixedReplicaWeightReadQueryLoadBalanceAlgorithmTest.java
++++ b/features/readwrite-splitting/core/src/test/java/org/apache/shardingsphere/readwritesplitting/algorithm/loadbalance/FixedReplicaWeightReadQueryLoadBalanceAlgorithmTest.java
+@@ -103,4 +103,14 @@ public final class FixedReplicaWeightReadQueryLoadBalanceAlgorithmTest {
+     private FixedReplicaWeightReadQueryLoadBalanceAlgorithm createReadQueryLoadBalanceAlgorithm(final Properties props) {
+         return (FixedReplicaWeightReadQueryLoadBalanceAlgorithm) ReadQueryLoadBalanceAlgorithmFactory.newInstance(new AlgorithmConfiguration("FIXED_REPLICA_WEIGHT", props));
+     }
++    
++    @Test
++    public void assertGetDataSourceWhenReadDataSourceChanged() {
++        Properties props = new Properties();
++        props.setProperty("test_read_ds_1", "1");
++        props.setProperty("test_read_ds_2", "2");
++        FixedReplicaWeightReadQueryLoadBalanceAlgorithm algorithm = createReadQueryLoadBalanceAlgorithm(props);
++        algorithm.getDataSource("ds", "test_write_ds", Arrays.asList("test_read_ds_1", "test_read_ds_1"), new TransactionConnectionContext());
++        assertThat(algorithm.getDataSource("ds", "test_write_ds", Collections.singletonList("test_read_ds_1"), new TransactionConnectionContext()), is("test_read_ds_1"));
++    }
+ }
+diff --git a/features/readwrite-splitting/core/src/test/java/org/apache/shardingsphere/readwritesplitting/algorithm/loadbalance/WeightReadQueryLoadBalanceAlgorithmTest.java b/features/readwrite-splitting/core/src/test/java/org/apache/shardingsphere/readwritesplitting/algorithm/loadbalance/WeightReadQueryLoadBalanceAlgorithmTest.java
+index 3a27ac8a661..4cb627af7e0 100644
+--- a/features/readwrite-splitting/core/src/test/java/org/apache/shardingsphere/readwritesplitting/algorithm/loadbalance/WeightReadQueryLoadBalanceAlgorithmTest.java
++++ b/features/readwrite-splitting/core/src/test/java/org/apache/shardingsphere/readwritesplitting/algorithm/loadbalance/WeightReadQueryLoadBalanceAlgorithmTest.java
+@@ -79,4 +79,14 @@ public final class WeightReadQueryLoadBalanceAlgorithmTest {
+         context.setInTransaction(true);
+         assertThat(loadBalanceAlgorithm.getDataSource("ds", writeDataSourceName, readDataSourceNames, context), is(writeDataSourceName));
+     }
++    
++    @Test
++    public void assertGetDataSourceWhenReadDataSourceChanged() {
++        Properties props = new Properties();
++        props.setProperty("test_read_ds_1", "1");
++        props.setProperty("test_read_ds_2", "2");
++        WeightReadQueryLoadBalanceAlgorithm algorithm = createReadQueryLoadBalanceAlgorithm(props);
++        algorithm.getDataSource("ds", "test_write_ds", Arrays.asList("test_read_ds_1", "test_read_ds_1"), new TransactionConnectionContext());
++        assertThat(algorithm.getDataSource("ds", "test_write_ds", Collections.singletonList("test_read_ds_1"), new TransactionConnectionContext()), is("test_read_ds_1"));
++    }
+ }

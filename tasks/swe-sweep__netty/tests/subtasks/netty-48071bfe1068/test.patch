@@ -1,0 +1,121 @@
+diff --git a/buffer/src/test/java/io/netty/buffer/AbstractByteBufTest.java b/buffer/src/test/java/io/netty/buffer/AbstractByteBufTest.java
+index 2374e6238e..452ea12f1a 100644
+--- a/buffer/src/test/java/io/netty/buffer/AbstractByteBufTest.java
++++ b/buffer/src/test/java/io/netty/buffer/AbstractByteBufTest.java
+@@ -2137,6 +2137,52 @@ public abstract class AbstractByteBufTest {
+         retainedSlice.release();
+     }
+ 
++    @Test
++    public void testDuplicateOfSliceHasTheSameCapacityAsTheSlice() {
++        ByteBuf slice = buffer.slice();
++        ByteBuf duplicate = slice.duplicate();
++        assertEquals(slice.capacity(), duplicate.capacity());
++
++        slice = buffer.slice(0, buffer.capacity() - 2);
++        duplicate = slice.duplicate();
++        assertEquals(slice.capacity(), duplicate.capacity());
++
++        slice = buffer.slice();
++        duplicate = slice.retainedDuplicate();
++        assertEquals(slice.capacity(), duplicate.capacity());
++        duplicate.release();
++
++        slice = buffer.slice(0, buffer.capacity() - 2);
++        duplicate = slice.retainedDuplicate();
++        assertEquals(slice.capacity(), duplicate.capacity());
++        duplicate.release();
++    }
++
++    @Test
++    public void testDuplicateOfRetainedSliceHasTheSameCapacityAsTheSlice() {
++        ByteBuf slice = buffer.retainedSlice();
++        ByteBuf duplicate = slice.duplicate();
++        assertEquals(slice.capacity(), duplicate.capacity());
++        slice.release();
++
++        slice = buffer.retainedSlice(0, buffer.capacity() - 2);
++        duplicate = slice.duplicate();
++        assertEquals(slice.capacity(), duplicate.capacity());
++        slice.release();
++
++        slice = buffer.retainedSlice();
++        duplicate = slice.retainedDuplicate();
++        assertEquals(slice.capacity(), duplicate.capacity());
++        slice.release();
++        duplicate.release();
++
++        slice = buffer.retainedSlice(0, buffer.capacity() - 2);
++        duplicate = slice.retainedDuplicate();
++        assertEquals(slice.capacity(), duplicate.capacity());
++        slice.release();
++        duplicate.release();
++    }
++
+     @Test
+     @SuppressWarnings("ObjectEqualsNull")
+     public void testEquals() {
+diff --git a/buffer/src/test/java/io/netty/buffer/ReadOnlyByteBufTest.java b/buffer/src/test/java/io/netty/buffer/ReadOnlyByteBufTest.java
+index 07ce5093d3..a1f663b1cf 100644
+--- a/buffer/src/test/java/io/netty/buffer/ReadOnlyByteBufTest.java
++++ b/buffer/src/test/java/io/netty/buffer/ReadOnlyByteBufTest.java
+@@ -297,4 +297,59 @@ public class ReadOnlyByteBufTest {
+         assertSame(readOnly, readOnly.asReadOnly());
+         readOnly.release();
+     }
++
++    @Test
++    public void testDuplicateOfSliceHasTheSameCapacityAsTheSlice() {
++        ByteBuf buffer = buffer(16);
++
++        ByteBuf slice = buffer.slice();
++        ByteBuf duplicate = slice.duplicate();
++        assertEquals(slice.capacity(), duplicate.capacity());
++
++        slice = buffer.slice(0, buffer.capacity() - 2);
++        duplicate = slice.duplicate();
++        assertEquals(slice.capacity(), duplicate.capacity());
++
++        slice = buffer.slice();
++        duplicate = slice.retainedDuplicate();
++        assertEquals(slice.capacity(), duplicate.capacity());
++        duplicate.release();
++
++        slice = buffer.slice(0, buffer.capacity() - 2);
++        duplicate = slice.retainedDuplicate();
++        assertEquals(slice.capacity(), duplicate.capacity());
++        duplicate.release();
++
++        buffer.release();
++    }
++
++    @Test
++    public void testDuplicateOfRetainedSliceHasTheSameCapacityAsTheSlice() {
++        ByteBuf buffer = buffer(16);
++
++        ByteBuf slice = buffer.retainedSlice();
++        ByteBuf duplicate = slice.duplicate();
++        assertEquals(slice.capacity(), duplicate.capacity());
++        slice.release();
++
++        slice = buffer.retainedSlice(0, buffer.capacity() - 2);
++        duplicate = slice.duplicate();
++        assertEquals(slice.capacity(), duplicate.capacity());
++        slice.release();
++
++        slice = buffer.retainedSlice();
++        duplicate = slice.retainedDuplicate();
++        assertEquals(slice.capacity(), duplicate.capacity());
++        slice.release();
++        duplicate.release();
++
++        slice = buffer.retainedSlice(0, buffer.capacity() - 2);
++        duplicate = slice.retainedDuplicate();
++        assertEquals(slice.capacity(), duplicate.capacity());
++        slice.release();
++        duplicate.release();
++
++        buffer.release();
++    }
++
+ }

@@ -1,0 +1,29 @@
+diff --git a/gix/src/open/options.rs b/gix/src/open/options.rs
+index b6c4811bc..82c958f8c 100644
+--- a/gix/src/open/options.rs
++++ b/gix/src/open/options.rs
+@@ -70,10 +70,11 @@ impl Options {
+         self
+     }
+ 
+-    /// If `true`, default `false`, we will not modify the incoming path to open to assure it is a `.git` directory.
++    /// If `true`, default `false`, we will not modify the incoming path for this open call to assure it is a `.git` directory.
+     ///
+     /// If `false`, we will try to open the input directory as is, even though it doesn't appear to be a `git` repository
+     /// due to the lack of `.git` suffix or because its basename is not `.git` as in `worktree/.git`.
++    /// This option is consumed while resolving the path and isn't retained in the opened repository's options.
+     pub fn open_path_as_is(mut self, enable: bool) -> Self {
+         self.open_path_as_is = enable;
+         self
+diff --git a/gix/src/open/repository.rs b/gix/src/open/repository.rs
+index ac2b29311..b4e78cc07 100644
+--- a/gix/src/open/repository.rs
++++ b/gix/src/open/repository.rs
+@@ -166,6 +166,7 @@ impl ThreadSafeRepository {
+         mut options: Options,
+     ) -> Result<Self, Error> {
+         let _span = gix_trace::detail!("open_from_paths()");
++        options.open_path_as_is = false;
+         let Options {
+             ref mut git_dir_trust,
+             object_store_slots,

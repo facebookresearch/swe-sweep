@@ -1,0 +1,22 @@
+diff --git a/src/net/http/transfer.go b/src/net/http/transfer.go
+index 85c2e5a360..5ff89cc17f 100644
+--- a/src/net/http/transfer.go
++++ b/src/net/http/transfer.go
+@@ -212,6 +212,7 @@ func (t *transferWriter) probeRequestBody() {
+ 			rres.b = buf[0]
+ 		}
+ 		t.ByteReadCh <- rres
++		close(t.ByteReadCh)
+ 	}(t.Body)
+ 	timer := time.NewTimer(200 * time.Millisecond)
+ 	select {
+@@ -1072,6 +1073,9 @@ func (fr finishAsyncByteRead) Read(p []byte) (n int, err error) {
+ 	if n == 1 {
+ 		p[0] = rres.b
+ 	}
++	if err == nil {
++		err = io.EOF
++	}
+ 	return
+ }
+ 

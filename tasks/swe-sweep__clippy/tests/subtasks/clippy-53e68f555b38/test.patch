@@ -1,0 +1,63 @@
+diff --git a/tests/ui-cargo/undocumented_unsafe_blocks/fail/Cargo.stderr b/tests/ui-cargo/undocumented_unsafe_blocks/fail/Cargo.stderr
+new file mode 100644
+index 000000000..59a7146ac
+--- /dev/null
++++ b/tests/ui-cargo/undocumented_unsafe_blocks/fail/Cargo.stderr
+@@ -0,0 +1,26 @@
++error: module has unnecessary safety comment
++ --> src/main.rs:2:1
++  |
++2 | mod x {}
++  | ^^^^^^^^
++  |
++help: consider removing the safety comment
++ --> src/main.rs:1:1
++  |
++1 | // SAFETY: ...
++  | ^^^^^^^^^^^^^^
++  = note: requested on the command line with `-D clippy::unnecessary-safety-comment`
++
++error: module has unnecessary safety comment
++ --> src/main.rs:5:1
++  |
++5 | mod y {}
++  | ^^^^^^^^
++  |
++help: consider removing the safety comment
++ --> src/main.rs:4:1
++  |
++4 | // SAFETY: ...
++  | ^^^^^^^^^^^^^^
++
++error: could not compile `undocumented_unsafe_blocks` (bin "undocumented_unsafe_blocks") due to 2 previous errors
+diff --git a/tests/ui-cargo/undocumented_unsafe_blocks/fail/Cargo.toml b/tests/ui-cargo/undocumented_unsafe_blocks/fail/Cargo.toml
+new file mode 100644
+index 000000000..36bb3472d
+--- /dev/null
++++ b/tests/ui-cargo/undocumented_unsafe_blocks/fail/Cargo.toml
+@@ -0,0 +1,12 @@
++# Reproducing #14553 requires the `# Safety` comment to be in the first line of 
++# the file. Since `unnecessary_safety_comment` is not enabled by default, we
++# will set it up here.
++
++[package]
++name = "undocumented_unsafe_blocks"
++edition = "2024"
++publish = false
++version = "0.1.0"
++
++[lints.clippy]
++unnecessary_safety_comment = "deny"
+diff --git a/tests/ui-cargo/undocumented_unsafe_blocks/fail/src/main.rs b/tests/ui-cargo/undocumented_unsafe_blocks/fail/src/main.rs
+new file mode 100644
+index 000000000..5cafcff99
+--- /dev/null
++++ b/tests/ui-cargo/undocumented_unsafe_blocks/fail/src/main.rs
+@@ -0,0 +1,7 @@
++// SAFETY: ...
++mod x {}
++
++// SAFETY: ...
++mod y {}
++
++fn main() {}

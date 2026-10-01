@@ -1,0 +1,47 @@
+diff --git a/plumbing/format/idxfile/idxfile_test.go b/plumbing/format/idxfile/idxfile_test.go
+index da1900f9..49483c0e 100644
+--- a/plumbing/format/idxfile/idxfile_test.go
++++ b/plumbing/format/idxfile/idxfile_test.go
+@@ -4,6 +4,7 @@ import (
+ 	"bytes"
+ 	"encoding/base64"
+ 	"fmt"
+ 	"io"
++	"sync"
+ 	"testing"
+ 
+@@ -166,3 +167,34 @@ func fixtureIndex() (*idxfile.MemoryIndex, error) {
+ 
+ 	return idx, nil
+ }
++
++func TestOffsetHashConcurrentPopulation(t *testing.T) {
++	idx, err := fixtureIndex()
++	if err != nil {
++		t.Fatalf("failed to build fixture index: %v", err)
++	}
++
++	var wg sync.WaitGroup
++
++	for _, h := range fixtureHashes {
++		wg.Add(1)
++		go func() {
++			defer wg.Done()
++			for i := 0; i < 5000; i++ {
++				_, _ = idx.FindOffset(h)
++			}
++		}()
++	}
++
++	for _, off := range fixtureOffsets {
++		wg.Add(1)
++		go func() {
++			defer wg.Done()
++			for i := 0; i < 3000; i++ {
++				_, _ = idx.FindHash(off)
++			}
++		}()
++	}
++
++	wg.Wait()
++}

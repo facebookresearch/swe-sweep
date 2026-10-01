@@ -1,0 +1,39 @@
+diff --git a/server-spi-private/src/main/java/org/keycloak/policy/NotContainsUsernamePasswordPolicyProvider.java b/server-spi-private/src/main/java/org/keycloak/policy/NotContainsUsernamePasswordPolicyProvider.java
+index 7d1e020b48..b23060bb76 100644
+--- a/server-spi-private/src/main/java/org/keycloak/policy/NotContainsUsernamePasswordPolicyProvider.java
++++ b/server-spi-private/src/main/java/org/keycloak/policy/NotContainsUsernamePasswordPolicyProvider.java
+@@ -36,7 +36,7 @@ public class NotContainsUsernamePasswordPolicyProvider implements PasswordPolicy
+         if (username == null) {
+             return null;
+         }
+-        return password.contains(username) ? new PolicyError(ERROR_MESSAGE) : null;
++        return password.toLowerCase().contains(username.toLowerCase()) ? new PolicyError(ERROR_MESSAGE) : null;
+     }
+ 
+     @Override
+diff --git a/server-spi-private/src/main/java/org/keycloak/policy/NotEmailPasswordPolicyProvider.java b/server-spi-private/src/main/java/org/keycloak/policy/NotEmailPasswordPolicyProvider.java
+index ae0e711d93..45335fa46f 100644
+--- a/server-spi-private/src/main/java/org/keycloak/policy/NotEmailPasswordPolicyProvider.java
++++ b/server-spi-private/src/main/java/org/keycloak/policy/NotEmailPasswordPolicyProvider.java
+@@ -42,7 +42,7 @@ public class NotEmailPasswordPolicyProvider implements PasswordPolicyProvider {
+         if (email == null) {
+             return null;
+         }
+-        return email.equals(password) ? POLICY_ERROR : null;
++        return email.equalsIgnoreCase(password) ? POLICY_ERROR : null;
+     }
+ 
+     @Override
+diff --git a/server-spi-private/src/main/java/org/keycloak/policy/NotUsernamePasswordPolicyProvider.java b/server-spi-private/src/main/java/org/keycloak/policy/NotUsernamePasswordPolicyProvider.java
+index f08edab0d6..993c8b0f77 100644
+--- a/server-spi-private/src/main/java/org/keycloak/policy/NotUsernamePasswordPolicyProvider.java
++++ b/server-spi-private/src/main/java/org/keycloak/policy/NotUsernamePasswordPolicyProvider.java
+@@ -39,7 +39,7 @@ public class NotUsernamePasswordPolicyProvider implements PasswordPolicyProvider
+         if (username == null) {
+             return null;
+         }
+-        return username.equals(password) ? new PolicyError(ERROR_MESSAGE) : null;
++        return username.equalsIgnoreCase(password) ? new PolicyError(ERROR_MESSAGE) : null;
+     }
+ 
+     @Override

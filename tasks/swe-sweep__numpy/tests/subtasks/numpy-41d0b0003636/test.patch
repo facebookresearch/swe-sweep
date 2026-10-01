@@ -1,0 +1,31 @@
+diff --git a/numpy/core/tests/test_dtype.py b/numpy/core/tests/test_dtype.py
+index 8f33a8daf12..4031e7362c1 100644
+--- a/numpy/core/tests/test_dtype.py
++++ b/numpy/core/tests/test_dtype.py
+@@ -8,6 +8,7 @@ import pytest
+ import numpy as np
+ from numpy.core._rational_tests import rational
+ from numpy.testing import assert_, assert_equal, assert_raises
++from itertools import permutations
+ 
+ def assert_dtype_equal(a, b):
+     assert_equal(a, b)
+@@ -728,3 +729,17 @@ def test_dtypes_are_true():
+ def test_invalid_dtype_string():
+     # test for gh-10440
+     assert_raises(TypeError, np.dtype, 'f8,i8,[f8,i8]')
++
++
++all_types = set(np.typecodes['All'])
++all_pairs = permutations(all_types, 2)
++
++@pytest.mark.parametrize("pair", all_pairs)
++def test_pairs(pair):
++    """
++    Check that np.dtype('x,y') matches [np.dtype('x'), np.dtype('y')]
++    Example: np.dtype('d,I') -> dtype([('f0', '<f8'), ('f1', '<u4')])
++    """
++    # gh-5645: check that np.dtype('i,L') can be used
++    pair_type = np.dtype('{},{}'.format(*pair))
++    expected = np.dtype([('f0', pair[0]), ('f1', pair[1])])
++    assert_equal(pair_type, expected)

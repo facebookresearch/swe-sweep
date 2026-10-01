@@ -1,0 +1,80 @@
+diff --git a/tests/ui/manual_assert.edition2018.stderr b/tests/ui/manual_assert.edition2018.stderr
+index 8cedf2c68..221cddf06 100644
+--- a/tests/ui/manual_assert.edition2018.stderr
++++ b/tests/ui/manual_assert.edition2018.stderr
+@@ -189,5 +189,23 @@ LL -         };
+ LL +         const BAR: () = assert!(!(N == 0), );
+    |
+ 
+-error: aborting due to 10 previous errors
++error: only a `panic!` in `if`-then statement
++  --> tests/ui/manual_assert.rs:116:5
++   |
++LL | /     if !is_x86_feature_detected!("ssse3") {
++LL | |
++LL | |         panic!("SSSE3 is not supported");
++LL | |     }
++   | |_____^
++   |
++help: try instead
++   |
++LL -     if !is_x86_feature_detected!("ssse3") {
++LL -
++LL -         panic!("SSSE3 is not supported");
++LL -     }
++LL +     assert!(is_x86_feature_detected!("ssse3"), "SSSE3 is not supported");
++   |
++
++error: aborting due to 11 previous errors
+ 
+diff --git a/tests/ui/manual_assert.edition2021.stderr b/tests/ui/manual_assert.edition2021.stderr
+index 8cedf2c68..221cddf06 100644
+--- a/tests/ui/manual_assert.edition2021.stderr
++++ b/tests/ui/manual_assert.edition2021.stderr
+@@ -189,5 +189,23 @@ LL -         };
+ LL +         const BAR: () = assert!(!(N == 0), );
+    |
+ 
+-error: aborting due to 10 previous errors
++error: only a `panic!` in `if`-then statement
++  --> tests/ui/manual_assert.rs:116:5
++   |
++LL | /     if !is_x86_feature_detected!("ssse3") {
++LL | |
++LL | |         panic!("SSSE3 is not supported");
++LL | |     }
++   | |_____^
++   |
++help: try instead
++   |
++LL -     if !is_x86_feature_detected!("ssse3") {
++LL -
++LL -         panic!("SSSE3 is not supported");
++LL -     }
++LL +     assert!(is_x86_feature_detected!("ssse3"), "SSSE3 is not supported");
++   |
++
++error: aborting due to 11 previous errors
+ 
+diff --git a/tests/ui/manual_assert.rs b/tests/ui/manual_assert.rs
+index 46a42c3d0..ab02bd5f5 100644
+--- a/tests/ui/manual_assert.rs
++++ b/tests/ui/manual_assert.rs
+@@ -105,3 +105,17 @@ fn issue12505() {
+         };
+     }
+ }
++
++fn issue15227(left: u64, right: u64) -> u64 {
++    macro_rules! is_x86_feature_detected {
++        ($feature:literal) => {
++            $feature.len() > 0 && $feature.starts_with("ss")
++        };
++    }
++
++    if !is_x86_feature_detected!("ssse3") {
++        //~^ manual_assert
++        panic!("SSSE3 is not supported");
++    }
++    unsafe { todo!() }
++}

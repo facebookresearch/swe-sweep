@@ -1,0 +1,12 @@
+diff --git a/src/crypto/x509/x509_test.go b/src/crypto/x509/x509_test.go
+index a9dc145265..026367b167 100644
+--- a/src/crypto/x509/x509_test.go
++++ b/src/crypto/x509/x509_test.go
+@@ -1390,6 +1390,7 @@ func TestCreateCertificateRequest(t *testing.T) {
+ 		sigAlgo SignatureAlgorithm
+ 	}{
+ 		{"RSA", testPrivateKey, SHA1WithRSA},
++		{"RSA-PSS-SHA256", testPrivateKey, SHA256WithRSAPSS},
+ 		{"ECDSA-256", ecdsa256Priv, ECDSAWithSHA1},
+ 		{"ECDSA-384", ecdsa384Priv, ECDSAWithSHA1},
+ 		{"ECDSA-521", ecdsa521Priv, ECDSAWithSHA1},

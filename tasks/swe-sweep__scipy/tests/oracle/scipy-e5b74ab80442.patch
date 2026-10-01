@@ -1,0 +1,29 @@
+diff --git a/scipy/sparse/_index.py b/scipy/sparse/_index.py
+index 393d1355bb..060bca988b 100644
+--- a/scipy/sparse/_index.py
++++ b/scipy/sparse/_index.py
+@@ -109,7 +109,7 @@ class IndexMixin(object):
+             if not ((broadcast_row or x.shape[0] == i.shape[0]) and
+                     (broadcast_col or x.shape[1] == i.shape[1])):
+                 raise ValueError('shape mismatch in assignment')
+-            if x.size == 0:
++            if x.shape[0] == 0 or x.shape[1] == 0:
+                 return
+             x = x.tocoo(copy=True)
+             x.sum_duplicates()
+diff --git a/scipy/sparse/compressed.py b/scipy/sparse/compressed.py
+index 07a2f8dba4..17b9a23ce7 100644
+--- a/scipy/sparse/compressed.py
++++ b/scipy/sparse/compressed.py
+@@ -810,7 +810,11 @@ class _cs_matrix(_data_matrix, _minmax_mixin, IndexMixin):
+         broadcast_row = M != 1 and x.shape[0] == 1
+         broadcast_col = N != 1 and x.shape[1] == 1
+         r, c = x.row, x.col
++
+         x = np.asarray(x.data, dtype=self.dtype)
++        if x.size == 0:
++            return
++
+         if broadcast_row:
+             r = np.repeat(np.arange(M), len(r))
+             c = np.tile(c, M)

@@ -1,0 +1,13 @@
+diff --git a/src/Symfony/Component/Console/Command/TraceableCommand.php b/src/Symfony/Component/Console/Command/TraceableCommand.php
+index 9ffb68da397..9df467b0df8 100644
+--- a/src/Symfony/Component/Console/Command/TraceableCommand.php
++++ b/src/Symfony/Component/Console/Command/TraceableCommand.php
+@@ -283,7 +283,7 @@ final class TraceableCommand extends Command implements SignalableCommandInterfa
+         $event = $this->stopwatch->start($this->getName(), 'command');
+ 
+         try {
+-            $this->exitCode = parent::run($input, $output);
++            $this->exitCode = $this->command->run($input, $output);
+         } finally {
+             $event->stop();
+ 

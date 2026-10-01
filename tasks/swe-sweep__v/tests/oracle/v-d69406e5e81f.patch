@@ -1,0 +1,13 @@
+diff --git a/vlib/v/scanner/scanner.v b/vlib/v/scanner/scanner.v
+index cd9fea070..d19bb2e32 100644
+--- a/vlib/v/scanner/scanner.v
++++ b/vlib/v/scanner/scanner.v
+@@ -808,7 +808,7 @@ fn (mut s Scanner) text_scan() token.Token {
+ 			}
+ 			`{` {
+ 				// Skip { in `${` in strings
+-				if s.is_inside_string {
++				if s.is_inside_string || s.is_enclosed_inter {
+ 					if s.text[s.pos - 1] == `$` {
+ 						continue
+ 					} else {

@@ -1,0 +1,37 @@
+diff --git a/packages/mui-material/src/Stack/Stack.js b/packages/mui-material/src/Stack/Stack.js
+index 8368394fdc..bbb0122f36 100644
+--- a/packages/mui-material/src/Stack/Stack.js
++++ b/packages/mui-material/src/Stack/Stack.js
+@@ -60,7 +60,10 @@ export const style = ({ ownerState, theme }) => {
+     const transformer = createUnarySpacing(theme);
+ 
+     const base = Object.keys(theme.breakpoints.values).reduce((acc, breakpoint) => {
+-      if (ownerState.spacing[breakpoint] != null || ownerState.direction[breakpoint] != null) {
++      if (
++        (typeof ownerState.spacing === 'object' && ownerState.spacing[breakpoint] != null) ||
++        (typeof ownerState.direction === 'object' && ownerState.direction[breakpoint] != null)
++      ) {
+         acc[breakpoint] = true;
+       }
+       return acc;
+diff --git a/packages/mui-system/src/breakpoints.js b/packages/mui-system/src/breakpoints.js
+index 21f09e2484..8760755ab4 100644
+--- a/packages/mui-system/src/breakpoints.js
++++ b/packages/mui-system/src/breakpoints.js
+@@ -158,12 +158,14 @@ export function resolveBreakpointValues({
+       acc[breakpoint] =
+         breakpointValues[i] != null ? breakpointValues[i] : breakpointValues[previous];
+       previous = i;
+-    } else {
++    } else if (typeof breakpointValues === 'object') {
+       acc[breakpoint] =
+         breakpointValues[breakpoint] != null
+           ? breakpointValues[breakpoint]
+-          : breakpointValues[previous] || breakpointValues;
++          : breakpointValues[previous];
+       previous = breakpoint;
++    } else {
++      acc[breakpoint] = breakpointValues;
+     }
+     return acc;
+   }, {});

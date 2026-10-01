@@ -1,0 +1,20 @@
+diff --git a/vlib/v/fmt/tests/interface_fields_with_pre_comments_keep.vv b/vlib/v/fmt/tests/interface_fields_with_pre_comments_keep.vv
+new file mode 100644
+index 000000000..b8d9e3dc4
+--- /dev/null
++++ b/vlib/v/fmt/tests/interface_fields_with_pre_comments_keep.vv
+@@ -0,0 +1,14 @@
++module main
++
++fn main() {
++}
++
++pub interface IOperateInfo {
++mut:
++	// title
++	title string
++	// msg
++	msg string
++	// id
++	id string
++}

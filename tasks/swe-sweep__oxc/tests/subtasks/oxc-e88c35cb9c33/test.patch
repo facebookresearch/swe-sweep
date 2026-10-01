@@ -1,0 +1,14 @@
+diff --git a/crates/oxc_linter/src/snapshots/promise_prefer_await_to_then.snap b/crates/oxc_linter/src/snapshots/promise_prefer_await_to_then.snap
+index ce2038209b..981e8c08b2 100644
+--- a/crates/oxc_linter/src/snapshots/promise_prefer_await_to_then.snap
++++ b/crates/oxc_linter/src/snapshots/promise_prefer_await_to_then.snap
+@@ -78,3 +78,9 @@ source: crates/oxc_linter/src/tester.rs
+  1 │ async function foo() { thing().then() }
+    ·                                ────
+    ╰────
++
++  ⚠ eslint-plugin-promise(prefer-await-to-then): Prefer await to then()/catch()/finally()
++   ╭─[prefer_await_to_then.tsx:1:37]
++ 1 │ async function hi() { await thing().then(x => {}) }
++   ·                                     ────
++   ╰────

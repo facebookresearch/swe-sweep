@@ -1,0 +1,25 @@
+diff --git a/tests/parser/tbinarynotindented.nim b/tests/parser/tbinarynotindented.nim
+new file mode 100644
+index 000000000..8d124aade
+--- /dev/null
++++ b/tests/parser/tbinarynotindented.nim
+@@ -0,0 +1,3 @@
++type Foo = ref int
++  not nil #[tt.Error
++  ^ invalid indentation]#
+diff --git a/tests/parser/tbinarynotsameline.nim b/tests/parser/tbinarynotsameline.nim
+new file mode 100644
+index 000000000..ca417e023
+--- /dev/null
++++ b/tests/parser/tbinarynotsameline.nim
+@@ -0,0 +1,10 @@
++# issue #23565
++
++func foo: bool =
++  true
++
++const bar = block:
++  type T = int
++  not foo()
++
++doAssert not bar

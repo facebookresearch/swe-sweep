@@ -1,0 +1,28 @@
+diff --git a/activerecord/lib/active_record/relation/calculations.rb b/activerecord/lib/active_record/relation/calculations.rb
+index a17ae46e8d7..db588f7b60c 100644
+--- a/activerecord/lib/active_record/relation/calculations.rb
++++ b/activerecord/lib/active_record/relation/calculations.rb
+@@ -203,7 +203,7 @@ module ActiveRecord
+         relation = spawn
+         relation.select_values = columns
+         result = skip_query_cache_if_necessary do
+-          if where_clause.contradiction?
++          if where_clause.contradiction? && !possible_aggregation?(column_names)
+             ActiveRecord::Result.empty
+           else
+             klass.connection.select_all(relation.arel, "#{klass.name} Pluck")
+@@ -282,6 +282,13 @@ module ActiveRecord
+       def distinct_select?(column_name)
+         column_name.is_a?(::String) && /\bDISTINCT[\s(]/i.match?(column_name)
+       end
+ 
++      def possible_aggregation?(column_names)
++        column_names.any? do |column_name|
++          Arel.arel_node?(column_name) ||
++            (column_name.is_a?(String) && column_name.include?("("))
++        end
++      end
++
+       def aggregate_column(column_name)
+         return column_name if Arel::Expressions === column_name
+ 

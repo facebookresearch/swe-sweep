@@ -1,0 +1,151 @@
+{
+  "build_jobs": 4,
+  "container_repo": "/svgo",
+  "evaluation": {
+    "suite": "reproduction",
+    "test_dirs": [
+      "test"
+    ],
+    "visible_timeout": 7200
+  },
+  "upstream_image": "pandora-maxbug-svgo:v3.0.2",
+  "n_base_passing": 366,
+  "n_base_test_ignore": 3,
+  "oracle_digest": "2c3e9b350841e3caf5ffced745ca535cfdcdb8416717e90ceb5e81535da43696",
+  "oracle_pristine_paths": [],
+  "upstream_commit": "9f7399e15e6172900e0591deb5a57a45769d8205",
+  "reproduction": {
+    "needs_build": false,
+    "suite": {
+      "corpora": [
+        [
+          "^test/plugins/[^/]+\\.\\d+\\.svg$",
+          "test/plugins/_index.test.js"
+        ]
+      ],
+      "type": "jest-corpus"
+    },
+    "test_timeout": 900
+  },
+  "schema": 2,
+  "subtasks": [
+    {
+      "f2p": [
+        "plugins tests cleanupIds.24"
+      ],
+      "id": "svgo-0dd82dc12ad1",
+      "target_files": [
+        "plugins/cleanupIds.js"
+      ]
+    },
+    {
+      "f2p": [
+        "plugins tests cleanupIds.25"
+      ],
+      "id": "svgo-263af2d573ea",
+      "target_files": [
+        "plugins/cleanupIds.js"
+      ]
+    },
+    {
+      "f2p": [
+        "plugins tests removeEmptyContainers.06"
+      ],
+      "id": "svgo-2d626459290d",
+      "target_files": [
+        "plugins/removeEmptyContainers.js"
+      ]
+    },
+    {
+      "f2p": [
+        "plugins tests removeEmptyContainers.06"
+      ],
+      "id": "svgo-8188bc2af54f",
+      "target_files": [
+        "plugins/removeEmptyContainers.js"
+      ]
+    },
+    {
+      "f2p": [
+        "ignores @-moz-keyframes atrule",
+        "ignores @-o-keyframes atrule"
+      ],
+      "id": "svgo-9ad854ff6ec3",
+      "target_files": [
+        "lib/style.js"
+      ]
+    },
+    {
+      "f2p": [
+        "plugins tests cleanupIds.23"
+      ],
+      "id": "svgo-a11e665e83e9",
+      "target_files": [
+        "lib/path.js",
+        "lib/stringifier.js",
+        "lib/xast.js",
+        "plugins/_transforms.js",
+        "plugins/cleanupIds.js",
+        "plugins/inlineStyles.js",
+        "plugins/mergeStyles.js",
+        "plugins/prefixIds.js",
+        "plugins/removeOffCanvasPaths.js"
+      ]
+    },
+    {
+      "f2p": [
+        "plugins tests minifyStyles.11"
+      ],
+      "id": "svgo-b368e1be1d7a",
+      "target_files": [
+        "plugins/minifyStyles.js"
+      ]
+    },
+    {
+      "f2p": [
+        "plugins tests prefixIds.12"
+      ],
+      "id": "svgo-b673133294f6",
+      "target_files": [
+        "plugins/prefixIds.js"
+      ]
+    },
+    {
+      "f2p": [
+        "svgo should not add whitespace in pre element",
+        "svgo should not trim whitespace at start and end of pre element"
+      ],
+      "id": "svgo-bd7aeee179d9",
+      "target_files": [
+        "lib/parser.js",
+        "lib/stringifier.js",
+        "plugins/_collections.js",
+        "plugins/convertOneStopGradients.js",
+        "plugins/removeAttributesBySelector.js",
+        "plugins/removeDesc.js",
+        "plugins/removeTitle.js",
+        "plugins/reusePaths.js"
+      ]
+    },
+    {
+      "f2p": [
+        "plugins tests cleanupIds.22"
+      ],
+      "id": "svgo-d1fa40b0b36f",
+      "target_files": [
+        "plugins/cleanupIds.js"
+      ]
+    },
+    {
+      "f2p": [
+        "coa should generate correct datauri"
+      ],
+      "id": "svgo-f7ddb2b52df0",
+      "target_files": [
+        "lib/svgo/coa.js"
+      ]
+    }
+  ],
+  "task": "svgo",
+  "version": "v3.0.2"
+}

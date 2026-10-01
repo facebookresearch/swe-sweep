@@ -1,0 +1,13 @@
+diff --git a/src/execution/window_segment_tree.cpp b/src/execution/window_segment_tree.cpp
+index c3c8f6efe5..e41ffae510 100644
+--- a/src/execution/window_segment_tree.cpp
++++ b/src/execution/window_segment_tree.cpp
+@@ -616,7 +616,7 @@ void WindowSegmentTree::Finalize(const FrameStats &stats) {
+ }
+ 
+ WindowSegmentTree::~WindowSegmentTree() {
+-	if (!aggr.function.destructor) {
++	if (!aggr.function.destructor || !gstate) {
+ 		// nothing to destroy
+ 		return;
+ 	}

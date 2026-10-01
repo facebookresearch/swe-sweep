@@ -1,0 +1,340 @@
+diff --git a/Zend/tests/gh15108-001.phpt b/Zend/tests/gh15108-001.phpt
+new file mode 100644
+index 00000000000..9971ada5b37
+--- /dev/null
++++ b/Zend/tests/gh15108-001.phpt
+@@ -0,0 +1,36 @@
++--TEST--
++GH-15108 001: Segfault with delegated generator in suspended fiber
++--FILE--
++<?php
++
++class It implements \IteratorAggregate
++{
++    public function getIterator(): \Generator
++    {
++        yield 'foo';
++        Fiber::suspend();
++        var_dump("not executed");
++    }
++}
++
++function f() {
++    yield from new It();
++}
++
++$iterable = f();
++
++$fiber = new Fiber(function () use ($iterable) {
++    var_dump($iterable->current());
++    $iterable->next();
++    var_dump("not executed");
++});
++
++$ref = $fiber;
++
++$fiber->start();
++
++?>
++==DONE==
++--EXPECT--
++string(3) "foo"
++==DONE==
+diff --git a/Zend/tests/gh15108-002.phpt b/Zend/tests/gh15108-002.phpt
+new file mode 100644
+index 00000000000..64bdafaebf5
+--- /dev/null
++++ b/Zend/tests/gh15108-002.phpt
+@@ -0,0 +1,40 @@
++--TEST--
++GH-15108 002: Segfault with delegated generator in suspended fiber
++--FILE--
++<?php
++
++class It implements \IteratorAggregate
++{
++    public function getIterator(): \Generator
++    {
++        yield 'foo';
++        Fiber::suspend();
++        var_dump("not executed");
++    }
++}
++
++function g() {
++    yield from new It();
++}
++
++function f() {
++    yield from g();
++}
++
++$iterable = f();
++
++$fiber = new Fiber(function () use ($iterable) {
++    var_dump($iterable->current());
++    $iterable->next();
++    var_dump("not executed");
++});
++
++$ref = $fiber;
++
++$fiber->start();
++
++?>
++==DONE==
++--EXPECT--
++string(3) "foo"
++==DONE==
+diff --git a/Zend/tests/gh15108-003.phpt b/Zend/tests/gh15108-003.phpt
+new file mode 100644
+index 00000000000..c32e7b8f0c8
+--- /dev/null
++++ b/Zend/tests/gh15108-003.phpt
+@@ -0,0 +1,38 @@
++--TEST--
++GH-15108 003: Segfault with delegated generator in suspended fiber
++--FILE--
++<?php
++
++class It implements \IteratorAggregate
++{
++    public function getIterator(): \Generator
++    {
++        yield 'foo';
++        Fiber::suspend();
++        var_dump("not executed");
++    }
++}
++
++function f($gen) {
++    yield from $gen;
++}
++
++$a = new It();
++$b = f($a);
++$c = f($a);
++
++$fiber = new Fiber(function () use ($a, $b, $c) {
++    var_dump($b->current());
++    $b->next();
++    var_dump("not executed");
++});
++
++$ref = $fiber;
++
++$fiber->start();
++
++?>
++==DONE==
++--EXPECT--
++string(3) "foo"
++==DONE==
+diff --git a/Zend/tests/gh15108-004.phpt b/Zend/tests/gh15108-004.phpt
+new file mode 100644
+index 00000000000..caa548e515d
+--- /dev/null
++++ b/Zend/tests/gh15108-004.phpt
+@@ -0,0 +1,39 @@
++--TEST--
++GH-15108 004: Segfault with delegated generator in suspended fiber
++--FILE--
++<?php
++
++function gen1() {
++    yield 'foo';
++    Fiber::suspend();
++    var_dump("not executed");
++};
++
++function gen2($gen) {
++    yield from $gen;
++    var_dump("not executed");
++}
++
++$a = gen1();
++/* Both $b and $c have a root marked with IN_FIBER, but only $b is actually
++ * running in a fiber (at shutdown) */
++$b = gen2($a);
++$c = gen2($a);
++
++$fiber = new Fiber(function () use ($a, $b, $c) {
++    var_dump($b->current());
++    var_dump($c->current());
++    $b->next();
++    var_dump("not executed");
++});
++
++$ref = $fiber;
++
++$fiber->start();
++
++?>
++==DONE==
++--EXPECT--
++string(3) "foo"
++string(3) "foo"
++==DONE==
+diff --git a/Zend/tests/gh15108-005.phpt b/Zend/tests/gh15108-005.phpt
+new file mode 100644
+index 00000000000..76457e62c3f
+--- /dev/null
++++ b/Zend/tests/gh15108-005.phpt
+@@ -0,0 +1,45 @@
++--TEST--
++GH-15108 005: Segfault with delegated generator in suspended fiber
++--FILE--
++<?php
++
++class It implements \IteratorAggregate
++{
++    public function getIterator(): \Generator
++    {
++        yield 'foo';
++        Fiber::suspend();
++        var_dump("not executed");
++    }
++}
++
++function f() {
++    yield from new It();
++}
++
++function g() {
++    yield from f();
++}
++
++function h() {
++    /* g() is an intermediate node and will not be marked with IN_FIBER */
++    yield from g();
++}
++
++$iterable = h();
++var_dump($iterable->current());
++
++$fiber = new Fiber(function () use ($iterable) {
++    $iterable->next();
++    var_dump("not executed");
++});
++
++$ref = $fiber;
++
++$fiber->start();
++
++?>
++==DONE==
++--EXPECT--
++string(3) "foo"
++==DONE==
+diff --git a/Zend/tests/gh15108-006.phpt b/Zend/tests/gh15108-006.phpt
+new file mode 100644
+index 00000000000..5fb830d97cb
+--- /dev/null
++++ b/Zend/tests/gh15108-006.phpt
+@@ -0,0 +1,49 @@
++--TEST--
++GH-15108 006: Segfault with delegated generator in suspended fiber
++--FILE--
++<?php
++
++class It implements \IteratorAggregate
++{
++    public function getIterator(): \Generator
++    {
++        yield 'foo';
++        Fiber::suspend();
++        var_dump("not executed");
++    }
++}
++
++function f() {
++    yield from new It();
++}
++
++function g() {
++    yield from f();
++}
++
++function gen($gen) {
++    /* $gen is an intermediate node and will not be marked with IN_FIBER */
++    yield from $gen;
++}
++
++$g = g();
++$a = gen($g);
++$b = gen($g);
++var_dump($a->current());
++var_dump($b->current());
++
++$fiber = new Fiber(function () use ($a, $b, $g) {
++    $a->next();
++    var_dump("not executed");
++});
++
++$ref = $fiber;
++
++$fiber->start();
++
++?>
++==DONE==
++--EXPECT--
++string(3) "foo"
++string(3) "foo"
++==DONE==
+diff --git a/Zend/tests/gh15108-007.phpt b/Zend/tests/gh15108-007.phpt
+new file mode 100644
+index 00000000000..d66a8010a83
+--- /dev/null
++++ b/Zend/tests/gh15108-007.phpt
+@@ -0,0 +1,51 @@
++--TEST--
++GH-15108 007: Segfault with delegated generator in suspended fiber
++--FILE--
++<?php
++
++class It implements \IteratorAggregate
++{
++    public function getIterator(): \Generator
++    {
++        yield 'foo';
++        Fiber::suspend();
++        var_dump("not executed");
++    }
++}
++
++function f() {
++    yield from new It();
++}
++
++function g() {
++    yield from f();
++}
++
++function gen($gen) {
++    /* $gen is an intermediate node and will not be marked with IN_FIBER */
++    yield from $gen;
++}
++
++$g = g();
++$a = gen($g);
++$b = gen($g);
++$c = gen($g);
++$d = gen($g);
++var_dump($a->current());
++var_dump($b->current());
++
++$fiber = new Fiber(function () use ($a, $b, $c, $d, $g) {
++    $b->next();
++    var_dump("not executed");
++});
++
++$ref = $fiber;
++
++$fiber->start();
++
++?>
++==DONE==
++--EXPECT--
++string(3) "foo"
++string(3) "foo"
++==DONE==

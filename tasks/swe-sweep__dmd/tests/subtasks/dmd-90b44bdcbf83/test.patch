@@ -1,0 +1,18 @@
+diff --git a/compiler/test/runnable/template9.d b/compiler/test/runnable/template9.d
+index fa70b81c78..7a55b2dbfe 100644
+--- a/compiler/test/runnable/template9.d
++++ b/compiler/test/runnable/template9.d
+@@ -5036,6 +5036,13 @@ void test15653()
+ 
+ /******************************************/
+ 
++template foo23733(T, alias T a) {}
++
++int n23733;
++alias _ = foo23733!(int, n23733);
++
++/******************************************/
++
+ int main()
+ {
+     test1();

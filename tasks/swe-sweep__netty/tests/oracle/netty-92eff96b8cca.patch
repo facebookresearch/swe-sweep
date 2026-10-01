@@ -1,0 +1,16 @@
+diff --git a/handler/src/main/java/io/netty/handler/ipfilter/UniqueIpFilter.java b/handler/src/main/java/io/netty/handler/ipfilter/UniqueIpFilter.java
+index ac346481d7..15099bb2a3 100644
+--- a/handler/src/main/java/io/netty/handler/ipfilter/UniqueIpFilter.java
++++ b/handler/src/main/java/io/netty/handler/ipfilter/UniqueIpFilter.java
+@@ -38,10 +38,9 @@ public class UniqueIpFilter extends AbstractRemoteAddressFilter<InetSocketAddres
+     @Override
+     protected boolean accept(ChannelHandlerContext ctx, InetSocketAddress remoteAddress) throws Exception {
+         final InetAddress remoteIp = remoteAddress.getAddress();
+-        if (connected.contains(remoteIp)) {
++        if (!connected.add(remoteIp)) {
+             return false;
+         } else {
+-            connected.add(remoteIp);
+             ctx.channel().closeFuture().addListener(new ChannelFutureListener() {
+                 @Override
+                 public void operationComplete(ChannelFuture future) throws Exception {

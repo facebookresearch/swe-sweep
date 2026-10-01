@@ -1,0 +1,13 @@
+diff --git a/lib/ContextModule.js b/lib/ContextModule.js
+index b65955534..560318290 100644
+--- a/lib/ContextModule.js
++++ b/lib/ContextModule.js
+@@ -722,7 +722,7 @@ module.exports = webpackAsyncContext;`;
+ 		const thenFunction =
+ 			fakeMap !== 9
+ 				? `${arrow ? "id =>" : "function(id)"} {
+-		${this.getReturnModuleObjectSource(fakeMap)}
++		${this.getReturnModuleObjectSource(fakeMap, true)}
+ 	}`
+ 				: "__webpack_require__";
+ 		return `var map = ${JSON.stringify(map, null, "\t")};

@@ -1,0 +1,32 @@
+diff --git a/src/language-markdown/printer-markdown.js b/src/language-markdown/printer-markdown.js
+index 059029545..01c6f785b 100644
+--- a/src/language-markdown/printer-markdown.js
++++ b/src/language-markdown/printer-markdown.js
+@@ -44,6 +44,15 @@
+ 
+ const SIBLING_NODE_TYPES = new Set(["listItem", "definition"]);
+ 
++function hasFakeWhitespaceAfterNextToken(path) {
++  const { siblings, index } = path;
++  if (!siblings || typeof index !== "number") {
++    return false;
++  }
++  const afterNext = siblings[index + 2];
++  return afterNext?.type === "whitespace" && afterNext.value === "";
++}
++
+ function genericPrint(path, options, print) {
+   const { node } = path;
+ 
+@@ -131,7 +140,10 @@ function genericPrint(path, options, print) {
+ 
+       const proseWrap =
+         // leading char that may cause different syntax
+-        next && /^>|^(?:[*+-]|#{1,6}|\d+[).])$/u.test(next.value)
++        next &&
++        /^>|^(?:[*+-]|#{1,6}|\d+[).])$/u.test(next.value) &&
++        // Avoid https://github.com/prettier/prettier/issues/18861
++        !hasFakeWhitespaceAfterNextToken(path)
+           ? "never"
+           : options.proseWrap;
+ 

@@ -1,0 +1,13 @@
+diff --git a/dolphinscheduler-common/src/main/java/org/apache/dolphinscheduler/common/sql/ClasspathSqlScriptParser.java b/dolphinscheduler-common/src/main/java/org/apache/dolphinscheduler/common/sql/ClasspathSqlScriptParser.java
+index 224e30acc1..d6684b3272 100644
+--- a/dolphinscheduler-common/src/main/java/org/apache/dolphinscheduler/common/sql/ClasspathSqlScriptParser.java
++++ b/dolphinscheduler-common/src/main/java/org/apache/dolphinscheduler/common/sql/ClasspathSqlScriptParser.java
+@@ -116,7 +116,7 @@ public class ClasspathSqlScriptParser implements SqlScriptParser {
+                 // Skip the empty line, comment line
+                 continue;
+             }
+-            if (line.startsWith("*/")) {
++            if (trimLine.startsWith("*/")) {
+                 break;
+             }
+         }

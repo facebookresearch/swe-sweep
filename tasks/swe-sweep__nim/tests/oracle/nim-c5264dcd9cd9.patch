@@ -1,0 +1,13 @@
+diff --git a/lib/pure/asyncfutures.nim b/lib/pure/asyncfutures.nim
+index edf5f7277..51aaaca36 100644
+--- a/lib/pure/asyncfutures.nim
++++ b/lib/pure/asyncfutures.nim
+@@ -29,7 +29,7 @@ type
+     finished: bool
+     error*: ref Exception              ## Stored exception
+     errorStackTrace*: string
+-    when not defined(release):
++    when not defined(release) or defined(futureLogging):
+       stackTrace: seq[StackTraceEntry] ## For debugging purposes only.
+       id: int
+       fromProc: string

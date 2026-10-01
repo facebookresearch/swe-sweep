@@ -1,0 +1,39 @@
+diff --git a/compiler/typeallowed.nim b/compiler/typeallowed.nim
+index 3274246bc..6b2fa9fc3 100644
+--- a/compiler/typeallowed.nim
++++ b/compiler/typeallowed.nim
+@@ -25,6 +25,7 @@ type
+     taNoUntyped
+     taIsTemplateOrMacro
+     taProcContextIsNotMacro
++    taVoid # only allow direct void fields of objects/tuples
+ 
+   TTypeAllowedFlags* = set[TTypeAllowedFlag]
+ 
+@@ -58,6 +59,8 @@ proc typeAllowedAux(marker: var IntSet, typ: PType, kind: TSymKind,
+   if typ == nil: return nil
+   if containsOrIncl(marker, typ.id): return nil
+   var t = skipTypes(typ, abstractInst-{tyTypeDesc, tySink})
++
++  let flags = if t.kind == tyVoid: flags else: flags-{taVoid}
+   case t.kind
+   of tyVar, tyLent:
+     if kind in {skProc, skFunc, skConst} and (views notin c.features):
+@@ -113,7 +116,7 @@ proc typeAllowedAux(marker: var IntSet, typ: PType, kind: TSymKind,
+   of tyStatic:
+     if kind notin {skParam}: result = t
+   of tyVoid:
+-    if taField notin flags: result = t
++    if taVoid notin flags: result = t
+   of tyTypeClasses:
+     if tfGenericTypeParam in t.flags or taConcept in flags: #or taField notin flags:
+       discard
+@@ -171,7 +174,7 @@ proc typeAllowedAux(marker: var IntSet, typ: PType, kind: TSymKind,
+         t.kind == tyObject and t[0] != nil:
+       result = t
+     else:
+-      let flags = flags+{taField}
++      let flags = flags+{taField, taVoid}
+       for i in 0..<t.len:
+         result = typeAllowedAux(marker, t[i], kind, c, flags)
+         if result != nil: break

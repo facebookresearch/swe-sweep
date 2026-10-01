@@ -1,0 +1,42 @@
+diff --git a/src/Symfony/Component/Validator/Constraints/CardScheme.php b/src/Symfony/Component/Validator/Constraints/CardScheme.php
+index 42089110de5..39eb1cd59bf 100644
+--- a/src/Symfony/Component/Validator/Constraints/CardScheme.php
++++ b/src/Symfony/Component/Validator/Constraints/CardScheme.php
+@@ -58,7 +58,7 @@ class CardScheme extends Constraint
+     {
+         if (\is_array($schemes) && \is_string(key($schemes))) {
+             $options = array_merge($schemes, $options);
+-        } else {
++        } elseif (null !== $schemes) {
+             $options['value'] = $schemes;
+         }
+ 
+diff --git a/src/Symfony/Component/Validator/Constraints/Expression.php b/src/Symfony/Component/Validator/Constraints/Expression.php
+index 6dbcd93c113..e784ce9e875 100644
+--- a/src/Symfony/Component/Validator/Constraints/Expression.php
++++ b/src/Symfony/Component/Validator/Constraints/Expression.php
+@@ -57,7 +57,7 @@ class Expression extends Constraint
+ 
+         if (\is_array($expression)) {
+             $options = array_merge($expression, $options);
+-        } else {
++        } elseif (null !== $expression) {
+             $options['value'] = $expression;
+         }
+ 
+diff --git a/src/Symfony/Component/Validator/Constraints/When.php b/src/Symfony/Component/Validator/Constraints/When.php
+index 2b7afddca37..3150284275f 100644
+--- a/src/Symfony/Component/Validator/Constraints/When.php
++++ b/src/Symfony/Component/Validator/Constraints/When.php
+@@ -37,7 +37,10 @@ class When extends Composite
+             $options = array_merge($expression, $options);
+         } else {
+             $options['expression'] = $expression;
+-            $options['constraints'] = $constraints;
++
++            if (null !== $constraints) {
++                $options['constraints'] = $constraints;
++            }
+         }
+ 
+         if (isset($options['constraints']) && !\is_array($options['constraints'])) {

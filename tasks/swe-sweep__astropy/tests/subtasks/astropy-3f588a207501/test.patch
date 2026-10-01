@@ -1,0 +1,19 @@
+diff --git a/astropy/table/tests/test_table.py b/astropy/table/tests/test_table.py
+index 1bd2628a34..f8c7f23386 100644
+--- a/astropy/table/tests/test_table.py
++++ b/astropy/table/tests/test_table.py
+@@ -3229,3 +3229,14 @@ def test_add_list_order():
+     array = np.empty((20, 1))
+     t.add_columns(array, names=names)
+     assert t.colnames == names
++
++
++def test_meta_writes_npstr_ecsv(tmp_path):
++    """Regression test for #18235"""
++    t = Table(dict(a=[1, 2, 3], b=["a", "b", "c"]))
++    t.meta["foo"] = np.str_("hello")
++    table_filename = tmp_path / "foo.ecsv"
++    # Write the table out with Table.write()
++    t.write(table_filename, overwrite=True)
++    t2 = Table.read(table_filename)
++    assert t2.meta["foo"] == t.meta["foo"]

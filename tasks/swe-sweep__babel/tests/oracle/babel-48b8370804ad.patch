@@ -1,0 +1,13 @@
+diff --git a/packages/babel-parser/src/parser/statement.js b/packages/babel-parser/src/parser/statement.js
+index e5b8086c04..b677bfd0c9 100644
+--- a/packages/babel-parser/src/parser/statement.js
++++ b/packages/babel-parser/src/parser/statement.js
+@@ -315,7 +315,7 @@ export default class StatementParser extends ExpressionParser {
+       node.expression = expr;
+       this.state.decoratorStack.pop();
+     } else {
+-      node.expression = this.parseMaybeAssign();
++      node.expression = this.parseExprSubscripts();
+     }
+     return this.finishNode(node, "Decorator");
+   }

@@ -1,0 +1,12 @@
+diff --git a/src/theory/theory_model.cpp b/src/theory/theory_model.cpp
+--- a/src/theory/theory_model.cpp
++++ b/src/theory/theory_model.cpp
+@@ -716,6 +716,6 @@ std::vector< Node > TheoryModel::getFunctionsToAssign() {
+     {
+       continue;
+     }
+-    // should not have been solved for in a substitution
+-    Assert(d_env.getTopLevelSubstitutions().apply(n) == n);
++    // Note that d_env.getTopLevelSubstitutions().apply(n) may not be n
++    // if we are in incremenal mode.
+     if( !hasAssignedFunctionDefinition( n ) ){

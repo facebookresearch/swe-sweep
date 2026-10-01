@@ -1,0 +1,13 @@
+diff --git a/src/Compilers/CSharp/Portable/Lowering/LocalRewriter/LocalRewriter_IndexerAccess.cs b/src/Compilers/CSharp/Portable/Lowering/LocalRewriter/LocalRewriter_IndexerAccess.cs
+index e817e472360..cca2ac2ad47 100644
+--- a/src/Compilers/CSharp/Portable/Lowering/LocalRewriter/LocalRewriter_IndexerAccess.cs
++++ b/src/Compilers/CSharp/Portable/Lowering/LocalRewriter/LocalRewriter_IndexerAccess.cs
+@@ -1010,7 +1010,7 @@ namespace Microsoft.CodeAnalysis.CSharp
+                     var rangeSizeLocal = F.StoreToTemp(rangeSizeExpr, out var rangeSizeStore);
+                     localsBuilder.Add(rangeSizeLocal.LocalSymbol);
+                     sideEffectsBuilder.Add(rangeSizeStore);
+-                    rangeSizeExpr = startLocal;
++                    rangeSizeExpr = rangeSizeLocal;
+                 }
+             }
+             else

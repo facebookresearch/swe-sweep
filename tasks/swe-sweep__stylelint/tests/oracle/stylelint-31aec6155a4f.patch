@@ -1,0 +1,24 @@
+diff --git a/lib/reference/selectors.cjs b/lib/reference/selectors.cjs
+index c09b449b0..7d52c6302 100644
+--- a/lib/reference/selectors.cjs
++++ b/lib/reference/selectors.cjs
+@@ -442,6 +442,7 @@ const pseudoClasses = uniteSets(
+ 		'scope',
+ 		'state',
+ 		'target',
++		'unchecked',
+ 		'unresolved',
+ 		'user-invalid',
+ 		'user-valid',
+diff --git a/lib/reference/selectors.mjs b/lib/reference/selectors.mjs
+index 97f3bfadc..63f595f1e 100644
+--- a/lib/reference/selectors.mjs
++++ b/lib/reference/selectors.mjs
+@@ -439,6 +439,7 @@ export const pseudoClasses = uniteSets(
+ 		'scope',
+ 		'state',
+ 		'target',
++		'unchecked',
+ 		'unresolved',
+ 		'user-invalid',
+ 		'user-valid',

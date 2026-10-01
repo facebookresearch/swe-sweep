@@ -1,0 +1,15 @@
+diff --git a/tests/generics/t22826.nim b/tests/generics/t22826.nim
+new file mode 100644
+index 000000000..914d4243a
+--- /dev/null
++++ b/tests/generics/t22826.nim
+@@ -0,0 +1,8 @@
++import std/tables
++
++var a: Table[string, float]
++
++type Value*[T] = object
++  table: Table[string, Value[T]]
++
++discard toTable({"a": Value[float]()})
+\ No newline at end of file

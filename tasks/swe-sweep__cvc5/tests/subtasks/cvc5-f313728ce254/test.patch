@@ -1,0 +1,27 @@
+diff --git a/test/regress/cli/CMakeLists.txt b/test/regress/cli/CMakeLists.txt
+index 6b77915185..b887ddf742 100644
+--- a/test/regress/cli/CMakeLists.txt
++++ b/test/regress/cli/CMakeLists.txt
+@@ -469,6 +469,7 @@ set(regress_0_tests
+   regress0/bv/inequality03.smt2
+   regress0/bv/inequality04.smt2
+   regress0/bv/inequality05.smt2
++  regress0/bv/int_to_bv_10080_ite.smt2
+   regress0/bv/int_to_bv_err_on_demand_1.smt2
+   regress0/bv/int_to_bv_model.smt2
+   regress0/bv/int_to_bv_model2.smt2
+diff --git a/test/regress/cli/regress0/bv/int_to_bv_10080_ite.smt2 b/test/regress/cli/regress0/bv/int_to_bv_10080_ite.smt2
+new file mode 100644
+index 0000000000..319a6d3862
+--- /dev/null
++++ b/test/regress/cli/regress0/bv/int_to_bv_10080_ite.smt2
+@@ -0,0 +1,9 @@
++; EXPECT: sat
++; COMMAND-LINE: --solve-int-as-bv=8
++(set-logic QF_LIA)
++(declare-const x Int)
++(declare-const y Int)
++(declare-const z Int)
++(assert (> y 0))
++(assert (= z (ite (> x y) x (+ x y))))
++(check-sat)

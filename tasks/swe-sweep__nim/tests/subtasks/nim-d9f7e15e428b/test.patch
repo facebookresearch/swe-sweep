@@ -1,0 +1,12 @@
+diff --git a/tests/js/tasyncjs.nim b/tests/js/tasyncjs.nim
+--- a/tests/js/tasyncjs.nim
++++ b/tests/js/tasyncjs.nim
+@@ -80,3 +80,8 @@ proc main() {.async.} =
+   echo "done" # justified here to make sure we're running this, since it's inside `async`
+ 
++block: # 13341
++  proc f {.async.} =
++    proc g: int =
++      result = 123
++
+ discard main()

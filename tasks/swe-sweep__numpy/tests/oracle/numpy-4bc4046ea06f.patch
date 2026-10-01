@@ -1,0 +1,46 @@
+diff --git a/numpy/core/src/multiarray/descriptor.c b/numpy/core/src/multiarray/descriptor.c
+index bb3cc9d..b1b903e 100644
+--- a/numpy/core/src/multiarray/descriptor.c
++++ b/numpy/core/src/multiarray/descriptor.c
+@@ -1555,7 +1555,13 @@ PyArray_DescrConverter(PyObject *obj, PyArray_Descr **at)
+     }
+     else if (PyTuple_Check(obj)) {
+         /* or a tuple */
++        if (Py_EnterRecursiveCall(
++                " while trying to convert the given data type from"
++                " a tuple object" ) != 0) {
++            return NPY_FAIL;
++        }
+         *at = _convert_from_tuple(obj, 0);
++        Py_LeaveRecursiveCall();
+         if (*at == NULL){
+             if (PyErr_Occurred()) {
+                 return NPY_FAIL;
+@@ -1566,7 +1572,13 @@ PyArray_DescrConverter(PyObject *obj, PyArray_Descr **at)
+     }
+     else if (PyList_Check(obj)) {
+         /* or a list */
++        if (Py_EnterRecursiveCall(
++                " while trying to convert the given data type from"
++                " a list object" ) != 0) {
++            return NPY_FAIL;
++        }
+         *at = _convert_from_array_descr(obj,0);
++        Py_LeaveRecursiveCall();
+         if (*at == NULL) {
+             if (PyErr_Occurred()) {
+                 return NPY_FAIL;
+@@ -1577,7 +1589,13 @@ PyArray_DescrConverter(PyObject *obj, PyArray_Descr **at)
+     }
+     else if (PyDict_Check(obj) || PyDictProxy_Check(obj)) {
+         /* or a dictionary */
++        if (Py_EnterRecursiveCall(
++                " while trying to convert the given data type from"
++                " a dict object" ) != 0) {
++            return NPY_FAIL;
++        }
+         *at = _convert_from_dict(obj,0);
++        Py_LeaveRecursiveCall();
+         if (*at == NULL) {
+             if (PyErr_Occurred()) {
+                 return NPY_FAIL;

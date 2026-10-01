@@ -1,0 +1,27 @@
+diff --git a/clippy_lints/src/panic_unimplemented.rs b/clippy_lints/src/panic_unimplemented.rs
+index 8962f36db..449d3da76 100644
+--- a/clippy_lints/src/panic_unimplemented.rs
++++ b/clippy_lints/src/panic_unimplemented.rs
+@@ -152,7 +152,6 @@ impl<'tcx> LateLintPass<'tcx> for PanicUnimplemented {
+                 expr.span,
+                 "`panic_any` should not be present in production code",
+             );
+-            return;
+         }
+     }
+ }
+diff --git a/clippy_lints/src/returns.rs b/clippy_lints/src/returns.rs
+index ab9b0f88f..401b6a563 100644
+--- a/clippy_lints/src/returns.rs
++++ b/clippy_lints/src/returns.rs
+@@ -435,7 +435,9 @@ fn check_final_expr<'tcx>(
+         ExprKind::If(_, then, else_clause_opt) => {
+             check_block_return(cx, &then.kind, peeled_drop_expr.span, semi_spans.clone());
+             if let Some(else_clause) = else_clause_opt {
+-                check_block_return(cx, &else_clause.kind, peeled_drop_expr.span, semi_spans);
++                // The `RetReplacement` won't be used there as `else_clause` will be either a block or
++                // a `if` expression.
++                check_final_expr(cx, else_clause, semi_spans, RetReplacement::Empty, match_ty_opt);
+             }
+         },
+         // a match expr, check all arms

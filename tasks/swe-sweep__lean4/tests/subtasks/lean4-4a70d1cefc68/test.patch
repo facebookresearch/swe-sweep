@@ -1,0 +1,17 @@
+diff --git a/tests/lean/run/renameSelf.lean b/tests/lean/run/renameSelf.lean
+new file mode 100644
+index 0000000000..47df6110af
+--- /dev/null
++++ b/tests/lean/run/renameSelf.lean
+@@ -0,0 +1,11 @@
++variable {P Q : Prop}
++
++/--
++error: failed to find a hypothesis with type
++  P ↔ Q
++-/
++#guard_msgs in
++example : P ↔ Q := by
++  rename P ↔ Q => goal
++  obtain ⟨hpq, hqp⟩ := goal
++  constructor <;> trivial

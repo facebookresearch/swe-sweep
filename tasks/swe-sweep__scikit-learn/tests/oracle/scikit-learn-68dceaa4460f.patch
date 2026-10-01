@@ -1,0 +1,13 @@
+diff --git a/sklearn/datasets/samples_generator.py b/sklearn/datasets/samples_generator.py
+index 3ba9dfd487..82ae355a7f 100644
+--- a/sklearn/datasets/samples_generator.py
++++ b/sklearn/datasets/samples_generator.py
+@@ -26,7 +26,7 @@ def _generate_hypercube(samples, dimensions, rng):
+     """Returns distinct binary samples of length dimensions
+     """
+     if dimensions > 30:
+-        return np.hstack([_generate_hypercube(samples, dimensions - 30, rng),
++        return np.hstack([rng.randint(2, size=(samples, dimensions - 30)),
+                           _generate_hypercube(samples, 30, rng)])
+     out = astype(sample_without_replacement(2 ** dimensions, samples,
+                                             random_state=rng),

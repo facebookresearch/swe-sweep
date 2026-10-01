@@ -1,0 +1,16 @@
+diff --git a/activesupport/test/core_ext/enumerable_test.rb b/activesupport/test/core_ext/enumerable_test.rb
+index 60d86d0f6c4..99ebcd29b7a 100644
+--- a/activesupport/test/core_ext/enumerable_test.rb
++++ b/activesupport/test/core_ext/enumerable_test.rb
+@@ -375,6 +375,11 @@ class EnumerableTests < ActiveSupport::TestCase
+     assert_equal [ Payment.new(1), Payment.new(5) ], values.in_order_of(:price, [ 1, 5 ])
+   end
+ 
++  def test_in_order_of_preserves_duplicates
++    values = [ Payment.new(5), Payment.new(1), Payment.new(5) ]
++    assert_equal [ Payment.new(1), Payment.new(5), Payment.new(5) ], values.in_order_of(:price, [ 1, 5 ])
++  end
++
+   def test_sole
+     expected_raise = Enumerable::SoleItemExpectedError
+ 

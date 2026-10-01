@@ -1,0 +1,14 @@
+diff --git a/tests/lean/run/2710.lean b/tests/lean/run/2710.lean
+new file mode 100644
+index 0000000000..7ed23b7e3c
+--- /dev/null
++++ b/tests/lean/run/2710.lean
+@@ -0,0 +1,8 @@
++/-!
++# Structure field default values can be noncomputable
++-/
++
++noncomputable def ohno := 1
++
++structure OhNo where
++  x := ohno

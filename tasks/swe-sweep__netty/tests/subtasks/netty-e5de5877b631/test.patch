@@ -1,0 +1,46 @@
+diff --git a/codec-http/src/test/java/io/netty/handler/codec/http/HttpClientUpgradeHandlerTest.java b/codec-http/src/test/java/io/netty/handler/codec/http/HttpClientUpgradeHandlerTest.java
+--- a/codec-http/src/test/java/io/netty/handler/codec/http/HttpClientUpgradeHandlerTest.java
++++ b/codec-http/src/test/java/io/netty/handler/codec/http/HttpClientUpgradeHandlerTest.java
+@@ -28,6 +28,7 @@
+ import static org.junit.Assert.assertFalse;
+ import static org.junit.Assert.assertNull;
+ import static org.junit.Assert.assertTrue;
++import static org.junit.Assert.fail;
+ 
+ public class HttpClientUpgradeHandlerTest {
+ 
+@@ -173,5 +174,34 @@
+         HttpResponse response = channel.readInbound();
+         assertEquals(HttpResponseStatus.OK, response.status());
+         assertFalse(channel.finish());
+     }
++
++    @Test
++    public void forwardOnFailure() {
++        HttpClientUpgradeHandler.SourceCodec sourceCodec = new FakeSourceCodec();
++        HttpClientUpgradeHandler.UpgradeCodec upgradeCodec = new FakeUpgradeCodec();
++        HttpClientUpgradeHandler handler = new HttpClientUpgradeHandler(sourceCodec, upgradeCodec, 1024);
++        final EmbeddedChannel channel = new EmbeddedChannel();
++        channel.pipeline().addFirst("upgrade", handler);
++
++        assertTrue(channel.writeOutbound(new DefaultFullHttpRequest(HttpVersion.HTTP_1_1, HttpMethod.GET, "netty.io")));
++        FullHttpRequest request = channel.readOutbound();
++        assertTrue(request.release());
++
++        DefaultHttpResponse response = new DefaultHttpResponse(
++                HttpVersion.HTTP_1_1, HttpResponseStatus.SWITCHING_PROTOCOLS);
++        response.headers().add(HttpHeaderNames.UPGRADE, "");
++        assertFalse(channel.writeInbound(response));
++        try {
++            channel.writeInbound(LastHttpContent.EMPTY_LAST_CONTENT);
++            fail();
++        } catch (IllegalStateException expected) {
++            // expected
++        }
++
++        FullHttpResponse full = channel.readInbound();
++        assertTrue(full.release());
++
++        assertFalse(channel.finish());
++    }
+ }

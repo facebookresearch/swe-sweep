@@ -1,0 +1,68 @@
+diff --git a/tests/ui/non_zero_suggestions.fixed b/tests/ui/non_zero_suggestions.fixed
+index 4573896ec..b714a6cf6 100644
+--- a/tests/ui/non_zero_suggestions.fixed
++++ b/tests/ui/non_zero_suggestions.fixed
+@@ -1,5 +1,5 @@
+ #![warn(clippy::non_zero_suggestions)]
+-use std::num::{NonZeroI8, NonZeroI16, NonZeroU8, NonZeroU16, NonZeroU32, NonZeroU64, NonZeroUsize};
++use std::num::{NonZeroI8, NonZeroI16, NonZeroI32, NonZeroU8, NonZeroU16, NonZeroU32, NonZeroU64, NonZeroUsize};
+ 
+ fn main() {
+     /// Positive test cases (lint should trigger)
+@@ -45,6 +45,12 @@ fn main() {
+     let k: u64 = 300;
+     let l = NonZeroU32::new(15).unwrap();
+     let r9 = k / NonZeroU64::from(l);
++
++    // Signed integers in div/rem: must NOT trigger because i64 / NonZeroI64 is not in std
++    let s: i64 = 10;
++    let t = NonZeroI32::new(3).unwrap();
++    let r10 = s / i64::from(t.get());
++    let r11 = s % i64::from(t.get());
+ }
+ 
+ // Additional function to test the lint in a different context
+diff --git a/tests/ui/non_zero_suggestions.rs b/tests/ui/non_zero_suggestions.rs
+index 3e7081e0c..0e4cd3cc3 100644
+--- a/tests/ui/non_zero_suggestions.rs
++++ b/tests/ui/non_zero_suggestions.rs
+@@ -1,5 +1,5 @@
+ #![warn(clippy::non_zero_suggestions)]
+-use std::num::{NonZeroI8, NonZeroI16, NonZeroU8, NonZeroU16, NonZeroU32, NonZeroU64, NonZeroUsize};
++use std::num::{NonZeroI8, NonZeroI16, NonZeroI32, NonZeroU8, NonZeroU16, NonZeroU32, NonZeroU64, NonZeroUsize};
+ 
+ fn main() {
+     /// Positive test cases (lint should trigger)
+@@ -45,6 +45,12 @@ fn main() {
+     let k: u64 = 300;
+     let l = NonZeroU32::new(15).unwrap();
+     let r9 = k / NonZeroU64::from(l);
++
++    // Signed integers in div/rem: must NOT trigger because i64 / NonZeroI64 is not in std
++    let s: i64 = 10;
++    let t = NonZeroI32::new(3).unwrap();
++    let r10 = s / i64::from(t.get());
++    let r11 = s % i64::from(t.get());
+ }
+ 
+ // Additional function to test the lint in a different context
+diff --git a/tests/ui/non_zero_suggestions.stderr b/tests/ui/non_zero_suggestions.stderr
+index 7a57f7983..4b5a8a3fc 100644
+--- a/tests/ui/non_zero_suggestions.stderr
++++ b/tests/ui/non_zero_suggestions.stderr
+@@ -26,13 +26,13 @@ LL |     let x = u64::from(NonZeroU32::new(5).unwrap().get());
+    |             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ help: replace with: `NonZeroU64::from(NonZeroU32::new(5).unwrap())`
+ 
+ error: consider using `NonZeroU64::from()` for more efficient and type-safe conversion
+-  --> tests/ui/non_zero_suggestions.rs:52:9
++  --> tests/ui/non_zero_suggestions.rs:58:9
+    |
+ LL |     x / u64::from(y.get())
+    |         ^^^^^^^^^^^^^^^^^^ help: replace with: `NonZeroU64::from(y)`
+ 
+ error: consider using `NonZeroU64::from()` for more efficient and type-safe conversion
+-  --> tests/ui/non_zero_suggestions.rs:62:22
++  --> tests/ui/non_zero_suggestions.rs:68:22
+    |
+ LL |         self.value / u64::from(divisor.get())
+    |                      ^^^^^^^^^^^^^^^^^^^^^^^^ help: replace with: `NonZeroU64::from(divisor)`

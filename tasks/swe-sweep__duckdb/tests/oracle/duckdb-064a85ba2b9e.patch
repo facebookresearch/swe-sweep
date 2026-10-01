@@ -1,0 +1,38 @@
+diff --git a/src/include/duckdb/planner/query_node/bound_select_node.hpp b/src/include/duckdb/planner/query_node/bound_select_node.hpp
+index af16afc501..0bab35cacb 100644
+--- a/src/include/duckdb/planner/query_node/bound_select_node.hpp
++++ b/src/include/duckdb/planner/query_node/bound_select_node.hpp
+@@ -62,6 +62,8 @@ public:
+ 
+ 	//! The amount of columns in the final result
+ 	idx_t column_count;
++	//! The amount of bound columns in the select list
++	idx_t bound_column_count = 0;
+ 
+ 	//! Index used by the LogicalProjection
+ 	idx_t projection_index;
+diff --git a/src/planner/binder/query_node/bind_select_node.cpp b/src/planner/binder/query_node/bind_select_node.cpp
+index accd54a276..568237abbd 100644
+--- a/src/planner/binder/query_node/bind_select_node.cpp
++++ b/src/planner/binder/query_node/bind_select_node.cpp
+@@ -506,6 +506,7 @@ unique_ptr<BoundQueryNode> Binder::BindSelectNode(SelectNode &statement, unique_
+ 		bool is_original_column = i < result->column_count;
+ 		bool can_group_by_all =
+ 		    statement.aggregate_handling == AggregateHandling::FORCE_AGGREGATES && is_original_column;
++		result->bound_column_count++;
+ 
+ 		if (select_binder.HasExpandedExpressions()) {
+ 			if (!is_original_column) {
+diff --git a/src/planner/expression_binder/base_select_binder.cpp b/src/planner/expression_binder/base_select_binder.cpp
+index 4501a717f1..78ff2d9032 100644
+--- a/src/planner/expression_binder/base_select_binder.cpp
++++ b/src/planner/expression_binder/base_select_binder.cpp
+@@ -81,7 +81,7 @@ BindResult BaseSelectBinder::BindColumnRef(unique_ptr<ParsedExpression> &expr_pt
+ 		if (alias_entry != alias_map.end()) {
+ 			// found entry!
+ 			auto index = alias_entry->second;
+-			if (index >= node.select_list.size()) {
++			if (index >= node.bound_column_count) {
+ 				throw BinderException("Column \"%s\" referenced that exists in the SELECT clause - but this column "
+ 				                      "cannot be referenced before it is defined",
+ 				                      colref.column_names[0]);

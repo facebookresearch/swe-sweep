@@ -1,0 +1,27 @@
+diff --git a/independent-projects/resteasy-reactive/server/runtime/src/main/java/org/jboss/resteasy/reactive/server/core/multipart/MultipartParser.java b/independent-projects/resteasy-reactive/server/runtime/src/main/java/org/jboss/resteasy/reactive/server/core/multipart/MultipartParser.java
+index 78fe4ab62f5..6c6db94b8ba 100644
+--- a/independent-projects/resteasy-reactive/server/runtime/src/main/java/org/jboss/resteasy/reactive/server/core/multipart/MultipartParser.java
++++ b/independent-projects/resteasy-reactive/server/runtime/src/main/java/org/jboss/resteasy/reactive/server/core/multipart/MultipartParser.java
+@@ -143,6 +143,8 @@ public class MultipartParser {
+                 } else if (subState == -1) {
+                     if (b == CR) {
+                         subState = -2;
++                    } else if (b == DASH) {
++                        subState = -3;
+                     }
+                 } else if (subState == -2) {
+                     if (b == LF) {
+@@ -153,6 +155,13 @@ public class MultipartParser {
+                     } else {
+                         subState = -1;
+                     }
++                } else if (subState == -3) {
++                    if (b == DASH) {
++                        state = -1; // we are done
++                        return;
++                    } else {
++                        subState = -1;
++                    }
+                 }
+             }
+         }

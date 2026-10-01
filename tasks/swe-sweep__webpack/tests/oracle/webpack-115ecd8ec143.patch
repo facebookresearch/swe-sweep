@@ -1,0 +1,84 @@
+diff --git a/lib/dependencies/CommonJsImportsParserPlugin.js b/lib/dependencies/CommonJsImportsParserPlugin.js
+index 3340df1af..d9744396d 100644
+--- a/lib/dependencies/CommonJsImportsParserPlugin.js
++++ b/lib/dependencies/CommonJsImportsParserPlugin.js
+@@ -141,7 +141,9 @@ class CommonJsImportsParserPlugin {
+ 						regExp: options.unknownContextRegExp,
+ 						mode: "sync"
+ 					},
+-					expr.range
++					expr.range,
++					undefined,
++					parser.scope.inShorthand
+ 				);
+ 				dep.critical =
+ 					options.unknownContextCritical &&
+diff --git a/lib/dependencies/CommonJsRequireContextDependency.js b/lib/dependencies/CommonJsRequireContextDependency.js
+index 8536e6cfd..627d234e5 100644
+--- a/lib/dependencies/CommonJsRequireContextDependency.js
++++ b/lib/dependencies/CommonJsRequireContextDependency.js
+@@ -10,11 +10,13 @@ const ContextDependency = require("./ContextDependency");
+ const ContextDependencyTemplateAsRequireCall = require("./ContextDependencyTemplateAsRequireCall");
+ 
+ class CommonJsRequireContextDependency extends ContextDependency {
+-	constructor(options, range, valueRange) {
++	constructor(options, range, valueRange, inShorthand) {
+ 		super(options);
+ 
+ 		this.range = range;
+ 		this.valueRange = valueRange;
++		// inShorthand must be serialized by subclasses that use it
++		this.inShorthand = inShorthand;
+ 	}
+ 
+ 	get type() {
+@@ -26,6 +28,7 @@ class CommonJsRequireContextDependency extends ContextDependency {
+ 
+ 		write(this.range);
+ 		write(this.valueRange);
++		write(this.inShorthand);
+ 
+ 		super.serialize(context);
+ 	}
+@@ -35,6 +38,7 @@ class CommonJsRequireContextDependency extends ContextDependency {
+ 
+ 		this.range = read();
+ 		this.valueRange = read();
++		this.inShorthand = read();
+ 
+ 		super.deserialize(context);
+ 	}
+diff --git a/lib/dependencies/ContextDependency.js b/lib/dependencies/ContextDependency.js
+index febeded4d..4b23b527e 100644
+--- a/lib/dependencies/ContextDependency.js
++++ b/lib/dependencies/ContextDependency.js
+@@ -47,6 +47,7 @@ class ContextDependency extends Dependency {
+ 		this.request = undefined;
+ 		this.range = undefined;
+ 		this.valueRange = undefined;
++		this.inShorthand = undefined;
+ 		// TODO refactor this
+ 		this.replaces = undefined;
+ 	}
+diff --git a/lib/dependencies/ContextDependencyTemplateAsRequireCall.js b/lib/dependencies/ContextDependencyTemplateAsRequireCall.js
+index 9b73dcb38..8907f9f55 100644
+--- a/lib/dependencies/ContextDependencyTemplateAsRequireCall.js
++++ b/lib/dependencies/ContextDependencyTemplateAsRequireCall.js
+@@ -24,13 +24,16 @@ class ContextDependencyTemplateAsRequireCall extends ContextDependency.Template
+ 		{ runtimeTemplate, moduleGraph, chunkGraph, runtimeRequirements }
+ 	) {
+ 		const dep = /** @type {ContextDependency} */ (dependency);
+-		const moduleExports = runtimeTemplate.moduleExports({
++		let moduleExports = runtimeTemplate.moduleExports({
+ 			module: moduleGraph.getModule(dep),
+ 			chunkGraph,
+ 			request: dep.request,
+ 			runtimeRequirements
+ 		});
+ 
++		if (dep.inShorthand) {
++			moduleExports = `${dep.inShorthand}: ${moduleExports}`;
++		}
+ 		if (moduleGraph.getModule(dep)) {
+ 			if (dep.valueRange) {
+ 				if (Array.isArray(dep.replaces)) {

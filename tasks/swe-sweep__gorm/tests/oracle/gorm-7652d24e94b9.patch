@@ -1,0 +1,13 @@
+diff --git a/schema/field.go b/schema/field.go
+index 981f56f..d4dfbd6 100644
+--- a/schema/field.go
++++ b/schema/field.go
+@@ -950,7 +950,7 @@ func (field *Field) setupNewValuePool() {
+ 			New: func() interface{} {
+ 				return &serializer{
+ 					Field:      field,
+-					Serializer: reflect.New(reflect.Indirect(reflect.ValueOf(field.Serializer)).Type()).Interface().(SerializerInterface),
++					Serializer: field.Serializer,
+ 				}
+ 			},
+ 		}

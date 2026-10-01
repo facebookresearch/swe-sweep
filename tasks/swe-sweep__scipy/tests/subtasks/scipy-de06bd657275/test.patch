@@ -1,0 +1,33 @@
+diff --git a/scipy/optimize/tests/test_trustregion_exact.py b/scipy/optimize/tests/test_trustregion_exact.py
+index fc5a22cba2..1a871a250b 100644
+--- a/scipy/optimize/tests/test_trustregion_exact.py
++++ b/scipy/optimize/tests/test_trustregion_exact.py
+@@ -15,7 +15,7 @@ from scipy.optimize._trustregion_exact import (
+ from scipy.linalg import (svd, get_lapack_funcs, det,
+                           cho_factor, cho_solve, qr,
+                           eigvalsh, eig, norm)
+-from numpy.testing import (assert_, assert_array_equal,
++from numpy.testing import (assert_, assert_allclose, assert_array_equal,
+                            assert_equal, assert_array_almost_equal,
+                            assert_array_less)
+ 
+@@ -206,6 +206,19 @@ class TestIterativeSubproblem:
+ 
+         assert_array_almost_equal(-s, subprob.lambda_current)
+ 
++    def test_gh20244(self):
++        g = [20, -10]
++        H = [[15, 0], [0, 5]]
++
++        subprob = IterativeSubproblem(x=np.zeros(2), fun=lambda _: 0,
++                                      jac=lambda _: np.array(g),
++                                      hess=lambda _: np.array(H), k_easy=1e-6,
++                                      k_hard=1e-9)
++        p, hits_boundary = subprob.solve(1.0)
++
++        assert_allclose(p, [-0.77472957,  0.63229272])
++        assert hits_boundary
++
+     def test_for_interior_convergence(self):
+ 
+         H = [[1.812159, 0.82687265, 0.21838879, -0.52487006, 0.25436988],

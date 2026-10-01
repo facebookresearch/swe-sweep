@@ -1,0 +1,137 @@
+diff --git a/cpp/src/arrow/compute/exec/hash_join_node_test.cc b/cpp/src/arrow/compute/exec/hash_join_node_test.cc
+index 960d3838fb..58551f4eca 100644
+--- a/cpp/src/arrow/compute/exec/hash_join_node_test.cc
++++ b/cpp/src/arrow/compute/exec/hash_join_node_test.cc
+@@ -243,7 +243,8 @@ struct RandomDataTypeConstraints {
+   int max_string_length;
+ 
+   void Default() {
+-    data_type_enabled_mask = kInt1 | kInt2 | kInt4 | kInt8 | kBool | kBinary | kString;
++    data_type_enabled_mask =
++        kInt1 | kInt2 | kInt4 | kInt8 | kBool | kBinary | kString | kLargeString;
+     min_null_probability = 0.0;
+     max_null_probability = 0.2;
+     min_binary_length = 1;
+@@ -279,6 +280,7 @@ struct RandomDataTypeConstraints {
+   static constexpr int64_t kBool = 16;
+   static constexpr int64_t kBinary = 32;
+   static constexpr int64_t kString = 64;
++  static constexpr int64_t kLargeString = 128;
+ };
+ 
+ struct RandomDataType {
+@@ -287,6 +289,7 @@ struct RandomDataType {
+   int fixed_length;
+   int min_string_length;
+   int max_string_length;
++  bool is_large_string;
+ 
+   static RandomDataType Random(Random64Bit& rng,
+                                const RandomDataTypeConstraints& constraints) {
+@@ -302,6 +305,15 @@ struct RandomDataType {
+     } else {
+       result.is_fixed_length = true;
+     }
++
++    if (!result.is_fixed_length &&
++        (constraints.data_type_enabled_mask & constraints.kLargeString) != 0) {
++      // When selecting the string type, there's a 50% chance of choosing a large string.
++      result.is_large_string = ((rng.next() % 2) == 0);
++    } else {
++      result.is_large_string = false;
++    }
++
+     if (constraints.max_null_probability > 0.0) {
+       // 25% chance of no nulls
+       // Uniform distribution of null probability from min to max
+@@ -395,9 +407,16 @@ std::vector<std::shared_ptr<Array>> GenRandomRecords(
+           break;
+       }
+     } else {
+-      result.push_back(rag.String(num_rows, data_types[i].min_string_length,
+-                                  data_types[i].max_string_length,
+-                                  data_types[i].null_probability));
++      if (data_types[i].is_large_string) {
++        // Generate LargeString if is_large_string flag is true
++        result.push_back(rag.LargeString(num_rows, data_types[i].min_string_length,
++                                         data_types[i].max_string_length,
++                                         data_types[i].null_probability));
++      } else {
++        result.push_back(rag.String(num_rows, data_types[i].min_string_length,
++                                    data_types[i].max_string_length,
++                                    data_types[i].null_probability));
++      }
+     }
+   }
+   return result;
+diff --git a/cpp/src/arrow/compute/light_array_test.cc b/cpp/src/arrow/compute/light_array_test.cc
+index 71d228bf3f..4e33f7b578 100644
+--- a/cpp/src/arrow/compute/light_array_test.cc
++++ b/cpp/src/arrow/compute/light_array_test.cc
+@@ -236,6 +236,66 @@ TEST(KeyColumnArray, FromExecBatch) {
+   ASSERT_EQ(1, arrays[1].length());
+ }
+ 
++struct SliceTestCase {
++  int offset;
++  int length;
++  std::vector<std::string> expected;
++};
++
++template <typename OffsetType>
++void GenericTestSlice(const std::shared_ptr<DataType>& type, const char* json_data,
++                      const std::vector<SliceTestCase>& testCases) {
++  auto array = ArrayFromJSON(type, json_data);
++  KeyColumnArray kc_array =
++      ColumnArrayFromArrayData(array->data(), 0, array->length()).ValueOrDie();
++
++  for (const auto& testCase : testCases) {
++    ARROW_SCOPED_TRACE("Offset: ", testCase.offset, " Length: ", testCase.length);
++    KeyColumnArray sliced = kc_array.Slice(testCase.offset, testCase.length);
++
++    // Extract binary data from the sliced KeyColumnArray
++    std::vector<std::string> sliced_data;
++    const auto* offset_data = reinterpret_cast<const OffsetType*>(sliced.data(1));
++    const auto* string_data = reinterpret_cast<const char*>(sliced.data(2));
++
++    for (auto i = 0; i < testCase.length; ++i) {
++      auto start = offset_data[i];
++      auto end = offset_data[i + 1];
++      sliced_data.push_back(std::string(string_data + start, string_data + end));
++    }
++
++    // Compare the sliced values to the expected string
++    ASSERT_EQ(testCase.expected, sliced_data);
++  }
++}
++
++TEST(KeyColumnArray, SliceBinaryTest) {
++  const char* json_test_strings = R"(["Hello", "World", "Slice", "Binary", "Test"])";
++  std::vector<SliceTestCase> testCases = {
++      {0, 1, {"Hello"}},
++      {1, 1, {"World"}},
++      {2, 1, {"Slice"}},
++      {3, 1, {"Binary"}},
++      {4, 1, {"Test"}},
++      {0, 2, {"Hello", "World"}},
++      {1, 2, {"World", "Slice"}},
++      {2, 2, {"Slice", "Binary"}},
++      {3, 2, {"Binary", "Test"}},
++      {0, 3, {"Hello", "World", "Slice"}},
++      {1, 3, {"World", "Slice", "Binary"}},
++      {2, 3, {"Slice", "Binary", "Test"}},
++      {0, 4, {"Hello", "World", "Slice", "Binary"}},
++      {1, 4, {"World", "Slice", "Binary", "Test"}},
++      {0, 5, {"Hello", "World", "Slice", "Binary", "Test"}},
++  };
++
++  // Run tests with binary type
++  GenericTestSlice<int32_t>(binary(), json_test_strings, testCases);
++
++  // Run tests with large binary type
++  GenericTestSlice<int64_t>(large_binary(), json_test_strings, testCases);
++}
++
+ TEST(ResizableArrayData, Basic) {
+   std::unique_ptr<MemoryPool> pool = MemoryPool::CreateDefault();
+   for (const auto& type : kSampleFixedDataTypes) {

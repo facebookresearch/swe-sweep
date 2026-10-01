@@ -1,0 +1,250 @@
+diff --git a/src/Symfony/Bridge/Doctrine/Tests/Fixtures/DoctrineLoaderParentEntity.php b/src/Symfony/Bridge/Doctrine/Tests/Fixtures/DoctrineLoaderParentEntity.php
+index 2a5d6822cfe..27f792ba9ba 100644
+--- a/src/Symfony/Bridge/Doctrine/Tests/Fixtures/DoctrineLoaderParentEntity.php
++++ b/src/Symfony/Bridge/Doctrine/Tests/Fixtures/DoctrineLoaderParentEntity.php
+@@ -12,6 +12,7 @@
+ namespace Symfony\Bridge\Doctrine\Tests\Fixtures;
+ 
+ use Doctrine\ORM\Mapping as ORM;
++use Symfony\Component\Validator\Constraints as Assert;
+ 
+ #[ORM\MappedSuperclass]
+ class DoctrineLoaderParentEntity
+@@ -22,6 +23,9 @@ class DoctrineLoaderParentEntity
+     #[ORM\Column(length: 30)]
+     private $privateParentMaxLength;
+ 
++    #[ORM\Column(length: 25), Assert\DisableAutoMapping]
++    protected $parentNoAutoMapping;
++
+     public function getPrivateParentMaxLength()
+     {
+         return $this->privateParentMaxLength;
+diff --git a/src/Symfony/Bridge/Doctrine/Tests/Validator/DoctrineLoaderTest.php b/src/Symfony/Bridge/Doctrine/Tests/Validator/DoctrineLoaderTest.php
+index a5ca51669ab..d69691a44ec 100644
+--- a/src/Symfony/Bridge/Doctrine/Tests/Validator/DoctrineLoaderTest.php
++++ b/src/Symfony/Bridge/Doctrine/Tests/Validator/DoctrineLoaderTest.php
+@@ -83,6 +83,12 @@ class DoctrineLoaderTest extends TestCase
+         $this->assertInstanceOf(Length::class, $publicParentMaxLengthConstraints[0]);
+         $this->assertSame(35, $publicParentMaxLengthConstraints[0]->max);
+ 
++        /** @var PropertyMetadata[] $parentNoAutoMappingMetadata */
++        $parentNoAutoMappingMetadata = $classMetadata->getPropertyMetadata('parentNoAutoMapping');
++        $this->assertCount(1, $parentNoAutoMappingMetadata);
++        $this->assertCount(0, $parentNoAutoMappingMetadata[0]->getConstraints());
++        $this->assertSame(AutoMappingStrategy::DISABLED, $parentNoAutoMappingMetadata[0]->getAutoMappingStrategy());
++
+         $embeddedMetadata = $classMetadata->getPropertyMetadata('embedded');
+         $this->assertCount(1, $embeddedMetadata);
+         $this->assertSame(CascadingStrategy::CASCADE, $embeddedMetadata[0]->getCascadingStrategy());
+diff --git a/src/Symfony/Component/Validator/Tests/Fixtures/PropertyInfoLoaderChildEntity.php b/src/Symfony/Component/Validator/Tests/Fixtures/PropertyInfoLoaderChildEntity.php
+new file mode 100644
+index 00000000000..aaaf27b8705
+--- /dev/null
++++ b/src/Symfony/Component/Validator/Tests/Fixtures/PropertyInfoLoaderChildEntity.php
+@@ -0,0 +1,17 @@
++<?php
++
++/*
++ * This file is part of the Symfony package.
++ *
++ * (c) Fabien Potencier <fabien@symfony.com>
++ *
++ * For the full copyright and license information, please view the LICENSE
++ * file that was distributed with this source code.
++ */
++
++namespace Symfony\Component\Validator\Tests\Fixtures;
++
++class PropertyInfoLoaderChildEntity extends PropertyInfoLoaderParentEntity
++{
++    public $string;
++}
+diff --git a/src/Symfony/Component/Validator/Tests/Fixtures/PropertyInfoLoaderParentEntity.php b/src/Symfony/Component/Validator/Tests/Fixtures/PropertyInfoLoaderParentEntity.php
+new file mode 100644
+index 00000000000..f27990124e4
+--- /dev/null
++++ b/src/Symfony/Component/Validator/Tests/Fixtures/PropertyInfoLoaderParentEntity.php
+@@ -0,0 +1,20 @@
++<?php
++
++/*
++ * This file is part of the Symfony package.
++ *
++ * (c) Fabien Potencier <fabien@symfony.com>
++ *
++ * For the full copyright and license information, please view the LICENSE
++ * file that was distributed with this source code.
++ */
++
++namespace Symfony\Component\Validator\Tests\Fixtures;
++
++use Symfony\Component\Validator\Constraints as Assert;
++
++class PropertyInfoLoaderParentEntity
++{
++    #[Assert\DisableAutoMapping]
++    protected $parentNoAutoMapping;
++}
+diff --git a/src/Symfony/Component/Validator/Tests/Mapping/Loader/PropertyInfoLoaderTest.php b/src/Symfony/Component/Validator/Tests/Mapping/Loader/PropertyInfoLoaderTest.php
+index 0ebc17e319e..1ffb6be7de0 100644
+--- a/src/Symfony/Component/Validator/Tests/Mapping/Loader/PropertyInfoLoaderTest.php
++++ b/src/Symfony/Component/Validator/Tests/Mapping/Loader/PropertyInfoLoaderTest.php
+@@ -24,6 +24,7 @@ use Symfony\Component\Validator\Mapping\ClassMetadata;
+ use Symfony\Component\Validator\Mapping\Loader\PropertyInfoLoader;
+ use Symfony\Component\Validator\Mapping\PropertyMetadata;
+ use Symfony\Component\Validator\Tests\Fixtures\NestedAttribute\Entity;
++use Symfony\Component\Validator\Tests\Fixtures\PropertyInfoLoaderChildEntity;
+ use Symfony\Component\Validator\Tests\Fixtures\PropertyInfoLoaderEntity;
+ use Symfony\Component\Validator\Tests\Fixtures\PropertyInfoLoaderNoAutoMappingEntity;
+ use Symfony\Component\Validator\Validation;
+@@ -185,6 +186,41 @@ class PropertyInfoLoaderTest extends TestCase
+         $this->assertCount(0, $noAutoMappingConstraints, 'DisableAutoMapping constraint is not added in the list');
+     }
+ 
++    public function testInheritedAutoMappingStrategy()
++    {
++        $propertyInfoStub = $this->createStub(PropertyInfoExtractorInterface::class);
++        $propertyInfoStub
++            ->method('getProperties')
++            ->willReturn(['string', 'parentNoAutoMapping'])
++        ;
++        $propertyInfoStub
++            ->method('getTypes')
++            ->willReturn([new Type(Type::BUILTIN_TYPE_STRING)])
++        ;
++        $propertyInfoStub
++            ->method('isWritable')
++            ->willReturn(true)
++        ;
++
++        $propertyInfoLoader = new PropertyInfoLoader($propertyInfoStub, $propertyInfoStub, $propertyInfoStub, '{.*}');
++        $validator = Validation::createValidatorBuilder()
++            ->enableAttributeMapping()
++            ->addLoader($propertyInfoLoader)
++            ->getValidator()
++        ;
++
++        /** @var ClassMetadata $classMetadata */
++        $classMetadata = $validator->getMetadataFor(new PropertyInfoLoaderChildEntity());
++
++        $this->assertCount(2, $classMetadata->getPropertyMetadata('string')[0]->getConstraints());
++
++        /** @var PropertyMetadata[] $parentNoAutoMappingMetadata */
++        $parentNoAutoMappingMetadata = $classMetadata->getPropertyMetadata('parentNoAutoMapping');
++        $this->assertCount(1, $parentNoAutoMappingMetadata);
++        $this->assertCount(0, $parentNoAutoMappingMetadata[0]->getConstraints());
++        $this->assertSame(AutoMappingStrategy::DISABLED, $parentNoAutoMappingMetadata[0]->getAutoMappingStrategy());
++    }
++
+     /**
+      * @dataProvider regexpProvider
+      */
+diff --git a/src/Symfony/Component/Validator/Tests/Mapping/Factory/LazyLoadingMetadataFactoryTest.php b/src/Symfony/Component/Validator/Tests/Mapping/Factory/LazyLoadingMetadataFactoryTest.php
+index 3d10506..747c852 100644
+--- a/src/Symfony/Component/Validator/Tests/Mapping/Factory/LazyLoadingMetadataFactoryTest.php
++++ b/src/Symfony/Component/Validator/Tests/Mapping/Factory/LazyLoadingMetadataFactoryTest.php
+@@ -15,7 +15,10 @@ use PHPUnit\Framework\TestCase;
+ use Psr\Cache\CacheItemPoolInterface;
+ use Symfony\Component\Cache\Adapter\ArrayAdapter;
+ use Symfony\Component\Validator\Constraints\Callback;
++use Symfony\Component\Validator\Constraints\DisableAutoMapping;
++use Symfony\Component\Validator\Constraints\EnableAutoMapping;
+ use Symfony\Component\Validator\Constraints\NotBlank;
++use Symfony\Component\Validator\Mapping\AutoMappingStrategy;
+ use Symfony\Component\Validator\Exception\NoSuchMetadataException;
+ use Symfony\Component\Validator\Mapping\ClassMetadata;
+ use Symfony\Component\Validator\Mapping\Factory\LazyLoadingMetadataFactory;
+@@ -154,6 +157,92 @@ class LazyLoadingMetadataFactoryTest extends TestCase
+         $this->assertContains('EntityStaticVehicle', $groups);
+     }
+ 
++    public function testLoadersSeeAutoMappingStrategyOfParentProperties()
++    {
++        $loader = new class implements LoaderInterface {
++            public int $strategy = AutoMappingStrategy::NONE;
++
++            public function loadClassMetadata(ClassMetadata $metadata): bool
++            {
++                if (EntityParent::class === $metadata->getClassName()) {
++                    $metadata->addPropertyConstraint('firstName', new DisableAutoMapping());
++
++                    return true;
++                }
++
++                foreach ($metadata->getPropertyMetadata('firstName') as $propertyMetadata) {
++                    $this->strategy = $propertyMetadata->getAutoMappingStrategy();
++                }
++
++                return true;
++            }
++        };
++
++        $factory = new LazyLoadingMetadataFactory($loader);
++        $factory->getMetadataFor(self::CLASS_NAME);
++
++        $this->assertSame(AutoMappingStrategy::DISABLED, $loader->strategy);
++    }
++
++    public function testInheritedAutoMappingStrategiesKeepTheOrderOfProperties()
++    {
++        $loader = new class implements LoaderInterface {
++            public function loadClassMetadata(ClassMetadata $metadata): bool
++            {
++                if (EntityParent::class === $metadata->getClassName()) {
++                    $metadata->addPropertyConstraint('firstName', new DisableAutoMapping());
++                    $metadata->addPropertyConstraint('firstName', new NotBlank());
++                } elseif (Entity::class === $metadata->getClassName()) {
++                    $metadata->addPropertyConstraint('lastName', new NotBlank());
++                    $metadata->addPropertyConstraint('reference', new NotBlank());
++                }
++
++                return true;
++            }
++        };
++
++        $factory = new LazyLoadingMetadataFactory($loader);
++        $metadata = $factory->getMetadataFor(self::CLASS_NAME);
++
++        $this->assertSame(['lastName', 'reference', 'firstName'], $metadata->getConstrainedProperties());
++
++        $firstNameMetadata = $metadata->getPropertyMetadata('firstName');
++        $this->assertCount(1, $firstNameMetadata);
++        $this->assertSame(self::PARENT_CLASS, $firstNameMetadata[0]->getClassName());
++        $this->assertSame(AutoMappingStrategy::DISABLED, $firstNameMetadata[0]->getAutoMappingStrategy());
++    }
++
++    public function testInheritedAutoMappingStrategiesAreKeptWhenLoadersMapTheProperty()
++    {
++        $loader = new class implements LoaderInterface {
++            public function loadClassMetadata(ClassMetadata $metadata): bool
++            {
++                if (EntityParent::class === $metadata->getClassName()) {
++                    $metadata->addPropertyConstraint('firstName', new EnableAutoMapping());
++
++                    return true;
++                }
++
++                foreach ($metadata->getPropertyMetadata('firstName') as $propertyMetadata) {
++                    if (AutoMappingStrategy::ENABLED === $propertyMetadata->getAutoMappingStrategy()) {
++                        $metadata->addPropertyConstraint('firstName', new NotBlank());
++                    }
++                }
++
++                return true;
++            }
++        };
++
++        $factory = new LazyLoadingMetadataFactory($loader);
++        $metadata = $factory->getMetadataFor(self::CLASS_NAME);
++
++        $firstNameMetadata = $metadata->getPropertyMetadata('firstName');
++        $this->assertCount(2, $firstNameMetadata);
++        $this->assertSame(self::CLASS_NAME, $firstNameMetadata[0]->getClassName());
++        $this->assertCount(1, $firstNameMetadata[0]->getConstraints());
++        $this->assertSame(AutoMappingStrategy::ENABLED, $firstNameMetadata[0]->getAutoMappingStrategy());
++    }
++
+     public function testMultipathInterfaceConstraint()
+     {
+         $factory = new LazyLoadingMetadataFactory(new PropertyGetterInterfaceConstraintLoader());

@@ -1,0 +1,59 @@
+diff --git a/test-data/unit/check-isinstance.test b/test-data/unit/check-isinstance.test
+index 2e483bbbf..04fbced53 100644
+--- a/test-data/unit/check-isinstance.test
++++ b/test-data/unit/check-isinstance.test
+@@ -2660,6 +2660,33 @@ y: Any
+ if type(y) is int:
+     reveal_type(y) # N: Revealed type is "builtins.int"
+ 
++[case testTypeEqualsCheckUsingIsNonOverlapping]
++# flags: --warn-unreachable
++from typing import Union
++
++y: str
++if type(y) is int:  # E: Subclass of "str" and "int" cannot exist: would have incompatible method signatures
++    y # E: Statement is unreachable
++else:
++    reveal_type(y) # N: Revealed type is "builtins.str"
++[builtins fixtures/isinstance.pyi]
++
++[case testTypeEqualsCheckUsingIsNonOverlappingChild-xfail]
++# flags: --warn-unreachable
++from typing import Union
++
++class A: ...
++class B: ...
++class C(A): ...
++x: Union[B, C]
++# C instance cannot be exactly its parent A, we need reversed subtyping relationship
++# here (type(parent) is Child).
++if type(x) is A:
++    reveal_type(x)  # E: Statement is unreachable
++else:
++    reveal_type(x)  # N: Revealed type is "Union[__main__.B, __main__.C]"
++[builtins fixtures/isinstance.pyi]
++
+ [case testTypeEqualsNarrowingUnionWithElse]
+ from typing import Union
+ 
+diff --git a/test-data/unit/check-typevar-values.test b/test-data/unit/check-typevar-values.test
+index 8b961d88d..f932cf53c 100644
+--- a/test-data/unit/check-typevar-values.test
++++ b/test-data/unit/check-typevar-values.test
+@@ -732,3 +732,16 @@ def foo3(x: NT) -> None:
+ def foo4(x: NT) -> None:
+     p, q = 1, 2.0  # type: (int, float)
+ [builtins fixtures/tuple.pyi]
++
++[case testTypeVarValuesNarrowing]
++from typing import TypeVar
++
++W = TypeVar("W", int, str)
++
++def fn(w: W) -> W:
++    if type(w) is str:
++        reveal_type(w)  # N: Revealed type is "builtins.str"
++    elif type(w) is int:
++        reveal_type(w)  # N: Revealed type is "builtins.int"
++    return w
++[builtins fixtures/isinstance.pyi]

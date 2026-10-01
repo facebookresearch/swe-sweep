@@ -1,0 +1,75 @@
+diff --git a/test/Fail/Issue5923.agda b/test/Fail/Issue5923.agda
+new file mode 100644
+index 0000000000..c822bf0bd5
+--- /dev/null
++++ b/test/Fail/Issue5923.agda
+@@ -0,0 +1,16 @@
++{-# OPTIONS --rewriting #-}
++
++open import Agda.Builtin.Equality
++open import Agda.Builtin.Equality.Rewrite
++open import Agda.Builtin.Unit
++
++postulate
++  A : Set
++  a : A
++  f : {X : Set} → X → A
++  g : {X : Set} → A → X
++  rew-fg : {X : Set} (a : A) → f (g {X} a) ≡ a
++{-# REWRITE rew-fg #-}
++
++test : f tt ≡ a
++test = refl
+diff --git a/test/Fail/Issue5923.err b/test/Fail/Issue5923.err
+new file mode 100644
+index 0000000000..f1711fd120
+--- /dev/null
++++ b/test/Fail/Issue5923.err
+@@ -0,0 +1,3 @@
++Issue5923.agda:16,8-12
++f tt != a of type A
++when checking that the expression refl has type f tt ≡ a
+diff --git a/test/Succeed/Issue5923-OP.agda b/test/Succeed/Issue5923-OP.agda
+new file mode 100644
+index 0000000000..57541db688
+--- /dev/null
++++ b/test/Succeed/Issue5923-OP.agda
+@@ -0,0 +1,38 @@
++{-# OPTIONS --type-in-type --rewriting #-}
++
++module _ where
++
++postulate
++  _≡_ : {A : Set} → A → A → Set
++
++{-# BUILTIN REWRITE _≡_ #-}
++
++record ⊤ : Set where
++  constructor []
++open ⊤
++
++postulate
++  ID : (Δ : Set) (δ₀ δ₁ : Δ) → Set
++  ID⊤ : (δ₀ δ₁ : ⊤) → ID ⊤ δ₀ δ₁ ≡ ⊤
++  Id : {Δ : Set} (A : Δ → Set) {δ₀ δ₁ : Δ} (δ₂ : ID Δ δ₀ δ₁) (a₀ : A δ₀) (a₁ : A δ₁) → Set
++  ap : {Δ : Set} {A : Δ → Set} (f : (δ : Δ) → A δ) {δ₀ δ₁ : Δ} (δ₂ : ID Δ δ₀ δ₁) → Id A δ₂ (f δ₀) (f δ₁)
++  AP : {Θ Δ : Set} (f : Θ → Δ) {t₀ t₁ : Θ} (t₂ : ID Θ t₀ t₁) → ID Δ (f t₀) (f t₁)
++  Id-AP : {Θ Δ : Set} (f : Θ → Δ) {t₀ t₁ : Θ} (t₂ : ID Θ t₀ t₁) (A : Δ → Set) (a₀ : A (f t₀)) (a₁ : A (f t₁)) →
++    Id A (AP f t₂) a₀ a₁ ≡ Id (λ w → A (f w)) t₂ a₀ a₁
++  Copy : Set → Set
++  uncopy : {A : Set} → Copy A → A
++
++{-# REWRITE ID⊤ #-}
++{-# REWRITE Id-AP #-}
++
++postulate
++  utr→ : {Δ : Set} (A : Δ → Set) {δ₀ δ₁ : Δ} (δ₂ : ID Δ δ₀ δ₁) (a₁ a₁' : A δ₁) → Id {⊤} (λ _ → A δ₁) [] a₁ a₁'
++  IdU : {Δ : Set} {δ₀ δ₁ : Δ} (δ₂ : ID Δ δ₀ δ₁) (A B : Set) →
++    Id {Δ} (λ _ → Set) δ₂ A B ≡ Copy ((b₀ : B) (b₁ : B) → Id {⊤} (λ _ → B) [] b₀ b₁)
++
++{-# REWRITE IdU #-}
++
++postulate
++  apU : {Δ : Set} (A : Δ → Set) {δ₀ δ₁ : Δ} (δ₂ : ID Δ δ₀ δ₁) → uncopy (ap A δ₂) ≡ utr→ A δ₂
++
++{-# REWRITE apU #-}

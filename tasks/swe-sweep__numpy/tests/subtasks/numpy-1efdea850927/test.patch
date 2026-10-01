@@ -1,0 +1,23 @@
+diff --git a/numpy/core/tests/test_numeric.py b/numpy/core/tests/test_numeric.py
+index 2c5535a19c..9e71b7c6b1 100644
+--- a/numpy/core/tests/test_numeric.py
++++ b/numpy/core/tests/test_numeric.py
+@@ -2290,6 +2290,16 @@ class TestConvolve(object):
+         k = np.ones(3)
+         np.convolve(d, k)
+         assert_array_equal(d, np.ones(100))
+         assert_array_equal(k, np.ones(3))
+ 
++    def test_convolve_empty_input_error_message(self):
++        """
++        Test that convolve raises the correct error message when inputs are empty.
++        Regression test for gh-30272 (variable swapping bug).
++        """
++        with pytest.raises(ValueError, match="a cannot be empty"):
++            np.convolve(np.array([]), np.array([1, 2]))
++
++        with pytest.raises(ValueError, match="v cannot be empty"):
++            np.convolve(np.array([1, 2]), np.array([]))
+ 
+ class TestArgwhere(object):
+     def test_2D(self):

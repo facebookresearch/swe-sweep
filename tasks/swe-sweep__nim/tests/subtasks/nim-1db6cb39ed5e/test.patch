@@ -1,0 +1,18 @@
+diff --git a/tests/lent/tlent_tuple_address.nim b/tests/lent/tlent_tuple_address.nim
+new file mode 100644
+index 000000000..f9c8d4542
+--- /dev/null
++++ b/tests/lent/tlent_tuple_address.nim
+@@ -0,0 +1,12 @@
++discard """
++  errormsg: "expression has no address"
++"""
++
++iterator foo(x: int): (lent int, lent int) =
++  yield (x, x + 1)
++
++
++var x = 12
++for i in foo(x):
++  echo i[0]
++  echo i[1]

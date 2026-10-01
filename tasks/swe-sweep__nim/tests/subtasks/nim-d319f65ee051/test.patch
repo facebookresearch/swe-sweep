@@ -1,0 +1,23 @@
+diff --git a/tests/ccgbugs/t5296.nim b/tests/ccgbugs/t5296.nim
+index 990b4bee2..8fbed35c4 100644
+--- a/tests/ccgbugs/t5296.nim
++++ b/tests/ccgbugs/t5296.nim
+@@ -1,6 +1,7 @@
+ discard """
+ cmd: "nim c -d:release $file"
+-output: 1
++output: '''1
++-1'''
+ """
+ 
+ proc bug() : void =
+@@ -12,3 +13,9 @@ proc bug() : void =
+         echo x
+ 
+ bug()
++
++# bug #19051
++type GInt[T] = int
++
++var a = 1
++echo -a

@@ -1,0 +1,13 @@
+diff --git a/scipy/sparse/linalg/matfuncs.py b/scipy/sparse/linalg/matfuncs.py
+index 1079166fa6..148e6bb8b6 100644
+--- a/scipy/sparse/linalg/matfuncs.py
++++ b/scipy/sparse/linalg/matfuncs.py
+@@ -611,7 +611,7 @@ def _expm(A, use_exact_onenorm):
+     # algorithms.
+ 
+     # Avoid indiscriminate asarray() to allow sparse or other strange arrays.
+-    if isinstance(A, (list, tuple)):
++    if isinstance(A, (list, tuple, np.matrix)):
+         A = np.asarray(A)
+     if len(A.shape) != 2 or A.shape[0] != A.shape[1]:
+         raise ValueError('expected a square matrix')

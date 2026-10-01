@@ -1,0 +1,84 @@
+diff --git a/networkx/algorithms/bipartite/tests/test_edgelist.py b/networkx/algorithms/bipartite/tests/test_edgelist.py
+index 86ffba072..66be8a2f5 100644
+--- a/networkx/algorithms/bipartite/tests/test_edgelist.py
++++ b/networkx/algorithms/bipartite/tests/test_edgelist.py
+@@ -189,3 +189,25 @@ class TestEdgelist:
+             G = nx.path_graph(4)
+             bytesIO = io.BytesIO()
+             bipartite.write_edgelist(G, bytesIO)
++
++
++def test_bipartite_edgelist_consistent_strip_handling():
++    """See gh-7462
++
++    Input when printed looks like:
++
++        A       B       interaction     2
++        B       C       interaction     4
++        C       A       interaction
++
++    Note the trailing \\t in the last line, which indicates the existence of
++    an empty data field.
++    """
++    lines = io.StringIO(
++        "A\tB\tinteraction\t2\nB\tC\tinteraction\t4\nC\tA\tinteraction\t"
++    )
++    descr = [("type", str), ("weight", str)]
++    # Should not raise
++    G = nx.bipartite.parse_edgelist(lines, delimiter="\t", data=descr)
++    expected = [("A", "B", "2"), ("A", "C", ""), ("B", "C", "4")]
++    assert sorted(G.edges(data="weight")) == expected
+diff --git a/networkx/readwrite/tests/test_adjlist.py b/networkx/readwrite/tests/test_adjlist.py
+index 6f52c234f..f2218eba1 100644
+--- a/networkx/readwrite/tests/test_adjlist.py
++++ b/networkx/readwrite/tests/test_adjlist.py
+@@ -239,3 +239,24 @@ class TestMultilineAdjlist:
+         H = nx.read_multiline_adjlist(fh, nodetype=int, delimiter=":")
+         assert nodes_equal(list(H), list(G))
+         assert edges_equal(list(H.edges()), list(G.edges()))
++
++
++@pytest.mark.parametrize(
++    ("lines", "delim"),
++    (
++        (["1 2 5", "2 3 4", "3 5", "4", "5"], None),  # No extra whitespace
++        (["1\t2\t5", "2\t3\t4", "3\t5", "4", "5"], "\t"),  # tab-delimited
++        (
++            ["1\t2\t5", "2\t3\t4", "3\t5\t", "4\t", "5"],
++            "\t",
++        ),  # tab-delimited, extra delims
++        (
++            ["1\t2\t5", "2\t3\t4", "3\t5\t\t\n", "4\t", "5"],
++            "\t",
++        ),  # extra delim+newlines
++    ),
++)
++def test_adjlist_rstrip_parsing(lines, delim):
++    """Regression test related to gh-7465"""
++    expected = nx.Graph([(1, 2), (1, 5), (2, 3), (2, 4), (3, 5)])
++    nx.utils.graphs_equal(nx.parse_adjlist(lines, delimiter=delim), expected)
+diff --git a/networkx/readwrite/tests/test_edgelist.py b/networkx/readwrite/tests/test_edgelist.py
+index 9751885aa..fe58b3b7d 100644
+--- a/networkx/readwrite/tests/test_edgelist.py
++++ b/networkx/readwrite/tests/test_edgelist.py
+@@ -312,3 +312,20 @@ class TestEdgelist:
+         assert edges_equal(list(H.edges()), list(G.edges()))
+         os.close(fd)
+         os.unlink(fname)
++
++
++def test_edgelist_consistent_strip_handling():
++    """See gh-7462
++
++    Input when printed looks like::
++
++        1       2       3
++        2       3
++        3       4       3.0
++
++    Note the trailing \\t after the `3` in the second row, indicating an empty
++    data value.
++    """
++    s = io.StringIO("1\t2\t3\n2\t3\t\n3\t4\t3.0")
++    G = nx.parse_edgelist(s, delimiter="\t", nodetype=int, data=[("value", str)])
++    assert sorted(G.edges(data="value")) == [(1, 2, "3"), (2, 3, ""), (3, 4, "3.0")]

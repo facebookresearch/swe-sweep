@@ -1,0 +1,19 @@
+diff --git a/scipy/sparse/tests/test_construct.py b/scipy/sparse/tests/test_construct.py
+index 5a2b926677..f24b3d99e8 100644
+--- a/scipy/sparse/tests/test_construct.py
++++ b/scipy/sparse/tests/test_construct.py
+@@ -279,9 +279,11 @@ class TestConstructUtils(object):
+ 
+         for a in cases:
+             for b in cases:
+-                result = construct.kron(csr_matrix(a),csr_matrix(b)).todense()
+-                expected = np.kron(a,b)
+-                assert_array_equal(result,expected)
++                expected = np.kron(a, b)
++                for fmt in sparse_formats:
++                    result = construct.kron(csr_matrix(a), csr_matrix(b), format=fmt) 
++                    assert_equal(result.format, fmt)
++                    assert_array_equal(result.todense(), expected)
+ 
+     def test_kronsum(self):
+         cases = []

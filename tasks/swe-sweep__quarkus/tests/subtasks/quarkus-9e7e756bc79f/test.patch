@@ -1,0 +1,39 @@
+diff --git a/extensions/qute/deployment/src/test/java/io/quarkus/qute/deployment/globals/TemplateGlobalTest.java b/extensions/qute/deployment/src/test/java/io/quarkus/qute/deployment/globals/TemplateGlobalTest.java
+index 35674762c49..d9fc5fb1bef 100644
+--- a/extensions/qute/deployment/src/test/java/io/quarkus/qute/deployment/globals/TemplateGlobalTest.java
++++ b/extensions/qute/deployment/src/test/java/io/quarkus/qute/deployment/globals/TemplateGlobalTest.java
+@@ -20,7 +20,7 @@ public class TemplateGlobalTest {
+             .withApplicationRoot(root -> root
+                     .addClasses(Globals.class, NextGlobals.class)
+                     .addAsResource(new StringAsset(
+-                            "Hello {currentUser}! Your name is {_name}. You're {age} years old."),
++                            "Hello {currentUser}! Your name is {_name}. You're {age} years old. [{serviceEnabled || true}]"),
+                             "templates/hello.txt"));
+ 
+     @Inject
+@@ -28,11 +28,11 @@ public class TemplateGlobalTest {
+ 
+     @Test
+     public void testTemplateData() {
+-        assertEquals("Hello Fu! Your name is Lu. You're 40 years old.", hello.render());
++        assertEquals("Hello Fu! Your name is Lu. You're 40 years old. [true]", hello.render());
+         assertEquals("Hello Fu! Your name is Lu. You're 40 years old.",
+                 Qute.fmt("Hello {currentUser}! Your name is {_name}. You're {age} years old.").render());
+         Globals.user = "Hu";
+-        assertEquals("Hello Hu! Your name is Lu. You're 20 years old.", hello.render());
++        assertEquals("Hello Hu! Your name is Lu. You're 20 years old. [true]", hello.render());
+         assertEquals("Hello Hu! Your name is Lu. You're 20 years old.",
+                 Qute.fmt("Hello {currentUser}! Your name is {_name}. You're {age} years old.").render());
+ 
+@@ -46,6 +46,11 @@ public class TemplateGlobalTest {
+             return user.equals("Fu") ? 40 : 20;
+         }
+ 
++        @TemplateGlobal
++        static boolean serviceEnabled() {
++            return true;
++        }
++
+     }
+ 
+     static enum Color {

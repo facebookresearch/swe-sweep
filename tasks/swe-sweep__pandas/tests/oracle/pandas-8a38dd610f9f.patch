@@ -1,0 +1,13 @@
+diff --git a/pandas/core/groupby/generic.py b/pandas/core/groupby/generic.py
+index 88d1baae86..a6be85bf2b 100644
+--- a/pandas/core/groupby/generic.py
++++ b/pandas/core/groupby/generic.py
+@@ -758,7 +758,7 @@ class SeriesGroupBy(GroupBy[Series]):
+         # new values are where sorted labels change
+         lchanges = llab(lab, slice(1, None)) != llab(lab, slice(None, -1))
+         inc = np.r_[True, lchanges]
+-        if not len(lchanges):
++        if not len(val):
+             inc = lchanges
+         inc[idx] = True  # group boundaries are also new values
+         out = np.diff(np.nonzero(np.r_[inc, True])[0])  # value counts

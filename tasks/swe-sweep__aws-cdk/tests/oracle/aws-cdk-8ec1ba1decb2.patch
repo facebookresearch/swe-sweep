@@ -1,0 +1,16 @@
+diff --git a/packages/@aws-cdk/aws-elasticloadbalancingv2/lib/alb/application-listener-action.ts b/packages/@aws-cdk/aws-elasticloadbalancingv2/lib/alb/application-listener-action.ts
+index 6f7e72d021..ed25ff0405 100644
+--- a/packages/@aws-cdk/aws-elasticloadbalancingv2/lib/alb/application-listener-action.ts
++++ b/packages/@aws-cdk/aws-elasticloadbalancingv2/lib/alb/application-listener-action.ts
+@@ -173,10 +173,7 @@ export class ListenerAction implements IListenerAction {
+    * Called when the action is being used in a listener
+    */
+   public bind(scope: Construct, listener: IApplicationListener, associatingConstruct?: IConstruct) {
+-    // Empty on purpose
+-    Array.isArray(scope);
+-    Array.isArray(listener);
+-    Array.isArray(associatingConstruct);
++    this.next?.bind(scope, listener, associatingConstruct);
+   }
+ 
+   /**

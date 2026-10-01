@@ -1,0 +1,38 @@
+diff --git a/src/test/java/io/reactivex/internal/operators/flowable/FlowableDebounceTest.java b/src/test/java/io/reactivex/internal/operators/flowable/FlowableDebounceTest.java
+index 459d63e5c..aacff6e5a 100644
+--- a/src/test/java/io/reactivex/internal/operators/flowable/FlowableDebounceTest.java
++++ b/src/test/java/io/reactivex/internal/operators/flowable/FlowableDebounceTest.java
+@@ -546,4 +546,14 @@ public class FlowableDebounceTest {
+         .test()
+         .assertFailure(TestException.class);
+     }
++
++    @Test
++    public void debounceOnEmpty() {
++        Flowable.empty().debounce(new Function<Object, Publisher<Object>>() {
++            @Override
++            public Publisher<Object> apply(Object o) {
++                return Flowable.just(new Object());
++            }
++        }).subscribe();
++    }
+ }
+diff --git a/src/test/java/io/reactivex/internal/operators/observable/ObservableDebounceTest.java b/src/test/java/io/reactivex/internal/operators/observable/ObservableDebounceTest.java
+index e1c96cd13..aa24f68cd 100644
+--- a/src/test/java/io/reactivex/internal/operators/observable/ObservableDebounceTest.java
++++ b/src/test/java/io/reactivex/internal/operators/observable/ObservableDebounceTest.java
+@@ -504,4 +504,14 @@ public class ObservableDebounceTest {
+         .test()
+         .assertFailure(TestException.class);
+     }
++
++    @Test
++    public void debounceOnEmpty() {
++        Observable.empty().debounce(new Function<Object, ObservableSource<Object>>() {
++            @Override
++            public ObservableSource<Object> apply(Object o) {
++                return Observable.just(new Object());
++            }
++        }).subscribe();
++    }
+ }

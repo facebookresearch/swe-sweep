@@ -1,0 +1,37 @@
+diff --git a/src/Symfony/Bundle/FrameworkBundle/Test/KernelTestCase.php b/src/Symfony/Bundle/FrameworkBundle/Test/KernelTestCase.php
+index 45608501402..89dbd40af00 100644
+--- a/src/Symfony/Bundle/FrameworkBundle/Test/KernelTestCase.php
++++ b/src/Symfony/Bundle/FrameworkBundle/Test/KernelTestCase.php
+@@ -160,6 +160,11 @@ abstract class KernelTestCase extends TestCase
+             static::$kernel->shutdown();
+             static::$booted = false;
+ 
++            if ($container->has('services_resetter')) {
++                // Instantiate the service because Container::reset() only resets services that have been used
++                $container->get('services_resetter');
++            }
++
+             if ($container instanceof ResetInterface) {
+                 $container->reset();
+             }
+diff --git a/src/Symfony/Component/DependencyInjection/Container.php b/src/Symfony/Component/DependencyInjection/Container.php
+index ced09e991ed..ee5ef3d0b76 100644
+--- a/src/Symfony/Component/DependencyInjection/Container.php
++++ b/src/Symfony/Component/DependencyInjection/Container.php
+@@ -299,7 +299,6 @@ class Container implements ContainerInterface, ResetInterface
+     public function reset()
+     {
+         $services = $this->services + $this->privates;
+-        $this->services = $this->factories = $this->privates = [];
+ 
+         foreach ($services as $service) {
+             try {
+@@ -310,6 +309,8 @@ class Container implements ContainerInterface, ResetInterface
+                 continue;
+             }
+         }
++
++        $this->services = $this->factories = $this->privates = [];
+     }
+ 
+     /**

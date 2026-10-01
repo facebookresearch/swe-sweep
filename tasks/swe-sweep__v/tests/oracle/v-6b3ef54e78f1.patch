@@ -1,0 +1,14 @@
+diff --git a/vlib/v/gen/c/infix.v b/vlib/v/gen/c/infix.v
+index c1fa6a72a..84a268620 100644
+--- a/vlib/v/gen/c/infix.v
++++ b/vlib/v/gen/c/infix.v
+@@ -605,6 +605,9 @@ fn (mut g Gen) infix_expr_in_optimization(left ast.Expr, right ast.ArrayInit) {
+ 			else { // works in function kind
+ 				g.expr(left)
+ 				g.write(' == ')
++				if elem_sym.kind == .array_fixed {
++					g.write('(${g.typ(right.elem_type)})')
++				}
+ 				g.expr(array_expr)
+ 			}
+ 		}

@@ -1,0 +1,13 @@
+diff --git a/compiler/src/dmd/cparse.d b/compiler/src/dmd/cparse.d
+index d9fbe47e8e..d9998ebaf8 100644
+--- a/compiler/src/dmd/cparse.d
++++ b/compiler/src/dmd/cparse.d
+@@ -3143,6 +3143,8 @@ final class CParser(AST) : Parser!AST
+                         cparseParens();
+                 }
+             }
++            else if (token.value == TOK.restrict) // ImportC assigns no semantics to `restrict`, so just ignore the keyword.
++                nextToken();
+             else
+             {
+                 error("extended-decl-modifier expected");

@@ -1,0 +1,174 @@
+diff --git a/Zend/tests/gh11222.phpt b/Zend/tests/gh11222.phpt
+index c2c2b5eb488..5f4eedf8d4b 100644
+--- a/Zend/tests/gh11222.phpt
++++ b/Zend/tests/gh11222.phpt
+@@ -1,5 +1,5 @@
+ --TEST--
+-GH-112222: foreach by-ref may jump over keys during a rehash
++GH-11222: foreach by-ref may jump over keys during a rehash
+ --FILE--
+ <?php
+ 
+diff --git a/Zend/tests/gh11244-001.phpt b/Zend/tests/gh11244-001.phpt
+new file mode 100644
+index 00000000000..3774b2c6da6
+--- /dev/null
++++ b/Zend/tests/gh11244-001.phpt
+@@ -0,0 +1,22 @@
++--TEST--
++GH-11244: Modifying a copied by-ref iterated array resets the array position (packed)
++--FILE--
++<?php
++
++$data = [0, 1, 2];
++
++foreach ($data as $key => &$value) {
++    echo "$value\n";
++    if ($value === 1) {
++        $cow_copy = $data;
++        echo "unset $value\n";
++        unset($data[$key]);
++    }
++}
++
++?>
++--EXPECTF--
++0
++1
++unset 1
++2
+diff --git a/Zend/tests/gh11244-002.phpt b/Zend/tests/gh11244-002.phpt
+new file mode 100644
+index 00000000000..0b48e3090fc
+--- /dev/null
++++ b/Zend/tests/gh11244-002.phpt
+@@ -0,0 +1,22 @@
++--TEST--
++GH-11244: Modifying a copied by-ref iterated array resets the array position (not packed)
++--FILE--
++<?php
++
++$data = ["k" => 0, 1, 2];
++
++foreach ($data as $key => &$value) {
++    echo "$value\n";
++    if ($value === 1) {
++        $cow_copy = $data;
++        echo "unset $value\n";
++        unset($data[$key]);
++    }
++}
++
++?>
++--EXPECTF--
++0
++1
++unset 1
++2
+diff --git a/Zend/tests/gh11244-003.phpt b/Zend/tests/gh11244-003.phpt
+new file mode 100644
+index 00000000000..d368ad79496
+--- /dev/null
++++ b/Zend/tests/gh11244-003.phpt
+@@ -0,0 +1,23 @@
++--TEST--
++GH-11244: Modifying a copied by-ref iterated array resets the array position (not packed with holes)
++--FILE--
++<?php
++
++$data = ["k" => 0, 1, 2, 3];
++unset($data[1]);
++
++foreach ($data as $key => &$value) {
++    echo "$value\n";
++    if ($value === 1) {
++        $cow_copy = $data;
++        echo "unset $value\n";
++        unset($data[$key]);
++    }
++}
++
++?>
++--EXPECTF--
++0
++1
++unset 1
++3
+diff --git a/Zend/tests/gh11244-004.phpt b/Zend/tests/gh11244-004.phpt
+new file mode 100644
+index 00000000000..6b3a5768ae0
+--- /dev/null
++++ b/Zend/tests/gh11244-004.phpt
+@@ -0,0 +1,18 @@
++--TEST--
++GH-11244: Modifying a copied by-ref iterated array resets the array position (with object)
++--FILE--
++<?php
++
++$obj = (object)[1,2,3];
++
++foreach ($obj as $p => $v) {
++    echo "$p : $v\n";
++    $clone = clone $obj;
++    $ref = &$obj->$p;
++}
++
++?>
++--EXPECTF--
++0 : 1
++1 : 2
++2 : 3
+diff --git a/Zend/tests/gh11244-005.phpt b/Zend/tests/gh11244-005.phpt
+new file mode 100644
+index 00000000000..2cbbfd82ca5
+--- /dev/null
++++ b/Zend/tests/gh11244-005.phpt
+@@ -0,0 +1,48 @@
++--TEST--
++GH-11244: Modifying a copied by-ref iterated array resets the array position (multiple copies)
++--FILE--
++<?php
++
++$data = [0, 1, 2];
++
++foreach ($data as $key => &$value) {
++    echo "$value\n";
++    if ($value === 1) {
++        $cow_copy = [$data, $data, $data];
++        echo "unset $value\n";
++        unset($cow_copy[0][$key]);
++        unset($data[$key]);
++        unset($cow_copy[2][$key]);
++    }
++}
++
++print_r($cow_copy);
++
++?>
++--EXPECTF--
++0
++1
++unset 1
++2
++Array
++(
++    [0] => Array
++        (
++            [0] => 0
++            [2] => 2
++        )
++
++    [1] => Array
++        (
++            [0] => 0
++            [1] => 1
++            [2] => 2
++        )
++
++    [2] => Array
++        (
++            [0] => 0
++            [2] => 2
++        )
++
++)

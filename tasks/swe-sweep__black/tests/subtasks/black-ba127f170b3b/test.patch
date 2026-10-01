@@ -1,0 +1,64 @@
+diff --git a/tests/data/simple_cases/ignore_pyi.py b/tests/data/simple_cases/ignore_pyi.py
+new file mode 100644
+index 00000000..3ef61079
+--- /dev/null
++++ b/tests/data/simple_cases/ignore_pyi.py
+@@ -0,0 +1,41 @@
++def f():  # type: ignore
++    ...
++
++class x:  # some comment
++    ...
++
++class y:
++    ...  # comment
++
++# whitespace doesn't matter (note the next line has a trailing space and tab)
++class z:        
++    ...
++
++def g():
++    # hi
++    ...
++
++def h():
++    ...
++    # bye
++
++# output
++
++def f():  # type: ignore
++    ...
++
++class x:  # some comment
++    ...
++
++class y: ...  # comment
++
++# whitespace doesn't matter (note the next line has a trailing space and tab)
++class z: ...
++
++def g():
++    # hi
++    ...
++
++def h():
++    ...
++    # bye
+diff --git a/tests/test_format.py b/tests/test_format.py
+index 8e0ada99..fb4d8eb4 100644
+--- a/tests/test_format.py
++++ b/tests/test_format.py
+@@ -33,9 +33,10 @@ def check_file(
+ @pytest.mark.parametrize("filename", all_data_cases("simple_cases"))
+ def test_simple_format(filename: str) -> None:
+     magic_trailing_comma = filename != "skip_magic_trailing_comma"
+-    check_file(
+-        "simple_cases", filename, black.Mode(magic_trailing_comma=magic_trailing_comma)
++    mode = black.Mode(
++        magic_trailing_comma=magic_trailing_comma, is_pyi=filename.endswith("_pyi")
+     )
++    check_file("simple_cases", filename, mode)
+ 
+ 
+ @pytest.mark.parametrize("filename", all_data_cases("preview"))

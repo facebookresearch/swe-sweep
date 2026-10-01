@@ -1,0 +1,18 @@
+diff --git a/tests/ui/unnecessary_safety_comment.rs b/tests/ui/unnecessary_safety_comment.rs
+index d82a7b969..75e831534 100644
+--- a/tests/ui/unnecessary_safety_comment.rs
++++ b/tests/ui/unnecessary_safety_comment.rs
+@@ -100,3 +100,13 @@ mod issue_12048 {
+ }
+ 
+ fn main() {}
++
++mod issue16553 {
++    //! ```
++    //! // SAFETY: All is well.
++    //! unsafe {
++    //!    foo()
++    //! }
++    //! ```
++    mod blah {}
++}

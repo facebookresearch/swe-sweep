@@ -1,0 +1,33 @@
+diff --git a/numpy/core/src/multiarray/multiarraymodule.c b/numpy/core/src/multiarray/multiarraymodule.c
+index af5949e73b4..79956863a14 100644
+--- a/numpy/core/src/multiarray/multiarraymodule.c
++++ b/numpy/core/src/multiarray/multiarraymodule.c
+@@ -2942,7 +2942,7 @@ array_arange(PyObject *NPY_UNUSED(ignored), PyObject *args, PyObject *kws) {
+     static char *kwd[]= {"start", "stop", "step", "dtype", NULL};
+     PyArray_Descr *typecode = NULL;
+ 
+-    if(!PyArg_ParseTupleAndKeywords(args, kws, "O|OOO&:arange", kwd,
++    if(!PyArg_ParseTupleAndKeywords(args, kws, "|OOOO&:arange", kwd,
+                 &o_start,
+                 &o_stop,
+                 &o_step,
+@@ -2950,6 +2950,19 @@ array_arange(PyObject *NPY_UNUSED(ignored), PyObject *args, PyObject *kws) {
+         Py_XDECREF(typecode);
+         return NULL;
+     }
++
++    if (o_stop == NULL) {
++        if (args == NULL || PyTuple_GET_SIZE(args) == 0){
++            PyErr_SetString(PyExc_TypeError,
++                "arange() requires stop to be specified.");
++            return NULL;
++        }
++    }
++    else if (o_start == NULL) {
++        o_start = o_stop;
++        o_stop = NULL;
++    }
++
+     range = PyArray_ArangeObj(o_start, o_stop, o_step, typecode);
+     Py_XDECREF(typecode);
+ 

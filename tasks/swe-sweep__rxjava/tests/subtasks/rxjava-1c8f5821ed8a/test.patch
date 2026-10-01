@@ -1,0 +1,540 @@
+diff --git a/src/test/java/io/reactivex/internal/operators/completable/CompletableAmbTest.java b/src/test/java/io/reactivex/internal/operators/completable/CompletableAmbTest.java
+index 0e45cd1c1..f4a8a084b 100644
+--- a/src/test/java/io/reactivex/internal/operators/completable/CompletableAmbTest.java
++++ b/src/test/java/io/reactivex/internal/operators/completable/CompletableAmbTest.java
+@@ -16,6 +16,7 @@ package io.reactivex.internal.operators.completable;
+ import static org.junit.Assert.*;
+ 
+ import java.util.*;
++import java.util.concurrent.*;
+ import java.util.concurrent.atomic.AtomicBoolean;
+ 
+ import org.junit.Test;
+@@ -23,10 +24,13 @@ import org.junit.Test;
+ import io.reactivex.*;
+ import io.reactivex.disposables.*;
+ import io.reactivex.exceptions.TestException;
++import io.reactivex.functions.*;
++import io.reactivex.internal.functions.Functions;
+ import io.reactivex.internal.operators.completable.CompletableAmb.Amb;
+ import io.reactivex.observers.TestObserver;
+ import io.reactivex.plugins.RxJavaPlugins;
+ import io.reactivex.processors.PublishProcessor;
++import io.reactivex.schedulers.Schedulers;
+ import io.reactivex.subjects.*;
+ 
+ public class CompletableAmbTest {
+@@ -173,6 +177,7 @@ public class CompletableAmbTest {
+         CompositeDisposable cd = new CompositeDisposable();
+         AtomicBoolean once = new AtomicBoolean();
+         Amb a = new Amb(once, cd, to);
++        a.onSubscribe(Disposables.empty());
+ 
+         a.onComplete();
+         a.onComplete();
+@@ -259,4 +264,54 @@ public class CompletableAmbTest {
+         to.assertFailure(TestException.class);
+     }
+ 
++    @Test
++    public void noWinnerErrorDispose() throws Exception {
++        final TestException ex = new TestException();
++        for (int i = 0; i < TestHelper.RACE_LONG_LOOPS; i++) {
++            final AtomicBoolean interrupted = new AtomicBoolean();
++            final CountDownLatch cdl = new CountDownLatch(1);
++
++            Completable.ambArray(
++                    Completable.error(ex)
++                    .subscribeOn(Schedulers.single())
++                    .observeOn(Schedulers.computation()),
++                    Completable.never()
++            )
++            .subscribe(Functions.EMPTY_ACTION, new Consumer<Throwable>() {
++                @Override
++                public void accept(Throwable e) throws Exception {
++                    interrupted.set(Thread.currentThread().isInterrupted());
++                    cdl.countDown();
++                }
++            });
++
++            assertTrue(cdl.await(500, TimeUnit.SECONDS));
++            assertFalse("Interrupted!", interrupted.get());
++        }
++    }
++
++    @Test
++    public void noWinnerCompleteDispose() throws Exception {
++        for (int i = 0; i < TestHelper.RACE_LONG_LOOPS; i++) {
++            final AtomicBoolean interrupted = new AtomicBoolean();
++            final CountDownLatch cdl = new CountDownLatch(1);
++
++            Completable.ambArray(
++                Completable.complete()
++                    .subscribeOn(Schedulers.single())
++                    .observeOn(Schedulers.computation()),
++                Completable.never()
++            )
++            .subscribe(new Action() {
++                @Override
++                public void run() throws Exception {
++                    interrupted.set(Thread.currentThread().isInterrupted());
++                    cdl.countDown();
++                }
++            });
++
++            assertTrue(cdl.await(500, TimeUnit.SECONDS));
++            assertFalse("Interrupted!", interrupted.get());
++        }
++    }
+ }
+diff --git a/src/test/java/io/reactivex/internal/operators/flowable/FlowableAmbTest.java b/src/test/java/io/reactivex/internal/operators/flowable/FlowableAmbTest.java
+index a4b03c633..5b5941fbf 100644
+--- a/src/test/java/io/reactivex/internal/operators/flowable/FlowableAmbTest.java
++++ b/src/test/java/io/reactivex/internal/operators/flowable/FlowableAmbTest.java
+@@ -19,8 +19,8 @@ import static org.mockito.Mockito.*;
+ import java.io.IOException;
+ import java.lang.reflect.Method;
+ import java.util.*;
+-import java.util.concurrent.TimeUnit;
+-import java.util.concurrent.atomic.AtomicLong;
++import java.util.concurrent.*;
++import java.util.concurrent.atomic.*;
+ 
+ import org.junit.*;
+ import org.mockito.InOrder;
+@@ -30,6 +30,7 @@ import io.reactivex.*;
+ import io.reactivex.disposables.CompositeDisposable;
+ import io.reactivex.exceptions.TestException;
+ import io.reactivex.functions.*;
++import io.reactivex.internal.functions.Functions;
+ import io.reactivex.internal.util.CrashingMappedIterable;
+ import io.reactivex.plugins.RxJavaPlugins;
+ import io.reactivex.processors.PublishProcessor;
+@@ -713,4 +714,83 @@ public class FlowableAmbTest {
+         Flowable<Integer> error = Flowable.error(new RuntimeException());
+         Flowable.ambArray(Flowable.just(1), error).test().assertValue(1).assertComplete();
+     }
++
++    @SuppressWarnings("unchecked")
++    @Test
++    public void noWinnerSuccessDispose() throws Exception {
++        for (int i = 0; i < TestHelper.RACE_LONG_LOOPS; i++) {
++            final AtomicBoolean interrupted = new AtomicBoolean();
++            final CountDownLatch cdl = new CountDownLatch(1);
++
++            Flowable.ambArray(
++                Flowable.just(1)
++                    .subscribeOn(Schedulers.single())
++                    .observeOn(Schedulers.computation()),
++                Flowable.never()
++            )
++            .subscribe(new Consumer<Object>() {
++                @Override
++                public void accept(Object v) throws Exception {
++                    interrupted.set(Thread.currentThread().isInterrupted());
++                    cdl.countDown();
++                }
++            });
++
++            assertTrue(cdl.await(500, TimeUnit.SECONDS));
++            assertFalse("Interrupted!", interrupted.get());
++        }
++    }
++
++    @SuppressWarnings("unchecked")
++    @Test
++    public void noWinnerErrorDispose() throws Exception {
++        final TestException ex = new TestException();
++        for (int i = 0; i < TestHelper.RACE_LONG_LOOPS; i++) {
++            final AtomicBoolean interrupted = new AtomicBoolean();
++            final CountDownLatch cdl = new CountDownLatch(1);
++
++            Flowable.ambArray(
++                Flowable.error(ex)
++                    .subscribeOn(Schedulers.single())
++                    .observeOn(Schedulers.computation()),
++                Flowable.never()
++            )
++            .subscribe(Functions.emptyConsumer(), new Consumer<Throwable>() {
++                @Override
++                public void accept(Throwable e) throws Exception {
++                    interrupted.set(Thread.currentThread().isInterrupted());
++                    cdl.countDown();
++                }
++            });
++
++            assertTrue(cdl.await(500, TimeUnit.SECONDS));
++            assertFalse("Interrupted!", interrupted.get());
++        }
++    }
++
++    @SuppressWarnings("unchecked")
++    @Test
++    public void noWinnerCompleteDispose() throws Exception {
++        for (int i = 0; i < TestHelper.RACE_LONG_LOOPS; i++) {
++            final AtomicBoolean interrupted = new AtomicBoolean();
++            final CountDownLatch cdl = new CountDownLatch(1);
++
++            Flowable.ambArray(
++                Flowable.empty()
++                    .subscribeOn(Schedulers.single())
++                    .observeOn(Schedulers.computation()),
++                Flowable.never()
++            )
++            .subscribe(Functions.emptyConsumer(), Functions.emptyConsumer(), new Action() {
++                @Override
++                public void run() throws Exception {
++                    interrupted.set(Thread.currentThread().isInterrupted());
++                    cdl.countDown();
++                }
++            });
++
++            assertTrue(cdl.await(500, TimeUnit.SECONDS));
++            assertFalse("Interrupted!", interrupted.get());
++        }
++    }
+ }
+diff --git a/src/test/java/io/reactivex/internal/operators/maybe/MaybeAmbTest.java b/src/test/java/io/reactivex/internal/operators/maybe/MaybeAmbTest.java
+index a50c68523..a701a279a 100644
+--- a/src/test/java/io/reactivex/internal/operators/maybe/MaybeAmbTest.java
++++ b/src/test/java/io/reactivex/internal/operators/maybe/MaybeAmbTest.java
+@@ -16,15 +16,21 @@ package io.reactivex.internal.operators.maybe;
+ import static org.junit.Assert.*;
+ 
+ import java.util.*;
++import java.util.concurrent.*;
++import java.util.concurrent.atomic.AtomicBoolean;
+ 
+ import org.junit.Test;
+ 
+ import io.reactivex.*;
+ import io.reactivex.disposables.Disposables;
+ import io.reactivex.exceptions.TestException;
++import io.reactivex.functions.*;
++import io.reactivex.internal.functions.Functions;
+ import io.reactivex.observers.TestObserver;
+ import io.reactivex.plugins.RxJavaPlugins;
+ import io.reactivex.processors.PublishProcessor;
++import io.reactivex.schedulers.Schedulers;
++import io.reactivex.subjects.*;
+ 
+ public class MaybeAmbTest {
+ 
+@@ -129,4 +135,122 @@ public class MaybeAmbTest {
+ 
+         to.assertResult(1);
+     }
++
++    @SuppressWarnings("unchecked")
++    @Test
++    public void noWinnerSuccessDispose() throws Exception {
++        for (int i = 0; i < TestHelper.RACE_LONG_LOOPS; i++) {
++            final AtomicBoolean interrupted = new AtomicBoolean();
++            final CountDownLatch cdl = new CountDownLatch(1);
++
++            Maybe.ambArray(
++                Maybe.just(1)
++                    .subscribeOn(Schedulers.single())
++                    .observeOn(Schedulers.computation()),
++                Maybe.never()
++            )
++            .subscribe(new Consumer<Object>() {
++                @Override
++                public void accept(Object v) throws Exception {
++                    interrupted.set(Thread.currentThread().isInterrupted());
++                    cdl.countDown();
++                }
++            });
++
++            assertTrue(cdl.await(500, TimeUnit.SECONDS));
++            assertFalse("Interrupted!", interrupted.get());
++        }
++    }
++
++    @SuppressWarnings("unchecked")
++    @Test
++    public void noWinnerErrorDispose() throws Exception {
++        final TestException ex = new TestException();
++        for (int i = 0; i < TestHelper.RACE_LONG_LOOPS; i++) {
++            final AtomicBoolean interrupted = new AtomicBoolean();
++            final CountDownLatch cdl = new CountDownLatch(1);
++
++            Maybe.ambArray(
++                Maybe.error(ex)
++                    .subscribeOn(Schedulers.single())
++                    .observeOn(Schedulers.computation()),
++                Maybe.never()
++            )
++            .subscribe(Functions.emptyConsumer(), new Consumer<Throwable>() {
++                @Override
++                public void accept(Throwable e) throws Exception {
++                    interrupted.set(Thread.currentThread().isInterrupted());
++                    cdl.countDown();
++                }
++            });
++
++            assertTrue(cdl.await(500, TimeUnit.SECONDS));
++            assertFalse("Interrupted!", interrupted.get());
++        }
++    }
++
++    @SuppressWarnings("unchecked")
++    @Test
++    public void noWinnerCompleteDispose() throws Exception {
++        for (int i = 0; i < TestHelper.RACE_LONG_LOOPS; i++) {
++            final AtomicBoolean interrupted = new AtomicBoolean();
++            final CountDownLatch cdl = new CountDownLatch(1);
++
++            Maybe.ambArray(
++                Maybe.empty()
++                    .subscribeOn(Schedulers.single())
++                    .observeOn(Schedulers.computation()),
++                Maybe.never()
++            )
++            .subscribe(Functions.emptyConsumer(), Functions.emptyConsumer(), new Action() {
++                @Override
++                public void run() throws Exception {
++                    interrupted.set(Thread.currentThread().isInterrupted());
++                    cdl.countDown();
++                }
++            });
++
++            assertTrue(cdl.await(500, TimeUnit.SECONDS));
++            assertFalse("Interrupted!", interrupted.get());
++        }
++    }
++
++    @Test
++    public void nullSourceSuccessRace() {
++        for (int i = 0; i < TestHelper.RACE_DEFAULT_LOOPS; i++) {
++            List<Throwable> errors = TestHelper.trackPluginErrors();
++
++            try {
++
++                final Subject<Integer> ps = ReplaySubject.create();
++                ps.onNext(1);
++
++                @SuppressWarnings("unchecked")
++                final Maybe<Integer> source = Maybe.ambArray(ps.singleElement(),
++                        Maybe.<Integer>never(), Maybe.<Integer>never(), null);
++
++                Runnable r1 = new Runnable() {
++                    @Override
++                    public void run() {
++                        source.test();
++                    }
++                };
++
++                Runnable r2 = new Runnable() {
++                    @Override
++                    public void run() {
++                        ps.onComplete();
++                    }
++                };
++
++                TestHelper.race(r1, r2);
++
++                if (!errors.isEmpty()) {
++                    TestHelper.assertError(errors, 0, NullPointerException.class);
++                }
++            } finally {
++                RxJavaPlugins.reset();
++            }
++        }
++    }
+ }
+diff --git a/src/test/java/io/reactivex/internal/operators/observable/ObservableAmbTest.java b/src/test/java/io/reactivex/internal/operators/observable/ObservableAmbTest.java
+index ee4d58adf..6e2c737f7 100644
+--- a/src/test/java/io/reactivex/internal/operators/observable/ObservableAmbTest.java
++++ b/src/test/java/io/reactivex/internal/operators/observable/ObservableAmbTest.java
+@@ -18,8 +18,8 @@ import static org.mockito.Mockito.*;
+ 
+ import java.io.IOException;
+ import java.util.*;
+-import java.util.concurrent.TimeUnit;
+-import java.util.concurrent.atomic.AtomicLong;
++import java.util.concurrent.*;
++import java.util.concurrent.atomic.*;
+ 
+ import org.junit.*;
+ import org.mockito.InOrder;
+@@ -29,7 +29,8 @@ import io.reactivex.Observable;
+ import io.reactivex.Observer;
+ import io.reactivex.disposables.*;
+ import io.reactivex.exceptions.TestException;
+-import io.reactivex.functions.Consumer;
++import io.reactivex.functions.*;
++import io.reactivex.internal.functions.Functions;
+ import io.reactivex.observers.TestObserver;
+ import io.reactivex.plugins.RxJavaPlugins;
+ import io.reactivex.schedulers.*;
+@@ -383,4 +384,84 @@ public class ObservableAmbTest {
+         Observable<Integer> error = Observable.error(new RuntimeException());
+         Observable.ambArray(Observable.just(1), error).test().assertValue(1).assertComplete();
+     }
++
++    @SuppressWarnings("unchecked")
++    @Test
++    public void noWinnerSuccessDispose() throws Exception {
++        for (int i = 0; i < TestHelper.RACE_LONG_LOOPS; i++) {
++            final AtomicBoolean interrupted = new AtomicBoolean();
++            final CountDownLatch cdl = new CountDownLatch(1);
++
++            Observable.ambArray(
++                Observable.just(1)
++                    .subscribeOn(Schedulers.single())
++                    .observeOn(Schedulers.computation()),
++                Observable.never()
++            )
++            .subscribe(new Consumer<Object>() {
++                @Override
++                public void accept(Object v) throws Exception {
++                    interrupted.set(Thread.currentThread().isInterrupted());
++                    cdl.countDown();
++                }
++            });
++
++            assertTrue(cdl.await(500, TimeUnit.SECONDS));
++            assertFalse("Interrupted!", interrupted.get());
++        }
++    }
++
++    @SuppressWarnings("unchecked")
++    @Test
++    public void noWinnerErrorDispose() throws Exception {
++        final TestException ex = new TestException();
++        for (int i = 0; i < TestHelper.RACE_LONG_LOOPS; i++) {
++            final AtomicBoolean interrupted = new AtomicBoolean();
++            final CountDownLatch cdl = new CountDownLatch(1);
++
++            Observable.ambArray(
++                Observable.error(ex)
++                    .subscribeOn(Schedulers.single())
++                    .observeOn(Schedulers.computation()),
++                Observable.never()
++            )
++            .subscribe(Functions.emptyConsumer(), new Consumer<Throwable>() {
++                @Override
++                public void accept(Throwable e) throws Exception {
++                    interrupted.set(Thread.currentThread().isInterrupted());
++                    cdl.countDown();
++                }
++            });
++
++            assertTrue(cdl.await(500, TimeUnit.SECONDS));
++            assertFalse("Interrupted!", interrupted.get());
++        }
++    }
++
++    @SuppressWarnings("unchecked")
++    @Test
++    public void noWinnerCompleteDispose() throws Exception {
++        for (int i = 0; i < TestHelper.RACE_LONG_LOOPS; i++) {
++            final AtomicBoolean interrupted = new AtomicBoolean();
++            final CountDownLatch cdl = new CountDownLatch(1);
++
++            Observable.ambArray(
++                Observable.empty()
++                    .subscribeOn(Schedulers.single())
++                    .observeOn(Schedulers.computation()),
++                Observable.never()
++            )
++            .subscribe(Functions.emptyConsumer(), Functions.emptyConsumer(), new Action() {
++                @Override
++                public void run() throws Exception {
++                    interrupted.set(Thread.currentThread().isInterrupted());
++                    cdl.countDown();
++                }
++            });
++
++            assertTrue(cdl.await(500, TimeUnit.SECONDS));
++            assertFalse("Interrupted!", interrupted.get());
++        }
++    }
++
+ }
+diff --git a/src/test/java/io/reactivex/internal/operators/single/SingleAmbTest.java b/src/test/java/io/reactivex/internal/operators/single/SingleAmbTest.java
+index 1bc00dedd..18f4f3be6 100644
+--- a/src/test/java/io/reactivex/internal/operators/single/SingleAmbTest.java
++++ b/src/test/java/io/reactivex/internal/operators/single/SingleAmbTest.java
+@@ -16,14 +16,18 @@ package io.reactivex.internal.operators.single;
+ import static org.junit.Assert.*;
+ 
+ import java.util.*;
++import java.util.concurrent.*;
++import java.util.concurrent.atomic.AtomicBoolean;
+ 
+ import org.junit.Test;
+ 
+ import io.reactivex.*;
+ import io.reactivex.exceptions.TestException;
++import io.reactivex.functions.BiConsumer;
+ import io.reactivex.observers.TestObserver;
+ import io.reactivex.plugins.RxJavaPlugins;
+ import io.reactivex.processors.PublishProcessor;
++import io.reactivex.schedulers.Schedulers;
+ import io.reactivex.subjects.*;
+ 
+ public class SingleAmbTest {
+@@ -280,4 +284,61 @@ public class SingleAmbTest {
+         Single<Integer> error = Single.error(new RuntimeException());
+         Single.ambArray(Single.just(1), error).test().assertValue(1);
+     }
++
++    @SuppressWarnings("unchecked")
++    @Test
++    public void noWinnerSuccessDispose() throws Exception {
++        for (int i = 0; i < TestHelper.RACE_LONG_LOOPS; i++) {
++            final AtomicBoolean interrupted = new AtomicBoolean();
++            final CountDownLatch cdl = new CountDownLatch(1);
++
++            Single.ambArray(
++                Single.just(1)
++                    .subscribeOn(Schedulers.single())
++                    .observeOn(Schedulers.computation()),
++                Single.never()
++            )
++            .subscribe(new BiConsumer<Object, Throwable>() {
++                @Override
++                public void accept(Object v, Throwable e) throws Exception {
++                    assertNotNull(v);
++                    assertNull(e);
++                    interrupted.set(Thread.currentThread().isInterrupted());
++                    cdl.countDown();
++                }
++            });
++
++            assertTrue(cdl.await(500, TimeUnit.SECONDS));
++            assertFalse("Interrupted!", interrupted.get());
++        }
++    }
++
++    @SuppressWarnings("unchecked")
++    @Test
++    public void noWinnerErrorDispose() throws Exception {
++        final TestException ex = new TestException();
++        for (int i = 0; i < TestHelper.RACE_LONG_LOOPS; i++) {
++            final AtomicBoolean interrupted = new AtomicBoolean();
++            final CountDownLatch cdl = new CountDownLatch(1);
++
++            Single.ambArray(
++                Single.error(ex)
++                    .subscribeOn(Schedulers.single())
++                    .observeOn(Schedulers.computation()),
++                Single.never()
++            )
++            .subscribe(new BiConsumer<Object, Throwable>() {
++                @Override
++                public void accept(Object v, Throwable e) throws Exception {
++                    assertNull(v);
++                    assertNotNull(e);
++                    interrupted.set(Thread.currentThread().isInterrupted());
++                    cdl.countDown();
++                }
++            });
++
++            assertTrue(cdl.await(500, TimeUnit.SECONDS));
++            assertFalse("Interrupted!", interrupted.get());
++        }
++    }
+ }

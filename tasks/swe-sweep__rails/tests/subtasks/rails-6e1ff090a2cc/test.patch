@@ -1,0 +1,82 @@
+diff --git a/activerecord/test/cases/associations/inner_join_association_test.rb b/activerecord/test/cases/associations/inner_join_association_test.rb
+index 7bab2c2afed..39dba1eed7e 100644
+--- a/activerecord/test/cases/associations/inner_join_association_test.rb
++++ b/activerecord/test/cases/associations/inner_join_association_test.rb
+@@ -10,6 +10,10 @@ require "models/categorization"
+ require "models/person"
+ require "models/tagging"
+ require "models/tag"
++require "models/friendship"
++require "models/reader"
++require "models/reference"
++require "models/job"
+ 
+ class InnerJoinAssociationTest < ActiveRecord::TestCase
+   fixtures :authors, :author_addresses, :essays, :posts, :comments, :categories, :categories_posts, :categorizations,
+@@ -211,4 +215,12 @@ class InnerJoinAssociationTest < ActiveRecord::TestCase
+     assert_equal 0, categories.first.special_categorizations.size
+     assert_equal 1, categories.second.special_categorizations.size
+   end
++
++  def test_inner_joins_includes_all_nested_associations
++    queries = capture_sql { Friendship.joins(:friend_favorite_reference_job, :follower_favorite_reference_job).to_a }
++    # Match mysql and postgresql/sqlite quoting
++    quote = Regexp.union(%w[" `])
++    assert queries.any? { |sql| /#{quote}friendships#{quote}.#{quote}friend_id#{quote}/i.match?(sql) }
++    assert queries.any? { |sql| /#{quote}friendships#{quote}.#{quote}follower_id#{quote}/i.match?(sql) }
++  end
+ end
+diff --git a/activerecord/test/cases/associations/left_outer_join_association_test.rb b/activerecord/test/cases/associations/left_outer_join_association_test.rb
+index 02ccdeb1a15..b6a340e5282 100644
+--- a/activerecord/test/cases/associations/left_outer_join_association_test.rb
++++ b/activerecord/test/cases/associations/left_outer_join_association_test.rb
+@@ -9,6 +9,10 @@ require "models/essay"
+ require "models/category"
+ require "models/categorization"
+ require "models/person"
++require "models/friendship"
++require "models/reader"
++require "models/reference"
++require "models/job"
+ 
+ class LeftOuterJoinAssociationTest < ActiveRecord::TestCase
+   fixtures :authors, :author_addresses, :essays, :posts, :comments, :ratings, :categorizations, :people
+@@ -120,4 +124,12 @@ class LeftOuterJoinAssociationTest < ActiveRecord::TestCase
+ 
+     assert_equal [author], Author.where(id: author).left_outer_joins(:special_categorizations)
+   end
++
++  def test_left_outer_joins_includes_all_nested_associations
++    queries = capture_sql { Friendship.left_outer_joins(:friend_favorite_reference_job, :follower_favorite_reference_job).to_a }
++    # Match mysql and postgresql/sqlite quoting
++    quote = Regexp.union(%w[" `])
++    assert queries.any? { |sql| /#{quote}friendships#{quote}.#{quote}friend_id#{quote}/i.match?(sql) }
++    assert queries.any? { |sql| /#{quote}friendships#{quote}.#{quote}follower_id#{quote}/i.match?(sql) }
++  end
+ end
+diff --git a/activerecord/test/models/friendship.rb b/activerecord/test/models/friendship.rb
+index 9f1712a8ec5..d1e49d544bf 100644
+--- a/activerecord/test/models/friendship.rb
++++ b/activerecord/test/models/friendship.rb
+@@ -5,4 +5,7 @@ class Friendship < ActiveRecord::Base
+   # friend_too exists to test a bug, and probably shouldn't be used elsewhere
+   belongs_to :friend_too, foreign_key: "friend_id", class_name: "Person", counter_cache: :friends_too_count
+   belongs_to :follower, class_name: "Person"
++
++  has_one :friend_favorite_reference_job, through: :friend, source: :favorite_reference_job
++  has_one :follower_favorite_reference_job, through: :follower, source: :favorite_reference_job
+ end
+diff --git a/activerecord/test/models/person.rb b/activerecord/test/models/person.rb
+index 581157ac56c..f8b59bbc6ba 100644
+--- a/activerecord/test/models/person.rb
++++ b/activerecord/test/models/person.rb
+@@ -18,7 +18,8 @@ class Person < ActiveRecord::Base
+   has_many :references
+   has_many :bad_references
+   has_many :fixed_bad_references, -> { where favorite: true }, class_name: "BadReference"
+-  has_one  :favorite_reference, -> { where "favorite=?", true }, class_name: "Reference"
++  has_one  :favorite_reference, -> { where favorite: true }, class_name: "Reference"
++  has_one :favorite_reference_job, through: :favorite_reference, source: :job
+   has_many :posts_with_comments_sorted_by_comment_id, -> { includes(:comments).order("comments.id") }, through: :readers, source: :post
+   has_many :first_posts, -> { where(id: [1, 2]) }, through: :readers
+ 

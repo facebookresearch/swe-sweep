@@ -1,0 +1,28 @@
+diff --git a/astropy/stats/tests/test_sigma_clipping.py b/astropy/stats/tests/test_sigma_clipping.py
+index cdc3de3c86..b80e73d03e 100644
+--- a/astropy/stats/tests/test_sigma_clipping.py
++++ b/astropy/stats/tests/test_sigma_clipping.py
+@@ -7,6 +7,7 @@ from numpy.testing import assert_allclose, assert_equal
+ from astropy import units as u
+ from astropy.stats import mad_std
+ from astropy.stats.sigma_clipping import SigmaClip, sigma_clip, sigma_clipped_stats
++from astropy.table import MaskedColumn
+ from astropy.utils.compat.optional_deps import HAS_SCIPY
+ from astropy.utils.exceptions import AstropyUserWarning
+ from astropy.utils.misc import NumpyRNGContext
+@@ -163,6 +164,15 @@ def test_sigma_clipped_stats_ddof():
+         assert_allclose(stddev2, 0.98161731654802831)
+ 
+ 
++def test_sigma_clipped_stats_masked_col():
++    # see https://github.com/astropy/astropy/issues/13281
++    arr = np.ma.masked_array([1, 2, 3], mask=[False, True, False])
++    sigma_clipped_stats(arr)
++
++    col = MaskedColumn(data=arr)
++    sigma_clipped_stats(col)
++
++
+ def test_invalid_sigma_clip():
+     """Test sigma_clip of data containing invalid values."""
+ 

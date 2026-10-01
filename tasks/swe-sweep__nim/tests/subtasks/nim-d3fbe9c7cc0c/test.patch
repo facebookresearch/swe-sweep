@@ -1,0 +1,23 @@
+diff --git a/tests/vm/tvmmisc.nim b/tests/vm/tvmmisc.nim
+index ad1dfc3df..2ce4703b0 100644
+--- a/tests/vm/tvmmisc.nim
++++ b/tests/vm/tvmmisc.nim
+@@ -9,7 +9,7 @@ block:
+   static:
+     foo(int)
+ 
+-# #4412
++# bug #4412
+ block:
+   proc default[T](t: typedesc[T]): T {.inline.} = discard
+ 
+@@ -553,3 +553,9 @@ block: # bug #8015
+     doAssert $viaProc.table[0] == "(kind: Fixed, cost: 999)"
+     doAssert viaProc.table[1].handler() == 100
+     doAssert viaProc.table[2].handler() == 200
++
++# bug #19201
++proc foo(s: sink string) = doAssert s.len == 3
++
++static:
++  foo("abc")

@@ -1,0 +1,18 @@
+diff --git a/compiler/sigmatch.nim b/compiler/sigmatch.nim
+index 6bc6eef..3d68773 100644
+--- a/compiler/sigmatch.nim
++++ b/compiler/sigmatch.nim
+@@ -1638,8 +1638,11 @@ proc typeRel(c: var TCandidate, f, aOrig: PType,
+           result = isNone
+ 
+   of tyConcept:
+-    result = if concepts.conceptMatch(c.c, f, a, c.bindings, nil): isGeneric
+-             else: isNone
++    if a.kind == tyConcept and sameType(f, a):
++      result = isGeneric
++    else:
++      result = if concepts.conceptMatch(c.c, f, a, c.bindings, nil): isGeneric
++               else: isNone
+ 
+   of tyCompositeTypeClass:
+     considerPreviousT:

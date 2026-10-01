@@ -1,0 +1,16 @@
+diff --git a/sklearn/metrics/pairwise.py b/sklearn/metrics/pairwise.py
+index d7e2c8552d..9ca8a443ca 100644
+--- a/sklearn/metrics/pairwise.py
++++ b/sklearn/metrics/pairwise.py
+@@ -570,6 +570,11 @@ def cosine_distances(X, Y=None):
+     S = cosine_similarity(X, Y)
+     S *= -1
+     S += 1
++    np.clip(S, 0, 2, out=S)
++    if X is Y or Y is None:
++        # Ensure that distances between vectors and themselves are set to 0.0.
++        # This may not be the case due to floating point rounding errors.
++        S[np.diag_indices_from(S)] = 0.0
+     return S
+ 
+ 

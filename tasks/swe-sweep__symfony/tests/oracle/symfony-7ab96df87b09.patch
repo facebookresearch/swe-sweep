@@ -1,0 +1,13 @@
+diff --git a/src/Symfony/Bundle/FrameworkBundle/Command/ConfigDebugCommand.php b/src/Symfony/Bundle/FrameworkBundle/Command/ConfigDebugCommand.php
+index 0313a37d2f9..16fc8c499c7 100644
+--- a/src/Symfony/Bundle/FrameworkBundle/Command/ConfigDebugCommand.php
++++ b/src/Symfony/Bundle/FrameworkBundle/Command/ConfigDebugCommand.php
+@@ -161,7 +161,7 @@ private function getConfigForPath(array $config, string $path, string $alias): m
+         $steps = explode('.', $path);
+ 
+         foreach ($steps as $step) {
+-            if (!\array_key_exists($step, $config)) {
++            if (!\is_array($config) || !\array_key_exists($step, $config)) {
+                 throw new LogicException(sprintf('Unable to find configuration for "%s.%s".', $alias, $path));
+             }
+ 

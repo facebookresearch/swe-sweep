@@ -1,0 +1,30 @@
+diff --git a/src/Symfony/Component/DependencyInjection/Tests/Dumper/PhpDumperTest.php b/src/Symfony/Component/DependencyInjection/Tests/Dumper/PhpDumperTest.php
+index 8206a4a13da..17ec142eeea 100644
+--- a/src/Symfony/Component/DependencyInjection/Tests/Dumper/PhpDumperTest.php
++++ b/src/Symfony/Component/DependencyInjection/Tests/Dumper/PhpDumperTest.php
+@@ -2142,6 +2142,25 @@ EOF
+             ],
+         ];
+     }
++
++    public function testDumpServiceClosureWithNullableTypedReference()
++    {
++        $container = new ContainerBuilder();
++        $container->register('bar', 'stdClass');
++        $container->register('foo', 'stdClass')
++            ->setPublic(true)
++            ->setArguments([
++                new ServiceClosureArgument(new TypedReference('bar', '?stdClass')),
++            ]);
++
++        $container->compile();
++
++        $dumper = new PhpDumper($container);
++        $code = $dumper->dump(['as_files' => false]);
++
++        $this->assertStringNotContainsString(': \?stdClass', $code);
++        $this->assertStringContainsString(': ?\stdClass', $code);
++    }
+ }
+ 
+ class Rot13EnvVarProcessor implements EnvVarProcessorInterface

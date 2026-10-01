@@ -1,0 +1,12 @@
+diff --git a/vlib/v/parser/containers.v b/vlib/v/parser/containers.v
+index c1759a71d..9dc0bb46a 100644
+--- a/vlib/v/parser/containers.v
++++ b/vlib/v/parser/containers.v
+@@ -164,6 +164,7 @@ fn (mut p Parser) array_init(is_option bool) ast.ArrayInit {
+ 		}
+ 	}
+ 	pos := first_pos.extend_with_last_line(last_pos, p.prev_tok.line_nr)
++	p.expr_mod = ''
+ 	return ast.ArrayInit{
+ 		is_fixed: is_fixed
+ 		has_val: has_val

@@ -1,0 +1,61 @@
+diff --git a/activesupport/lib/active_support/number_helper/number_converter.rb b/activesupport/lib/active_support/number_helper/number_converter.rb
+index 789cd6eaf04..22b4a936d1d 100644
+--- a/activesupport/lib/active_support/number_helper/number_converter.rb
++++ b/activesupport/lib/active_support/number_helper/number_converter.rb
+@@ -1,5 +1,7 @@
+ # frozen_string_literal: true
+ 
++require "bigdecimal"
++require "bigdecimal/util"
+ require "active_support/core_ext/big_decimal/conversions"
+ require "active_support/core_ext/object/blank"
+ require "active_support/core_ext/hash/keys"
+@@ -128,7 +130,7 @@ module ActiveSupport
+       def execute
+         if !number
+           nil
+-        elsif validate_float? && !valid_float?
++        elsif validate_float? && !valid_bigdecimal
+           number
+         else
+           convert
+@@ -173,8 +175,13 @@ module ActiveSupport
+           key.split(".").reduce(DEFAULTS) { |defaults, k| defaults[k.to_sym] }
+         end
+ 
+-        def valid_float?
+-          Float(number, exception: false)
++        def valid_bigdecimal
++          case number
++          when Float, Rational
++            number.to_d(0)
++          else
++            BigDecimal(number, exception: false)
++          end
+         end
+     end
+   end
+diff --git a/activesupport/lib/active_support/number_helper/number_to_currency_converter.rb b/activesupport/lib/active_support/number_helper/number_to_currency_converter.rb
+index 241ec903bea..543c7b4fa65 100644
+--- a/activesupport/lib/active_support/number_helper/number_to_currency_converter.rb
++++ b/activesupport/lib/active_support/number_helper/number_to_currency_converter.rb
+@@ -10,13 +10,13 @@ module ActiveSupport
+       def convert
+         format = options[:format]
+ 
+-        number_f = valid_float?
+-        if number_f
+-          if number_f.negative?
+-            number_f = number_f.abs
+-            format = options[:negative_format] if (number_f * 10**options[:precision]) >= 0.5
++        number_d = valid_bigdecimal
++        if number_d
++          if number_d.negative?
++            number_d = number_d.abs
++            format = options[:negative_format] if (number_d * 10**options[:precision]) >= 0.5
+           end
+-          number_s = NumberToRoundedConverter.convert(number_f, options)
++          number_s = NumberToRoundedConverter.convert(number_d, options)
+         else
+           number_s = number.to_s.strip
+           format = options[:negative_format] if number_s.sub!(/^-/, "")

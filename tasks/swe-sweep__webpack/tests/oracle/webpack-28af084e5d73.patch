@@ -1,0 +1,21 @@
+diff --git a/lib/RuntimePlugin.js b/lib/RuntimePlugin.js
+index 5ab0b7d78..a751f334e 100644
+--- a/lib/RuntimePlugin.js
++++ b/lib/RuntimePlugin.js
+@@ -218,7 +218,15 @@ class RuntimePlugin {
+ 			compilation.hooks.runtimeRequirementInTree
+ 				.for(RuntimeGlobals.systemContext)
+ 				.tap("RuntimePlugin", chunk => {
+-					if (compilation.outputOptions.library.type === "system") {
++					const { outputOptions } = compilation;
++					const { library: globalLibrary } = outputOptions;
++					const entryOptions = chunk.getEntryOptions();
++					const libraryType =
++						entryOptions && entryOptions.library !== undefined
++							? entryOptions.library.type
++							: globalLibrary.type;
++
++					if (libraryType === "system") {
+ 						compilation.addRuntimeModule(
+ 							chunk,
+ 							new SystemContextRuntimeModule()

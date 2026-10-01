@@ -1,0 +1,75 @@
+diff --git a/src/Compiler/Checking/CheckRecordSyntaxHelpers.fs b/src/Compiler/Checking/CheckRecordSyntaxHelpers.fs
+index 861ad5587c..c21e4f5410 100644
+--- a/src/Compiler/Checking/CheckRecordSyntaxHelpers.fs
++++ b/src/Compiler/Checking/CheckRecordSyntaxHelpers.fs
+@@ -156,12 +156,26 @@ let TransformAstForNestedUpdates (cenv: TcFileState) (env: TcEnv) overallTy (lid
+         (accessIds, outerFieldId),
+         Some(synExprRecd (recdExprCopyInfo (fields |> List.map fst) withExpr) outerFieldId rest exprBeingAssigned)
+ 
++/// This name is used when a complex expression is bound for use as a binding in a copy-and-update expression.
++/// For example, in `{ f () with ... }`, `f ()` is replaced by `let bind@ = f ()`
++let BindIdText = "bind@"
++
++/// Finding the 'bind@' identifier is the only way to detect that an expression has already been bound.
++let inline (|IsSimpleOrBoundExpr|_|) (withExprOpt: (SynExpr * BlockSeparator) option) =
++    match withExprOpt with
++    | None -> true
++    | Some(expr, _) ->
++        match expr with
++        | SynExpr.LongIdent(_, lIds, _, _) -> lIds.LongIdent |> List.exists (fun id -> id.idText = BindIdText)
++        | SynExpr.Ident _ -> true
++        | _ -> false
++
+ /// When the original expression in copy-and-update is more complex than `{ x with ... }`, like `{ f () with ... }`,
+ /// we bind it first, so that it's not evaluated multiple times during a nested update
+ let BindOriginalRecdExpr (withExpr: SynExpr * BlockSeparator) mkRecdExpr =
+     let originalExpr, blockSep = withExpr
+     let mOrigExprSynth = originalExpr.Range.MakeSynthetic()
+-    let id = mkSynId mOrigExprSynth "bind@"
++    let id = mkSynId mOrigExprSynth BindIdText
+     let withExpr = SynExpr.Ident id, blockSep
+ 
+     let binding =
+diff --git a/src/Compiler/Checking/CheckRecordSyntaxHelpers.fsi b/src/Compiler/Checking/CheckRecordSyntaxHelpers.fsi
+index 4e4f40d750..dc68f8a73e 100644
+--- a/src/Compiler/Checking/CheckRecordSyntaxHelpers.fsi
++++ b/src/Compiler/Checking/CheckRecordSyntaxHelpers.fsi
+@@ -19,5 +19,9 @@ val TransformAstForNestedUpdates<'a> :
+     withExpr: SynExpr * (range * 'a) ->
+         (Ident list * Ident) * SynExpr option
+ 
++val BindIdText: string
++
++val inline (|IsSimpleOrBoundExpr|_|): withExprOpt: (SynExpr * BlockSeparator) option -> bool
++
+ val BindOriginalRecdExpr:
+     withExpr: SynExpr * BlockSeparator -> mkRecdExpr: ((SynExpr * BlockSeparator) option -> SynExpr) -> SynExpr
+diff --git a/src/Compiler/Checking/Expressions/CheckExpressions.fs b/src/Compiler/Checking/Expressions/CheckExpressions.fs
+index 9239165174..5d9197599b 100644
+--- a/src/Compiler/Checking/Expressions/CheckExpressions.fs
++++ b/src/Compiler/Checking/Expressions/CheckExpressions.fs
+@@ -5895,9 +5895,8 @@ and TcExprUndelayed (cenv: cenv) (overallTy: OverallTy) env tpenv (synExpr: SynE
+         TcExprTuple cenv overallTy env tpenv (isExplicitStruct, args, m)
+ 
+     | SynExpr.AnonRecd (isStruct, withExprOpt, unsortedFieldExprs, mWholeExpr, trivia) ->
+-        match withExprOpt with
+-        | None
+-        | Some(SynExpr.Ident _, _) ->
++        match withExprOpt with 
++        | None | IsSimpleOrBoundExpr ->
+             TcNonControlFlowExpr env <| fun env ->
+             TcPossiblyPropagatingExprLeafThenConvert (fun ty -> isAnonRecdTy g ty || isTyparTy g ty) cenv overallTy env mWholeExpr (fun overallTy ->
+                 TcAnonRecdExpr cenv overallTy env tpenv (isStruct, withExprOpt, unsortedFieldExprs, mWholeExpr)
+@@ -5929,10 +5928,9 @@ and TcExprUndelayed (cenv: cenv) (overallTy: OverallTy) env tpenv (synExpr: SynE
+         let binds = unionBindingAndMembers binds members
+         TcExprObjectExpr cenv overallTy env tpenv (synObjTy, argopt, binds, extraImpls, mNewExpr, m)
+ 
+-    | SynExpr.Record (inherits, withExprOpt, synRecdFields, mWholeExpr) ->
++    | SynExpr.Record (inherits, withExprOpt, synRecdFields, mWholeExpr) ->        
+         match withExprOpt with
+-        | None
+-        | Some(SynExpr.Ident _, _) ->
++        | None | IsSimpleOrBoundExpr ->
+             TcNonControlFlowExpr env <| fun env ->
+             TcExprRecord cenv overallTy env tpenv (inherits, withExprOpt, synRecdFields, mWholeExpr)
+         | Some withExpr ->

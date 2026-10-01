@@ -1,0 +1,23 @@
+diff --git a/tests/generics/t20811.nim b/tests/generics/t20811.nim
+new file mode 100644
+index 000000000..f16578271
+--- /dev/null
++++ b/tests/generics/t20811.nim
+@@ -0,0 +1,16 @@
++discard """
++  output: '''42
++42'''
++"""
++
++proc outer(j: int) =
++  proc genericInner[T](): int =
++    j
++
++  proc plainInner(): int =
++    j
++
++  echo genericInner[int]()
++  echo plainInner()
++
++outer(42)
+\ No newline at end of file

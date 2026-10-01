@@ -1,0 +1,22 @@
+diff --git a/model/jpa/src/main/java/org/keycloak/models/jpa/RealmAdapter.java b/model/jpa/src/main/java/org/keycloak/models/jpa/RealmAdapter.java
+index 73caea59e9..53b4a9693f 100755
+--- a/model/jpa/src/main/java/org/keycloak/models/jpa/RealmAdapter.java
++++ b/model/jpa/src/main/java/org/keycloak/models/jpa/RealmAdapter.java
+@@ -2138,7 +2138,7 @@ public class RealmAdapter implements StorageProviderRealmModel, JpaModel<RealmEn
+ 
+     /**
+      * This just exists for testing purposes
+-     * 
++     *
+      */
+     public static final String COMPONENT_PROVIDER_EXISTS_DISABLED = "component.provider.exists.disabled";
+ 
+@@ -2376,7 +2376,7 @@ public class RealmAdapter implements StorageProviderRealmModel, JpaModel<RealmEn
+ 
+     @Override
+     public ClientInitialAccessModel getClientInitialAccessModel(String id) {
+-        ClientInitialAccessEntity entity = em.find(ClientInitialAccessEntity.class, id);
++        ClientInitialAccessEntity entity = em.find(ClientInitialAccessEntity.class, id, LockModeType.PESSIMISTIC_WRITE);
+         if (entity == null) return null;
+         if (!entity.getRealm().getId().equals(realm.getId())) return null;
+         return entityToModel(entity);

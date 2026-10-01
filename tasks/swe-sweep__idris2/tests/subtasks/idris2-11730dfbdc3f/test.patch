@@ -1,0 +1,128 @@
+diff --git a/tests/Main.idr b/tests/Main.idr
+index 12fbae914..1be4aee18 100644
+--- a/tests/Main.idr
++++ b/tests/Main.idr
+@@ -88,7 +88,7 @@ idrisTestsInteractive = MkTestPool "Interactive editing" [] Nothing
+        "interactive025", "interactive026", "interactive027", "interactive028",
+        "interactive029", "interactive030", "interactive031", "interactive032",
+        "interactive033", "interactive034", "interactive035", "interactive036",
+-       "interactive037"]
++       "interactive037", "interactive039"]
+ 
+ idrisTestsInterface : TestPool
+ idrisTestsInterface = MkTestPool "Interface" [] Nothing
+diff --git a/tests/idris2/interactive039/CS_Syntax.idr b/tests/idris2/interactive039/CS_Syntax.idr
+new file mode 100644
+index 000000000..095c9cfaf
+--- /dev/null
++++ b/tests/idris2/interactive039/CS_Syntax.idr
+@@ -0,0 +1,43 @@
++f : Nat -> Nat
++f n = case n of case_val => ?f_rhs
++
++g : Nat -> Nat
++g n = (case n of case_val => ?g_rhs)
++
++h : Nat -> Nat
++h n = (case n of
++            case_val => ?h_rhs     )
++
++data Test = One
++          | Two Nat
++          | Three String Nat
++          | Four
++
++toTest : Nat -> Test
++
++i : Nat -> Nat
++i n = case toTest n of case_val => ?i_rhs
++
++j : Nat -> Nat
++j n = j_Where n where
++  j_Where : Nat -> Nat
++  j_Where k = (case toTest k of case_val => ?j_Where_rhs    )
++
++k : Nat -> Nat
++k n = (case toTest n of
++            case_val => ?k_rhs)
++
++l : Nat -> Nat -> Unit
++l n m = case n of foo => case toTest m of case_val => ?l_rhs
++
++m : Nat -> Nat -> Unit
++m n k = (case n of foo => case toTest k of case_val => ?m_rhs  )
++
++n : Nat -> Nat -> Unit
++n k m = case k of foo => case toTest m of
++                              case_val => ?n_rhs
++
++o : Nat -> Nat -> Unit
++o n m = (case n of foo => case toTest m of
++                               case_val => ?o_rhs   )
++
+diff --git a/tests/idris2/interactive039/expected b/tests/idris2/interactive039/expected
+new file mode 100644
+index 000000000..65c35aee5
+--- /dev/null
++++ b/tests/idris2/interactive039/expected
+@@ -0,0 +1,34 @@
++1/1: Building CS_Syntax (CS_Syntax.idr)
++Main> f n = case n of 0 => ?f_rhs_1
++                (S k) => ?f_rhs_2
++Main> g n = (case n of 0 => ?g_rhs_1
++                 (S k) => ?g_rhs_2)
++Main>             0 => ?h_rhs_1
++            (S k) => ?h_rhs_2     )
++Main>             0 => ?h_rhs_1
++            (S k) => ?h_rhs_2     )
++Main>   j_Where k = (case toTest k of One => ?j_Where_rhs_1
++                                (Two j) => ?j_Where_rhs_2
++                                (Three x j) => ?j_Where_rhs_3
++                                Four => ?j_Where_rhs_4    )
++Main>             One => ?k_rhs_1
++            (Two k) => ?k_rhs_2
++            (Three x k) => ?k_rhs_3
++            Four => ?k_rhs_4)
++Main> l n m = case n of foo => case toTest m of One => ?l_rhs_1
++                                          (Two k) => ?l_rhs_2
++                                          (Three x k) => ?l_rhs_3
++                                          Four => ?l_rhs_4
++Main> m n k = (case n of foo => case toTest k of One => ?m_rhs_1
++                                           (Two j) => ?m_rhs_2
++                                           (Three x j) => ?m_rhs_3
++                                           Four => ?m_rhs_4  )
++Main>                               One => ?n_rhs_1
++                              (Two j) => ?n_rhs_2
++                              (Three x j) => ?n_rhs_3
++                              Four => ?n_rhs_4
++Main>                                One => ?o_rhs_1
++                               (Two k) => ?o_rhs_2
++                               (Three x k) => ?o_rhs_3
++                               Four => ?o_rhs_4   )
++Main> Bye for now!
+diff --git a/tests/idris2/interactive039/input b/tests/idris2/interactive039/input
+new file mode 100644
+index 000000000..b8fb0dbd9
+--- /dev/null
++++ b/tests/idris2/interactive039/input
+@@ -0,0 +1,11 @@
++:cs 2 17 case_val
++:cs 5 18 case_val
++:cs 9 13 case_val
++:cs 9 24 case_val
++:cs 24 33 case_val
++:cs 28 13 case_val
++:cs 31 43 case_val
++:cs 34 44 case_val
++:cs 38 31 case_val
++:cs 42 32 case_val
++:q
+diff --git a/tests/idris2/interactive039/run b/tests/idris2/interactive039/run
+new file mode 100755
+index 000000000..b74c80985
+--- /dev/null
++++ b/tests/idris2/interactive039/run
+@@ -0,0 +1,3 @@
++rm -rf build
++
++$1 --no-color --console-width 0 --no-banner CS_Syntax.idr < input

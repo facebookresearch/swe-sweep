@@ -1,0 +1,16 @@
+diff --git a/astropy/units/tests/test_format.py b/astropy/units/tests/test_format.py
+index a571592670..6e53891190 100644
+--- a/astropy/units/tests/test_format.py
++++ b/astropy/units/tests/test_format.py
+@@ -235,6 +235,11 @@ def test_ogip_grammar_fail(string):
+         u_format.OGIP.parse(string)
+ 
+ 
++def test_ogip_ohm():
++    # Regression test for #17200 - OGIP converted u.ohm to 'V / A'
++    assert u_format.OGIP.to_string(u.ohm) == "ohm"
++
++
+ class RoundtripBase:
+     deprecated_units = set()
+ 

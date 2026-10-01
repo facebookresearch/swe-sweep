@@ -1,0 +1,37 @@
+diff --git a/extensions/spring-security/deployment/src/test/java/io/quarkus/spring/security/deployment/SpringPreAuthorizeTest.java b/extensions/spring-security/deployment/src/test/java/io/quarkus/spring/security/deployment/SpringPreAuthorizeTest.java
+index eaab4280b36..c7dc3deff1f 100644
+--- a/extensions/spring-security/deployment/src/test/java/io/quarkus/spring/security/deployment/SpringPreAuthorizeTest.java
++++ b/extensions/spring-security/deployment/src/test/java/io/quarkus/spring/security/deployment/SpringPreAuthorizeTest.java
+@@ -116,6 +116,16 @@ public class SpringPreAuthorizeTest {
+         assertSuccess(() -> springComponent.principalNameFromObject(new Person("user")), "user", USER);
+     }
+ 
++    @Test
++    public void testPrincipalNameFromObjectIsNot() {
++        assertFailureFor(() -> springComponent.principalNameFromObjectIsNot(new Person("whatever")),
++                UnauthorizedException.class,
++                ANONYMOUS);
++        assertSuccess(() -> springComponent.principalNameFromObjectIsNot(new Person("whatever")), "whatever", USER);
++        assertFailureFor(() -> springComponent.principalNameFromObjectIsNot(new Person("user")), ForbiddenException.class,
++                USER);
++    }
++
+     @Test
+     public void testNotSecured() {
+         assertSuccess(() -> springComponent.notSecured(), "notSecured", ANONYMOUS);
+diff --git a/extensions/spring-security/deployment/src/test/java/io/quarkus/spring/security/deployment/springapp/SpringComponent.java b/extensions/spring-security/deployment/src/test/java/io/quarkus/spring/security/deployment/springapp/SpringComponent.java
+index 0d86e8406fc..68a8af6552c 100644
+--- a/extensions/spring-security/deployment/src/test/java/io/quarkus/spring/security/deployment/springapp/SpringComponent.java
++++ b/extensions/spring-security/deployment/src/test/java/io/quarkus/spring/security/deployment/springapp/SpringComponent.java
+@@ -37,6 +37,11 @@ public class SpringComponent {
+         return person.getName();
+     }
+ 
++    @PreAuthorize("#person.name != authentication.principal.username")
++    public String principalNameFromObjectIsNot(Person person) {
++        return person.getName();
++    }
++
+     public String notSecured() {
+         return "notSecured";
+     }

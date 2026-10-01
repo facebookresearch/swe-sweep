@@ -1,0 +1,159 @@
+diff --git a/compiler/lambdalifting.nim b/compiler/lambdalifting.nim
+index 6838fd80d..4b7ca89cd 100644
+--- a/compiler/lambdalifting.nim
++++ b/compiler/lambdalifting.nim
+@@ -275,16 +275,11 @@ proc liftIterSym*(g: ModuleGraph; n: PNode; idgen: IdGenerator; owner: PSym): PN
+ proc freshVarForClosureIter*(g: ModuleGraph; s: PSym; idgen: IdGenerator; owner: PSym): PNode =
+   let envParam = getHiddenParam(g, owner)
+   let obj = envParam.typ.skipTypes({tyOwned, tyRef, tyPtr})
+-  addField(obj, s, g.cache, idgen)
++  let field = addField(obj, s, g.cache, idgen)
+ 
+   var access = newSymNode(envParam)
+   assert obj.kind == tyObject
+-  let field = getFieldFromObj(obj, s)
+-  if field != nil:
+-    result = rawIndirectAccess(access, field, s.info)
+-  else:
+-    localError(g.config, s.info, "internal error: cannot generate fresh variable")
+-    result = access
++  result = rawIndirectAccess(access, field, s.info)
+ 
+ # ------------------ new stuff -------------------------------------------
+ 
+@@ -452,7 +447,7 @@ proc detectCapturedVars(n: PNode; owner: PSym; c: var DetectionPass) =
+             if s.name.id == getIdent(c.graph.cache, ":state").id:
+               obj.n[0].sym.itemId = ItemId(module: s.itemId.module, item: -s.itemId.item)
+             else:
+-              addField(obj, s, c.graph.cache, c.idgen)
++              discard addField(obj, s, c.graph.cache, c.idgen)
+     # direct or indirect dependency:
+     elif (innerProc and s.typ.callConv == ccClosure) or interestingVar(s):
+       discard """
+@@ -474,7 +469,7 @@ proc detectCapturedVars(n: PNode; owner: PSym; c: var DetectionPass) =
+       if interestingVar(s) and not c.capturedVars.containsOrIncl(s.id):
+         let obj = c.getEnvTypeForOwner(ow, n.info).skipTypes({tyOwned, tyRef, tyPtr})
+         #getHiddenParam(owner).typ.skipTypes({tyOwned, tyRef, tyPtr})
+-        addField(obj, s, c.graph.cache, c.idgen)
++        discard addField(obj, s, c.graph.cache, c.idgen)
+       # create required upFields:
+       var w = owner.skipGenericOwner
+       if isInnerProc(w) or owner.isIterator:
+diff --git a/compiler/lowerings.nim b/compiler/lowerings.nim
+index 382e48a16..de2f678d7 100644
+--- a/compiler/lowerings.nim
++++ b/compiler/lowerings.nim
+@@ -230,7 +230,7 @@ proc lookupInRecord(n: PNode, id: ItemId): PSym =
+     if n.sym.itemId.module == id.module and n.sym.itemId.item == -abs(id.item): result = n.sym
+   else: discard
+ 
+-proc addField*(obj: PType; s: PSym; cache: IdentCache; idgen: IdGenerator) =
++proc addField*(obj: PType; s: PSym; cache: IdentCache; idgen: IdGenerator): PSym =
+   # because of 'gensym' support, we have to mangle the name with its ID.
+   # This is hacky but the clean solution is much more complex than it looks.
+   var field = newSym(skField, getIdent(cache, s.name.s & $obj.n.len),
+@@ -244,6 +244,7 @@ proc addField*(obj: PType; s: PSym; cache: IdentCache; idgen: IdGenerator) =
+   field.flags = s.flags * {sfCursor}
+   obj.n.add newSymNode(field)
+   fieldCheck()
++  result = field
+ 
+ proc addUniqueField*(obj: PType; s: PSym; cache: IdentCache; idgen: IdGenerator): PSym {.discardable.} =
+   result = lookupInRecord(obj.n, s.itemId)
+diff --git a/compiler/spawn.nim b/compiler/spawn.nim
+index e57686cb4..581f722d5 100644
+--- a/compiler/spawn.nim
++++ b/compiler/spawn.nim
+@@ -221,7 +221,7 @@ proc setupArgsForConcurrency(g: ModuleGraph; n: PNode; objType: PType;
+     let fieldname = if i < formals.len: formals[i].sym.name else: tmpName
+     var field = newSym(skField, fieldname, nextSymId idgen, objType.owner, n.info, g.config.options)
+     field.typ = argType
+-    objType.addField(field, g.cache, idgen)
++    discard objType.addField(field, g.cache, idgen)
+     result.add newFastAsgnStmt(newDotExpr(scratchObj, field), n[i])
+ 
+     let temp = addLocalVar(g, varSection, varInit, idgen, owner, argType,
+@@ -260,17 +260,17 @@ proc setupArgsForParallelism(g: ModuleGraph; n: PNode; objType: PType;
+       slice[0].typ = getSysType(g, n.info, tyInt) # fake type
+       var fieldB = newSym(skField, tmpName, nextSymId idgen, objType.owner, n.info, g.config.options)
+       fieldB.typ = getSysType(g, n.info, tyInt)
+-      objType.addField(fieldB, g.cache, idgen)
++      discard objType.addField(fieldB, g.cache, idgen)
+ 
+       if getMagic(n) == mSlice:
+         let a = genAddrOf(n[1], idgen)
+         field.typ = a.typ
+-        objType.addField(field, g.cache, idgen)
++        discard objType.addField(field, g.cache, idgen)
+         result.add newFastAsgnStmt(newDotExpr(scratchObj, field), a)
+ 
+         var fieldA = newSym(skField, tmpName, nextSymId idgen, objType.owner, n.info, g.config.options)
+         fieldA.typ = getSysType(g, n.info, tyInt)
+-        objType.addField(fieldA, g.cache, idgen)
++        discard objType.addField(fieldA, g.cache, idgen)
+         result.add newFastAsgnStmt(newDotExpr(scratchObj, fieldA), n[2])
+         result.add newFastAsgnStmt(newDotExpr(scratchObj, fieldB), n[3])
+ 
+@@ -281,7 +281,7 @@ proc setupArgsForParallelism(g: ModuleGraph; n: PNode; objType: PType;
+       else:
+         let a = genAddrOf(n, idgen)
+         field.typ = a.typ
+-        objType.addField(field, g.cache, idgen)
++        discard objType.addField(field, g.cache, idgen)
+         result.add newFastAsgnStmt(newDotExpr(scratchObj, field), a)
+         result.add newFastAsgnStmt(newDotExpr(scratchObj, fieldB), genHigh(g, n))
+ 
+@@ -299,7 +299,7 @@ proc setupArgsForParallelism(g: ModuleGraph; n: PNode; objType: PType;
+       # it is more efficient to pass a pointer instead:
+       let a = genAddrOf(n, idgen)
+       field.typ = a.typ
+-      objType.addField(field, g.cache, idgen)
++      discard objType.addField(field, g.cache, idgen)
+       result.add newFastAsgnStmt(newDotExpr(scratchObj, field), a)
+       let threadLocal = addLocalVar(g, varSection, nil, idgen, owner, field.typ,
+                                     indirectAccess(castExpr, field, n.info),
+@@ -308,7 +308,7 @@ proc setupArgsForParallelism(g: ModuleGraph; n: PNode; objType: PType;
+     else:
+       # boring case
+       field.typ = argType
+-      objType.addField(field, g.cache, idgen)
++      discard objType.addField(field, g.cache, idgen)
+       result.add newFastAsgnStmt(newDotExpr(scratchObj, field), n)
+       let threadLocal = addLocalVar(g, varSection, varInit,
+                                     idgen, owner, field.typ,
+@@ -377,7 +377,7 @@ proc wrapProcForSpawn*(g: ModuleGraph; idgen: IdGenerator; owner: PSym; spawnExp
+     var argType = n[0].typ.skipTypes(abstractInst)
+     var field = newSym(skField, getIdent(g.cache, "fn"), nextSymId idgen, owner, n.info, g.config.options)
+     field.typ = argType
+-    objType.addField(field, g.cache, idgen)
++    discard objType.addField(field, g.cache, idgen)
+     result.add newFastAsgnStmt(newDotExpr(scratchObj, field), n[0])
+     fn = indirectAccess(castExpr, field, n.info)
+   elif fn.kind == nkSym and fn.sym.kind == skIterator:
+@@ -399,7 +399,7 @@ proc wrapProcForSpawn*(g: ModuleGraph; idgen: IdGenerator; owner: PSym; spawnExp
+     typ.rawAddSon(magicsys.getCompilerProc(g, "Barrier").typ)
+     var field = newSym(skField, getIdent(g.cache, "barrier"), nextSymId idgen, owner, n.info, g.config.options)
+     field.typ = typ
+-    objType.addField(field, g.cache, idgen)
++    discard objType.addField(field, g.cache, idgen)
+     result.add newFastAsgnStmt(newDotExpr(scratchObj, field), barrier)
+     barrierAsExpr = indirectAccess(castExpr, field, n.info)
+ 
+@@ -407,7 +407,7 @@ proc wrapProcForSpawn*(g: ModuleGraph; idgen: IdGenerator; owner: PSym; spawnExp
+   if spawnKind == srFlowVar:
+     var field = newSym(skField, getIdent(g.cache, "fv"), nextSymId idgen, owner, n.info, g.config.options)
+     field.typ = retType
+-    objType.addField(field, g.cache, idgen)
++    discard objType.addField(field, g.cache, idgen)
+     fvField = newDotExpr(scratchObj, field)
+     fvAsExpr = indirectAccess(castExpr, field, n.info)
+     # create flowVar:
+@@ -419,7 +419,7 @@ proc wrapProcForSpawn*(g: ModuleGraph; idgen: IdGenerator; owner: PSym; spawnExp
+     var field = newSym(skField, getIdent(g.cache, "fv"), nextSymId idgen, owner, n.info, g.config.options)
+     field.typ = newType(tyPtr, nextTypeId idgen, objType.owner)
+     field.typ.rawAddSon(retType)
+-    objType.addField(field, g.cache, idgen)
++    discard objType.addField(field, g.cache, idgen)
+     fvAsExpr = indirectAccess(castExpr, field, n.info)
+     result.add newFastAsgnStmt(newDotExpr(scratchObj, field), genAddrOf(dest, idgen))
+ 

@@ -1,0 +1,15 @@
+diff --git a/test/sql/function/generic/test_set.test b/test/sql/function/generic/test_set.test
+index 05ce9c6691..117f0a31c3 100644
+--- a/test/sql/function/generic/test_set.test
++++ b/test/sql/function/generic/test_set.test
+@@ -50,6 +50,10 @@ statement error
+ SELECT CURRENT_SETTING(NULL)
+ ----
+ 
++statement error
++SELECT CURRENT_SETTING(CAST(NULL AS TEXT))
++----
++
+ statement error
+ SELECT CURRENT_SETTING('')
+ ----

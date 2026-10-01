@@ -1,0 +1,19 @@
+diff --git a/tests/migrate_test.go b/tests/migrate_test.go
+index d6a6c4d..6576a2b 100644
+--- a/tests/migrate_test.go
++++ b/tests/migrate_test.go
+@@ -636,3 +636,14 @@ func TestMigrateSerialColumn(t *testing.T) {
+ 		AssertEqual(t, v.ID, v.UID)
+ 	}
+ }
++
++// https://github.com/go-gorm/gorm/issues/5300
++func TestMigrateWithSpecialName(t *testing.T) {
++	DB.AutoMigrate(&Coupon{})
++	DB.Table("coupon_product_1").AutoMigrate(&CouponProduct{})
++	DB.Table("coupon_product_2").AutoMigrate(&CouponProduct{})
++
++	AssertEqual(t, true, DB.Migrator().HasTable("coupons"))
++	AssertEqual(t, true, DB.Migrator().HasTable("coupon_product_1"))
++	AssertEqual(t, true, DB.Migrator().HasTable("coupon_product_2"))
++}

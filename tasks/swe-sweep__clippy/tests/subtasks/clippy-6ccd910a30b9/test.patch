@@ -1,0 +1,59 @@
+diff --git a/tests/ui/excessive_precision.fixed b/tests/ui/excessive_precision.fixed
+index 99d09774d..8a8c2e193 100644
+--- a/tests/ui/excessive_precision.fixed
++++ b/tests/ui/excessive_precision.fixed
+@@ -79,6 +79,9 @@ fn main() {
+     // issue #2840
+     let num = 0.000_000_000_01e-10f64;
+ 
++    // issue #6341
++    let exponential: f64 = 4.886506780521244E-03;
++
+     // issue #7744
+     let _ = 2.225_073_858_507_201e-308_f64;
+     //~^ excessive_precision
+diff --git a/tests/ui/excessive_precision.rs b/tests/ui/excessive_precision.rs
+index a542fb2e7..5dcf55cb9 100644
+--- a/tests/ui/excessive_precision.rs
++++ b/tests/ui/excessive_precision.rs
+@@ -79,6 +79,9 @@ fn main() {
+     // issue #2840
+     let num = 0.000_000_000_01e-10f64;
+ 
++    // issue #6341
++    let exponential: f64 = 4.886506780521244E-03;
++
+     // issue #7744
+     let _ = 2.225_073_858_507_201_1e-308_f64;
+     //~^ excessive_precision
+diff --git a/tests/ui/excessive_precision.stderr b/tests/ui/excessive_precision.stderr
+index 934a367e1..f5eeadf0c 100644
+--- a/tests/ui/excessive_precision.stderr
++++ b/tests/ui/excessive_precision.stderr
+@@ -157,7 +157,7 @@ LL +     let bad_bige32: f32 = 1.123_456_8E-10;
+    |
+ 
+ error: float has excessive precision
+-  --> tests/ui/excessive_precision.rs:83:13
++  --> tests/ui/excessive_precision.rs:86:13
+    |
+ LL |     let _ = 2.225_073_858_507_201_1e-308_f64;
+    |             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+@@ -169,7 +169,7 @@ LL +     let _ = 2.225_073_858_507_201e-308_f64;
+    |
+ 
+ error: float has excessive precision
+-  --> tests/ui/excessive_precision.rs:87:13
++  --> tests/ui/excessive_precision.rs:90:13
+    |
+ LL |     let _ = 1.000_000_000_000_001e-324_f64;
+    |             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+@@ -181,7 +181,7 @@ LL +     let _ = 0_f64;
+    |
+ 
+ error: float has excessive precision
+-  --> tests/ui/excessive_precision.rs:98:20
++  --> tests/ui/excessive_precision.rs:101:20
+    |
+ LL |     const _: f64 = 3.0000000000000000e+00;
+    |                    ^^^^^^^^^^^^^^^^^^^^^^

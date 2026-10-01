@@ -1,0 +1,20 @@
+diff --git a/src/plugin/duration/index.js b/src/plugin/duration/index.js
+index 48ceadd..50f6604 100644
+--- a/src/plugin/duration/index.js
++++ b/src/plugin/duration/index.js
+@@ -176,4 +176,15 @@ export default (option, Dayjs, dayjs) => {
+     return wrapper(input, {}, unit)
+   }
+   dayjs.isDuration = isDuration
++
++  const oldAdd = Dayjs.prototype.add
++  const oldSubtract = Dayjs.prototype.subtract
++  Dayjs.prototype.add = function (value, unit) {
++    if (isDuration(value)) value = value.asMilliseconds()
++    return oldAdd.bind(this)(value, unit)
++  }
++  Dayjs.prototype.subtract = function (value, unit) {
++    if (isDuration(value)) value = value.asMilliseconds()
++    return oldSubtract.bind(this)(value, unit)
++  }
+ }

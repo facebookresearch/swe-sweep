@@ -1,0 +1,18 @@
+diff --git a/codec-http2/src/main/java/io/netty/handler/codec/http2/Http2MultiplexCodec.java b/codec-http2/src/main/java/io/netty/handler/codec/http2/Http2MultiplexCodec.java
+index 515822ff9f..958fbda9c2 100644
+--- a/codec-http2/src/main/java/io/netty/handler/codec/http2/Http2MultiplexCodec.java
++++ b/codec-http2/src/main/java/io/netty/handler/codec/http2/Http2MultiplexCodec.java
+@@ -867,9 +867,10 @@ public class Http2MultiplexCodec extends Http2FrameCodec {
+                     closePending = false;
+                     fireChannelReadPending = false;
+ 
+-                    // Only ever send a reset frame if the connection is still alive as otherwise it makes no sense at
+-                    // all anyway.
+-                    if (parent().isActive() && !streamClosedWithoutError && isStreamIdValid(stream().id())) {
++                    // Only ever send a reset frame if the connection is still alive and if the stream may have existed
++                    // as otherwise we may send a RST on a stream in an invalid state and cause a connection error.
++                    if (parent().isActive() && !streamClosedWithoutError &&
++                            connection().streamMayHaveExisted(stream().id())) {
+                         Http2StreamFrame resetFrame = new DefaultHttp2ResetFrame(Http2Error.CANCEL).stream(stream());
+                         write(resetFrame, unsafe().voidPromise());
+                         flush();

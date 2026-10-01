@@ -1,0 +1,20 @@
+diff --git a/vlib/v/tests/generic_fn_with_nested_generic_fn_call_test.v b/vlib/v/tests/generic_fn_with_nested_generic_fn_call_test.v
+new file mode 100644
+index 000000000..e0023e9d2
+--- /dev/null
++++ b/vlib/v/tests/generic_fn_with_nested_generic_fn_call_test.v
+@@ -0,0 +1,14 @@
++struct Test {}
++
++fn unmarshal[T]() ! {
++	get_number[int]()!
++}
++
++fn get_number[T]() !T {
++	return T(42)
++}
++
++fn test_generic_fn_with_nested_generic_fn_call() {
++	unmarshal[Test]()!
++	assert true
++}

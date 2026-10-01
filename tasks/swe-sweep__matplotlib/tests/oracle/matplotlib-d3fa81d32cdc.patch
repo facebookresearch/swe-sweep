@@ -1,0 +1,15 @@
+diff --git a/src/_path_wrapper.cpp b/src/_path_wrapper.cpp
+index cdab886d86..7277457657 100644
+--- a/src/_path_wrapper.cpp
++++ b/src/_path_wrapper.cpp
+@@ -811,8 +811,8 @@ static PyObject *Py_is_sorted(PyObject *self, PyObject *obj)
+     npy_intp size;
+     bool result;
+ 
+-    PyArrayObject *array = (PyArrayObject *)PyArray_FromAny(
+-        obj, NULL, 1, 1, 0, NULL);
++    PyArrayObject *array = (PyArrayObject *)PyArray_CheckFromAny(
++        obj, NULL, 1, 1, NPY_ARRAY_NOTSWAPPED, NULL);
+ 
+     if (array == NULL) {
+         return NULL;

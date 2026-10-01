@@ -1,0 +1,15 @@
+diff --git a/server.go b/server.go
+index a96211c..2aa0fb1 100644
+--- a/server.go
++++ b/server.go
+@@ -3147,8 +3147,9 @@ func (s *Server) closeIdleConns() {
+ 		t := ict.Load()
+ 		if t != 0 && now-t >= 0 {
+ 			_ = c.Close()
++			// Don't recycle ict: the connection's own goroutine still holds it
++			// and stores into it, so only that goroutine may return it.
+ 			delete(s.idleConns, c)
+-			idleConnTimePool.Put(ict)
+ 		}
+ 	}
+ 	s.idleConnsMu.Unlock()

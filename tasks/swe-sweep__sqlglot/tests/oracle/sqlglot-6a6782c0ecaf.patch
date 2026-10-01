@@ -1,0 +1,26 @@
+diff --git a/sqlglot/parser.py b/sqlglot/parser.py
+index 42f98dec97..ae2db40af6 100644
+--- a/sqlglot/parser.py
++++ b/sqlglot/parser.py
+@@ -5366,13 +5366,19 @@ class Parser:
+         this = self._curr.text
+         upper = this.upper()
+ 
++        after_dot = self._prev is not None and self._prev.token_type == TokenType.DOT
+         parser = self.NO_PAREN_FUNCTION_PARSERS.get(upper)
+-        if optional_parens and parser and token_type not in self.INVALID_FUNC_NAME_TOKENS:
++        if (
++            optional_parens
++            and parser
++            and token_type not in self.INVALID_FUNC_NAME_TOKENS
++            and not after_dot
++        ):
+             self._advance()
+             return self._parse_window(parser(self))
+ 
+         if not self._next or self._next.token_type != TokenType.L_PAREN:
+-            if optional_parens and token_type in self.NO_PAREN_FUNCTIONS:
++            if optional_parens and token_type in self.NO_PAREN_FUNCTIONS and not after_dot:
+                 self._advance()
+                 return self.expression(self.NO_PAREN_FUNCTIONS[token_type])
+ 

@@ -1,0 +1,10 @@
+diff --git a/tests/lean/run/4213.lean b/tests/lean/run/4213.lean
+new file mode 100644
+index 0000000000..f7eddcde9b
+--- /dev/null
++++ b/tests/lean/run/4213.lean
+@@ -0,0 +1,4 @@
++class FooClass (α : Type _) : Prop where
++
++theorem bar (α ι : Type _) [FooClass α] (f : ι → FooClass α) : FooClass α := by
++  infer_instance

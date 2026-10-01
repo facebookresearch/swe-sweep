@@ -1,0 +1,22 @@
+diff --git a/tests/template/t13515.nim b/tests/template/t13515.nim
+new file mode 100644
+index 000000000..ffebedcbe
+--- /dev/null
++++ b/tests/template/t13515.nim
+@@ -0,0 +1,16 @@
++discard """
++  action: compile
++"""
++
++template test: bool = true
++
++# compiles:
++if not test:
++  echo "wtf"
++
++# does not compile:
++template x =
++  if not test:
++    echo "wtf"
++
++x

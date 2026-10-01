@@ -1,0 +1,128 @@
+diff --git a/src/H5Tconv.c b/src/H5Tconv.c
+index 0c2ae4d..70d4353 100644
+--- a/src/H5Tconv.c
++++ b/src/H5Tconv.c
+@@ -3065,6 +3065,78 @@ done:
+     FUNC_LEAVE_NOAPI(ret_value)
+ } /* end H5T__conv_enum_numeric() */
+ 
++/*-------------------------------------------------------------------------
++ * Function:    H5T__conv_vlen_nested_free
++ *
++ * Purpose:     Recursively locates and frees any nested VLEN components of
++ *              complex data types (including COMPOUND).
++ *
++ * Return:      Non-negative on success/Negative on failure.
++ *
++ *-------------------------------------------------------------------------
++ */
++static herr_t
++H5T__conv_vlen_nested_free(uint8_t *buf, H5T_t *dt)
++{
++    unsigned i;                   /* Local index variable */
++    herr_t   ret_value = SUCCEED; /* Return value */
++
++    FUNC_ENTER_PACKAGE
++
++    switch (dt->shared->type) {
++        case H5T_VLEN: {
++            const uint8_t *tmp = buf; /* Pointer to the sequence's information */
++            size_t         seq_len;   /* Length of the sequence */
++            H5HG_t         hobjid;    /* Sequence's heap ID info */
++
++            /* Pointer buf refers to VLEN data; free it */
++            UINT32DECODE(tmp, seq_len);
++            if (seq_len > 0) {
++                H5F_addr_decode(dt->shared->u.vlen.f, &tmp, &(hobjid.addr));
++                UINT32DECODE(tmp, hobjid.idx);
++                if (H5HG_remove(dt->shared->u.vlen.f, &hobjid) < 0)
++                    HGOTO_ERROR(H5E_DATATYPE, H5E_CANTFREE, FAIL, "can't free nested vlen")
++            } /* end if */
++            break;
++        } /* end case */
++
++        case H5T_COMPOUND:
++            /* Pointer buf refers to COMPOUND data; recurse for each member. */
++            for (i = 0; i < dt->shared->u.compnd.nmembs; ++i)
++                if (H5T__conv_vlen_nested_free(buf + dt->shared->u.compnd.memb[i].offset,
++                                               dt->shared->u.compnd.memb[i].type) < 0)
++                    HGOTO_ERROR(H5E_DATATYPE, H5E_CANTFREE, FAIL, "can't free compound member")
++            break;
++
++        case H5T_ARRAY:
++            /* Pointer buf refers to ARRAY data; recurse for each element. */
++            for (i = 0; i < dt->shared->u.array.nelem; ++i)
++                if (H5T__conv_vlen_nested_free(buf + i * dt->shared->parent->shared->size,
++                                               dt->shared->parent) < 0)
++                    HGOTO_ERROR(H5E_DATATYPE, H5E_CANTFREE, FAIL, "can't free array data")
++            break;
++
++        case H5T_INTEGER:
++        case H5T_FLOAT:
++        case H5T_TIME:
++        case H5T_STRING:
++        case H5T_BITFIELD:
++        case H5T_OPAQUE:
++        case H5T_REFERENCE:
++        case H5T_ENUM:
++            /* These types cannot contain vl data */
++            break;
++
++        case H5T_NO_CLASS:
++        case H5T_NCLASSES:
++        default:
++            HGOTO_ERROR(H5E_DATATYPE, H5E_BADTYPE, FAIL, "invalid datatype class")
++    } /* end switch */
++
++done:
++    FUNC_LEAVE_NOAPI(ret_value)
++} /* H5T__conv_vlen_nested_free() */
++
+ /*-------------------------------------------------------------------------
+  * Function:    H5T__conv_vlen
+  *
+@@ -3101,7 +3173,7 @@ H5T__conv_vlen(hid_t src_id, hid_t dst_id, H5T_cdata_t *cdata, size_t nelmts, si
+     hid_t                 tsrc_id = -1, tdst_id = -1; /*temporary type atoms         */
+     H5T_t *               src = NULL;                 /*source datatype             */
+     H5T_t *               dst = NULL;                 /*destination datatype             */
+-    H5HG_t                bg_hobjid, parent_hobjid;
++    H5HG_t                bg_hobjid;
+     uint8_t *             s = NULL;           /*source buffer            */
+     uint8_t *             d = NULL;           /*destination buffer        */
+     uint8_t *             b = NULL;           /*background buffer        */
+@@ -3375,24 +3447,19 @@ H5T__conv_vlen(hid_t src_id, hid_t dst_id, H5T_cdata_t *cdata, size_t nelmts, si
+                             /* For nested VL case, free leftover heap objects from the deeper level if the
+                              * length of new data elements is shorter than the old data elements.*/
+                             if (nested && seq_len < bg_seq_len) {
+-                                size_t         parent_seq_len;
+-                                const uint8_t *tmp;
+-                                size_t         u;
++                                uint8_t *tmp;
++                                size_t   u;
+ 
+-                                /* TMP_P is reset each time in the loop because DST_BASE_SIZE may include some
++                                /* TMP is reset each time in the loop because DST_BASE_SIZE may include some
+                                  * data in addition to VL info. - SLU */
+-                                for (u = seq_len; u < bg_seq_len; u++) {
+-                                    tmp = (uint8_t *)tmp_buf + u * dst_base_size;
+-                                    UINT32DECODE(tmp, parent_seq_len);
+-                                    if (parent_seq_len > 0) {
+-                                        H5F_addr_decode(dst->shared->u.vlen.f, &tmp, &(parent_hobjid.addr));
+-                                        UINT32DECODE(tmp, parent_hobjid.idx);
+-                                        if (H5HG_remove(dst->shared->u.vlen.f, &parent_hobjid) < 0)
+-                                            HGOTO_ERROR(H5E_DATATYPE, H5E_WRITEERROR, FAIL,
+-                                                        "Unable to remove heap object")
+-                                    } /* end if */
+-                                }     /* end for */
+-                            }         /* end if */
++                                tmp = (uint8_t *)tmp_buf + seq_len * dst_base_size;
++                                for (u = seq_len; u < bg_seq_len; u++, tmp += dst_base_size) {
++                                    /* Recursively free destination data */
++                                    if (H5T__conv_vlen_nested_free(tmp, dst->shared->parent) < 0)
++                                        HGOTO_ERROR(H5E_DATATYPE, H5E_CANTREMOVE, FAIL,
++                                                    "unable to remove heap object")
++                                } /* end for */
++                            }     /* end if */
+                         }             /* end if */
+                     }                 /* end else */
+ 

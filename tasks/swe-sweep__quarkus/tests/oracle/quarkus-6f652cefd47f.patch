@@ -1,0 +1,13 @@
+diff --git a/independent-projects/resteasy-reactive/server/runtime/src/main/java/org/jboss/resteasy/reactive/server/handlers/PublisherResponseHandler.java b/independent-projects/resteasy-reactive/server/runtime/src/main/java/org/jboss/resteasy/reactive/server/handlers/PublisherResponseHandler.java
+index c1af6782605..20110476a41 100644
+--- a/independent-projects/resteasy-reactive/server/runtime/src/main/java/org/jboss/resteasy/reactive/server/handlers/PublisherResponseHandler.java
++++ b/independent-projects/resteasy-reactive/server/runtime/src/main/java/org/jboss/resteasy/reactive/server/handlers/PublisherResponseHandler.java
+@@ -151,7 +151,7 @@ public class PublisherResponseHandler implements ServerRestHandler {
+         @Override
+         public void onComplete() {
+             if (!hadItem) {
+-                StreamingUtil.setHeaders(requestContext, requestContext.serverResponse(), staticCustomizers);
++                StreamingUtil.setHeaders(requestContext, requestContext.serverResponse(), this.determineCustomizers(true));
+             }
+             if (json) {
+                 String postfix = onCompleteText();

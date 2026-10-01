@@ -1,0 +1,61 @@
+diff --git a/e2e/__tests__/__snapshots__/testTodo.test.ts.snap b/e2e/__tests__/__snapshots__/testTodo.test.ts.snap
+index 223f73fe35..a9e1ff123e 100644
+--- a/e2e/__tests__/__snapshots__/testTodo.test.ts.snap
++++ b/e2e/__tests__/__snapshots__/testTodo.test.ts.snap
+@@ -1,5 +1,19 @@
+ // Jest Snapshot v1, https://goo.gl/fbAQLP
+ 
++exports[`counts todo tests when inside of a \`describe.only\` 1`] = `
++"PASS __tests__/only-todo.test.js
++  with .only, should show 'passed', 'todo', 'todo'
++    ✓ passing test
++    ✎ todo todo test 1
++    ✎ todo todo test 2
++
++Test Suites: 1 passed, 1 total
++Tests:       2 todo, 1 passed, 3 total
++Snapshots:   0 total
++Time:        <<REPLACED>>
++Ran all test suites matching /only-todo.test.js/i."
++`;
++
+ exports[`shows error messages when called with invalid argument 1`] = `
+ "FAIL __tests__/todoNonString.test.js
+   ● Test suite failed to run
+diff --git a/e2e/__tests__/testTodo.test.ts b/e2e/__tests__/testTodo.test.ts
+index d1b6082270..bf60beb7c3 100644
+--- a/e2e/__tests__/testTodo.test.ts
++++ b/e2e/__tests__/testTodo.test.ts
+@@ -44,3 +44,10 @@ test('shows todo messages when in verbose mode', () => {
+   const {rest} = extractSummary(result.stderr);
+   expect(rest).toMatchSnapshot();
+ });
++
++test('counts todo tests when inside of a `describe.only`', () => {
++  const result = runJest(dir, ['only-todo.test.js']);
++  expect(result.exitCode).toBe(0);
++  const {rest, summary} = extractSummary(result.stderr);
++  expect(`${rest}\n\n${summary}`).toMatchSnapshot();
++});
+diff --git a/e2e/test-todo/__tests__/only-todo.test.js b/e2e/test-todo/__tests__/only-todo.test.js
+new file mode 100644
+index 0000000000..6bc35448d0
+--- /dev/null
++++ b/e2e/test-todo/__tests__/only-todo.test.js
+@@ -0,0 +1,16 @@
++/**
++ * Copyright (c) Facebook, Inc. and its affiliates. All Rights Reserved.
++ *
++ * This source code is licensed under the MIT license found in the
++ * LICENSE file in the root directory of this source tree.
++ */
++
++/* eslint-disable jest/no-focused-tests */
++
++'use strict';
++
++describe.only("with .only, should show 'passed', 'todo', 'todo'", () => {
++  test('passing test', () => {});
++  test.todo('todo test 1');
++  test.todo('todo test 2');
++});

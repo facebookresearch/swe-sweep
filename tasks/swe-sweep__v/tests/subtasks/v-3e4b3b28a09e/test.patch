@@ -1,0 +1,32 @@
+diff --git a/vlib/v/tests/skip_unused/aggregate_call.run.out b/vlib/v/tests/skip_unused/aggregate_call.run.out
+new file mode 100644
+index 000000000..e69de29bb
+diff --git a/vlib/v/tests/skip_unused/aggregate_call.skip_unused.run.out b/vlib/v/tests/skip_unused/aggregate_call.skip_unused.run.out
+new file mode 100644
+index 000000000..e69de29bb
+diff --git a/vlib/v/tests/skip_unused/aggregate_call.vv b/vlib/v/tests/skip_unused/aggregate_call.vv
+new file mode 100644
+index 000000000..76b9c7460
+--- /dev/null
++++ b/vlib/v/tests/skip_unused/aggregate_call.vv
+@@ -0,0 +1,20 @@
++struct Foo {}
++
++struct Bar {}
++
++type SumType = Foo | Bar
++
++fn (f Foo) pstr() {
++}
++
++fn (b Bar) pstr() {
++}
++
++fn main() {
++	a := SumType(Foo{})
++	match a {
++		Foo, Bar {
++			a.pstr()
++		}
++	}
++}

@@ -1,0 +1,19 @@
+diff --git a/pandas/tests/io/formats/test_to_string.py b/pandas/tests/io/formats/test_to_string.py
+index c1beed8b88..f91f46c846 100644
+--- a/pandas/tests/io/formats/test_to_string.py
++++ b/pandas/tests/io/formats/test_to_string.py
+@@ -274,6 +274,14 @@ def test_to_string_complex_number_trims_zeros():
+     )
+     assert result == expected
+ 
++
++def test_nested_dataframe():
++    df1 = DataFrame({"level1": [["row1"], ["row2"]]})
++    df2 = DataFrame({"level3": [{"level2": df1}]})
++    result = df2.to_string()
++    expected = "                   level3\n0  {'level2': ['level1']}"
++    assert result == expected
++
+ 
+ def test_nullable_float_to_string(float_ea_dtype):
+     # https://github.com/pandas-dev/pandas/issues/36775

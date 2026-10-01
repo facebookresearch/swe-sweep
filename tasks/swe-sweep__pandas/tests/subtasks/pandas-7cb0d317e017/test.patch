@@ -1,0 +1,18 @@
+diff --git a/pandas/tests/groupby/test_sample.py b/pandas/tests/groupby/test_sample.py
+index 9153fac092..4dd4747417 100644
+--- a/pandas/tests/groupby/test_sample.py
++++ b/pandas/tests/groupby/test_sample.py
+@@ -142,3 +142,13 @@ def test_groupby_sample_with_selections():
+     result = df.groupby("a")[["b", "c"]].sample(n=None, frac=None)
+     expected = DataFrame({"b": [1, 2], "c": [1, 2]}, index=result.index)
+     tm.assert_frame_equal(result, expected)
++
++
++def test_groupby_sample_with_empty_inputs():
++    # GH48459
++    df = DataFrame({"a": [], "b": []})
++    groupby_df = df.groupby("a")
++
++    result = groupby_df.sample()
++    expected = df
++    tm.assert_frame_equal(result, expected)

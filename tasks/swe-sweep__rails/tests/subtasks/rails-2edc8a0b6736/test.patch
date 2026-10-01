@@ -1,0 +1,23 @@
+diff --git a/actionview/test/template/dependency_tracker_test.rb b/actionview/test/template/dependency_tracker_test.rb
+index 509bc898c58..2c60015604e 100644
+--- a/actionview/test/template/dependency_tracker_test.rb
++++ b/actionview/test/template/dependency_tracker_test.rb
+@@ -197,6 +197,18 @@ module SharedTrackerTests
+     ], tracker.dependencies
+   end
+ 
++  def test_finds_dependencies_with_bare_assoc_hash_on_constant
++    template = FakeTemplate.new(%{
++      <%= render SomeConstant.message(this: "that") %>
++    }, :erb)
++
++    tracker = make_tracker("assoc_hash/const", template)
++
++    assert_equal [
++      "messages/message",
++    ], tracker.dependencies
++  end
++
+   def test_dependencies_with_interpolation
+     template = FakeTemplate.new(%q{
+       <%= render "double/#{quote}" %>

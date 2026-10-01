@@ -1,0 +1,63 @@
+{
+  "build_jobs": 4,
+  "container_repo": "/arrow",
+  "evaluation": {
+    "paths": "tests",
+    "test_timeout": 900
+  },
+  "upstream_image": "pandora-maxbug-arrow-py:1.0.2",
+  "n_base_passing": 1677,
+  "n_base_test_ignore": 2,
+  "oracle_digest": "8d50d5f0d7af62677a39acc01f4a650c16bb0158ba11e89f21df7e7973a92c6a",
+  "oracle_pristine_paths": [],
+  "upstream_commit": "9f7399e15e6172900e0591deb5a57a45769d8205",
+  "reproduction": {
+    "needs_build": false,
+    "test_timeout": 600
+  },
+  "schema": 2,
+  "subtasks": [
+    {
+      "f2p": [
+        "tests.test_factory.TestGet::test_one_arg_arrow_tzinfo_kwarg",
+        "tests.test_factory.TestGet::test_one_arg_date_tzinfo_kwarg",
+        "tests.test_factory.TestGet::test_one_arg_datetime_tzinfo_kwarg",
+        "tests.test_factory.TestGet::test_one_arg_iso_calendar_tzinfo_kwarg"
+      ],
+      "id": "arrow-py-0e4092fc6fc5",
+      "target_files": [
+        "arrow/factory.py"
+      ]
+    },
+    {
+      "f2p": [
+        "tests.test_locales.TestHungarianLocale::test_format_timeframe"
+      ],
+      "id": "arrow-py-38f7b9e7e46c",
+      "target_files": [
+        "arrow/locales.py"
+      ]
+    },
+    {
+      "f2p": [
+        "tests.test_arrow.TestArrowHumanize::test_no_floats",
+        "tests.test_arrow.TestArrowHumanize::test_no_floats_multi_gran"
+      ],
+      "id": "arrow-py-47972b7db0b3",
+      "target_files": [
+        "arrow/locales.py"
+      ]
+    },
+    {
+      "f2p": [
+        "tests.test_locales.TestAfrikaansLocale::test_timeframes"
+      ],
+      "id": "arrow-py-830cda25d27f",
+      "target_files": [
+        "arrow/locales.py"
+      ]
+    }
+  ],
+  "task": "arrow-py",
+  "version": "1.0.2"
+}

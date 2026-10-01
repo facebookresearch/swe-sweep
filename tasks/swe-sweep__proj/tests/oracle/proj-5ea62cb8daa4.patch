@@ -1,0 +1,13 @@
+diff --git a/src/iso19111/datum.cpp b/src/iso19111/datum.cpp
+index 777addd22..4e3b47276 100644
+--- a/src/iso19111/datum.cpp
++++ b/src/iso19111/datum.cpp
+@@ -1156,7 +1156,7 @@ bool Ellipsoid::_isEquivalentTo(const util::IComparable *other,
+         }
+ 
+     } else {
+-        if (!otherEllipsoid->computeSemiMinorAxis()._isEquivalentTo(
++        if (!computeSemiMinorAxis()._isEquivalentTo(
+                 otherEllipsoid->computeSemiMinorAxis(), criterion)) {
+             return false;
+         }

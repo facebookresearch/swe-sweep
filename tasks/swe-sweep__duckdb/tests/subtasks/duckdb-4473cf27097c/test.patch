@@ -1,0 +1,20 @@
+diff --git a/test/optimizer/joins/cross_join_and_unnest_dont_work.test b/test/optimizer/joins/cross_join_and_unnest_dont_work.test
+new file mode 100644
+index 0000000000..b217d5a535
+--- /dev/null
++++ b/test/optimizer/joins/cross_join_and_unnest_dont_work.test
+@@ -0,0 +1,13 @@
++# name: test/optimizer/joins/cross_join_and_unnest_dont_work.test
++# description: Internal issue
++# group: [joins]
++
++statement ok
++SELECT y + z AS c
++FROM (
++	SELECT y, unnest([x]) AS z
++	FROM
++		(SELECT 1 as x),
++		(SELECT 1 as y)
++	)
++ WHERE c > 0;
+\ No newline at end of file

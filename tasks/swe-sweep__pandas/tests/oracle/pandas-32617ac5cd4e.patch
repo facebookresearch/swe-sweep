@@ -1,0 +1,57 @@
+diff --git a/pandas/_libs/tslibs/offsets.pyx b/pandas/_libs/tslibs/offsets.pyx
+index 7e6d8fa38a..6df4abc160 100644
+--- a/pandas/_libs/tslibs/offsets.pyx
++++ b/pandas/_libs/tslibs/offsets.pyx
+@@ -186,8 +186,9 @@ def apply_wraps(func):
+         if self.normalize:
+             result = result.normalize()
+ 
+-        # nanosecond may be deleted depending on offset process
+-        if not self.normalize and nano != 0:
++        # If the offset object does not have a nanoseconds component,
++        # the result's nanosecond component may be lost.
++        if not self.normalize and nano != 0 and not hasattr(self, "nanoseconds"):
+             if result.nanosecond != nano:
+                 if result.tz is not None:
+                     # convert to UTC
+@@ -333,7 +334,7 @@ cdef _determine_offset(kwds):
+             # sub-daily offset - use timedelta (tz-aware)
+             offset = timedelta(**kwds_no_nanos)
+     else:
+-        offset = timedelta(1)
++        offset = timedelta(0)
+     return offset, use_relativedelta
+ 
+ 
+@@ -1068,12 +1069,17 @@ cdef class RelativeDeltaOffset(BaseOffset):
+                 # perform calculation in UTC
+                 other = other.replace(tzinfo=None)
+ 
++            if hasattr(self, "nanoseconds"):
++                td_nano = Timedelta(nanoseconds=self.nanoseconds)
++            else:
++                td_nano = Timedelta(0)
++
+             if self.n > 0:
+                 for i in range(self.n):
+-                    other = other + self._offset
++                    other = other + self._offset + td_nano
+             else:
+                 for i in range(-self.n):
+-                    other = other - self._offset
++                    other = other - self._offset - td_nano
+ 
+             if tzinfo is not None and self._use_relativedelta:
+                 # bring tz back from UTC calculation
+diff --git a/pandas/_libs/tslibs/timestamps.pyx b/pandas/_libs/tslibs/timestamps.pyx
+index f491b5aeed..1c26793876 100644
+--- a/pandas/_libs/tslibs/timestamps.pyx
++++ b/pandas/_libs/tslibs/timestamps.pyx
+@@ -307,7 +307,6 @@ cdef class _Timestamp(ABCTimestamp):
+         elif not isinstance(self, _Timestamp):
+             # cython semantics, args have been switched and this is __radd__
+             return other.__add__(self)
+-
+         return NotImplemented
+ 
+     def __sub__(self, other):

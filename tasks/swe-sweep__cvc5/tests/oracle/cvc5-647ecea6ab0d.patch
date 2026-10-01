@@ -1,0 +1,42 @@
+diff --git a/src/expr/dtype.cpp b/src/expr/dtype.cpp
+index 2c6ca5292d..7e6d5778bc 100644
+--- a/src/expr/dtype.cpp
++++ b/src/expr/dtype.cpp
+@@ -565,11 +565,17 @@ CardinalityClass DType::getCardinalityClass(TypeNode t) const
+   // if we have one constructor and FINITE otherwise.
+   CardinalityClass c = d_constructors.size() == 1 ? CardinalityClass::ONE
+                                                   : CardinalityClass::FINITE;
++  Trace("datatypes-card-class")
++      << "Compute cardinality class of " << t << "..." << std::endl;
+   for (std::shared_ptr<DTypeConstructor> ctor : d_constructors)
+   {
+     CardinalityClass cc = ctor->getCardinalityClass(t);
++    Trace("datatypes-card-class")
++        << "- constructor " << ctor->getName() << " is " << cc << std::endl;
+     c = maxCardinalityClass(c, cc);
+   }
++  Trace("datatypes-card-class")
++      << "Cardinality class of " << t << " is " << c << std::endl;
+   d_cardClass[t] = c;
+   return c;
+ }
+diff --git a/src/theory/theory_model_builder.cpp b/src/theory/theory_model_builder.cpp
+index b6be496bce..34492ab41e 100644
+--- a/src/theory/theory_model_builder.cpp
++++ b/src/theory/theory_model_builder.cpp
+@@ -372,10 +372,12 @@ void TheoryEngineModelBuilder::addToTypeList(
+         const DType& dt = tn.getDType();
+         for (unsigned i = 0; i < dt.getNumConstructors(); i++)
+         {
+-          for (unsigned j = 0; j < dt[i].getNumArgs(); j++)
++          // Note that we may be a parameteric datatype, in which case the
++          // instantiated sorts need to be considered.
++          TypeNode ctn = dt[i].getInstantiatedConstructorType(tn);
++          for (const TypeNode& ctnc : ctn)
+           {
+-            TypeNode ctn = dt[i][j].getRangeType();
+-            addToTypeList(ctn, type_list, visiting);
++            addToTypeList(ctnc, type_list, visiting);
+           }
+         }
+       }

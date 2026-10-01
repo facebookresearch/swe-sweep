@@ -1,0 +1,38 @@
+diff --git a/dask/dataframe/core.py b/dask/dataframe/core.py
+index 93441cca4..5f448c3b7 100644
+--- a/dask/dataframe/core.py
++++ b/dask/dataframe/core.py
+@@ -3251,10 +3251,13 @@ class Series(_Frame):
+ 
+     @derived_from(pd.Series)
+     def memory_usage(self, index=True, deep=False):
+-        result = self.map_partitions(
+-            M.memory_usage, index=index, deep=deep, enforce_metadata=False
++        return self.reduction(
++            M.memory_usage,
++            M.sum,
++            chunk_kwargs={"index": index, "deep": deep},
++            split_every=False,
++            token=self._token_prefix + "memory-usage",
+         )
+-        return delayed(sum)(result.to_delayed())
+ 
+     def __divmod__(self, other):
+         res1 = self // other
+@@ -3440,6 +3443,16 @@ class Index(Series):
+             applied = applied.clear_divisions()
+         return applied
+ 
++    @derived_from(pd.Index)
++    def memory_usage(self, deep=False):
++        return self.reduction(
++            M.memory_usage,
++            M.sum,
++            chunk_kwargs={"deep": deep},
++            split_every=False,
++            token=self._token_prefix + "memory-usage",
++        )
++
+ 
+ class DataFrame(_Frame):
+     """

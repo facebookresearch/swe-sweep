@@ -1,0 +1,67 @@
+diff --git a/lib/rules/selector-max-specificity/__tests__/index.mjs b/lib/rules/selector-max-specificity/__tests__/index.mjs
+index e74e1d0db..1f0f7e072 100644
+--- a/lib/rules/selector-max-specificity/__tests__/index.mjs
++++ b/lib/rules/selector-max-specificity/__tests__/index.mjs
+@@ -1,3 +1,5 @@
++import { stripIndent } from 'common-tags';
++
+ import rule from '../index.mjs';
+ const { messages, ruleName } = rule;
+ 
+@@ -68,6 +70,16 @@ testRule({
+ 		{
+ 			code: '[value] {}',
+ 		},
++		{
++			code: stripIndent`
++				/* stylelint-disable-next-line selector-max-specificity */
++				.ab .ab, /* stylelint-disable-next-line selector-max-specificity */
++				.ab .ab,
++				/* stylelint-disable-next-line selector-max-specificity */
++				.ab .ab
++				{}
++			`,
++		},
+ 	],
+ 
+ 	reject: [
+@@ -167,6 +179,39 @@ testRule({
+ 			endLine: 1,
+ 			endColumn: 11,
+ 		},
++		{
++			code: stripIndent`
++				/* a comment */
++				.ab .ab, /* a comment */
++				.ab .ab,
++				/* a comment */
++				.ab .ab
++				{}
++			`,
++			warnings: [
++				{
++					message: messages.expected('.ab .ab', '0,1,0'),
++					line: 2,
++					column: 1,
++					endLine: 2,
++					endColumn: 8,
++				},
++				{
++					message: messages.expected('.ab .ab', '0,1,0'),
++					line: 3,
++					column: 1,
++					endLine: 3,
++					endColumn: 8,
++				},
++				{
++					message: messages.expected('.ab .ab', '0,1,0'),
++					line: 5,
++					column: 1,
++					endLine: 5,
++					endColumn: 8,
++				},
++			],
++		},
+ 	],
+ });
+ 

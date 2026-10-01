@@ -1,0 +1,32 @@
+diff --git a/vlib/v/tests/if_match_branches_with_call_expr_with_or_block_test.v b/vlib/v/tests/if_match_branches_with_call_expr_with_or_block_test.v
+new file mode 100644
+index 000000000..50e2bcb8a
+--- /dev/null
++++ b/vlib/v/tests/if_match_branches_with_call_expr_with_or_block_test.v
+@@ -0,0 +1,26 @@
++fn foo() !string {
++	return 'abc'
++}
++
++// exists call_expr in the if-else branches and the left_expr of call_expr with or_block
++fn test_if() {
++	res := if false {
++		''
++	} else {
++		foo() or { panic('error') }.trim('')
++	}
++	assert res == 'abc'
++}
++
++// exists call_expr in the match branches and the left_expr of call_expr with or_block
++fn test_match() {
++	res := match false {
++		true {
++			''
++		}
++		else {
++			foo() or { panic('error') }.trim('')
++		}
++	}
++	assert res == 'abc'
++}

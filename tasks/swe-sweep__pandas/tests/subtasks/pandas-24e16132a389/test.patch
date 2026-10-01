@@ -1,0 +1,31 @@
+diff --git a/pandas/tests/groupby/test_nth.py b/pandas/tests/groupby/test_nth.py
+index f0eef550b3..8742135da5 100644
+--- a/pandas/tests/groupby/test_nth.py
++++ b/pandas/tests/groupby/test_nth.py
+@@ -689,3 +689,26 @@ def test_first_multi_key_groupbby_categorical():
+         [(1, 100), (1, 200), (2, 100)], names=["A", "B"]
+     )
+     tm.assert_frame_equal(result, expected)
++
++
++def test_groupby_nth_with_column_axis():
++    # GH43926
++    df = DataFrame(
++        [
++            [4, 5, 6],
++            [8, 8, 7],
++        ],
++        index=["z", "y"],
++        columns=["C", "B", "A"],
++    )
++    result = df.groupby(df.iloc[1], axis=1).nth(0)
++    expected = DataFrame(
++        [
++            [6, 4],
++            [7, 8],
++        ],
++        index=["z", "y"],
++        columns=[7, 8],
++    )
++    expected.columns.name = "y"
++    tm.assert_frame_equal(result, expected)

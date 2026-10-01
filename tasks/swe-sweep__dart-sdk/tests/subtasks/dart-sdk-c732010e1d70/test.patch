@@ -1,0 +1,25 @@
+diff --git a/pkg/analyzer/test/src/lint/linter/linter_context_impl_test.dart b/pkg/analyzer/test/src/lint/linter/linter_context_impl_test.dart
+index 45e51be508a..0cf6bcacd2c 100644
+--- a/pkg/analyzer/test/src/lint/linter/linter_context_impl_test.dart
++++ b/pkg/analyzer/test/src/lint/linter/linter_context_impl_test.dart
+@@ -209,6 +209,20 @@ B f() => B(A());
+     assertCanBeConst("B(A(", false);
+   }
+ 
++  void test_false_constructorReference_typeParameter() async {
++    await resolve('''
++class A<T> {
++  const A();
++}
++class B<T> {
++  final A<T> Function() fn;
++  const B(this.fn);
++}
++B<T> fn<T>() => B(A<T>.new);
++''');
++    assertCanBeConst('B(A<T>.new)', false);
++  }
++
+   void test_false_mapKeyType_implementsEqual() async {
+     await resolve('''
+ class A {

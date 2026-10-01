@@ -1,0 +1,90 @@
+diff --git a/extensions/resteasy-reactive/rest-client-reactive-jackson/deployment/src/test/java/io/quarkus/rest/client/reactive/jackson/test/MultiSseTest.java b/extensions/resteasy-reactive/rest-client-reactive-jackson/deployment/src/test/java/io/quarkus/rest/client/reactive/jackson/test/MultiSseTest.java
+index aa715e0..51a6d55 100644
+--- a/extensions/resteasy-reactive/rest-client-reactive-jackson/deployment/src/test/java/io/quarkus/rest/client/reactive/jackson/test/MultiSseTest.java
++++ b/extensions/resteasy-reactive/rest-client-reactive-jackson/deployment/src/test/java/io/quarkus/rest/client/reactive/jackson/test/MultiSseTest.java
+@@ -8,6 +8,17 @@
+ import java.util.Objects;
+ import java.util.concurrent.CopyOnWriteArrayList;
+ import java.util.concurrent.TimeUnit;
++import java.util.concurrent.atomic.AtomicReference;
++import java.util.function.Consumer;
++import java.util.function.Predicate;
++
++import jakarta.ws.rs.DefaultValue;
++import jakarta.ws.rs.WebApplicationException;
++import jakarta.ws.rs.core.Response;
++
++import org.eclipse.microprofile.rest.client.annotation.ClientHeaderParam;
++import org.jboss.resteasy.reactive.RestHeader;
++import io.quarkus.rest.client.reactive.ClientExceptionMapper;
+ 
+ import jakarta.ws.rs.GET;
+ import jakarta.ws.rs.POST;
+@@ -47,6 +58,28 @@ void shouldConsume() {
+                         () -> assertThat(resultList).containsExactly("foo", "bar"));
+     }
+ 
++    @Test
++    void shouldReadBodyFromFailedResponse() {
++        var errorBody = new AtomicReference<String>();
++        createClient()
++                .fail()
++                .subscribe().with(new Consumer<Object>() {
++                    @Override
++                    public void accept(Object o) {
++
++                    }
++                }, new Consumer<>() {
++                    @Override
++                    public void accept(Throwable t) {
++                        errorBody.set(t.getMessage());
++                    }
++                });
++
++        await().atMost(5, TimeUnit.SECONDS)
++                .untilAsserted(
++                        () -> assertThat(errorBody.get()).isEqualTo("invalid input provided"));
++    }
++
+     @Test
+     void shouldConsumeJsonEntity() {
+         var resultList = new CopyOnWriteArrayList<>();
+@@ -125,6 +158,11 @@ public interface SseClient {
+         @Produces(MediaType.SERVER_SENT_EVENTS)
+         Multi<String> get();
+ 
++        @GET
++        @Produces(MediaType.SERVER_SENT_EVENTS)
++        @ClientHeaderParam(name = "fail", value = "true")
++        Multi<String> fail();
++
+         @GET
+         @Path("/json")
+         @Produces(MediaType.SERVER_SENT_EVENTS)
+@@ -144,6 +182,14 @@ public interface SseClient {
+         @Produces(MediaType.SERVER_SENT_EVENTS)
+         @Path("/with-entity-json")
+         Multi<Map<String, String>> postAndReadAsMap(String entity);
++
++        @ClientExceptionMapper
++        static RuntimeException toException(Response response) {
++            if (response.getStatusInfo().getStatusCode() == 400) {
++                return new IllegalArgumentException(response.readEntity(String.class));
++            }
++            return null;
++        }
+     }
+ 
+     @Path("/sse")
+@@ -151,7 +197,10 @@ public static class SseResource {
+ 
+         @GET
+         @Produces(MediaType.SERVER_SENT_EVENTS)
+-        public Multi<String> get() {
++        public Multi<String> get(@DefaultValue("false") @RestHeader boolean fail) {
++            if (fail) {
++                throw new WebApplicationException(Response.status(400).entity("invalid input provided").build());
++            }
+             return Multi.createFrom().items("foo", "bar");
+         }
+ 

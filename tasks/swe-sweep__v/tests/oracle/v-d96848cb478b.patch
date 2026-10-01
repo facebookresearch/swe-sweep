@@ -1,0 +1,37 @@
+diff --git a/vlib/v/checker/comptime.v b/vlib/v/checker/comptime.v
+index cef1c2370..92606b79a 100644
+--- a/vlib/v/checker/comptime.v
++++ b/vlib/v/checker/comptime.v
+@@ -666,7 +666,6 @@ fn (mut c Checker) comptime_if_branch(cond ast.Expr, pos token.Pos) ComptimeBran
+ 						sym := c.table.sym(cond.right.typ)
+ 						if sym.kind != .interface_ {
+ 							c.expr(cond.left)
+-							// c.error('`$sym.name` is not an interface', cond.right.pos())
+ 						}
+ 						return .unknown
+ 					} else if cond.left is ast.TypeNode && cond.right is ast.ComptimeType {
+diff --git a/vlib/v/checker/if.v b/vlib/v/checker/if.v
+index def64bc89..50ec92492 100644
+--- a/vlib/v/checker/if.v
++++ b/vlib/v/checker/if.v
+@@ -100,7 +100,7 @@ fn (mut c Checker) if_expr(mut node ast.IfExpr) ast.Type {
+ 					is_comptime_type_is_expr = true
+ 				}
+ 			} else if mut branch.cond is ast.InfixExpr {
+-				if branch.cond.op == .key_is {
++				if branch.cond.op in [.not_is, .key_is] {
+ 					left := branch.cond.left
+ 					right := branch.cond.right
+ 					if right !in [ast.TypeNode, ast.ComptimeType] {
+@@ -163,7 +163,10 @@ fn (mut c Checker) if_expr(mut node ast.IfExpr) ast.Type {
+ 							skip_state = c.check_compatible_types(left_type, right as ast.TypeNode)
+ 						}
+ 					}
+-				} else if branch.cond.op in [.eq, .ne] {
++					if branch.cond.op == .not_is && skip_state != .unknown {
++						skip_state = if skip_state == .eval { .skip } else { .eval }
++					}
++				} else if branch.cond.op in [.eq, .ne, .gt, .lt, .ge, .le] {
+ 					left := branch.cond.left
+ 					right := branch.cond.right
+ 					if left is ast.SelectorExpr && right is ast.IntegerLiteral {

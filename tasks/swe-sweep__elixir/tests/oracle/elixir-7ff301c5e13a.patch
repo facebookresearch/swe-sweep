@@ -1,0 +1,13 @@
+diff --git a/lib/elixir/lib/path.ex b/lib/elixir/lib/path.ex
+index c123456..d789abc 100644
+--- a/lib/elixir/lib/path.ex
++++ b/lib/elixir/lib/path.ex
+@@ -355,7 +355,7 @@ defmodule Path do
+   def relative_to_cwd(path) do
+     case :file.get_cwd() do
+       {:ok, base} -> relative_to(path, IO.chardata_to_string(base))
+-      _ -> path
++      _ -> IO.chardata_to_string(path)
+     end
+   end
+ 

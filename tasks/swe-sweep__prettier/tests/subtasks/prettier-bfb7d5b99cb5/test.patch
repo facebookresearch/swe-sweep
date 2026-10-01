@@ -1,0 +1,161 @@
+diff --git a/tests/format/jsx/optional-chaining/__snapshots__/format.test.js.snap b/tests/format/jsx/optional-chaining/__snapshots__/format.test.js.snap
+index 959f68a90..770ab4b71 100644
+--- a/tests/format/jsx/optional-chaining/__snapshots__/format.test.js.snap
++++ b/tests/format/jsx/optional-chaining/__snapshots__/format.test.js.snap
+@@ -1,4 +1,4 @@
+-// Jest Snapshot v1, https://goo.gl/fbAQLP
++// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+ 
+ exports[`optional-chaining.jsx format 1`] = `
+ ====================================options=====================================
+@@ -18,6 +18,46 @@ function foo() {
+   )
+ }
+ 
++function Component( ) {
++  return (
++    <div>
++      {aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa?.bbbbbbbbbbbbbbbbbbbbbbbbb.map(
++        (p, i) => <p key={i}>{p}</p>
++      )}
++    </div>
++  );
++}
++
++function Component() {
++  return (
++    <div>
++      {aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa?.bbbbbbbbbbbbbbbbbbbbbbbbb().map(
++        (p, i) => <p key={i}>{p}</p>
++      )}
++    </div>
++  );
++}
++
++function Component() {
++  return (
++    <div>
++      {aaa?.aaa()?.aaa()?.map(
++        (p, i) => <p key={i}>{p}</p>
++      )}
++    </div>
++  );
++}
++
++function Component() {
++  return (
++    <div>
++      {aaa?.aaa?.()?.aaa?.()?.map?.(
++        (p, i) => <p key={i}>{p}</p>
++      )}
++    </div>
++  );
++}
++
+ =====================================output=====================================
+ function foo() {
+   // https://github.com/marmelab/react-admin/blob/5ae855aa958ba54438b144bf0907b1437c5a5d77/examples/demo/src/orders/Totals.tsx#L38-L43
+@@ -31,5 +71,55 @@ function foo() {
+   );
+ }
+ 
++function Component() {
++  return (
++    <div>
++      {aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa?.bbbbbbbbbbbbbbbbbbbbbbbbb.map(
++        (p, i) => (
++          <p key={i}>{p}</p>
++        ),
++      )}
++    </div>
++  );
++}
++
++function Component() {
++  return (
++    <div>
++      {aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
++        ?.bbbbbbbbbbbbbbbbbbbbbbbbb()
++        .map((p, i) => (
++          <p key={i}>{p}</p>
++        ))}
++    </div>
++  );
++}
++
++function Component() {
++  return (
++    <div>
++      {aaa
++        ?.aaa()
++        ?.aaa()
++        ?.map((p, i) => (
++          <p key={i}>{p}</p>
++        ))}
++    </div>
++  );
++}
++
++function Component() {
++  return (
++    <div>
++      {aaa
++        ?.aaa?.()
++        ?.aaa?.()
++        ?.map?.((p, i) => (
++          <p key={i}>{p}</p>
++        ))}
++    </div>
++  );
++}
++
+ ================================================================================
+ `;
+diff --git a/tests/format/jsx/optional-chaining/optional-chaining.jsx b/tests/format/jsx/optional-chaining/optional-chaining.jsx
+index 3d5ffd50a..6b59a8bc1 100644
+--- a/tests/format/jsx/optional-chaining/optional-chaining.jsx
++++ b/tests/format/jsx/optional-chaining/optional-chaining.jsx
+@@ -9,3 +9,43 @@ function foo() {
+       </TableCell>
+   )
+ }
++
++function Component( ) {
++  return (
++    <div>
++      {aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa?.bbbbbbbbbbbbbbbbbbbbbbbbb.map(
++        (p, i) => <p key={i}>{p}</p>
++      )}
++    </div>
++  );
++}
++
++function Component() {
++  return (
++    <div>
++      {aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa?.bbbbbbbbbbbbbbbbbbbbbbbbb().map(
++        (p, i) => <p key={i}>{p}</p>
++      )}
++    </div>
++  );
++}
++
++function Component() {
++  return (
++    <div>
++      {aaa?.aaa()?.aaa()?.map(
++        (p, i) => <p key={i}>{p}</p>
++      )}
++    </div>
++  );
++}
++
++function Component() {
++  return (
++    <div>
++      {aaa?.aaa?.()?.aaa?.()?.map?.(
++        (p, i) => <p key={i}>{p}</p>
++      )}
++    </div>
++  );
++}

@@ -1,0 +1,12 @@
+diff --git a/dolphinscheduler-master/src/main/java/org/apache/dolphinscheduler/server/master/runner/task/dynamic/DynamicCommandUtils.java b/dolphinscheduler-master/src/main/java/org/apache/dolphinscheduler/server/master/runner/task/dynamic/DynamicCommandUtils.java
+index e360a8857e..2401562f15 100644
+--- a/dolphinscheduler-master/src/main/java/org/apache/dolphinscheduler/server/master/runner/task/dynamic/DynamicCommandUtils.java
++++ b/dolphinscheduler-master/src/main/java/org/apache/dolphinscheduler/server/master/runner/task/dynamic/DynamicCommandUtils.java
+@@ -65,6 +65,7 @@ public class DynamicCommandUtils {
+         command.setProcessInstancePriority(processInstance.getProcessInstancePriority());
+         command.setWorkerGroup(processInstance.getWorkerGroup());
+         command.setDryRun(processInstance.getDryRun());
++        command.setTenantCode(processInstance.getTenantCode());
+         return command;
+     }
+ 

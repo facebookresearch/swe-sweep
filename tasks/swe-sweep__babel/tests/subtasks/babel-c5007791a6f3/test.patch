@@ -1,0 +1,15 @@
+diff --git a/packages/babel-parser/test/fixtures/experimental/numeric-separator/invalid-legacy-octal-literal/input.js b/packages/babel-parser/test/fixtures/experimental/numeric-separator/invalid-legacy-octal-literal/input.js
+new file mode 100644
+index 0000000000..909c1baacf
+--- /dev/null
++++ b/packages/babel-parser/test/fixtures/experimental/numeric-separator/invalid-legacy-octal-literal/input.js
+@@ -0,0 +1 @@
++00_0
+\ No newline at end of file
+diff --git a/packages/babel-parser/test/fixtures/experimental/numeric-separator/invalid-legacy-octal-literal/options.json b/packages/babel-parser/test/fixtures/experimental/numeric-separator/invalid-legacy-octal-literal/options.json
+new file mode 100644
+index 0000000000..5a4fb4525d
+--- /dev/null
++++ b/packages/babel-parser/test/fixtures/experimental/numeric-separator/invalid-legacy-octal-literal/options.json
+@@ -0,0 +1 @@
++{ "throws": "Numeric separator can not be used after leading 0 (1:2)" }

@@ -1,0 +1,40 @@
+diff --git a/lib/matplotlib/collections.py b/lib/matplotlib/collections.py
+index 25d339eaec..9db9a066fb 100644
+--- a/lib/matplotlib/collections.py
++++ b/lib/matplotlib/collections.py
+@@ -663,8 +663,16 @@ class Collection(artist.Artist, cm.ScalarMappable):
+         """
+         self._capstyle = CapStyle(cs)
+ 
++    @docstring.interpd
+     def get_capstyle(self):
+-        return self._capstyle.name
++        """
++        Return the cap style for the collection (for all its elements).
++
++        Returns
++        -------
++        %(CapStyle)s or None
++        """
++        return self._capstyle.name if self._capstyle else None
+ 
+     @docstring.interpd
+     def set_joinstyle(self, js):
+@@ -677,8 +685,16 @@ class Collection(artist.Artist, cm.ScalarMappable):
+         """
+         self._joinstyle = JoinStyle(js)
+ 
++    @docstring.interpd
+     def get_joinstyle(self):
+-        return self._joinstyle.name
++        """
++        Return the join style for the collection (for all its elements).
++
++        Returns
++        -------
++        %(JoinStyle)s or None
++        """
++        return self._joinstyle.name if self._joinstyle else None
+ 
+     @staticmethod
+     def _bcast_lwls(linewidths, dashes):

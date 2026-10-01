@@ -1,0 +1,34 @@
+diff --git a/crates/ruff_linter/resources/test/fixtures/pyflakes/F821_32.pyi b/crates/ruff_linter/resources/test/fixtures/pyflakes/F821_32.pyi
+new file mode 100644
+index 0000000000..d8d1280a47
+--- /dev/null
++++ b/crates/ruff_linter/resources/test/fixtures/pyflakes/F821_32.pyi
+@@ -0,0 +1,6 @@
++from typing import TypeVar
++
++# Forward references are okay for both `bound` and `default` in a stub file
++_P = TypeVar("_P", bound=X, default=X)
++
++class X: ...
+diff --git a/crates/ruff_linter/src/rules/pyflakes/mod.rs b/crates/ruff_linter/src/rules/pyflakes/mod.rs
+index 0e20e29246..a3fc5d81a7 100644
+--- a/crates/ruff_linter/src/rules/pyflakes/mod.rs
++++ b/crates/ruff_linter/src/rules/pyflakes/mod.rs
+@@ -161,6 +161,7 @@ mod tests {
+     #[test_case(Rule::UndefinedName, Path::new("F821_27.py"))]
+     #[test_case(Rule::UndefinedName, Path::new("F821_28.py"))]
+     #[test_case(Rule::UndefinedName, Path::new("F821_30.py"))]
++    #[test_case(Rule::UndefinedName, Path::new("F821_32.pyi"))]
+     #[test_case(Rule::UndefinedExport, Path::new("F822_0.py"))]
+     #[test_case(Rule::UndefinedExport, Path::new("F822_0.pyi"))]
+     #[test_case(Rule::UndefinedExport, Path::new("F822_1.py"))]
+diff --git a/crates/ruff_linter/src/rules/pyflakes/snapshots/ruff_linter__rules__pyflakes__tests__F821_F821_32.pyi.snap b/crates/ruff_linter/src/rules/pyflakes/snapshots/ruff_linter__rules__pyflakes__tests__F821_F821_32.pyi.snap
+new file mode 100644
+index 0000000000..d0b409f39e
+--- /dev/null
++++ b/crates/ruff_linter/src/rules/pyflakes/snapshots/ruff_linter__rules__pyflakes__tests__F821_F821_32.pyi.snap
+@@ -0,0 +1,4 @@
++---
++source: crates/ruff_linter/src/rules/pyflakes/mod.rs
++---
++

@@ -1,0 +1,62 @@
+diff --git a/extensions/oidc/runtime/src/main/java/io/quarkus/oidc/runtime/DefaultTokenIntrospectionUserInfoCache.java b/extensions/oidc/runtime/src/main/java/io/quarkus/oidc/runtime/DefaultTokenIntrospectionUserInfoCache.java
+index 214436d5e69..647bb0ab695 100644
+--- a/extensions/oidc/runtime/src/main/java/io/quarkus/oidc/runtime/DefaultTokenIntrospectionUserInfoCache.java
++++ b/extensions/oidc/runtime/src/main/java/io/quarkus/oidc/runtime/DefaultTokenIntrospectionUserInfoCache.java
+@@ -7,12 +7,15 @@ import java.util.concurrent.ConcurrentHashMap;
+ import java.util.concurrent.atomic.AtomicInteger;
+ import java.util.function.IntUnaryOperator;
+ 
++import org.jboss.logging.Logger;
++
+ import io.quarkus.oidc.OidcRequestContext;
+ import io.quarkus.oidc.OidcTenantConfig;
+ import io.quarkus.oidc.TokenIntrospection;
+ import io.quarkus.oidc.TokenIntrospectionCache;
+ import io.quarkus.oidc.UserInfo;
+ import io.quarkus.oidc.UserInfoCache;
++import io.quarkus.oidc.common.runtime.OidcConstants;
+ import io.quarkus.oidc.runtime.OidcConfig.TokenCache;
+ import io.smallrye.mutiny.Uni;
+ import io.vertx.core.Handler;
+@@ -28,6 +31,7 @@ import io.vertx.core.Vertx;
+  * which has been introspected which will be used to request UserInfo.
+  */
+ public class DefaultTokenIntrospectionUserInfoCache implements TokenIntrospectionCache, UserInfoCache {
++    private static final Logger LOG = Logger.getLogger(DefaultTokenIntrospectionUserInfoCache.class);
+     private static final Uni<TokenIntrospection> NULL_INTROSPECTION_UNI = Uni.createFrom().nullItem();
+     private static final Uni<UserInfo> NULL_USERINFO_UNI = Uni.createFrom().nullItem();
+ 
+@@ -44,7 +48,7 @@ public class DefaultTokenIntrospectionUserInfoCache implements TokenIntrospectio
+     private void init(Vertx vertx) {
+         if (cacheConfig.maxSize > 0) {
+             cacheMap = new ConcurrentHashMap<>();
+-            if (cacheConfig.cleanUpTimerInterval.isPresent()) {
++            if (vertx != null && cacheConfig.cleanUpTimerInterval.isPresent()) {
+                 vertx.setPeriodic(cacheConfig.cleanUpTimerInterval.get().toMillis(), new Handler<Long>() {
+                     @Override
+                     public void handle(Long event) {
+@@ -77,7 +81,23 @@ public class DefaultTokenIntrospectionUserInfoCache implements TokenIntrospectio
+     public Uni<TokenIntrospection> getIntrospection(String token, OidcTenantConfig oidcConfig,
+             OidcRequestContext<TokenIntrospection> requestContext) {
+         CacheEntry entry = findValidCacheEntry(token);
+-        return entry == null ? NULL_INTROSPECTION_UNI : Uni.createFrom().item(entry.introspection);
++        if (entry == null || entry.introspection == null) {
++            return NULL_INTROSPECTION_UNI;
++        }
++        if (isTokenExpired(entry.introspection.getLong(OidcConstants.INTROSPECTION_TOKEN_EXP), oidcConfig)) {
++            LOG.debug("Introspected token has expired, removing it from the token introspection cache");
++            cacheMap.remove(token);
++            size.decrementAndGet();
++            return NULL_INTROSPECTION_UNI;
++        }
++
++        return Uni.createFrom().item(entry.introspection);
++    }
++
++    private static boolean isTokenExpired(Long exp, OidcTenantConfig oidcConfig) {
++        final long lifespanGrace = oidcConfig != null ? oidcConfig.token.lifespanGrace.orElse(0) : 0;
++        return exp != null
++                && System.currentTimeMillis() / 1000 > (exp + lifespanGrace);
+     }
+ 
+     @Override

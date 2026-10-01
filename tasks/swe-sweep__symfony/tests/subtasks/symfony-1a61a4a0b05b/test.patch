@@ -1,0 +1,28 @@
+diff --git a/src/Symfony/Component/ErrorHandler/Tests/DebugClassLoaderTest.php b/src/Symfony/Component/ErrorHandler/Tests/DebugClassLoaderTest.php
+index ac08e698e27..b47e6c6807f 100644
+--- a/src/Symfony/Component/ErrorHandler/Tests/DebugClassLoaderTest.php
++++ b/src/Symfony/Component/ErrorHandler/Tests/DebugClassLoaderTest.php
+@@ -333,7 +333,7 @@ class DebugClassLoaderTest extends TestCase
+             'Class "Test\Symfony\Component\ErrorHandler\Tests\ExtendsVirtualParent" should implement method "Symfony\Component\ErrorHandler\Tests\Fixtures\VirtualInterface::invalidInterfaceMethod(): unknownType".',
+             'Class "Test\Symfony\Component\ErrorHandler\Tests\ExtendsVirtualParent" should implement method "Symfony\Component\ErrorHandler\Tests\Fixtures\VirtualInterface::invalidInterfaceMethodNoBraces(): unknownType|string".',
+             'Class "Test\Symfony\Component\ErrorHandler\Tests\ExtendsVirtualParent" should implement method "Symfony\Component\ErrorHandler\Tests\Fixtures\VirtualInterface::complexInterfaceMethod($arg, ...$args)".',
+-            'Class "Test\Symfony\Component\ErrorHandler\Tests\ExtendsVirtualParent" should implement method "Symfony\Component\ErrorHandler\Tests\Fixtures\VirtualInterface::complexInterfaceMethodTyped($arg, int ...$args): string[]|int": Description ...',
++            'Class "Test\Symfony\Component\ErrorHandler\Tests\ExtendsVirtualParent" should implement method "Symfony\Component\ErrorHandler\Tests\Fixtures\VirtualInterface::complexInterfaceMethodTyped($arg, int ...$args): array<string, int>|string[]|int": Description ...',
+             'Class "Test\Symfony\Component\ErrorHandler\Tests\ExtendsVirtualParent" should implement method "static Symfony\Component\ErrorHandler\Tests\Fixtures\VirtualInterface::staticMethodNoBraces(): mixed".',
+             'Class "Test\Symfony\Component\ErrorHandler\Tests\ExtendsVirtualParent" should implement method "static Symfony\Component\ErrorHandler\Tests\Fixtures\VirtualInterface::staticMethodTyped(int $arg): \stdClass": Description.',
+             'Class "Test\Symfony\Component\ErrorHandler\Tests\ExtendsVirtualParent" should implement method "static Symfony\Component\ErrorHandler\Tests\Fixtures\VirtualInterface::staticMethodTypedNoBraces(): \stdClass[]".',
+diff --git a/src/Symfony/Component/ErrorHandler/Tests/Fixtures/VirtualInterface.php b/src/Symfony/Component/ErrorHandler/Tests/Fixtures/VirtualInterface.php
+index 5c9136081fe..aef42fa20e6 100644
+--- a/src/Symfony/Component/ErrorHandler/Tests/Fixtures/VirtualInterface.php
++++ b/src/Symfony/Component/ErrorHandler/Tests/Fixtures/VirtualInterface.php
+@@ -21,8 +21,8 @@ namespace Symfony\Component\ErrorHandler\Tests\Fixtures;
+  * @method unknownType|string invalidInterfaceMethodNoBraces
+  *
+  * Complex
+- * @method              complexInterfaceMethod($arg, ...$args)
+- * @method string[]|int complexInterfaceMethodTyped($arg, int ...$args) Description ...
++ * @method                                 complexInterfaceMethod($arg, ...$args)
++ * @method array<string, int>|string[]|int complexInterfaceMethodTyped($arg, int ...$args) Description ...
+  *
+  * Static
+  * @method static Foo&Bar staticMethod()

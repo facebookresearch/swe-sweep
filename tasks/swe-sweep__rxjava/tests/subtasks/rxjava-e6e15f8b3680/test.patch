@@ -1,0 +1,48 @@
+diff --git a/src/test/java/io/reactivex/internal/operators/flowable/FlowableSwitchTest.java b/src/test/java/io/reactivex/internal/operators/flowable/FlowableSwitchTest.java
+index 2bb5a0580..9f200e3c5 100644
+--- a/src/test/java/io/reactivex/internal/operators/flowable/FlowableSwitchTest.java
++++ b/src/test/java/io/reactivex/internal/operators/flowable/FlowableSwitchTest.java
+@@ -1202,4 +1202,19 @@
+         .assertNoErrors()
+         .assertComplete();
+     }
++
++    @Test
++    public void innerOnSubscribeOuterCancelRace() {
++        TestSubscriber<Integer> ts = new TestSubscriber<Integer>();
++
++        Flowable.just(1)
++        .hide()
++        .switchMap(v -> Flowable.just(1)
++                .doOnSubscribe(d -> ts.cancel())
++                .scan(1, (a, b) -> a)
++        )
++        .subscribe(ts);
++
++        ts.assertEmpty();
++    }
+ }
+diff --git a/src/test/java/io/reactivex/internal/operators/observable/ObservableSwitchTest.java b/src/test/java/io/reactivex/internal/operators/observable/ObservableSwitchTest.java
+index ffa4049a4..72e6c93bb 100644
+--- a/src/test/java/io/reactivex/internal/operators/observable/ObservableSwitchTest.java
++++ b/src/test/java/io/reactivex/internal/operators/observable/ObservableSwitchTest.java
+@@ -1192,4 +1192,19 @@
+         .assertNoErrors()
+         .assertComplete();
+     }
++
++    @Test
++    public void innerOnSubscribeOuterCancelRace() {
++        TestObserver<Integer> to = new TestObserver<Integer>();
++
++        Observable.just(1)
++        .hide()
++        .switchMap(v -> Observable.just(1)
++                .doOnSubscribe(d -> to.dispose())
++                .scan(1, (a, b) -> a)
++        )
++        .subscribe(to);
++
++        to.assertEmpty();
++    }
+ }

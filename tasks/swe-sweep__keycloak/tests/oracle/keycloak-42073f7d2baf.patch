@@ -1,0 +1,35 @@
+diff --git a/services/src/main/java/org/keycloak/services/error/KeycloakErrorHandler.java b/services/src/main/java/org/keycloak/services/error/KeycloakErrorHandler.java
+index 655d4ff..6f37682 100644
+--- a/services/src/main/java/org/keycloak/services/error/KeycloakErrorHandler.java
++++ b/services/src/main/java/org/keycloak/services/error/KeycloakErrorHandler.java
+@@ -20,6 +20,7 @@ import org.keycloak.representations.idm.OAuth2ErrorRepresentation;
+ import org.keycloak.services.managers.RealmManager;
+ import org.keycloak.services.messages.Messages;
+ import org.keycloak.theme.Theme;
++import org.keycloak.theme.beans.AdvancedMessageFormatterMethod;
+ import org.keycloak.theme.beans.LocaleBean;
+ import org.keycloak.theme.beans.MessageBean;
+ import org.keycloak.theme.beans.MessageFormatterMethod;
+@@ -174,7 +175,7 @@ public class KeycloakErrorHandler implements ExceptionMapper<Throwable> {
+ 
+     private static Map<String, Object> initAttributes(KeycloakSession session, RealmModel realm, Theme theme, Locale locale, int statusCode) throws IOException {
+         Map<String, Object> attributes = new HashMap<>();
+-        Properties messagesBundle = theme.getMessages(locale);
++        Properties messagesBundle = theme.getEnhancedMessages(realm, locale);
+ 
+         attributes.put("statusCode", statusCode);
+ 
+@@ -188,11 +189,8 @@ public class KeycloakErrorHandler implements ExceptionMapper<Throwable> {
+ 
+         attributes.put("message", new MessageBean(errorMessage, MessageType.ERROR));
+ 
+-        try {
+-            attributes.put("msg", new MessageFormatterMethod(locale, theme.getMessages(locale)));
+-        } catch (IOException e) {
+-            e.printStackTrace();
+-        }
++        attributes.put("msg", new MessageFormatterMethod(locale, messagesBundle));
++        attributes.put("advancedMsg", new AdvancedMessageFormatterMethod(locale, messagesBundle));
+ 
+         try {
+             attributes.put("properties", theme.getProperties());

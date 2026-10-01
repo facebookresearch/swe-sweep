@@ -1,0 +1,12 @@
+diff --git a/lib/matplotlib/image.py b/lib/matplotlib/image.py
+index 5b01525053..2e13293028 100644
+--- a/lib/matplotlib/image.py
++++ b/lib/matplotlib/image.py
+@@ -1583,6 +1583,7 @@ def imsave(fname, arr, vmin=None, vmax=None, cmap=None, format=None,
+         if pil_kwargs is None:
+             pil_kwargs = {}
+         pil_shape = (rgba.shape[1], rgba.shape[0])
++        rgba = np.require(rgba, requirements='C')
+         image = PIL.Image.frombuffer(
+             "RGBA", pil_shape, rgba, "raw", "RGBA", 0, 1)
+         if format == "png":

@@ -1,0 +1,585 @@
+diff --git a/packages/babel-parser/test/fixtures/core/object/member-expression-after-property-initializer-1/input.js b/packages/babel-parser/test/fixtures/core/object/member-expression-after-property-initializer-1/input.js
+new file mode 100644
+index 0000000000..c6beddd4d7
+--- /dev/null
++++ b/packages/babel-parser/test/fixtures/core/object/member-expression-after-property-initializer-1/input.js
+@@ -0,0 +1 @@
++({a = 42, b: test.d} = {})
+\ No newline at end of file
+diff --git a/packages/babel-parser/test/fixtures/core/object/member-expression-after-property-initializer-1/output.json b/packages/babel-parser/test/fixtures/core/object/member-expression-after-property-initializer-1/output.json
+new file mode 100644
+index 0000000000..6f4e90ee1d
+--- /dev/null
++++ b/packages/babel-parser/test/fixtures/core/object/member-expression-after-property-initializer-1/output.json
+@@ -0,0 +1,278 @@
++{
++  "type": "File",
++  "start": 0,
++  "end": 26,
++  "loc": {
++    "start": {
++      "line": 1,
++      "column": 0
++    },
++    "end": {
++      "line": 1,
++      "column": 26
++    }
++  },
++  "program": {
++    "type": "Program",
++    "start": 0,
++    "end": 26,
++    "loc": {
++      "start": {
++        "line": 1,
++        "column": 0
++      },
++      "end": {
++        "line": 1,
++        "column": 26
++      }
++    },
++    "sourceType": "script",
++    "interpreter": null,
++    "body": [
++      {
++        "type": "ExpressionStatement",
++        "start": 0,
++        "end": 26,
++        "loc": {
++          "start": {
++            "line": 1,
++            "column": 0
++          },
++          "end": {
++            "line": 1,
++            "column": 26
++          }
++        },
++        "expression": {
++          "type": "AssignmentExpression",
++          "start": 1,
++          "end": 25,
++          "loc": {
++            "start": {
++              "line": 1,
++              "column": 1
++            },
++            "end": {
++              "line": 1,
++              "column": 25
++            }
++          },
++          "operator": "=",
++          "left": {
++            "type": "ObjectPattern",
++            "start": 1,
++            "end": 20,
++            "loc": {
++              "start": {
++                "line": 1,
++                "column": 1
++              },
++              "end": {
++                "line": 1,
++                "column": 20
++              }
++            },
++            "properties": [
++              {
++                "type": "ObjectProperty",
++                "start": 2,
++                "end": 8,
++                "loc": {
++                  "start": {
++                    "line": 1,
++                    "column": 2
++                  },
++                  "end": {
++                    "line": 1,
++                    "column": 8
++                  }
++                },
++                "method": false,
++                "key": {
++                  "type": "Identifier",
++                  "start": 2,
++                  "end": 3,
++                  "loc": {
++                    "start": {
++                      "line": 1,
++                      "column": 2
++                    },
++                    "end": {
++                      "line": 1,
++                      "column": 3
++                    },
++                    "identifierName": "a"
++                  },
++                  "name": "a"
++                },
++                "computed": false,
++                "shorthand": true,
++                "value": {
++                  "type": "AssignmentPattern",
++                  "start": 2,
++                  "end": 8,
++                  "loc": {
++                    "start": {
++                      "line": 1,
++                      "column": 2
++                    },
++                    "end": {
++                      "line": 1,
++                      "column": 8
++                    }
++                  },
++                  "left": {
++                    "type": "Identifier",
++                    "start": 2,
++                    "end": 3,
++                    "loc": {
++                      "start": {
++                        "line": 1,
++                        "column": 2
++                      },
++                      "end": {
++                        "line": 1,
++                        "column": 3
++                      },
++                      "identifierName": "a"
++                    },
++                    "name": "a"
++                  },
++                  "right": {
++                    "type": "NumericLiteral",
++                    "start": 6,
++                    "end": 8,
++                    "loc": {
++                      "start": {
++                        "line": 1,
++                        "column": 6
++                      },
++                      "end": {
++                        "line": 1,
++                        "column": 8
++                      }
++                    },
++                    "extra": {
++                      "rawValue": 42,
++                      "raw": "42"
++                    },
++                    "value": 42
++                  }
++                },
++                "extra": {
++                  "shorthand": true
++                }
++              },
++              {
++                "type": "ObjectProperty",
++                "start": 10,
++                "end": 19,
++                "loc": {
++                  "start": {
++                    "line": 1,
++                    "column": 10
++                  },
++                  "end": {
++                    "line": 1,
++                    "column": 19
++                  }
++                },
++                "method": false,
++                "key": {
++                  "type": "Identifier",
++                  "start": 10,
++                  "end": 11,
++                  "loc": {
++                    "start": {
++                      "line": 1,
++                      "column": 10
++                    },
++                    "end": {
++                      "line": 1,
++                      "column": 11
++                    },
++                    "identifierName": "b"
++                  },
++                  "name": "b"
++                },
++                "computed": false,
++                "shorthand": false,
++                "value": {
++                  "type": "MemberExpression",
++                  "start": 13,
++                  "end": 19,
++                  "loc": {
++                    "start": {
++                      "line": 1,
++                      "column": 13
++                    },
++                    "end": {
++                      "line": 1,
++                      "column": 19
++                    }
++                  },
++                  "object": {
++                    "type": "Identifier",
++                    "start": 13,
++                    "end": 17,
++                    "loc": {
++                      "start": {
++                        "line": 1,
++                        "column": 13
++                      },
++                      "end": {
++                        "line": 1,
++                        "column": 17
++                      },
++                      "identifierName": "test"
++                    },
++                    "name": "test"
++                  },
++                  "property": {
++                    "type": "Identifier",
++                    "start": 18,
++                    "end": 19,
++                    "loc": {
++                      "start": {
++                        "line": 1,
++                        "column": 18
++                      },
++                      "end": {
++                        "line": 1,
++                        "column": 19
++                      },
++                      "identifierName": "d"
++                    },
++                    "name": "d"
++                  },
++                  "computed": false
++                }
++              }
++            ]
++          },
++          "right": {
++            "type": "ObjectExpression",
++            "start": 23,
++            "end": 25,
++            "loc": {
++              "start": {
++                "line": 1,
++                "column": 23
++              },
++              "end": {
++                "line": 1,
++                "column": 25
++              }
++            },
++            "properties": []
++          },
++          "extra": {
++            "parenthesized": true,
++            "parenStart": 0
++          }
++        }
++      }
++    ],
++    "directives": []
++  }
++}
+\ No newline at end of file
+diff --git a/packages/babel-parser/test/fixtures/core/object/member-expression-after-property-initializer-2/input.js b/packages/babel-parser/test/fixtures/core/object/member-expression-after-property-initializer-2/input.js
+new file mode 100644
+index 0000000000..e02e09a0f5
+--- /dev/null
++++ b/packages/babel-parser/test/fixtures/core/object/member-expression-after-property-initializer-2/input.js
+@@ -0,0 +1 @@
++({a = 42, b: {}.d} = {})
+\ No newline at end of file
+diff --git a/packages/babel-parser/test/fixtures/core/object/member-expression-after-property-initializer-2/output.json b/packages/babel-parser/test/fixtures/core/object/member-expression-after-property-initializer-2/output.json
+new file mode 100644
+index 0000000000..9da6d1356b
+--- /dev/null
++++ b/packages/babel-parser/test/fixtures/core/object/member-expression-after-property-initializer-2/output.json
+@@ -0,0 +1,277 @@
++{
++  "type": "File",
++  "start": 0,
++  "end": 24,
++  "loc": {
++    "start": {
++      "line": 1,
++      "column": 0
++    },
++    "end": {
++      "line": 1,
++      "column": 24
++    }
++  },
++  "program": {
++    "type": "Program",
++    "start": 0,
++    "end": 24,
++    "loc": {
++      "start": {
++        "line": 1,
++        "column": 0
++      },
++      "end": {
++        "line": 1,
++        "column": 24
++      }
++    },
++    "sourceType": "script",
++    "interpreter": null,
++    "body": [
++      {
++        "type": "ExpressionStatement",
++        "start": 0,
++        "end": 24,
++        "loc": {
++          "start": {
++            "line": 1,
++            "column": 0
++          },
++          "end": {
++            "line": 1,
++            "column": 24
++          }
++        },
++        "expression": {
++          "type": "AssignmentExpression",
++          "start": 1,
++          "end": 23,
++          "loc": {
++            "start": {
++              "line": 1,
++              "column": 1
++            },
++            "end": {
++              "line": 1,
++              "column": 23
++            }
++          },
++          "operator": "=",
++          "left": {
++            "type": "ObjectPattern",
++            "start": 1,
++            "end": 18,
++            "loc": {
++              "start": {
++                "line": 1,
++                "column": 1
++              },
++              "end": {
++                "line": 1,
++                "column": 18
++              }
++            },
++            "properties": [
++              {
++                "type": "ObjectProperty",
++                "start": 2,
++                "end": 8,
++                "loc": {
++                  "start": {
++                    "line": 1,
++                    "column": 2
++                  },
++                  "end": {
++                    "line": 1,
++                    "column": 8
++                  }
++                },
++                "method": false,
++                "key": {
++                  "type": "Identifier",
++                  "start": 2,
++                  "end": 3,
++                  "loc": {
++                    "start": {
++                      "line": 1,
++                      "column": 2
++                    },
++                    "end": {
++                      "line": 1,
++                      "column": 3
++                    },
++                    "identifierName": "a"
++                  },
++                  "name": "a"
++                },
++                "computed": false,
++                "shorthand": true,
++                "value": {
++                  "type": "AssignmentPattern",
++                  "start": 2,
++                  "end": 8,
++                  "loc": {
++                    "start": {
++                      "line": 1,
++                      "column": 2
++                    },
++                    "end": {
++                      "line": 1,
++                      "column": 8
++                    }
++                  },
++                  "left": {
++                    "type": "Identifier",
++                    "start": 2,
++                    "end": 3,
++                    "loc": {
++                      "start": {
++                        "line": 1,
++                        "column": 2
++                      },
++                      "end": {
++                        "line": 1,
++                        "column": 3
++                      },
++                      "identifierName": "a"
++                    },
++                    "name": "a"
++                  },
++                  "right": {
++                    "type": "NumericLiteral",
++                    "start": 6,
++                    "end": 8,
++                    "loc": {
++                      "start": {
++                        "line": 1,
++                        "column": 6
++                      },
++                      "end": {
++                        "line": 1,
++                        "column": 8
++                      }
++                    },
++                    "extra": {
++                      "rawValue": 42,
++                      "raw": "42"
++                    },
++                    "value": 42
++                  }
++                },
++                "extra": {
++                  "shorthand": true
++                }
++              },
++              {
++                "type": "ObjectProperty",
++                "start": 10,
++                "end": 17,
++                "loc": {
++                  "start": {
++                    "line": 1,
++                    "column": 10
++                  },
++                  "end": {
++                    "line": 1,
++                    "column": 17
++                  }
++                },
++                "method": false,
++                "key": {
++                  "type": "Identifier",
++                  "start": 10,
++                  "end": 11,
++                  "loc": {
++                    "start": {
++                      "line": 1,
++                      "column": 10
++                    },
++                    "end": {
++                      "line": 1,
++                      "column": 11
++                    },
++                    "identifierName": "b"
++                  },
++                  "name": "b"
++                },
++                "computed": false,
++                "shorthand": false,
++                "value": {
++                  "type": "MemberExpression",
++                  "start": 13,
++                  "end": 17,
++                  "loc": {
++                    "start": {
++                      "line": 1,
++                      "column": 13
++                    },
++                    "end": {
++                      "line": 1,
++                      "column": 17
++                    }
++                  },
++                  "object": {
++                    "type": "ObjectExpression",
++                    "start": 13,
++                    "end": 15,
++                    "loc": {
++                      "start": {
++                        "line": 1,
++                        "column": 13
++                      },
++                      "end": {
++                        "line": 1,
++                        "column": 15
++                      }
++                    },
++                    "properties": []
++                  },
++                  "property": {
++                    "type": "Identifier",
++                    "start": 16,
++                    "end": 17,
++                    "loc": {
++                      "start": {
++                        "line": 1,
++                        "column": 16
++                      },
++                      "end": {
++                        "line": 1,
++                        "column": 17
++                      },
++                      "identifierName": "d"
++                    },
++                    "name": "d"
++                  },
++                  "computed": false
++                }
++              }
++            ]
++          },
++          "right": {
++            "type": "ObjectExpression",
++            "start": 21,
++            "end": 23,
++            "loc": {
++              "start": {
++                "line": 1,
++                "column": 21
++              },
++              "end": {
++                "line": 1,
++                "column": 23
++              }
++            },
++            "properties": []
++          },
++          "extra": {
++            "parenthesized": true,
++            "parenStart": 0
++          }
++        }
++      }
++    ],
++    "directives": []
++  }
++}
+\ No newline at end of file

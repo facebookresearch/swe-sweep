@@ -1,0 +1,19 @@
+diff --git a/handler/src/main/java/io/netty/handler/ssl/SslHandler.java b/handler/src/main/java/io/netty/handler/ssl/SslHandler.java
+index 0825f9f5e6..593ceb870e 100644
+--- a/handler/src/main/java/io/netty/handler/ssl/SslHandler.java
++++ b/handler/src/main/java/io/netty/handler/ssl/SslHandler.java
+@@ -1157,9 +1157,11 @@ public class SslHandler extends ByteToMessageDecoder implements ChannelOutboundH
+         this.packetLength = 0;
+         try {
+             int bytesConsumed = unwrap(ctx, in, in.readerIndex(), packetLength);
+-            assert bytesConsumed == packetLength || engine.isInboundDone() :
+-                    "we feed the SSLEngine a packets worth of data: " + packetLength + " but it only consumed: " +
+-                            bytesConsumed;
++            if (bytesConsumed != packetLength && !engine.isInboundDone()) {
++                // The JDK equivalent of getEncryptedPacketLength has some optimizations and can behave slightly
++                // differently to ours, but this should always be a sign of bad input data.
++                throw new NotSslRecordException();
++            }
+             in.skipBytes(bytesConsumed);
+         } catch (Throwable cause) {
+             handleUnwrapThrowable(ctx, cause);

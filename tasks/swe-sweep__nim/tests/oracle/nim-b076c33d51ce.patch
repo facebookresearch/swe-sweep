@@ -1,0 +1,26 @@
+diff --git a/compiler/semfold.nim b/compiler/semfold.nim
+index 9b21c5fa3..f38359a64 100644
+--- a/compiler/semfold.nim
++++ b/compiler/semfold.nim
+@@ -674,7 +674,7 @@ proc getConstExpr(m: PSym, n: PNode; idgen: IdGenerator; g: ModuleGraph): PNode
+   of nkCast:
+     var a = getConstExpr(m, n[1], idgen, g)
+     if a == nil: return
+-    if n.typ != nil and n.typ.kind in NilableTypes:
++    if n.typ != nil and n.typ.kind in NilableTypes and a.kind != nkNilLit:
+       # we allow compile-time 'cast' for pointer types:
+       result = a
+       result.typ = n.typ
+diff --git a/lib/posix/posix_linux_amd64_consts.nim b/lib/posix/posix_linux_amd64_consts.nim
+index f3230f71d..917c1f966 100644
+--- a/lib/posix/posix_linux_amd64_consts.nim
++++ b/lib/posix/posix_linux_amd64_consts.nim
+@@ -365,7 +365,7 @@ const SCHED_RR* = cint(2)
+ const SCHED_OTHER* = cint(0)
+ 
+ # <semaphore.h>
+-const SEM_FAILED* = cast[pointer]((nil))
++const SEM_FAILED* = nil
+ 
+ # <signal.h>
+ const SIGEV_NONE* = cint(1)

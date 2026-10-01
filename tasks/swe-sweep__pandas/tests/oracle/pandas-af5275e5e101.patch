@@ -1,0 +1,19 @@
+diff --git a/pandas/core/reshape/pivot.py b/pandas/core/reshape/pivot.py
+index fc6db78320..069f0e5003 100644
+--- a/pandas/core/reshape/pivot.py
++++ b/pandas/core/reshape/pivot.py
+@@ -495,7 +495,13 @@ def pivot(
+         )
+     else:
+         if index is None:
+-            index_list = [Series(data.index, name=data.index.name)]
++            if isinstance(data.index, MultiIndex):
++                # GH 23955
++                index_list = [
++                    data.index.get_level_values(i) for i in range(data.index.nlevels)
++                ]
++            else:
++                index_list = [Series(data.index, name=data.index.name)]
+         else:
+             index_list = [data[idx] for idx in com.convert_to_list_like(index)]
+ 

@@ -1,0 +1,60 @@
+diff --git a/test/app-luatest/gh_5064_console_ignore_i_flag_without_tty_test.lua b/test/app-luatest/gh_5064_console_ignore_i_flag_without_tty_test.lua
+new file mode 100644
+index 0000000000..c578d28699
+--- /dev/null
++++ b/test/app-luatest/gh_5064_console_ignore_i_flag_without_tty_test.lua
+@@ -0,0 +1,22 @@
++local t = require('luatest')
++local g = t.group()
++
++local result_str =  [[tarantool> 42
++---
++- 42
++...
++
++tarantool> ]]
++
++local TARANTOOL_PATH = arg[-1]
++
++g.test_console_ignores_i_flag_without_tty = function()
++    local cmd = [[printf '42\n' | ]] .. TARANTOOL_PATH .. [[ -i 2>/dev/null]]
++    local fh = io.popen(cmd, 'r')
++
++    -- Readline on CentOS 7 produces \e[?1034h escape sequence before tarantool> prompt, remove it.
++    local result = fh:read('*a'):gsub('\x1b%[%?1034h', '')
++
++    fh:close()
++    t.assert_equals(result, result_str)
++end
+diff --git a/test/box/gh-4703-on_shutdown-bug.result b/test/box/gh-4703-on_shutdown-bug.result
+index 7c1aae2ba5..75118373f9 100644
+--- a/test/box/gh-4703-on_shutdown-bug.result
++++ b/test/box/gh-4703-on_shutdown-bug.result
+@@ -20,9 +20,10 @@ test_run:cmd("setopt delimiter ';'");
+  | ---
+  | - true
+  | ...
++-- Extra \n is required on openSUSE.
+ on_shutdown_cmd = "box.ctl.on_shutdown(function() local fio = require('fio') "..
+                    "fio.open('"..file_name.."', "..
+-                   "{'O_CREAT', 'O_TRUNC', 'O_WRONLY'}, 777):close() end)";
++                   "{'O_CREAT', 'O_TRUNC', 'O_WRONLY'}, 777):close() end)\n";
+  | ---
+  | ...
+ test_run:cmd("setopt delimiter ''");
+diff --git a/test/box/gh-4703-on_shutdown-bug.test.lua b/test/box/gh-4703-on_shutdown-bug.test.lua
+index 2b15277dbf..e06ef7a5eb 100755
+--- a/test/box/gh-4703-on_shutdown-bug.test.lua
++++ b/test/box/gh-4703-on_shutdown-bug.test.lua
+@@ -8,9 +8,10 @@ test_run = env.new()
+ --
+ file_name = "on_shutdown_triggered.txt"
+ test_run:cmd("setopt delimiter ';'");
++-- Extra \n is required on openSUSE.
+ on_shutdown_cmd = "box.ctl.on_shutdown(function() local fio = require('fio') "..
+                    "fio.open('"..file_name.."', "..
+-                   "{'O_CREAT', 'O_TRUNC', 'O_WRONLY'}, 777):close() end)";
++                   "{'O_CREAT', 'O_TRUNC', 'O_WRONLY'}, 777):close() end)\n";
+ test_run:cmd("setopt delimiter ''");
+ server = io.popen('tarantool -i', 'w')
+ server:write(on_shutdown_cmd)

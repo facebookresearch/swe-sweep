@@ -1,0 +1,76 @@
+diff --git a/test/sql/tpcds/dsdgen_readonly.test b/test/sql/tpcds/dsdgen_readonly.test
+new file mode 100644
+index 0000000000..ec0c448d8e
+--- /dev/null
++++ b/test/sql/tpcds/dsdgen_readonly.test
+@@ -0,0 +1,32 @@
++# name: test/sql/tpcds/dsdgen_readonly.test
++# description: Test that dsdgen respects read-only mode
++# group: [tpcds]
++
++require tpcds
++
++require skip_reload
++
++load __TEST_DIR__/test_dsdgen_ro.db
++
++statement ok
++CREATE TABLE tbl (i INTEGER);
++
++load __TEST_DIR__/test_dsdgen_ro.db readonly
++
++statement error
++CALL dsdgen(sf=0);
++----
++read-only
++
++load
++
++statement ok
++ATTACH '__TEST_DIR__/test_dsdgen_ro.db' AS dsdgentest (READ_ONLY)
++
++statement error
++CALL dsdgen(sf=0, catalog='dsdgentest');
++----
++read-only
++
++statement ok
++CALL dsdgen(sf=0);
+diff --git a/test/sql/tpch/dbgen_readonly.test b/test/sql/tpch/dbgen_readonly.test
+new file mode 100644
+index 0000000000..33cdb551c6
+--- /dev/null
++++ b/test/sql/tpch/dbgen_readonly.test
+@@ -0,0 +1,32 @@
++# name: test/sql/tpch/dbgen_readonly.test
++# description: Test that dbgen respects read-only mode
++# group: [tpch]
++
++require tpch
++
++require skip_reload
++
++load __TEST_DIR__/test_dbgen_ro.db
++
++statement ok
++CREATE TABLE tbl (i INTEGER);
++
++load __TEST_DIR__/test_dbgen_ro.db readonly
++
++statement error
++CALL dbgen(sf=0);
++----
++read-only
++
++load
++
++statement ok
++ATTACH '__TEST_DIR__/test_dbgen_ro.db' AS dbgentest (READ_ONLY)
++
++statement error
++CALL dbgen(sf=0, catalog='dbgentest');
++----
++read-only
++
++statement ok
++CALL dbgen(sf=0);

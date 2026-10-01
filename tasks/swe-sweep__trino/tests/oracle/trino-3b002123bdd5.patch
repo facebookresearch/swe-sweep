@@ -1,0 +1,22 @@
+diff --git a/core/trino-parser/src/main/java/io/trino/sql/SqlFormatter.java b/core/trino-parser/src/main/java/io/trino/sql/SqlFormatter.java
+index 9739346d85e..f4271da6fcc 100644
+--- a/core/trino-parser/src/main/java/io/trino/sql/SqlFormatter.java
++++ b/core/trino-parser/src/main/java/io/trino/sql/SqlFormatter.java
+@@ -1452,7 +1452,7 @@ public final class SqlFormatter
+         public Void visitSetSession(SetSession node, Integer context)
+         {
+             builder.append("SET SESSION ")
+-                    .append(node.getName())
++                    .append(formatName(node.getName()))
+                     .append(" = ")
+                     .append(formatExpression(node.getValue()));
+ 
+@@ -1463,7 +1463,7 @@ public final class SqlFormatter
+         public Void visitResetSession(ResetSession node, Integer context)
+         {
+             builder.append("RESET SESSION ")
+-                    .append(node.getName());
++                    .append(formatName(node.getName()));
+ 
+             return null;
+         }

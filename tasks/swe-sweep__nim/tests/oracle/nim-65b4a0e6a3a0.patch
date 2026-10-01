@@ -1,0 +1,16 @@
+diff --git a/lib/system/excpt.nim b/lib/system/excpt.nim
+index 5b7d4d49f..72225cf96 100644
+--- a/lib/system/excpt.nim
++++ b/lib/system/excpt.nim
+@@ -135,8 +135,9 @@ proc pushCurrentException(e: sink(ref Exception)) {.compilerRtl, inl.} =
+   #showErrorMessage2 "A"
+ 
+ proc popCurrentException {.compilerRtl, inl.} =
+-  currException = currException.up
+-  #showErrorMessage2 "B"
++  if currException != nil:
++    currException = currException.up
++    #showErrorMessage2 "B"
+ 
+ proc popCurrentExceptionEx(id: uint) {.compilerRtl.} =
+   discard "only for bootstrapping compatbility"

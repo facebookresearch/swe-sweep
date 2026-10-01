@@ -1,0 +1,22 @@
+diff --git a/scipy/io/idl.py b/scipy/io/idl.py
+index d41cb35ef6..35ab33bc55 100644
+--- a/scipy/io/idl.py
++++ b/scipy/io/idl.py
+@@ -378,7 +378,7 @@ def _read_record(f):
+         record['os'] = _read_string(f)
+         record['release'] = _read_string(f)
+ 
+-    elif record['rectype'] == "IDENTIFICATON":
++    elif record['rectype'] == "IDENTIFICATION":
+ 
+         record['author'] = _read_string(f)
+         record['title'] = _read_string(f)
+@@ -834,7 +834,7 @@ def readsav(file_name, idict=None, python_dict=False,
+ 
+         # Print out identification info about the file
+         for record in records:
+-            if record['rectype'] == "IDENTIFICATON":
++            if record['rectype'] == "IDENTIFICATION":
+                 print("-"*50)
+                 print("Author: %s" % record['author'])
+                 print("Title: %s" % record['title'])

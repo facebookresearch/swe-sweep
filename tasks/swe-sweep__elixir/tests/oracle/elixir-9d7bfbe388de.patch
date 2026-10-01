@@ -1,0 +1,13 @@
+diff --git a/lib/elixir/lib/calendar/date_range.ex b/lib/elixir/lib/calendar/date_range.ex
+index 9914c1438..553c50c80 100644
+--- a/lib/elixir/lib/calendar/date_range.ex
++++ b/lib/elixir/lib/calendar/date_range.ex
+@@ -88,7 +88,7 @@ defmodule Date.Range do
+             step: step
+           } = range
+         ) do
+-      {:ok, size(range), &slice(first + &1 * step, step + &3 - 1, &2, calendar)}
++      {:ok, size(range), &slice(first + &1 * step, step * &3, &2, calendar)}
+     end
+ 
+     # TODO: Remove me on v2.0

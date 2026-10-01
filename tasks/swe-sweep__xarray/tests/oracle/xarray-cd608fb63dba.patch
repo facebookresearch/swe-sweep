@@ -1,0 +1,13 @@
+diff --git a/xarray/backends/zarr.py b/xarray/backends/zarr.py
+index 5c3d5781..5ff1cf58 100644
+--- a/xarray/backends/zarr.py
++++ b/xarray/backends/zarr.py
+@@ -338,7 +338,7 @@ class ZarrStore(AbstractWritableDataStore):
+         )
+         open_kwargs["storage_options"] = storage_options
+ 
+-        if chunk_store:
++        if chunk_store is not None:
+             open_kwargs["chunk_store"] = chunk_store
+             if consolidated is None:
+                 consolidated = False

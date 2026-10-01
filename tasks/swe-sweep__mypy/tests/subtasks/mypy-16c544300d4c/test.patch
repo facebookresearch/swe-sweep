@@ -1,0 +1,20 @@
+diff --git a/test-data/unit/check-typevar-tuple.test b/test-data/unit/check-typevar-tuple.test
+index f6d9de8b0..0b7f8fe06 100644
+--- a/test-data/unit/check-typevar-tuple.test
++++ b/test-data/unit/check-typevar-tuple.test
+@@ -2487,3 +2487,15 @@
+ c: C[int, str]  # E: Can only replace ParamSpec with a parameter types list or another ParamSpec, got "int"
+ reveal_type(c.fn)  # N: Revealed type is "def (*Any, **Any)"
+ [builtins fixtures/tuple.pyi]
++
++[case testTypeVarTupleLiteralValueAsTypeArgument]
++from typing import TypeVarTuple, Unpack, Callable, TypeVar
++
++Ts = TypeVarTuple('Ts')
++T = TypeVar('T')
++
++def func(d: Callable[[Unpack[Ts]], T]) -> T: ...
++
++y = func[1, int] # E: Type application is only supported for generic classes \
++                 # E: Invalid type: try using Literal[1] instead?
++[builtins fixtures/tuple.pyi]

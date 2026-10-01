@@ -1,0 +1,18 @@
+diff --git a/tests/FSharp.Compiler.Service.Tests/Symbols.fs b/tests/FSharp.Compiler.Service.Tests/Symbols.fs
+--- a/tests/FSharp.Compiler.Service.Tests/Symbols.fs
++++ b/tests/FSharp.Compiler.Service.Tests/Symbols.fs
+@@ -1272,2 +1272,14 @@
+ 
+         Assert.False hasPropertySymbols
++
++    [<Fact>]
++    let ``CLIEvent 01 - Synthetic range`` () =
++        let _, checkResults = getParseAndCheckResults """
++type T() =
++    [<CLIEvent>]
++    member this.Event = Event<int>().Publish
++"""
++        checkResults.GetAllUsesOfAllSymbolsInFile()
++        |> Seq.exists (fun symbolUse -> symbolUse.Symbol.DisplayNameCore = "handler")
++        |> shouldEqual false
++

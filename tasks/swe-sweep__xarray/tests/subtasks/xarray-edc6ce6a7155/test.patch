@@ -1,0 +1,24 @@
+diff --git a/xarray/tests/test_variable.py b/xarray/tests/test_variable.py
+index bef5efc1..a6dffb82 100644
+--- a/xarray/tests/test_variable.py
++++ b/xarray/tests/test_variable.py
+@@ -2414,6 +2414,19 @@ class TestAsCompatibleData:
+         assert_array_equal(expected, actual)
+         assert np.dtype(float) == actual.dtype
+ 
++        original = np.ma.MaskedArray([1.0, 2.0], mask=[True, False])
++        original.flags.writeable = False
++        expected = [np.nan, 2.0]
++        actual = as_compatible_data(original)
++        assert_array_equal(expected, actual)
++        assert np.dtype(float) == actual.dtype
++
++        # GH2377
++        actual = Variable(dims=tuple(), data=np.ma.masked)
++        expected = Variable(dims=tuple(), data=np.nan)
++        assert_array_equal(expected, actual)
++        assert actual.dtype == expected.dtype
++
+     def test_datetime(self):
+         expected = np.datetime64("2000-01-01")
+         actual = as_compatible_data(expected)

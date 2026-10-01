@@ -1,0 +1,17 @@
+diff --git a/pkg/analysis_server/lib/src/services/completion/yaml/yaml_completion_generator.dart b/pkg/analysis_server/lib/src/services/completion/yaml/yaml_completion_generator.dart
+index ec3e06f6bba..50c7bb6eade 100644
+--- a/pkg/analysis_server/lib/src/services/completion/yaml/yaml_completion_generator.dart
++++ b/pkg/analysis_server/lib/src/services/completion/yaml/yaml_completion_generator.dart
+@@ -51,7 +51,11 @@ abstract class YamlCompletionGenerator {
+     var precedingText = '';
+     if (completionNode is YamlScalar) {
+       var value = completionNode.value;
+-      if (value is String && completionNode.style == ScalarStyle.PLAIN) {
++      if (value is String &&
++          completionNode.style == ScalarStyle.PLAIN &&
++          // It's possible that `offset` is after the end of `value` because we
++          // could be in whitespace after the value.
++          offset - completionNode.span.start.offset <= value.length) {
+         precedingText =
+             value.substring(0, offset - completionNode.span.start.offset);
+       } else if (value != null) {

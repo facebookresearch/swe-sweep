@@ -1,0 +1,1362 @@
+{
+  "build_jobs": 4,
+  "container_repo": "/rails",
+  "evaluation": {
+    "suite": "reproduction",
+    "visible_timeout": 7200
+  },
+  "upstream_image": "pandora-maxbug-rails:v7.0.0",
+  "n_base_passing": 0,
+  "n_base_test_ignore": 1,
+  "oracle_digest": "1998f631828e4b270ba5032de4ce78f4b4f583afeddef1b182a846d68d71db9c",
+  "oracle_pristine_paths": [],
+  "upstream_commit": "9f7399e15e6172900e0591deb5a57a45769d8205",
+  "reproduction": {
+    "needs_build": false,
+    "suite": {
+      "all_command": [
+        "bundle",
+        "exec",
+        "rake",
+        "test"
+      ],
+      "bundler": true,
+      "runner": "bin/test",
+      "type": "minitest"
+    },
+    "test_timeout": 1200
+  },
+  "schema": 2,
+  "subtasks": [
+    {
+      "f2p": [
+        "railties::test_route_with_namespace_option_revokes_route_without_breaking_existing_namespace_blocks"
+      ],
+      "id": "rails-001e3c7d691c",
+      "target_files": [
+        "railties/lib/rails/generators/actions.rb"
+      ]
+    },
+    {
+      "f2p": [
+        "activerecord::test_unscope_with_triple_dot_where"
+      ],
+      "id": "rails-00cbb84a96e3",
+      "target_files": [
+        "activerecord/lib/arel/nodes/and.rb"
+      ]
+    },
+    {
+      "f2p": [
+        "activerecord::test_runs_queries_when_using_pick_with_expression_column_and_empty_IN"
+      ],
+      "id": "rails-04d1e11dc9d0",
+      "target_files": [
+        "activerecord/lib/active_record/relation/calculations.rb"
+      ]
+    },
+    {
+      "f2p": [
+        "activerecord::test_reload_sets_correct_owner_for_association_cache"
+      ],
+      "id": "rails-05b1a5dda959",
+      "target_files": [
+        "activerecord/lib/active_record/associations/association.rb",
+        "activerecord/lib/active_record/persistence.rb"
+      ]
+    },
+    {
+      "f2p": [
+        "actionpack::test_signed_cookie_using_json_serializer_will_drop_marshal_dumped_value"
+      ],
+      "id": "rails-06a0b1991994",
+      "target_files": [
+        "actionpack/lib/action_dispatch/middleware/cookies.rb"
+      ]
+    },
+    {
+      "f2p": [
+        "activesupport::test_method_missing_works_with_kwargs"
+      ],
+      "id": "rails-07f270f9e035",
+      "target_files": [
+        "activesupport/lib/active_support/time_with_zone.rb"
+      ]
+    },
+    {
+      "f2p": [
+        "activerecord/test/cases/strict_loading_test.rb"
+      ],
+      "id": "rails-0b35c4941279",
+      "target_files": [
+        "activerecord/lib/active_record/relation.rb"
+      ]
+    },
+    {
+      "f2p": [
+        "actionview::test_to_partial_path_for_subclass_without_builder_suffix"
+      ],
+      "id": "rails-0e5bcf7f6248",
+      "target_files": [
+        "actionview/lib/action_view/helpers/form_helper.rb"
+      ]
+    },
+    {
+      "f2p": [
+        "actionpack/test/dispatch/cookies_test.rb"
+      ],
+      "id": "rails-0fbd7d7fdac1",
+      "target_files": [
+        "actionpack/lib/action_controller/test_case.rb"
+      ]
+    },
+    {
+      "f2p": [
+        "activesupport/test/number_helper_test.rb"
+      ],
+      "id": "rails-1267eeb9860f",
+      "target_files": [
+        "activesupport/lib/active_support/number_helper/number_converter.rb",
+        "activesupport/lib/active_support/number_helper/number_to_currency_converter.rb"
+      ]
+    },
+    {
+      "f2p": [
+        "activerecord::test_invert_add_reference_if_not_exists",
+        "activerecord::test_invert_remove_column_if_exists",
+        "activerecord::test_invert_remove_reference_if_exists"
+      ],
+      "id": "rails-14181eec6556",
+      "target_files": [
+        "activerecord/lib/active_record/migration/command_recorder.rb"
+      ]
+    },
+    {
+      "f2p": [
+        "activesupport::test_in_units_preserve_sub_second_precision"
+      ],
+      "id": "rails-1490e4317007",
+      "target_files": [
+        "activesupport/lib/active_support/duration.rb"
+      ]
+    },
+    {
+      "f2p": [
+        "activemodel::test_validates_inclusion_of_beginless_numeric_range"
+      ],
+      "id": "rails-1658ba76c0bd",
+      "target_files": [
+        "activemodel/lib/active_model/validations/clusivity.rb"
+      ]
+    },
+    {
+      "f2p": [
+        "actionview::test_word_wrap_with_non_strippable_break_sequence"
+      ],
+      "id": "rails-16ff63ee85b1",
+      "target_files": [
+        "actionview/lib/action_view/helpers/text_helper.rb"
+      ]
+    },
+    {
+      "f2p": [
+        "activerecord::test_update_all_with_lock_column_set_through_an_alias"
+      ],
+      "id": "rails-17983a7e0a80",
+      "target_files": [
+        "activerecord/lib/active_record/relation.rb"
+      ]
+    },
+    {
+      "f2p": [
+        "activerecord::test_invert_remove_foreign_key_if_exists"
+      ],
+      "id": "rails-190ccc7f435e",
+      "target_files": [
+        "activerecord/lib/active_record/migration/command_recorder.rb"
+      ]
+    },
+    {
+      "f2p": [
+        "actionpack::test_abort_terminates_a_reader_blocked_on_the_buffer",
+        "actionpack::test_close_then_abort_still_terminates_the_reader"
+      ],
+      "id": "rails-1b4ca61a91d2",
+      "target_files": [
+        "actionpack/lib/action_controller/metal/live.rb"
+      ]
+    },
+    {
+      "f2p": [
+        "actionmailer::test_assert_enqueued_email_with_when_queue_name_prefix_is_configured"
+      ],
+      "id": "rails-1c0fc32e64f7",
+      "target_files": [
+        "actionmailer/lib/action_mailer/test_helper.rb"
+      ]
+    },
+    {
+      "f2p": [
+        "actionpack::test_dynamic_directive",
+        "actionpack::test_dynamic_directive_returning_multiple_sources"
+      ],
+      "id": "rails-1ecc46413aa0",
+      "target_files": [
+        "actionpack/lib/action_dispatch/http/permissions_policy.rb"
+      ]
+    },
+    {
+      "f2p": [
+        "activesupport::test_indifferent_filter"
+      ],
+      "id": "rails-1ff76e45a3b4",
+      "target_files": [
+        "activesupport/lib/active_support/hash_with_indifferent_access.rb"
+      ]
+    },
+    {
+      "f2p": [
+        "activerecord::test_exclude_the_installation_of_autofiltered_params"
+      ],
+      "id": "rails-20aa271f8aea",
+      "target_files": [
+        "activerecord/lib/active_record/encryption/configurable.rb"
+      ]
+    },
+    {
+      "f2p": [
+        "actionview::test_week_field_with_iso_week_year_boundary"
+      ],
+      "id": "rails-21ad7b9fd05b",
+      "target_files": [
+        "actionview/lib/action_view/helpers/tags/week_field.rb"
+      ]
+    },
+    {
+      "f2p": [
+        "activesupport::test_writing_with_dynamic_accessor_and_reading_with_element_reference",
+        "activesupport::test_writing_with_element_assignment_and_reading_with_element_reference"
+      ],
+      "id": "rails-232caeaca4a0",
+      "target_files": [
+        "activesupport/lib/active_support/encrypted_configuration.rb"
+      ]
+    },
+    {
+      "f2p": [
+        "activesupport::test_humanize_with_international_characters"
+      ],
+      "id": "rails-26bd8dbd0dc1",
+      "target_files": [
+        "activesupport/lib/active_support/inflector/methods.rb"
+      ]
+    },
+    {
+      "f2p": [
+        "activerecord::test_invert_remove_column_with_options_but_no_type"
+      ],
+      "id": "rails-29332de09dbf",
+      "target_files": [
+        "activerecord/lib/active_record/migration/command_recorder.rb"
+      ]
+    },
+    {
+      "f2p": [
+        "activerecord::test_rename_index_preserves_where_clause"
+      ],
+      "id": "rails-29742e301b4e",
+      "target_files": [
+        "activerecord/lib/active_record/connection_adapters/abstract/schema_statements.rb"
+      ]
+    },
+    {
+      "f2p": [
+        "activejob::test_perform_enqueued_jobs_doesn't_raise_if_discard_on_ActiveJob::DeserializationError"
+      ],
+      "id": "rails-2a2ea4f89f11",
+      "target_files": [
+        "activejob/lib/active_job/test_helper.rb"
+      ]
+    },
+    {
+      "f2p": [
+        "activerecord::test_uniqueness_on_custom_relation_primary_key"
+      ],
+      "id": "rails-2b08ff8c51ca",
+      "target_files": [
+        "activerecord/lib/active_record/relation.rb"
+      ]
+    },
+    {
+      "f2p": [
+        "activerecord/test/cases/serialized_attribute_test.rb"
+      ],
+      "id": "rails-2bc614bafbc5",
+      "target_files": [
+        "activerecord/lib/active_record/encryption/extended_deterministic_queries.rb",
+        "activerecord/lib/arel/nodes/homogeneous_in.rb"
+      ]
+    },
+    {
+      "f2p": [
+        "activesupport::test_overlaps_with_beginless_range",
+        "activesupport::test_overlaps_with_two_beginless_ranges"
+      ],
+      "id": "rails-2cc9e5679e1d",
+      "target_files": [
+        "activesupport/lib/active_support/core_ext/range/overlaps.rb"
+      ]
+    },
+    {
+      "f2p": [
+        "activerecord::test_copy_table_with_column_with_default"
+      ],
+      "id": "rails-2d6782c940ca",
+      "target_files": [
+        "activerecord/lib/active_record/connection_adapters/sqlite3_adapter.rb"
+      ]
+    },
+    {
+      "f2p": [
+        "activemodel::test_create_a_new_user_with_validation,_a_spaces_only_password,_and_an_incorrect_password_confirmation",
+        "activemodel::test_updating_an_existing_user_with_validation,_a_spaces_only_password,_and_an_incorrect_password_confirmation"
+      ],
+      "id": "rails-2da34419390c",
+      "target_files": [
+        "activemodel/lib/active_model/secure_password.rb"
+      ]
+    },
+    {
+      "f2p": [
+        "activerecord::test_model_class_in_fixture_file_is_respected"
+      ],
+      "id": "rails-2e3604c2787c",
+      "target_files": [
+        "activerecord/lib/active_record/fixtures.rb"
+      ]
+    },
+    {
+      "f2p": [
+        "actionview::test_finds_dependencies_with_bare_assoc_hash_on_constant"
+      ],
+      "id": "rails-2edc8a0b6736",
+      "target_files": [
+        "actionview/lib/action_view/ripper_ast_parser.rb"
+      ]
+    },
+    {
+      "f2p": [
+        "activerecord::test_eager_loaded_has_many_association_without_primary_key",
+        "activerecord::test_eager_loaded_has_one_association_without_primary_key"
+      ],
+      "id": "rails-3237e6a04a66",
+      "target_files": [
+        "activerecord/lib/active_record/associations/join_dependency.rb"
+      ]
+    },
+    {
+      "f2p": [
+        "actionpack::test_store"
+      ],
+      "id": "rails-332afded99cc",
+      "target_files": [
+        "actionpack/lib/action_dispatch/request/session.rb"
+      ]
+    },
+    {
+      "f2p": [
+        "railties::test_app_update_preserves_skip_action_mailbox",
+        "railties::test_app_update_preserves_skip_action_text",
+        "railties::test_app_update_preserves_skip_active_job",
+        "railties::test_app_update_preserves_skip_test"
+      ],
+      "id": "rails-343ea9b76c76",
+      "target_files": [
+        "railties/lib/rails/app_updater.rb"
+      ]
+    },
+    {
+      "f2p": [
+        "activesupport::test_write_expired_value_with_unless_exist"
+      ],
+      "id": "rails-347b13bfce28",
+      "target_files": [
+        "activesupport/lib/active_support/cache/memory_store.rb"
+      ]
+    },
+    {
+      "f2p": [
+        "activerecord/test/cases/migration/foreign_key_test.rb"
+      ],
+      "id": "rails-34914bba975a",
+      "target_files": [
+        "activerecord/lib/active_record/connection_adapters/abstract/schema_statements.rb",
+        "activerecord/lib/active_record/connection_adapters/sqlite3/schema_statements.rb"
+      ]
+    },
+    {
+      "f2p": [
+        "activesupport::test_time_helper_travel_to_with_separate_class"
+      ],
+      "id": "rails-34fb1feb8c30",
+      "target_files": [
+        "activesupport/lib/active_support/testing/time_helpers.rb"
+      ]
+    },
+    {
+      "f2p": [
+        "activesupport::test_should_include_exclusive_end_float_range",
+        "activesupport::test_should_include_exclusive_end_time_range",
+        "activesupport::test_should_not_include_exclusive_end_float_range_past_end"
+      ],
+      "id": "rails-3a83307961e0",
+      "target_files": [
+        "activesupport/lib/active_support/core_ext/range/compare_range.rb"
+      ]
+    },
+    {
+      "f2p": [
+        "activesupport::test_overlapping_acronyms"
+      ],
+      "id": "rails-3a846d0137cf",
+      "target_files": [
+        "activesupport/lib/active_support/inflector/inflections.rb"
+      ]
+    },
+    {
+      "f2p": [
+        "activesupport::test_truncates_bytes_preserves_encoding"
+      ],
+      "id": "rails-3dc4afb6547e",
+      "target_files": [
+        "activesupport/lib/active_support/core_ext/string/filters.rb"
+      ]
+    },
+    {
+      "f2p": [
+        "actionview::test_select_with_multiple_and_form_to_add_hidden_input_with_form"
+      ],
+      "id": "rails-3dd8550da5ab",
+      "target_files": [
+        "actionview/lib/action_view/helpers/tags/select_renderer.rb"
+      ]
+    },
+    {
+      "f2p": [
+        "actionpack::test_delete_session_returns_nil_when_dropped"
+      ],
+      "id": "rails-3f33499f87ca",
+      "target_files": [
+        "actionpack/lib/action_dispatch/middleware/session/cache_store.rb"
+      ]
+    },
+    {
+      "f2p": [
+        "activerecord::test_load_async_has_many_association",
+        "activerecord::test_load_async_has_many_through_association"
+      ],
+      "id": "rails-4065bd8e8899",
+      "target_files": [
+        "activerecord/lib/active_record/associations/collection_proxy.rb",
+        "activerecord/lib/active_record/connection_adapters/sqlite3_adapter.rb"
+      ]
+    },
+    {
+      "f2p": [
+        "activesupport::test_advance_preserves_fractional_hour_offset_for_local_times_around_end_of_dst",
+        "activesupport::test_advance_preserves_fractional_hour_offset_for_zoned_times_around_end_of_dst",
+        "activesupport::test_advance_preserves_offset_for_local_times_around_end_of_dst",
+        "activesupport::test_advance_preserves_offset_for_zoned_times_around_end_of_dst",
+        "activesupport::test_change_preserves_fractional_hour_offset_for_local_times_around_end_of_dst",
+        "activesupport::test_change_preserves_fractional_hour_offset_for_zoned_times_around_end_of_dst",
+        "activesupport::test_change_preserves_offset_for_local_times_around_end_of_dst",
+        "activesupport::test_change_preserves_offset_for_zoned_times_around_end_of_dst"
+      ],
+      "id": "rails-40b4cbdfa907",
+      "target_files": [
+        "activesupport/lib/active_support/core_ext/time/calculations.rb"
+      ]
+    },
+    {
+      "f2p": [
+        "activerecord::test_saved_changes_tracking_for_accessors_with_json_column"
+      ],
+      "id": "rails-40e0238494d1",
+      "target_files": [
+        "activerecord/lib/active_record/store.rb"
+      ]
+    },
+    {
+      "f2p": [
+        "activerecord::test_combined_default_scope_without_and_with_all_queries_works"
+      ],
+      "id": "rails-4116717347b6",
+      "target_files": [
+        "activerecord/lib/active_record/scoping/default.rb"
+      ]
+    },
+    {
+      "f2p": [
+        "actionpack::test_merge_does_not_mutate_the_original_request_when_headers_are_memoized"
+      ],
+      "id": "rails-49c53a5645dc",
+      "target_files": [
+        "actionpack/lib/action_dispatch/http/headers.rb"
+      ]
+    },
+    {
+      "f2p": [
+        "actionpack::test_setter_methods_work_and_do_not_change_Rack_SPEC_conformity"
+      ],
+      "id": "rails-4b46ebc6d0a3",
+      "target_files": [
+        "actionpack/lib/action_dispatch/testing/test_request.rb"
+      ]
+    },
+    {
+      "f2p": [
+        "activerecord::test_group_alias_is_properly_quoted"
+      ],
+      "id": "rails-4f8af0cc7c91",
+      "target_files": [
+        "activerecord/lib/active_record/relation/calculations.rb"
+      ]
+    },
+    {
+      "f2p": [
+        "activerecord::test_saving_an_unchanged_record_with_a_mutating_before_update_callback_updates_its_timestamp"
+      ],
+      "id": "rails-51d6fee63091",
+      "target_files": [
+        "activerecord/lib/active_record/callbacks.rb",
+        "activerecord/lib/active_record/timestamp.rb"
+      ]
+    },
+    {
+      "f2p": [
+        "activerecord::test_multi_database_polymorphic_preload_with_same_table_name"
+      ],
+      "id": "rails-534464ff5b3c",
+      "target_files": [
+        "activerecord/lib/active_record/associations/preloader/association.rb"
+      ]
+    },
+    {
+      "f2p": [
+        "actionpack::test_clear_clears_the_cached_ast_and_simulator",
+        "actionpack::test_recognize_path_does_not_recognize_routes_removed_by_a_redraw"
+      ],
+      "id": "rails-537dad39d3af",
+      "target_files": [
+        "actionpack/lib/action_dispatch/journey/routes.rb"
+      ]
+    },
+    {
+      "f2p": [
+        "activesupport/test/callbacks_test.rb"
+      ],
+      "id": "rails-561807c1ce57",
+      "target_files": [
+        "activesupport/lib/active_support/callbacks.rb"
+      ]
+    },
+    {
+      "f2p": [
+        "activesupport/test/encrypted_configuration_test.rb"
+      ],
+      "id": "rails-5a77e767aeba",
+      "target_files": [
+        "activesupport/lib/active_support/encrypted_configuration.rb"
+      ]
+    },
+    {
+      "f2p": [
+        "activerecord::test_limit_does_not_count_the_attributes_of_a_single_record_hash"
+      ],
+      "id": "rails-5b7f6c24bd46",
+      "target_files": [
+        "activerecord/lib/active_record/nested_attributes.rb"
+      ]
+    },
+    {
+      "f2p": [
+        "activejob::test_serialize_a_class_with_permitted?_defined"
+      ],
+      "id": "rails-5cc66d667e8c",
+      "target_files": [
+        "activejob/lib/active_job/arguments.rb"
+      ]
+    },
+    {
+      "f2p": [
+        "activerecord::test_query_cache_handles_mutated_binds"
+      ],
+      "id": "rails-5e9d7010c15c",
+      "target_files": [
+        "activemodel/lib/active_model/type/helpers/mutable.rb",
+        "activemodel/lib/active_model/type/value.rb",
+        "activerecord/lib/active_record/relation/predicate_builder.rb"
+      ]
+    },
+    {
+      "f2p": [
+        "railties/test/generators/scaffold_controller_generator_test.rb"
+      ],
+      "id": "rails-6063ff99af76",
+      "target_files": [
+        "railties/lib/rails/generators/named_base.rb"
+      ]
+    },
+    {
+      "f2p": [
+        "actionpack::test_deep_transform_keys!_transforms_nested_keys",
+        "actionpack::test_deep_transform_keys_transforms_nested_keys"
+      ],
+      "id": "rails-613f12a6cf89",
+      "target_files": [
+        "actionpack/lib/action_controller/metal/strong_parameters.rb"
+      ]
+    },
+    {
+      "f2p": [
+        "activerecord::test_label_interpolation_inserts_the_label_verbatim"
+      ],
+      "id": "rails-625af3b2c293",
+      "target_files": [
+        "activerecord/lib/active_record/fixture_set/table_row.rb"
+      ]
+    },
+    {
+      "f2p": [
+        "activesupport::test_strptime_with_timestamp_seconds_and_fractional_seconds"
+      ],
+      "id": "rails-628fa1463105",
+      "target_files": [
+        "activesupport/lib/active_support/values/time_zone.rb"
+      ]
+    },
+    {
+      "f2p": [
+        "activerecord::test_removing_association_updates_counter"
+      ],
+      "id": "rails-65dad50d3373",
+      "target_files": [
+        "activerecord/lib/active_record/locking/optimistic.rb",
+        "activerecord/lib/active_record/persistence.rb"
+      ]
+    },
+    {
+      "f2p": [
+        "activestorage::test_mirroring_a_file_without_a_checksum_does_not_raise"
+      ],
+      "id": "rails-67b018eff896",
+      "target_files": [
+        "activestorage/lib/active_storage/service/mirror_service.rb"
+      ]
+    },
+    {
+      "f2p": [
+        "activerecord::test_left_outer_joins_includes_all_nested_associations"
+      ],
+      "id": "rails-6e1ff090a2cc",
+      "target_files": [
+        "activerecord/lib/active_record/associations/join_dependency.rb",
+        "activerecord/lib/active_record/associations/join_dependency/join_association.rb"
+      ]
+    },
+    {
+      "f2p": [
+        "activerecord::test_where_on_association_with_collection_polymorphic_relation"
+      ],
+      "id": "rails-6eb19697871b",
+      "target_files": [
+        "activerecord/lib/active_record/reflection.rb",
+        "activerecord/lib/active_record/relation/predicate_builder/association_query_value.rb",
+        "activerecord/lib/active_record/table_metadata.rb"
+      ]
+    },
+    {
+      "f2p": [
+        "activesupport::test_allow_with_the_default_warning_message",
+        "activesupport::test_disallowed_warnings_with_the_default_warning_message"
+      ],
+      "id": "rails-6ec4acd27bbe",
+      "target_files": [
+        "activesupport/lib/active_support/deprecation/disallowed.rb",
+        "activesupport/lib/active_support/deprecation/reporting.rb"
+      ]
+    },
+    {
+      "f2p": [
+        "actionpack::test_result_independence"
+      ],
+      "id": "rails-70883d6c663b",
+      "target_files": [
+        "actionpack/lib/action_controller/metal/basic_implicit_render.rb"
+      ]
+    },
+    {
+      "f2p": [
+        "activerecord::test_has_one_double_belongs_to_destroys_both_from_either_end"
+      ],
+      "id": "rails-71446dd0ee68",
+      "target_files": [
+        "activerecord/lib/active_record/callbacks.rb"
+      ]
+    },
+    {
+      "f2p": [
+        "activerecord::test_logs_unnamed_binds"
+      ],
+      "id": "rails-7231618d218e",
+      "target_files": [
+        "activerecord/lib/active_record/log_subscriber.rb"
+      ]
+    },
+    {
+      "f2p": [
+        "actionview::test_link_tag_using_active_record_model_twice"
+      ],
+      "id": "rails-73ca026c4d90",
+      "target_files": [
+        "actionview/lib/action_view/helpers/url_helper.rb"
+      ]
+    },
+    {
+      "f2p": [
+        "activerecord::test_support_encrypted_attributes_defined_on_columns_with_default_values"
+      ],
+      "id": "rails-741c7a4fa03e",
+      "target_files": [
+        "activerecord/lib/active_record/encryption/encryptable_record.rb",
+        "activerecord/lib/active_record/encryption/encrypted_attribute_type.rb"
+      ]
+    },
+    {
+      "f2p": [
+        "activesupport::test_proc_as_first_argument_with_other_options_should_still_merge_options"
+      ],
+      "id": "rails-77ea55d2e337",
+      "target_files": [
+        "activesupport/lib/active_support/option_merger.rb"
+      ]
+    },
+    {
+      "f2p": [
+        "actionpack::test_url_for_accepts_a_frozen_params_hash",
+        "actionpack::test_url_for_does_not_mutate_the_passed_params_hash"
+      ],
+      "id": "rails-80089274ca17",
+      "target_files": [
+        "actionpack/lib/action_dispatch/http/url.rb"
+      ]
+    },
+    {
+      "f2p": [
+        "activesupport::test_stringify_keys_stringifies_integer_keys_for_hash_with_indifferent_access",
+        "activesupport::test_stringify_keys_stringifies_non_string_keys_for_hash_with_indifferent_access"
+      ],
+      "id": "rails-8296dccc8e82",
+      "target_files": [
+        "activesupport/lib/active_support/hash_with_indifferent_access.rb"
+      ]
+    },
+    {
+      "f2p": [
+        "activerecord::test_updating_the_store_and_changing_it_back_won't_mark_accessor_as_changed"
+      ],
+      "id": "rails-8420466e90a2",
+      "target_files": [
+        "activerecord/lib/active_record/store.rb"
+      ]
+    },
+    {
+      "f2p": [
+        "actionview::test_form_for_with_persisted_to_model"
+      ],
+      "id": "rails-891834ddf6be",
+      "target_files": [
+        "actionview/lib/action_view/helpers/form_helper.rb"
+      ]
+    },
+    {
+      "f2p": [
+        "activejob::test_should_maintain_a_functional_duration"
+      ],
+      "id": "rails-896422a98944",
+      "target_files": [
+        "activejob/lib/active_job/serializers/duration_serializer.rb"
+      ]
+    },
+    {
+      "f2p": [
+        "activesupport::test_delete_matched_when_key_exceeds_max_filename_size"
+      ],
+      "id": "rails-89a4d88d3efd",
+      "target_files": [
+        "activesupport/lib/active_support/cache/file_store.rb"
+      ]
+    },
+    {
+      "f2p": [
+        "activerecord::test_should_count_field_in_joined_table_with_group_by_when_tables_share_column_names"
+      ],
+      "id": "rails-89d67c1c21be",
+      "target_files": [
+        "activerecord/lib/active_record/relation/calculations.rb"
+      ]
+    },
+    {
+      "f2p": [
+        "activerecord::test_uniqueness_on_custom_relation_primary_key"
+      ],
+      "id": "rails-8bad2ce0e534",
+      "target_files": [
+        "activerecord/lib/active_record/relation.rb"
+      ]
+    },
+    {
+      "f2p": [
+        "actionpack::test_setting_cookie_with_specific_same_site_nil"
+      ],
+      "id": "rails-8bfe2c79e712",
+      "target_files": [
+        "actionpack/lib/action_dispatch/middleware/cookies.rb"
+      ]
+    },
+    {
+      "f2p": [
+        "activejob::test_using_a_custom_default_priority"
+      ],
+      "id": "rails-8f8709fa7b52",
+      "target_files": [
+        "activejob/lib/active_job/queue_priority.rb"
+      ]
+    },
+    {
+      "f2p": [
+        "actionview::test_token_list_and_class_names_only_html_escape_once"
+      ],
+      "id": "rails-900f9fe6d019",
+      "target_files": [
+        "actionview/lib/action_view/helpers/tag_helper.rb"
+      ]
+    },
+    {
+      "f2p": [
+        "activerecord::test_recognises_inverse_polymorphic_association_changes_with_same_foreign_key"
+      ],
+      "id": "rails-9047f54f003b",
+      "target_files": [
+        "activerecord/lib/active_record/autosave_association.rb"
+      ]
+    },
+    {
+      "f2p": [
+        "activesupport/test/core_ext/enumerable_test.rb"
+      ],
+      "id": "rails-931d81cd1575",
+      "target_files": [
+        "activesupport/lib/active_support/core_ext/enumerable.rb"
+      ]
+    },
+    {
+      "f2p": [
+        "activerecord::test_multiparameter_attributes_with_malformed_name_reports_remaining_errors_alongside_valid_pairs",
+        "activerecord::test_multiparameter_attributes_with_unclosed_parenthesis_raises_multiparameter_assignment_errors"
+      ],
+      "id": "rails-935349037ee8",
+      "target_files": [
+        "activerecord/lib/active_record/attribute_assignment.rb"
+      ]
+    },
+    {
+      "f2p": [
+        "actionpack::test_flag_cookies_as_secure_with_multiple_cookies_in_array",
+        "actionpack::test_flag_cookies_as_secure_with_single_cookie_in_array"
+      ],
+      "id": "rails-94efdfb0ec52",
+      "target_files": [
+        "actionpack/lib/action_dispatch/middleware/ssl.rb"
+      ]
+    },
+    {
+      "f2p": [
+        "actionpack/test/controller/request_forgery_protection_test.rb"
+      ],
+      "id": "rails-956ee2ea8ade",
+      "target_files": [
+        "actionpack/lib/action_controller/metal/request_forgery_protection.rb"
+      ]
+    },
+    {
+      "f2p": [
+        "activerecord::test_joining_through_a_polymorphic_association_with_a_where_clause"
+      ],
+      "id": "rails-9d06753f9423",
+      "target_files": [
+        "activerecord/lib/active_record/reflection.rb"
+      ]
+    },
+    {
+      "f2p": [
+        "activerecord::test_validate_uniqueness_with_singleton_class"
+      ],
+      "id": "rails-9fe26a46c98c",
+      "target_files": [
+        "activerecord/lib/active_record/validations/uniqueness.rb"
+      ]
+    },
+    {
+      "f2p": [
+        "activejob::test_retry_different_queue_logging"
+      ],
+      "id": "rails-a13e997c5308",
+      "target_files": [
+        "activejob/lib/active_job/exceptions.rb"
+      ]
+    },
+    {
+      "f2p": [
+        "activesupport::test_in_date_range"
+      ],
+      "id": "rails-a304f38f1164",
+      "target_files": [
+        "activesupport/lib/active_support/core_ext/object/inclusion.rb"
+      ]
+    },
+    {
+      "f2p": [
+        "activerecord::test_associated_with_child_association",
+        "activerecord::test_missing_with_child_association"
+      ],
+      "id": "rails-a55baa9eb484",
+      "target_files": [
+        "activerecord/lib/active_record/relation/query_methods.rb"
+      ]
+    },
+    {
+      "f2p": [
+        "activerecord::test_touch_account"
+      ],
+      "id": "rails-a98a153c304f",
+      "target_files": [
+        "activerecord/lib/active_record/touch_later.rb"
+      ]
+    },
+    {
+      "f2p": [
+        "actionpack::test_handles_empty_path_as_request_path",
+        "actionpack::test_handles_relative_paths",
+        "actionpack::test_handles_relative_paths_with_dot"
+      ],
+      "id": "rails-a9a9f8f17d2e",
+      "target_files": [
+        "actionpack/lib/action_controller/metal/request_forgery_protection.rb"
+      ]
+    },
+    {
+      "f2p": [
+        "activerecord::test_polymorphic_belongs_to"
+      ],
+      "id": "rails-ac4a352a0d08",
+      "target_files": [
+        "activerecord/lib/active_record/associations/belongs_to_association.rb"
+      ]
+    },
+    {
+      "f2p": [
+        "activerecord::test_cant_touch_readonly_record",
+        "activerecord::test_cant_update_column_readonly_record",
+        "activerecord::test_cant_update_columns_readonly_record"
+      ],
+      "id": "rails-b151548101f5",
+      "target_files": [
+        "activerecord/lib/active_record/persistence.rb"
+      ]
+    },
+    {
+      "f2p": [
+        "activerecord::test_add_constraint_from_change_table_with_options",
+        "activerecord::test_remove_constraint_from_change_table_with_options"
+      ],
+      "id": "rails-b4037ef2f8f9",
+      "target_files": [
+        "activerecord/lib/active_record/connection_adapters/abstract/schema_definitions.rb"
+      ]
+    },
+    {
+      "f2p": [
+        "activestorage::test_attaching_many_new_blobs_within_a_transaction_uploads_all_the_files",
+        "activestorage::test_attaching_new_blobs_within_a_transaction_uploads_all_the_files",
+        "activestorage::test_attaching_new_blobs_within_a_transaction_with_append_on_assign_config_uploads_all_the_files"
+      ],
+      "id": "rails-b510df98bebc",
+      "target_files": [
+        "activestorage/lib/active_storage/attached/changes/create_many.rb",
+        "activestorage/lib/active_storage/attached/model.rb"
+      ]
+    },
+    {
+      "f2p": [
+        "actionview::test_select_time_with_a_single_default_prompt"
+      ],
+      "id": "rails-b83a7f09a1cc",
+      "target_files": [
+        "actionview/lib/action_view/helpers/date_helper.rb"
+      ]
+    },
+    {
+      "f2p": [
+        "activesupport::test_indifferent_to_proc"
+      ],
+      "id": "rails-ba2e1fdc5702",
+      "target_files": [
+        "activesupport/lib/active_support/hash_with_indifferent_access.rb"
+      ]
+    },
+    {
+      "f2p": [
+        "activemodel::test_added?_ignores_callback_option_when_provided_in_check",
+        "activemodel::test_added?_ignores_callback_options_with_other_options",
+        "activemodel::test_added?_ignores_message_option_when_provided_in_check"
+      ],
+      "id": "rails-ba5687ea89c1",
+      "target_files": [
+        "activemodel/lib/active_model/error.rb"
+      ]
+    },
+    {
+      "f2p": [
+        "activerecord::test_delete_all_with_group_by_and_having_without_joins",
+        "activerecord::test_update_all_with_group_by_and_having_without_joins"
+      ],
+      "id": "rails-bce3c78233e3",
+      "target_files": [
+        "activerecord/lib/arel/visitors/to_sql.rb"
+      ]
+    },
+    {
+      "f2p": [
+        "actionview::test_field_name_with_nil_object_name"
+      ],
+      "id": "rails-c07165796b30",
+      "target_files": [
+        "actionview/lib/action_view/helpers/form_tag_helper.rb"
+      ]
+    },
+    {
+      "f2p": [
+        "activesupport/test/encrypted_configuration_test.rb"
+      ],
+      "id": "rails-c2cd8794eee5",
+      "target_files": [
+        "activesupport/lib/active_support/encrypted_configuration.rb"
+      ]
+    },
+    {
+      "f2p": [
+        "activerecord::test_multiparameter_attributes_on_date_with_all_nil"
+      ],
+      "id": "rails-c50131847b49",
+      "target_files": [
+        "activerecord/lib/active_record/attribute_assignment.rb"
+      ]
+    },
+    {
+      "f2p": [
+        "activesupport::test_advance_does_not_mutate_options",
+        "activesupport::test_advance_with_frozen_options"
+      ],
+      "id": "rails-c529e09b2514",
+      "target_files": [
+        "activesupport/lib/active_support/core_ext/date_time/calculations.rb",
+        "activesupport/lib/active_support/core_ext/time/calculations.rb"
+      ]
+    },
+    {
+      "f2p": [
+        "activerecord::test_has_many_through_unscope_respects_join_model_default_scope"
+      ],
+      "id": "rails-c6f35a6ffe60",
+      "target_files": [
+        "activerecord/lib/active_record/associations/association_scope.rb",
+        "activerecord/lib/active_record/relation/query_methods.rb"
+      ]
+    },
+    {
+      "f2p": [
+        "activerecord::test_should_group_by_multiple_fields_when_table_name_is_too_long"
+      ],
+      "id": "rails-c953b2c4d732",
+      "target_files": [
+        "activerecord/lib/active_record/relation/calculations.rb"
+      ]
+    },
+    {
+      "f2p": [
+        "activerecord::test_expression_index_with_trailing_comment"
+      ],
+      "id": "rails-d080abf92283",
+      "target_files": [
+        "activerecord/lib/active_record/connection_adapters/sqlite3/schema_statements.rb"
+      ]
+    },
+    {
+      "f2p": [
+        "activerecord::test_should_not_raise_error"
+      ],
+      "id": "rails-d1d64debc470",
+      "target_files": [
+        "activerecord/lib/active_record/autosave_association.rb"
+      ]
+    },
+    {
+      "f2p": [
+        "actionview::test_dependencies_encode_binary_non_ascii_source_before_handler"
+      ],
+      "id": "rails-d2bb2a105727",
+      "target_files": [
+        "actionview/lib/action_view/dependency_tracker/ruby_tracker.rb"
+      ]
+    },
+    {
+      "f2p": [
+        "activesupport::test_in_order_of_preserves_duplicates"
+      ],
+      "id": "rails-d2cf737035f0",
+      "target_files": [
+        "activesupport/lib/active_support/core_ext/enumerable.rb"
+      ]
+    },
+    {
+      "f2p": [
+        "activerecord::test_query_cache_callbacks_exit_gracefully_from_a_fork"
+      ],
+      "id": "rails-d48a886567d4",
+      "target_files": [
+        "activerecord/lib/active_record/query_cache.rb"
+      ]
+    },
+    {
+      "f2p": [
+        "actionview::test_color_field_with_string_containing_hex_color_substring"
+      ],
+      "id": "rails-d84ff0968969",
+      "target_files": [
+        "actionview/lib/action_view/helpers/tags/color_field.rb"
+      ]
+    },
+    {
+      "f2p": [
+        "activerecord::test_in_batches_enumerator_each_record_should_quote_batch_order_with_desc_order",
+        "activerecord::test_in_batches_enumerator_should_quote_batch_order_with_desc_order",
+        "activerecord::test_in_batches_without_block_should_raise_if_order_is_invalid"
+      ],
+      "id": "rails-d9074aaa6458",
+      "target_files": [
+        "activerecord/lib/active_record/relation/batches.rb",
+        "activerecord/lib/active_record/relation/batches/batch_enumerator.rb"
+      ]
+    },
+    {
+      "f2p": [
+        "activesupport::test_module_parent_name_notice_changes",
+        "activesupport::test_module_parent_notice_changes"
+      ],
+      "id": "rails-d9dc44dcee94",
+      "target_files": [
+        "activesupport/lib/active_support/core_ext/module/introspection.rb"
+      ]
+    },
+    {
+      "f2p": [
+        "activerecord::test_delegation_doesn't_override_methods_defined_in_other_relation_subclasses"
+      ],
+      "id": "rails-db8b5dfc3d15",
+      "target_files": [
+        "activerecord/lib/active_record/relation/delegation.rb"
+      ]
+    },
+    {
+      "f2p": [
+        "activerecord::test_cache_key_for_a_loaded_relation_with_a_NULL_timestamp_matches_the_unloaded_key"
+      ],
+      "id": "rails-ddc4bea53df0",
+      "target_files": [
+        "activerecord/lib/active_record/relation.rb"
+      ]
+    },
+    {
+      "f2p": [
+        "actionview::test_when_layout_is_specified_as_a_string,_overwriting_with_:default,_render_with_locals",
+        "actionview::test_when_layout_is_specified_as_a_string,_render_with_locals"
+      ],
+      "id": "rails-e423464f81d9",
+      "target_files": [
+        "actionview/lib/action_view/layouts.rb",
+        "actionview/lib/action_view/renderer/template_renderer.rb"
+      ]
+    },
+    {
+      "f2p": [
+        "activerecord::test_with_has_many_inversing_does_not_add_saved_duplicate_records_when_collection_is_loaded",
+        "activerecord::test_with_has_many_inversing_does_not_add_unsaved_duplicate_records_when_collection_is_loaded"
+      ],
+      "id": "rails-e4984d9e8f95",
+      "target_files": [
+        "activerecord/lib/active_record/associations/collection_association.rb"
+      ]
+    },
+    {
+      "f2p": [
+        "actionview/test/template/text_helper_test.rb"
+      ],
+      "id": "rails-e4e0b3920060",
+      "target_files": [
+        "actionview/lib/action_view/helpers/text_helper.rb"
+      ]
+    },
+    {
+      "f2p": [
+        "activerecord::test_nil_is_always_persisted_as_default",
+        "activerecord::test_serialized_attribute_with_default_can_update_to_default"
+      ],
+      "id": "rails-e5cc098e8d3d",
+      "target_files": [
+        "activerecord/lib/active_record/attribute_methods/serialization.rb",
+        "activerecord/lib/active_record/type/serialized.rb"
+      ]
+    },
+    {
+      "f2p": [
+        "activerecord::test_table_name_for_base_class"
+      ],
+      "id": "rails-e662c819a8c3",
+      "target_files": [
+        "activerecord/lib/active_record/model_schema.rb"
+      ]
+    },
+    {
+      "f2p": [
+        "activerecord::test_target_merging_ignores_persisted_in_memory_records_when_loaded_records_are_empty"
+      ],
+      "id": "rails-ea4e44b4d09b",
+      "target_files": [
+        "activerecord/lib/active_record/associations/collection_association.rb"
+      ]
+    },
+    {
+      "f2p": [
+        "activesupport/test/number_helper_test.rb"
+      ],
+      "id": "rails-f0711e605e47",
+      "target_files": [
+        "activesupport/lib/active_support/number_helper/number_to_phone_converter.rb"
+      ]
+    },
+    {
+      "f2p": [
+        "activesupport::test_delegate_missing_with_allow_nil_when_called_on_self"
+      ],
+      "id": "rails-f0b851f5b85b",
+      "target_files": [
+        "activesupport/lib/active_support/core_ext/module/delegation.rb"
+      ]
+    },
+    {
+      "f2p": [
+        "actionpack::test_integration_test_follows_rack_SPEC"
+      ],
+      "id": "rails-f346cc5722da",
+      "target_files": [
+        "actionpack/lib/action_dispatch/testing/integration.rb"
+      ]
+    },
+    {
+      "f2p": [
+        "activesupport::test_custom_behavior"
+      ],
+      "id": "rails-f59456c38f93",
+      "target_files": [
+        "activesupport/lib/active_support/deprecation/behaviors.rb"
+      ]
+    },
+    {
+      "f2p": [
+        "activerecord::test_scope_chain_does_not_interfere_with_hmt_with_polymorphic_and_subclass_source_2"
+      ],
+      "id": "rails-f7092be88f6a",
+      "target_files": [
+        "activerecord/lib/active_record/associations/has_many_through_association.rb"
+      ]
+    },
+    {
+      "f2p": [
+        "activemodel::test_passing_an_object_with_each_pair_but_without_each"
+      ],
+      "id": "rails-f7445cb2d77e",
+      "target_files": [
+        "activemodel/lib/active_model/attribute_assignment.rb"
+      ]
+    },
+    {
+      "f2p": [
+        "actionpack::test_send_stream_with_inferred_content_type"
+      ],
+      "id": "rails-f8fe56f5ec3a",
+      "target_files": [
+        "actionpack/lib/action_controller/metal/live.rb"
+      ]
+    },
+    {
+      "f2p": [
+        "activerecord::test_increment_destroyed_record",
+        "activerecord::test_increment_new_record"
+      ],
+      "id": "rails-f9bd5d38ca35",
+      "target_files": [
+        "activerecord/lib/active_record/persistence.rb"
+      ]
+    },
+    {
+      "f2p": [
+        "activerecord::test_inspect_singleton_instance"
+      ],
+      "id": "rails-fb6353dcc2da",
+      "target_files": [
+        "activerecord/lib/active_record/core.rb"
+      ]
+    },
+    {
+      "f2p": [
+        "activerecord::test_reset_will_reset_cache_version"
+      ],
+      "id": "rails-fce0528f728b",
+      "target_files": [
+        "activerecord/lib/active_record/relation.rb"
+      ]
+    },
+    {
+      "f2p": [
+        "actionpack::test_only_path_redirect"
+      ],
+      "id": "rails-fd708b18bdc2",
+      "target_files": [
+        "actionpack/lib/action_controller/metal/redirecting.rb"
+      ]
+    },
+    {
+      "f2p": [
+        "activerecord::test_becomes_initializes_missing_attributes"
+      ],
+      "id": "rails-ff981e51d202",
+      "target_files": [
+        "activemodel/lib/active_model/attribute_set.rb",
+        "activerecord/lib/active_record/persistence.rb"
+      ]
+    }
+  ],
+  "task": "rails",
+  "version": "v7.0.0"
+}

@@ -1,0 +1,372 @@
+diff --git a/gitoxide-core/src/repository/merge/commit.rs b/gitoxide-core/src/repository/merge/commit.rs
+index 88b4bf60d..74545d446 100644
+--- a/gitoxide-core/src/repository/merge/commit.rs
++++ b/gitoxide-core/src/repository/merge/commit.rs
+@@ -72,7 +72,7 @@ pub fn commit(
+     }
+ 
+     if debug {
+-        writeln!(err, "{:#?}", &res.conflicts)?;
++        writeln!(err, "{:#?}", res.conflicts)?;
+     }
+     if !has_conflicts {
+         writeln!(err, "{} possibly resolved conflicts", res.conflicts.len())?;
+diff --git a/gitoxide-core/src/repository/merge/tree.rs b/gitoxide-core/src/repository/merge/tree.rs
+index e8541b3a9..cd3a1bbb6 100644
+--- a/gitoxide-core/src/repository/merge/tree.rs
++++ b/gitoxide-core/src/repository/merge/tree.rs
+@@ -86,7 +86,7 @@ pub(super) mod function {
+         if message.is_some() && has_unresolved_conflicts {
+             write_unresolved_conflict_paths(err, &res.conflicts)?;
+             if debug {
+-                writeln!(err, "{:#?}", &res.conflicts)?;
++                writeln!(err, "{:#?}", res.conflicts)?;
+             }
+             bail!("Tree conflicted, refusing to write commit");
+         }
+diff --git a/gitoxide-core/src/repository/status.rs b/gitoxide-core/src/repository/status.rs
+index c425277e5..42a1058ee 100644
+--- a/gitoxide-core/src/repository/status.rs
++++ b/gitoxide-core/src/repository/status.rs
+@@ -177,10 +177,7 @@ pub fn show(
+                 }
+             }
+             status::Item::IndexWorktree(index_worktree::Item::Rewrite {
+-                source,
+-                dirwalk_entry,
+-                copy: _, // TODO: how to visualize copies?
+-                ..
++                source, dirwalk_entry, ..
+             }) => {
+                 // TODO: handle multi-status characters, there can also be modifications at the same time as determined by their ID and potentially diffstats.
+                 writeln!(
+diff --git a/gix-chunk/src/file/decode.rs b/gix-chunk/src/file/decode.rs
+index 3ad32fb36..9f316066a 100644
+--- a/gix-chunk/src/file/decode.rs
++++ b/gix-chunk/src/file/decode.rs
+@@ -19,7 +19,7 @@ impl file::Index {
+         let mut toc_entry = &data[toc_offset..];
+         let expected_min_size = (num_chunks as usize + 1) * file::Index::ENTRY_SIZE;
+         if toc_entry.len() < expected_min_size {
+-            return Err(format!(
++            Err(format!(
+                 "The table of contents would be {expected_min_size} bytes, but got only {toc_entry_len}",
+                 toc_entry_len = toc_entry.len()
+             ))?;
+@@ -29,12 +29,12 @@ impl file::Index {
+             let (kind, offset) = toc_entry.split_at(4);
+             let kind = to_kind(kind);
+             if kind == crate::SENTINEL {
+-                return Err(format!(
++                Err(format!(
+                     "Sentinel value encountered while processing chunks {chunk_idx} of {num_chunks}"
+                 ))?;
+             }
+             if chunks.iter().any(|c: &index::Entry| c.kind == kind) {
+-                return Err(format!(
++                Err(format!(
+                     "The chunk of kind '{}' was encountered more than once",
+                     kind.as_bstr()
+                 ))?;
+@@ -42,19 +42,19 @@ impl file::Index {
+ 
+             let offset = be_u64(offset);
+             if offset > data_len {
+-                return Err(format!(
++                Err(format!(
+                     "The chunk offset {offset} went past the file of length {data_len} - was it truncated?",
+                 ))?;
+             }
+             toc_entry = &toc_entry[file::Index::ENTRY_SIZE..];
+             let next_offset = be_u64(&toc_entry[4..]);
+             if next_offset > data_len {
+-                return Err(format!(
++                Err(format!(
+                     "The chunk offset {next_offset} went past the file of length {data_len} - was it truncated?"
+                 ))?;
+             }
+             if next_offset <= offset {
+-                return Err("All chunk offsets must be incrementing.")?;
++                Err("All chunk offsets must be incrementing.")?;
+             }
+             chunks.push(index::Entry {
+                 kind,
+@@ -67,7 +67,7 @@ impl file::Index {
+ 
+         let sentinel = to_kind(&toc_entry[..4]);
+         if sentinel != crate::SENTINEL {
+-            return Err(format!("Sentinel value wasn't found, saw '{}'", sentinel.as_bstr()))?;
++            Err(format!("Sentinel value wasn't found, saw '{}'", sentinel.as_bstr()))?;
+         }
+ 
+         Ok(file::Index {
+diff --git a/gix-chunk/src/file/write.rs b/gix-chunk/src/file/write.rs
+index 77afc1d77..42dbac0dc 100644
+--- a/gix-chunk/src/file/write.rs
++++ b/gix-chunk/src/file/write.rs
+@@ -55,12 +55,9 @@ mod write_chunk {
+         pub fn next_chunk(&mut self) -> Option<crate::Id> {
+             if let Some(entry) = self.next_chunk.take() {
+                 assert_eq!(
+-                    entry.offset.end,
+-                    self.written_bytes as u64,
++                    entry.offset.end, self.written_bytes as u64,
+                     "BUG: expected to write {} bytes, but only wrote {} for chunk {:?}",
+-                    entry.offset.end,
+-                    self.written_bytes,
+-                    (&entry.kind)
++                    entry.offset.end, self.written_bytes, entry.kind
+                 );
+             }
+             self.written_bytes = 0;
+@@ -86,8 +83,7 @@ impl Index {
+         assert!(self.will_write, "BUG: create the index with `for_writing()`");
+         assert!(
+             !self.chunks.iter().any(|e| e.kind == chunk),
+-            "BUG: must not add chunk of same kind twice: {:?}",
+-            (&chunk)
++            "BUG: must not add chunk of same kind twice: {chunk:?}"
+         );
+         self.chunks.push(Entry {
+             kind: chunk,
+diff --git a/gix-config/src/parse/error.rs b/gix-config/src/parse/error.rs
+index 1f469ee4c..693afff1d 100644
+--- a/gix-config/src/parse/error.rs
++++ b/gix-config/src/parse/error.rs
+@@ -51,7 +51,7 @@ impl Display for Error {
+                 write!(
+                     f,
+                     "'{}' ... ({} characters omitted)",
+-                    &data.chars().take(10).collect::<String>(),
++                    data.chars().take(10).collect::<String>(),
+                     data_size - 10
+                 )
+             }
+diff --git a/gix-date/src/parse/git.rs b/gix-date/src/parse/git.rs
+index ff0625a3d..a691b3d59 100644
+--- a/gix-date/src/parse/git.rs
++++ b/gix-date/src/parse/git.rs
+@@ -261,10 +261,9 @@ fn parse_flexible_offset(offset: &str) -> Option<i32> {
+ 
+     let (sign, rest) = if let Some(stripped) = offset.strip_prefix('+') {
+         (1, stripped)
+-    } else if let Some(stripped) = offset.strip_prefix('-') {
+-        (-1, stripped)
+     } else {
+-        return None;
++        let stripped = offset.strip_prefix('-')?;
++        (-1, stripped)
+     };
+ 
+     // Remove colon if present
+diff --git a/gix-error/src/exn/impls.rs b/gix-error/src/exn/impls.rs
+index 6263938ce..37c9cb653 100644
+--- a/gix-error/src/exn/impls.rs
++++ b/gix-error/src/exn/impls.rs
+@@ -201,7 +201,7 @@ impl<E: Error + Send + Sync + 'static> Exn<E> {
+     /// Iterate over all frames and find one that downcasts into error of type `T`.
+     /// Note that the search includes this instance as well.
+     pub fn downcast_any_ref<T: Error + 'static>(&self) -> Option<&T> {
+-        self.iter().find_map(|e| e.error.downcast_ref())
++        self.iter().find_map(|e| e.error().downcast_ref())
+     }
+ }
+ 
+@@ -307,8 +307,14 @@ pub struct Frame {
+ 
+ impl Frame {
+     /// Return the error as a reference to [`Error`].
++    ///
++    /// If the error was [erased](crate::Exn::erased), this is the original error,
++    /// so it can still be downcast to its actual type.
+     pub fn error(&self) -> &(dyn Error + Send + Sync + 'static) {
+-        &*self.error
++        match self.error.downcast_ref::<Untyped>() {
++            Some(erased) => &*erased.0,
++            None => &*self.error,
++        }
+     }
+ 
+     /// Return the source code location where this exception frame was created.
+@@ -458,7 +464,11 @@ impl fmt::Debug for Untyped {
+     }
+ }
+ 
+-impl Error for Untyped {}
++impl Error for Untyped {
++    fn source(&self) -> Option<&(dyn Error + 'static)> {
++        self.0.source()
++    }
++}
+ 
+ /// An error that merely says that something is wrong.
+ pub struct Something;
+diff --git a/gix-fs/src/dir/remove.rs b/gix-fs/src/dir/remove.rs
+index 72f5b3ff3..530e23958 100644
+--- a/gix-fs/src/dir/remove.rs
++++ b/gix-fs/src/dir/remove.rs
+@@ -72,9 +72,9 @@ impl<'a> Iterator for Iter<'a> {
+ /// Note that `boundary_dir` must contain `delete_dir` or an error is returned, otherwise `delete_dir` is returned on success.
+ pub fn empty_upward_until_boundary<'a>(delete_dir: &'a Path, boundary_dir: &'a Path) -> std::io::Result<&'a Path> {
+     for item in Iter::new(delete_dir, boundary_dir)? {
+-        match item {
+-            Ok(_dir) => continue,
+-            Err(err) => return Err(err),
++        {
++            let _dir = item?;
++            continue;
+         }
+     }
+     Ok(delete_dir)
+diff --git a/gix-imara-diff/src/unified_diff.rs b/gix-imara-diff/src/unified_diff.rs
+index b33e0cba5..c40e3a7a5 100644
+--- a/gix-imara-diff/src/unified_diff.rs
++++ b/gix-imara-diff/src/unified_diff.rs
+@@ -168,7 +168,7 @@ impl<T: EndsWithNewline + Hash + Eq + Display + ?Sized> UnifiedDiffPrinter for B
+     }
+ 
+     fn display_context_token(&self, mut f: impl fmt::Write, token: Token) -> fmt::Result {
+-        write!(f, " {}", &self.0[token])?;
++        write!(f, " {}", self.0[token])?;
+         if !&self.0[token].ends_with_newline() {
+             writeln!(f)?;
+         }
+diff --git a/gix-object/src/commit/ref_iter.rs b/gix-object/src/commit/ref_iter.rs
+index 7963b0121..d126ba7bc 100644
+--- a/gix-object/src/commit/ref_iter.rs
++++ b/gix-object/src/commit/ref_iter.rs
+@@ -225,14 +225,14 @@ impl<'a> CommitRefIter<'a> {
+                     Self::next_inner_(input, state, hash_kind)?
+                 } else {
+                     let before = *input;
+-                    match parse::any_header_field_multi_line(input)
+-                        .map(|(k, o)| (k.as_bstr(), Cow::Owned(o)))
+-                        .or_else(|_| {
+-                            *input = before;
+-                            parse::any_header_field(input).map(|(k, o)| (k.as_bstr(), Cow::Borrowed(o.as_bstr())))
+-                        }) {
+-                        Ok(extra_header) => Token::ExtraHeader(extra_header),
+-                        Err(err) => return Err(err),
++                    {
++                        let extra_header = parse::any_header_field_multi_line(input)
++                            .map(|(k, o)| (k.as_bstr(), Cow::Owned(o)))
++                            .or_else(|_| {
++                                *input = before;
++                                parse::any_header_field(input).map(|(k, o)| (k.as_bstr(), Cow::Borrowed(o.as_bstr())))
++                            })?;
++                        Token::ExtraHeader(extra_header)
+                     }
+                 }
+             }
+diff --git a/gix-object/src/tree/editor.rs b/gix-object/src/tree/editor.rs
+index 8726d95bc..c4e1ac56a 100644
+--- a/gix-object/src/tree/editor.rs
++++ b/gix-object/src/tree/editor.rs
+@@ -544,7 +544,7 @@ fn empty_path() -> BString {
+ 
+ fn push_path_component(base: &mut BString, component: &[u8]) -> usize {
+     let prev_len = base.len();
+-    debug_assert!(base.last() != Some(&b'/'));
++    debug_assert_ne!(base.last(), Some(&b'/'));
+     if !base.is_empty() {
+         base.push_byte(b'/');
+     }
+diff --git a/gix-odb/src/store_impls/dynamic/find.rs b/gix-odb/src/store_impls/dynamic/find.rs
+index b7adf1dbe..301dee48a 100644
+--- a/gix-odb/src/store_impls/dynamic/find.rs
++++ b/gix-odb/src/store_impls/dynamic/find.rs
+@@ -434,12 +434,10 @@ where
+                 }
+             }
+ 
+-            match self.store.load_one_index(self.refresh, snapshot.marker).ok()? {
+-                Some(new_snapshot) => {
+-                    *snapshot = new_snapshot;
+-                    self.clear_cache();
+-                }
+-                None => return None,
++            {
++                let new_snapshot = self.store.load_one_index(self.refresh, snapshot.marker).ok()??;
++                *snapshot = new_snapshot;
++                self.clear_cache();
+             }
+         }
+     }
+@@ -460,12 +458,10 @@ where
+                 }
+             }
+ 
+-            match self.store.load_one_index(self.refresh, snapshot.marker).ok()? {
+-                Some(new_snapshot) => {
+-                    drop(snapshot);
+-                    *self.snapshot.borrow_mut() = new_snapshot;
+-                }
+-                None => return None,
++            {
++                let new_snapshot = self.store.load_one_index(self.refresh, snapshot.marker).ok()??;
++                drop(snapshot);
++                *self.snapshot.borrow_mut() = new_snapshot;
+             }
+         }
+     }
+diff --git a/gix-protocol/src/remote_progress.rs b/gix-protocol/src/remote_progress.rs
+index 26c6cc5d2..7fd7dbf60 100644
+--- a/gix-protocol/src/remote_progress.rs
++++ b/gix-protocol/src/remote_progress.rs
+@@ -19,13 +19,9 @@ pub struct RemoteProgress<'a> {
+ impl RemoteProgress<'_> {
+     /// Parse the progress from a typical git progress `line` as sent by the remote.
+     pub fn from_bytes(mut line: &[u8]) -> Option<RemoteProgress<'_>> {
+-        parse_progress(&mut line).ok().and_then(|r| {
+-            if r.percent.is_none() && r.step.is_none() && r.max.is_none() {
+-                None
+-            } else {
+-                Some(r)
+-            }
+-        })
++        parse_progress(&mut line)
++            .ok()
++            .filter(|&r| !(r.percent.is_none() && r.step.is_none() && r.max.is_none()))
+     }
+ 
+     /// Parse `text`, which is interpreted as error if `is_error` is true, as [`RemoteProgress`] and call the respective
+diff --git a/gix-ref/src/store/general/handle/find.rs b/gix-ref/src/store/general/handle/find.rs
+index 0bb5a86f0..a8b2079ee 100644
+--- a/gix-ref/src/store/general/handle/find.rs
++++ b/gix-ref/src/store/general/handle/find.rs
+@@ -33,7 +33,7 @@ impl store::Handle {
+     {
+         let _name = partial.try_into()?;
+         match &self.state {
+-            handle::State::Loose { store: _, .. } => {
++            handle::State::Loose { .. } => {
+                 todo!()
+             }
+         }
+diff --git a/gix/src/head/peel.rs b/gix/src/head/peel.rs
+index 77863de09..ec980e8ca 100644
+--- a/gix/src/head/peel.rs
++++ b/gix/src/head/peel.rs
+@@ -128,15 +128,13 @@ impl<'repo> Head<'repo> {
+                 if id.header()?.kind() == gix_object::Kind::Commit {
+                     id
+                 } else {
+-                    match id.object()?.peel_tags_to_end() {
+-                        Ok(obj) => {
+-                            self.kind = Kind::Detached {
+-                                peeled: Some(obj.id),
+-                                target: *target,
+-                            };
+-                            obj.id()
+-                        }
+-                        Err(err) => return Err(err.into()),
++                    {
++                        let obj = id.object()?.peel_tags_to_end()?;
++                        self.kind = Kind::Detached {
++                            peeled: Some(obj.id),
++                            target: *target,
++                        };
++                        obj.id()
+                     }
+                 }
+             }

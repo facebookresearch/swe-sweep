@@ -1,0 +1,74 @@
+diff --git a/test/api/cpp/CMakeLists.txt b/test/api/cpp/CMakeLists.txt
+index 6a15e252b3..aa3bc7944b 100644
+--- a/test/api/cpp/CMakeLists.txt
++++ b/test/api/cpp/CMakeLists.txt
+@@ -67,1 +67,2 @@ cvc5_add_api_test(proj-issue484)
+ cvc5_add_api_test(proj-issue484)
++cvc5_add_api_test(proj-issue570)
+diff --git a/test/api/cpp/proj-issue570.cpp b/test/api/cpp/proj-issue570.cpp
+new file mode 100644
+index 0000000000..4d949eee07
+--- /dev/null
++++ b/test/api/cpp/proj-issue570.cpp
+@@ -0,0 +1,37 @@
++/******************************************************************************
++ * Top contributors (to current version):
++ *   Andrew Reynolds
++ *
++ * This file is part of the cvc5 project.
++ *
++ * Copyright (c) 2009-2022 by the authors listed in the file AUTHORS
++ * in the top-level source directory and their institutional affiliations.
++ * All rights reserved.  See the file COPYING in the top-level source
++ * directory for licensing information.
++ * ****************************************************************************
++ *
++ * Test for project issue #570
++ *
++ */
++#include <cvc5/cvc5.h>
++
++using namespace cvc5;
++int main(void)
++{
++  Solver solver;
++  solver.setOption("incremental", "false");
++  solver.setOption("produce-interpolants", "true");
++  Sort s0 = solver.getStringSort();
++  Term t1 = solver.mkString("");
++  Op o2 = solver.mkOp(SET_SINGLETON);
++  Term t3 = solver.mkTerm(o2, {t1});
++  Sort s4 = t3.getSort();
++  Op o5 = solver.mkOp(SET_MINUS);
++  Term t6 = solver.mkTerm(o5, {t3, t3});
++  Op o7 = solver.mkOp(SET_IS_SINGLETON);
++  Term t8 = solver.mkTerm(o7, {t6});
++  Sort s9 = t8.getSort();
++  Term t10 = solver.getInterpolant(t8);
++
++  return 0;
++}
+diff --git a/test/regress/cli/CMakeLists.txt b/test/regress/cli/CMakeLists.txt
+index 9a32259f7e..f2fb702378 100644
+--- a/test/regress/cli/CMakeLists.txt
++++ b/test/regress/cli/CMakeLists.txt
+@@ -2148,6 +2148,7 @@ set(regress_1_tests
+   regress1/ho/soundness_fmf_SYO362^5-delta.p
+   regress1/ho/store-ax-min.p
+   regress1/hole6.cvc.smt2
++  regress1/interpolant-unk-570.smt2
+   regress1/ite5.smt2
+   regress1/issue3970-nl-ext-purify.smt2
+   regress1/issue3990-sort-inference.smt2
+diff --git a/test/regress/cli/regress1/interpolant-unk-570.smt2 b/test/regress/cli/regress1/interpolant-unk-570.smt2
+new file mode 100644
+index 0000000000..c17630855e
+--- /dev/null
++++ b/test/regress/cli/regress1/interpolant-unk-570.smt2
+@@ -0,0 +1,6 @@
++; COMMAND-LINE: -q
++; EXPECT: fail
++(set-logic ALL)
++(set-option :produce-interpolants true)
++(declare-fun x () (Set Int))
++(get-interpolant A (set.is_singleton (set.minus x x)))

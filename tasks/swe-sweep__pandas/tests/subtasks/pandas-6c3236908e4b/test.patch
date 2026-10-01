@@ -1,0 +1,33 @@
+diff --git a/pandas/tests/frame/methods/test_replace.py b/pandas/tests/frame/methods/test_replace.py
+index b2320798ea..c95806d931 100644
+--- a/pandas/tests/frame/methods/test_replace.py
++++ b/pandas/tests/frame/methods/test_replace.py
+@@ -646,6 +646,13 @@ class TestDataFrameReplace:
+         result = df.replace({"col": {-1: "-", 1: "a", 4: "b"}})
+         tm.assert_frame_equal(expected, result)
+ 
++    def test_replace_all_NA(self):
++        # GH#60688
++        df = DataFrame({"ticker": ["#1234#"], "name": [None]})
++        result = df.replace({col: {r"^#": "$"} for col in df.columns}, regex=True)
++        expected = DataFrame({"ticker": ["$1234#"], "name": [None]})
++        tm.assert_frame_equal(result, expected)
++
+     def test_replace_value_is_none(self, datetime_frame):
+         orig_value = datetime_frame.iloc[0, 0]
+         orig2 = datetime_frame.iloc[1, 0]
+diff --git a/pandas/tests/series/methods/test_replace.py b/pandas/tests/series/methods/test_replace.py
+index ecfe3d1b39..abd5d075ea 100644
+--- a/pandas/tests/series/methods/test_replace.py
++++ b/pandas/tests/series/methods/test_replace.py
+@@ -445,3 +445,10 @@ class TestSeriesReplace:
+         result = s.replace({regex: "z"}, regex=True)
+         expected = pd.Series(["z", "b", "c"])
+         tm.assert_series_equal(result, expected)
++
++    def test_replace_all_NA(self):
++        # GH#60688
++        df = pd.Series([pd.NA, pd.NA])
++        result = df.replace({r"^#": "$"}, regex=True)
++        expected = pd.Series([pd.NA, pd.NA])
++        tm.assert_series_equal(result, expected)

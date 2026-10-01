@@ -1,0 +1,42 @@
+diff --git a/core/trino-main/src/main/java/io/trino/sql/planner/planprinter/IoPlanPrinter.java b/core/trino-main/src/main/java/io/trino/sql/planner/planprinter/IoPlanPrinter.java
+index 5909b9dc870..9a748eb0050 100644
+--- a/core/trino-main/src/main/java/io/trino/sql/planner/planprinter/IoPlanPrinter.java
++++ b/core/trino-main/src/main/java/io/trino/sql/planner/planprinter/IoPlanPrinter.java
+@@ -783,7 +783,7 @@ public class IoPlanPrinter
+                                     .collect(toImmutableSet())),
+                     discreteValues -> formattedRanges.addAll(
+                             discreteValues.getValues().stream()
+-                                    .map(value -> valuePrinter.castToVarcharOrFail(type, value))
++                                    .map(value -> valuePrinter.castToVarchar(type, value))
+                                     .map(value -> new FormattedMarker(Optional.of(value), Bound.EXACTLY))
+                                     .map(marker -> new FormattedRange(marker, marker))
+                                     .collect(toImmutableSet())),
+@@ -799,13 +799,13 @@ public class IoPlanPrinter
+             FormattedMarker low = range.isLowUnbounded()
+                     ? new FormattedMarker(Optional.empty(), Bound.ABOVE)
+                     : new FormattedMarker(
+-                    Optional.of(valuePrinter.castToVarcharOrFail(range.getType(), range.getLowBoundedValue())),
++                    Optional.of(valuePrinter.castToVarchar(range.getType(), range.getLowBoundedValue())),
+                     range.isLowInclusive() ? Bound.EXACTLY : Bound.ABOVE);
+ 
+             FormattedMarker high = range.isHighUnbounded()
+                     ? new FormattedMarker(Optional.empty(), Bound.BELOW)
+                     : new FormattedMarker(
+-                    Optional.of(valuePrinter.castToVarcharOrFail(range.getType(), range.getHighBoundedValue())),
++                    Optional.of(valuePrinter.castToVarchar(range.getType(), range.getHighBoundedValue())),
+                     range.isHighInclusive() ? Bound.EXACTLY : Bound.BELOW);
+ 
+             return new FormattedRange(low, high);
+diff --git a/core/trino-main/src/main/java/io/trino/sql/planner/planprinter/ValuePrinter.java b/core/trino-main/src/main/java/io/trino/sql/planner/planprinter/ValuePrinter.java
+index 380489ef11c..19114060f36 100644
+--- a/core/trino-main/src/main/java/io/trino/sql/planner/planprinter/ValuePrinter.java
++++ b/core/trino-main/src/main/java/io/trino/sql/planner/planprinter/ValuePrinter.java
+@@ -48,7 +48,7 @@ public final class ValuePrinter
+         }
+     }
+ 
+-    public String castToVarcharOrFail(Type type, Object value)
++    private String castToVarcharOrFail(Type type, Object value)
+             throws OperatorNotFoundException
+     {
+         if (value == null) {

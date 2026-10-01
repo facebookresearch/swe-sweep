@@ -1,0 +1,129 @@
+diff --git a/src/PhpSpreadsheet/Worksheet/ColumnDimension.php b/src/PhpSpreadsheet/Worksheet/ColumnDimension.php
+index 4e87a34..3b78515 100644
+--- a/src/PhpSpreadsheet/Worksheet/ColumnDimension.php
++++ b/src/PhpSpreadsheet/Worksheet/ColumnDimension.php
+@@ -2,6 +2,8 @@
+ 
+ namespace PhpOffice\PhpSpreadsheet\Worksheet;
+ 
++use PhpOffice\PhpSpreadsheet\Cell\Coordinate;
++
+ class ColumnDimension extends Dimension
+ {
+     /**
+@@ -58,9 +60,27 @@ class ColumnDimension extends Dimension
+      *
+      * @return $this
+      */
+-    public function setColumnIndex($pValue)
++    public function setColumnIndex(string $index): self
++    {
++        $this->columnIndex = $index;
++
++        return $this;
++    }
++
++    /**
++     * Get column index as numeric.
++     */
++    public function getColumnNumeric(): int
++    {
++        return Coordinate::columnIndexFromString($this->columnIndex);
++    }
++
++    /**
++     * Set column index as numeric.
++     */
++    public function setColumnNumeric(int $index): self
+     {
+-        $this->columnIndex = $pValue;
++        $this->columnIndex = Coordinate::stringFromColumnIndex($index);
+ 
+         return $this;
+     }
+diff --git a/src/PhpSpreadsheet/Worksheet/Worksheet.php b/src/PhpSpreadsheet/Worksheet/Worksheet.php
+index e2b0dd8..0e20b74 100644
+--- a/src/PhpSpreadsheet/Worksheet/Worksheet.php
++++ b/src/PhpSpreadsheet/Worksheet/Worksheet.php
+@@ -2063,6 +2063,7 @@ class Worksheet implements IComparable
+             throw new Exception('Rows to be deleted should at least start from row 1.');
+         }
+ 
++        $holdRowDimensions = $this->removeRowDimensions($pRow, $pNumRows);
+         $highestRow = $this->getHighestDataRow();
+         $removedRowsCounter = 0;
+ 
+@@ -2080,9 +2081,30 @@ class Worksheet implements IComparable
+             --$highestRow;
+         }
+ 
++        $this->rowDimensions = $holdRowDimensions;
++
+         return $this;
+     }
+ 
++    private function removeRowDimensions(int $row, int $numberOfRows): array
++    {
++        $highRow = $row + $numberOfRows - 1;
++        $holdRowDimensions = [];
++        foreach ($this->rowDimensions as $rowDimension) {
++            $num = $rowDimension->getRowIndex();
++            if ($num < $row) {
++                $holdRowDimensions[$num] = $rowDimension;
++            } elseif ($num > $highRow) {
++                $num -= $numberOfRows;
++                $cloneDimension = clone $rowDimension;
++                $cloneDimension->setRowIndex($num);
++                $holdRowDimensions[$num] = $cloneDimension;
++            }
++        }
++
++        return $holdRowDimensions;
++    }
++
+     /**
+      * Remove a column, updating all possible related data.
+      *
+@@ -2105,6 +2127,8 @@ class Worksheet implements IComparable
+             return $this;
+         }
+ 
++        $holdColumnDimensions = $this->removeColumnDimensions($pColumnIndex, $pNumCols);
++
+         $pColumn = Coordinate::stringFromColumnIndex($pColumnIndex + $pNumCols);
+         $objReferenceHelper = ReferenceHelper::getInstance();
+         $objReferenceHelper->insertNewBefore($pColumn . '1', -$pNumCols, 0, $this);
+@@ -2116,11 +2140,33 @@ class Worksheet implements IComparable
+             $highestColumn = Coordinate::stringFromColumnIndex(Coordinate::columnIndexFromString($highestColumn) - 1);
+         }
+ 
++        $this->columnDimensions = $holdColumnDimensions;
++
+         $this->garbageCollect();
+ 
+         return $this;
+     }
+ 
++    private function removeColumnDimensions(int $pColumnIndex, int $numberOfColumns): array
++    {
++        $highCol = $pColumnIndex + $numberOfColumns - 1;
++        $holdColumnDimensions = [];
++        foreach ($this->columnDimensions as $columnDimension) {
++            $num = $columnDimension->getColumnNumeric();
++            if ($num < $pColumnIndex) {
++                $str = $columnDimension->getColumnIndex();
++                $holdColumnDimensions[$str] = $columnDimension;
++            } elseif ($num > $highCol) {
++                $cloneDimension = clone $columnDimension;
++                $cloneDimension->setColumnNumeric($num - $numberOfColumns);
++                $str = $cloneDimension->getColumnIndex();
++                $holdColumnDimensions[$str] = $cloneDimension;
++            }
++        }
++
++        return $holdColumnDimensions;
++    }
++
+     /**
+      * Remove a column, updating all possible related data.
+      *

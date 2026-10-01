@@ -1,0 +1,15 @@
+diff --git a/src/utils/front-matter/parse.js b/src/utils/front-matter/parse.js
+index 5e426b3..49c92c5 100644
+--- a/src/utils/front-matter/parse.js
++++ b/src/utils/front-matter/parse.js
+@@ -71,7 +71,9 @@ function parse(text) {
+ 
+   return {
+     frontMatter,
+-    content: raw.replaceAll(/[^\n]/gu, " ") + text.slice(raw.length),
++    content:
++      // eslint-disable-next-line require-unicode-regexp -- string length matters so intentionally not using unicode flag
++      raw.replaceAll(/[^\n]/g, " ") + text.slice(raw.length),
+   };
+ }
+ 

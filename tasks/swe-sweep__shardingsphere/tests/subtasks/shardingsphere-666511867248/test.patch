@@ -1,0 +1,18 @@
+diff --git a/infra/common/src/test/java/org/apache/shardingsphere/infra/database/metadata/url/StandardJdbcUrlParserTest.java b/infra/common/src/test/java/org/apache/shardingsphere/infra/database/metadata/url/StandardJdbcUrlParserTest.java
+index 9abd9d02747..b4cedfe61e2 100644
+--- a/infra/common/src/test/java/org/apache/shardingsphere/infra/database/metadata/url/StandardJdbcUrlParserTest.java
++++ b/infra/common/src/test/java/org/apache/shardingsphere/infra/database/metadata/url/StandardJdbcUrlParserTest.java
+@@ -74,4 +74,13 @@ public final class StandardJdbcUrlParserTest {
+     public void assertParseIncorrectURL() {
+         new StandardJdbcUrlParser().parse("jdbc:h2:mem:test;DB_CLOSE_DELAY=-1;DATABASE_TO_UPPER=false;MODE=MySQL");
+     }
++    
++    @Test
++    public void assertParseMySQLJdbcUrlWithIPV6() {
++        JdbcUrl actual = new StandardJdbcUrlParser().parse("jdbc:mysql://[fe80::d114:22b3:a0d9:2b3]:3306/db_test");
++        assertThat(actual.getHostname(), is("fe80::d114:22b3:a0d9:2b3"));
++        assertThat(actual.getPort(), is(3306));
++        assertThat(actual.getDatabase(), is("db_test"));
++        assertTrue(actual.getQueryProperties().isEmpty());
++    }
+ }

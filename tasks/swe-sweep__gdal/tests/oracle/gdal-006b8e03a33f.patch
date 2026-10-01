@@ -1,0 +1,14 @@
+diff --git a/frmts/sdts/sdtslinereader.cpp b/frmts/sdts/sdtslinereader.cpp
+index 244a6dfae2..fb34ca3b60 100644
+--- a/frmts/sdts/sdtslinereader.cpp
++++ b/frmts/sdts/sdtslinereader.cpp
+@@ -269,9 +269,6 @@ void SDTSLineReader::AttachToPolygons(SDTSTransfer *poTransfer,
+                                       int iTargetPolyLayer)
+ 
+ {
+-    if (!IsIndexed())
+-        return;
+-
+     /* -------------------------------------------------------------------- */
+     /*      We force a filling of the index because when we attach the      */
+     /*      lines we are just providing a pointer back to the line          */

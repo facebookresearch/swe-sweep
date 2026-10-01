@@ -1,0 +1,23 @@
+diff --git a/sqlglot/optimizer/qualify_columns.py b/sqlglot/optimizer/qualify_columns.py
+index 2f8963ae19..6ab0384a6b 100644
+--- a/sqlglot/optimizer/qualify_columns.py
++++ b/sqlglot/optimizer/qualify_columns.py
+@@ -288,7 +288,9 @@ def _expand_alias_refs(
+             if table and (not alias_expr or double_agg):
+                 column.set("table", table)
+             elif not column.table and alias_expr and not double_agg:
+-                if isinstance(alias_expr, exp.Literal) and (literal_index or resolve_table):
++                if (isinstance(alias_expr, exp.Literal) or alias_expr.is_number) and (
++                    literal_index or resolve_table
++                ):
+                     if literal_index:
+                         column.replace(exp.Literal.number(i))
+                 else:
+@@ -403,6 +405,7 @@ def _expand_positional_references(
+ 
+                 if (
+                     isinstance(select, exp.CONSTANTS)
++                    or select.is_number
+                     or select.find(exp.Explode, exp.Unnest)
+                     or ambiguous
+                 ):

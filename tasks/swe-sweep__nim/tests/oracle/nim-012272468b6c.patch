@@ -1,0 +1,18 @@
+diff --git a/compiler/sizealignoffsetimpl.nim b/compiler/sizealignoffsetimpl.nim
+index 99e4342bb..424d7450f 100644
+--- a/compiler/sizealignoffsetimpl.nim
++++ b/compiler/sizealignoffsetimpl.nim
+@@ -433,10 +433,9 @@ proc computeSizeAlign(conf: ConfigRef; typ: PType) =
+     typ.paddingAtEnd = typ.base.paddingAtEnd
+ 
+   of tyForward:
+-    # is this really illegal recursion, or maybe just unknown?
+-    typ.size = szIllegalRecursion
+-    typ.align = szIllegalRecursion
+-    typ.paddingAtEnd = szIllegalRecursion
++    typ.size = szUnknownSize
++    typ.align = szUnknownSize
++    typ.paddingAtEnd = szUnknownSize
+ 
+   of tyStatic:
+     if typ.n != nil:

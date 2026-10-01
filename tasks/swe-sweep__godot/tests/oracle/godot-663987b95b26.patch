@@ -1,0 +1,41 @@
+diff --git a/core/string/ustring.cpp b/core/string/ustring.cpp
+index d5543aa05b..22e0651939 100644
+--- a/core/string/ustring.cpp
++++ b/core/string/ustring.cpp
+@@ -1536,13 +1536,16 @@ Vector<double> String::split_floats(const String &p_splitter, bool p_allow_empty
+ 	int from = 0;
+ 	int len = length();
+ 
++	String buffer = *this;
+ 	while (true) {
+ 		int end = find(p_splitter, from);
+ 		if (end < 0) {
+ 			end = len;
+ 		}
+ 		if (p_allow_empty || (end > from)) {
+-			ret.push_back(String::to_float(&get_data()[from]));
++			buffer[end] = 0;
++			ret.push_back(String::to_float(&buffer.get_data()[from]));
++			buffer[end] = _cowdata.get(end);
+ 		}
+ 
+ 		if (end == len) {
+@@ -1560,6 +1563,7 @@ Vector<float> String::split_floats_mk(const Vector<String> &p_splitters, bool p_
+ 	int from = 0;
+ 	int len = length();
+ 
++	String buffer = *this;
+ 	while (true) {
+ 		int idx;
+ 		int end = findmk(p_splitters, from, &idx);
+@@ -1571,7 +1575,9 @@ Vector<float> String::split_floats_mk(const Vector<String> &p_splitters, bool p_
+ 		}
+ 
+ 		if (p_allow_empty || (end > from)) {
+-			ret.push_back(String::to_float(&get_data()[from]));
++			buffer[end] = 0;
++			ret.push_back(String::to_float(&buffer.get_data()[from]));
++			buffer[end] = _cowdata.get(end);
+ 		}
+ 
+ 		if (end == len) {

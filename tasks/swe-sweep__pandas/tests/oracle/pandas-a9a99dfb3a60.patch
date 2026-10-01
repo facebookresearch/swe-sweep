@@ -1,0 +1,13 @@
+diff --git a/pandas/core/dtypes/cast.py b/pandas/core/dtypes/cast.py
+index 2d4d783e57..408e58e23a 100644
+--- a/pandas/core/dtypes/cast.py
++++ b/pandas/core/dtypes/cast.py
+@@ -1424,7 +1424,7 @@ def convert_dtypes(
+             inferred_dtype = input_array.dtype
+ 
+         if is_string_dtype(inferred_dtype):
+-            if not convert_string:
++            if not convert_string or inferred_dtype == "bytes":
+                 return input_array.dtype
+             else:
+                 return pandas_dtype("string")

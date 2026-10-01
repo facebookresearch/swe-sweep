@@ -1,0 +1,42 @@
+diff --git a/lib/rules/named-grid-areas-no-invalid/index.cjs b/lib/rules/named-grid-areas-no-invalid/index.cjs
+index b959a518f..b002a6823 100644
+--- a/lib/rules/named-grid-areas-no-invalid/index.cjs
++++ b/lib/rules/named-grid-areas-no-invalid/index.cjs
+@@ -6,6 +6,7 @@ const valueParser = require('postcss-value-parser');
+ const validateTypes = require('../../utils/validateTypes.cjs');
+ const declarationValueIndex = require('../../utils/declarationValueIndex.cjs');
+ const findNotContiguousOrRectangular = require('./utils/findNotContiguousOrRectangular.cjs');
++const isStandardSyntaxValue = require('../../utils/isStandardSyntaxValue.cjs');
+ const report = require('../../utils/report.cjs');
+ const ruleMessages = require('../../utils/ruleMessages.cjs');
+ const validateOptions = require('../../utils/validateOptions.cjs');
+@@ -34,6 +35,8 @@ const rule = (primary) => {
+ 		root.walkDecls(/^(?:grid|grid-template|grid-template-areas)$/i, (decl) => {
+ 			const { value } = decl;
+ 
++			if (!isStandardSyntaxValue(value)) return;
++
+ 			if (value.toLowerCase().trim() === 'none') return;
+ 
+ 			/** @type {Array<{ values: string[], index: number, endIndex: number }>} */
+diff --git a/lib/rules/named-grid-areas-no-invalid/index.mjs b/lib/rules/named-grid-areas-no-invalid/index.mjs
+index 606d4d71b..b8ceaaba4 100644
+--- a/lib/rules/named-grid-areas-no-invalid/index.mjs
++++ b/lib/rules/named-grid-areas-no-invalid/index.mjs
+@@ -3,6 +3,7 @@ import valueParser from 'postcss-value-parser';
+ import { assert } from '../../utils/validateTypes.mjs';
+ import declarationValueIndex from '../../utils/declarationValueIndex.mjs';
+ import findNotContiguousOrRectangular from './utils/findNotContiguousOrRectangular.mjs';
++import isStandardSyntaxValue from '../../utils/isStandardSyntaxValue.mjs';
+ import report from '../../utils/report.mjs';
+ import ruleMessages from '../../utils/ruleMessages.mjs';
+ import validateOptions from '../../utils/validateOptions.mjs';
+@@ -31,6 +32,8 @@ const rule = (primary) => {
+ 		root.walkDecls(/^(?:grid|grid-template|grid-template-areas)$/i, (decl) => {
+ 			const { value } = decl;
+ 
++			if (!isStandardSyntaxValue(value)) return;
++
+ 			if (value.toLowerCase().trim() === 'none') return;
+ 
+ 			/** @type {Array<{ values: string[], index: number, endIndex: number }>} */

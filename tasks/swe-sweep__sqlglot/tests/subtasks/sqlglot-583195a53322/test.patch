@@ -1,0 +1,18 @@
+diff --git a/tests/dialects/test_duckdb.py b/tests/dialects/test_duckdb.py
+index 365a75907c..856e99c8fd 100644
+--- a/tests/dialects/test_duckdb.py
++++ b/tests/dialects/test_duckdb.py
+@@ -902,6 +902,13 @@ class TestDuckDB(Validator):
+             },
+         )
+ 
++        self.validate_identity(
++            "SELECT LAST_VALUE(x ORDER BY x IGNORE NULLS) OVER (ORDER BY x) FROM t"
++        )
++        self.validate_identity(
++            "SELECT LAST_VALUE(x ORDER BY x RESPECT NULLS) OVER (ORDER BY x) FROM t"
++        )
++
+     def test_array_index(self):
+         with self.assertLogs(helper_logger) as cm:
+             self.validate_all(

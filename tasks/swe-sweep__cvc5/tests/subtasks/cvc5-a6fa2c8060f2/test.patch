@@ -1,0 +1,24 @@
+diff --git a/test/regress/cli/CMakeLists.txt b/test/regress/cli/CMakeLists.txt
+index 413d2fe066..2decc31217 100644
+--- a/test/regress/cli/CMakeLists.txt
++++ b/test/regress/cli/CMakeLists.txt
+@@ -2874,6 +2874,7 @@ set(regress_1_tests
+   regress1/strings/proj-issue281.smt2
+   regress1/strings/proj-issue331.smt2
+   regress1/strings/proj-issue502-merge-type.smt2
++  regress1/strings/proj-issue585-cbqi-t-cons.smt2
+   regress1/strings/prop-engine-order.smt2
+   regress1/strings/query4674.smt2
+   regress1/strings/query8485.smt2
+diff --git a/test/regress/cli/regress1/strings/proj-issue585-cbqi-t-cons.smt2 b/test/regress/cli/regress1/strings/proj-issue585-cbqi-t-cons.smt2
+new file mode 100644
+index 0000000000..7cb21499b0
+--- /dev/null
++++ b/test/regress/cli/regress1/strings/proj-issue585-cbqi-t-cons.smt2
+@@ -0,0 +1,6 @@
++; EXPECT: sat
++(set-logic ALL)
++(declare-const x String)
++(set-option :cbqi-eager-test false)
++(set-option :cbqi-tconstraint true)
++(check-sat-assuming ((= x (str.replace_re_all x (str.to_re x) x))))

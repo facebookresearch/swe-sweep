@@ -1,0 +1,13 @@
+diff --git a/packages/jest-snapshot/src/InlineSnapshots.ts b/packages/jest-snapshot/src/InlineSnapshots.ts
+index 2864a8c8bc..2fc26394ee 100644
+--- a/packages/jest-snapshot/src/InlineSnapshots.ts
++++ b/packages/jest-snapshot/src/InlineSnapshots.ts
+@@ -258,7 +258,7 @@ const traverseAst = (
+       snapshotMatcherNames.push(callee.property.name);
+ 
+       const snapshotIndex = args.findIndex(
+-        ({type}) => type === 'TemplateLiteral',
++        ({type}) => type === 'TemplateLiteral' || type === 'StringLiteral',
+       );
+       const values = snapshotsForFrame.map(inlineSnapshot => {
+         inlineSnapshot.node = node;

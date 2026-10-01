@@ -1,0 +1,17 @@
+diff --git a/pandas/tests/extension/test_categorical.py b/pandas/tests/extension/test_categorical.py
+index f331449489..91ca358ca0 100644
+--- a/pandas/tests/extension/test_categorical.py
++++ b/pandas/tests/extension/test_categorical.py
+@@ -302,3 +302,12 @@ class TestComparisonOps(base.BaseComparisonOpsTests):
+ 
+ class TestParsing(base.BaseParsingTests):
+     pass
++
++
++def test_astype_category_readonly_mask_values():
++    # GH 53658
++    df = pd.DataFrame([0, 1, 2], dtype="Int64")
++    df._mgr.arrays[0]._mask.flags["WRITEABLE"] = False
++    result = df.astype("category")
++    expected = pd.DataFrame([0, 1, 2], dtype="Int64").astype("category")
++    tm.assert_frame_equal(result, expected)

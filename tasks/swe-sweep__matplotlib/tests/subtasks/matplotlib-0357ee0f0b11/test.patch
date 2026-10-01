@@ -1,0 +1,18 @@
+diff --git a/lib/matplotlib/tests/test_axes.py b/lib/matplotlib/tests/test_axes.py
+index 7950e5b..c8022b7 100644
+--- a/lib/matplotlib/tests/test_axes.py
++++ b/lib/matplotlib/tests/test_axes.py
+@@ -767,6 +767,13 @@ def test_hexbin_empty():
+     # From #3886: creating hexbin from empty dataset raises ValueError
+     ax = plt.gca()
+     ax.hexbin([], [])
++    # From #23922: creating hexbin with log scaling from empty
++    # dataset raises ValueError
++    ax.hexbin([], [], bins='log')
++    # From #27103: np.max errors when handed empty data
++    ax.hexbin([], [], C=[], reduce_C_function=np.max)
++    # No string-comparison warning from NumPy.
++    ax.hexbin([], [], bins=np.arange(10))
+ 
+ 
+ def test_hexbin_pickable():

@@ -1,0 +1,31 @@
+diff --git a/src/test/java/io/reactivex/internal/util/MiscUtilTest.java b/src/test/java/io/reactivex/internal/util/MiscUtilTest.java
+index c882315b2..8d44fdfc9 100644
+--- a/src/test/java/io/reactivex/internal/util/MiscUtilTest.java
++++ b/src/test/java/io/reactivex/internal/util/MiscUtilTest.java
+@@ -236,4 +236,26 @@ public class MiscUtilTest {
+     public void queueDrainHelperUtility() {
+         TestHelper.checkUtilityClass(QueueDrainHelper.class);
+     }
++
++    @Test
++    public void appendOnlyLinkedArrayListForEachWhileBiFullChunkNoNext() throws Exception {
++        // Fill exactly capacity elements in one chunk; no next chunk exists (a[c] == null).
++        // The predicate returns false for all elements so the loop must traverse past the full chunk.
++        AppendOnlyLinkedArrayList<Integer> list = new AppendOnlyLinkedArrayList<Integer>(2);
++
++        list.add(1);
++        list.add(2);
++
++        final List<Integer> out = new ArrayList<Integer>();
++
++        list.forEachWhile(null, new BiPredicate<Object, Integer>() {
++            @Override
++            public boolean test(Object state, Integer value) throws Exception {
++                out.add(value);
++                return false; // never terminate early
++            }
++        });
++
++        assertEquals(Arrays.asList(1, 2), out);
++    }
+ }

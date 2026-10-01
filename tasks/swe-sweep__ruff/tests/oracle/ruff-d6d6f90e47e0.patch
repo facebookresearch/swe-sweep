@@ -1,0 +1,21 @@
+diff --git a/crates/ruff_linter/src/rules/flake8_django/rules/nullable_model_string_field.rs b/crates/ruff_linter/src/rules/flake8_django/rules/nullable_model_string_field.rs
+index 47e463d5df..9ff80f0d52 100644
+--- a/crates/ruff_linter/src/rules/flake8_django/rules/nullable_model_string_field.rs
++++ b/crates/ruff_linter/src/rules/flake8_django/rules/nullable_model_string_field.rs
+@@ -61,9 +61,14 @@ pub(crate) fn nullable_model_string_field(checker: &mut Checker, body: &[Stmt]) {
+     }
+ 
+     for statement in body {
+-        let Stmt::Assign(ast::StmtAssign { value, .. }) = statement else {
+-            continue;
++        let value = match statement {
++            Stmt::Assign(ast::StmtAssign { value, .. }) => value,
++            Stmt::AnnAssign(ast::StmtAnnAssign {
++                value: Some(value), ..
++            }) => value,
++            _ => continue,
+         };
++
+         if let Some(field_name) = is_nullable_field(value, checker.semantic()) {
+             checker.diagnostics.push(Diagnostic::new(
+                 DjangoNullableModelStringField {

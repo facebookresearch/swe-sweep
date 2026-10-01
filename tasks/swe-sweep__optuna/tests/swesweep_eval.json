@@ -1,0 +1,91 @@
+{
+  "build_jobs": 4,
+  "container_repo": "/optuna",
+  "evaluation": {
+    "paths": "tests",
+    "visible_timeout": 21600
+  },
+  "upstream_image": "pandora-maxbug-optuna:v2.5.0",
+  "n_base_passing": 1311,
+  "n_base_test_ignore": 59,
+  "oracle_digest": "c7f98a5b0c8b0a04db81641850261f4d58608a9dde4d39e7f6e65ca2aa5a0048",
+  "oracle_pristine_paths": [],
+  "upstream_commit": "9f7399e15e6172900e0591deb5a57a45769d8205",
+  "reproduction": {
+    "needs_build": false,
+    "suite": "pytest",
+    "test_timeout": 900
+  },
+  "schema": 2,
+  "subtasks": [
+    {
+      "f2p": [
+        "tests.importance_tests.test_fanova::test_fanova_importance_evaluator_single_distribution"
+      ],
+      "id": "optuna-06213a5ddea6",
+      "target_files": [
+        "optuna/importance/_fanova/_evaluator.py"
+      ]
+    },
+    {
+      "f2p": [
+        "tests.samplers_tests.test_partial_fixed::test_fixed_none_value_sampling"
+      ],
+      "id": "optuna-25742539c4de",
+      "target_files": [
+        "optuna/samplers/_partial_fixed.py"
+      ]
+    },
+    {
+      "f2p": [
+        "tests.test_transform::test_search_space_transform_untransform_params"
+      ],
+      "id": "optuna-2e94a1eb496c",
+      "target_files": [
+        "optuna/_transform.py"
+      ]
+    },
+    {
+      "f2p": [
+        "tests.samplers_tests.tpe_tests.test_multivariate_parzen_estomator::test_suggest_with_step_multivariate_parzen_estimator"
+      ],
+      "id": "optuna-4dd3e0b925da",
+      "target_files": [
+        "optuna/samplers/_tpe/multivariate_parzen_estimator.py"
+      ]
+    },
+    {
+      "f2p": [
+        "tests.samplers_tests.tpe_tests.test_sampler::test_mixed_relative_search_space_pruned_and_completed_trials"
+      ],
+      "id": "optuna-6c6d85063dbc",
+      "target_files": [
+        "optuna/samplers/_search_space.py",
+        "optuna/samplers/_tpe/sampler.py"
+      ]
+    },
+    {
+      "f2p": [
+        "tests.pruners_tests.test_hyperband::test_hyperband_pruner_and_grid_sampler"
+      ],
+      "id": "optuna-a720df8ecc89",
+      "target_files": [
+        "optuna/pruners/_hyperband.py",
+        "optuna/samplers/_grid.py"
+      ]
+    },
+    {
+      "f2p": [
+        "tests.integration_tests.lightgbm_tuner_tests.test_alias::test_handling_alias_metrics[aliases15-expect15]",
+        "tests.integration_tests.lightgbm_tuner_tests.test_alias::test_handling_alias_metrics[aliases16-expect16]",
+        "tests.integration_tests.lightgbm_tuner_tests.test_alias::test_handling_unexpected_alias_metrics"
+      ],
+      "id": "optuna-c27bf69fc575",
+      "target_files": [
+        "optuna/integration/_lightgbm_tuner/alias.py"
+      ]
+    }
+  ],
+  "task": "optuna",
+  "version": "v2.5.0"
+}

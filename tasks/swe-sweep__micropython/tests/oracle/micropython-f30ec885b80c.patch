@@ -1,0 +1,24 @@
+diff --git a/ports/unix/main.c b/ports/unix/main.c
+index 0acd8c9f2..db50e12f5 100644
+--- a/ports/unix/main.c
++++ b/ports/unix/main.c
+@@ -620,12 +620,18 @@ MP_NOINLINE int main_(int argc, char **argv) {
+                 subpkg_tried = false;
+ 
+             reimport:
++                mp_hal_set_interrupt_char(CHAR_CTRL_C);
+                 if (nlr_push(&nlr) == 0) {
+                     mod = mp_builtin___import__(MP_ARRAY_SIZE(import_args), import_args);
++                    mp_hal_set_interrupt_char(-1);
++                    mp_handle_pending(true);
+                     nlr_pop();
+                 } else {
+                     // uncaught exception
+-                    return handle_uncaught_exception(nlr.ret_val) & 0xff;
++                    mp_hal_set_interrupt_char(-1);
++                    mp_handle_pending(false);
++                    ret = handle_uncaught_exception(nlr.ret_val) & 0xff;
++                    break;
+                 }
+ 
+                 if (mp_obj_is_package(mod) && !subpkg_tried) {

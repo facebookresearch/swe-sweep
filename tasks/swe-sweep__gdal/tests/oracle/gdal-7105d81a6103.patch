@@ -1,0 +1,165 @@
+diff --git a/frmts/netcdf/netcdfsgwriterutil.cpp b/frmts/netcdf/netcdfsgwriterutil.cpp
+index 390608f0c6..2863d4214d 100644
+--- a/frmts/netcdf/netcdfsgwriterutil.cpp
++++ b/frmts/netcdf/netcdfsgwriterutil.cpp
+@@ -37,7 +37,7 @@ SGeometry_Feature::SGeometry_Feature(OGRFeature &ft)
+ 
+     if (geom == nullptr)
+     {
+-        throw SGWriter_Exception_EmptyGeometry();
++        throw SGWriter_Exception_NullGeometry();
+     }
+ 
+     OGRwkbGeometryType ogwkt = geom->getGeometryType();
+@@ -114,12 +114,8 @@ SGeometry_Feature::SGeometry_Feature(OGRFeature &ft)
+         // Get node count
+         // First count exterior ring
+         const auto exterior_ring = poly->getExteriorRing();
+-        if (exterior_ring == nullptr)
+-        {
+-            throw SGWriter_Exception_EmptyGeometry();
+-        }
+-
+-        size_t outer_ring_ct = exterior_ring->getNumPoints();
++        const size_t outer_ring_ct =
++            exterior_ring ? exterior_ring->getNumPoints() : 0;
+ 
+         this->total_point_count += outer_ring_ct;
+         this->ppart_node_count.push_back(outer_ring_ct);
+@@ -134,14 +130,12 @@ SGeometry_Feature::SGeometry_Feature(OGRFeature &ft)
+         {
+             this->hasInteriorRing = true;
+             const auto iring = poly->getInteriorRing(iRingCt);
+-            if (iring == nullptr)
++            if (iring)
+             {
+-                throw SGWriter_Exception_RingOOB();
++                this->total_point_count += iring->getNumPoints();
++                this->ppart_node_count.push_back(iring->getNumPoints());
++                this->total_part_count++;
+             }
+-
+-            this->total_point_count += iring->getNumPoints();
+-            this->ppart_node_count.push_back(iring->getNumPoints());
+-            this->total_part_count++;
+         }
+     }
+ 
+@@ -155,12 +149,8 @@ SGeometry_Feature::SGeometry_Feature(OGRFeature &ft)
+         for (const auto poly : *poMP)
+         {
+             const auto exterior_ring = poly->getExteriorRing();
+-            if (exterior_ring == nullptr)
+-            {
+-                throw SGWriter_Exception_EmptyGeometry();
+-            }
+-
+-            size_t outer_ring_ct = exterior_ring->getNumPoints();
++            const size_t outer_ring_ct =
++                exterior_ring ? exterior_ring->getNumPoints() : 0;
+ 
+             this->total_point_count += outer_ring_ct;
+             this->ppart_node_count.push_back(outer_ring_ct);
+@@ -176,16 +166,14 @@ SGeometry_Feature::SGeometry_Feature(OGRFeature &ft)
+                  iRingCt++)
+             {
+                 const auto iring = poly->getInteriorRing(iRingCt);
+-                if (iring == nullptr)
++                if (iring)
+                 {
+-                    throw SGWriter_Exception_RingOOB();
++                    this->hasInteriorRing = true;
++                    this->total_point_count += iring->getNumPoints();
++                    this->ppart_node_count.push_back(iring->getNumPoints());
++                    this->total_part_count++;
++                    this->part_at_ind_interior.push_back(true);
+                 }
+-
+-                this->hasInteriorRing = true;
+-                this->total_point_count += iring->getNumPoints();
+-                this->ppart_node_count.push_back(iring->getNumPoints());
+-                this->total_part_count++;
+-                this->part_at_ind_interior.push_back(true);
+             }
+         }
+     }
+diff --git a/frmts/netcdf/netcdfsgwriterutil.h b/frmts/netcdf/netcdfsgwriterutil.h
+index 1f3bac76c4..175c7b9bf6 100644
+--- a/frmts/netcdf/netcdfsgwriterutil.h
++++ b/frmts/netcdf/netcdfsgwriterutil.h
+@@ -639,7 +639,7 @@ class SGWriter_Exception_NCDefFailure : public SGWriter_Exception
+                                     const char *failure_type);
+ };
+ 
+-class SGWriter_Exception_EmptyGeometry : public SGWriter_Exception
++class SGWriter_Exception_NullGeometry : public SGWriter_Exception
+ {
+     std::string msg;
+ 
+@@ -648,28 +648,13 @@ class SGWriter_Exception_EmptyGeometry : public SGWriter_Exception
+     {
+         return this->msg.c_str();
+     }
+-    SGWriter_Exception_EmptyGeometry()
+-        : msg("An empty geometry was detected when writing a netCDF file. "
++    SGWriter_Exception_NullGeometry()
++        : msg("A null  geometry was detected when writing a netCDF file. "
+               "Empty geometries are not allowed.")
+     {
+     }
+ };
+ 
+-class SGWriter_Exception_RingOOB : public SGWriter_Exception
+-{
+-    std::string msg;
+-
+-  public:
+-    const char *get_err_msg() override
+-    {
+-        return this->msg.c_str();
+-    }
+-    SGWriter_Exception_RingOOB()
+-        : msg("An attempt was made to read a polygon ring that does not exist.")
+-    {
+-    }
+-};
+-
+ class SGWriter_Exception_NCDelFailure : public SGWriter_Exception
+ {
+     std::string msg;
+diff --git a/ogr/ogrsf_frmts/geojson/ogrgeojsonreader.cpp b/ogr/ogrsf_frmts/geojson/ogrgeojsonreader.cpp
+index c9fb2e221b..bf437f4544 100644
+--- a/ogr/ogrsf_frmts/geojson/ogrgeojsonreader.cpp
++++ b/ogr/ogrsf_frmts/geojson/ogrgeojsonreader.cpp
+@@ -3003,7 +3003,6 @@ OGRPolygon *OGRGeoJSONReadPolygon(json_object *poObj, bool bRaw)
+             if (poObjPoints == nullptr)
+             {
+                 poPolygon = new OGRPolygon();
+-                poPolygon->addRingDirectly(new OGRLinearRing());
+             }
+             else
+             {
+@@ -3019,11 +3018,7 @@ OGRPolygon *OGRGeoJSONReadPolygon(json_object *poObj, bool bRaw)
+                  i < nRings && nullptr != poPolygon; ++i)
+             {
+                 poObjPoints = json_object_array_get_idx(poObjRings, i);
+-                if (poObjPoints == nullptr)
+-                {
+-                    poPolygon->addRingDirectly(new OGRLinearRing());
+-                }
+-                else
++                if (poObjPoints != nullptr)
+                 {
+                     OGRLinearRing *poRing =
+                         OGRGeoJSONReadLinearRing(poObjPoints);
+@@ -3034,6 +3029,10 @@ OGRPolygon *OGRGeoJSONReadPolygon(json_object *poObj, bool bRaw)
+                 }
+             }
+         }
++        else
++        {
++            poPolygon = new OGRPolygon();
++        }
+     }
+ 
+     return poPolygon;

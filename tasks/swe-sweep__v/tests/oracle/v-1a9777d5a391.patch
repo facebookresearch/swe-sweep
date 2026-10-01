@@ -1,0 +1,13 @@
+diff --git a/vlib/v/gen/c/cgen.v b/vlib/v/gen/c/cgen.v
+index 88cf9b205..d1dfcb36c 100644
+--- a/vlib/v/gen/c/cgen.v
++++ b/vlib/v/gen/c/cgen.v
+@@ -5476,7 +5476,7 @@ fn (mut g Gen) return_stmt(node ast.Return) {
+ 			g.writeln('${ret_typ} ${tmpvar};')
+ 			g.write('_result_ok(&(${styp}[]) { ')
+ 			if !fn_ret_type.is_ptr() && node.types[0].is_ptr() {
+-				if !(node.exprs[0] is ast.Ident && !g.is_amp) {
++				if !((node.exprs[0] is ast.Ident && !g.is_amp) || sym.kind == .interface_) {
+ 					g.write('*')
+ 				}
+ 			}

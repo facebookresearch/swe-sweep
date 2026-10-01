@@ -1,0 +1,13 @@
+diff --git a/packages/@aws-cdk/aws-apigateway/lib/api-key.ts b/packages/@aws-cdk/aws-apigateway/lib/api-key.ts
+index c6dd3e8c44..1852ab0a42 100644
+--- a/packages/@aws-cdk/aws-apigateway/lib/api-key.ts
++++ b/packages/@aws-cdk/aws-apigateway/lib/api-key.ts
+@@ -165,7 +165,7 @@ export class ApiKey extends ApiKeyBase {
+     const resource = new CfnApiKey(this, 'Resource', {
+       customerId: props.customerId,
+       description: props.description,
+-      enabled: props.enabled || true,
++      enabled: props.enabled ?? true,
+       generateDistinctId: props.generateDistinctId,
+       name: this.physicalName,
+       stageKeys: this.renderStageKeys(props.resources),

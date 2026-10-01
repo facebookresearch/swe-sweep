@@ -1,0 +1,143 @@
+diff --git a/codec/src/main/java/io/netty/handler/codec/base64/Base64.java b/codec/src/main/java/io/netty/handler/codec/base64/Base64.java
+index c4d0ced08d..2fb503bd2d 100644
+--- a/codec/src/main/java/io/netty/handler/codec/base64/Base64.java
++++ b/codec/src/main/java/io/netty/handler/codec/base64/Base64.java
+@@ -314,8 +314,6 @@ public final class Base64 {
+     private static final class Decoder implements ByteProcessor {
+         private final byte[] b4 = new byte[4];
+         private int b4Posn;
+-        private byte sbiCrop;
+-        private byte sbiDecode;
+         private byte[] decodabet;
+         private int outBuffPosn;
+         private ByteBuf dest;
+@@ -336,26 +334,24 @@ public final class Base64 {
+ 
+         @Override
+         public boolean process(byte value) throws Exception {
+-            sbiCrop = (byte) (value & 0x7f); // Only the low seven bits
+-            sbiDecode = decodabet[sbiCrop];
++            if (value > 0) {
++                byte sbiDecode = decodabet[value];
++                if (sbiDecode >= WHITE_SPACE_ENC) { // White space, Equals sign or better
++                    if (sbiDecode >= EQUALS_SIGN_ENC) { // Equals sign or better
++                        b4[b4Posn ++] = value;
++                        if (b4Posn > 3) { // Quartet built
++                            outBuffPosn += decode4to3(b4, dest, outBuffPosn, decodabet);
++                            b4Posn = 0;
+ 
+-            if (sbiDecode >= WHITE_SPACE_ENC) { // White space, Equals sign or better
+-                if (sbiDecode >= EQUALS_SIGN_ENC) { // Equals sign or better
+-                    b4[b4Posn ++] = sbiCrop;
+-                    if (b4Posn > 3) { // Quartet built
+-                        outBuffPosn += decode4to3(b4, dest, outBuffPosn, decodabet);
+-                        b4Posn = 0;
+-
+-                        // If that was the equals sign, break out of 'for' loop
+-                        if (sbiCrop == EQUALS_SIGN) {
+-                            return false;
++                            // If that was the equals sign, break out of 'for' loop
++                            return value != EQUALS_SIGN;
+                         }
+                     }
++                    return true;
+                 }
+-                return true;
+             }
+             throw new IllegalArgumentException(
+-                    "invalid bad Base64 input character: " + (short) (value & 0xFF) + " (decimal)");
++                    "invalid Base64 input character: " + (short) (value & 0xFF) + " (decimal)");
+         }
+ 
+         private static int decode4to3(byte[] src, ByteBuf dest, int destOffset, byte[] decodabet) {
+diff --git a/codec/src/main/java/io/netty/handler/codec/base64/Base64Dialect.java b/codec/src/main/java/io/netty/handler/codec/base64/Base64Dialect.java
+index 27aecf23cf..716b0e249c 100644
+--- a/codec/src/main/java/io/netty/handler/codec/base64/Base64Dialect.java
++++ b/codec/src/main/java/io/netty/handler/codec/base64/Base64Dialect.java
+@@ -67,17 +67,17 @@ public enum Base64Dialect {
+             -9, -9, -9, -9, -9, -9, // Decimal 91 - 96
+             26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, // Letters 'a' through 'm'
+             39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, // Letters 'n' through 'z'
+-            -9, -9, -9, -9, // Decimal 123 - 126
+-         /* -9,-9,-9,-9,-9,-9,-9,-9,-9,-9,-9,-9,-9,     // Decimal 127 - 139
+-            -9,-9,-9,-9,-9,-9,-9,-9,-9,-9,-9,-9,-9,     // Decimal 140 - 152
+-            -9,-9,-9,-9,-9,-9,-9,-9,-9,-9,-9,-9,-9,     // Decimal 153 - 165
+-            -9,-9,-9,-9,-9,-9,-9,-9,-9,-9,-9,-9,-9,     // Decimal 166 - 178
+-            -9,-9,-9,-9,-9,-9,-9,-9,-9,-9,-9,-9,-9,     // Decimal 179 - 191
+-            -9,-9,-9,-9,-9,-9,-9,-9,-9,-9,-9,-9,-9,     // Decimal 192 - 204
+-            -9,-9,-9,-9,-9,-9,-9,-9,-9,-9,-9,-9,-9,     // Decimal 205 - 217
+-            -9,-9,-9,-9,-9,-9,-9,-9,-9,-9,-9,-9,-9,     // Decimal 218 - 230
+-            -9,-9,-9,-9,-9,-9,-9,-9,-9,-9,-9,-9,-9,     // Decimal 231 - 243
+-            -9,-9,-9,-9,-9,-9,-9,-9,-9,-9,-9,-9         // Decimal 244 - 255 */
++            -9, -9, -9, -9, -9 // Decimal 123 - 127
++         /* -9,-9,-9,-9,-9,-9,-9,-9,-9,-9,-9,-9,-9,     // Decimal 128 - 140
++            -9,-9,-9,-9,-9,-9,-9,-9,-9,-9,-9,-9,-9,     // Decimal 141 - 153
++            -9,-9,-9,-9,-9,-9,-9,-9,-9,-9,-9,-9,-9,     // Decimal 154 - 166
++            -9,-9,-9,-9,-9,-9,-9,-9,-9,-9,-9,-9,-9,     // Decimal 167 - 179
++            -9,-9,-9,-9,-9,-9,-9,-9,-9,-9,-9,-9,-9,     // Decimal 180 - 192
++            -9,-9,-9,-9,-9,-9,-9,-9,-9,-9,-9,-9,-9,     // Decimal 193 - 205
++            -9,-9,-9,-9,-9,-9,-9,-9,-9,-9,-9,-9,-9,     // Decimal 206 - 218
++            -9,-9,-9,-9,-9,-9,-9,-9,-9,-9,-9,-9,-9,     // Decimal 219 - 231
++            -9,-9,-9,-9,-9,-9,-9,-9,-9,-9,-9,-9,-9,     // Decimal 232 - 244
++            -9,-9,-9,-9,-9,-9,-9,-9,-9,-9,-9            // Decimal 245 - 255 */
+             }, true),
+     /**
+      * Base64-like encoding that is URL-safe as described in the Section 4 of
+@@ -126,17 +126,17 @@ public enum Base64Dialect {
+             -9, // Decimal 96
+             26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, // Letters 'a' through 'm'
+             39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, 51, // Letters 'n' through 'z'
+-            -9, -9, -9, -9, // Decimal 123 - 126
+-          /*-9,-9,-9,-9,-9,-9,-9,-9,-9,-9,-9,-9,-9,     // Decimal 127 - 139
+-            -9,-9,-9,-9,-9,-9,-9,-9,-9,-9,-9,-9,-9,     // Decimal 140 - 152
+-            -9,-9,-9,-9,-9,-9,-9,-9,-9,-9,-9,-9,-9,     // Decimal 153 - 165
+-            -9,-9,-9,-9,-9,-9,-9,-9,-9,-9,-9,-9,-9,     // Decimal 166 - 178
+-            -9,-9,-9,-9,-9,-9,-9,-9,-9,-9,-9,-9,-9,     // Decimal 179 - 191
+-            -9,-9,-9,-9,-9,-9,-9,-9,-9,-9,-9,-9,-9,     // Decimal 192 - 204
+-            -9,-9,-9,-9,-9,-9,-9,-9,-9,-9,-9,-9,-9,     // Decimal 205 - 217
+-            -9,-9,-9,-9,-9,-9,-9,-9,-9,-9,-9,-9,-9,     // Decimal 218 - 230
+-            -9,-9,-9,-9,-9,-9,-9,-9,-9,-9,-9,-9,-9,     // Decimal 231 - 243
+-            -9,-9,-9,-9,-9,-9,-9,-9,-9,-9,-9,-9         // Decimal 244 - 255 */
++            -9, -9, -9, -9, -9, // Decimal 123 - 127
++         /* -9,-9,-9,-9,-9,-9,-9,-9,-9,-9,-9,-9,-9,     // Decimal 128 - 140
++            -9,-9,-9,-9,-9,-9,-9,-9,-9,-9,-9,-9,-9,     // Decimal 141 - 153
++            -9,-9,-9,-9,-9,-9,-9,-9,-9,-9,-9,-9,-9,     // Decimal 154 - 166
++            -9,-9,-9,-9,-9,-9,-9,-9,-9,-9,-9,-9,-9,     // Decimal 167 - 179
++            -9,-9,-9,-9,-9,-9,-9,-9,-9,-9,-9,-9,-9,     // Decimal 180 - 192
++            -9,-9,-9,-9,-9,-9,-9,-9,-9,-9,-9,-9,-9,     // Decimal 193 - 205
++            -9,-9,-9,-9,-9,-9,-9,-9,-9,-9,-9,-9,-9,     // Decimal 206 - 218
++            -9,-9,-9,-9,-9,-9,-9,-9,-9,-9,-9,-9,-9,     // Decimal 219 - 231
++            -9,-9,-9,-9,-9,-9,-9,-9,-9,-9,-9,-9,-9,     // Decimal 232 - 244
++            -9,-9,-9,-9,-9,-9,-9,-9,-9,-9,-9            // Decimal 245 - 255 */
+             }, false),
+     /**
+      * Special "ordered" dialect of Base64 described in
+@@ -182,17 +182,17 @@ public enum Base64Dialect {
+             -9, // Decimal 96
+             38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50, // Letters 'a' through 'm'
+             51, 52, 53, 54, 55, 56, 57, 58, 59, 60, 61, 62, 63, // Letters 'n' through 'z'
+-            -9, -9, -9, -9, // Decimal 123 - 126
+-         /* -9,-9,-9,-9,-9,-9,-9,-9,-9,-9,-9,-9,-9,     // Decimal 127 - 139
+-            -9,-9,-9,-9,-9,-9,-9,-9,-9,-9,-9,-9,-9,     // Decimal 140 - 152
+-            -9,-9,-9,-9,-9,-9,-9,-9,-9,-9,-9,-9,-9,     // Decimal 153 - 165
+-            -9,-9,-9,-9,-9,-9,-9,-9,-9,-9,-9,-9,-9,     // Decimal 166 - 178
+-            -9,-9,-9,-9,-9,-9,-9,-9,-9,-9,-9,-9,-9,     // Decimal 179 - 191
+-            -9,-9,-9,-9,-9,-9,-9,-9,-9,-9,-9,-9,-9,     // Decimal 192 - 204
+-            -9,-9,-9,-9,-9,-9,-9,-9,-9,-9,-9,-9,-9,     // Decimal 205 - 217
+-            -9,-9,-9,-9,-9,-9,-9,-9,-9,-9,-9,-9,-9,     // Decimal 218 - 230
+-            -9,-9,-9,-9,-9,-9,-9,-9,-9,-9,-9,-9,-9,     // Decimal 231 - 243
+-            -9,-9,-9,-9,-9,-9,-9,-9,-9,-9,-9,-9         // Decimal 244 - 255 */
++            -9, -9, -9, -9, -9 // Decimal 123 - 127
++         /* -9,-9,-9,-9,-9,-9,-9,-9,-9,-9,-9,-9,-9,     // Decimal 128 - 140
++            -9,-9,-9,-9,-9,-9,-9,-9,-9,-9,-9,-9,-9,     // Decimal 141 - 153
++            -9,-9,-9,-9,-9,-9,-9,-9,-9,-9,-9,-9,-9,     // Decimal 154 - 166
++            -9,-9,-9,-9,-9,-9,-9,-9,-9,-9,-9,-9,-9,     // Decimal 167 - 179
++            -9,-9,-9,-9,-9,-9,-9,-9,-9,-9,-9,-9,-9,     // Decimal 180 - 192
++            -9,-9,-9,-9,-9,-9,-9,-9,-9,-9,-9,-9,-9,     // Decimal 193 - 205
++            -9,-9,-9,-9,-9,-9,-9,-9,-9,-9,-9,-9,-9,     // Decimal 206 - 218
++            -9,-9,-9,-9,-9,-9,-9,-9,-9,-9,-9,-9,-9,     // Decimal 219 - 231
++            -9,-9,-9,-9,-9,-9,-9,-9,-9,-9,-9,-9,-9,     // Decimal 232 - 244
++            -9,-9,-9,-9,-9,-9,-9,-9,-9,-9,-9            // Decimal 245 - 255 */
+             }, true);
+ 
+     final byte[] alphabet;

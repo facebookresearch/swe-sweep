@@ -1,0 +1,13 @@
+diff --git a/packages/babel-parser/src/tokenizer/context.js b/packages/babel-parser/src/tokenizer/context.js
+index 11fe53d2d2..bb0f7b8a20 100644
+--- a/packages/babel-parser/src/tokenizer/context.js
++++ b/packages/babel-parser/src/tokenizer/context.js
+@@ -106,7 +106,7 @@ tt.incDec.updateContext = function() {
+   // tokExprAllowed stays unchanged
+ };
+ 
+-tt._function.updateContext = function(prevType) {
++tt._function.updateContext = tt._class.updateContext = function(prevType) {
+   if (this.state.exprAllowed && !this.braceIsBlock(prevType)) {
+     this.state.context.push(types.functionExpression);
+   }

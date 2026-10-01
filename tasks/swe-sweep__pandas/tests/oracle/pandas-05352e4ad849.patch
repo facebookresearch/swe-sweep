@@ -1,0 +1,38 @@
+diff --git a/pandas/core/reshape/merge.py b/pandas/core/reshape/merge.py
+index 140a3024a8..13bc100869 100644
+--- a/pandas/core/reshape/merge.py
++++ b/pandas/core/reshape/merge.py
+@@ -36,6 +36,7 @@ from pandas.util._decorators import (
+     Substitution,
+ )
+ 
++from pandas.core.dtypes.cast import find_common_type
+ from pandas.core.dtypes.common import (
+     ensure_float64,
+     ensure_int64,
+@@ -1193,8 +1194,23 @@ class _MergeOperation:
+             if is_numeric_dtype(lk.dtype) and is_numeric_dtype(rk.dtype):
+                 if lk.dtype.kind == rk.dtype.kind:
+                     continue
+ 
++                if is_extension_array_dtype(lk.dtype) and not is_extension_array_dtype(
++                    rk.dtype
++                ):
++                    ct = find_common_type([lk.dtype, rk.dtype])
++                    if is_extension_array_dtype(ct):
++                        rk = ct.construct_array_type()._from_sequence(rk)  # type: ignore[union-attr]  # noqa: E501
++                    else:
++                        rk = rk.astype(ct)  # type: ignore[arg-type]
++                elif is_extension_array_dtype(rk.dtype):
++                    ct = find_common_type([lk.dtype, rk.dtype])
++                    if is_extension_array_dtype(ct):
++                        lk = ct.construct_array_type()._from_sequence(lk)  # type: ignore[union-attr]  # noqa: E501
++                    else:
++                        lk = lk.astype(ct)  # type: ignore[arg-type]
++
+                 # check whether ints and floats
+-                elif is_integer_dtype(rk.dtype) and is_float_dtype(lk.dtype):
++                if is_integer_dtype(rk.dtype) and is_float_dtype(lk.dtype):
+                     if not (lk == lk.astype(rk.dtype))[~np.isnan(lk)].all():
+                         warnings.warn(
+                             "You are merging on int and float "

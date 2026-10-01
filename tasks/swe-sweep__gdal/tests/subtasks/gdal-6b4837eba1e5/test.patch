@@ -1,0 +1,56 @@
+diff --git a/autotest/ogr/ogr_sql_test.py b/autotest/ogr/ogr_sql_test.py
+index 8e27bcf2d6..c30642861a 100755
+--- a/autotest/ogr/ogr_sql_test.py
++++ b/autotest/ogr/ogr_sql_test.py
+@@ -1602,6 +1602,51 @@ def test_ogr_sql_field_names_same_case():
+     assert f["ID2"] == "baz"
+ 
+ 
++###############################################################################
++# Test SetAttributeFilter() on a GenSQL layer that doesn't forward its
++# initial where clause to the source, particularly with explicit dialect="OGRSQL"
++
++
++@pytest.mark.parametrize("dialect", [None, "OGRSQL"])
++def test_ogr_sql_attribute_filter_on_top_of_non_forward_where_clause(dialect):
++
++    mem_ds = ogr.GetDriverByName("Memory").CreateDataSource("")
++    mem_lyr = mem_ds.CreateLayer("test")
++    f = ogr.Feature(mem_lyr.GetLayerDefn())
++    f.SetGeometry(ogr.CreateGeometryFromWkt("POLYGON EMPTY"))
++    mem_lyr.CreateFeature(f)
++    f = ogr.Feature(mem_lyr.GetLayerDefn())
++    f.SetGeometry(ogr.CreateGeometryFromWkt("MULTIPOLYGON EMPTY"))
++    mem_lyr.CreateFeature(f)
++
++    sql_lyr = mem_ds.ExecuteSQL(
++        "SELECT * FROM test WHERE OGR_GEOMETRY = 'POLYGON'", dialect=dialect
++    )
++    sql_lyr.SetAttributeFilter("")
++    try:
++        assert sql_lyr.GetFeatureCount() == 1
++    finally:
++        mem_ds.ReleaseResultSet(sql_lyr)
++
++    sql_lyr = mem_ds.ExecuteSQL(
++        "SELECT * FROM test WHERE OGR_GEOMETRY = 'POLYGON'", dialect=dialect
++    )
++    sql_lyr.SetAttributeFilter("1")
++    try:
++        assert sql_lyr.GetFeatureCount() == 1
++    finally:
++        mem_ds.ReleaseResultSet(sql_lyr)
++
++    sql_lyr = mem_ds.ExecuteSQL(
++        "SELECT * FROM test WHERE OGR_GEOMETRY = 'POLYGON'", dialect=dialect
++    )
++    sql_lyr.SetAttributeFilter("0")
++    try:
++        assert sql_lyr.GetFeatureCount() == 0
++    finally:
++        mem_ds.ReleaseResultSet(sql_lyr)
++
++
+ ###############################################################################
+ 
+ 

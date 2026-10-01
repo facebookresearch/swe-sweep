@@ -1,0 +1,49 @@
+diff --git a/compiler/src/dmd/expressionsem.d b/compiler/src/dmd/expressionsem.d
+index 77c537ae25..54498e1f66 100644
+--- a/compiler/src/dmd/expressionsem.d
++++ b/compiler/src/dmd/expressionsem.d
+@@ -8473,6 +8473,7 @@ private extern (C++) final class ExpressionSemanticVisitor : Visitor
+                 }
+ 
+                 semanticTypeInfo(sc, taa);
++                checkNewEscape(sc, exp.e2, false);
+ 
+                 exp.type = taa.next;
+                 break;
+@@ -10365,9 +10366,13 @@ private extern (C++) final class ExpressionSemanticVisitor : Visitor
+             return setError();
+ 
+         exp.type = exp.e1.type;
++        auto assignElem = exp.e2;
+         auto res = exp.reorderSettingAAElem(sc);
+-        if (exp.op == EXP.concatenateElemAssign || exp.op == EXP.concatenateDcharAssign)
++        if (res != exp) // `AA[k] = v` rewrite was performed
++            checkNewEscape(sc, assignElem, false);
++        else if (exp.op == EXP.concatenateElemAssign || exp.op == EXP.concatenateDcharAssign)
+             checkAssignEscape(sc, res, false, false);
++
+         result = res;
+ 
+         if ((exp.op == EXP.concatenateAssign || exp.op == EXP.concatenateElemAssign) &&
+diff --git a/druntime/src/core/demangle.d b/druntime/src/core/demangle.d
+index 2172920362..869ade6482 100644
+--- a/druntime/src/core/demangle.d
++++ b/druntime/src/core/demangle.d
+@@ -2218,7 +2218,7 @@ char[] reencodeMangled(return scope const(char)[] mangled) nothrow pure @safe
+             }
+         }
+ 
+-        bool parseLName(scope ref Remangle d) scope
++        bool parseLName(scope ref Remangle d) scope @trusted
+         {
+             flushPosition(d);
+ 
+@@ -2269,7 +2269,7 @@ char[] reencodeMangled(return scope const(char)[] mangled) nothrow pure @safe
+                 }
+                 else
+                 {
+-                    idpos[id] = refpos;
++                    idpos[id] = refpos; //! scope variable id used as AA key, makes this function @trusted
+                     result ~= d.buf[refpos .. d.pos];
+                 }
+             }

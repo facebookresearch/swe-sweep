@@ -1,0 +1,29 @@
+diff --git a/lib/matplotlib/tests/test_contour.py b/lib/matplotlib/tests/test_contour.py
+index 58c15c9..3302f11 100644
+--- a/lib/matplotlib/tests/test_contour.py
++++ b/lib/matplotlib/tests/test_contour.py
+@@ -397,4 +397,24 @@
+ @pytest.mark.backend("pdf")
+ def test_label_nonagg():
+     # This should not crash even if the canvas doesn't have a get_renderer().
+     plt.clabel(plt.contour([[1, 2], [3, 4]]))
++
++
++def test_subfigure_clabel():
++    # Smoke test for gh#23173
++    delta = 0.025
++    x = np.arange(-3.0, 3.0, delta)
++    y = np.arange(-2.0, 2.0, delta)
++    X, Y = np.meshgrid(x, y)
++    Z1 = np.exp(-(X**2) - Y**2)
++    Z2 = np.exp(-((X - 1) ** 2) - (Y - 1) ** 2)
++    Z = (Z1 - Z2) * 2
++
++    fig = plt.figure()
++    figs = fig.subfigures(nrows=1, ncols=2)
++
++    for f in figs:
++        ax = f.subplots()
++        CS = ax.contour(X, Y, Z)
++        ax.clabel(CS, inline=True, fontsize=10)
++        ax.set_title("Simplest default with labels")

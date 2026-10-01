@@ -1,0 +1,25 @@
+diff --git a/src/Symfony/Component/Finder/Glob.php b/src/Symfony/Component/Finder/Glob.php
+index 7fe8b1a86ce..d950e48fc7e 100644
+--- a/src/Symfony/Component/Finder/Glob.php
++++ b/src/Symfony/Component/Finder/Glob.php
+@@ -44,6 +44,9 @@ class Glob
+         $escaping = false;
+         $inCurlies = 0;
+         $regex = '';
++        if ($unanchored = str_starts_with($glob, '**/')) {
++            $glob = '/'.$glob;
++        }
+         $sizeGlob = \strlen($glob);
+         for ($i = 0; $i < $sizeGlob; ++$i) {
+             $car = $glob[$i];
+@@ -104,6 +107,10 @@ class Glob
+             $escaping = false;
+         }
+ 
++        if ($unanchored) {
++            $regex = substr_replace($regex, '?', 1 + ('/' === $delimiter) + ($strictLeadingDot ? \strlen('(?=[^\.])') : 0), 0);
++        }
++
+         return $delimiter.'^'.$regex.'$'.$delimiter;
+     }
+ }

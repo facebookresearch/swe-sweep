@@ -1,0 +1,27 @@
+diff --git a/test/regress/cli/CMakeLists.txt b/test/regress/cli/CMakeLists.txt
+index 2cbc86aec2..8a71036da6 100644
+--- a/test/regress/cli/CMakeLists.txt
++++ b/test/regress/cli/CMakeLists.txt
+@@ -2219,6 +2219,7 @@ set(regress_1_tests
+   regress1/nl/issue9183-5.smt2
+   regress1/nl/issue9420-ll.smt2
+   regress1/nl/issue9480-pow-pow2.smt2
++  regress1/nl/issue9611-lrew.smt2
+   regress1/nl/learned-rewrite-int-mod-range.smt2
+   regress1/nl/metitarski-1025.smt2
+   regress1/nl/metitarski-3-4.smt2
+diff --git a/test/regress/cli/regress1/nl/issue9611-lrew.smt2 b/test/regress/cli/regress1/nl/issue9611-lrew.smt2
+new file mode 100644
+index 0000000000..0a83700cad
+--- /dev/null
++++ b/test/regress/cli/regress1/nl/issue9611-lrew.smt2
+@@ -0,0 +1,9 @@
++; COMMAND-LINE: --learned-rewrite
++; EXPECT: unsat
++; DISABLE-TESTER: proof
++; DISABLE-TESTER: unsat-core
++(set-logic QF_UFNIA)
++(declare-fun i (Int Int Int) Int)
++(assert (> 0 (i 0 0 0)))
++(assert (= (i 0 0 0) (ite (= 0 (i 0 0 0)) 1 (mod 0 0))))
++(check-sat)

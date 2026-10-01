@@ -1,0 +1,99 @@
+diff --git a/e2e/filter/my-filter.js b/e2e/filter/my-filter.js
+index 10c71b8363..da0e2c761a 100644
+--- a/e2e/filter/my-filter.js
++++ b/e2e/filter/my-filter.js
+@@ -11,9 +11,7 @@ module.exports = function (tests) {
+   return new Promise(resolve => {
+     setTimeout(() => {
+       resolve({
+-        filtered: tests
+-          .filter(t => t.indexOf('foo') !== -1)
+-          .map(test => ({message: 'some message', test})),
++        filtered: tests.filter(t => t.indexOf('foo') !== -1),
+       });
+     }, 100);
+   });
+diff --git a/e2e/filter/my-secondary-filter.js b/e2e/filter/my-secondary-filter.js
+index b6551712ee..f729832e74 100644
+--- a/e2e/filter/my-secondary-filter.js
++++ b/e2e/filter/my-secondary-filter.js
+@@ -9,6 +9,6 @@
+ 
+ module.exports = function (tests) {
+   return {
+-    filtered: tests.filter(t => t.indexOf('foo') !== -1).map(test => ({test})),
++    filtered: tests.filter(t => t.indexOf('foo') !== -1),
+   };
+ };
+diff --git a/e2e/filter/my-setup-filter.js b/e2e/filter/my-setup-filter.js
+index 751568123d..02d797bb2a 100644
+--- a/e2e/filter/my-setup-filter.js
++++ b/e2e/filter/my-setup-filter.js
+@@ -13,9 +13,7 @@ const setupData = {
+ 
+ module.exports = function (tests) {
+   return {
+-    filtered: tests
+-      .filter(t => t.indexOf(setupData.filterText) !== -1)
+-      .map(test => ({test})),
++    filtered: tests.filter(t => t.indexOf(setupData.filterText) !== -1),
+   };
+ };
+ 
+diff --git a/packages/jest-core/src/__tests__/SearchSource.test.ts b/packages/jest-core/src/__tests__/SearchSource.test.ts
+index fc93a8f03d..1ec593bbf3 100644
+--- a/packages/jest-core/src/__tests__/SearchSource.test.ts
++++ b/packages/jest-core/src/__tests__/SearchSource.test.ts
+@@ -12,6 +12,7 @@ import type {Config} from '@jest/types';
+ import {normalize} from 'jest-config';
+ import Runtime from 'jest-runtime';
+ import SearchSource, {SearchResult} from '../SearchSource';
++import type {Filter} from '../types';
+ 
+ jest.setTimeout(15000);
+ 
+@@ -105,9 +106,16 @@ describe('SearchSource', () => {
+   describe('getTestPaths', () => {
+-    const getTestPaths = async (initialOptions: Config.InitialOptions) => {
++    const getTestPaths = async (
++      initialOptions: Config.InitialOptions,
++      filter?: Filter,
++    ) => {
+       const searchSource = await initSearchSource(initialOptions);
+-      const {tests: paths} = await searchSource.getTestPaths({
+-        testPathPattern: '',
+-      });
++      const {tests: paths} = await searchSource.getTestPaths(
++        {
++          testPathPattern: '',
++        },
++        null,
++        filter,
++      );
+       return paths.map(({path: p}) => path.relative(rootDir, p)).sort();
+     };
+ 
+@@ -286,6 +294,23 @@ describe('SearchSource', () => {
+         path.normalize('__testtests__/test.jsx'),
+       ]);
+     });
++
++    it('filter tests based on an optional filter method', async () => {
++      const filterFunction = (testPaths: Array<string>) =>
++        Promise.resolve({
++          filtered: testPaths.filter(testPath => testPath.includes('test.jsx')),
++        });
++      const paths = await getTestPaths(
++        {
++          id,
++          rootDir,
++        },
++        filterFunction,
++      );
++
++      expect(paths).toHaveLength(1);
++      expect(paths[0]).toStrictEqual(path.normalize('__testtests__/test.jsx'));
++    });
+   });
+ 
+   describe('filterPathsWin32', () => {

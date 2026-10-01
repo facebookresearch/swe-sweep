@@ -1,0 +1,68 @@
+diff --git a/tests/ui/unwrap_expect_used.rs b/tests/ui/unwrap_expect_used.rs
+index d0bb57127..b429f3a8a 100644
+--- a/tests/ui/unwrap_expect_used.rs
++++ b/tests/ui/unwrap_expect_used.rs
+@@ -66,3 +66,20 @@ fn main() {
+         SOME.expect("Still not three?");
+     }
+ }
++
++mod with_expansion {
++    macro_rules! open {
++        ($file:expr) => {
++            std::fs::File::open($file)
++        };
++    }
++
++    fn test(file: &str) {
++        use std::io::Read;
++        let mut s = String::new();
++        let _ = open!(file).unwrap(); //~ unwrap_used
++        let _ = open!(file).expect("can open"); //~ expect_used
++        let _ = open!(file).unwrap_err(); //~ unwrap_used
++        let _ = open!(file).expect_err("can open"); //~ expect_used
++    }
++}
+diff --git a/tests/ui/unwrap_expect_used.stderr b/tests/ui/unwrap_expect_used.stderr
+index 79eac3f58..6fd1b84d8 100644
+--- a/tests/ui/unwrap_expect_used.stderr
++++ b/tests/ui/unwrap_expect_used.stderr
+@@ -50,5 +50,37 @@ LL |     a.expect_err("Hello error!");
+    |
+    = note: if this value is an `Ok`, it will panic
+ 
+-error: aborting due to 6 previous errors
++error: used `unwrap()` on a `Result` value
++  --> tests/ui/unwrap_expect_used.rs:80:17
++   |
++LL |         let _ = open!(file).unwrap();
++   |                 ^^^^^^^^^^^^^^^^^^^^
++   |
++   = note: if this value is an `Err`, it will panic
++
++error: used `expect()` on a `Result` value
++  --> tests/ui/unwrap_expect_used.rs:81:17
++   |
++LL |         let _ = open!(file).expect("can open");
++   |                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
++   |
++   = note: if this value is an `Err`, it will panic
++
++error: used `unwrap_err()` on a `Result` value
++  --> tests/ui/unwrap_expect_used.rs:82:17
++   |
++LL |         let _ = open!(file).unwrap_err();
++   |                 ^^^^^^^^^^^^^^^^^^^^^^^^
++   |
++   = note: if this value is an `Ok`, it will panic
++
++error: used `expect_err()` on a `Result` value
++  --> tests/ui/unwrap_expect_used.rs:83:17
++   |
++LL |         let _ = open!(file).expect_err("can open");
++   |                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
++   |
++   = note: if this value is an `Ok`, it will panic
++
++error: aborting due to 10 previous errors
+ 

@@ -1,0 +1,26 @@
+diff --git a/test/document.test.js b/test/document.test.js
+--- a/test/document.test.js
++++ b/test/document.test.js
+@@ -11879,6 +11879,20 @@ describe('document', function() {
+     assert.strictEqual(doc.count, 1);
+ 
+     const addedDoc = await Model.findOne({ name: 'Test' });
+     assert.strictEqual(addedDoc.count, 1);
+   });
++
++  it('$shift() triggers $pop', function() {
++    const Test = db.model('Test', mongoose.Schema({
++      arr: [String]
++    }, { autoCreate: false, autoIndex: false }));
++
++    const doc = Test.hydrate({ arr: ['a', 'b', 'c'] });
++    doc.arr.$shift();
++
++    assert.deepStrictEqual(
++      doc.getChanges(),
++      { $pop: { arr: -1 }, $inc: { __v: 1 } }
++    );
++  });
+ });
+ 
+ describe('Check if instance function that is supplied in schema option is availabe', function() {

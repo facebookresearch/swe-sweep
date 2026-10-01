@@ -1,0 +1,41 @@
+diff --git a/src/Lean/Elab/Tactic/SimpTrace.lean b/src/Lean/Elab/Tactic/SimpTrace.lean
+index 3342fc3..ca6e3d2 100644
+--- a/src/Lean/Elab/Tactic/SimpTrace.lean
++++ b/src/Lean/Elab/Tactic/SimpTrace.lean
+@@ -23,10 +23,10 @@ def mkSimpCallStx (stx : Syntax) (usedSimps : UsedSimps) : MetaM (TSyntax `tacti
+   let stx := stx.unsetTrailing
+   mkSimpOnly stx usedSimps
+ 
+-@[builtin_tactic simpTrace] def evalSimpTrace : Tactic := fun stx =>
++@[builtin_tactic simpTrace] def evalSimpTrace : Tactic := fun stx => withMainContext do withSimpDiagnostics do
+   match stx with
+   | `(tactic|
+-      simp?%$tk $[!%$bang]? $(config)? $(discharger)? $[only%$o]? $[[$args,*]]? $(loc)?) => withMainContext do withSimpDiagnostics do
++      simp?%$tk $[!%$bang]? $(config)? $(discharger)? $[only%$o]? $[[$args,*]]? $(loc)?) =>
+     let stx ← if bang.isSome then
+       `(tactic| simp!%$tk $(config)? $(discharger)? $[only%$o]? $[[$args,*]]? $(loc)?)
+     else
+@@ -40,9 +40,9 @@ def mkSimpCallStx (stx : Syntax) (usedSimps : UsedSimps) : MetaM (TSyntax `tacti
+     return stats.diag
+   | _ => throwUnsupportedSyntax
+ 
+-@[builtin_tactic simpAllTrace] def evalSimpAllTrace : Tactic := fun stx =>
++@[builtin_tactic simpAllTrace] def evalSimpAllTrace : Tactic := fun stx => withMainContext do withSimpDiagnostics do
+   match stx with
+-  | `(tactic| simp_all?%$tk $[!%$bang]? $(config)? $(discharger)? $[only%$o]? $[[$args,*]]?) => withSimpDiagnostics do
++  | `(tactic| simp_all?%$tk $[!%$bang]? $(config)? $(discharger)? $[only%$o]? $[[$args,*]]?) =>
+     let stx ← if bang.isSome then
+       `(tactic| simp_all!%$tk $(config)? $(discharger)? $[only%$o]? $[[$args,*]]?)
+     else
+@@ -80,9 +80,9 @@ where
+     | some mvarId => replaceMainGoal [mvarId]
+     pure stats
+ 
+-@[builtin_tactic dsimpTrace] def evalDSimpTrace : Tactic := fun stx =>
++@[builtin_tactic dsimpTrace] def evalDSimpTrace : Tactic := fun stx => withMainContext do withSimpDiagnostics do
+   match stx with
+-  | `(tactic| dsimp?%$tk $[!%$bang]? $(config)? $[only%$o]? $[[$args,*]]? $(loc)?) => withSimpDiagnostics do
++  | `(tactic| dsimp?%$tk $[!%$bang]? $(config)? $[only%$o]? $[[$args,*]]? $(loc)?) =>
+     let stx ← if bang.isSome then
+       `(tactic| dsimp!%$tk $(config)? $[only%$o]? $[[$args,*]]? $(loc)?)
+     else

@@ -1,0 +1,26 @@
+diff --git a/lib/helpers/query/cast$expr.js b/lib/helpers/query/cast$expr.js
+index dd4102d80..a13190b1c 100644
+--- a/lib/helpers/query/cast$expr.js
++++ b/lib/helpers/query/cast$expr.js
+@@ -29,7 +29,6 @@ const arithmeticOperatorNumber = new Set([
+   '$floor',
+   '$ln',
+   '$log10',
+-  '$round',
+   '$sqrt',
+   '$sin',
+   '$cos',
+@@ -118,6 +117,13 @@ function _castExpression(val, schema, strictQuery) {
+   if (val.$size) {
+     val.$size = castNumberOperator(val.$size, schema, strictQuery);
+   }
++  if (val.$round) {
++    const $round = val.$round;
++    if (!Array.isArray($round) || $round.length < 1 || $round.length > 2) {
++      throw new CastError('Array', $round, '$round');
++    }
++    val.$round = $round.map(v => castNumberOperator(v, schema, strictQuery));
++  }
+ 
+   _omitUndefined(val);
+ 

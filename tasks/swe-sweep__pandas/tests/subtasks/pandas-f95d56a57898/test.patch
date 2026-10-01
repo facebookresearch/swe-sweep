@@ -1,0 +1,18 @@
+diff --git a/pandas/tests/indexes/categorical/test_category.py b/pandas/tests/indexes/categorical/test_category.py
+index 64cbe657a8..87facbf529 100644
+--- a/pandas/tests/indexes/categorical/test_category.py
++++ b/pandas/tests/indexes/categorical/test_category.py
+@@ -251,6 +251,13 @@ class TestCategoricalIndex(Base):
+         expected = np.array([False] * 5 + [True])
+         tm.assert_numpy_array_equal(result, expected)
+ 
++    def test_isin_overlapping_intervals(self):
++        # GH 34974
++        idx = pd.IntervalIndex([pd.Interval(0, 2), pd.Interval(0, 1)])
++        result = CategoricalIndex(idx).isin(idx)
++        expected = np.array([True, True])
++        tm.assert_numpy_array_equal(result, expected)
++
+     def test_identical(self):
+ 
+         ci1 = CategoricalIndex(["a", "b"], categories=["a", "b"], ordered=True)

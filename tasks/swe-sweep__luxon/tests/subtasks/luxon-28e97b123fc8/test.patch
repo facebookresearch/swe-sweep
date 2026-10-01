@@ -1,0 +1,20 @@
+diff --git a/test/datetime/format.test.js b/test/datetime/format.test.js
+index 0bbfcc0f..2634b6cf 100644
+--- a/test/datetime/format.test.js
++++ b/test/datetime/format.test.js
+@@ -54,6 +54,15 @@ test("DateTime#toISO() returns null for invalid DateTimes", () => {
+   expect(invalid.toISO()).toBe(null);
+ });
+ 
++// #724, Firefox specific issue, offset prints as '-05:50.60000000000002'
++test("DateTime#toISO() rounds fractional timezone minute offsets", () => {
++  expect(
++    DateTime.fromMillis(-62090696591000)
++      .setZone("America/Chicago")
++      .toISO()
++  ).toBe("0002-06-04T10:26:13.000-05:50");
++});
++
+ //------
+ // #toISODate()
+ //------

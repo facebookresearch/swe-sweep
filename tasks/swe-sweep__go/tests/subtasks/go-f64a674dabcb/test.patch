@@ -1,0 +1,25 @@
+diff --git a/src/math/big/intmarsh_test.go b/src/math/big/intmarsh_test.go
+index f82956ceaf..936669b380 100644
+--- a/src/math/big/intmarsh_test.go
++++ b/src/math/big/intmarsh_test.go
+@@ -97,6 +97,20 @@ func TestIntJSONEncoding(t *testing.T) {
+ 	}
+ }
+ 
++
++func TestIntJSONEncodingNil(t *testing.T) {
++	var x *Int
++	b, err := x.MarshalJSON()
++	if err != nil {
++		t.Fatalf("marshaling of nil failed: %s", err)
++	}
++	got := string(b)
++	want := "null"
++	if got != want {
++		t.Fatalf("marshaling of nil failed: got %s want %s", got, want)
++	}
++}
++
+ func TestIntXMLEncoding(t *testing.T) {
+ 	for _, test := range encodingTests {
+ 		for _, sign := range []string{"", "+", "-"} {

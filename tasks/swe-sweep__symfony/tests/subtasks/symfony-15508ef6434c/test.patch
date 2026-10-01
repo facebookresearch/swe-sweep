@@ -1,0 +1,35 @@
+diff --git a/src/Symfony/Component/PropertyInfo/Tests/Extractor/ReflectionExtractorTest.php b/src/Symfony/Component/PropertyInfo/Tests/Extractor/ReflectionExtractorTest.php
+index 59823cc1c10..0fdab63361f 100644
+--- a/src/Symfony/Component/PropertyInfo/Tests/Extractor/ReflectionExtractorTest.php
++++ b/src/Symfony/Component/PropertyInfo/Tests/Extractor/ReflectionExtractorTest.php
+@@ -523,6 +523,7 @@ class ReflectionExtractorTest extends TestCase
+         $this->assertEquals([new Type(Type::BUILTIN_TYPE_ARRAY, false, null, true, new Type(Type::BUILTIN_TYPE_INT), new Type(Type::BUILTIN_TYPE_STRING))], $this->extractor->getTypes(Php74Dummy::class, 'stringCollection'));
+         $this->assertEquals([new Type(Type::BUILTIN_TYPE_INT, true)], $this->extractor->getTypes(Php74Dummy::class, 'nullableWithDefault'));
+         $this->assertEquals([new Type(Type::BUILTIN_TYPE_ARRAY, false, null, true)], $this->extractor->getTypes(Php74Dummy::class, 'collection'));
++        $this->assertEquals([new Type(Type::BUILTIN_TYPE_ARRAY, true, null, true, new Type(Type::BUILTIN_TYPE_INT), new Type(Type::BUILTIN_TYPE_OBJECT, false, Dummy::class))], $this->extractor->getTypes(Php74Dummy::class, 'nullableTypedCollection'));
+     }
+ 
+     /**
+diff --git a/src/Symfony/Component/PropertyInfo/Tests/Fixtures/Php74Dummy.php b/src/Symfony/Component/PropertyInfo/Tests/Fixtures/Php74Dummy.php
+index 816b857b67b..dc72d07756b 100644
+--- a/src/Symfony/Component/PropertyInfo/Tests/Fixtures/Php74Dummy.php
++++ b/src/Symfony/Component/PropertyInfo/Tests/Fixtures/Php74Dummy.php
+@@ -23,6 +23,9 @@ class Php74Dummy
+     private ?int $nullableWithDefault = 1;
+     public array $collection = [];
+ 
++    /** @var Dummy[]|null  */
++    public ?array $nullableTypedCollection = null;
++
+     public function addStringCollection(string $string): void
+     {
+     }
+@@ -30,4 +33,8 @@ class Php74Dummy
+     public function removeStringCollection(string $string): void
+     {
+     }
++
++    public function addNullableTypedCollection(Dummy $dummy): void
++    {
++    }
+ }

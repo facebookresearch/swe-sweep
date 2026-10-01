@@ -1,0 +1,18 @@
+diff --git a/xarray/tests/test_dataset.py b/xarray/tests/test_dataset.py
+index e3ab430a..bc5bf1c0 100644
+--- a/xarray/tests/test_dataset.py
++++ b/xarray/tests/test_dataset.py
+@@ -902,6 +902,13 @@ class TestDataset:
+         assert data.attrs["foobar"], "baz"
+         assert isinstance(data.attrs, dict)
+ 
++    def test_chunks_does_not_load_data(self) -> None:
++        # regression test for GH6538
++        store = InaccessibleVariableDataStore()
++        create_test_data().dump_to_store(store)
++        ds = open_dataset(store)
++        assert ds.chunks == {}
++
+     @requires_dask
+     def test_chunk(self):
+         data = create_test_data()

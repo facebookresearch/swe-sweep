@@ -1,0 +1,23 @@
+diff --git a/test/datetime/invalid.test.js b/test/datetime/invalid.test.js
+index a776e185..d13fb864 100644
+--- a/test/datetime/invalid.test.js
++++ b/test/datetime/invalid.test.js
+@@ -72,3 +72,18 @@ test("throwOnInvalid throws", () => {
+ test("DateTime.invalid throws if you don't provide a reason", () => {
+   expect(() => DateTime.invalid()).toThrow();
+ });
++
++test("throwOnInvalid throws if year is too big", () => {
++  try {
++    Settings.throwOnInvalid = true;
++    expect(() =>
++      DateTime.fromObject({
++        year: 9999999,
++        month: 5,
++        day: 25,
++      })
++    ).toThrow();
++  } finally {
++    Settings.throwOnInvalid = false;
++  }
++});

@@ -1,0 +1,24 @@
+diff --git a/sklearn/cluster/_k_means_elkan.pyx b/sklearn/cluster/_k_means_elkan.pyx
+index 5dad5f0c24..a0734a624f 100644
+--- a/sklearn/cluster/_k_means_elkan.pyx
++++ b/sklearn/cluster/_k_means_elkan.pyx
+@@ -253,4 +253,4 @@ def k_means_elkan(np.ndarray[floating, ndim=2, mode='c'] X_,
+         update_labels_distances_inplace(X_p, centers_p, center_half_distances,
+                                         labels, lower_bounds, upper_bounds,
+                                         n_samples, n_features, n_clusters)
+-    return centers_, labels_, iteration
++    return centers_, labels_, iteration + 1
+diff --git a/sklearn/cluster/k_means_.py b/sklearn/cluster/k_means_.py
+index e2ee291473..42ca6402df 100644
+--- a/sklearn/cluster/k_means_.py
++++ b/sklearn/cluster/k_means_.py
+@@ -792,6 +792,9 @@ class KMeans(BaseEstimator, ClusterMixin, TransformerMixin):
+     inertia_ : float
+         Sum of distances of samples to their closest cluster center.
+ 
++    n_iter_ : int
++        Number of iterations run.
++
+     Examples
+     --------
+ 

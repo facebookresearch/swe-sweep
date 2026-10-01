@@ -1,0 +1,15 @@
+diff --git a/tests/pragmas/tinvalid_user_pragma.nim b/tests/pragmas/tinvalid_user_pragma.nim
+new file mode 100644
+index 000000000..3081db842
+--- /dev/null
++++ b/tests/pragmas/tinvalid_user_pragma.nim
+@@ -0,0 +1,9 @@
++discard """
++cmd: "nim check $file"
++"""
++
++{.pragma test: foo.} #[tt.Error
++^ invalid pragma:  {.pragma, test: foo.} ]#
++
++{.pragma: 1.} #[tt.Error
++^ invalid pragma:  {.pragma: 1.} ]#

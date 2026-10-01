@@ -1,0 +1,20 @@
+diff --git a/lib/style.js b/lib/style.js
+index bff82a5..d17730a 100644
+--- a/lib/style.js
++++ b/lib/style.js
+@@ -83,7 +83,14 @@ const parseStylesheet = (css, dynamic) => {
+       return csstreeWalkSkip;
+     }
+     if (cssNode.type === 'Atrule') {
+-      if (cssNode.name === 'keyframes') {
++      if (
++        [
++          'keyframes',
++          '-webkit-keyframes',
++          '-o-keyframes',
++          '-moz-keyframes',
++        ].includes(cssNode.name)
++      ) {
+         return csstreeWalkSkip;
+       }
+       csstree.walk(cssNode, (ruleNode) => {

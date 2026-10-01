@@ -1,0 +1,22 @@
+diff --git a/tests/generics/t19848.nim b/tests/generics/t19848.nim
+new file mode 100644
+index 000000000..f80f0e298
+--- /dev/null
++++ b/tests/generics/t19848.nim
+@@ -0,0 +1,16 @@
++discard """
++  output: '''
++todo
++'''
++"""
++
++type
++  Maybe[T] = object
++  List[T] = object
++
++proc dump[M: Maybe](a: List[M]) =
++  echo "todo"
++
++var a: List[Maybe[int]]
++  
++dump(a)

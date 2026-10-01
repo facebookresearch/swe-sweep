@@ -1,0 +1,69 @@
+diff --git a/actionpack/test/controller/live_stream_test.rb b/actionpack/test/controller/live_stream_test.rb
+index f0d2e9b4546..c6941c328c6 100644
+--- a/actionpack/test/controller/live_stream_test.rb
++++ b/actionpack/test/controller/live_stream_test.rb
+@@ -168,6 +168,27 @@ module ActionController
+         end
+       end
+ 
++      def send_stream_with_inferred_content_type
++        send_stream(filename: "sample.csv") do |stream|
++          stream.writeln "fruit,quantity"
++          stream.writeln "apple,5"
++        end
++      end
++
++      def send_stream_with_implicit_content_type
++        send_stream(filename: "sample.csv", type: :csv) do |stream|
++          stream.writeln "fruit,quantity"
++          stream.writeln "apple,5"
++        end
++      end
++
++      def send_stream_with_explicit_content_type
++        send_stream(filename: "sample.csv", type: "text/csv") do |stream|
++          stream.writeln "fruit,quantity"
++          stream.writeln "apple,5"
++        end
++      end
++
+       def blocking_stream
+         response.headers["Content-Type"] = "text/event-stream"
+         %w{ hello world }.each do |word|
+@@ -360,6 +381,36 @@ module ActionController
+       assert_match "export", @response.headers["Content-Disposition"]
+     end
+ 
++    def test_send_stream_with_explicit_content_type
++      get :send_stream_with_explicit_content_type
++
++      assert_equal "fruit,quantity\napple,5\n", @response.body
++
++      content_type = @response.headers.fetch("Content-Type")
++      assert_equal String, content_type.class
++      assert_equal "text/csv", content_type
++    end
++
++    def test_send_stream_with_implicit_content_type
++      get :send_stream_with_implicit_content_type
++
++      assert_equal "fruit,quantity\napple,5\n", @response.body
++
++      content_type = @response.headers.fetch("Content-Type")
++      assert_equal String, content_type.class
++      assert_equal "text/csv", content_type
++    end
++
++    def test_send_stream_with_inferred_content_type
++      get :send_stream_with_inferred_content_type
++
++      assert_equal "fruit,quantity\napple,5\n", @response.body
++
++      content_type = @response.headers.fetch("Content-Type")
++      assert_equal String, content_type.class
++      assert_equal "text/csv", content_type
++    end
++
+     def test_delayed_autoload_after_write_within_interlock_hook
+       # Simulate InterlockHook
+       ActiveSupport::Dependencies.interlock.start_running

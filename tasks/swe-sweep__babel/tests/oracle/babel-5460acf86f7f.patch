@@ -1,0 +1,15 @@
+diff --git a/packages/babel-parser/src/parser/expression.js b/packages/babel-parser/src/parser/expression.js
+index 48dd82d..672841a 100644
+--- a/packages/babel-parser/src/parser/expression.js
++++ b/packages/babel-parser/src/parser/expression.js
+@@ -420,10 +420,6 @@ export default class ExpressionParser extends LValParser {
+       return expr;
+     }
+ 
+-    if (refShorthandDefaultPos && refShorthandDefaultPos.start) {
+-      return expr;
+-    }
+-
+     return this.parseSubscripts(expr, startPos, startLoc);
+   }
+ 

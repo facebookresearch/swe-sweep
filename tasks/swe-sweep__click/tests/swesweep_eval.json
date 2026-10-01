@@ -1,0 +1,152 @@
+{
+  "build_jobs": 4,
+  "container_repo": "/click",
+  "evaluation": {
+    "paths": "tests"
+  },
+  "upstream_image": "pandora-maxbug-click:8.0.1",
+  "n_base_passing": 488,
+  "n_base_test_ignore": 22,
+  "oracle_digest": "cf7e23ac8c006a55ff68896bdbec7cbf0b53ff6a79010bbb59f521b07877e4d2",
+  "oracle_pristine_paths": [],
+  "upstream_commit": "9f7399e15e6172900e0591deb5a57a45769d8205",
+  "reproduction": {
+    "needs_build": false,
+    "suite": "pytest",
+    "test_timeout": 900
+  },
+  "schema": 2,
+  "subtasks": [
+    {
+      "f2p": [
+        "tests.test_types::test_symlink_resolution[sym_file0-basename]"
+      ],
+      "id": "click-0099eb6f2003",
+      "target_files": [
+        "src/click/types.py"
+      ]
+    },
+    {
+      "f2p": [
+        "tests.test_arguments::test_when_argument_decorator_is_used_multiple_times_cls_is_preserved"
+      ],
+      "id": "click-4f1302f13075",
+      "target_files": [
+        "src/click/decorators.py"
+      ]
+    },
+    {
+      "f2p": [
+        "tests.test_arguments::test_envvar_flag_value"
+      ],
+      "id": "click-6017fe42f482",
+      "target_files": [
+        "src/click/core.py"
+      ]
+    },
+    {
+      "f2p": [
+        "tests.test_options::test_multiple_option_with_optional_value"
+      ],
+      "id": "click-679517d3ee49",
+      "target_files": [
+        "src/click/core.py"
+      ]
+    },
+    {
+      "f2p": [
+        "tests.test_shell_completion::test_flag_option_with_nargs_option"
+      ],
+      "id": "click-747fcbb3e083",
+      "target_files": [
+        "src/click/shell_completion.py"
+      ]
+    },
+    {
+      "f2p": [
+        "tests.test_options::test_missing_required_flag"
+      ],
+      "id": "click-893d8aa42974",
+      "target_files": [
+        "src/click/core.py"
+      ]
+    },
+    {
+      "f2p": [
+        "tests.test_options::test_is_bool_flag_is_correctly_set[bool non-flag [False]]",
+        "tests.test_options::test_is_bool_flag_is_correctly_set[bool non-flag [None]]",
+        "tests.test_options::test_is_bool_flag_is_correctly_set[bool non-flag [True]]"
+      ],
+      "id": "click-9434d4e04beb",
+      "target_files": [
+        "src/click/core.py"
+      ]
+    },
+    {
+      "f2p": [
+        "tests.test_utils::test_echo_no_streams"
+      ],
+      "id": "click-c786553b9f25",
+      "target_files": [
+        "src/click/_compat.py",
+        "src/click/_termui_impl.py",
+        "src/click/utils.py"
+      ]
+    },
+    {
+      "f2p": [
+        "tests.test_defaults::test_flag_default_map"
+      ],
+      "id": "click-c851620935ec",
+      "target_files": [
+        "src/click/core.py"
+      ]
+    },
+    {
+      "f2p": [
+        "tests.test_formatting::test_command_write_usage_no_args[empty-options-metavar-no-params]",
+        "tests.test_formatting::test_command_write_usage_no_args[none-options-metavar-no-params]",
+        "tests.test_formatting::test_help_formatter_write_usage[empty-args-custom-prefix]",
+        "tests.test_formatting::test_help_formatter_write_usage[empty-args-default-prefix]",
+        "tests.test_formatting::test_help_formatter_write_usage[empty-args-indented]",
+        "tests.test_formatting::test_help_formatter_write_usage[empty-args-long-prog]",
+        "tests.test_formatting::test_help_formatter_write_usage_without_args_styled_prefix"
+      ],
+      "id": "click-d539b282ff28",
+      "target_files": [
+        "src/click/formatting.py"
+      ]
+    },
+    {
+      "f2p": [
+        "tests.test_options::test_empty_envvar[AUTO_MYPATH]"
+      ],
+      "id": "click-e5fa0258b14c",
+      "target_files": [
+        "src/click/core.py"
+      ]
+    },
+    {
+      "f2p": [
+        "tests.test_shell_completion::test_absolute_path"
+      ],
+      "id": "click-e70c1510ebf0",
+      "target_files": [
+        "src/click/shell_completion.py"
+      ]
+    },
+    {
+      "f2p": [
+        "tests.test_shell_completion::test_zsh_full_complete_with_colons[env0-plain\\na\\n_\\nplain\\nb\\nbee\\nplain\\nc\\\\:d\\ncee:dee\\nplain\\nc:e\\n_\\n]",
+        "tests.test_shell_completion::test_zsh_full_complete_with_colons[env1-plain\\nc\\\\:d\\ncee:dee\\nplain\\nc:e\\n_\\n]",
+        "tests.test_shell_completion::test_zsh_full_complete_with_colons[env2-plain\\nc\\\\:d\\ncee:dee\\nplain\\nc:e\\n_\\n]"
+      ],
+      "id": "click-ffc928bfe723",
+      "target_files": [
+        "src/click/shell_completion.py"
+      ]
+    }
+  ],
+  "task": "click",
+  "version": "8.0.1"
+}

@@ -1,0 +1,17 @@
+diff --git a/lib/matplotlib/collections.py b/lib/matplotlib/collections.py
+--- a/lib/matplotlib/collections.py
++++ b/lib/matplotlib/collections.py
+@@ -543,9 +543,12 @@ class Collection(artist.Artist, cm.ScalarMappable):
+         ----------
+         offsets : (N, 2) or (2,) array-like
+         """
+-        offsets = np.asanyarray(offsets, float)
++        offsets = np.asanyarray(offsets)
+         if offsets.shape == (2,):  # Broadcast (2,) -> (1, 2) but nothing else.
+             offsets = offsets[None, :]
++        offsets = np.column_stack(
++            (np.asarray(self.convert_xunits(offsets[:, 0]), 'float'),
++             np.asarray(self.convert_yunits(offsets[:, 1]), 'float')))
+         # This decision is based on how they are initialized above in __init__.
+         if self._uniform_offsets is None:
+             self._offsets = offsets

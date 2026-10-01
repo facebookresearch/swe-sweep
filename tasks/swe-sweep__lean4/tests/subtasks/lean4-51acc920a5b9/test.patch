@@ -1,0 +1,74 @@
+diff --git a/tests/lean/binopIssues.lean b/tests/lean/binopIssues.lean
+deleted file mode 100644
+index 2056d77301..0000000000
+--- a/tests/lean/binopIssues.lean
++++ /dev/null
+@@ -1,11 +0,0 @@
+-example (n : Nat) (i : Int) : n + i = i + n := by
+-  rw [Int.add_comm]
+-
+-def f1 (a : Int) (b c : Nat) : Int :=
+-  a + (b - c)
+-
+-def f2 (a : Int) (b c : Nat) : Int :=
+-  (b - c) + a
+-
+-#print f1
+-#print f2
+diff --git a/tests/lean/binopIssues.lean.expected.out b/tests/lean/binopIssues.lean.expected.out
+deleted file mode 100644
+index 4379a524ca..0000000000
+--- a/tests/lean/binopIssues.lean.expected.out
++++ /dev/null
+@@ -1,4 +0,0 @@
+-def f1 : Int → Nat → Nat → Int :=
+-fun a b c => a + (↑b - ↑c)
+-def f2 : Int → Nat → Nat → Int :=
+-fun a b c => ↑b - ↑c + a
+diff --git a/tests/lean/run/binop.lean b/tests/lean/run/binop.lean
+new file mode 100644
+index 0000000000..13eb0f11d0
+--- /dev/null
++++ b/tests/lean/run/binop.lean
+@@ -0,0 +1,41 @@
++/-!
++# Tests for the expression tree elaborator (`binop%`, etc.)
++-/
++
++/-!
++Some basic Int/Nat examples
++-/
++
++example (n : Nat) (i : Int) : n + i = i + n := by
++  rw [Int.add_comm]
++
++def f1 (a : Int) (b c : Nat) : Int :=
++  a + (b - c)
++
++def f2 (a : Int) (b c : Nat) : Int :=
++  (b - c) + a
++
++/--
++info: def f1 : Int → Nat → Nat → Int :=
++fun a b c => a + (↑b - ↑c)
++-/
++#guard_msgs in
++#print f1
++
++/--
++info: def f2 : Int → Nat → Nat → Int :=
++fun a b c => ↑b - ↑c + a
++-/
++#guard_msgs in
++#print f2
++
++
++/-!
++Interaction with default instances for pow. This used to fail with not being able
++to synthesize an `HMul Int Int Nat` instance because the type of
++the result of `*` wasn't being set to `Int`.
++-/
++
++/-- info: ∀ (a : Nat) (b : Int), ↑a = id (↑a * b ^ 2) : Prop -/
++#guard_msgs in
++#check ∀ (a : Nat) (b : Int), a = id (a * b^2)

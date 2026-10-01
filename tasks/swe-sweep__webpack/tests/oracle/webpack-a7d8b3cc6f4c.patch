@@ -1,0 +1,86 @@
+diff --git a/lib/Compilation.js b/lib/Compilation.js
+index c6a6d0d2a..c17748d5c 100644
+--- a/lib/Compilation.js
++++ b/lib/Compilation.js
+@@ -1722,6 +1722,7 @@ BREAKING CHANGE: Asset processing hooks in Compilation has been merged into a si
+ 			originModule,
+ 			module,
+ 			true,
++			false,
+ 			callback
+ 		);
+ 	}
+@@ -1741,6 +1742,7 @@ BREAKING CHANGE: Asset processing hooks in Compilation has been merged into a si
+ 	 * @property {string=} context
+ 	 * @property {boolean=} recursive recurse into dependencies of the created module
+ 	 * @property {boolean=} connectOrigin connect the resolved module with the origin module
++	 * @property {boolean=} checkCycle check the cycle dependencies of the created module
+ 	 */
+ 
+ 	/**
+@@ -1756,7 +1758,8 @@ BREAKING CHANGE: Asset processing hooks in Compilation has been merged into a si
+ 			contextInfo,
+ 			context,
+ 			recursive = true,
+-			connectOrigin = recursive
++			connectOrigin = recursive,
++			checkCycle = !recursive
+ 		},
+ 		callback
+ 	) {
+@@ -1877,6 +1880,7 @@ BREAKING CHANGE: Asset processing hooks in Compilation has been merged into a si
+ 						originModule,
+ 						module,
+ 						recursive,
++						checkCycle,
+ 						callback
+ 					);
+ 				});
+@@ -1884,10 +1888,16 @@ BREAKING CHANGE: Asset processing hooks in Compilation has been merged into a si
+ 		);
+ 	}
+ 
+-	_handleModuleBuildAndDependencies(originModule, module, recursive, callback) {
++	_handleModuleBuildAndDependencies(
++		originModule,
++		module,
++		recursive,
++		checkCycle,
++		callback
++	) {
+ 		// Check for cycles when build is trigger inside another build
+ 		let creatingModuleDuringBuildSet = undefined;
+-		if (!recursive && this.buildQueue.isProcessing(originModule)) {
++		if (checkCycle && this.buildQueue.isProcessing(originModule)) {
+ 			// Track build dependency
+ 			creatingModuleDuringBuildSet =
+ 				this.creatingModuleDuringBuild.get(originModule);
+diff --git a/lib/dependencies/LoaderPlugin.js b/lib/dependencies/LoaderPlugin.js
+index 3132cfdff..f30c90c14 100644
+--- a/lib/dependencies/LoaderPlugin.js
++++ b/lib/dependencies/LoaderPlugin.js
+@@ -185,7 +185,8 @@ class LoaderPlugin {
+ 									issuerLayer: options.layer
+ 								},
+ 								context: loaderContext.context,
+-								connectOrigin: false
++								connectOrigin: false,
++								checkCycle: true
+ 							},
+ 							err => {
+ 								compilation.buildQueue.decreaseParallelism();
+diff --git a/types.d.ts b/types.d.ts
+index 04605f97f..642cde5fb 100644
+--- a/types.d.ts
++++ b/types.d.ts
+@@ -4311,5 +4311,10 @@ declare interface HandleModuleCreationOptions {
+ 	 * connect the resolved module with the origin module
+ 	 */
+ 	connectOrigin?: boolean;
++
++	/**
++	 * check the cycle dependencies of the created module
++	 */
++	checkCycle?: boolean;
+ }
+ declare class Hash {

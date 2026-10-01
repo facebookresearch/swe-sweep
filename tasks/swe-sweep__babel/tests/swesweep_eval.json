@@ -1,0 +1,355 @@
+{
+  "build_jobs": 4,
+  "container_repo": "/babel",
+  "evaluation": {
+    "suite": "reproduction",
+    "visible_timeout": 14400
+  },
+  "upstream_image": "pandora-maxbug-babel:7.0.0",
+  "n_base_passing": 3689,
+  "n_base_test_ignore": 432,
+  "oracle_digest": "2a15acc9f17aacd3fc3f80ab7102d30f7cf853d961b5a27c5eaefea925092008",
+  "oracle_pristine_paths": [],
+  "upstream_commit": "9f7399e15e6172900e0591deb5a57a45769d8205",
+  "reproduction": {
+    "build_cmd": "\nset -e\n./node_modules/.bin/gulp build\nif git diff --name-only baseline | grep -q '^packages/babel-types/src/'; then\n    node ./packages/babel-types/scripts/generateTypeHelpers.js\n    ./node_modules/.bin/gulp build\nfi\n",
+    "jobs_env": "SWESWEEP_BUILD_JOBS",
+    "suite": {
+      "fixture_roots": [
+        {
+          "case_segment": -2,
+          "drivers": [
+            "\\1/test/index.js"
+          ],
+          "name_transform": "hyphens-to-spaces",
+          "pattern": "((?:packages|codemods)/[^/]+)/test/fixtures/"
+        },
+        {
+          "case_segment": -2,
+          "drivers": [
+            "\\1/test/expressions.js"
+          ],
+          "name_transform": "hyphens-to-spaces",
+          "pattern": "(packages/babel-parser)/test/expressions/"
+        }
+      ],
+      "type": "jest-fixture"
+    },
+    "test_timeout": 1200
+  },
+  "schema": 2,
+  "subtasks": [
+    {
+      "f2p": [
+        "typescript/regression/issue 7742"
+      ],
+      "id": "babel-00b45eb59042",
+      "target_files": [
+        "packages/babel-parser/src/plugins/typescript.js"
+      ]
+    },
+    {
+      "f2p": [
+        "typescript/class/async optional method"
+      ],
+      "id": "babel-13cb17b804f0",
+      "target_files": [
+        "packages/babel-parser/src/parser/statement.js"
+      ]
+    },
+    {
+      "f2p": [
+        "typescript/class/predicate types"
+      ],
+      "id": "babel-157ee1d3478d",
+      "target_files": [
+        "packages/babel-parser/src/plugins/typescript.js"
+      ]
+    },
+    {
+      "f2p": [
+        "typescript/arrow function/return type like conditional"
+      ],
+      "id": "babel-20ff0b355937",
+      "target_files": [
+        "packages/babel-parser/src/parser/expression.js",
+        "packages/babel-parser/src/parser/lval.js",
+        "packages/babel-parser/src/plugins/flow.js",
+        "packages/babel-parser/src/plugins/typescript/index.js"
+      ]
+    },
+    {
+      "f2p": [
+        "typescript/variable declarator/definite asi"
+      ],
+      "id": "babel-43126028aa9a",
+      "target_files": [
+        "packages/babel-parser/src/plugins/typescript/index.js"
+      ]
+    },
+    {
+      "f2p": [
+        "experimental/decorators/method generator decorator"
+      ],
+      "id": "babel-48b8370804ad",
+      "target_files": [
+        "packages/babel-parser/src/parser/statement.js"
+      ]
+    },
+    {
+      "f2p": [
+        "typescript/class/abstract new line",
+        "typescript/class/declare new line",
+        "typescript/declare/const new line",
+        "typescript/declare/destructure new line",
+        "typescript/declare/interface new line",
+        "typescript/declare/let new line",
+        "typescript/declare/var new line",
+        "typescript/interface/new line",
+        "typescript/interface/new line error",
+        "typescript/module namespace/module new line",
+        "typescript/module namespace/module new line error",
+        "typescript/module namespace/namespace new line",
+        "typescript/module namespace/namespace new line error",
+        "typescript/types/new line"
+      ],
+      "id": "babel-4c02b3aec07b",
+      "target_files": [
+        "packages/babel-parser/src/plugins/typescript.js"
+      ]
+    },
+    {
+      "f2p": [
+        "experimental/bigint/decimal as property name",
+        "experimental/bigint/hex as property name"
+      ],
+      "id": "babel-50f9ea826afc",
+      "target_files": [
+        "packages/babel-parser/src/parser/expression.js"
+      ]
+    },
+    {
+      "f2p": [
+        "core/object/member expression after property initializer 1",
+        "core/object/member expression after property initializer 2"
+      ],
+      "id": "babel-5460acf86f7f",
+      "target_files": [
+        "packages/babel-parser/src/parser/expression.js"
+      ]
+    },
+    {
+      "f2p": [
+        "es2015/uncategorised/22"
+      ],
+      "id": "babel-62877326f4c7",
+      "target_files": [
+        "packages/babel-parser/src/tokenizer/index.js"
+      ]
+    },
+    {
+      "f2p": [
+        "typescript/class/members with modifier names"
+      ],
+      "id": "babel-6ce5f3e7a38d",
+      "target_files": [
+        "packages/babel-parser/src/plugins/typescript.js"
+      ]
+    },
+    {
+      "f2p": [
+        "typescript/arrow function/return type like conditional"
+      ],
+      "id": "babel-7adaaf150709",
+      "target_files": [
+        "packages/babel-parser/src/parser/expression.js",
+        "packages/babel-parser/src/parser/lval.js",
+        "packages/babel-parser/src/plugins/flow.js",
+        "packages/babel-parser/src/plugins/typescript/index.js"
+      ]
+    },
+    {
+      "f2p": [
+        "estree/class method/typescript"
+      ],
+      "id": "babel-87d62126285f",
+      "target_files": [
+        "packages/babel-parser/src/plugins/estree.js"
+      ]
+    },
+    {
+      "f2p": [
+        "es2015/class/division"
+      ],
+      "id": "babel-89b5f3d2f89e",
+      "target_files": [
+        "packages/babel-parser/src/tokenizer/context.js"
+      ]
+    },
+    {
+      "f2p": [
+        "es2015/for of/invalid expr"
+      ],
+      "id": "babel-8e6025016cab",
+      "target_files": [
+        "packages/babel-parser/src/parser/statement.js"
+      ]
+    },
+    {
+      "f2p": [
+        "typescript/regression/destructuring in function type"
+      ],
+      "id": "babel-91b41fbb579f",
+      "target_files": [
+        "packages/babel-parser/src/plugins/typescript.js",
+        "packages/babel-parser/src/types.js"
+      ]
+    },
+    {
+      "f2p": [
+        "es2015/destructuring/duplicate proto 4"
+      ],
+      "id": "babel-9603326cb04a",
+      "target_files": [
+        "packages/babel-parser/src/parser/expression.js"
+      ]
+    },
+    {
+      "f2p": [
+        "es2015/yield/in iterator stmt"
+      ],
+      "id": "babel-9a066208d56a",
+      "target_files": [
+        "packages/babel-parser/src/parser/expression.js"
+      ]
+    },
+    {
+      "f2p": [
+        "es2017/async functions/newline arrow"
+      ],
+      "id": "babel-9be83d5e8381",
+      "target_files": [
+        "packages/babel-parser/src/parser/expression.js"
+      ]
+    },
+    {
+      "f2p": [
+        "flow/anonymous function no parens types/good_15"
+      ],
+      "id": "babel-ad765ac51185",
+      "target_files": [
+        "packages/babel-parser/src/plugins/flow.js"
+      ]
+    },
+    {
+      "f2p": [
+        "flow/expect plugin/export interface",
+        "flow/expect plugin/export type",
+        "flow/expect plugin/export type named",
+        "typescript/expect plugin/export interface",
+        "typescript/expect plugin/export type",
+        "typescript/expect plugin/export type named"
+      ],
+      "id": "babel-c4ab07f3102b",
+      "target_files": [
+        "packages/babel-parser/src/parser/statement.js"
+      ]
+    },
+    {
+      "f2p": [
+        "experimental/numeric separator/invalid legacy octal literal"
+      ],
+      "id": "babel-c5007791a6f3",
+      "target_files": [
+        "packages/babel-parser/src/tokenizer/index.js"
+      ]
+    },
+    {
+      "f2p": [
+        "getTargets allows 'defaults' query"
+      ],
+      "id": "babel-c641feccb5f8",
+      "target_files": [
+        "packages/babel-preset-env/src/targets-parser.js"
+      ]
+    },
+    {
+      "f2p": [
+        "es2015/modules/duplicate named export destructuring assignment"
+      ],
+      "id": "babel-c90358af9fb4",
+      "target_files": [
+        "packages/babel-parser/src/parser/statement.js"
+      ]
+    },
+    {
+      "f2p": [
+        "es2017/async functions/context division after expression"
+      ],
+      "id": "babel-d09eb1018e65",
+      "target_files": [
+        "packages/babel-parser/src/parser/expression.js"
+      ]
+    },
+    {
+      "f2p": [
+        "typescript/optional chaining/type arguments"
+      ],
+      "id": "babel-d3e5c3162ceb",
+      "target_files": [
+        "packages/babel-parser/src/parser/expression.js",
+        "packages/babel-parser/src/plugins/flow.js",
+        "packages/babel-parser/src/plugins/typescript/index.js"
+      ]
+    },
+    {
+      "f2p": [
+        "typescript/types/union intersection"
+      ],
+      "id": "babel-d6bb2161bdf5",
+      "target_files": [
+        "packages/babel-parser/src/plugins/typescript/index.js"
+      ]
+    },
+    {
+      "f2p": [
+        "jsx/errors/member in namespace 2"
+      ],
+      "id": "babel-e63926958d01",
+      "target_files": [
+        "packages/babel-parser/src/plugins/jsx/index.js",
+        "packages/babel-types/src/definitions/jsx.js"
+      ]
+    },
+    {
+      "f2p": [
+        "es2015/destructuring/duplicate proto"
+      ],
+      "id": "babel-ea54d4b2dbe4",
+      "target_files": [
+        "packages/babel-parser/src/parser/expression.js",
+        "packages/babel-parser/src/plugins/estree.js"
+      ]
+    },
+    {
+      "f2p": [
+        "typescript/types/object shorthand"
+      ],
+      "id": "babel-ea57a67a8360",
+      "target_files": [
+        "packages/babel-parser/src/plugins/typescript.js"
+      ]
+    },
+    {
+      "f2p": [
+        "typescript/arrow function/optional parameter"
+      ],
+      "id": "babel-eb027ba3831a",
+      "target_files": [
+        "packages/babel-parser/src/plugins/typescript.js"
+      ]
+    }
+  ],
+  "task": "babel",
+  "version": "7.0.0"
+}

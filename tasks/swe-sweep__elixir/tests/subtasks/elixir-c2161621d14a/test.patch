@@ -1,0 +1,19 @@
+diff --git a/lib/elixir/test/elixir/integer_test.exs b/lib/elixir/test/elixir/integer_test.exs
+index 5069eb58d..db94d6b07 100644
+--- a/lib/elixir/test/elixir/integer_test.exs
++++ b/lib/elixir/test/elixir/integer_test.exs
+@@ -144,6 +144,14 @@ defmodule IntegerTest do
+     assert_raise ArgumentError, "invalid digit 17 in base 16", fn ->
+       Integer.undigits([1, 2, 17], 16)
+     end
++
++    assert_raise ArgumentError, "invalid digit -10 in base 10", fn ->
++      Integer.undigits([-10], 10)
++    end
++
++    assert_raise ArgumentError, "invalid digit -17 in base 16", fn ->
++      Integer.undigits([1, 2, -17], 16)
++    end
+   end
+ 
+   test "parse/2" do

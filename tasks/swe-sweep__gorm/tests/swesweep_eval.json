@@ -1,0 +1,221 @@
+{
+  "build_jobs": 4,
+  "container_repo": "/gorm",
+  "evaluation": {
+    "suite": {
+      "eval_roots": [
+        ".",
+        "tests"
+      ],
+      "type": "go"
+    }
+  },
+  "upstream_image": "pandora-maxbug-gorm:v1.23.5",
+  "n_base_passing": 13803,
+  "n_base_test_ignore": 8,
+  "oracle_digest": "493bfeb155231a5d7a68b0a9e6bb4dd4010ad06b8c870eeb781ebe1d3298024e",
+  "oracle_pristine_paths": [],
+  "upstream_commit": "9f7399e15e6172900e0591deb5a57a45769d8205",
+  "reproduction": {
+    "needs_build": false,
+    "suite": {
+      "eval_roots": [
+        "."
+      ],
+      "type": "go"
+    },
+    "test_timeout": 900
+  },
+  "schema": 2,
+  "subtasks": [
+    {
+      "f2p": [
+        "tests::TestUpsertSliceWithReturning"
+      ],
+      "id": "gorm-01b1c7ae6377",
+      "target_files": [
+        "callbacks/create.go"
+      ]
+    },
+    {
+      "f2p": [
+        "tests::TestFailedToSaveAssociationShouldRollback"
+      ],
+      "id": "gorm-2798a5340962",
+      "target_files": [
+        "callbacks/query.go"
+      ]
+    },
+    {
+      "f2p": [
+        "tests::TestOr"
+      ],
+      "id": "gorm-3b6e70a10ccf",
+      "target_files": [
+        "statement.go"
+      ]
+    },
+    {
+      "f2p": [
+        "tests::TestJoinArgsWithDB"
+      ],
+      "id": "gorm-41a8c84af1fc",
+      "target_files": [
+        "callbacks/query.go",
+        "chainable_api.go",
+        "statement.go"
+      ]
+    },
+    {
+      "f2p": [
+        "tests::TestMigrateWithSpecialName"
+      ],
+      "id": "gorm-50f0212276b0",
+      "target_files": [
+        "migrator/migrator.go"
+      ]
+    },
+    {
+      "f2p": [
+        "clause::TestNamedExpr",
+        "clause::TestNamedExpr/case_#10",
+        "clause::TestNamedExpr/case_#9"
+      ],
+      "id": "gorm-55e60a3f05fb",
+      "target_files": [
+        "clause/expression.go"
+      ]
+    },
+    {
+      "f2p": [
+        "tests::TestComplexScopes",
+        "tests::TestComplexScopes/depth_1",
+        "tests::TestComplexScopes/depth_1_pre_cond",
+        "tests::TestComplexScopes/depth_2"
+      ],
+      "id": "gorm-607e34c06493",
+      "target_files": [
+        "callbacks.go",
+        "chainable_api.go",
+        "migrator.go",
+        "statement.go"
+      ]
+    },
+    {
+      "f2p": [
+        "tests::TestHasManyAssociationReplaceWithNonValidValue"
+      ],
+      "id": "gorm-628f941c7124",
+      "target_files": [
+        "association.go"
+      ]
+    },
+    {
+      "f2p": [
+        "tests::TestSerializer",
+        "tests::TestSerializer/CustomSerializerString",
+        "tests::TestSerializerAssignFirstOrCreate"
+      ],
+      "id": "gorm-7652d24e94b9",
+      "target_files": [
+        "schema/field.go"
+      ]
+    },
+    {
+      "f2p": [
+        "tests::TestUpdateWithDiffSchema"
+      ],
+      "id": "gorm-92cbc6f05023",
+      "target_files": [
+        "callbacks/update.go"
+      ]
+    },
+    {
+      "f2p": [
+        "tests::TestScanToEmbedded"
+      ],
+      "id": "gorm-9a888de53c9c",
+      "target_files": [
+        "scan.go"
+      ]
+    },
+    {
+      "f2p": [
+        "tests::TestCreateOnConfilctWithDefalutNull"
+      ],
+      "id": "gorm-a53df14abb3d",
+      "target_files": [
+        "callbacks/create.go"
+      ]
+    },
+    {
+      "f2p": [
+        "utils::TestAssertEqual",
+        "utils::TestAssertEqual/driver.Valuer_equal_(ptr_to_nil_ptr)"
+      ],
+      "id": "gorm-a5e3f9cc7859",
+      "target_files": [
+        "utils/utils.go"
+      ]
+    },
+    {
+      "f2p": [
+        "tests::TestUpdateCallbacks"
+      ],
+      "id": "gorm-bb2c4158f147",
+      "target_files": [
+        "callbacks/callmethod.go",
+        "callbacks/update.go",
+        "schema/utils.go"
+      ]
+    },
+    {
+      "f2p": [
+        "tests::TestFirstOrCreateNotExistsTable"
+      ],
+      "id": "gorm-bee33e7ec643",
+      "target_files": [
+        "finisher_api.go"
+      ]
+    },
+    {
+      "f2p": [
+        "clause::TestExpression",
+        "clause::TestExpression/case_#6.0"
+      ],
+      "id": "gorm-c48037ec4dd2",
+      "target_files": [
+        "clause/expression.go"
+      ]
+    },
+    {
+      "f2p": [
+        "tests::TestAssociationEmptyQueryClause"
+      ],
+      "id": "gorm-d076899b16a8",
+      "target_files": [
+        "association.go"
+      ]
+    },
+    {
+      "f2p": [
+        "tests::TestEmbeddedTagSetting"
+      ],
+      "id": "gorm-d6eb8e7987dc",
+      "target_files": [
+        "schema/field.go"
+      ]
+    },
+    {
+      "f2p": [
+        "tests::TestCreateInBatchesWithReturning"
+      ],
+      "id": "gorm-efbb9dbb9912",
+      "target_files": [
+        "finisher_api.go"
+      ]
+    }
+  ],
+  "task": "gorm",
+  "version": "v1.23.5"
+}

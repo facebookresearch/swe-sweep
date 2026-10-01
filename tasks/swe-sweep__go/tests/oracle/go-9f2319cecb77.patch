@@ -1,0 +1,14 @@
+diff --git a/src/encoding/base32/base32.go b/src/encoding/base32/base32.go
+index 5f3af4c8bb..fa6e42e26c 100644
+--- a/src/encoding/base32/base32.go
++++ b/src/encoding/base32/base32.go
+@@ -445,6 +445,9 @@ func (d *decoder) Read(p []byte) (n int, err error) {
+ 	if d.nbuf < min {
+ 		return 0, d.err
+ 	}
++	if nn > 0 && d.end {
++		return 0, CorruptInputError(0)
++	}
+ 
+ 	// Decode chunk into p, or d.out and then p if p is too small.
+ 	var nr int

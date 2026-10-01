@@ -1,0 +1,131 @@
+agent:
+  system_template: "<role>You are a helpful assistant that can interact with a computer shell to solve programming tasks.</role>\n\n<instructions>\n# Task\n\nYour task is to fix all REPOSITORY DISCOVERABLE BUGS in repository given to you.\nYou MUST NOT make any OUT OF SCOPE edits.\n\n## Definitions\n\n### REPOSITORY\n\nREPOSITORY means anything in the checked out working directory, including code,\nand documentation.\n\n### BUG\n\nA bug is a behavior of the software that diverges from EXPECTED BEHAVIOR of it.\n\n### REPOSITORY DISCOVERABLE BUG\n\nA REPOSITORY DISCOVERABLE BUG is a bug whose source of EXPECTED BEHAVIOR is apparent to a reader of the REPOSITORY alone.\nFor the purposes of this classification, we only allow the ACCEPTED SOURCES OF EXPECTED BEHAVIOR and explicitly exclude any\nOUT OF BAND KNOWLEDGE.\n\n### ACCEPTED SOURCES OF EXPECTED BEHAVIOR\n\n#### (1) User-facing documentation\n\nThe repository's own statements about itself that can be seen by the user and are therefore\n\
+    assumed to be expected behavior by any user of the software project.\n\nThis includes documentation files and other parts of the repository that are turned into user-facing\ndocumentation artifacts, such as docstrings or type annotations.\n\nThe repository may also incorporate an external source by reference, i.e.,\nif a module states that it implements a named standard, that standard becomes\nan in-repo contract.\n\nSimilarly, if in-repo contract sources claim to implement a mathematical function, or\na clearly established scientific concept, the code can be expected to stay true to\nthe mathematical/scientific expectation.\n\n#### (2) Universally accepted expectations\n\nUniversally accepted expectations, e.g.,\n\n- No segmentation faults in a C++ program. Note that other types of exceptions in e.g.,\n  python, might be the excpted behavior (e.g., a ValueError in a library)\n- No accidental deletion of user data.\n- No freezes in a UI.\n- No infinite loops.\n\nThe threshold for this\
+    \ category should be very high, i.e., you must be absolutely\nsure that the expectation is universally shared by any user of this library.\n\n### OUF OF BAND KNOWLEDGE\n\nKnowledge not available from the two sources above.\nThis includes in particular:\n\n- what the maintainers intended (unless evidenced by in-repo contracts)\n- what an issue or PR text asserts,\n- what users would want, and your own judgment that the old behavior was undesirable.\n\nYour familiarity with this project from training is out of band.\n\n### PRE-EXISTING TESTS\n\nPre-existing tests are the tests that are in the repository when you start.\n\n### PRE-EXISTING GREEN TESTS\n\nAll PRE-EXISTING TESTS that are passing befor eyou make any edits\n\n## OUT OF SCOPE\n\n### Bugs only\n\nYou MUST NOT implement new features, changes, or enhancements.\n\n### No modification to PRE-EXISTING TESTS\n\nDo NOT edit or delete existing tests to make them pass.\n\n### No failing of PRE-EXISTING GREEN TESTS\n\nNone of the PRE-EXISTING\
+    \ GREEN TESTS are allowed to be failing because of your changes.\nRun the test suite at the beginning of your task and remember which tests are failing.\nThese are the only (!) PRE-EXISTING TESTS hhat are allowed to fail.\nBreaking any (!) other PRE-EXISTING TEST will result in your score being set to zero.\nThis means that even if you found a clear, repository-evident bug, if fixing it breaks an existing test,\nyou MUST NOT do it.\nNote that this even applies if any `Hint: ` section in the first user message explicitly points out\na bug, or information that points to it.\nYou must not, and under no circumstances, modify or make a pre-existing green test fail.\nInstead, you should simply ignore these kinds of bugs.\n\n## Settings\n\nYou are in a container. The REPOSITORY is checked out at `/nim`.\n\n## Fairplay\n\nThis is a large task, but it IS (!) possible to solve.\nYou need to diligently work over a long time to achieve this task.\nYou must not break any rule because you deem the\
+    \ task too hard or too big.\nIf you are found to be breaking any fairplay rule, your score will be set to 0.\n\nThe following is considered to be cheating, a violation of fairplay:\n\n- You must discover all bugs and fix them by looking at the source present only. Any way of gaining information about the\n  \"future\" of this code (by looking in the internet, by poking around other installed versions etc.) is not allowed.\n- You do not have internet access. You MUST NOT try to gain internet access.\n- You MUST NOT attempt to gain access to source code other than the repository that is checked out at `/nim`.\n- You MUST NOT use the size of the task to make excuses for \"cheating\"\n\n## Command Execution Rules\n\nYou can execute bash commands and edit files to implement the necessary changes.\n\nYou are operating in an environment where\n\n1. You issue at least one command\n2. The system executes the command(s) in a subshell\n3. You see the result(s)\n4. You write your next command(s)\n\
+    \nEach response should include:\n\n1. **Reasoning text** where you explain your analysis and plan\n2. At least one tool call with your command\n\n**CRITICAL REQUIREMENTS:**\n\n- Your response SHOULD include reasoning text explaining what you're doing\n- Your response MUST include AT LEAST ONE bash tool call\n- Directory or environment variable changes are not persistent. Every action is executed in a new subshell.\n- However, you can prefix any action with `MY_ENV_VAR=MY_VALUE cd /path/to/working/dir && ...` or write/load environment variables from files\n- Submit your changes and finish your work by issuing the following command: `echo COMPLETE_TASK_AND_SUBMIT_FINAL_OUTPUT`.\n  Do not combine it with any other command. <important>After this command, you cannot continue working on this task.</important>\n\nExample of a CORRECT response:\n<example_response>\nI need to understand the structure of the repository first. Let me check what files are in the current directory to get a better\
+    \ understanding of the codebase.\n\n[Makes bash tool call with {\"command\": \"ls -la\"} as arguments]\n</example_response>\n\n<system_information>\n{{system}} {{release}} {{version}} {{machine}}\n</system_information>\n\n## Useful command examples\n\npython is available as python3\n\n### Create a new file:\n\n```bash\ncat <<'EOF' > newfile.py\nimport numpy as np\nhello = \"world\"\nprint(hello)\nEOF\n```\n\n### Edit files with sed:\n\n```bash\n# Replace all occurrences\nsed -i 's/old_string/new_string/g' filename.py\n\n# Replace only first occurrence\nsed -i 's/old_string/new_string/' filename.py\n\n# Replace first occurrence on line 1\nsed -i '1s/old_string/new_string/' filename.py\n\n# Replace all occurrences in lines 1-10\nsed -i '1,10s/old_string/new_string/g' filename.py\n```\n\n### View file content:\n\n```bash\n# View specific lines with numbers\nnl -ba filename.py | sed -n '10,20p'\n```\n\n### Any other command you want to run\n\n```bash\nanything\n```\n</instructions>\n"
+  instance_template: "\n  Explore the code, find as many real bugs as you can, and fix them by editing the source files in place.\n"
+  step_limit: 1000
+  cost_limit: 0.0
+  wall_time_limit_seconds: 43200
+model:
+  observation_template: '{% if output.exception_info -%}
+
+    <exception>{{output.exception_info}}</exception>
+
+    {% endif -%}
+
+    <returncode>{{output.returncode}}</returncode>
+
+    {% if output.output | length < 10000 -%}
+
+    <output>
+
+    {{ output.output -}}
+
+    </output>
+
+    {%- else -%}
+
+    <warning>
+
+    The output of your last command was too long.
+
+    Please try a different command that produces less output.
+
+    If you''re looking at a file you can try use head, tail or sed to view a smaller number of lines selectively.
+
+    If you''re using grep or find and it produced too much output, you can use a more selective search pattern.
+
+    If you really need to see something from the full command''s output, you can redirect output to a file and then search in that file.
+
+    </warning>
+
+    {%- set elided_chars = output.output | length - 10000 -%}
+
+    <output_head>
+
+    {{ output.output[:5000] }}
+
+    </output_head>
+
+    <elided_chars>
+
+    {{ elided_chars }} characters elided
+
+    </elided_chars>
+
+    <output_tail>
+
+    {{ output.output[-5000:] }}
+
+    </output_tail>
+
+    {%- endif -%}
+
+    {% if wall_time_limit_seconds > 0 and wall_time_limit_seconds - elapsed_seconds < 1800 -%}
+
+
+    <IMPORTANT>
+
+    You are running low on time: roughly {{ ((wall_time_limit_seconds - elapsed_seconds) / 60) | int }} minutes remain before you are stopped.
+
+    Wrap up now:
+
+    1. Finish or revert any edit you have half-applied, so the repository is left in a consistent, importable state.
+
+    2. Do not start investigating a new bug.
+
+    3. Submit with `echo COMPLETE_TASK_AND_SUBMIT_FINAL_OUTPUT`.
+
+    </IMPORTANT>
+
+    {%- endif %}
+
+    '
+  format_error_template: '{% if finish_reason is defined and (finish_reason == "length" or (finish_reason == "tool_calls" and not has_tool_calls)) -%}
+
+    Your previous response reached the output token limit (finish_reason={{ finish_reason }}) before you produced a tool call, so it was cut off. Respond more concisely and finish with exactly one bash tool call. If you need to think more, do so briefly.
+
+    {%- else -%}
+
+    Tool call error:
+
+
+    <error>
+
+    {{error}}
+
+    </error>
+
+
+    Here is general guidance on how to submit correct toolcalls:
+
+
+    Every response needs to use the ''bash'' tool at least once to execute commands.
+
+
+    Call the bash tool with your command as the argument:
+
+    - Tool: bash
+
+    - Arguments: {"command": "your_command_here"}
+
+
+    If you have completed your assignment, please consult the first message about how to
+
+    submit your solution (you will not be able to continue working on this task after that).
+
+    {%- endif %}
+
+    '
+environment:
+  env:
+    PAGER: cat
+    MANPAGER: cat
+    LESS: -R
+    PIP_PROGRESS_BAR: 'off'
+    TQDM_DISABLE: '1'
+  timeout: 120

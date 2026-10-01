@@ -1,0 +1,30 @@
+diff --git a/vlib/v/checker/tests/auto_deref_assign_err.out b/vlib/v/checker/tests/auto_deref_assign_err.out
+new file mode 100644
+index 000000000..afb32550a
+--- /dev/null
++++ b/vlib/v/checker/tests/auto_deref_assign_err.out
+@@ -0,0 +1,6 @@
++vlib/v/checker/tests/auto_deref_assign_err.vv:10:6: error: cannot assign to `o`: expected `&int`, not `string`
++    8 | fn sub( mut o &int ) {
++    9 |     println( 'in function got: ' + o.str() )
++   10 |     o = "mutate int as string??"
++      |         ~~~~~~~~~~~~~~~~~~~~~~~~
++   11 | }
+diff --git a/vlib/v/checker/tests/auto_deref_assign_err.vv b/vlib/v/checker/tests/auto_deref_assign_err.vv
+new file mode 100644
+index 000000000..1c16db342
+--- /dev/null
++++ b/vlib/v/checker/tests/auto_deref_assign_err.vv
+@@ -0,0 +1,11 @@
++fn main() {
++	mut a := 42
++	println( 'before sub: ' + a.str() )
++	sub( mut a )
++	println( 'after sub: ' + a.str() )
++}
++
++fn sub( mut o &int ) {
++	println( 'in function got: ' + o.str() )
++	o = "mutate int as string??"
++}
+\ No newline at end of file

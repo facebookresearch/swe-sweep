@@ -1,0 +1,16 @@
+diff --git a/src/ty.rs b/src/ty.rs
+index c38200f9..410e701e 100644
+--- a/src/ty.rs
++++ b/src/ty.rs
+@@ -740,7 +740,10 @@ pub mod parsing {
+                         break;
+                     }
+ 
+-                    inputs.push_punct(args.parse()?);
++                    let comma = args.parse()?;
++                    if !has_mut_self {
++                        inputs.push_punct(comma);
++                    }
+                 }
+ 
+                 inputs

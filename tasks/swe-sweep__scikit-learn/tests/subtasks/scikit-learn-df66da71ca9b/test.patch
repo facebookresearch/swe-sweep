@@ -1,0 +1,16 @@
+diff --git a/sklearn/cluster/tests/test_k_means.py b/sklearn/cluster/tests/test_k_means.py
+index 526c33058f..485b120b54 100644
+--- a/sklearn/cluster/tests/test_k_means.py
++++ b/sklearn/cluster/tests/test_k_means.py
+@@ -824,3 +824,11 @@ def test_KMeans_init_centers():
+         km = KMeans(init=init_centers_test, n_clusters=3, n_init=1)
+         km.fit(X_test)
+         assert_equal(False, np.may_share_memory(km.cluster_centers_, init_centers))
++
++
++def test_iter_attribute():
++    # Regression test on bad n_iter_ value. Previous bug n_iter_ was one off
++    # it's right value (#11340).
++    estimator = KMeans(algorithm="elkan", max_iter=1)
++    estimator.fit(np.random.rand(10, 10))
++    assert estimator.n_iter_ == 1

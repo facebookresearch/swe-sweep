@@ -1,0 +1,16 @@
+diff --git a/services/src/main/java/org/keycloak/services/clientregistration/policy/impl/ProtocolMappersClientRegistrationPolicy.java b/services/src/main/java/org/keycloak/services/clientregistration/policy/impl/ProtocolMappersClientRegistrationPolicy.java
+index fe309747a4..3ece3ce98a 100644
+--- a/services/src/main/java/org/keycloak/services/clientregistration/policy/impl/ProtocolMappersClientRegistrationPolicy.java
++++ b/services/src/main/java/org/keycloak/services/clientregistration/policy/impl/ProtocolMappersClientRegistrationPolicy.java
+@@ -86,6 +86,11 @@ public class ProtocolMappersClientRegistrationPolicy implements ClientRegistrati
+ 				ServicesLogger.LOGGER.warn(message);
+ 				throw new ClientRegistrationPolicyException(message);
+ 			}
++			String storedMapperType = mapperModel.getProtocolMapper();
++			if (!Objects.equals(mapperType, storedMapperType)) {
++				failWithProtocolMapperTypeNotAllowedError(mapperRepresentation);
++				return;
++			}
+ 			Map<String, String> modelConfig = mapperModel.getConfig();
+ 			Map<String, String> representationConfig = mapperRepresentation.getConfig();
+ 			if (!Objects.equals(representationConfig, modelConfig)) {

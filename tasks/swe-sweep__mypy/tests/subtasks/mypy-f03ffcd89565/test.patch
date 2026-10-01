@@ -1,0 +1,36 @@
+diff --git a/test-data/unit/check-type-promotion.test b/test-data/unit/check-type-promotion.test
+index d98d0c60e..1b69174a4 100644
+--- a/test-data/unit/check-type-promotion.test
++++ b/test-data/unit/check-type-promotion.test
+@@ -187,3 +187,19 @@ if isinstance(x, (float, complex)):
+ else:
+     reveal_type(x)  # N: Revealed type is "builtins.int"
+ [builtins fixtures/primitives.pyi]
++
++[case testRejectPromotionsForProtocols]
++from typing import Protocol
++
++class H(Protocol):
++    def hex(self, /) -> str: ...
++
++f: H = 1.0
++o: H = object()  # E: Incompatible types in assignment (expression has type "object", variable has type "H")
++c: H = 1j   # E: Incompatible types in assignment (expression has type "complex", variable has type "H")
++i: H = 1  # E: Incompatible types in assignment (expression has type "int", variable has type "H")
++b: H = False  # E: Incompatible types in assignment (expression has type "bool", variable has type "H")
++
++class N(float): ...
++n: H = N()
++[builtins fixtures/primitives.pyi]
+diff --git a/test-data/unit/fixtures/primitives.pyi b/test-data/unit/fixtures/primitives.pyi
+index e7d3e12bd..fc220a4e2 100644
+--- a/test-data/unit/fixtures/primitives.pyi
++++ b/test-data/unit/fixtures/primitives.pyi
+@@ -22,6 +22,7 @@ class int:
+ class float:
+     def __float__(self) -> float: pass
+     def __add__(self, x: float) -> float: pass
++    def hex(self) -> str: pass
+ class complex:
+     def __add__(self, x: complex) -> complex: pass
+ class bool(int): pass

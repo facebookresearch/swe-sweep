@@ -1,0 +1,18 @@
+diff --git a/compiler/test/compilable/testcstuff1.c b/compiler/test/compilable/testcstuff1.c
+index 19db4f2917..2e37e49be7 100644
+--- a/compiler/test/compilable/testcstuff1.c
++++ b/compiler/test/compilable/testcstuff1.c
+@@ -201,6 +201,13 @@ _Static_assert(testexpinit() == 1 + 2 + 3, "ok");
+ 
+ /********************************/
+ 
++__declspec(restrict) void* testrestrictdeclspec()
++{
++    return 0;
++}
++
++/********************************/
++
+ // Character literals
+ _Static_assert(sizeof('a') == 4, "ok");
+ _Static_assert(sizeof(u'a') == 4, "ok");

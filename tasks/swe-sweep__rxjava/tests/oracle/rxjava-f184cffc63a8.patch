@@ -1,0 +1,16 @@
+diff --git a/src/main/java/io/reactivex/internal/operators/flowable/FlowableFlatMap.java b/src/main/java/io/reactivex/internal/operators/flowable/FlowableFlatMap.java
+index c68e82bb9..a7631de8b 100644
+--- a/src/main/java/io/reactivex/internal/operators/flowable/FlowableFlatMap.java
++++ b/src/main/java/io/reactivex/internal/operators/flowable/FlowableFlatMap.java
+@@ -322,6 +322,11 @@ public final class FlowableFlatMap<T, U> extends AbstractFlowableWithUpstream<T,
+             }
+             if (errs.addThrowable(t)) {
+                 done = true;
++                if (!delayErrors) {
++                    for (InnerSubscriber<?, ?> a : subscribers.getAndSet(CANCELLED)) {
++                        a.dispose();
++                    }
++                }
+                 drain();
+             } else {
+                 RxJavaPlugins.onError(t);

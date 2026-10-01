@@ -1,0 +1,17 @@
+diff --git a/xarray/backends/api.py b/xarray/backends/api.py
+index ca040306..d2929519 100644
+--- a/xarray/backends/api.py
++++ b/xarray/backends/api.py
+@@ -358,9 +358,9 @@ def _dataset_from_backend_dataset(
+ 
+     ds.set_close(backend_ds._close)
+ 
+-    # Ensure source filename always stored in dataset object (GH issue #2550)
+-    if "source" not in ds.encoding and isinstance(filename_or_obj, str):
+-        ds.encoding["source"] = filename_or_obj
++    # Ensure source filename always stored in dataset object
++    if "source" not in ds.encoding and isinstance(filename_or_obj, (str, os.PathLike)):
++        ds.encoding["source"] = _normalize_path(filename_or_obj)
+ 
+     return ds
+ 

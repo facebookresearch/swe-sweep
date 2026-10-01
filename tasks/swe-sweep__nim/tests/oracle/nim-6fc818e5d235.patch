@@ -1,0 +1,45 @@
+diff --git a/compiler/semexprs.nim b/compiler/semexprs.nim
+index 7454c7f8e..9cf206b4c 100644
+--- a/compiler/semexprs.nim
++++ b/compiler/semexprs.nim
+@@ -2203,10 +2203,13 @@ proc semQuoteAst(c: PContext, n: PNode): PNode =
+   if ids.len > 0:
+     dummyTemplate[paramsPos] = newNodeI(nkFormalParams, n.info)
+     dummyTemplate[paramsPos].add getSysSym(c.graph, n.info, "untyped").newSymNode # return type
+-    ids.add getSysSym(c.graph, n.info, "untyped").newSymNode # params type
+-    ids.add c.graph.emptyNode # no default value
+-    dummyTemplate[paramsPos].add newTreeI(nkIdentDefs, n.info, ids)
+-
++    dummyTemplate[paramsPos].add newTreeI(nkIdentDefs, n.info, ids[0], getSysSym(c.graph, n.info, "typed").newSymNode, c.graph.emptyNode)
++    for i in 1..<ids.len:
++      let typ = semExprWithType(c, quotes[i+1], {}).typ
++      if tfTriggersCompileTime notin typ.flags:
++        dummyTemplate[paramsPos].add newTreeI(nkIdentDefs, n.info, ids[i], newNodeIT(nkType, n.info, typ), c.graph.emptyNode)
++      else:
++        dummyTemplate[paramsPos].add newTreeI(nkIdentDefs, n.info, ids[i], getSysSym(c.graph, n.info, "typed").newSymNode, c.graph.emptyNode)
+   var tmpl = semTemplateDef(c, dummyTemplate)
+   quotes[0] = tmpl[namePos]
+   # This adds a call to newIdentNode("result") as the first argument to the template call
+diff --git a/compiler/vm.nim b/compiler/vm.nim
+index 3946be0fd..38b856277 100644
+--- a/compiler/vm.nim
++++ b/compiler/vm.nim
+@@ -10,7 +10,7 @@
+ ## This file implements the new evaluation engine for Nim code.
+ ## An instruction is 1-3 int32s in memory, it is a register based VM.
+ 
+-
++import semmacrosanity
+ import
+   std/[strutils, tables, parseutils],
+   msgs, vmdef, vmgen, nimsets, types, passes,
+@@ -1408,6 +1408,9 @@ proc rawExecute(c: PCtx, start: int, tos: PStackFrame): TFullReg =
+         for i in 1..rc-1:
+           let node = regs[rb+i].regToNode
+           node.info = c.debug[pc]
++          if prc.typ[i].kind notin {tyTyped, tyUntyped}:
++            node.annotateType(prc.typ[i], c.config)
++
+           macroCall.add(node)
+         var a = evalTemplate(macroCall, prc, genSymOwner, c.config, c.cache, c.templInstCounter, c.idgen)
+         if a.kind == nkStmtList and a.len == 1: a = a[0]

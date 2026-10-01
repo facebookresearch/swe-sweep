@@ -1,0 +1,58 @@
+diff --git a/codec-http/src/main/java/io/netty/handler/codec/http/ComposedLastHttpContent.java b/codec-http/src/main/java/io/netty/handler/codec/http/ComposedLastHttpContent.java
+index b8b7dc967f..1ef39e56ff 100644
+--- a/codec-http/src/main/java/io/netty/handler/codec/http/ComposedLastHttpContent.java
++++ b/codec-http/src/main/java/io/netty/handler/codec/http/ComposedLastHttpContent.java
+@@ -28,6 +28,11 @@ final class ComposedLastHttpContent implements LastHttpContent {
+         this.trailingHeaders = trailingHeaders;
+     }
+ 
++    ComposedLastHttpContent(HttpHeaders trailingHeaders, DecoderResult result) {
++        this(trailingHeaders);
++        this.result = result;
++    }
++
+     @Override
+     public HttpHeaders trailingHeaders() {
+         return trailingHeaders;
+diff --git a/codec-http/src/main/java/io/netty/handler/codec/http/HttpContentDecoder.java b/codec-http/src/main/java/io/netty/handler/codec/http/HttpContentDecoder.java
+index e85adaaa37..3eb7ad3e33 100644
+--- a/codec-http/src/main/java/io/netty/handler/codec/http/HttpContentDecoder.java
++++ b/codec-http/src/main/java/io/netty/handler/codec/http/HttpContentDecoder.java
+@@ -19,6 +19,7 @@ import io.netty.buffer.ByteBuf;
+ import io.netty.channel.ChannelHandlerContext;
+ import io.netty.channel.embedded.EmbeddedChannel;
+ import io.netty.handler.codec.CodecException;
++import io.netty.handler.codec.DecoderResult;
+ import io.netty.handler.codec.MessageToMessageDecoder;
+ import io.netty.util.ReferenceCountUtil;
+ 
+@@ -164,7 +165,7 @@ public abstract class HttpContentDecoder extends MessageToMessageDecoder<HttpObj
+             if (headers.isEmpty()) {
+                 out.add(LastHttpContent.EMPTY_LAST_CONTENT);
+             } else {
+-                out.add(new ComposedLastHttpContent(headers));
++                out.add(new ComposedLastHttpContent(headers, DecoderResult.SUCCESS));
+             }
+         }
+     }
+diff --git a/codec-http/src/main/java/io/netty/handler/codec/http/HttpContentEncoder.java b/codec-http/src/main/java/io/netty/handler/codec/http/HttpContentEncoder.java
+index 0078edc421..c486a67ed8 100644
+--- a/codec-http/src/main/java/io/netty/handler/codec/http/HttpContentEncoder.java
++++ b/codec-http/src/main/java/io/netty/handler/codec/http/HttpContentEncoder.java
+@@ -19,6 +19,7 @@ import io.netty.buffer.ByteBuf;
+ import io.netty.buffer.ByteBufHolder;
+ import io.netty.channel.ChannelHandlerContext;
+ import io.netty.channel.embedded.EmbeddedChannel;
++import io.netty.handler.codec.DecoderResult;
+ import io.netty.handler.codec.MessageToMessageCodec;
+ import io.netty.util.ReferenceCountUtil;
+ 
+@@ -264,7 +265,7 @@ public abstract class HttpContentEncoder extends MessageToMessageCodec<HttpReque
+             if (headers.isEmpty()) {
+                 out.add(LastHttpContent.EMPTY_LAST_CONTENT);
+             } else {
+-                out.add(new ComposedLastHttpContent(headers));
++                out.add(new ComposedLastHttpContent(headers, DecoderResult.SUCCESS));
+             }
+             return true;
+         }

@@ -1,0 +1,21 @@
+diff --git a/testsuite/integration-arquillian/tests/base/src/test/java/org/keycloak/testsuite/cli/admin/KcAdmTest.java b/testsuite/integration-arquillian/tests/base/src/test/java/org/keycloak/testsuite/cli/admin/KcAdmTest.java
+index 17a8d3e58c..353c326850 100644
+--- a/testsuite/integration-arquillian/tests/base/src/test/java/org/keycloak/testsuite/cli/admin/KcAdmTest.java
++++ b/testsuite/integration-arquillian/tests/base/src/test/java/org/keycloak/testsuite/cli/admin/KcAdmTest.java
+@@ -672,5 +672,16 @@ public class KcAdmTest extends AbstractAdmCliTest {
+         // should contain an error message
+         assertExitCodeAndStreamSizes(exec, 0, 0, 1);
+     }
++    
++    @Test
++    public void testEnvPasswordWithRegularCommand() {
++        execute("config credentials --server " + serverUrl + " --realm master --user admin --password admin");
++        KcAdmExec exec = KcAdmExec.newBuilder()
++                .argsLine("get users --format csv")
++                .env("KC_CLI_PASSWORD=ignoreme")
++                .execute();
++        // should not contain an error message
++        assertExitCodeAndStreamSizes(exec, 0, 1, 0);
++    }
+ 
+ }

@@ -1,0 +1,23 @@
+diff --git a/vlib/v/tests/chan_interface_test.v b/vlib/v/tests/chan_interface_test.v
+new file mode 100644
+index 000000000..eb7a2f392
+--- /dev/null
++++ b/vlib/v/tests/chan_interface_test.v
+@@ -0,0 +1,17 @@
++interface TestInterface {
++	a int
++}
++
++struct TestStruct {
++	a int
++}
++
++fn test_chan_interface() {
++	c := chan TestInterface{cap: 1}
++
++	c.try_push(TestInterface(TestStruct{ a: 1 }))
++
++	m := <-c
++	println(m)
++	assert m.a == 1
++}

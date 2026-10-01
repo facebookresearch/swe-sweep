@@ -1,0 +1,25 @@
+diff --git a/xarray/tests/test_coding_times.py b/xarray/tests/test_coding_times.py
+index 7d36f4e3..67d865d0 100644
+--- a/xarray/tests/test_coding_times.py
++++ b/xarray/tests/test_coding_times.py
+@@ -1123,3 +1123,20 @@ def test_should_cftime_be_used_target_not_npable():
+         ValueError, match="Calendar 'noleap' is only valid with cftime."
+     ):
+         _should_cftime_be_used(src, "noleap", False)
++
++
++@pytest.mark.parametrize("use_cftime", [True, False])
++def test_decode_0size_datetime(use_cftime):
++    # GH1329
++    if use_cftime and not has_cftime:
++        pytest.skip()
++
++    dtype = object if use_cftime else "M8[ns]"
++    expected = np.array([], dtype=dtype)
++    actual = decode_cf_datetime(
++        np.zeros(shape=0, dtype=np.int64),
++        units="days since 1970-01-01 00:00:00",
++        calendar="proleptic_gregorian",
++        use_cftime=use_cftime,
++    )
++    np.testing.assert_equal(expected, actual)

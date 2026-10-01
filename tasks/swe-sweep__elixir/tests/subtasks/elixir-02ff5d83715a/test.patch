@@ -1,0 +1,12 @@
+diff --git a/lib/elixir/test/elixir/code_formatter/containers_test.exs b/lib/elixir/test/elixir/code_formatter/containers_test.exs
+index 9f3b3bc5d..8e7b5e430 100644
+--- a/lib/elixir/test/elixir/code_formatter/containers_test.exs
++++ b/lib/elixir/test/elixir/code_formatter/containers_test.exs
+@@ -203,6 +203,7 @@ defmodule Code.Formatter.ContainersTest do
+       assert_same ~S(["\w": 1, "\\w": 2])
+       assert_same ~S(["Elixir.Foo": 1, "Elixir.Bar": 2])
+       assert_format ~S(["Foo": 1, "Bar": 2]), ~S([Foo: 1, Bar: 2])
++      assert_same ~S(["with \"scare quotes\"": 1])
+     end
+ 
+     test "with operators keyword lists" do

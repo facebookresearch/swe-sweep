@@ -1,0 +1,38 @@
+diff --git a/modules/gdscript/tests/scripts/lsp/doc_comments.gd b/modules/gdscript/tests/scripts/lsp/doc_comments.gd
+new file mode 100644
+index 0000000000..c6d6303810
+--- /dev/null
++++ b/modules/gdscript/tests/scripts/lsp/doc_comments.gd
+@@ -0,0 +1,7 @@
++## brief
++##
++## description
++##
++## @tutorial(t1): https://example.com/t2
++## @tutorial: https://example.com/t3
++extends Node
+diff --git a/modules/gdscript/tests/test_lsp.h b/modules/gdscript/tests/test_lsp.h
+index 288eb71e5b..ec9e59dc49 100644
+--- a/modules/gdscript/tests/test_lsp.h
++++ b/modules/gdscript/tests/test_lsp.h
+@@ -463,6 +463,20 @@ func f():
+ 			test_resolve_symbols(uri, all_test_data, all_test_data);
+ 		}
+ 
++		SUBCASE("Documentation is correctly set") {
++			String path = "res://lsp/doc_comments.gd";
++			assert_no_errors_in(path);
++			GDScriptLanguageProtocol::get_singleton()->get_workspace()->parse_local_script(path);
++			ExtendGDScriptParser *parser = GDScriptLanguageProtocol::get_singleton()->get_workspace()->parse_results[path];
++			REQUIRE(parser);
++			lsp::DocumentSymbol cls = parser->get_symbols();
++			REQUIRE(cls.documentation.contains("brief"));
++			REQUIRE(cls.documentation.contains("description"));
++			REQUIRE(cls.documentation.contains("t1"));
++			REQUIRE(cls.documentation.contains("t2"));
++			REQUIRE(cls.documentation.contains("t3"));
++		}
++
+ 		memdelete(proto);
+ 		finish_language();
+ 	}

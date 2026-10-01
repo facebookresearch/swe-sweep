@@ -1,0 +1,21 @@
+diff --git a/actionview/lib/action_view/helpers/url_helper.rb b/actionview/lib/action_view/helpers/url_helper.rb
+index 16e775d21ff..75e013642f5 100644
+--- a/actionview/lib/action_view/helpers/url_helper.rb
++++ b/actionview/lib/action_view/helpers/url_helper.rb
+@@ -208,7 +208,6 @@ module ActionView
+       #
+       def link_to(name = nil, options = nil, html_options = nil, &block)
+         html_options, options, name = options, name, block if block_given?
+-        options ||= {}
+ 
+         html_options = convert_options_to_data_attributes(options, html_options)
+ 
+@@ -743,7 +742,7 @@ module ActionView
+         end
+ 
+         def url_target(name, options)
+-          if name.respond_to?(:model_name) && options.empty?
++          if name.respond_to?(:model_name) && options.is_a?(Hash) && options.empty?
+             url_for(name)
+           else
+             url_for(options)

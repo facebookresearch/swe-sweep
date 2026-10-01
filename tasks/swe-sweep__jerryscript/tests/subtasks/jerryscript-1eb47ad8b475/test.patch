@@ -1,0 +1,21 @@
+diff --git a/tests/jerry/array.js b/tests/jerry/array.js
+index c6866f33..ff502223 100644
+--- a/tests/jerry/array.js
++++ b/tests/jerry/array.js
+@@ -155,3 +155,16 @@ for (i = 0; i < 1024; i++)
+ 
+ var elision = [0,,2 ,3];
+ assert (elision.hasOwnProperty(1) == false);
++
++(function () {
++  "use strict";
++  var arr = [1];
++  Object.defineProperty (arr, "length", {value: 1, writable: false});
++
++  try {
++    arr[2] = 5;
++    assert (false);
++  } catch (e) {
++    assert (e instanceof TypeError);
++  }
++}) ();

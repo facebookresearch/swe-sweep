@@ -1,0 +1,29 @@
+diff --git a/datafusion/sqllogictest/test_files/type_coercion.slt b/datafusion/sqllogictest/test_files/type_coercion.slt
+--- a/datafusion/sqllogictest/test_files/type_coercion.slt
++++ b/datafusion/sqllogictest/test_files/type_coercion.slt
+@@ -254,3 +254,24 @@
+ ########################################
+ ## Test type coercion with UNIONs end ##
+ ########################################
++
++#############################################################
++## Test validation for functions with empty argument lists ##
++#############################################################
++
++# https://github.com/apache/datafusion/issues/20201
++
++query error does not support zero arguments
++SELECT * FROM (SELECT 1) WHERE (STARTS_WITH() IS NULL);
++
++query error does not support zero arguments
++SELECT * FROM (SELECT 1) WHERE (STARTS_WITH() IS NOT NULL);
++
++query error does not support zero arguments
++SELECT * FROM (SELECT 'a') WHERE (STARTS_WITH() SIMILAR TO 'abc%');
++
++query error does not support zero arguments
++SELECT * FROM (SELECT 1) WHERE CAST(STARTS_WITH() AS STRING) = 'x';
++
++query error does not support zero arguments
++SELECT * FROM (SELECT 1) WHERE TRY_CAST(STARTS_WITH() AS INT) = 1;
+\ No newline at end of file

@@ -1,0 +1,67 @@
+diff --git a/lib/rules/selector-pseudo-class-allowed-list/__tests__/index.mjs b/lib/rules/selector-pseudo-class-allowed-list/__tests__/index.mjs
+index 320e5f12f..a774b2f4d 100644
+--- a/lib/rules/selector-pseudo-class-allowed-list/__tests__/index.mjs
++++ b/lib/rules/selector-pseudo-class-allowed-list/__tests__/index.mjs
+@@ -1,3 +1,5 @@
++import { stripIndent } from 'common-tags';
++
+ import rule from '../index.mjs';
+ const { messages, ruleName } = rule;
+ 
+@@ -49,6 +51,16 @@ testRule({
+ 			code: 'html { --custom-property-set: {} }',
+ 			description: 'custom property set in selector',
+ 		},
++		{
++			code: stripIndent`
++				/* stylelint-disable-next-line selector-pseudo-class-allowed-list */
++				:focus, /* stylelint-disable-next-line selector-pseudo-class-allowed-list */
++				:focus,
++				/* stylelint-disable-next-line selector-pseudo-class-allowed-list */
++				:focus
++				{}
++			`,
++		},
+ 	],
+ 
+ 	reject: [
+@@ -116,6 +128,39 @@ testRule({
+ 			endLine: 1,
+ 			endColumn: 6,
+ 		},
++		{
++			code: stripIndent`
++				/* a comment */
++				:focus, /* a comment */
++				:focus,
++				/* a comment */
++				:focus
++				{}
++			`,
++			warnings: [
++				{
++					message: messages.rejected(':focus'),
++					line: 2,
++					column: 1,
++					endLine: 2,
++					endColumn: 7,
++				},
++				{
++					message: messages.rejected(':focus'),
++					line: 3,
++					column: 1,
++					endLine: 3,
++					endColumn: 7,
++				},
++				{
++					message: messages.rejected(':focus'),
++					line: 5,
++					column: 1,
++					endLine: 5,
++					endColumn: 7,
++				},
++			],
++		},
+ 	],
+ });
+ 

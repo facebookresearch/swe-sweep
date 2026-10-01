@@ -1,0 +1,13 @@
+diff --git a/lib/elixir/lib/calendar/date.ex b/lib/elixir/lib/calendar/date.ex
+index ad7094133..cbdbcf07b 100644
+--- a/lib/elixir/lib/calendar/date.ex
++++ b/lib/elixir/lib/calendar/date.ex
+@@ -422,7 +422,7 @@ defmodule Date do
+   def to_iso8601(%{calendar: _} = date, format) when format in [:basic, :extended] do
+     date
+     |> convert!(Calendar.ISO)
+-    |> to_iso8601()
++    |> to_iso8601(format)
+   end
+ 
+   @doc """

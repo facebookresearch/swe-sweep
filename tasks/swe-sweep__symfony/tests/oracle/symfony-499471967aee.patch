@@ -1,0 +1,170 @@
+diff --git a/src/Symfony/Component/Messenger/Exception/DelayedMessageHandlingException.php b/src/Symfony/Component/Messenger/Exception/DelayedMessageHandlingException.php
+index f2048cb1efd..ea785bfefcb 100644
+--- a/src/Symfony/Component/Messenger/Exception/DelayedMessageHandlingException.php
++++ b/src/Symfony/Component/Messenger/Exception/DelayedMessageHandlingException.php
+@@ -16,12 +16,12 @@ use Symfony\Component\Messenger\Envelope;
+  *
+  * @author Tobias Nyholm <tobias.nyholm@gmail.com>
+  */
+-class DelayedMessageHandlingException extends RuntimeException implements WrappedExceptionsInterface
++class DelayedMessageHandlingException extends RuntimeException implements WrappedExceptionsInterface, EnvelopeAwareExceptionInterface
+ {
++    use EnvelopeAwareExceptionTrait;
+     use WrappedExceptionsTrait;
+ 
+     private array $exceptions;
+-    private ?Envelope $envelope;
+ 
+     public function __construct(array $exceptions, Envelope $envelope = null)
+     {
+@@ -53,9 +53,4 @@ class DelayedMessageHandlingException extends RuntimeException implements Wrappe
+ 
+         return $this->exceptions;
+     }
+-
+-    public function getEnvelope(): ?Envelope
+-    {
+-        return $this->envelope;
+-    }
+ }
+diff --git a/src/Symfony/Component/Messenger/Exception/EnvelopeAwareExceptionInterface.php b/src/Symfony/Component/Messenger/Exception/EnvelopeAwareExceptionInterface.php
+new file mode 100644
+index 00000000000..b57aa034e44
+--- /dev/null
++++ b/src/Symfony/Component/Messenger/Exception/EnvelopeAwareExceptionInterface.php
+@@ -0,0 +1,22 @@
++<?php
++
++/*
++ * This file is part of the Symfony package.
++ *
++ * (c) Fabien Potencier <fabien@symfony.com>
++ *
++ * For the full copyright and license information, please view the LICENSE
++ * file that was distributed with this source code.
++ */
++
++namespace Symfony\Component\Messenger\Exception;
++
++use Symfony\Component\Messenger\Envelope;
++
++/**
++ * @internal
++ */
++interface EnvelopeAwareExceptionInterface
++{
++    public function getEnvelope(): ?Envelope;
++}
+diff --git a/src/Symfony/Component/Messenger/Exception/EnvelopeAwareExceptionTrait.php b/src/Symfony/Component/Messenger/Exception/EnvelopeAwareExceptionTrait.php
+new file mode 100644
+index 00000000000..3bb7676b86e
+--- /dev/null
++++ b/src/Symfony/Component/Messenger/Exception/EnvelopeAwareExceptionTrait.php
+@@ -0,0 +1,27 @@
++<?php
++
++/*
++ * This file is part of the Symfony package.
++ *
++ * (c) Fabien Potencier <fabien@symfony.com>
++ *
++ * For the full copyright and license information, please view the LICENSE
++ * file that was distributed with this source code.
++ */
++
++namespace Symfony\Component\Messenger\Exception;
++
++use Symfony\Component\Messenger\Envelope;
++
++/**
++ * @internal
++ */
++trait EnvelopeAwareExceptionTrait
++{
++    private ?Envelope $envelope = null;
++
++    public function getEnvelope(): ?Envelope
++    {
++        return $this->envelope;
++    }
++}
+diff --git a/src/Symfony/Component/Messenger/Exception/HandlerFailedException.php b/src/Symfony/Component/Messenger/Exception/HandlerFailedException.php
+index f854238ec59..ed1699583d4 100644
+--- a/src/Symfony/Component/Messenger/Exception/HandlerFailedException.php
++++ b/src/Symfony/Component/Messenger/Exception/HandlerFailedException.php
+@@ -13,7 +13,7 @@ namespace Symfony\Component\Messenger\Exception;
+ 
+ use Symfony\Component\Messenger\Envelope;
+ 
+-class HandlerFailedException extends RuntimeException implements WrappedExceptionsInterface
++class HandlerFailedException extends RuntimeException implements WrappedExceptionsInterface, EnvelopeAwareExceptionInterface
+ {
+     use WrappedExceptionsTrait;
+ 
+diff --git a/src/Symfony/Component/Messenger/Exception/ValidationFailedException.php b/src/Symfony/Component/Messenger/Exception/ValidationFailedException.php
+index 0e91372f62d..0a8655e5c3e 100644
+--- a/src/Symfony/Component/Messenger/Exception/ValidationFailedException.php
++++ b/src/Symfony/Component/Messenger/Exception/ValidationFailedException.php
+@@ -11,20 +11,24 @@
+ 
+ namespace Symfony\Component\Messenger\Exception;
+ 
++use Symfony\Component\Messenger\Envelope;
+ use Symfony\Component\Validator\ConstraintViolationListInterface;
+ 
+ /**
+  * @author Tobias Nyholm <tobias.nyholm@gmail.com>
+  */
+-class ValidationFailedException extends RuntimeException
++class ValidationFailedException extends RuntimeException implements EnvelopeAwareExceptionInterface
+ {
++    use EnvelopeAwareExceptionTrait;
++
+     private ConstraintViolationListInterface $violations;
+     private object $violatingMessage;
+ 
+-    public function __construct(object $violatingMessage, ConstraintViolationListInterface $violations)
++    public function __construct(object $violatingMessage, ConstraintViolationListInterface $violations, ?Envelope $envelope = null)
+     {
+         $this->violatingMessage = $violatingMessage;
+         $this->violations = $violations;
++        $this->envelope = $envelope;
+ 
+         parent::__construct(sprintf('Message of type "%s" failed validation.', $this->violatingMessage::class));
+     }
+diff --git a/src/Symfony/Component/Messenger/Middleware/ValidationMiddleware.php b/src/Symfony/Component/Messenger/Middleware/ValidationMiddleware.php
+index 851ef295eb3..bbfe7e02962 100644
+--- a/src/Symfony/Component/Messenger/Middleware/ValidationMiddleware.php
++++ b/src/Symfony/Component/Messenger/Middleware/ValidationMiddleware.php
+@@ -39,7 +39,7 @@ class ValidationMiddleware implements MiddlewareInterface
+ 
+         $violations = $this->validator->validate($message, null, $groups);
+         if (\count($violations)) {
+-            throw new ValidationFailedException($message, $violations);
++            throw new ValidationFailedException($message, $violations, $envelope);
+         }
+ 
+         return $stack->next()->handle($envelope, $stack);
+diff --git a/src/Symfony/Component/Messenger/Worker.php b/src/Symfony/Component/Messenger/Worker.php
+index 7e25f7de1b5..3d69dd61351 100644
+--- a/src/Symfony/Component/Messenger/Worker.php
++++ b/src/Symfony/Component/Messenger/Worker.php
+@@ -22,8 +22,7 @@ use Symfony\Component\Messenger\Event\WorkerRateLimitedEvent;
+ use Symfony\Component\Messenger\Event\WorkerRunningEvent;
+ use Symfony\Component\Messenger\Event\WorkerStartedEvent;
+ use Symfony\Component\Messenger\Event\WorkerStoppedEvent;
+-use Symfony\Component\Messenger\Exception\DelayedMessageHandlingException;
+-use Symfony\Component\Messenger\Exception\HandlerFailedException;
++use Symfony\Component\Messenger\Exception\EnvelopeAwareExceptionInterface;
+ use Symfony\Component\Messenger\Exception\RejectRedeliveredMessageException;
+ use Symfony\Component\Messenger\Exception\RuntimeException;
+ use Symfony\Component\Messenger\Stamp\AckStamp;
+@@ -189,7 +188,7 @@ class Worker
+                     $receiver->reject($envelope);
+                 }
+ 
+-                if ($e instanceof HandlerFailedException || ($e instanceof DelayedMessageHandlingException && null !== $e->getEnvelope())) {
++                if ($e instanceof EnvelopeAwareExceptionInterface && null !== $e->getEnvelope()) {
+                     $envelope = $e->getEnvelope();
+                 }
+ 

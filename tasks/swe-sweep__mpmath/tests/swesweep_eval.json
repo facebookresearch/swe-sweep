@@ -1,0 +1,172 @@
+{
+  "build_jobs": 4,
+  "container_repo": "/mpmath",
+  "evaluation": {
+    "paths": "mpmath",
+    "visible_timeout": 7200
+  },
+  "upstream_image": "pandora-maxbug-mpmath:1.1.0",
+  "n_base_passing": 331,
+  "n_base_test_ignore": 1,
+  "oracle_digest": "28d7695ec0b9382f491b6b610a7dc29934adfe2dcb4186d36eac9e9a1b33254a",
+  "oracle_pristine_paths": [],
+  "upstream_commit": "9f7399e15e6172900e0591deb5a57a45769d8205",
+  "reproduction": {
+    "needs_build": false,
+    "test_timeout": 900
+  },
+  "schema": 2,
+  "subtasks": [
+    {
+      "f2p": [
+        "mpmath.tests.test_basic_ops::test_issue_438"
+      ],
+      "id": "mpmath-1d930f9bbd61",
+      "target_files": [
+        "mpmath/ctx_mp_python.py"
+      ]
+    },
+    {
+      "f2p": [
+        "mpmath.tests.test_functions2::test_issue_473"
+      ],
+      "id": "mpmath-236ebba167ff",
+      "target_files": [
+        "mpmath/functions/zeta.py"
+      ]
+    },
+    {
+      "f2p": [
+        "mpmath.tests.test_fp::test_fp_tan",
+        "mpmath.tests.test_fp::test_fp_tanh",
+        "mpmath.tests.test_functions::test_tan",
+        "mpmath.tests.test_functions::test_tanh"
+      ],
+      "id": "mpmath-2d5d21226b71",
+      "target_files": [
+        "mpmath/libfp.py",
+        "mpmath/libmp/libmpc.py"
+      ]
+    },
+    {
+      "f2p": [
+        "mpmath.tests.test_eigen::test_eig"
+      ],
+      "id": "mpmath-30780ceb35bf",
+      "target_files": [
+        "mpmath/matrices/eigen.py"
+      ]
+    },
+    {
+      "f2p": [
+        "mpmath.tests.test_matrices::test_interval_matrix_mult_bug",
+        "mpmath.tests.test_matrices::test_matrix_conversion_to_iv"
+      ],
+      "id": "mpmath-317f679c09a2",
+      "target_files": [
+        "mpmath/matrices/matrices.py"
+      ]
+    },
+    {
+      "f2p": [
+        "mpmath.tests.test_quad::test_multiple_intervals"
+      ],
+      "id": "mpmath-4522e7ff8a85",
+      "target_files": [
+        "mpmath/calculus/quadrature.py"
+      ]
+    },
+    {
+      "f2p": [
+        "mpmath.tests.test_matrices::test_matrix_basic"
+      ],
+      "id": "mpmath-51b1fbb0aceb",
+      "target_files": [
+        "mpmath/matrices/matrices.py"
+      ]
+    },
+    {
+      "f2p": [
+        "mpmath.tests.test_linalg::test_qr_solve_issue_983"
+      ],
+      "id": "mpmath-7f3ddb980998",
+      "target_files": [
+        "mpmath/matrices/linalg.py"
+      ]
+    },
+    {
+      "f2p": [
+        "mpmath.tests.test_functions2::test_issue_545"
+      ],
+      "id": "mpmath-843d80a93d51",
+      "target_files": [
+        "mpmath/functions/expintegrals.py"
+      ]
+    },
+    {
+      "f2p": [
+        "mpmath.tests.test_linalg::test_qr"
+      ],
+      "id": "mpmath-89c643e86886",
+      "target_files": [
+        "mpmath/matrices/linalg.py"
+      ]
+    },
+    {
+      "f2p": [
+        "mpmath.tests.test_functions2::test_gegenbauer"
+      ],
+      "id": "mpmath-9c4cb89e12a9",
+      "target_files": [
+        "mpmath/functions/orthogonal.py"
+      ]
+    },
+    {
+      "f2p": [
+        "mpmath.tests.test_linalg::test_cholesky"
+      ],
+      "id": "mpmath-aebadcce9717",
+      "target_files": [
+        "mpmath/matrices/linalg.py"
+      ]
+    },
+    {
+      "f2p": [
+        "mpmath.tests.test_functions2::test_issue_634"
+      ],
+      "id": "mpmath-c38f79646306",
+      "target_files": [
+        "mpmath/functions/zeta.py"
+      ]
+    },
+    {
+      "f2p": [
+        "mpmath.tests.test_functions2::test_issue_637"
+      ],
+      "id": "mpmath-ce9ccef56552",
+      "target_files": [
+        "mpmath/functions/bessel.py"
+      ]
+    },
+    {
+      "f2p": [
+        "mpmath.tests.test_elliptic::test_issue_486"
+      ],
+      "id": "mpmath-d686fc6c8839",
+      "target_files": [
+        "mpmath/functions/elliptic.py"
+      ]
+    },
+    {
+      "f2p": [
+        "mpmath.tests.test_matrices::test_matrix_iv"
+      ],
+      "id": "mpmath-d7af0613548b",
+      "target_files": [
+        "mpmath/ctx_iv.py"
+      ]
+    }
+  ],
+  "task": "mpmath",
+  "version": "1.1.0"
+}

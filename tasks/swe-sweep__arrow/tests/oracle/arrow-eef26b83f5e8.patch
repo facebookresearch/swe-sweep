@@ -1,0 +1,18 @@
+diff --git a/cpp/src/parquet/column_writer.cc b/cpp/src/parquet/column_writer.cc
+index 20b8cc98ca..797d435e73 100644
+--- a/cpp/src/parquet/column_writer.cc
++++ b/cpp/src/parquet/column_writer.cc
+@@ -1581,7 +1581,12 @@ Status WriteArrowSerialize(const ::arrow::Array& array, int64_t num_levels,
+   PARQUET_THROW_NOT_OK(ctx->GetScratchData<ParquetCType>(array.length(), &buffer));
+ 
+   SerializeFunctor<ParquetType, ArrowType> functor;
+-  RETURN_NOT_OK(functor.Serialize(checked_cast<const ArrayType&>(array), ctx, buffer));
++  // The value buffer could be empty if all values are nulls.
++  // The output buffer will then remain uninitialized, but that's ok since
++  // null value slots are not written in Parquet.
++  if (array.null_count() != array.length()) {
++    RETURN_NOT_OK(functor.Serialize(checked_cast<const ArrayType&>(array), ctx, buffer));
++  }
+   bool no_nulls =
+       writer->descr()->schema_node()->is_required() || (array.null_count() == 0);
+   if (!maybe_parent_nulls && no_nulls) {

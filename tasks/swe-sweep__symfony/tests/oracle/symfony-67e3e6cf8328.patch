@@ -1,0 +1,13 @@
+diff --git a/src/Symfony/Bundle/FrameworkBundle/DependencyInjection/Configuration.php b/src/Symfony/Bundle/FrameworkBundle/DependencyInjection/Configuration.php
+index ad352160822..4f23d439644 100644
+--- a/src/Symfony/Bundle/FrameworkBundle/DependencyInjection/Configuration.php
++++ b/src/Symfony/Bundle/FrameworkBundle/DependencyInjection/Configuration.php
+@@ -1197,7 +1197,7 @@ class Configuration implements ConfigurationInterface
+                         ->arrayNode('default_context')
+                             ->normalizeKeys(false)
+                             ->useAttributeAsKey('name')
+-                            ->beforeNormalization()
++                            ->validate()
+                                 ->ifTrue(fn () => $this->debug && class_exists(JsonParser::class))
+                                 ->then(fn (array $v) => $v + [JsonDecode::DETAILED_ERROR_MESSAGES => true])
+                             ->end()

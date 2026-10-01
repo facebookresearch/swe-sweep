@@ -1,0 +1,29 @@
+diff --git a/crates/swc_ecma_lints/src/rules/const_assign.rs b/crates/swc_ecma_lints/src/rules/const_assign.rs
+index 66ede58a7f..22caf8473b 100644
+--- a/crates/swc_ecma_lints/src/rules/const_assign.rs
++++ b/crates/swc_ecma_lints/src/rules/const_assign.rs
+@@ -78,6 +78,24 @@ impl Visit for ConstAssign {
+         }
+     }
+ 
++    fn visit_assign_expr(&mut self, n: &AssignExpr) {
++        n.visit_children_with(self);
++
++        if let PatOrExpr::Expr(left) = &n.left {
++            if let Expr::Ident(ident) = &**left {
++                self.check(ident);
++            }
++        }
++    }
++
++    fn visit_update_expr(&mut self, n: &UpdateExpr) {
++        n.visit_children_with(self);
++
++        if let Expr::Ident(ident) = &*n.arg {
++            self.check(ident);
++        }
++    }
++
+     fn visit_script(&mut self, program: &Script) {
+         program.visit_children_with(&mut Collector {
+             const_vars: &mut self.const_vars,

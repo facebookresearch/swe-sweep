@@ -1,0 +1,37 @@
+diff --git a/vlib/v/tests/return_match_expr_with_nest_match_expr_test.v b/vlib/v/tests/return_match_expr_with_nest_match_expr_test.v
+new file mode 100644
+index 000000000..98ad107e9
+--- /dev/null
++++ b/vlib/v/tests/return_match_expr_with_nest_match_expr_test.v
+@@ -0,0 +1,31 @@
++struct Foo {
++}
++
++struct Bar {
++	b bool
++}
++
++type FooBar = Foo | Bar
++
++fn get_foobar(f FooBar) FooBar {
++	return match f {
++		Foo {
++			Foo{}
++		}
++		Bar {
++			b := match f.b {
++				true { false }
++				false { true }
++			}
++			Bar{
++				b: b
++			}
++		}
++	}
++}
++
++fn test_return_match_expr_with_nest_match_expr() {
++	assert get_foobar(Bar{}) == FooBar(Bar{
++		b: true
++	})
++}

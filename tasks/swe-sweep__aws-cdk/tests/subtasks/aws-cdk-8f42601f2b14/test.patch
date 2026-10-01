@@ -1,0 +1,19 @@
+diff --git a/packages/@aws-cdk/core/test/feature-flags.test.ts b/packages/@aws-cdk/core/test/feature-flags.test.ts
+index a65490afc3..0e4a267452 100644
+--- a/packages/@aws-cdk/core/test/feature-flags.test.ts
++++ b/packages/@aws-cdk/core/test/feature-flags.test.ts
+@@ -26,5 +26,14 @@ nodeunitShim({
+       test.equals(FeatureFlags.of(stack).isEnabled('non-existent-flag'), undefined);
+       test.done();
+     },
++
++    'strings are evaluated as boolean'(test: Test) {
++      const stack = new Stack();
++      stack.node.setContext(cxapi.NEW_STYLE_STACK_SYNTHESIS_CONTEXT, 'true');
++
++      const actual = FeatureFlags.of(stack).isEnabled(cxapi.NEW_STYLE_STACK_SYNTHESIS_CONTEXT);
++      test.equals(actual, true);
++      test.done();
++    },
+   },
+ });

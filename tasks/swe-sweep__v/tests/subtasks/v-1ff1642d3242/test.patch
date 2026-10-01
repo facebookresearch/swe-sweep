@@ -1,0 +1,20 @@
+diff --git a/vlib/v/tests/spawn_array_mut_test.v b/vlib/v/tests/spawn_array_mut_test.v
+new file mode 100644
+index 000000000..efc66a623
+--- /dev/null
++++ b/vlib/v/tests/spawn_array_mut_test.v
+@@ -0,0 +1,14 @@
++fn mutable_array_arg(mut a []int) {
++	println(a)
++	a << 4
++	assert a.len == 4
++}
++
++fn test_main() {
++	mut a := []int{}
++	a << 1
++	a << 2
++	a << 3
++	w := spawn mutable_array_arg(mut a)
++	w.wait()
++}

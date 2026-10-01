@@ -1,0 +1,66 @@
+diff --git a/src/Symfony/Component/Validator/Mapping/Loader/AbstractLoader.php b/src/Symfony/Component/Validator/Mapping/Loader/AbstractLoader.php
+index 3f0c0aa46fa..146b0dc9edf 100644
+--- a/src/Symfony/Component/Validator/Mapping/Loader/AbstractLoader.php
++++ b/src/Symfony/Component/Validator/Mapping/Loader/AbstractLoader.php
+@@ -87,6 +87,18 @@ abstract class AbstractLoader implements LoaderInterface
+         }
+ 
+         if ($this->namedArgumentsCache[$className] ??= (bool) (new \ReflectionMethod($className, '__construct'))->getAttributes(HasNamedArguments::class)) {
++            if (null === $options) {
++                return new $className();
++            }
++
++            if (!\is_array($options)) {
++                return new $className($options);
++            }
++
++            if (1 === \count($options) && isset($options['value'])) {
++                return new $className($options['value']);
++            }
++
+             return new $className(...$options);
+         }
+ 
+diff --git a/src/Symfony/Component/Validator/Mapping/Loader/XmlFileLoader.php b/src/Symfony/Component/Validator/Mapping/Loader/XmlFileLoader.php
+index 94d3f071e5a..1c5f5287308 100644
+--- a/src/Symfony/Component/Validator/Mapping/Loader/XmlFileLoader.php
++++ b/src/Symfony/Component/Validator/Mapping/Loader/XmlFileLoader.php
+@@ -80,7 +80,9 @@ class XmlFileLoader extends FileLoader
+         foreach ($nodes as $node) {
+             if (\count($node) > 0) {
+                 if (\count($node->value) > 0) {
+-                    $options = $this->parseValues($node->value);
++                    $options = [
++                        'value' => $this->parseValues($node->value),
++                    ];
+                 } elseif (\count($node->constraint) > 0) {
+                     $options = $this->parseConstraints($node->constraint);
+                 } elseif (\count($node->option) > 0) {
+@@ -94,6 +96,10 @@ class XmlFileLoader extends FileLoader
+                 $options = null;
+             }
+ 
++            if (isset($options['groups']) && !\is_array($options['groups'])) {
++                $options['groups'] = (array) $options['groups'];
++            }
++
+             $constraints[] = $this->newConstraint((string) $node['name'], $options);
+         }
+ 
+diff --git a/src/Symfony/Component/Validator/Mapping/Loader/YamlFileLoader.php b/src/Symfony/Component/Validator/Mapping/Loader/YamlFileLoader.php
+index e610b454273..d17f96ef447 100644
+--- a/src/Symfony/Component/Validator/Mapping/Loader/YamlFileLoader.php
++++ b/src/Symfony/Component/Validator/Mapping/Loader/YamlFileLoader.php
+@@ -91,6 +91,12 @@ class YamlFileLoader extends FileLoader
+                     $options = $this->parseNodes($options);
+                 }
+ 
++                if (null !== $options && (!\is_array($options) || array_is_list($options))) {
++                    $options = [
++                        'value' => $options,
++                    ];
++                }
++
+                 $values[] = $this->newConstraint(key($childNodes), $options);
+             } else {
+                 if (\is_array($childNodes)) {

@@ -1,0 +1,26 @@
+diff --git a/test/Succeed/Issue5620.agda b/test/Succeed/Issue5620.agda
+new file mode 100644
+index 0000000000..16e74b55ed
+--- /dev/null
++++ b/test/Succeed/Issue5620.agda
+@@ -0,0 +1,20 @@
++
++module _ where
++
++record LinearOrderStr (D : Set) : Set₁ where
++  no-eta-equality
++  field
++    _<_ : D -> D -> Set
++
++open LinearOrderStr {{...}}
++
++postulate
++  D : Set
++
++module _ {{O : LinearOrderStr D}} where
++  abstract
++    broken : {b c : D} -> (b < c) -> b < c
++    broken {b} {c} b<c = b<c
++      where
++      b<c2 : b < c
++      b<c2 = b<c

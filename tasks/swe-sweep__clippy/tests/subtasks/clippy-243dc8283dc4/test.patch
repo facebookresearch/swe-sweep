@@ -1,0 +1,74 @@
+diff --git a/tests/ui/non_canonical_partial_ord_impl.fixed b/tests/ui/non_canonical_partial_ord_impl.fixed
+index 23dbee5a0..6915e1984 100644
+--- a/tests/ui/non_canonical_partial_ord_impl.fixed
++++ b/tests/ui/non_canonical_partial_ord_impl.fixed
+@@ -195,3 +195,19 @@ impl PartialOrd for K {
+     //~^ non_canonical_partial_ord_impl
+     fn partial_cmp(&self, other: &Self) -> Option<Ordering> { Some(self.cmp(other)) }
+ }
++
++// #14574, check that partial_cmp invokes other.cmp
++
++#[derive(Eq, PartialEq)]
++struct L(u32);
++
++impl Ord for L {
++    fn cmp(&self, other: &Self) -> Ordering {
++        todo!();
++    }
++}
++
++impl PartialOrd for L {
++    //~^ non_canonical_partial_ord_impl
++    fn partial_cmp(&self, other: &Self) -> Option<Ordering> { Some(self.cmp(other)) }
++}
+diff --git a/tests/ui/non_canonical_partial_ord_impl.rs b/tests/ui/non_canonical_partial_ord_impl.rs
+index 12f055a54..7ce4cdc9a 100644
+--- a/tests/ui/non_canonical_partial_ord_impl.rs
++++ b/tests/ui/non_canonical_partial_ord_impl.rs
+@@ -201,3 +201,21 @@ impl PartialOrd for K {
+         Ordering::Greater.into()
+     }
+ }
++
++// #14574, check that partial_cmp invokes other.cmp
++
++#[derive(Eq, PartialEq)]
++struct L(u32);
++
++impl Ord for L {
++    fn cmp(&self, other: &Self) -> Ordering {
++        todo!();
++    }
++}
++
++impl PartialOrd for L {
++    //~^ non_canonical_partial_ord_impl
++    fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
++        Some(other.cmp(self))
++    }
++}
+diff --git a/tests/ui/non_canonical_partial_ord_impl.stderr b/tests/ui/non_canonical_partial_ord_impl.stderr
+index c7de96858..9bd6b1f72 100644
+--- a/tests/ui/non_canonical_partial_ord_impl.stderr
++++ b/tests/ui/non_canonical_partial_ord_impl.stderr
+@@ -44,5 +44,18 @@ LL | ||     }
+ LL | |  }
+    | |__^
+ 
+-error: aborting due to 3 previous errors
++error: non-canonical implementation of `partial_cmp` on an `Ord` type
++  --> tests/ui/non_canonical_partial_ord_impl.rs:216:1
++   |
++LL | /  impl PartialOrd for L {
++LL | |
++LL | |      fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
++   | | _____________________________________________________________-
++LL | ||         Some(other.cmp(self))
++LL | ||     }
++   | ||_____- help: change this to: `{ Some(self.cmp(other)) }`
++LL | |  }
++   | |__^
++
++error: aborting due to 4 previous errors
+ 

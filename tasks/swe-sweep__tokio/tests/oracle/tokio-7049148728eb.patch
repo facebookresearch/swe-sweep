@@ -1,0 +1,142 @@
+diff --git a/tokio/src/fs/file.rs b/tokio/src/fs/file.rs
+index 2590d30..4a8cda7 100644
+--- a/tokio/src/fs/file.rs
++++ b/tokio/src/fs/file.rs
+@@ -375,7 +375,14 @@ impl File {
+ 
+         let (op, buf) = match inner.state {
+             State::Idle(_) => unreachable!(),
+-            State::Busy(ref mut rx) => rx.await?,
++            State::Busy(ref mut rx) => {
++                let res = rx.await;
++                if res.is_err() {
++                    // Restore a valid Idle state before returning the error.
++                    inner.state = State::Idle(Some(Buf::with_capacity(0)));
++                }
++                res?
++            }
+         };
+ 
+         inner.state = State::Idle(Some(buf));
+@@ -548,7 +555,12 @@ impl AsyncRead for File {
+                     }));
+                 }
+                 State::Busy(ref mut rx) => {
+-                    let (op, mut buf) = ready!(Pin::new(rx).poll(cx))?;
++                    let res = ready!(Pin::new(rx).poll(cx));
++                    if res.is_err() {
++                        // Restore a valid Idle state before returning the error.
++                        inner.state = State::Idle(Some(Buf::with_capacity(0)));
++                    }
++                    let (op, mut buf) = res?;
+ 
+                     match op {
+                         Operation::Read(Ok(_)) => {
+@@ -628,7 +640,12 @@ impl AsyncSeek for File {
+             match inner.state {
+                 State::Idle(_) => return Poll::Ready(Ok(inner.pos)),
+                 State::Busy(ref mut rx) => {
+-                    let (op, buf) = ready!(Pin::new(rx).poll(cx))?;
++                    let res = ready!(Pin::new(rx).poll(cx));
++                    if res.is_err() {
++                        // Restore a valid Idle state before returning the error.
++                        inner.state = State::Idle(Some(Buf::with_capacity(0)));
++                    }
++                    let (op, buf) = res?;
+                     inner.state = State::Idle(Some(buf));
+ 
+                     match op {
+@@ -679,7 +696,7 @@ impl AsyncWrite for File {
+                     let n = buf.copy_from(src);
+                     let std = me.std.clone();
+ 
+-                    let blocking_task_join_handle = spawn_mandatory_blocking(move || {
++                    let res = spawn_mandatory_blocking(move || {
+                         let res = if let Some(seek) = seek {
+                             (&*std).seek(seek).and_then(|_| buf.write_to(&mut &*std))
+                         } else {
+@@ -688,16 +705,25 @@ impl AsyncWrite for File {
+ 
+                         (Operation::Write(res), buf)
+                     })
+-                    .ok_or_else(|| {
+-                        io::Error::new(io::ErrorKind::Other, "background task failed")
+-                    })?;
++                    .ok_or_else(|| io::Error::new(io::ErrorKind::Other, "background task failed"));
++
++                    if res.is_err() {
++                        // Restore a valid Idle state before returning the error.
++                        inner.state = State::Idle(Some(Buf::with_capacity(0)));
++                    }
++                    let blocking_task_join_handle = res?;
+ 
+                     inner.state = State::Busy(blocking_task_join_handle);
+ 
+                     return Poll::Ready(Ok(n));
+                 }
+                 State::Busy(ref mut rx) => {
+-                    let (op, buf) = ready!(Pin::new(rx).poll(cx))?;
++                    let res = ready!(Pin::new(rx).poll(cx));
++                    if res.is_err() {
++                        // Restore a valid Idle state before returning the error.
++                        inner.state = State::Idle(Some(Buf::with_capacity(0)));
++                    }
++                    let (op, buf) = res?;
+                     inner.state = State::Idle(Some(buf));
+ 
+                     match op {
+@@ -750,7 +776,7 @@ impl AsyncWrite for File {
+                     let n = buf.copy_from_bufs(bufs);
+                     let std = me.std.clone();
+ 
+-                    let blocking_task_join_handle = spawn_mandatory_blocking(move || {
++                    let res = spawn_mandatory_blocking(move || {
+                         let res = if let Some(seek) = seek {
+                             (&*std).seek(seek).and_then(|_| buf.write_to(&mut &*std))
+                         } else {
+@@ -759,16 +785,25 @@ impl AsyncWrite for File {
+ 
+                         (Operation::Write(res), buf)
+                     })
+-                    .ok_or_else(|| {
+-                        io::Error::new(io::ErrorKind::Other, "background task failed")
+-                    })?;
++                    .ok_or_else(|| io::Error::new(io::ErrorKind::Other, "background task failed"));
++
++                    if res.is_err() {
++                        // Restore a valid Idle state before returning the error.
++                        inner.state = State::Idle(Some(Buf::with_capacity(0)));
++                    }
++                    let blocking_task_join_handle = res?;
+ 
+                     inner.state = State::Busy(blocking_task_join_handle);
+ 
+                     return Poll::Ready(Ok(n));
+                 }
+                 State::Busy(ref mut rx) => {
+-                    let (op, buf) = ready!(Pin::new(rx).poll(cx))?;
++                    let res = ready!(Pin::new(rx).poll(cx));
++                    if res.is_err() {
++                        // Restore a valid Idle state before returning the error.
++                        inner.state = State::Idle(Some(Buf::with_capacity(0)));
++                    }
++                    let (op, buf) = res?;
+                     inner.state = State::Idle(Some(buf));
+ 
+                     match op {
+@@ -899,7 +934,14 @@ impl Inner {
+ 
+         let (op, buf) = match self.state {
+             State::Idle(_) => return Poll::Ready(Ok(())),
+-            State::Busy(ref mut rx) => ready!(Pin::new(rx).poll(cx))?,
++            State::Busy(ref mut rx) => {
++                let res = ready!(Pin::new(rx).poll(cx));
++                if res.is_err() {
++                    // Restore a valid Idle state before returning the error.
++                    self.state = State::Idle(Some(Buf::with_capacity(0)));
++                }
++                res?
++            }
+         };
+ 
+         // The buffer is not used here

@@ -1,0 +1,12 @@
+diff --git a/pkg/analysis_server/lib/src/services/refactoring/legacy/extract_widget.dart b/pkg/analysis_server/lib/src/services/refactoring/legacy/extract_widget.dart
+index 64a1e80ea35..345f249a482 100644
+--- a/pkg/analysis_server/lib/src/services/refactoring/legacy/extract_widget.dart
++++ b/pkg/analysis_server/lib/src/services/refactoring/legacy/extract_widget.dart
+@@ -650,6 +650,7 @@ class _ParametersCollector extends RecursiveAstVisitor<void> {
+           status.addError("Write to '$elementName' cannot be extracted.");
+         } else {
+           type = field.type;
++          element = element.declaration;
+         }
+       }
+     }

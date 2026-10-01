@@ -1,0 +1,224 @@
+{
+  "build_jobs": 4,
+  "container_repo": "/pulsar",
+  "evaluation": {
+    "suite": "reproduction",
+    "visible_timeout": 14400
+  },
+  "upstream_image": "pandora-maxbug-pulsar:v2.10.1",
+  "n_base_passing": 560,
+  "n_base_test_ignore": 494,
+  "oracle_digest": "004c246b5a29b6961cc65b359779a4c89420cb4b14acf9adaf464f6ea43a91c7",
+  "oracle_pristine_paths": [],
+  "upstream_commit": "9f7399e15e6172900e0591deb5a57a45769d8205",
+  "reproduction": {
+    "jobs_env": "SWESWEEP_BUILD_JOBS",
+    "needs_build": false,
+    "suite": {
+      "goal": "test",
+      "mvn_args": [
+        "-Pcore-modules,-main",
+        "-Dcheckstyle.skip=true",
+        "-Drat.skip=true",
+        "-Dlicense.skip=true",
+        "-Dspotbugs.skip=true",
+        "-Dmaven.javadoc.skip=true",
+        "-Dmaven.source.skip=true",
+        "-Denforcer.skip=true",
+        "-DskipDocker=true",
+        "-DskipBuildDistribution=true"
+      ],
+      "type": "maven"
+    },
+    "test_timeout": 1800
+  },
+  "schema": 2,
+  "subtasks": [
+    {
+      "f2p": [
+        "org.apache.bookkeeper.mledger.impl.ManagedLedgerTest.testStartReadOperationOnLedgerWithEmptyLedgers"
+      ],
+      "id": "pulsar-0bc77e07e110",
+      "target_files": [
+        "managed-ledger/src/main/java/org/apache/bookkeeper/mledger/impl/ManagedLedgerImpl.java",
+        "managed-ledger/src/main/java/org/apache/bookkeeper/mledger/impl/OpReadEntry.java"
+      ]
+    },
+    {
+      "f2p": [
+        "org.apache.pulsar.functions.utils.SinkConfigUtilsTest.testMergeDifferentInputSpecWithInputsSet"
+      ],
+      "id": "pulsar-0ed2bfbcd046",
+      "target_files": [
+        "pulsar-functions/utils/src/main/java/org/apache/pulsar/functions/utils/SinkConfigUtils.java"
+      ]
+    },
+    {
+      "f2p": [
+        "org.apache.bookkeeper.mledger.impl.NonDurableCursorTest.testMessagesConsumedCounterInitializedCorrect"
+      ],
+      "id": "pulsar-1057ab4897cf",
+      "target_files": [
+        "managed-ledger/src/main/java/org/apache/bookkeeper/mledger/impl/NonDurableCursorImpl.java"
+      ]
+    },
+    {
+      "f2p": [
+        "org.apache.pulsar.client.impl.schema.AvroSchemaTest.testDecodeUuidLogicalTypeWithJsonDef"
+      ],
+      "id": "pulsar-383177528014",
+      "target_files": [
+        "pulsar-client/src/main/java/org/apache/pulsar/client/impl/schema/reader/AvroReader.java"
+      ]
+    },
+    {
+      "f2p": [
+        "org.apache.pulsar.client.impl.schema.generic.GenericProtobufNativeReaderTest.testGetNativeSchema"
+      ],
+      "id": "pulsar-45b4a679524e",
+      "target_files": [
+        "pulsar-client/src/main/java/org/apache/pulsar/client/impl/schema/generic/GenericProtobufNativeSchema.java"
+      ]
+    },
+    {
+      "f2p": [
+        "org.apache.pulsar.common.api.raw.RawMessageImplTest.testNonBatchedMessage"
+      ],
+      "id": "pulsar-4c180914615b",
+      "target_files": [
+        "pulsar-common/src/main/java/org/apache/pulsar/common/api/raw/RawMessageImpl.java"
+      ]
+    },
+    {
+      "f2p": [
+        "org.apache.pulsar.client.impl.BatchMessageIdImplTest.notEqualsMultiTest"
+      ],
+      "id": "pulsar-5b9360b4de68",
+      "target_files": [
+        "pulsar-client/src/main/java/org/apache/pulsar/client/impl/BatchMessageIdImpl.java",
+        "pulsar-client/src/main/java/org/apache/pulsar/client/impl/MessageIdImpl.java",
+        "pulsar-client/src/main/java/org/apache/pulsar/client/impl/MultiMessageIdImpl.java"
+      ]
+    },
+    {
+      "f2p": [
+        "org.apache.pulsar.broker.stats.prometheus.PrometheusMetricsGeneratorUtilsTest.testGenerateSystemMetricsWithSpecifyCluster"
+      ],
+      "id": "pulsar-6f5cbf60b19f",
+      "target_files": [
+        "pulsar-broker-common/src/main/java/org/apache/pulsar/broker/stats/prometheus/PrometheusMetricsGeneratorUtils.java"
+      ]
+    },
+    {
+      "f2p": [
+        "org.apache.bookkeeper.mledger.impl.ManagedLedgerTest.testGetEstimatedBacklogSize"
+      ],
+      "id": "pulsar-7aee15c53e49",
+      "target_files": [
+        "managed-ledger/src/main/java/org/apache/bookkeeper/mledger/impl/ManagedLedgerImpl.java"
+      ]
+    },
+    {
+      "f2p": [
+        "org.apache.pulsar.common.compression.CommandsTest.testPeekStickyKey"
+      ],
+      "id": "pulsar-815e10b0a404",
+      "target_files": [
+        "pulsar-common/src/main/java/org/apache/pulsar/common/protocol/Commands.java"
+      ]
+    },
+    {
+      "f2p": [
+        "org.apache.pulsar.bookie.rackawareness.BookieRackAffinityMappingTest.testMultipleMetadataServiceUris"
+      ],
+      "id": "pulsar-8820e24602f3",
+      "target_files": [
+        "pulsar-broker-common/src/main/java/org/apache/pulsar/bookie/rackawareness/BookieRackAffinityMapping.java",
+        "pulsar-broker-common/src/main/java/org/apache/pulsar/bookie/rackawareness/ConfigurationStringUtil.java",
+        "pulsar-broker-common/src/main/java/org/apache/pulsar/bookie/rackawareness/IsolatedBookieEnsemblePlacementPolicy.java"
+      ]
+    },
+    {
+      "f2p": [
+        "org.apache.pulsar.client.impl.MessageIdSerializationTest.testBatchSizeNotSet"
+      ],
+      "id": "pulsar-9aada7b4d019",
+      "target_files": [
+        "pulsar-client/src/main/java/org/apache/pulsar/client/impl/MessageIdImpl.java"
+      ]
+    },
+    {
+      "f2p": [
+        "org.apache.bookkeeper.mledger.impl.ManagedCursorTest.testTrimDeletedEntries",
+        "org.apache.bookkeeper.mledger.impl.ManagedCursorTest.testasyncResetCursor",
+        "org.apache.bookkeeper.mledger.impl.ManagedCursorTest.unorderedAsyncMarkDelete",
+        "org.apache.bookkeeper.mledger.impl.ManagedCursorTest.unorderedMarkDelete"
+      ],
+      "id": "pulsar-b268978e409d",
+      "target_files": [
+        "managed-ledger/src/main/java/org/apache/bookkeeper/mledger/impl/ManagedCursorImpl.java"
+      ]
+    },
+    {
+      "f2p": [
+        "org.apache.pulsar.functions.utils.FunctionConfigUtilsTest.testConvertBatchBuilder"
+      ],
+      "id": "pulsar-be998c9871e5",
+      "target_files": [
+        "pulsar-functions/utils/src/main/java/org/apache/pulsar/functions/utils/FunctionConfigUtils.java"
+      ]
+    },
+    {
+      "f2p": [
+        "org.apache.pulsar.common.policies.data.NonPersistentPartitionedTopicStatsTest.testPartitionedTopicStatsByNullProducerName",
+        "org.apache.pulsar.common.policies.data.PersistentTopicStatsTest.testPersistentTopicStatsAggregationPartialProducerIsNotSupported"
+      ],
+      "id": "pulsar-c99e828b5ef9",
+      "target_files": [
+        "pulsar-common/src/main/java/org/apache/pulsar/common/policies/data/stats/NonPersistentPartitionedTopicStatsImpl.java",
+        "pulsar-common/src/main/java/org/apache/pulsar/common/policies/data/stats/NonPersistentTopicStatsImpl.java",
+        "pulsar-common/src/main/java/org/apache/pulsar/common/policies/data/stats/PartitionedTopicStatsImpl.java",
+        "pulsar-common/src/main/java/org/apache/pulsar/common/policies/data/stats/TopicStatsImpl.java"
+      ]
+    },
+    {
+      "f2p": [
+        "org.apache.pulsar.common.policies.data.OffloadPoliciesTest.brokerPropertyCompatibleTest"
+      ],
+      "id": "pulsar-e5d8c0f15a3a",
+      "target_files": [
+        "pulsar-common/src/main/java/org/apache/pulsar/common/policies/data/OffloadPoliciesImpl.java"
+      ]
+    },
+    {
+      "f2p": [
+        "org.apache.pulsar.client.impl.ProducerStatsRecorderImplTest.testPartitionTopicAggegationStats"
+      ],
+      "id": "pulsar-ecb56095efe0",
+      "target_files": [
+        "pulsar-client/src/main/java/org/apache/pulsar/client/impl/ProducerStatsRecorderImpl.java"
+      ]
+    },
+    {
+      "f2p": [
+        "org.apache.pulsar.broker.web.plugin.servlet.AdditionalServletsTest.testEmptyStringAsExtractionDirectory"
+      ],
+      "id": "pulsar-f34becbda95a",
+      "target_files": [
+        "pulsar-broker-common/src/main/java/org/apache/pulsar/broker/web/plugin/servlet/AdditionalServlets.java"
+      ]
+    },
+    {
+      "f2p": [
+        "org.apache.bookkeeper.mledger.impl.ManagedLedgerFactoryTest.testConcurrentCloseLedgerAndSwitchLedgerForReproduceIssue"
+      ],
+      "id": "pulsar-ff1f8d8c900b",
+      "target_files": [
+        "managed-ledger/src/main/java/org/apache/bookkeeper/mledger/impl/ManagedLedgerFactoryImpl.java",
+        "managed-ledger/src/main/java/org/apache/bookkeeper/mledger/impl/ManagedLedgerImpl.java"
+      ]
+    }
+  ],
+  "task": "pulsar",
+  "version": "v2.10.1"
+}

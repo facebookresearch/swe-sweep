@@ -1,0 +1,33 @@
+diff --git a/crates/ruff_linter/resources/test/fixtures/pyupgrade/UP029_2.py b/crates/ruff_linter/resources/test/fixtures/pyupgrade/UP029_2.py
+new file mode 100644
+index 0000000000..34ff94fa90
+--- /dev/null
++++ b/crates/ruff_linter/resources/test/fixtures/pyupgrade/UP029_2.py
+@@ -0,0 +1,5 @@
++from .builtins import next
++from ..builtins import str
++from ...builtins import int
++from .builtins import next as _next
++
+diff --git a/crates/ruff_linter/src/rules/pyupgrade/mod.rs b/crates/ruff_linter/src/rules/pyupgrade/mod.rs
+index c933de5ee8..a4bd1c5ac6 100644
+--- a/crates/ruff_linter/src/rules/pyupgrade/mod.rs
++++ b/crates/ruff_linter/src/rules/pyupgrade/mod.rs
+@@ -79,6 +79,7 @@ mod tests {
+     #[test_case(Rule::UTF8EncodingDeclaration, Path::new("UP009_10.py"))]
+     #[test_case(Rule::UnicodeKindPrefix, Path::new("UP025.py"))]
+     #[test_case(Rule::UnnecessaryBuiltinImport, Path::new("UP029.py"))]
++    #[test_case(Rule::UnnecessaryBuiltinImport, Path::new("UP029_2.py"))]
+     #[test_case(Rule::UnnecessaryClassParentheses, Path::new("UP039.py"))]
+     #[test_case(Rule::UnnecessaryDefaultTypeArgs, Path::new("UP043.py"))]
+     #[test_case(Rule::UnnecessaryEncodeUTF8, Path::new("UP012.py"))]
+diff --git a/crates/ruff_linter/src/rules/pyupgrade/snapshots/ruff_linter__rules__pyupgrade__tests__UP029_2.py.snap b/crates/ruff_linter/src/rules/pyupgrade/snapshots/ruff_linter__rules__pyupgrade__tests__UP029_2.py.snap
+new file mode 100644
+index 0000000000..2bacb5d540
+--- /dev/null
++++ b/crates/ruff_linter/src/rules/pyupgrade/snapshots/ruff_linter__rules__pyupgrade__tests__UP029_2.py.snap
+@@ -0,0 +1,4 @@
++---
++source: crates/ruff_linter/src/rules/pyupgrade/mod.rs
++---
++

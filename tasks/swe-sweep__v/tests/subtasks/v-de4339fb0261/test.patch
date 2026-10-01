@@ -1,0 +1,29 @@
+diff --git a/vlib/v/slow_tests/inout/dump_fixed_array_of_option.out b/vlib/v/slow_tests/inout/dump_fixed_array_of_option.out
+new file mode 100644
+index 000000000..4a01298d4
+--- /dev/null
++++ b/vlib/v/slow_tests/inout/dump_fixed_array_of_option.out
+@@ -0,0 +1,4 @@
++[vlib/v/slow_tests/inout/dump_fixed_array_of_option.vv:3] a1: [Option('foo'), Option(none)]
++[vlib/v/slow_tests/inout/dump_fixed_array_of_option.vv:6] a2: [Option(22), Option(none)]
++[vlib/v/slow_tests/inout/dump_fixed_array_of_option.vv:9] a3: [Option(22.2), Option(none)]
++[vlib/v/slow_tests/inout/dump_fixed_array_of_option.vv:12] a4: [Option(true), Option(none)]
+diff --git a/vlib/v/slow_tests/inout/dump_fixed_array_of_option.vv b/vlib/v/slow_tests/inout/dump_fixed_array_of_option.vv
+new file mode 100644
+index 000000000..a607b2c4b
+--- /dev/null
++++ b/vlib/v/slow_tests/inout/dump_fixed_array_of_option.vv
+@@ -0,0 +1,13 @@
++fn main() {
++	a1 := [?string('foo'), ?string(none)]!
++	dump(a1)
++
++	a2 := [?int(22), ?int(none)]!
++	dump(a2)
++
++	a3 := [?f64(22.2), ?f64(none)]!
++	dump(a3)
++
++	a4 := [?bool(true), ?bool(none)]!
++	dump(a4)
++}

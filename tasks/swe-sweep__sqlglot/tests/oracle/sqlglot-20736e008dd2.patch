@@ -1,0 +1,12 @@
+diff --git a/sqlglot/parser.py b/sqlglot/parser.py
+index 6f49d2b7e0..c51838df80 100644
+--- a/sqlglot/parser.py
++++ b/sqlglot/parser.py
+@@ -544,6 +544,7 @@ class Parser(metaclass=_Parser):
+         TokenType.OFFSET,
+         TokenType.OPERATOR,
+         TokenType.ORDINALITY,
++        TokenType.OVER,
+         TokenType.OVERLAPS,
+         TokenType.OVERWRITE,
+         TokenType.PARTITION,

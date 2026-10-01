@@ -1,0 +1,13 @@
+diff --git a/compiler/parser.nim b/compiler/parser.nim
+index aedf62d54..0ef6d1f54 100644
+--- a/compiler/parser.nim
++++ b/compiler/parser.nim
+@@ -1146,7 +1146,7 @@ proc isExprStart(p: Parser): bool =
+   of tkSymbol, tkAccent, tkOpr, tkNot, tkNil, tkCast, tkIf, tkFor,
+      tkProc, tkFunc, tkIterator, tkBind, tkBuiltInMagics,
+      tkParLe, tkBracketLe, tkCurlyLe, tkIntLit..tkCustomLit, tkVar, tkRef, tkPtr,
+-     tkTuple, tkObject, tkWhen, tkCase, tkOut:
++     tkTuple, tkObject, tkWhen, tkCase, tkOut, tkTry, tkBlock:
+     result = true
+   else: result = false
+ 

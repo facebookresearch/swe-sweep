@@ -1,0 +1,17 @@
+diff --git a/src/Symfony/Component/DomCrawler/Field/ChoiceFormField.php b/src/Symfony/Component/DomCrawler/Field/ChoiceFormField.php
+index 02285730eda..588a8efb677 100644
+--- a/src/Symfony/Component/DomCrawler/Field/ChoiceFormField.php
++++ b/src/Symfony/Component/DomCrawler/Field/ChoiceFormField.php
+@@ -163,7 +163,11 @@ class ChoiceFormField extends FormField
+         $this->options[] = $option;
+ 
+         if ($node->hasAttribute('checked')) {
+-            $this->value = $option['value'];
++            if ($this->multiple) {
++                $this->value[] = $option['value'];
++            } else {
++                $this->value = $option['value'];
++            }
+         }
+     }
+ 

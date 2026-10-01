@@ -1,0 +1,82 @@
+diff --git a/lib/rules/selector-type-no-unknown/index.cjs b/lib/rules/selector-type-no-unknown/index.cjs
+index 80ff63186..fc9d24434 100644
+--- a/lib/rules/selector-type-no-unknown/index.cjs
++++ b/lib/rules/selector-type-no-unknown/index.cjs
+@@ -5,6 +5,7 @@
+ const selectorParser = require('postcss-selector-parser');
+ const svgTags = require('svg-tags');
+ const validateTypes = require('../../utils/validateTypes.cjs');
++const getRuleSelector = require('../../utils/getRuleSelector.cjs');
+ const selectors = require('../../reference/selectors.cjs');
+ const isCustomElement = require('../../utils/isCustomElement.cjs');
+ const isKeyframeSelector = require('../../utils/isKeyframeSelector.cjs');
+@@ -71,7 +72,7 @@ const rule = (primary, secondaryOptions) => {
+ 				return;
+ 			}
+ 
+-			parseSelector(selector, result, ruleNode)?.walkTags((tagNode) => {
++			parseSelector(getRuleSelector(ruleNode), result, ruleNode)?.walkTags((tagNode) => {
+ 				if (!isStandardSyntaxTypeSelector(tagNode)) return;
+ 
+ 				if (
+@@ -106,14 +107,17 @@ const rule = (primary, secondaryOptions) => {
+ 					return;
+ 				}
+ 
++				const index = tagNode.sourceIndex;
++				const endIndex = index + tagName.length;
++
+ 				report({
+ 					message: messages.rejected,
+ 					messageArgs: [tagName],
+ 					node: ruleNode,
+-					index: tagNode.sourceIndex,
++					index,
++					endIndex,
+ 					ruleName,
+ 					result,
+-					word: tagName,
+ 				});
+ 			});
+ 		});
+diff --git a/lib/rules/selector-type-no-unknown/index.mjs b/lib/rules/selector-type-no-unknown/index.mjs
+index a3307c8df..89faf07b0 100644
+--- a/lib/rules/selector-type-no-unknown/index.mjs
++++ b/lib/rules/selector-type-no-unknown/index.mjs
+@@ -2,6 +2,7 @@ import parser from 'postcss-selector-parser';
+ import svgTags from 'svg-tags';
+ 
+ import { isRegExp, isString } from '../../utils/validateTypes.mjs';
++import getRuleSelector from '../../utils/getRuleSelector.mjs';
+ import { htmlTypeSelectors } from '../../reference/selectors.mjs';
+ import isCustomElement from '../../utils/isCustomElement.mjs';
+ import isKeyframeSelector from '../../utils/isKeyframeSelector.mjs';
+@@ -68,7 +69,7 @@ const rule = (primary, secondaryOptions) => {
+ 				return;
+ 			}
+ 
+-			parseSelector(selector, result, ruleNode)?.walkTags((tagNode) => {
++			parseSelector(getRuleSelector(ruleNode), result, ruleNode)?.walkTags((tagNode) => {
+ 				if (!isStandardSyntaxTypeSelector(tagNode)) return;
+ 
+ 				if (
+@@ -103,14 +104,17 @@ const rule = (primary, secondaryOptions) => {
+ 					return;
+ 				}
+ 
++				const index = tagNode.sourceIndex;
++				const endIndex = index + tagName.length;
++
+ 				report({
+ 					message: messages.rejected,
+ 					messageArgs: [tagName],
+ 					node: ruleNode,
+-					index: tagNode.sourceIndex,
++					index,
++					endIndex,
+ 					ruleName,
+ 					result,
+-					word: tagName,
+ 				});
+ 			});
+ 		});

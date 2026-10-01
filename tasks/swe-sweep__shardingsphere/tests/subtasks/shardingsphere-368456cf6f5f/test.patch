@@ -1,0 +1,30 @@
+diff --git a/infra/common/src/test/java/org/apache/shardingsphere/infra/metadata/database/schema/loader/dialect/OracleSchemaMetaDataLoaderTest.java b/infra/common/src/test/java/org/apache/shardingsphere/infra/metadata/database/schema/loader/dialect/OracleSchemaMetaDataLoaderTest.java
+index 1be77e1..edb9fda 100644
+--- a/infra/common/src/test/java/org/apache/shardingsphere/infra/metadata/database/schema/loader/dialect/OracleSchemaMetaDataLoaderTest.java
++++ b/infra/common/src/test/java/org/apache/shardingsphere/infra/metadata/database/schema/loader/dialect/OracleSchemaMetaDataLoaderTest.java
+@@ -183,6 +183,25 @@ public final class OracleSchemaMetaDataLoaderTest {
+         assertThat(columnsIterator.next(), is(new ColumnMetaData("name", 12, false, false, false, false)));
+     }
+     
++    @Test
++    public void assertLoadCondition7() throws SQLException {
++        DataSource dataSource = mockDataSource();
++        ResultSet resultSet = mockTableMetaDataResultSet();
++        when(dataSource.getConnection().prepareStatement(ALL_TAB_COLUMNS_SQL_CONDITION4).executeQuery()).thenReturn(resultSet);
++        ResultSet indexResultSet = mockIndexMetaDataResultSet();
++        when(dataSource.getConnection().prepareStatement(ALL_INDEXES_SQL).executeQuery()).thenReturn(indexResultSet);
++        ResultSet primaryKeys = mockPrimaryKeysMetaDataResultSet();
++        when(dataSource.getConnection().prepareStatement(ALL_CONSTRAINTS_SQL_WITH_TABLES).executeQuery()).thenReturn(primaryKeys);
++        when(dataSource.getConnection().getMetaData().getDatabaseMajorVersion()).thenReturn(19);
++        when(dataSource.getConnection().getMetaData().getDatabaseMinorVersion()).thenReturn(0);
++        Collection<SchemaMetaData> actual = getDialectTableMetaDataLoader().load(dataSource, Collections.singleton("tbl"), "sharding_db");
++        assertTableMetaDataMap(actual);
++        TableMetaData actualTableMetaData = actual.iterator().next().getTables().iterator().next();
++        Iterator<ColumnMetaData> columnsIterator = actualTableMetaData.getColumns().iterator();
++        assertThat(columnsIterator.next(), is(new ColumnMetaData("id", 4, true, true, true, true)));
++        assertThat(columnsIterator.next(), is(new ColumnMetaData("name", 12, false, false, false, false)));
++    }
++    
+     private DataSource mockDataSource() throws SQLException {
+         DataSource result = mock(DataSource.class, RETURNS_DEEP_STUBS);
+         ResultSet typeInfoResultSet = mockTypeInfoResultSet();

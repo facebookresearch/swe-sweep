@@ -1,0 +1,31 @@
+diff --git a/pandas/core/indexes/base.py b/pandas/core/indexes/base.py
+index e666b14..0c6b82b 100644
+--- a/pandas/core/indexes/base.py
++++ b/pandas/core/indexes/base.py
+@@ -1888,11 +1888,21 @@ class Index(IndexOpsMixin, PandasObject):
+ 
+         if len(new_levels) == 1:
+ 
+-            # set nan if needed
+-            mask = new_codes[0] == -1
+-            result = new_levels[0].take(new_codes[0])
+-            if mask.any():
+-                result = result.putmask(mask, np.nan)
++            if len(new_levels[0]) == 0:
++                # If lev is empty, lev.take will fail GH#42055
++                if len(new_codes[0]) == 0:
++                    # GH#45230 preserve RangeIndex here
++                    #  see test_reset_index_empty_rangeindex
++                    result = new_levels[0][:0]
++                else:
++                    res_values = algos.take(new_levels[0]._values, new_codes[0], allow_fill=True)
++                    result = new_levels[0]._constructor._simple_new(res_values, name=new_names[0])
++            else:
++                # set nan if needed
++                mask = new_codes[0] == -1
++                result = new_levels[0].take(new_codes[0])
++                if mask.any():
++                    result = result.putmask(mask, np.nan)
+ 
+             result._name = new_names[0]
+             return result

@@ -1,0 +1,23 @@
+diff --git a/tests/concepts/tusertypeclasses2.nim b/tests/concepts/tusertypeclasses2.nim
+index c9978f6ef..2d4688265 100644
+--- a/tests/concepts/tusertypeclasses2.nim
++++ b/tests/concepts/tusertypeclasses2.nim
+@@ -1,3 +1,7 @@
++discard """
++  target: "c js"
++"""
++
+ block:
+   type
+     hasFieldX = concept z
+@@ -42,3 +46,10 @@ block:
+   foo2(x)
+   foo3(x)
+   foo4(x)
++
++block: # bug #9550
++  type Foo = concept c
++    for v in c: (v is char)
++
++  func foo(c: Foo) = (for v in c: discard)
++  foo @['a', 'b' ,'c']

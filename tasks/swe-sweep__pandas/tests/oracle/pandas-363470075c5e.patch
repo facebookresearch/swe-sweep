@@ -1,0 +1,13 @@
+diff --git a/pandas/_libs/tslibs/timedeltas.pyx b/pandas/_libs/tslibs/timedeltas.pyx
+index 6606158aea..39a3414ca5 100644
+--- a/pandas/_libs/tslibs/timedeltas.pyx
++++ b/pandas/_libs/tslibs/timedeltas.pyx
+@@ -1487,8 +1487,6 @@ class Timedelta(_Timedelta):
+         elif PyDelta_Check(value):
+             value = convert_to_timedelta64(value, 'ns')
+         elif is_timedelta64_object(value):
+-            if unit is not None:
+-                value = value.astype(f'timedelta64[{unit}]')
+             value = ensure_td64ns(value)
+         elif is_tick_object(value):
+             value = np.timedelta64(value.nanos, 'ns')

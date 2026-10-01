@@ -1,0 +1,30 @@
+diff --git a/frmts/vrt/vrtrasterband.cpp b/frmts/vrt/vrtrasterband.cpp
+index 9b2a8df17f..25504b2fde 100644
+--- a/frmts/vrt/vrtrasterband.cpp
++++ b/frmts/vrt/vrtrasterband.cpp
+@@ -1314,7 +1314,9 @@ int VRTRasterBand::GetOverviewCount()
+         return static_cast<int>(m_aoOverviewInfos.size());
+ 
+     // If not found, external .ovr overviews
+-    const int nOverviewCount = GDALRasterBand::GetOverviewCount();
++    const int nOverviewCount = poVRTDS->GetDescription()[0] == '\0'
++                                   ? 0
++                                   : GDALRasterBand::GetOverviewCount();
+     if (nOverviewCount)
+         return nOverviewCount;
+ 
+diff --git a/gcore/gdaldriver.cpp b/gcore/gdaldriver.cpp
+index f857bad7bc..da3baab307 100644
+--- a/gcore/gdaldriver.cpp
++++ b/gcore/gdaldriver.cpp
+@@ -1028,7 +1028,9 @@ CPLErr GDALDriver::QuietDeleteForCreateCopy(const char *pszFilename,
+         // This is somewhat messy. Ideally there should be a way for the
+         // driver to overload the default behavior
+         if (!EQUAL(GetDescription(), "MEM") &&
+-            !EQUAL(GetDescription(), "Memory"))
++            !EQUAL(GetDescription(), "Memory") &&
++            // VRT with empty name is a un-materialized dataset
++            !(EQUAL(GetDescription(), "VRT") && pszFilename[0] == 0))
+         {
+             /* --------------------------------------------------------------------
+              */

@@ -1,0 +1,16 @@
+diff --git a/vlib/v/checker/struct.v b/vlib/v/checker/struct.v
+index 33bf4a60d..f5a156ed9 100644
+--- a/vlib/v/checker/struct.v
++++ b/vlib/v/checker/struct.v
+@@ -696,9 +696,10 @@
+ 	if node.has_update_expr {
+ 		update_type := c.expr(node.update_expr)
+ 		node.update_expr_type = update_type
++		expr_sym := c.table.final_sym(c.unwrap_generic(update_type))
+ 		if node.update_expr is ast.ComptimeSelector {
+ 			c.error('cannot use struct update syntax in compile time expressions', node.update_expr_pos)
+-		} else if c.table.final_sym(update_type).kind != .struct_ {
++		} else if expr_sym.kind != .struct_ {
+ 			s := c.table.type_to_str(update_type)
+ 			c.error('expected struct, found `${s}`', node.update_expr.pos())
+ 		} else if update_type != node.typ {

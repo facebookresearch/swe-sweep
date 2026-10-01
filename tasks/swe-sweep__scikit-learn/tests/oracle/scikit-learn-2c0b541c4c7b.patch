@@ -1,0 +1,13 @@
+diff --git a/sklearn/naive_bayes.py b/sklearn/naive_bayes.py
+index 6aec725bd9..ae01ccb62f 100644
+--- a/sklearn/naive_bayes.py
++++ b/sklearn/naive_bayes.py
+@@ -374,7 +374,7 @@ class GaussianNB(BaseNB):
+                     raise ValueError('Number of priors must match number of'
+                                      ' classes.')
+                 # Check that the sum is 1
+-                if priors.sum() != 1.0:
++                if not np.isclose(priors.sum(), 1.0):
+                     raise ValueError('The sum of the priors should be 1.')
+                 # Check that the prior are non-negative
+                 if (priors < 0).any():

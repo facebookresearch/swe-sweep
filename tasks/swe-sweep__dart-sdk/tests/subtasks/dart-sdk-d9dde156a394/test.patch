@@ -1,0 +1,140 @@
+diff --git a/pkg/analysis_server/test/src/services/correction/assist/convert_class_to_enum_test.dart b/pkg/analysis_server/test/src/services/correction/assist/convert_class_to_enum_test.dart
+index 67113780c90..f98306f4b4a 100644
+--- a/pkg/analysis_server/test/src/services/correction/assist/convert_class_to_enum_test.dart
++++ b/pkg/analysis_server/test/src/services/correction/assist/convert_class_to_enum_test.dart
+@@ -19,6 +19,95 @@ class ConvertClassToEnumTest extends AssistProcessorTest {
+   @override
+   AssistKind get kind => DartAssistKind.CONVERT_CLASS_TO_ENUM;
+ 
++  Future<void> test_documentationComments_mix() async {
++    await resolveTestCode('''
++class E {
++  /// AAA
++  static const E a = E._('a');
++  static const E b = E._('b');
++
++  /// CCC
++  static const E c = E._('c');
++
++  final String name;
++
++  const E._(this.name);
++}
++''');
++    await assertHasAssistAt('E {', '''
++enum E {
++  /// AAA
++  a._('a'),
++  b._('b'),
++
++  /// CCC
++  c._('c');
++
++  final String name;
++
++  const E._(this.name);
++}
++''');
++  }
++
++  Future<void> test_documentationComments_multiple() async {
++    await resolveTestCode('''
++class E {
++  /// AAA
++  static const E a = E._('a');
++
++  /// BBB
++  /// BBB
++  static const E b = E._('b');
++
++  /// Name.
++  final String name;
++
++  const E._(this.name);
++}
++''');
++    await assertHasAssistAt('E {', '''
++enum E {
++  /// AAA
++  a._('a'),
++
++  /// BBB
++  /// BBB
++  b._('b');
++
++  /// Name.
++  final String name;
++
++  const E._(this.name);
++}
++''');
++  }
++
++  Future<void> test_documentationComments_single() async {
++    await resolveTestCode('''
++class E {
++  /// AAA
++  static const E a = E._('a');
++
++  /// Name.
++  final String name;
++
++  const E._(this.name);
++}
++''');
++    await assertHasAssistAt('E {', '''
++enum E {
++  /// AAA
++  a._('a');
++
++  /// Name.
++  final String name;
++
++  const E._(this.name);
++}
++''');
++  }
++
+   Future<void> test_extends_object_privateClass() async {
+     await resolveTestCode('''
+ class _E extends Object {
+diff --git a/pkg/analysis_server/test/src/services/correction/fix/convert_class_to_enum_test.dart b/pkg/analysis_server/test/src/services/correction/fix/convert_class_to_enum_test.dart
+index b9183483da1..85bd708763c 100644
+--- a/pkg/analysis_server/test/src/services/correction/fix/convert_class_to_enum_test.dart
++++ b/pkg/analysis_server/test/src/services/correction/fix/convert_class_to_enum_test.dart
+@@ -75,6 +75,35 @@ class ConvertClassToEnumTest extends FixProcessorLintTest {
+   @override
+   String get lintCode => LintNames.use_enums;
+ 
++  Future<void> test_minimal_documentationComments() async {
++    await resolveTestCode('''
++class E {
++  /// C0.
++  static const E c0 = E._(0);
++
++  /// C1.
++  static const E c1 = E._(1);
++
++  final int value;
++
++  const E._(this.value);
++}
++''');
++    await assertHasFix('''
++enum E {
++  /// C0.
++  c0._(0),
++
++  /// C1.
++  c1._(1);
++
++  final int value;
++
++  const E._(this.value);
++}
++''');
++  }
++
+   Future<void> test_minimal_intField_privateClass() async {
+     await resolveTestCode('''
+ class _E {

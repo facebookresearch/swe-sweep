@@ -1,0 +1,17 @@
+diff --git a/compiler/test/compilable/test21179.d b/compiler/test/compilable/test21179.d
+new file mode 100644
+index 0000000000..78bdffda55
+--- /dev/null
++++ b/compiler/test/compilable/test21179.d
+@@ -0,0 +1,11 @@
++// https://github.com/dlang/dmd/issues/21179
++
++void bigEndianToNative(ubyte[2] a) {}
++
++void main()
++{
++    ubyte[] arr;
++    const ubyte[2] bytes;
++    bigEndianToNative(bytes);
++    auto b = cast(const ubyte[2][]) arr;
++}

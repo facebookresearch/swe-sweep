@@ -1,0 +1,18 @@
+diff --git a/pkg/analyzer/lib/src/generated/error_verifier.dart b/pkg/analyzer/lib/src/generated/error_verifier.dart
+index f7bccc3..a4d0282 100644
+--- a/pkg/analyzer/lib/src/generated/error_verifier.dart
++++ b/pkg/analyzer/lib/src/generated/error_verifier.dart
+@@ -2296,13 +2296,6 @@ class ErrorVerifier extends RecursiveAstVisitor<void>
+     if (constructorName.staticElement != null) {
+       return;
+     }
+-    DartType type = namedType.typeOrThrow;
+-    if (type is InterfaceType) {
+-      if (type.element is EnumElement) {
+-        // We have already reported the error.
+-        return;
+-      }
+-    }
+     Identifier className = namedType.name;
+     // report as named or default constructor absence
+     var name = constructorName.name;

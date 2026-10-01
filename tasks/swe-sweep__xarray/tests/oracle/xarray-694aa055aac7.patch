@@ -1,0 +1,13 @@
+diff --git a/xarray/plot/dataset_plot.py b/xarray/plot/dataset_plot.py
+index 37bdcbac..ff508ee2 100644
+--- a/xarray/plot/dataset_plot.py
++++ b/xarray/plot/dataset_plot.py
+@@ -630,6 +630,8 @@ def streamplot(
+     cmap_params = kwargs.pop("cmap_params")
+ 
+     if hue:
++        if xdim is not None and ydim is not None:
++            ds[hue] = ds[hue].transpose(ydim, xdim)
+         kwargs["color"] = ds[hue].values
+ 
+         # TODO: Fix this by always returning a norm with vmin, vmax in cmap_params

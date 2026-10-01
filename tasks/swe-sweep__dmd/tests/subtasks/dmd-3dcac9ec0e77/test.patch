@@ -1,0 +1,30 @@
+diff --git a/compiler/test/runnable/imports/imp23402a.c b/compiler/test/runnable/imports/imp23402a.c
+new file mode 100644
+index 0000000000..53c5fdf179
+--- /dev/null
++++ b/compiler/test/runnable/imports/imp23402a.c
+@@ -0,0 +1 @@
++#include <stdio.h>
+diff --git a/compiler/test/runnable/imports/imp23402b.c b/compiler/test/runnable/imports/imp23402b.c
+new file mode 100644
+index 0000000000..53c5fdf179
+--- /dev/null
++++ b/compiler/test/runnable/imports/imp23402b.c
+@@ -0,0 +1 @@
++#include <stdio.h>
+diff --git a/compiler/test/runnable/test23402.d b/compiler/test/runnable/test23402.d
+new file mode 100644
+index 0000000000..22fd21a717
+--- /dev/null
++++ b/compiler/test/runnable/test23402.d
+@@ -0,0 +1,10 @@
++// https://issues.dlang.org/show_bug.cgi?id=23402
++
++import imports.imp23402a;
++import imports.imp23402b;
++
++int main()
++{
++    printf("hello world\n");
++    return 0;
++}

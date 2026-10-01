@@ -1,0 +1,32 @@
+diff --git a/packages/jest-core/src/SearchSource.ts b/packages/jest-core/src/SearchSource.ts
+index 681464ec7f..abfc62de15 100644
+--- a/packages/jest-core/src/SearchSource.ts
++++ b/packages/jest-core/src/SearchSource.ts
+@@ -339,9 +339,7 @@ export default class SearchSource {
+         );
+       }
+ 
+-      const filteredSet = new Set(
+-        filterResult.filtered.map(result => result.test),
+-      );
++      const filteredSet = new Set(filterResult.filtered);
+ 
+       return {
+         ...searchResult,
+diff --git a/packages/jest-core/src/types.ts b/packages/jest-core/src/types.ts
+index 3aaece51f0..2577601716 100644
+--- a/packages/jest-core/src/types.ts
++++ b/packages/jest-core/src/types.ts
+@@ -33,11 +33,6 @@ export type TestPathCasesWithPathPattern = TestPathCases & {
+   testPathPattern: (path: string) => boolean;
+ };
+ 
+-export type FilterResult = {
+-  test: string;
+-  message: string;
+-};
+-
+ export type Filter = (testPaths: Array<string>) => Promise<{
+-  filtered: Array<FilterResult>;
++  filtered: Array<string>;
+ }>;

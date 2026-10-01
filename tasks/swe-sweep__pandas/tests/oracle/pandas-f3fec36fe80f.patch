@@ -1,0 +1,13 @@
+diff --git a/pandas/io/stata.py b/pandas/io/stata.py
+index 9cc1c4864b..8d6dc7f7f5 100644
+--- a/pandas/io/stata.py
++++ b/pandas/io/stata.py
+@@ -2388,7 +2388,7 @@ class StataWriter(StataParser):
+         # Check date conversion, and fix key if needed
+         if self._convert_dates:
+             for c, o in zip(columns, original_columns):
+-                if c != o:
++                if c != o and o in self._convert_dates:
+                     self._convert_dates[c] = self._convert_dates[o]
+                     del self._convert_dates[o]
+ 

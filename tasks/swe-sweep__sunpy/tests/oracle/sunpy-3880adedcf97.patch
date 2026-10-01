@@ -1,0 +1,14 @@
+diff --git a/sunpy/coordinates/wcs_utils.py b/sunpy/coordinates/wcs_utils.py
+index 087644364..c2ffcce22 100644
+--- a/sunpy/coordinates/wcs_utils.py
++++ b/sunpy/coordinates/wcs_utils.py
+@@ -191,6 +191,9 @@ def solar_frame_to_wcs_mapping(frame, projection='TAN'):
+             xcoord = 'HGLN' + '-' + projection
+             ycoord = 'HGLT' + '-' + projection
+             wcs.wcs.cunit = ['deg', 'deg']
++        else:
++            # A subclass not supported by the core library
++            return None
+ 
+     else:
+         return None

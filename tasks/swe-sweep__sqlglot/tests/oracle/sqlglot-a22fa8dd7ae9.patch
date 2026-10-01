@@ -1,0 +1,13 @@
+diff --git a/sqlglot/dialects/hive.py b/sqlglot/dialects/hive.py
+index 718e1c0b99..a4cfc59e71 100644
+--- a/sqlglot/dialects/hive.py
++++ b/sqlglot/dialects/hive.py
+@@ -89,7 +89,7 @@ class Hive(Dialect):
+     class Tokenizer(tokens.Tokenizer):
+         QUOTES = ["'", '"']
+         IDENTIFIERS = ["`"]
+-        STRING_ESCAPES = ["\\"]
++        STRING_ESCAPES = ["\\", "'"]
+ 
+         SINGLE_TOKENS = {
+             **tokens.Tokenizer.SINGLE_TOKENS,

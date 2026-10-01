@@ -1,0 +1,136 @@
+diff --git a/handler/src/main/java/io/netty/handler/traffic/AbstractTrafficShapingHandler.java b/handler/src/main/java/io/netty/handler/traffic/AbstractTrafficShapingHandler.java
+index 14356fb..2ae28d8 100644
+--- a/handler/src/main/java/io/netty/handler/traffic/AbstractTrafficShapingHandler.java
++++ b/handler/src/main/java/io/netty/handler/traffic/AbstractTrafficShapingHandler.java
+@@ -24,6 +24,7 @@ import io.netty.channel.ChannelOutboundBuffer;
+ import io.netty.channel.ChannelPromise;
+ import io.netty.util.Attribute;
+ import io.netty.util.AttributeKey;
++import io.netty.util.ReferenceCountUtil;
+ import io.netty.util.internal.logging.InternalLogger;
+ import io.netty.util.internal.logging.InternalLoggerFactory;
+ 
+@@ -567,6 +568,14 @@ public abstract class AbstractTrafficShapingHandler extends ChannelDuplexHandler
+     abstract void submitWrite(
+             ChannelHandlerContext ctx, Object msg, long size, long delay, long now, ChannelPromise promise);
+ 
++    /**
++     * Releases the given {@code msg} and fails the given {@code promise} with the supplied {@code cause}.
++     */
++    static void releaseAndFailQueuedWrite(Object msg, ChannelPromise promise, Throwable cause) {
++        ReferenceCountUtil.safeRelease(msg);
++        promise.tryFailure(cause);
++    }
++
+     @Override
+     public void channelRegistered(ChannelHandlerContext ctx) throws Exception {
+         setUserDefinedWritability(ctx, true);
+diff --git a/handler/src/main/java/io/netty/handler/traffic/ChannelTrafficShapingHandler.java b/handler/src/main/java/io/netty/handler/traffic/ChannelTrafficShapingHandler.java
+index 8074a6a..7953b4c 100644
+--- a/handler/src/main/java/io/netty/handler/traffic/ChannelTrafficShapingHandler.java
++++ b/handler/src/main/java/io/netty/handler/traffic/ChannelTrafficShapingHandler.java
+@@ -15,10 +15,10 @@
+  */
+ package io.netty.handler.traffic;
+ 
+-import io.netty.buffer.ByteBuf;
+ import io.netty.channel.ChannelHandlerContext;
+ import io.netty.channel.ChannelPromise;
+ 
++import java.nio.channels.ClosedChannelException;
+ import java.util.ArrayDeque;
+ import java.util.concurrent.TimeUnit;
+ 
+@@ -148,12 +148,12 @@ public class ChannelTrafficShapingHandler extends AbstractTrafficShapingHandler
+                     queueSize -= size;
+                     ctx.write(toSend.toSend, toSend.promise);
+                 }
+-            } else {
++            } else if (!messagesQueue.isEmpty()) {
++                ClosedChannelException cause = new ClosedChannelException();
+                 for (ToSend toSend : messagesQueue) {
+-                    if (toSend.toSend instanceof ByteBuf) {
+-                        ((ByteBuf) toSend.toSend).release();
+-                    }
++                    releaseAndFailQueuedWrite(toSend.toSend, toSend.promise, cause);
+                 }
++                queueSize = 0;
+             }
+             messagesQueue.clear();
+         }
+diff --git a/handler/src/main/java/io/netty/handler/traffic/GlobalChannelTrafficShapingHandler.java b/handler/src/main/java/io/netty/handler/traffic/GlobalChannelTrafficShapingHandler.java
+index e95ea82..012cf9a 100644
+--- a/handler/src/main/java/io/netty/handler/traffic/GlobalChannelTrafficShapingHandler.java
++++ b/handler/src/main/java/io/netty/handler/traffic/GlobalChannelTrafficShapingHandler.java
+@@ -15,7 +15,6 @@
+  */
+ package io.netty.handler.traffic;
+ 
+-import io.netty.buffer.ByteBuf;
+ import io.netty.channel.Channel;
+ import io.netty.channel.ChannelHandler.Sharable;
+ import io.netty.channel.ChannelConfig;
+@@ -27,6 +26,7 @@ import io.netty.util.internal.PlatformDependent;
+ import io.netty.util.internal.logging.InternalLogger;
+ import io.netty.util.internal.logging.InternalLoggerFactory;
+ 
++import java.nio.channels.ClosedChannelException;
+ import java.util.AbstractCollection;
+ import java.util.ArrayDeque;
+ import java.util.Collection;
+@@ -498,13 +498,13 @@ public class GlobalChannelTrafficShapingHandler extends AbstractTrafficShapingHa
+                         queuesSize.addAndGet(-size);
+                         ctx.write(toSend.toSend, toSend.promise);
+                     }
+-                } else {
++                } else if (!perChannel.messagesQueue.isEmpty()) {
+                     queuesSize.addAndGet(-perChannel.queueSize);
++                    ClosedChannelException cause = new ClosedChannelException();
+                     for (ToSend toSend : perChannel.messagesQueue) {
+-                        if (toSend.toSend instanceof ByteBuf) {
+-                            ((ByteBuf) toSend.toSend).release();
+-                        }
++                        releaseAndFailQueuedWrite(toSend.toSend, toSend.promise, cause);
+                     }
++                    perChannel.queueSize = 0;
+                 }
+                 perChannel.messagesQueue.clear();
+             }
+diff --git a/handler/src/main/java/io/netty/handler/traffic/GlobalTrafficShapingHandler.java b/handler/src/main/java/io/netty/handler/traffic/GlobalTrafficShapingHandler.java
+index ad624f8..02419b4 100644
+--- a/handler/src/main/java/io/netty/handler/traffic/GlobalTrafficShapingHandler.java
++++ b/handler/src/main/java/io/netty/handler/traffic/GlobalTrafficShapingHandler.java
+@@ -15,7 +15,6 @@
+  */
+ package io.netty.handler.traffic;
+ 
+-import io.netty.buffer.ByteBuf;
+ import io.netty.channel.ChannelHandler.Sharable;
+ import io.netty.channel.Channel;
+ import io.netty.channel.ChannelHandlerContext;
+@@ -23,6 +22,7 @@ import io.netty.channel.ChannelPromise;
+ import io.netty.util.concurrent.EventExecutor;
+ import io.netty.util.internal.PlatformDependent;
+ 
++import java.nio.channels.ClosedChannelException;
+ import java.util.ArrayDeque;
+ import java.util.concurrent.ConcurrentMap;
+ import java.util.concurrent.ScheduledExecutorService;
+@@ -274,13 +274,13 @@ public class GlobalTrafficShapingHandler extends AbstractTrafficShapingHandler {
+                         queuesSize.addAndGet(-size);
+                         ctx.write(toSend.toSend, toSend.promise);
+                     }
+-                } else {
++                } else if (!perChannel.messagesQueue.isEmpty()) {
+                     queuesSize.addAndGet(-perChannel.queueSize);
++                    ClosedChannelException cause = new ClosedChannelException();
+                     for (ToSend toSend : perChannel.messagesQueue) {
+-                        if (toSend.toSend instanceof ByteBuf) {
+-                            ((ByteBuf) toSend.toSend).release();
+-                        }
++                        releaseAndFailQueuedWrite(toSend.toSend, toSend.promise, cause);
+                     }
++                    perChannel.queueSize = 0;
+                 }
+                 perChannel.messagesQueue.clear();
+             }

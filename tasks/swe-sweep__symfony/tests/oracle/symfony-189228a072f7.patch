@@ -1,0 +1,74 @@
+diff --git a/src/Symfony/Component/Routing/Matcher/Dumper/CompiledUrlMatcherTrait.php b/src/Symfony/Component/Routing/Matcher/Dumper/CompiledUrlMatcherTrait.php
+index db754e6de05..5177c269ae3 100644
+--- a/src/Symfony/Component/Routing/Matcher/Dumper/CompiledUrlMatcherTrait.php
++++ b/src/Symfony/Component/Routing/Matcher/Dumper/CompiledUrlMatcherTrait.php
+@@ -57,7 +57,7 @@ trait CompiledUrlMatcherTrait
+             } finally {
+                 $this->context->setScheme($scheme);
+             }
+-        } elseif ('/' !== $trimmedPathinfo = rtrim($pathinfo, '/') ?: '/') {
++        } elseif ('' !== $trimmedPathinfo = rtrim($pathinfo, '/')) {
+             $pathinfo = $trimmedPathinfo === $pathinfo ? $pathinfo.'/' : $trimmedPathinfo;
+             if ($ret = $this->doMatch($pathinfo, $allow, $allowSchemes)) {
+                 return $this->redirect($pathinfo, $ret['_route']) + $ret;
+@@ -73,8 +73,8 @@ trait CompiledUrlMatcherTrait
+     private function doMatch(string $pathinfo, array &$allow = [], array &$allowSchemes = []): array
+     {
+         $allow = $allowSchemes = [];
+-        $pathinfo = rawurldecode($pathinfo) ?: '/';
+-        $trimmedPathinfo = rtrim($pathinfo, '/') ?: '/';
++        $pathinfo = '' === ($pathinfo = rawurldecode($pathinfo)) ? '/' : $pathinfo;
++        $trimmedPathinfo = '' === ($trimmedPathinfo = rtrim($pathinfo, '/')) ? '/' : $trimmedPathinfo;
+         $context = $this->context;
+         $requestMethod = $canonicalMethod = $context->getMethod();
+ 
+diff --git a/src/Symfony/Component/Routing/Matcher/RedirectableUrlMatcher.php b/src/Symfony/Component/Routing/Matcher/RedirectableUrlMatcher.php
+index 8d1ad4f90ad..3e7b78b5e60 100644
+--- a/src/Symfony/Component/Routing/Matcher/RedirectableUrlMatcher.php
++++ b/src/Symfony/Component/Routing/Matcher/RedirectableUrlMatcher.php
+@@ -41,7 +41,7 @@ abstract class RedirectableUrlMatcher extends UrlMatcher implements Redirectable
+                 } finally {
+                     $this->context->setScheme($scheme);
+                 }
+-            } elseif ('/' === $trimmedPathinfo = rtrim($pathinfo, '/') ?: '/') {
++            } elseif ('' === $trimmedPathinfo = rtrim($pathinfo, '/')) {
+                 throw $e;
+             } else {
+                 try {
+diff --git a/src/Symfony/Component/Routing/Matcher/TraceableUrlMatcher.php b/src/Symfony/Component/Routing/Matcher/TraceableUrlMatcher.php
+index 20fb064687c..8ff018309c9 100644
+--- a/src/Symfony/Component/Routing/Matcher/TraceableUrlMatcher.php
++++ b/src/Symfony/Component/Routing/Matcher/TraceableUrlMatcher.php
+@@ -63,7 +63,7 @@ class TraceableUrlMatcher extends UrlMatcher
+             $method = 'GET';
+         }
+         $supportsTrailingSlash = 'GET' === $method && $this instanceof RedirectableUrlMatcherInterface;
+-        $trimmedPathinfo = rtrim($pathinfo, '/') ?: '/';
++        $trimmedPathinfo = '' === ($trimmedPathinfo = rtrim($pathinfo, '/')) ? '/' : $trimmedPathinfo;
+ 
+         foreach ($routes as $name => $route) {
+             $compiledRoute = $route->compile();
+diff --git a/src/Symfony/Component/Routing/Matcher/UrlMatcher.php b/src/Symfony/Component/Routing/Matcher/UrlMatcher.php
+index ec281fde739..f3ab414f04e 100644
+--- a/src/Symfony/Component/Routing/Matcher/UrlMatcher.php
++++ b/src/Symfony/Component/Routing/Matcher/UrlMatcher.php
+@@ -78,8 +78,9 @@ class UrlMatcher implements UrlMatcherInterface, RequestMatcherInterface
+     public function match(string $pathinfo): array
+     {
+         $this->allow = $this->allowSchemes = [];
++        $pathinfo = '' === ($pathinfo = rawurldecode($pathinfo)) ? '/' : $pathinfo;
+ 
+-        if ($ret = $this->matchCollection(rawurldecode($pathinfo) ?: '/', $this->routes)) {
++        if ($ret = $this->matchCollection($pathinfo, $this->routes)) {
+             return $ret;
+         }
+ 
+@@ -125,7 +126,7 @@ class UrlMatcher implements UrlMatcherInterface, RequestMatcherInterface
+             $method = 'GET';
+         }
+         $supportsTrailingSlash = 'GET' === $method && $this instanceof RedirectableUrlMatcherInterface;
+-        $trimmedPathinfo = rtrim($pathinfo, '/') ?: '/';
++        $trimmedPathinfo = '' === ($trimmedPathinfo = rtrim($pathinfo, '/')) ? '/' : $trimmedPathinfo;
+ 
+         foreach ($routes as $name => $route) {
+             $compiledRoute = $route->compile();

@@ -1,0 +1,34 @@
+diff --git a/pkg/analysis_server/test/src/services/correction/fix/convert_to_named_arguments_test.dart b/pkg/analysis_server/test/src/services/correction/fix/convert_to_named_arguments_test.dart
+index 804be9f8c95..28f8fd738d1 100644
+--- a/pkg/analysis_server/test/src/services/correction/fix/convert_to_named_arguments_test.dart
++++ b/pkg/analysis_server/test/src/services/correction/fix/convert_to_named_arguments_test.dart
+@@ -142,6 +142,29 @@ class A {
+ void f() {
+   new A(1);
+ }
++''');
++    await assertNoFix();
++  }
++
++  Future<void> test_noCompatibleParameterName() async {
++    await resolveTestCode('''
++abstract class Base {
++  final String? key;
++  const Base({this.key});
++}
++
++class A extends Base {
++  const A({super.key, this.child});
++  final Base? child;
++}
++
++class B extends Base {
++  const B({super.key});
++}
++
++void f() {
++  new A(child: B(), B());
++}
+ ''');
+     await assertNoFix();
+   }

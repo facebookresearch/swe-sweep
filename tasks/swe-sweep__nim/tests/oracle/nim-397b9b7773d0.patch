@@ -1,0 +1,12 @@
+diff --git a/compiler/sigmatch.nim b/compiler/sigmatch.nim
+index 0dbd5e5f1..f8c7fa870 100644
+--- a/compiler/sigmatch.nim
++++ b/compiler/sigmatch.nim
+@@ -1980,6 +1980,7 @@ proc userConvMatch(c: PContext, m: var TCandidate, f, a: PType,
+         param = implicitConv(nkHiddenSubConv, src, copyTree(arg), m, c)
+       elif src.kind in {tyVar}:
+         # Analyse the converter return type
++        arg.sym.flags.incl sfAddrTaken
+         param = newNodeIT(nkHiddenAddr, arg.info, s.typ[1])
+         param.add copyTree(arg)
+       else:

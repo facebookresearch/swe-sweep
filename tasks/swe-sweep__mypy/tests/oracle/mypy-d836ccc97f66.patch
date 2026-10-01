@@ -1,0 +1,15 @@
+diff --git a/mypy/typeanal.py b/mypy/typeanal.py
+index 0c241f5c0..74f649ed6 100644
+--- a/mypy/typeanal.py
++++ b/mypy/typeanal.py
+@@ -688,7 +688,9 @@ class TypeAnalyser(SyntheticTypeVisitor[Type], TypeAnalyzerPluginInterface):
+                     code=codes.VALID_TYPE,
+                 )
+                 return AnyType(TypeOfAny.from_error)
+-            return self.anal_type(t.args[0])
++            return self.anal_type(
++                t.args[0], allow_typed_dict_special_forms=self.allow_typed_dict_special_forms
++            )
+         elif fullname in ("typing_extensions.Required", "typing.Required"):
+             if not self.allow_typed_dict_special_forms:
+                 self.fail(

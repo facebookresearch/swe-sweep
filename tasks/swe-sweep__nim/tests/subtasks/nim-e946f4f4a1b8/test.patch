@@ -1,0 +1,25 @@
+diff --git a/tests/alias/t19349.nim b/tests/alias/t19349.nim
+new file mode 100644
+index 000000000..1e1e58264
+--- /dev/null
++++ b/tests/alias/t19349.nim
+@@ -0,0 +1,19 @@
++discard """
++  action: "compile"
++"""
++
++type
++  Vec3[T: SomeNumber] = object
++    arr: array[3, T]
++
++var 
++  cfloatArr: array[3, array[3, cfloat]]
++  cfloatSeq = newSeq[Vec3[cfloat]]()
++for row in cfloatArr:
++  cfloatSeq.add(Vec3[float32](arr: [row[0], row[1], row[2]]))
++
++var 
++  cuintArr: array[3, array[3, cuint]]
++  cuintSeq = newSeq[Vec3[cuint]]()
++for row in cuintArr:
++  cuintSeq.add(Vec3[uint32](arr: [row[0], row[1], row[2]]))

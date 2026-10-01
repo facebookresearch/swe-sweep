@@ -1,0 +1,23 @@
+diff --git a/compiler/closureiters.nim b/compiler/closureiters.nim
+index a8da748..67c1bd1 100644
+--- a/compiler/closureiters.nim
++++ b/compiler/closureiters.nim
+@@ -813,11 +813,13 @@ proc newEndFinallyNode(ctx: var Ctx, info: TLineInfo): PNode =
+   let cmp = newTree(nkCall, newSymNode(ctx.g.getSysMagic(info, "==", mEqRef), info), curExc, nilnode)
+   cmp.typ = ctx.g.getSysType(info, tyBool)
+ 
+-  let asgn = newTree(nkFastAsgn,
+-    newSymNode(getClosureIterResult(ctx.g, ctx.fn, ctx.idgen), info),
+-    ctx.newTmpResultAccess())
+-
+-  let retStmt = newTree(nkReturnStmt, asgn)
++  let retValue = if ctx.fn.typ[0].isNil:
++                   ctx.g.emptyNode
++                 else:
++                   newTree(nkFastAsgn,
++                           newSymNode(getClosureIterResult(ctx.g, ctx.fn, ctx.idgen), info),
++                           ctx.newTmpResultAccess())
++  let retStmt = newTree(nkReturnStmt, retValue)
+   let branch = newTree(nkElifBranch, cmp, retStmt)
+ 
+   let nullifyExc = newTree(nkCall, newSymNode(ctx.g.getCompilerProc("closureIterSetupExc")), nilnode)

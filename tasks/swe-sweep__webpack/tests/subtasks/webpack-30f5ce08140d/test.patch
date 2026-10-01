@@ -1,0 +1,83 @@
+diff --git a/test/FileSystemInfo.unittest.js b/test/FileSystemInfo.unittest.js
+index 21d37d9ff..72860f131 100644
+--- a/test/FileSystemInfo.unittest.js
++++ b/test/FileSystemInfo.unittest.js
+@@ -6,6 +6,11 @@ const FileSystemInfo = require("../lib/FileSystemInfo");
+ const { buffersSerializer } = require("../lib/util/serialization");
+ 
+ describe("FileSystemInfo", () => {
++	afterEach(() => {
++		// restore the spy created with spyOn
++		jest.restoreAllMocks();
++	});
++
+ 	const files = [
+ 		"/path/file.txt",
+ 		"/path/nested/deep/file.txt",
+@@ -363,4 +368,66 @@ ${details(snapshot)}`)
+ 			}
+ 		});
+ 	}
++
++	describe("symlinks", () => {
++		it("should work with symlinks with errors", done => {
++			const fs = createFs();
++
++			fs.symlinkSync(
++				"/path/folder/context",
++				"/path/context/sub/symlink-error",
++				"dir"
++			);
++
++			const originalReadlink = fs.readlink;
++
++			let i = 0;
++
++			jest.spyOn(fs, "readlink").mockImplementation((path, callback) => {
++				if (path === "/path/context/sub/symlink-error" && i < 2) {
++					i += 1;
++					callback(new Error("test"));
++					return;
++				}
++
++				originalReadlink(path, callback);
++			});
++
++			createSnapshot(
++				fs,
++				["timestamp", { timestamp: true }],
++				(err, snapshot, snapshot2) => {
++					if (err) return done(err);
++					expectSnapshotsState(fs, snapshot, snapshot2, true, done);
++				}
++			);
++		});
++
++		it("should work with symlinks with errors #1", done => {
++			const fs = createFs();
++
++			fs.symlinkSync(
++				"/path/folder/context",
++				"/path/context/sub/symlink-error",
++				"dir"
++			);
++
++			jest.spyOn(fs, "readlink").mockImplementation((path, callback) => {
++				callback(new Error("test"));
++			});
++
++			const fsInfo = createFsInfo(fs);
++			fsInfo.createSnapshot(
++				Date.now() + 10000,
++				files,
++				directories,
++				missing,
++				["timestamp", { timestamp: true }],
++				(err, snapshot) => {
++					expect(snapshot).toBe(null);
++					done();
++				}
++			);
++		});
++	});
+ });

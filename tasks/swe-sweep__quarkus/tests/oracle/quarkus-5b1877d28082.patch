@@ -1,0 +1,13 @@
+diff --git a/independent-projects/bootstrap/app-model/src/main/java/io/quarkus/paths/PathTreeBuilder.java b/independent-projects/bootstrap/app-model/src/main/java/io/quarkus/paths/PathTreeBuilder.java
+index 12d0f4ae609..76a1f545335 100644
+--- a/independent-projects/bootstrap/app-model/src/main/java/io/quarkus/paths/PathTreeBuilder.java
++++ b/independent-projects/bootstrap/app-model/src/main/java/io/quarkus/paths/PathTreeBuilder.java
+@@ -56,7 +56,7 @@ public class PathTreeBuilder {
+     }
+ 
+     List<String> getExcludes() {
+-        return includes;
++        return excludes;
+     }
+ 
+     PathFilter getPathFilter() {

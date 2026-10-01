@@ -1,0 +1,42 @@
+diff --git a/compiler/semgnrc.nim b/compiler/semgnrc.nim
+index e249d88..7f87f59 100644
+--- a/compiler/semgnrc.nim
++++ b/compiler/semgnrc.nim
+@@ -173,7 +173,7 @@ proc fuzzyLookup(c: PContext, n: PNode, flags: TSemGenericFlags,
+         let syms = semGenericStmtSymbol(c, n, s, ctx, flags, fromDotExpr=true)
+         if syms.kind == nkSym:
+           let choice = symChoice(c, n, s, scForceOpen)
+-          choice.transitionSonsKind(nkClosedSymChoice)
++          if choice.kind == nkOpenSymChoice and choice.len == 1: choice.transitionSonsKind(nkClosedSymChoice)
+           result = newDot(result, choice)
+         else:
+           result = newDot(result, syms)
+diff --git a/compiler/semtempl.nim b/compiler/semtempl.nim
+index 49ce55a..d4b7aa8 100644
+--- a/compiler/semtempl.nim
++++ b/compiler/semtempl.nim
+@@ -70,6 +70,9 @@ proc symChoice(c: PContext, n: PNode, s: PSym, r: TSymChoiceRule;
+       onUse(info, s)
+     else:
+       result = n
++  elif i == 0:
++    # forced open but symbol not in scope, retain information
++    result = n
+   else:
+     # semantic checking requires a type; ``fitNode`` deals with it
+     # appropriately
+@@ -110,14 +113,10 @@ proc semBindStmt(c: PContext, n: PNode, toBind: var IntSet): PNode =
+ 
+ proc semMixinStmt(c: PContext, n: PNode, toMixin: var IntSet): PNode =
+   result = copyNode(n)
+-  var count = 0
+   for i in 0..<n.len:
+     toMixin.incl(considerQuotedIdent(c, n[i]).id)
+     let x = symChoice(c, n[i], nil, scForceOpen)
+-    inc count, x.len
+     result.add x
+-  if count == 0:
+-    result = newNodeI(nkEmpty, n.info)
+ 
+ proc replaceIdentBySym(c: PContext; n: var PNode, s: PNode) =
+   case n.kind

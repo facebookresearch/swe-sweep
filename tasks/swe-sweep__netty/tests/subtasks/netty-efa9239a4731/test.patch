@@ -1,0 +1,19 @@
+diff --git a/codec-http/src/test/java/io/netty/handler/codec/http/HttpObjectAggregatorTest.java b/codec-http/src/test/java/io/netty/handler/codec/http/HttpObjectAggregatorTest.java
+--- a/codec-http/src/test/java/io/netty/handler/codec/http/HttpObjectAggregatorTest.java
++++ b/codec-http/src/test/java/io/netty/handler/codec/http/HttpObjectAggregatorTest.java
+@@ -517,4 +517,15 @@ public class HttpObjectAggregatorTest {
+         aggregatedRep.release();
+         replacedRep.release();
+     }
++
++    @Test
++    public void invalidContinueLength() {
++        EmbeddedChannel channel = new EmbeddedChannel(new HttpServerCodec(), new HttpObjectAggregator(1024));
++
++        channel.writeInbound(Unpooled.copiedBuffer("POST / HTTP/1.1\r\n" +
++                "Expect: 100-continue\r\n" +
++                "Content-Length:\r\n" +
++                "\r\n\r\n", CharsetUtil.US_ASCII));
++        assertTrue(channel.finishAndReleaseAll());
++    }
+ }

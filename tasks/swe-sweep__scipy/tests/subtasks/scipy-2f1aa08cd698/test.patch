@@ -1,0 +1,20 @@
+diff --git a/scipy/sparse/tests/test_base.py b/scipy/sparse/tests/test_base.py
+index e5f099f6e0..e8f564a63e 100644
+--- a/scipy/sparse/tests/test_base.py
++++ b/scipy/sparse/tests/test_base.py
+@@ -3636,6 +3636,7 @@ class TestCSR(sparse_test_class()):
+         indptr = np.array([0, 2])
+         M = csr_matrix((data, sorted_inds, indptr)).copy()
+         assert_equal(True, M.has_sorted_indices)
++        assert type(M.has_sorted_indices) == bool
+ 
+         M = csr_matrix((data, unsorted_inds, indptr)).copy()
+         assert_equal(False, M.has_sorted_indices)
+@@ -3667,6 +3668,7 @@ class TestCSR(sparse_test_class()):
+ 
+         M = csr_matrix((data, indices, indptr)).copy()
+         assert_equal(False, M.has_canonical_format)
++        assert type(M.has_canonical_format) == bool
+ 
+         # set by deduplicating
+         M.sum_duplicates()

@@ -1,0 +1,15 @@
+diff --git a/pandas/tests/scalar/timedelta/test_timedelta.py b/pandas/tests/scalar/timedelta/test_timedelta.py
+index 06a0f3324c..73b2da0f7d 100644
+--- a/pandas/tests/scalar/timedelta/test_timedelta.py
++++ b/pandas/tests/scalar/timedelta/test_timedelta.py
+@@ -633,3 +633,10 @@ def test_timedelta_attribute_precision():
+     result += td.nanoseconds
+     expected = td.value
+     assert result == expected
++
++
++def test_to_pytimedelta_large_values():
++    td = Timedelta(1152921504609987375, unit="ns")
++    result = td.to_pytimedelta()
++    expected = timedelta(days=13343, seconds=86304, microseconds=609987)
++    assert result == expected

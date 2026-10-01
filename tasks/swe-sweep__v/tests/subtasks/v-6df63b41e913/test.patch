@@ -1,0 +1,20 @@
+diff --git a/vlib/v/tests/const_from_multi_branchs_of_if_expr_test.v b/vlib/v/tests/const_from_multi_branchs_of_if_expr_test.v
+new file mode 100644
+index 000000000..a0f008ed0
+--- /dev/null
++++ b/vlib/v/tests/const_from_multi_branchs_of_if_expr_test.v
+@@ -0,0 +1,14 @@
++import os
++
++const bin = $if linux {
++	os.join_path(@VMODROOT, 'bin_linux_64')
++} $else $if macos {
++	os.join_path(@VMODROOT, 'bin_macos')
++} $else {
++	''
++}
++
++fn test_const_from_mutli_branchs_of_if_expr() {
++	println('Hello')
++	assert true
++}

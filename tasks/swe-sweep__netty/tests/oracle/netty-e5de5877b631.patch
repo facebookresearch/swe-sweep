@@ -1,0 +1,12 @@
+diff --git a/codec-http/src/main/java/io/netty/handler/codec/http/HttpClientUpgradeHandler.java b/codec-http/src/main/java/io/netty/handler/codec/http/HttpClientUpgradeHandler.java
+index 63e2e46f62..6251209733 100644
+--- a/codec-http/src/main/java/io/netty/handler/codec/http/HttpClientUpgradeHandler.java
++++ b/codec-http/src/main/java/io/netty/handler/codec/http/HttpClientUpgradeHandler.java
+@@ -252,7 +252,6 @@ public class HttpClientUpgradeHandler extends HttpObjectAggregator implements Ch
+             out.clear();
+             removeThisHandler(ctx);
+         } catch (Throwable t) {
+-            release(response);
+             ctx.fireExceptionCaught(t);
+             removeThisHandler(ctx);
+         }

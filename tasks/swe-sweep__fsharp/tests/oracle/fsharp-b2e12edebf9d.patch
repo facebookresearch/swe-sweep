@@ -1,0 +1,26 @@
+diff --git a/src/FSharp.Core/array.fs b/src/FSharp.Core/array.fs
+index 63df73e501..27c6d6426b 100644
+--- a/src/FSharp.Core/array.fs
++++ b/src/FSharp.Core/array.fs
+@@ -1934,7 +1934,7 @@ module Array =
+         let valuesArray = Seq.toArray values
+ 
+         if valuesArray.Length = 0 then
+-            source
++            source.Clone() :?> 'T array
+         else
+             let length = source.Length + valuesArray.Length
+             let result = Microsoft.FSharp.Primitives.Basics.Array.zeroCreateUnchecked length
+diff --git a/src/FSharp.Core/array.fsi b/src/FSharp.Core/array.fsi
+index 6e76dbc32c..151081c300 100644
+--- a/src/FSharp.Core/array.fsi
++++ b/src/FSharp.Core/array.fsi
+@@ -3080,7 +3080,7 @@ module Array =
+     /// <param name="values">The values to insert.</param>
+     /// <param name="source">The input array.</param>
+     ///
+-    /// <returns>The result array.</returns>
++    /// <returns>A new array (even if values is empty).</returns>
+     ///
+     /// <exception cref="T:System.ArgumentException">Thrown when index is below 0 or greater than source.Length.</exception>
+     ///

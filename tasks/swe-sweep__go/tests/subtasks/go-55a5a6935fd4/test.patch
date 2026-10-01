@@ -1,0 +1,15 @@
+diff --git a/src/context/context_test.go b/src/context/context_test.go
+index 2c66ed42b2..ab3c2757cf 100644
+--- a/src/context/context_test.go
++++ b/src/context/context_test.go
+@@ -382,6 +382,10 @@ func XTestValues(t testingT) {
+ 	c4 := WithValue(c3, k1, nil)
+ 	check(c4, "c4", "", "c2k2", "c3k3")
+ 
++	if got, want := fmt.Sprint(c4), `context.Background.WithValue(type context.key1, val c1k1).WithValue(type context.key2, val c2k2).WithValue(type context.key2, val c3k3).WithValue(type context.key1, val <nil>)`; got != want {
++		t.Errorf("c.String() = %q want %q", got, want)
++	}
++
+ 	o0 := otherContext{Background()}
+ 	check(o0, "o0", "", "", "")
+ 

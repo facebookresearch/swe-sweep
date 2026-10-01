@@ -1,0 +1,13 @@
+diff --git a/src/Lean/Elab/Tactic/BuiltinTactic.lean b/src/Lean/Elab/Tactic/BuiltinTactic.lean
+index b80df98467..d47444d4ec 100644
+--- a/src/Lean/Elab/Tactic/BuiltinTactic.lean
++++ b/src/Lean/Elab/Tactic/BuiltinTactic.lean
+@@ -469,7 +469,7 @@ def renameInaccessibles (mvarId : MVarId) (hs : TSyntaxArray ``binderIdent) : Ta
+ private def getCaseGoals (tag : TSyntax ``binderIdent) : TacticM (MVarId × List MVarId) := do
+   let gs ← getUnsolvedGoals
+   let g ← if let `(binderIdent| $tag:ident) := tag then
+-    let tag := tag.getId
++    let tag := tag.getId.eraseMacroScopes
+     let some g ← findTag? gs tag | notFound gs tag
+     pure g
+   else

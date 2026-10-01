@@ -1,0 +1,12 @@
+diff --git a/compiler/test/compilable/test23534.d b/compiler/test/compilable/test23534.d
+new file mode 100644
+index 0000000000..f76a692b8b
+--- /dev/null
++++ b/compiler/test/compilable/test23534.d
+@@ -0,0 +1,6 @@
++// https://issues.dlang.org/show_bug.cgi?id=23534
++
++enum E { a = 1, b = 2 }
++
++// `E.a` is not 0
++static assert(!__traits(isZeroInit, E));

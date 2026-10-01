@@ -1,0 +1,182 @@
+diff --git a/tests/format/typescript/comments/__snapshots__/format.test.js.snap b/tests/format/typescript/comments/__snapshots__/format.test.js.snap
+index 279840e59..41d73e3b7 100644
+--- a/tests/format/typescript/comments/__snapshots__/format.test.js.snap
++++ b/tests/format/typescript/comments/__snapshots__/format.test.js.snap
+@@ -122,7 +122,7 @@ class A {
+ ================================================================================
+ `;
+ 
+-exports[`abstract_class.ts format 1`] = `
++exports[`abstract-class.ts format 1`] = `
+ ====================================options=====================================
+ parsers: ["typescript"]
+ printWidth: 80
+@@ -150,7 +150,7 @@ abstract class AbstractRule {
+ ================================================================================
+ `;
+ 
+-exports[`abstract_methods.ts format 1`] = `
++exports[`abstract-methods.ts format 1`] = `
+ ====================================options=====================================
+ parsers: ["typescript"]
+ printWidth: 80
+@@ -184,7 +184,91 @@ abstract class AbstractFoo {
+ ================================================================================
+ `;
+ 
+-exports[`after_jsx_generic.tsx format 1`] = `
++exports[`abstract-methods-2.ts format 1`] = `
++====================================options=====================================
++parsers: ["typescript"]
++printWidth: 80
++                                                                                | printWidth
++=====================================input======================================
++// #18478
++
++abstract class AbstractBar {
++  abstract method4(
++    param1: number,
++    // trailing line comment
++  ): void;
++  abstract method5(
++    param1: number,
++    /* trailing block comment */
++  ): void;
++  abstract method6(
++    ...rest: number[]
++    // trailing after rest
++  ): void;
++  abstract method7(
++    { a }: { a: number },
++    // trailing after object pattern
++  ): void;
++}
++
++declare class DeclareCls {
++  method(
++    param1: number,
++    // trailing line after last param
++  ): void;
++}
++
++class Overload {
++  method(
++    param1: number,
++    // trailing line on first overload
++  ): void;
++  method(param1: string): void;
++  method(param1: number | string): void {}
++}
++
++=====================================output=====================================
++// #18478
++
++abstract class AbstractBar {
++  abstract method4(
++    param1: number,
++    // trailing line comment
++  ): void;
++  abstract method5(
++    param1: number,
++    /* trailing block comment */
++  ): void;
++  abstract method6(
++    ...rest: number[]
++    // trailing after rest
++  ): void;
++  abstract method7(
++    { a }: { a: number },
++    // trailing after object pattern
++  ): void;
++}
++
++declare class DeclareCls {
++  method(
++    param1: number,
++    // trailing line after last param
++  ): void;
++}
++
++class Overload {
++  method(
++    param1: number,
++    // trailing line on first overload
++  ): void;
++  method(param1: string): void;
++  method(param1: number | string): void {}
++}
++
++================================================================================
++`;
++
++exports[`after-jsx-generic.tsx format 1`] = `
+ ====================================options=====================================
+ parsers: ["typescript"]
+ printWidth: 80
+@@ -844,7 +927,7 @@ type Props1 = // (DispatchProps & StateProps); WHY DON'T YOU WORK FLOW!!!!!!!!!
+ ================================================================================
+ `;
+ 
+-exports[`type_literals.ts format 1`] = `
++exports[`type-literals.ts format 1`] = `
+ ====================================options=====================================
+ parsers: ["typescript"]
+ printWidth: 80
+diff --git a/tests/format/typescript/comments/abstract_class.ts b/tests/format/typescript/comments/abstract-class.ts
+similarity index 100%
+rename from tests/format/typescript/comments/abstract_class.ts
+rename to tests/format/typescript/comments/abstract-class.ts
+diff --git a/tests/format/typescript/comments/abstract-methods-2.ts b/tests/format/typescript/comments/abstract-methods-2.ts
+new file mode 100644
+index 000000000..0c9b453c5
+--- /dev/null
++++ b/tests/format/typescript/comments/abstract-methods-2.ts
+@@ -0,0 +1,36 @@
++// #18478
++
++abstract class AbstractBar {
++  abstract method4(
++    param1: number,
++    // trailing line comment
++  ): void;
++  abstract method5(
++    param1: number,
++    /* trailing block comment */
++  ): void;
++  abstract method6(
++    ...rest: number[]
++    // trailing after rest
++  ): void;
++  abstract method7(
++    { a }: { a: number },
++    // trailing after object pattern
++  ): void;
++}
++
++declare class DeclareCls {
++  method(
++    param1: number,
++    // trailing line after last param
++  ): void;
++}
++
++class Overload {
++  method(
++    param1: number,
++    // trailing line on first overload
++  ): void;
++  method(param1: string): void;
++  method(param1: number | string): void {}
++}
+diff --git a/tests/format/typescript/comments/abstract_methods.ts b/tests/format/typescript/comments/abstract-methods.ts
+similarity index 100%
+rename from tests/format/typescript/comments/abstract_methods.ts
+rename to tests/format/typescript/comments/abstract-methods.ts
+diff --git a/tests/format/typescript/comments/after_jsx_generic.tsx b/tests/format/typescript/comments/after-jsx-generic.tsx
+similarity index 100%
+rename from tests/format/typescript/comments/after_jsx_generic.tsx
+rename to tests/format/typescript/comments/after-jsx-generic.tsx
+diff --git a/tests/format/typescript/comments/type_literals.ts b/tests/format/typescript/comments/type-literals.ts
+similarity index 100%
+rename from tests/format/typescript/comments/type_literals.ts
+rename to tests/format/typescript/comments/type-literals.ts

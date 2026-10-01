@@ -1,0 +1,12 @@
+diff --git a/response_writer.go b/response_writer.go
+index 43e828d..5cec1f6 100644
+--- a/response_writer.go
++++ b/response_writer.go
+@@ -61,6 +61,7 @@ func (w *responseWriter) WriteHeader(code int) {
+ 	if code > 0 && w.status != code {
+ 		if w.Written() {
+ 			debugPrint("[WARNING] Headers were already written. Wanted to override status code %d with %d", w.status, code)
++			return
+ 		}
+ 		w.status = code
+ 	}

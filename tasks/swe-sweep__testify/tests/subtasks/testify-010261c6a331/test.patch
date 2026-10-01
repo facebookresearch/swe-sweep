@@ -1,0 +1,19 @@
+diff --git a/assert/assertions_test.go b/assert/assertions_test.go
+index ad5c1be..ca12599 100644
+--- a/assert/assertions_test.go
++++ b/assert/assertions_test.go
+@@ -2036,6 +2036,14 @@ func TestInEpsilon(t *testing.T) {
+ 		{math.NaN(), 0, 1},
+ 		{0, math.NaN(), 1},
+ 		{0, 0, math.NaN()},
++		{math.Inf(1), 1, 1},
++		{math.Inf(-1), 1, 1},
++		{1, math.Inf(1), 1},
++		{1, math.Inf(-1), 1},
++		{math.Inf(1), math.Inf(1), 1},
++		{math.Inf(1), math.Inf(-1), 1},
++		{math.Inf(-1), math.Inf(1), 1},
++		{math.Inf(-1), math.Inf(-1), 1},
+ 	}
+ 
+ 	for _, tc := range cases {

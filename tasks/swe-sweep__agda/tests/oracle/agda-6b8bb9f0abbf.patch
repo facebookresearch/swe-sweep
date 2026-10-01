@@ -1,0 +1,12 @@
+diff --git a/src/full/Agda/TypeChecking/InstanceArguments.hs b/src/full/Agda/TypeChecking/InstanceArguments.hs
+index 701b4f278f..8af91628b5 100644
+--- a/src/full/Agda/TypeChecking/InstanceArguments.hs
++++ b/src/full/Agda/TypeChecking/InstanceArguments.hs
+@@ -86,7 +86,6 @@ initialInstanceCandidates t = do
+           vars = [ Candidate LocalCandidate x t (isOverlappable info)
+                  | (x, Dom{domInfo = info, unDom = (_, t)}) <- varsAndRaisedTypes
+                  , isInstance info
+-                 , usableModality info
+                  ]
+ 
+       -- {{}}-fields of variables are also candidates

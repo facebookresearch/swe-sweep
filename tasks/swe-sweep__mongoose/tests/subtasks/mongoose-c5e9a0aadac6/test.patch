@@ -1,0 +1,19 @@
+diff --git a/test/schema.test.js b/test/schema.test.js
+index ddf475653..3efbaed5a 100644
+--- a/test/schema.test.js
++++ b/test/schema.test.js
+@@ -2864,4 +2864,14 @@ describe('schema', function() {
+     assert.equal(doc1.domain, mongooseDomain);
+     assert.equal(doc1.domain, doc2.domain);
+   });
++  it('should have the correct schema definition with array schemas (gh-14416)', function() {
++    const schema = new Schema({
++      nums: [{ type: Array, of: Number }],
++      tags: [{ type: 'Array', of: String }],
++      subdocs: [{ type: Array, of: Schema({ name: String }) }]
++    });
++    assert.equal(schema.path('nums.$').caster.instance, 'Number'); // actually Mixed
++    assert.equal(schema.path('tags.$').caster.instance, 'String'); // actually Mixed
++    assert.equal(schema.path('subdocs.$').casterConstructor.schema.path('name').instance, 'String'); // actually Mixed
++  });
+ });

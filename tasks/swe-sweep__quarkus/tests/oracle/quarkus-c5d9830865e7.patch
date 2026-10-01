@@ -1,0 +1,13 @@
+diff --git a/extensions/resteasy-reactive/rest-client-reactive/runtime/src/main/java/io/quarkus/rest/client/reactive/runtime/RestClientBuilderImpl.java b/extensions/resteasy-reactive/rest-client-reactive/runtime/src/main/java/io/quarkus/rest/client/reactive/runtime/RestClientBuilderImpl.java
+index 96ef087a691..e252116464e 100644
+--- a/extensions/resteasy-reactive/rest-client-reactive/runtime/src/main/java/io/quarkus/rest/client/reactive/runtime/RestClientBuilderImpl.java
++++ b/extensions/resteasy-reactive/rest-client-reactive/runtime/src/main/java/io/quarkus/rest/client/reactive/runtime/RestClientBuilderImpl.java
+@@ -356,6 +356,8 @@ public class RestClientBuilderImpl implements RestClientBuilder {
+ 
+         if (getConfiguration().hasProperty(QuarkusRestClientProperties.HTTP2)) {
+             clientBuilder.http2((Boolean) getConfiguration().getProperty(QuarkusRestClientProperties.HTTP2));
++        } else if (restClientsConfig.http2) {
++            clientBuilder.http2(true);
+         }
+ 
+         Boolean enableCompression = ConfigProvider.getConfig()

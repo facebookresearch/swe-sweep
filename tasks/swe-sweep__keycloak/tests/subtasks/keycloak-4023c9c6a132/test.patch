@@ -1,0 +1,88 @@
+diff --git a/testsuite/integration-arquillian/tests/base/src/test/java/org/keycloak/testsuite/oauth/LogoutTest.java b/testsuite/integration-arquillian/tests/base/src/test/java/org/keycloak/testsuite/oauth/LogoutTest.java
+index 338931c4f7..232e96e223 100644
+--- a/testsuite/integration-arquillian/tests/base/src/test/java/org/keycloak/testsuite/oauth/LogoutTest.java
++++ b/testsuite/integration-arquillian/tests/base/src/test/java/org/keycloak/testsuite/oauth/LogoutTest.java
+@@ -31,10 +31,13 @@ import org.keycloak.events.Details;
+ import org.keycloak.jose.jws.JWSHeader;
+ import org.keycloak.jose.jws.JWSInput;
+ import org.keycloak.models.Constants;
++import org.keycloak.protocol.ProtocolMapper;
+ import org.keycloak.protocol.oidc.OIDCConfigAttributes;
+ import org.keycloak.protocol.oidc.OIDCLoginProtocol;
++import org.keycloak.representations.AccessToken;
+ import org.keycloak.representations.LogoutToken;
+ import org.keycloak.representations.idm.ClientRepresentation;
++import org.keycloak.representations.idm.ProtocolMapperRepresentation;
+ import org.keycloak.representations.idm.RealmRepresentation;
+ import org.keycloak.representations.idm.UserRepresentation;
+ import org.keycloak.testsuite.AbstractKeycloakTest;
+@@ -43,6 +46,7 @@ import org.keycloak.testsuite.AssertEvents;
+ import org.keycloak.testsuite.admin.ApiUtil;
+ import org.keycloak.testsuite.pages.LoginPage;
+ 
++import java.util.LinkedList;
+ import java.util.List;
+ import java.util.Map;
+ 
+@@ -56,6 +60,7 @@ import org.apache.http.impl.client.HttpClientBuilder;
+ import org.keycloak.testsuite.updaters.RealmAttributeUpdater;
+ import org.keycloak.testsuite.util.ClientManager;
+ import org.keycloak.testsuite.util.Matchers;
++import org.keycloak.testsuite.util.ProtocolMapperUtil;
+ import org.keycloak.testsuite.util.OAuthClient;
+ import org.keycloak.testsuite.util.RealmBuilder;
+ import org.keycloak.testsuite.util.TokenSignatureUtil;
+@@ -325,6 +330,53 @@ public class LogoutTest extends AbstractKeycloakTest {
+         }
+     }
+ 
++    @Test
++    public void backChannelWithPairwiseLogout() throws Exception {
++        ClientsResource clients = adminClient.realm(oauth.getRealm()).clients();
++        ClientRepresentation rep = clients.findByClientId(oauth.getClientId()).get(0);
++
++        rep.getAttributes().put(OIDCConfigAttributes.BACKCHANNEL_LOGOUT_URL, oauth.APP_ROOT + "/admin/backchannelLogout");
++        List<ProtocolMapperRepresentation> mappers = new LinkedList<>();
++        mappers.add(ProtocolMapperUtil.createPairwiseMapper("","123456"));
++        rep.setProtocolMappers(mappers);
++
++        ClientResource clientResource = clients.get(rep.getId());
++        clientResource.update(rep);
++
++        try {
++            oauth.doLogin("test-user@localhost", "password");
++
++            String code = oauth.getCurrentQuery().get(OAuth2Constants.CODE);
++
++            oauth.clientSessionState("client-session");
++
++            OAuthClient.AccessTokenResponse tokenResponse = oauth.doAccessTokenRequest(code, "password");
++            AccessToken accessToken = new JWSInput(tokenResponse.getAccessToken()).readJsonContent(AccessToken.class);
++            String idTokenString = tokenResponse.getIdToken();
++            String logoutUrl = oauth.getLogoutUrl()
++                    .idTokenHint(idTokenString)
++                    .postLogoutRedirectUri(oauth.APP_AUTH_ROOT)
++                    .build();
++
++            try (CloseableHttpClient c = HttpClientBuilder.create().disableRedirectHandling().build();
++                 CloseableHttpResponse response = c.execute(new HttpGet(logoutUrl))) {
++                MatcherAssert.assertThat(response, Matchers.statusCodeIsHC(Status.FOUND));
++                MatcherAssert.assertThat(response.getFirstHeader(HttpHeaders.LOCATION).getValue(), is(oauth.APP_AUTH_ROOT));
++            }
++
++            String rawLogoutToken = testingClient.testApp().getBackChannelRawLogoutToken();
++            JWSInput jwsInput = new JWSInput(rawLogoutToken);
++            LogoutToken logoutToken = jwsInput.readJsonContent(LogoutToken.class);
++            validateLogoutToken(logoutToken);
++            JWSHeader logoutTokenHeader = jwsInput.getHeader();
++            assertEquals("logout+jwt", logoutTokenHeader.getType());
++            assertEquals(accessToken.getSubject(), logoutToken.getSubject());
++        } finally {
++            rep.getAttributes().put(OIDCConfigAttributes.BACKCHANNEL_LOGOUT_URL, "");
++            clientResource.update(rep);
++        }
++    }
++
+     /**
+      * Validate the token matches the spec at <a href="https://openid.net/specs/openid-connect-backchannel-1_0.html#LogoutToken">OpenID Connect Back-Channel Logout 1.0 incorporating errata set 1</a>
+      */

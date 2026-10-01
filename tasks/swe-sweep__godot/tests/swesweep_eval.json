@@ -1,0 +1,209 @@
+{
+  "build_jobs": 4,
+  "container_repo": "/godot",
+  "evaluation": {
+    "suite": {
+      "binary": "bin/godot.linuxbsd.editor.dev.x86_64",
+      "build_cmd": "scons platform=linuxbsd target=editor tests=yes dev_build=yes debug_symbols=no module_text_server_fb_enabled=yes -j {jobs}",
+      "corpus_cases": [
+        {
+          "case": "Script compilation and runtime",
+          "glob": "modules/gdscript/tests/scripts/**"
+        }
+      ],
+      "extra_args": [
+        "--test"
+      ],
+      "test_re": "^(?:tests/|modules/[^/]+/tests/)",
+      "type": "doctest"
+    }
+  },
+  "upstream_image": "pandora-maxbug-godot:4.3-stable",
+  "n_base_passing": 2218,
+  "n_base_test_ignore": 0,
+  "oracle_digest": "42cea3e84adede403be32d16216532455295338045ffc29535bc2afdb0292274",
+  "oracle_pristine_paths": [],
+  "upstream_commit": "9f7399e15e6172900e0591deb5a57a45769d8205",
+  "reproduction": {
+    "build_timeout": 5400,
+    "needs_build": false,
+    "suite": {
+      "binary": "bin/godot.linuxbsd.editor.dev.x86_64",
+      "build_cmd": "scons platform=linuxbsd target=editor tests=yes dev_build=yes debug_symbols=no module_text_server_fb_enabled=yes -j {jobs}",
+      "corpus_cases": [
+        {
+          "case": "Script compilation and runtime",
+          "glob": "modules/gdscript/tests/scripts/**"
+        }
+      ],
+      "extra_args": [
+        "--test"
+      ],
+      "test_re": "^(?:tests/|modules/[^/]+/tests/)",
+      "type": "doctest"
+    },
+    "test_timeout": 5400
+  },
+  "schema": 2,
+  "subtasks": [
+    {
+      "f2p": [
+        "[SceneTree][CodeEdit] indent/[CodeEdit] convert indent to tabs"
+      ],
+      "id": "godot-141d838cb0a9",
+      "target_files": [
+        "scene/gui/code_edit.cpp"
+      ]
+    },
+    {
+      "f2p": [
+        "Script compilation and runtime"
+      ],
+      "id": "godot-1487db8f8067",
+      "target_files": [
+        "modules/gdscript/gdscript_byte_codegen.cpp"
+      ]
+    },
+    {
+      "f2p": [
+        "[TextServer] Init, font loading and shaping/[TextServer] Text layout: Line break and align points"
+      ],
+      "id": "godot-16e44a6ee5fd",
+      "target_files": [
+        "servers/text_server.cpp",
+        "servers/text_server.h"
+      ]
+    },
+    {
+      "f2p": [
+        "[SceneTree][Control] Set position does not cause size side-effects/Shrinks after setting position and smaller custom minimum size (while keeping offsets)",
+        "[SceneTree][Control] Set position does not cause size side-effects/Shrinks after setting position and smaller custom minimum size (without keeping offsets)"
+      ],
+      "id": "godot-1ae6171b9aa5",
+      "target_files": [
+        "scene/gui/control.cpp",
+        "scene/gui/control.h"
+      ]
+    },
+    {
+      "f2p": [
+        "[PackedScene] Signals Preserved when Packing Scene/Signals that should not be saved"
+      ],
+      "id": "godot-1c09cb9eb560",
+      "target_files": [
+        "core/object/object.h",
+        "scene/resources/packed_scene.cpp"
+      ]
+    },
+    {
+      "f2p": [
+        "[workspace][resolve_symbol]/Documentation is correctly set"
+      ],
+      "id": "godot-2a35121cb587",
+      "target_files": [
+        "modules/gdscript/language_server/gdscript_extend_parser.cpp"
+      ]
+    },
+    {
+      "f2p": [
+        "[SceneTree][TextEdit] small height value"
+      ],
+      "id": "godot-3cec1823b69a",
+      "target_files": [
+        "scene/gui/text_edit.cpp"
+      ]
+    },
+    {
+      "f2p": [
+        "[Object] Destruction at the end of the call chain is safe/Within callp()/Through call()"
+      ],
+      "id": "godot-4a105bb044ef",
+      "target_files": [
+        "core/object/object.cpp"
+      ]
+    },
+    {
+      "f2p": [
+        "[Projection] Orthogonal projection matrix inversion"
+      ],
+      "id": "godot-5a307011ac8b",
+      "target_files": [
+        "core/math/projection.cpp"
+      ]
+    },
+    {
+      "f2p": [
+        "Script compilation and runtime"
+      ],
+      "id": "godot-6191f779e20c",
+      "target_files": [
+        "modules/gdscript/gdscript_utility_functions.cpp"
+      ]
+    },
+    {
+      "f2p": [
+        "[String] Splitting"
+      ],
+      "id": "godot-663987b95b26",
+      "target_files": [
+        "core/ustring.cpp"
+      ]
+    },
+    {
+      "f2p": [
+        "[String] sprintf"
+      ],
+      "id": "godot-6ca6a961c8e1",
+      "target_files": [
+        "core/string/ustring.cpp"
+      ]
+    },
+    {
+      "f2p": [
+        "[workspace][resolve_symbol]/selectionRange of root class must be inside range"
+      ],
+      "id": "godot-979d80320b3c",
+      "target_files": [
+        "modules/gdscript/gdscript_parser.cpp"
+      ]
+    },
+    {
+      "f2p": [
+        "[Geometry3D] Does Segment Intersect Convex"
+      ],
+      "id": "godot-ad060d7c9da5",
+      "target_files": [
+        "core/math/geometry_3d.h"
+      ]
+    },
+    {
+      "f2p": [
+        "[Color] Linear <-> sRGB conversion"
+      ],
+      "id": "godot-bddc285d34b7",
+      "target_files": [
+        "core/math/color.h"
+      ]
+    },
+    {
+      "f2p": [
+        "[Basis] Euler conversions"
+      ],
+      "id": "godot-c985347ac8f8",
+      "target_files": [
+        "core/math/basis.cpp"
+      ]
+    },
+    {
+      "f2p": [
+        "Script compilation and runtime"
+      ],
+      "id": "godot-dc71181af3af",
+      "target_files": [
+        "modules/gdscript/gdscript_analyzer.cpp"
+      ]
+    }
+  ],
+  "task": "godot",
+  "version": "4.3-stable"
+}

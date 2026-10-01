@@ -1,0 +1,15 @@
+diff --git a/test/sql/subquery/scalar/test_correlated_subquery.test b/test/sql/subquery/scalar/test_correlated_subquery.test
+index 30ee7482c0..6f63a38710 100644
+--- a/test/sql/subquery/scalar/test_correlated_subquery.test
++++ b/test/sql/subquery/scalar/test_correlated_subquery.test
+@@ -192,3 +192,10 @@ NULL	NULL
+ 2	42
+ 3	42
+ 
++query II
++SELECT i, (SELECT CASE WHEN sum(i) > 1 THEN 0 ELSE 1 END FROM integers WHERE i=i1.i) FROM integers i1;
++----
++1	1
++2	0
++3	0
++NULL	1

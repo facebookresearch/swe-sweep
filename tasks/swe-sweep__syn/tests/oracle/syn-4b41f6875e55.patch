@@ -1,0 +1,22 @@
+diff --git a/src/item.rs b/src/item.rs
+index 883ecc79..c5083d05 100644
+--- a/src/item.rs
++++ b/src/item.rs
+@@ -2032,14 +2032,14 @@ pub mod parsing {
+         let mut supertraits = Punctuated::new();
+         if colon_token.is_some() {
+             loop {
++                if input.peek(Token![where]) || input.peek(token::Brace) {
++                    break;
++                }
+                 supertraits.push_value(input.parse()?);
+                 if input.peek(Token![where]) || input.peek(token::Brace) {
+                     break;
+                 }
+                 supertraits.push_punct(input.parse()?);
+-                if input.peek(Token![where]) || input.peek(token::Brace) {
+-                    break;
+-                }
+             }
+         }
+ 

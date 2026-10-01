@@ -1,0 +1,127 @@
+diff --git a/tests/async/t22210.nim b/tests/async/t22210.nim
+new file mode 100644
+index 000000000..fcf939472
+--- /dev/null
++++ b/tests/async/t22210.nim
+@@ -0,0 +1,41 @@
++discard """
++output: '''
++stage 1
++stage 2
++stage 3
++(status: 200, data: "SOMEDATA")
++'''
++"""
++
++import std/asyncdispatch
++
++
++# bug #22210
++type
++  ClientResponse = object
++    status*: int
++    data*: string
++
++proc subFoo1(): Future[int] {.async.} =
++  await sleepAsync(100)
++  return 200
++
++proc subFoo2(): Future[string] {.async.} =
++  await sleepAsync(100)
++  return "SOMEDATA"
++
++proc testFoo(): Future[ClientResponse] {.async.} =
++  try:
++    let status = await subFoo1()
++    doAssert(status == 200)
++    let data = await subFoo2()
++    return ClientResponse(status: status, data: data)
++  finally:
++    echo "stage 1"
++    await sleepAsync(100)
++    echo "stage 2"
++    await sleepAsync(200)
++    echo "stage 3"
++
++when isMainModule:
++  echo waitFor testFoo()
+\ No newline at end of file
+diff --git a/tests/async/t22210_2.nim b/tests/async/t22210_2.nim
+new file mode 100644
+index 000000000..9db664a32
+--- /dev/null
++++ b/tests/async/t22210_2.nim
+@@ -0,0 +1,73 @@
++import std/asyncdispatch
++
++
++# bug #22210
++type
++  ClientResponse = object
++    status*: int
++    data*: string
++
++proc subFoo1(): Future[int] {.async.} =
++  await sleepAsync(100)
++  return 200
++
++proc subFoo2(): Future[string] {.async.} =
++  await sleepAsync(100)
++  return "SOMEDATA"
++
++
++proc testFoo2(): Future[ClientResponse] {.async.} =
++  var flag = 0
++  try:
++    let status = await subFoo1()
++    doAssert(status == 200)
++    let data = await subFoo2()
++    result = ClientResponse(status: status, data: data)
++  finally:
++    inc flag
++    await sleepAsync(100)
++    inc flag
++    await sleepAsync(200)
++    inc flag
++  doAssert flag == 3
++
++discard waitFor testFoo2()
++
++proc testFoo3(): Future[ClientResponse] {.async.} =
++  var flag = 0
++  try:
++    let status = await subFoo1()
++    doAssert(status == 200)
++    let data = await subFoo2()
++    if false:
++      return ClientResponse(status: status, data: data)
++  finally:
++    inc flag
++    await sleepAsync(100)
++    inc flag
++    await sleepAsync(200)
++    inc flag
++  doAssert flag == 3
++
++discard waitFor testFoo3()
++
++
++proc testFoo4(): Future[ClientResponse] {.async.} =
++  var flag = 0
++  try:
++    let status = await subFoo1()
++    doAssert(status == 200)
++    let data = await subFoo2()
++    if status == 200:
++      return ClientResponse(status: status, data: data)
++    else:
++      return ClientResponse()
++  finally:
++    inc flag
++    await sleepAsync(100)
++    inc flag
++    await sleepAsync(200)
++    inc flag
++  doAssert flag == 3
++
++discard waitFor testFoo4()

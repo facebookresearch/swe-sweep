@@ -1,0 +1,132 @@
+{
+  "build_jobs": 4,
+  "container_repo": "/isort",
+  "evaluation": {
+    "paths": "tests",
+    "test_dirs": [
+      "scripts"
+    ]
+  },
+  "upstream_image": "pandora-maxbug-isort:5.10.1",
+  "n_base_passing": 502,
+  "n_base_test_ignore": 38,
+  "oracle_digest": "92903eae8b7d861099042a2b6031c99313a92379d16d851a576dbfb88546e22f",
+  "oracle_pristine_paths": [],
+  "upstream_commit": "9f7399e15e6172900e0591deb5a57a45769d8205",
+  "reproduction": {
+    "needs_build": false,
+    "suite": "pytest",
+    "test_timeout": 900
+  },
+  "schema": 2,
+  "subtasks": [
+    {
+      "f2p": [
+        "tests.unit.test_regressions::test_check_code_should_not_false_positive_with_float_to_top_and_add_imports"
+      ],
+      "id": "isort-11305550df85",
+      "target_files": [
+        "isort/core.py"
+      ]
+    },
+    {
+      "f2p": [
+        "tests.unit.test_wrap_modes::test_hanging_indent__with_include_trailing_comma__expect_same_result[True]"
+      ],
+      "id": "isort-8d0bfdb26cc7",
+      "target_files": [
+        "isort/wrap_modes.py"
+      ]
+    },
+    {
+      "f2p": [
+        "tests.unit.test_ticketed_features::test_unindented_comment_in_indented_block_issue_1899"
+      ],
+      "id": "isort-94f352e5f001",
+      "target_files": [
+        "isort/core.py"
+      ]
+    },
+    {
+      "f2p": [
+        "tests.unit.test_regressions::test_noqa_wrap_mode_idempotent_with_existing_comment"
+      ],
+      "id": "isort-9f3907320b71",
+      "target_files": [
+        "isort/wrap_modes.py"
+      ]
+    },
+    {
+      "f2p": [
+        "tests.unit.test_ticketed_features::test_comment_not_duplicated_across_from_imports_2282"
+      ],
+      "id": "isort-a1efd1180fb6",
+      "target_files": [
+        "isort/output.py"
+      ]
+    },
+    {
+      "f2p": [
+        "tests.unit.test_main::test_cli_src_path_glob_pattern"
+      ],
+      "id": "isort-c20c8b008cba",
+      "target_files": [
+        "isort/main.py"
+      ]
+    },
+    {
+      "f2p": [
+        "tests.unit.test_isort::test_to_ensure_correctly_handling_of_whitespace_only_issue_811[\\t]"
+      ],
+      "id": "isort-c7228e5a688b",
+      "target_files": [
+        "isort/format.py"
+      ]
+    },
+    {
+      "f2p": [
+        "tests.unit.test_main::test_config_root_interaction_with_resolve_all_configs"
+      ],
+      "id": "isort-c77b6b220ac0",
+      "target_files": [
+        "isort/main.py"
+      ]
+    },
+    {
+      "f2p": [
+        "tests.unit.test_isort::test_skip_comment_is_no_comment"
+      ],
+      "id": "isort-d2839c9cfac8",
+      "target_files": [
+        "isort/core.py",
+        "isort/settings.py"
+      ]
+    },
+    {
+      "f2p": [
+        "tests.unit.test_isort::test_dunder_future_import[# Copyright 2026\\nimport __future__\\nfrom __future__ import annotations\\n-# Copyright 2026\\nfrom __future__ import annotations\\nimport __future__\\n]",
+        "tests.unit.test_isort::test_dunder_future_import[from __future__ import annotations\\nimport __future__\\n-from __future__ import annotations\\nimport __future__\\n]",
+        "tests.unit.test_isort::test_dunder_future_import[from __future__ import annotations\\nimport __future__\\nfrom __future__ import annotations\\n-from __future__ import annotations\\nimport __future__\\n]",
+        "tests.unit.test_isort::test_dunder_future_import[import __future__ as future\\nfrom __future__ import annotations\\n-from __future__ import annotations\\nimport __future__ as future\\n]",
+        "tests.unit.test_isort::test_dunder_future_import[import __future__\\n\\nfrom __future__ import generator_stop\\nfrom __future__ import annotations\\n\\nfrom concurrent.futures import ThreadPoolExecutor\\n\\n-from __future__ import annotations, generator_stop\\nimport __future__\\n\\nfrom concurrent.futures import ThreadPoolExecutor\\n]",
+        "tests.unit.test_isort::test_dunder_future_import[import __future__\\nfrom __future__ import *\\n-from __future__ import *\\nimport __future__\\n]",
+        "tests.unit.test_isort::test_dunder_future_import[import sys\\nfrom __future__ import annotations\\nimport os\\nimport __future__\\nfrom pathlib import Path\\n-from __future__ import annotations\\nimport __future__\\n\\nimport os\\nimport sys\\nfrom pathlib import Path\\n]"
+      ],
+      "id": "isort-faa9d0e85ff2",
+      "target_files": [
+        "isort/output.py"
+      ]
+    },
+    {
+      "f2p": [
+        "tests.unit.test_isort::test_line_endings_are_detected_ignoring_whitespace[\\x0c]"
+      ],
+      "id": "isort-fe2af38f2077",
+      "target_files": [
+        "isort/core.py"
+      ]
+    }
+  ],
+  "task": "isort",
+  "version": "5.10.1"
+}

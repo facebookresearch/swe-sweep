@@ -1,0 +1,46 @@
+diff --git a/compiler/semexprs.nim b/compiler/semexprs.nim
+index 302c46f39..bc9ae54a1 100644
+--- a/compiler/semexprs.nim
++++ b/compiler/semexprs.nim
+@@ -2378,6 +2378,22 @@
+   else:
+     result = semDirectOp(c, n, flags)
+ 
++proc semNimvmBranch(c: PContext, n: PNode): PNode =
++  let
++    oldOptionStack = c.optionStack[0..^1]
++    oldOptions = c.config.options
++    oldNotes = c.config.notes
++    oldWarningAsErrors = c.config.warningAsErrors
++    oldFeatures = c.features
++  try:
++    result = semExpr(c, n)
++  finally:
++    c.optionStack = oldOptionStack
++    c.config.options = oldOptions
++    c.config.notes = oldNotes
++    c.config.warningAsErrors = oldWarningAsErrors
++    c.features = oldFeatures
++
+ proc semWhen(c: PContext, n: PNode, semCheck = true): PNode =
+   # If semCheck is set to false, ``when`` will return the verbatim AST of
+   # the correct branch. Otherwise the AST will be passed through semStmt.
+@@ -2413,7 +2429,7 @@
+       checkSonsLen(it, 2, c.config)
+       if whenNimvm:
+         if semCheck:
+-          it[1] = semExpr(c, it[1])
++          it[1] = semNimvmBranch(c, it[1])
+           typ = commonType(c, typ, it[1].typ)
+         result = n # when nimvm is not elimited until codegen
+       else:
+@@ -2441,7 +2457,8 @@
+       checkSonsLen(it, 1, c.config)
+       if result == nil or whenNimvm:
+         if semCheck:
+-          it[0] = semExpr(c, it[0])
++          it[0] = if whenNimvm: semNimvmBranch(c, it[0])
++                  else: semExpr(c, it[0])
+           typ = commonType(c, typ, it[0].typ)
+         if result == nil:
+           result = it[0]

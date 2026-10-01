@@ -1,0 +1,16 @@
+diff --git a/tests/lean/run/3242.lean b/tests/lean/run/3242.lean
+index c9ce4f9e1d..b1dac64038 100644
+--- a/tests/lean/run/3242.lean
++++ b/tests/lean/run/3242.lean
+@@ -11,3 +11,11 @@ inductive R (F: α → α → Prop) (a : α) : α → Prop where
+ inductive And₂ (F: α → α → Prop) (a : α) : α → (Nat → α) → Nat → Prop where
+   | mk (b : α) (f : Nat → α) (n : Nat): R F a (f n) → F (f n) b → And₂ F a b f n
+ end
++
++structure Salg (n k: Nat) where
++  D: Type
++
++mutual
++inductive Ins (salg: Salg n k) : salg.D → Prop
++inductive Out (salg: Salg n k) : salg.D → Prop
++end

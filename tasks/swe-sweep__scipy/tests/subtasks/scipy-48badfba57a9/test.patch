@@ -1,0 +1,64 @@
+diff --git a/scipy/odr/tests/test_odr.py b/scipy/odr/tests/test_odr.py
+index 3b30d46f1e..d3aa91595b 100644
+--- a/scipy/odr/tests/test_odr.py
++++ b/scipy/odr/tests/test_odr.py
+@@ -1,12 +1,14 @@
+ from __future__ import division, print_function, absolute_import
+ 
++import pickle
++
+ # SciPy imports.
+ import numpy as np
+ from numpy import pi
+ from numpy.testing import (assert_array_almost_equal,
+                            assert_equal, assert_warns)
+ from pytest import raises as assert_raises
+-from scipy.odr import Data, Model, ODR, RealData, OdrStop, OdrWarning
++from scipy.odr import Data, Model, ODR, RealData, OdrStop, OdrWarning, unilinear
+ 
+ 
+ class TestODR(object):
+@@ -352,3 +354,43 @@ class TestODR(object):
+         odr2 = ODR(data, model, beta0=np.array([1.]), ifixx=fix)
+         sol2 = odr2.run()
+         assert_equal(sol1.beta, sol2.beta)
++
++    def test_pickling_data(self):
++        x = np.linspace(0.0, 5.0)
++        y = 1.0 * x + 2.0
++        data = Data(x, y)
++
++        obj_pickle = pickle.dumps(data)
++        del data
++        pickle.loads(obj_pickle)
++
++    def test_pickling_real_data(self):
++        x = np.linspace(0.0, 5.0)
++        y = 1.0 * x + 2.0
++        data = RealData(x, y)
++
++        obj_pickle = pickle.dumps(data)
++        del data
++        pickle.loads(obj_pickle)
++
++    def test_pickling_model(self):
++        obj_pickle = pickle.dumps(unilinear)
++        pickle.loads(obj_pickle)
++
++    def test_pickling_odr(self):
++        x = np.linspace(0.0, 5.0)
++        y = 1.0 * x + 2.0
++        odr_obj = ODR(Data(x, y), unilinear)
++
++        obj_pickle = pickle.dumps(odr_obj)
++        del odr_obj
++        pickle.loads(obj_pickle)
++
++    def test_pickling_output(self):
++        x = np.linspace(0.0, 5.0)
++        y = 1.0 * x + 2.0
++        output = ODR(Data(x, y), unilinear).run
++
++        obj_pickle = pickle.dumps(output)
++        del output
++        pickle.loads(obj_pickle)

@@ -1,0 +1,14 @@
+diff --git a/src/language-js/print/object.js b/src/language-js/print/object.js
+index d1d788fb4..32fcd58a8 100644
+--- a/src/language-js/print/object.js
++++ b/src/language-js/print/object.js
+@@ -159,7 +159,8 @@ function printObject(path, options, print) {
+         ((lastElem.type === "TSPropertySignature" ||
+           lastElem.type === "TSCallSignatureDeclaration" ||
+           lastElem.type === "TSMethodSignature" ||
+-          lastElem.type === "TSConstructSignatureDeclaration") &&
++          lastElem.type === "TSConstructSignatureDeclaration" ||
++          lastElem.type === "TSIndexSignature") &&
+           hasComment(lastElem, CommentCheckFlags.PrettierIgnore))))
+   );
+ 

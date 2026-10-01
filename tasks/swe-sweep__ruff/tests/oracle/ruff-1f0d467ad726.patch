@@ -1,0 +1,137 @@
+diff --git a/crates/ruff_linter/src/rules/flake8_errmsg/rules/string_in_exception.rs b/crates/ruff_linter/src/rules/flake8_errmsg/rules/string_in_exception.rs
+index 42bbf90..2a52531 100644
+--- a/crates/ruff_linter/src/rules/flake8_errmsg/rules/string_in_exception.rs
++++ b/crates/ruff_linter/src/rules/flake8_errmsg/rules/string_in_exception.rs
+@@ -176,19 +176,67 @@ impl Violation for DotFormatInException {
+ 
+ /// EM101, EM102, EM103
+ pub(crate) fn string_in_exception(checker: &mut Checker, stmt: &Stmt, exc: &Expr) {
+-    if let Expr::Call(ast::ExprCall {
++    let Expr::Call(ast::ExprCall {
++        func,
+         arguments: Arguments { args, .. },
+         ..
+     }) = exc
+-    {
+-        if let Some(first) = args.first() {
+-            match first {
+-                // Check for string literals.
+-                Expr::StringLiteral(ast::ExprStringLiteral { value: string, .. }) => {
+-                    if checker.enabled(Rule::RawStringInException) {
+-                        if string.len() >= checker.settings.flake8_errmsg.max_string_length {
++    else {
++        return;
++    };
++
++    if checker.semantic().match_typing_expr(func, "cast") {
++        return;
++    }
++
++    if let Some(first) = args.first() {
++        match first {
++            // Check for string literals.
++            Expr::StringLiteral(ast::ExprStringLiteral { value: string, .. }) => {
++                if checker.enabled(Rule::RawStringInException) {
++                    if string.len() >= checker.settings.flake8_errmsg.max_string_length {
++                        let mut diagnostic =
++                            Diagnostic::new(RawStringInException, first.range());
++                        if let Some(indentation) =
++                            whitespace::indentation(checker.source(), stmt)
++                        {
++                            diagnostic.set_fix(generate_fix(
++                                stmt,
++                                first,
++                                indentation,
++                                checker.stylist(),
++                                checker.locator(),
++                            ));
++                        }
++                        checker.diagnostics.push(diagnostic);
++                    }
++                }
++            }
++            // Check for f-strings.
++            Expr::FString(_) => {
++                if checker.enabled(Rule::FStringInException) {
++                    let mut diagnostic = Diagnostic::new(FStringInException, first.range());
++                    if let Some(indentation) = whitespace::indentation(checker.source(), stmt) {
++                        diagnostic.set_fix(generate_fix(
++                            stmt,
++                            first,
++                            indentation,
++                            checker.stylist(),
++                            checker.locator(),
++                        ));
++                    }
++                    checker.diagnostics.push(diagnostic);
++                }
++            }
++            // Check for .format() calls.
++            Expr::Call(ast::ExprCall { func, .. }) => {
++                if checker.enabled(Rule::DotFormatInException) {
++                    if let Expr::Attribute(ast::ExprAttribute { value, attr, .. }) =
++                        func.as_ref()
++                    {
++                        if attr == "format" && value.is_literal_expr() {
+                             let mut diagnostic =
+-                                Diagnostic::new(RawStringInException, first.range());
++                                Diagnostic::new(DotFormatInException, first.range());
+                             if let Some(indentation) =
+                                 whitespace::indentation(checker.source(), stmt)
+                             {
+@@ -204,53 +252,13 @@ pub(crate) fn string_in_exception(checker: &mut Checker, stmt: &Stmt, exc: &Expr
+                         }
+                     }
+                 }
+-                // Check for f-strings.
+-                Expr::FString(_) => {
+-                    if checker.enabled(Rule::FStringInException) {
+-                        let mut diagnostic = Diagnostic::new(FStringInException, first.range());
+-                        if let Some(indentation) = whitespace::indentation(checker.source(), stmt) {
+-                            diagnostic.set_fix(generate_fix(
+-                                stmt,
+-                                first,
+-                                indentation,
+-                                checker.stylist(),
+-                                checker.locator(),
+-                            ));
+-                        }
+-                        checker.diagnostics.push(diagnostic);
+-                    }
+-                }
+-                // Check for .format() calls.
+-                Expr::Call(ast::ExprCall { func, .. }) => {
+-                    if checker.enabled(Rule::DotFormatInException) {
+-                        if let Expr::Attribute(ast::ExprAttribute { value, attr, .. }) =
+-                            func.as_ref()
+-                        {
+-                            if attr == "format" && value.is_literal_expr() {
+-                                let mut diagnostic =
+-                                    Diagnostic::new(DotFormatInException, first.range());
+-                                if let Some(indentation) =
+-                                    whitespace::indentation(checker.source(), stmt)
+-                                {
+-                                    diagnostic.set_fix(generate_fix(
+-                                        stmt,
+-                                        first,
+-                                        indentation,
+-                                        checker.stylist(),
+-                                        checker.locator(),
+-                                    ));
+-                                }
+-                                checker.diagnostics.push(diagnostic);
+-                            }
+-                        }
+-                    }
+-                }
+-                _ => {}
+             }
++            _ => {}
+         }
+     }
+ }
+ 
++
+ /// Generate the [`Fix`] for EM001, EM002, and EM003 violations.
+ ///
+ /// This assumes that the violation is fixable and that the patch should

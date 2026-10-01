@@ -1,0 +1,154 @@
+diff --git a/numpy/lib/function_base.py b/numpy/lib/function_base.py
+index 95edb95..7c1406a 100644
+--- a/numpy/lib/function_base.py
++++ b/numpy/lib/function_base.py
+@@ -3196,7 +3196,7 @@ def msort(a):
+     return b
+ 
+ 
+-def _ureduce(a, func, **kwargs):
++def _ureduce(a, func, keepdims=False, **kwargs):
+     """
+     Internal Function.
+     Call `func` with `a` as first argument swapping the axes to use extended
+@@ -3224,13 +3224,20 @@ def _ureduce(a, func, **kwargs):
+     """
+     a = np.asanyarray(a)
+     axis = kwargs.get('axis', None)
++    out = kwargs.get('out', None)
++
++    if keepdims is np._NoValue:
++        keepdims = False
++
++    nd = a.ndim
+     if axis is not None:
+-        keepdim = list(a.shape)
+-        nd = a.ndim
+         axis = _nx.normalize_axis_tuple(axis, nd)
+ 
+-        for ax in axis:
+-            keepdim[ax] = 1
++        if keepdims:
++            if out is not None:
++                index_out = tuple(
++                    0 if i in axis else slice(None) for i in range(nd))
++                kwargs['out'] = out[(Ellipsis, ) + index_out]
+ 
+         if len(axis) == 1:
+             kwargs['axis'] = axis[0]
+@@ -3243,12 +3250,27 @@ def _ureduce(a, func, **kwargs):
+             # merge reduced axis
+             a = a.reshape(a.shape[:nkeep] + (-1,))
+             kwargs['axis'] = -1
+-        keepdim = tuple(keepdim)
+     else:
+-        keepdim = (1,) * a.ndim
++        if keepdims:
++            if out is not None:
++                index_out = (0, ) * nd
++                kwargs['out'] = out[(Ellipsis, ) + index_out]
+ 
+     r = func(a, **kwargs)
+-    return r, keepdim
++
++    if out is not None:
++        return out
++
++    if keepdims:
++        if axis is None:
++            index_r = (np.newaxis, ) * nd
++        else:
++            index_r = tuple(
++                np.newaxis if i in axis else slice(None)
++                for i in range(nd))
++        r = r[(Ellipsis, ) + index_r]
++
++    return r
+ 
+ 
+ def median(a, axis=None, out=None, overwrite_input=False, keepdims=False):
+@@ -3332,12 +3354,8 @@ def median(a, axis=None, out=None, overwrite_input=False, keepdims=False):
+     >>> assert not np.all(a==b)
+ 
+     """
+-    r, k = _ureduce(a, func=_median, axis=axis, out=out,
++    return _ureduce(a, func=_median, keepdims=keepdims, axis=axis, out=out,
+                     overwrite_input=overwrite_input)
+-    if keepdims:
+-        return r.reshape(k)
+-    else:
+-        return r
+ 
+ def _median(a, axis=None, out=None, overwrite_input=False):
+     # can't be reasonably be implemented in terms of percentile as we have to
+@@ -3647,13 +3665,10 @@ def quantile(a, q, axis=None, out=None,
+ def _quantile_unchecked(a, q, axis=None, out=None, overwrite_input=False,
+                         interpolation='linear', keepdims=False):
+     """Assumes that q is in [0, 1], and is an ndarray"""
+-    r, k = _ureduce(a, func=_quantile_ureduce_func, q=q, axis=axis, out=out,
++    return _ureduce(a, func=_quantile_ureduce_func, q=q,
++                    keepdims=keepdims, axis=axis, out=out,
+                     overwrite_input=overwrite_input,
+                     interpolation=interpolation)
+-    if keepdims:
+-        return r.reshape(q.shape + k)
+-    else:
+-        return r
+ 
+ 
+ def _quantile_is_valid(q):
+diff --git a/numpy/lib/nanfunctions.py b/numpy/lib/nanfunctions.py
+index abd2da1..c574917 100644
+--- a/numpy/lib/nanfunctions.py
++++ b/numpy/lib/nanfunctions.py
+@@ -1018,12 +1018,9 @@ def nanmedian(a, axis=None, out=None, overwrite_input=False, keepdims=np._NoValu
+     if a.size == 0:
+         return np.nanmean(a, axis, out=out, keepdims=keepdims)
+ 
+-    r, k = function_base._ureduce(a, func=_nanmedian, axis=axis, out=out,
++    return function_base._ureduce(a, func=_nanmedian, keepdims=keepdims,
++                                  axis=axis, out=out,
+                                   overwrite_input=overwrite_input)
+-    if keepdims and keepdims is not np._NoValue:
+-        return r.reshape(k)
+-    else:
+-        return r
+ 
+ 
+ def nanpercentile(a, q, axis=None, out=None, overwrite_input=False,
+@@ -1258,14 +1255,11 @@ def _nanquantile_unchecked(a, q, axis=None, out=None, overwrite_input=False,
+     if a.size == 0:
+         return np.nanmean(a, axis, out=out, keepdims=keepdims)
+ 
+-    r, k = function_base._ureduce(
+-        a, func=_nanquantile_ureduce_func, q=q, axis=axis, out=out,
++    return function_base._ureduce(
++        a, func=_nanquantile_ureduce_func, q=q, keepdims=keepdims,
++        axis=axis, out=out,
+         overwrite_input=overwrite_input, interpolation=interpolation
+     )
+-    if keepdims and keepdims is not np._NoValue:
+-        return r.reshape(q.shape + k)
+-    else:
+-        return r
+ 
+ 
+ def _nanquantile_ureduce_func(a, q, axis=None, out=None, overwrite_input=False,
+diff --git a/numpy/ma/extras.py b/numpy/ma/extras.py
+index 3be4d36..d8b29ca 100644
+--- a/numpy/ma/extras.py
++++ b/numpy/ma/extras.py
+@@ -690,12 +690,8 @@ def median(a, axis=None, out=None, overwrite_input=False, keepdims=False):
+         else:
+             return m
+ 
+-    r, k = _ureduce(a, func=_median, axis=axis, out=out,
++    return _ureduce(a, func=_median, keepdims=keepdims, axis=axis, out=out,
+                     overwrite_input=overwrite_input)
+-    if keepdims:
+-        return r.reshape(k)
+-    else:
+-        return r
+ 
+ def _median(a, axis=None, out=None, overwrite_input=False):
+     # when an unmasked NaN is present return it, so we need to sort the NaN

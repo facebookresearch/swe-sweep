@@ -1,0 +1,961 @@
+diff --git a/src/include/duckdb/optimizer/compressed_materialization.hpp b/src/include/duckdb/optimizer/compressed_materialization.hpp
+index 86422c9c60..05b8a9607b 100644
+--- a/src/include/duckdb/optimizer/compressed_materialization.hpp
++++ b/src/include/duckdb/optimizer/compressed_materialization.hpp
+@@ -8,15 +8,15 @@
+ 
+ #pragma once
+ 
+-#include "duckdb/common/unordered_set.hpp"
+-#include "duckdb/function/scalar/compressed_materialization_functions.hpp"
++#include "duckdb/common/types.hpp"
+ #include "duckdb/planner/column_binding_map.hpp"
+ #include "duckdb/storage/statistics/base_statistics.hpp"
+ 
+ namespace duckdb {
+ 
++class Optimizer;
++class ClientContext;
+ class LogicalOperator;
+-struct JoinCondition;
+ 
+ struct CMChildInfo {
+ public:
+@@ -75,14 +75,11 @@ typedef column_binding_map_t<unique_ptr<BaseStatistics>> statistics_map_t;
+ //! but only if the data enters a materializing operator
+ class CompressedMaterialization {
+ public:
+-	explicit CompressedMaterialization(ClientContext &context, Binder &binder, statistics_map_t &&statistics_map);
++	CompressedMaterialization(Optimizer &optimizer, LogicalOperator &root, statistics_map_t &statistics_map);
+ 
+ 	void Compress(unique_ptr<LogicalOperator> &op);
+ 
+ private:
+-	//! Depth-first traversal of the plan
+-	void CompressInternal(unique_ptr<LogicalOperator> &op);
+-
+ 	//! Compress materializing operators
+ 	void CompressAggregate(unique_ptr<LogicalOperator> &op);
+ 	void CompressDistinct(unique_ptr<LogicalOperator> &op);
+@@ -122,12 +119,12 @@ private:
+ 	unique_ptr<Expression> GetStringDecompress(unique_ptr<Expression> input, const BaseStatistics &stats);
+ 
+ private:
++	Optimizer &optimizer;
+ 	ClientContext &context;
+-	Binder &binder;
+-	statistics_map_t statistics_map;
+-	unordered_set<idx_t> compression_table_indices;
+-	unordered_set<idx_t> decompression_table_indices;
++	//! The root of the query plan
+ 	optional_ptr<LogicalOperator> root;
++	//! The map of ColumnBinding -> statistics for the various nodes
++	statistics_map_t &statistics_map;
+ };
+ 
+ } // namespace duckdb
+diff --git a/src/include/duckdb/optimizer/optimizer.hpp b/src/include/duckdb/optimizer/optimizer.hpp
+index 312fcc4908..a33d10c1bc 100644
+--- a/src/include/duckdb/optimizer/optimizer.hpp
++++ b/src/include/duckdb/optimizer/optimizer.hpp
+@@ -26,7 +26,10 @@ public:
+ 	unique_ptr<LogicalOperator> Optimize(unique_ptr<LogicalOperator> plan);
+ 	//! Return a reference to the client context of this optimizer
+ 	ClientContext &GetContext();
++	//! Whether the specific optimizer is disabled
++	bool OptimizerDisabled(OptimizerType type);
+ 
++public:
+ 	ClientContext &context;
+ 	Binder &binder;
+ 	ExpressionRewriter rewriter;
+diff --git a/src/include/duckdb/optimizer/statistics_propagator.hpp b/src/include/duckdb/optimizer/statistics_propagator.hpp
+index 7569909982..618c075057 100644
+--- a/src/include/duckdb/optimizer/statistics_propagator.hpp
++++ b/src/include/duckdb/optimizer/statistics_propagator.hpp
+@@ -27,7 +27,7 @@ struct BoundOrderByNode;
+ 
+ class StatisticsPropagator {
+ public:
+-	explicit StatisticsPropagator(Optimizer &optimizer);
++	StatisticsPropagator(Optimizer &optimizer, LogicalOperator &root);
+ 
+ 	unique_ptr<NodeStatistics> PropagateStatistics(unique_ptr<LogicalOperator> &node_ptr);
+ 
+@@ -37,23 +37,23 @@ public:
+ 
+ private:
+ 	//! Propagate statistics through an operator
+-	unique_ptr<NodeStatistics> PropagateStatistics(LogicalOperator &node, unique_ptr<LogicalOperator> *node_ptr);
++	unique_ptr<NodeStatistics> PropagateStatistics(LogicalOperator &node, unique_ptr<LogicalOperator> &node_ptr);
+ 
+-	unique_ptr<NodeStatistics> PropagateStatistics(LogicalFilter &op, unique_ptr<LogicalOperator> *node_ptr);
+-	unique_ptr<NodeStatistics> PropagateStatistics(LogicalGet &op, unique_ptr<LogicalOperator> *node_ptr);
+-	unique_ptr<NodeStatistics> PropagateStatistics(LogicalJoin &op, unique_ptr<LogicalOperator> *node_ptr);
+-	unique_ptr<NodeStatistics> PropagateStatistics(LogicalPositionalJoin &op, unique_ptr<LogicalOperator> *node_ptr);
+-	unique_ptr<NodeStatistics> PropagateStatistics(LogicalProjection &op, unique_ptr<LogicalOperator> *node_ptr);
+-	void PropagateStatistics(LogicalComparisonJoin &op, unique_ptr<LogicalOperator> *node_ptr);
+-	void PropagateStatistics(LogicalAnyJoin &op, unique_ptr<LogicalOperator> *node_ptr);
+-	unique_ptr<NodeStatistics> PropagateStatistics(LogicalSetOperation &op, unique_ptr<LogicalOperator> *node_ptr);
+-	unique_ptr<NodeStatistics> PropagateStatistics(LogicalAggregate &op, unique_ptr<LogicalOperator> *node_ptr);
+-	unique_ptr<NodeStatistics> PropagateStatistics(LogicalCrossProduct &op, unique_ptr<LogicalOperator> *node_ptr);
+-	unique_ptr<NodeStatistics> PropagateStatistics(LogicalLimit &op, unique_ptr<LogicalOperator> *node_ptr);
+-	unique_ptr<NodeStatistics> PropagateStatistics(LogicalOrder &op, unique_ptr<LogicalOperator> *node_ptr);
+-	unique_ptr<NodeStatistics> PropagateStatistics(LogicalWindow &op, unique_ptr<LogicalOperator> *node_ptr);
++	unique_ptr<NodeStatistics> PropagateStatistics(LogicalFilter &op, unique_ptr<LogicalOperator> &node_ptr);
++	unique_ptr<NodeStatistics> PropagateStatistics(LogicalGet &op, unique_ptr<LogicalOperator> &node_ptr);
++	unique_ptr<NodeStatistics> PropagateStatistics(LogicalJoin &op, unique_ptr<LogicalOperator> &node_ptr);
++	unique_ptr<NodeStatistics> PropagateStatistics(LogicalPositionalJoin &op, unique_ptr<LogicalOperator> &node_ptr);
++	unique_ptr<NodeStatistics> PropagateStatistics(LogicalProjection &op, unique_ptr<LogicalOperator> &node_ptr);
++	void PropagateStatistics(LogicalComparisonJoin &op, unique_ptr<LogicalOperator> &node_ptr);
++	void PropagateStatistics(LogicalAnyJoin &op, unique_ptr<LogicalOperator> &node_ptr);
++	unique_ptr<NodeStatistics> PropagateStatistics(LogicalSetOperation &op, unique_ptr<LogicalOperator> &node_ptr);
++	unique_ptr<NodeStatistics> PropagateStatistics(LogicalAggregate &op, unique_ptr<LogicalOperator> &node_ptr);
++	unique_ptr<NodeStatistics> PropagateStatistics(LogicalCrossProduct &op, unique_ptr<LogicalOperator> &node_ptr);
++	unique_ptr<NodeStatistics> PropagateStatistics(LogicalLimit &op, unique_ptr<LogicalOperator> &node_ptr);
++	unique_ptr<NodeStatistics> PropagateStatistics(LogicalOrder &op, unique_ptr<LogicalOperator> &node_ptr);
++	unique_ptr<NodeStatistics> PropagateStatistics(LogicalWindow &op, unique_ptr<LogicalOperator> &node_ptr);
+ 
+-	unique_ptr<NodeStatistics> PropagateChildren(LogicalOperator &node, unique_ptr<LogicalOperator> *node_ptr);
++	unique_ptr<NodeStatistics> PropagateChildren(LogicalOperator &node, unique_ptr<LogicalOperator> &node_ptr);
+ 
+ 	//! Return statistics from a constant value
+ 	unique_ptr<BaseStatistics> StatisticsFromValue(const Value &input);
+@@ -86,18 +86,18 @@ private:
+ 	                               const BaseStatistics &stats_before, const BaseStatistics &stats_after);
+ 
+ 	unique_ptr<BaseStatistics> PropagateExpression(unique_ptr<Expression> &expr);
+-	unique_ptr<BaseStatistics> PropagateExpression(Expression &expr, unique_ptr<Expression> *expr_ptr);
++	unique_ptr<BaseStatistics> PropagateExpression(Expression &expr, unique_ptr<Expression> &expr_ptr);
+ 
+-	unique_ptr<BaseStatistics> PropagateExpression(BoundAggregateExpression &expr, unique_ptr<Expression> *expr_ptr);
+-	unique_ptr<BaseStatistics> PropagateExpression(BoundBetweenExpression &expr, unique_ptr<Expression> *expr_ptr);
+-	unique_ptr<BaseStatistics> PropagateExpression(BoundCaseExpression &expr, unique_ptr<Expression> *expr_ptr);
+-	unique_ptr<BaseStatistics> PropagateExpression(BoundCastExpression &expr, unique_ptr<Expression> *expr_ptr);
+-	unique_ptr<BaseStatistics> PropagateExpression(BoundConjunctionExpression &expr, unique_ptr<Expression> *expr_ptr);
+-	unique_ptr<BaseStatistics> PropagateExpression(BoundFunctionExpression &expr, unique_ptr<Expression> *expr_ptr);
+-	unique_ptr<BaseStatistics> PropagateExpression(BoundComparisonExpression &expr, unique_ptr<Expression> *expr_ptr);
+-	unique_ptr<BaseStatistics> PropagateExpression(BoundConstantExpression &expr, unique_ptr<Expression> *expr_ptr);
+-	unique_ptr<BaseStatistics> PropagateExpression(BoundColumnRefExpression &expr, unique_ptr<Expression> *expr_ptr);
+-	unique_ptr<BaseStatistics> PropagateExpression(BoundOperatorExpression &expr, unique_ptr<Expression> *expr_ptr);
++	unique_ptr<BaseStatistics> PropagateExpression(BoundAggregateExpression &expr, unique_ptr<Expression> &expr_ptr);
++	unique_ptr<BaseStatistics> PropagateExpression(BoundBetweenExpression &expr, unique_ptr<Expression> &expr_ptr);
++	unique_ptr<BaseStatistics> PropagateExpression(BoundCaseExpression &expr, unique_ptr<Expression> &expr_ptr);
++	unique_ptr<BaseStatistics> PropagateExpression(BoundCastExpression &expr, unique_ptr<Expression> &expr_ptr);
++	unique_ptr<BaseStatistics> PropagateExpression(BoundConjunctionExpression &expr, unique_ptr<Expression> &expr_ptr);
++	unique_ptr<BaseStatistics> PropagateExpression(BoundFunctionExpression &expr, unique_ptr<Expression> &expr_ptr);
++	unique_ptr<BaseStatistics> PropagateExpression(BoundComparisonExpression &expr, unique_ptr<Expression> &expr_ptr);
++	unique_ptr<BaseStatistics> PropagateExpression(BoundConstantExpression &expr, unique_ptr<Expression> &expr_ptr);
++	unique_ptr<BaseStatistics> PropagateExpression(BoundColumnRefExpression &expr, unique_ptr<Expression> &expr_ptr);
++	unique_ptr<BaseStatistics> PropagateExpression(BoundOperatorExpression &expr, unique_ptr<Expression> &expr_ptr);
+ 
+ 	void ReplaceWithEmptyResult(unique_ptr<LogicalOperator> &node);
+ 
+@@ -107,6 +107,8 @@ private:
+ private:
+ 	Optimizer &optimizer;
+ 	ClientContext &context;
++	//! The root of the query plan
++	optional_ptr<LogicalOperator> root;
+ 	//! The map of ColumnBinding -> statistics for the various nodes
+ 	column_binding_map_t<unique_ptr<BaseStatistics>> statistics_map;
+ 	//! Node stats for the current node
+diff --git a/src/optimizer/compressed_materialization.cpp b/src/optimizer/compressed_materialization.cpp
+index c54918a847..a034d44fc9 100644
+--- a/src/optimizer/compressed_materialization.cpp
++++ b/src/optimizer/compressed_materialization.cpp
+@@ -1,14 +1,15 @@
+ #include "duckdb/optimizer/compressed_materialization.hpp"
+ 
+ #include "duckdb/execution/expression_executor.hpp"
++#include "duckdb/function/scalar/compressed_materialization_functions.hpp"
+ #include "duckdb/function/scalar/operators.hpp"
+ #include "duckdb/optimizer/column_binding_replacer.hpp"
++#include "duckdb/optimizer/optimizer.hpp"
+ #include "duckdb/optimizer/topn_optimizer.hpp"
+ #include "duckdb/planner/binder.hpp"
+ #include "duckdb/planner/expression/bound_constant_expression.hpp"
+ #include "duckdb/planner/expression/bound_function_expression.hpp"
+ #include "duckdb/planner/expression_iterator.hpp"
+-#include "duckdb/planner/operator/logical_comparison_join.hpp"
+ #include "duckdb/planner/operator/logical_projection.hpp"
+ 
+ namespace duckdb {
+@@ -41,9 +42,9 @@ CompressExpression::CompressExpression(unique_ptr<Expression> expression_p, uniq
+     : expression(std::move(expression_p)), stats(std::move(stats_p)) {
+ }
+ 
+-CompressedMaterialization::CompressedMaterialization(ClientContext &context_p, Binder &binder_p,
+-                                                     statistics_map_t &&statistics_map_p)
+-    : context(context_p), binder(binder_p), statistics_map(std::move(statistics_map_p)) {
++CompressedMaterialization::CompressedMaterialization(Optimizer &optimizer_p, LogicalOperator &root_p,
++                                                     statistics_map_t &statistics_map_p)
++    : optimizer(optimizer_p), context(optimizer.context), root(&root_p), statistics_map(statistics_map_p) {
+ }
+ 
+ void CompressedMaterialization::GetReferencedBindings(const Expression &expression,
+@@ -74,22 +75,21 @@ void CompressedMaterialization::UpdateBindingInfo(CompressedMaterializationInfo
+ }
+ 
+ void CompressedMaterialization::Compress(unique_ptr<LogicalOperator> &op) {
+-	root = op.get();
+-	root->ResolveOperatorTypes();
+-
+-	CompressInternal(op);
+-}
+-
+-void CompressedMaterialization::CompressInternal(unique_ptr<LogicalOperator> &op) {
+ 	if (TopN::CanOptimize(*op)) { // Let's not mess with the TopN optimizer
+-		CompressInternal(op->children[0]->children[0]);
+ 		return;
+ 	}
+ 
+-	for (auto &child : op->children) {
+-		CompressInternal(child);
++	switch (op->type) {
++	case LogicalOperatorType::LOGICAL_AGGREGATE_AND_GROUP_BY:
++	case LogicalOperatorType::LOGICAL_DISTINCT:
++	case LogicalOperatorType::LOGICAL_ORDER_BY:
++		break;
++	default:
++		return;
+ 	}
+ 
++	root->ResolveOperatorTypes();
++
+ 	switch (op->type) {
+ 	case LogicalOperatorType::LOGICAL_AGGREGATE_AND_GROUP_BY:
+ 		CompressAggregate(op);
+@@ -166,9 +166,8 @@ void CompressedMaterialization::CreateCompressProjection(unique_ptr<LogicalOpera
+ 	for (auto &compress_expr : compress_exprs) {
+ 		projections.emplace_back(std::move(compress_expr->expression));
+ 	}
+-	const auto table_index = binder.GenerateTableIndex();
++	const auto table_index = optimizer.binder.GenerateTableIndex();
+ 	auto compress_projection = make_uniq<LogicalProjection>(table_index, std::move(projections));
+-	compression_table_indices.insert(table_index);
+ 	compress_projection->ResolveOperatorTypes();
+ 
+ 	compress_projection->children.emplace_back(std::move(child_op));
+@@ -191,7 +190,7 @@ void CompressedMaterialization::CreateCompressProjection(unique_ptr<LogicalOpera
+ 		statistics_map.erase(old_binding);
+ 	}
+ 
+-	// Make sure we skip the compress operator when replacing bindings
++	// Make sure we stop at the compress operator when replacing bindings
+ 	replacer.stop_operator = child_op.get();
+ 
+ 	// Make the plan consistent again
+@@ -253,16 +252,15 @@ void CompressedMaterialization::CreateDecompressProjection(unique_ptr<LogicalOpe
+ 	}
+ 
+ 	// Replace op with a projection
+-	const auto table_index = binder.GenerateTableIndex();
++	const auto table_index = optimizer.binder.GenerateTableIndex();
+ 	auto decompress_projection = make_uniq<LogicalProjection>(table_index, std::move(decompress_exprs));
+-	decompression_table_indices.insert(table_index);
+ 
+ 	decompress_projection->children.emplace_back(std::move(op));
+ 	op = std::move(decompress_projection);
+ 
+ 	// Check if we're placing a projection on top of the root
+-	if (op->children[0].get() == root.get()) {
+-		root = op.get();
++	if (RefersToSameObject(*op->children[0], *root)) {
++		root = op;
+ 		return;
+ 	}
+ 
+diff --git a/src/optimizer/compressed_materialization/compress_aggregate.cpp b/src/optimizer/compressed_materialization/compress_aggregate.cpp
+index a61787e759..beea67d494 100644
+--- a/src/optimizer/compressed_materialization/compress_aggregate.cpp
++++ b/src/optimizer/compressed_materialization/compress_aggregate.cpp
+@@ -7,6 +7,9 @@ namespace duckdb {
+ 
+ void CompressedMaterialization::CompressAggregate(unique_ptr<LogicalOperator> &op) {
+ 	auto &aggregate = op->Cast<LogicalAggregate>();
++	if (aggregate.grouping_sets.size() > 1) {
++		return; // FIXME: we should be able to compress here but for some reason the NULL statistics ain't right
++	}
+ 	auto &groups = aggregate.groups;
+ 	column_binding_set_t group_binding_set;
+ 	for (const auto &group : groups) {
+diff --git a/src/optimizer/optimizer.cpp b/src/optimizer/optimizer.cpp
+index d314984549..ce20ca7d8a 100644
+--- a/src/optimizer/optimizer.cpp
++++ b/src/optimizer/optimizer.cpp
+@@ -6,7 +6,6 @@
+ #include "duckdb/main/query_profiler.hpp"
+ #include "duckdb/optimizer/column_lifetime_optimizer.hpp"
+ #include "duckdb/optimizer/common_aggregate_optimizer.hpp"
+-#include "duckdb/optimizer/compressed_materialization.hpp"
+ #include "duckdb/optimizer/cse_optimizer.hpp"
+ #include "duckdb/optimizer/deliminator.hpp"
+ #include "duckdb/optimizer/expression_heuristics.hpp"
+@@ -57,9 +56,13 @@ ClientContext &Optimizer::GetContext() {
+ 	return context;
+ }
+ 
+-void Optimizer::RunOptimizer(OptimizerType type, const std::function<void()> &callback) {
++bool Optimizer::OptimizerDisabled(OptimizerType type) {
+ 	auto &config = DBConfig::GetConfig(context);
+-	if (config.options.disabled_optimizers.find(type) != config.options.disabled_optimizers.end()) {
++	return config.options.disabled_optimizers.find(type) != config.options.disabled_optimizers.end();
++}
++
++void Optimizer::RunOptimizer(OptimizerType type, const std::function<void()> &callback) {
++	if (OptimizerDisabled(type)) {
+ 		// optimizer is marked as disabled: skip
+ 		return;
+ 	}
+@@ -159,7 +162,7 @@ unique_ptr<LogicalOperator> Optimizer::Optimize(unique_ptr<LogicalOperator> plan
+ 	// perform statistics propagation
+ 	column_binding_map_t<unique_ptr<BaseStatistics>> statistics_map;
+ 	RunOptimizer(OptimizerType::STATISTICS_PROPAGATION, [&]() {
+-		StatisticsPropagator propagator(*this);
++		StatisticsPropagator propagator(*this, *plan);
+ 		propagator.PropagateStatistics(plan);
+ 		statistics_map = propagator.GetStatisticsMap();
+ 	});
+@@ -176,12 +179,6 @@ unique_ptr<LogicalOperator> Optimizer::Optimize(unique_ptr<LogicalOperator> plan
+ 		column_lifetime.VisitOperator(*plan);
+ 	});
+ 
+-	// compress data based on statistics for materializing operators
+-	RunOptimizer(OptimizerType::COMPRESSED_MATERIALIZATION, [&]() {
+-		CompressedMaterialization compressed_materialization(context, binder, std::move(statistics_map));
+-		compressed_materialization.Compress(plan);
+-	});
+-
+ 	// transform ORDER BY + LIMIT to TopN
+ 	RunOptimizer(OptimizerType::TOP_N, [&]() {
+ 		TopN topn;
+diff --git a/src/optimizer/statistics/expression/propagate_aggregate.cpp b/src/optimizer/statistics/expression/propagate_aggregate.cpp
+index b3dc53b8b9..d0e24dac60 100644
+--- a/src/optimizer/statistics/expression/propagate_aggregate.cpp
++++ b/src/optimizer/statistics/expression/propagate_aggregate.cpp
+@@ -4,7 +4,7 @@
+ namespace duckdb {
+ 
+ unique_ptr<BaseStatistics> StatisticsPropagator::PropagateExpression(BoundAggregateExpression &aggr,
+-                                                                     unique_ptr<Expression> *expr_ptr) {
++                                                                     unique_ptr<Expression> &expr_ptr) {
+ 	vector<BaseStatistics> stats;
+ 	stats.reserve(aggr.children.size());
+ 	for (auto &child : aggr.children) {
+diff --git a/src/optimizer/statistics/expression/propagate_between.cpp b/src/optimizer/statistics/expression/propagate_between.cpp
+index fd4865e768..b7953332a9 100644
+--- a/src/optimizer/statistics/expression/propagate_between.cpp
++++ b/src/optimizer/statistics/expression/propagate_between.cpp
+@@ -1,13 +1,13 @@
++#include "duckdb/optimizer/expression_rewriter.hpp"
+ #include "duckdb/optimizer/statistics_propagator.hpp"
+ #include "duckdb/planner/expression/bound_between_expression.hpp"
+ #include "duckdb/planner/expression/bound_comparison_expression.hpp"
+ #include "duckdb/planner/expression/bound_constant_expression.hpp"
+-#include "duckdb/optimizer/expression_rewriter.hpp"
+ 
+ namespace duckdb {
+ 
+ unique_ptr<BaseStatistics> StatisticsPropagator::PropagateExpression(BoundBetweenExpression &between,
+-                                                                     unique_ptr<Expression> *expr_ptr) {
++                                                                     unique_ptr<Expression> &expr_ptr) {
+ 	// propagate in all the children
+ 	auto input_stats = PropagateExpression(between.input);
+ 	auto lower_stats = PropagateExpression(between.lower);
+@@ -29,11 +29,11 @@ unique_ptr<BaseStatistics> StatisticsPropagator::PropagateExpression(BoundBetwee
+ 	if (lower_prune == FilterPropagateResult::FILTER_ALWAYS_TRUE &&
+ 	    upper_prune == FilterPropagateResult::FILTER_ALWAYS_TRUE) {
+ 		// both filters are always true: replace the between expression with a constant true
+-		*expr_ptr = make_uniq<BoundConstantExpression>(Value::BOOLEAN(true));
++		expr_ptr = make_uniq<BoundConstantExpression>(Value::BOOLEAN(true));
+ 	} else if (lower_prune == FilterPropagateResult::FILTER_ALWAYS_FALSE ||
+ 	           upper_prune == FilterPropagateResult::FILTER_ALWAYS_FALSE) {
+ 		// either one of the filters is always false: replace the between expression with a constant false
+-		*expr_ptr = make_uniq<BoundConstantExpression>(Value::BOOLEAN(false));
++		expr_ptr = make_uniq<BoundConstantExpression>(Value::BOOLEAN(false));
+ 	} else if (lower_prune == FilterPropagateResult::FILTER_FALSE_OR_NULL ||
+ 	           upper_prune == FilterPropagateResult::FILTER_FALSE_OR_NULL) {
+ 		// either one of the filters is false or null: replace with a constant or null (false)
+@@ -41,7 +41,7 @@ unique_ptr<BaseStatistics> StatisticsPropagator::PropagateExpression(BoundBetwee
+ 		children.push_back(std::move(between.input));
+ 		children.push_back(std::move(between.lower));
+ 		children.push_back(std::move(between.upper));
+-		*expr_ptr = ExpressionRewriter::ConstantOrNull(std::move(children), Value::BOOLEAN(false));
++		expr_ptr = ExpressionRewriter::ConstantOrNull(std::move(children), Value::BOOLEAN(false));
+ 	} else if (lower_prune == FilterPropagateResult::FILTER_TRUE_OR_NULL &&
+ 	           upper_prune == FilterPropagateResult::FILTER_TRUE_OR_NULL) {
+ 		// both filters are true or null: replace with a true or null
+@@ -49,14 +49,14 @@ unique_ptr<BaseStatistics> StatisticsPropagator::PropagateExpression(BoundBetwee
+ 		children.push_back(std::move(between.input));
+ 		children.push_back(std::move(between.lower));
+ 		children.push_back(std::move(between.upper));
+-		*expr_ptr = ExpressionRewriter::ConstantOrNull(std::move(children), Value::BOOLEAN(true));
++		expr_ptr = ExpressionRewriter::ConstantOrNull(std::move(children), Value::BOOLEAN(true));
+ 	} else if (lower_prune == FilterPropagateResult::FILTER_ALWAYS_TRUE) {
+ 		// lower filter is always true: replace with upper comparison
+-		*expr_ptr =
++		expr_ptr =
+ 		    make_uniq<BoundComparisonExpression>(upper_comparison, std::move(between.input), std::move(between.upper));
+ 	} else if (upper_prune == FilterPropagateResult::FILTER_ALWAYS_TRUE) {
+ 		// upper filter is always true: replace with lower comparison
+-		*expr_ptr =
++		expr_ptr =
+ 		    make_uniq<BoundComparisonExpression>(lower_comparison, std::move(between.input), std::move(between.lower));
+ 	}
+ 	return nullptr;
+diff --git a/src/optimizer/statistics/expression/propagate_case.cpp b/src/optimizer/statistics/expression/propagate_case.cpp
+index 7586b9a42d..d74a057559 100644
+--- a/src/optimizer/statistics/expression/propagate_case.cpp
++++ b/src/optimizer/statistics/expression/propagate_case.cpp
+@@ -4,7 +4,7 @@
+ namespace duckdb {
+ 
+ unique_ptr<BaseStatistics> StatisticsPropagator::PropagateExpression(BoundCaseExpression &bound_case,
+-                                                                     unique_ptr<Expression> *expr_ptr) {
++                                                                     unique_ptr<Expression> &expr_ptr) {
+ 	// propagate in all the children
+ 	auto result_stats = PropagateExpression(bound_case.else_expr);
+ 	for (auto &case_check : bound_case.case_checks) {
+diff --git a/src/optimizer/statistics/expression/propagate_cast.cpp b/src/optimizer/statistics/expression/propagate_cast.cpp
+index 94908ea486..9cb590823b 100644
+--- a/src/optimizer/statistics/expression/propagate_cast.cpp
++++ b/src/optimizer/statistics/expression/propagate_cast.cpp
+@@ -122,7 +122,7 @@ static unique_ptr<BaseStatistics> StatisticsNumericCastSwitch(const BaseStatisti
+ }
+ 
+ unique_ptr<BaseStatistics> StatisticsPropagator::PropagateExpression(BoundCastExpression &cast,
+-                                                                     unique_ptr<Expression> *expr_ptr) {
++                                                                     unique_ptr<Expression> &expr_ptr) {
+ 	auto child_stats = PropagateExpression(cast.child);
+ 	if (!child_stats) {
+ 		return nullptr;
+diff --git a/src/optimizer/statistics/expression/propagate_columnref.cpp b/src/optimizer/statistics/expression/propagate_columnref.cpp
+index 8a8d7db1a6..94ed2b0ab0 100644
+--- a/src/optimizer/statistics/expression/propagate_columnref.cpp
++++ b/src/optimizer/statistics/expression/propagate_columnref.cpp
+@@ -4,7 +4,7 @@
+ namespace duckdb {
+ 
+ unique_ptr<BaseStatistics> StatisticsPropagator::PropagateExpression(BoundColumnRefExpression &colref,
+-                                                                     unique_ptr<Expression> *expr_ptr) {
++                                                                     unique_ptr<Expression> &expr_ptr) {
+ 	auto stats = statistics_map.find(colref.binding);
+ 	if (stats == statistics_map.end()) {
+ 		return nullptr;
+diff --git a/src/optimizer/statistics/expression/propagate_comparison.cpp b/src/optimizer/statistics/expression/propagate_comparison.cpp
+index 1331d8167d..3022d7c5df 100644
+--- a/src/optimizer/statistics/expression/propagate_comparison.cpp
++++ b/src/optimizer/statistics/expression/propagate_comparison.cpp
+@@ -92,7 +92,7 @@ FilterPropagateResult StatisticsPropagator::PropagateComparison(BaseStatistics &
+ }
+ 
+ unique_ptr<BaseStatistics> StatisticsPropagator::PropagateExpression(BoundComparisonExpression &expr,
+-                                                                     unique_ptr<Expression> *expr_ptr) {
++                                                                     unique_ptr<Expression> &expr_ptr) {
+ 	auto left_stats = PropagateExpression(expr.left);
+ 	auto right_stats = PropagateExpression(expr.right);
+ 	if (!left_stats || !right_stats) {
+@@ -102,23 +102,23 @@ unique_ptr<BaseStatistics> StatisticsPropagator::PropagateExpression(BoundCompar
+ 	auto propagate_result = PropagateComparison(*left_stats, *right_stats, expr.type);
+ 	switch (propagate_result) {
+ 	case FilterPropagateResult::FILTER_ALWAYS_TRUE:
+-		*expr_ptr = make_uniq<BoundConstantExpression>(Value::BOOLEAN(true));
+-		return PropagateExpression(*expr_ptr);
++		expr_ptr = make_uniq<BoundConstantExpression>(Value::BOOLEAN(true));
++		return PropagateExpression(expr_ptr);
+ 	case FilterPropagateResult::FILTER_ALWAYS_FALSE:
+-		*expr_ptr = make_uniq<BoundConstantExpression>(Value::BOOLEAN(false));
+-		return PropagateExpression(*expr_ptr);
++		expr_ptr = make_uniq<BoundConstantExpression>(Value::BOOLEAN(false));
++		return PropagateExpression(expr_ptr);
+ 	case FilterPropagateResult::FILTER_TRUE_OR_NULL: {
+ 		vector<unique_ptr<Expression>> children;
+ 		children.push_back(std::move(expr.left));
+ 		children.push_back(std::move(expr.right));
+-		*expr_ptr = ExpressionRewriter::ConstantOrNull(std::move(children), Value::BOOLEAN(true));
++		expr_ptr = ExpressionRewriter::ConstantOrNull(std::move(children), Value::BOOLEAN(true));
+ 		return nullptr;
+ 	}
+ 	case FilterPropagateResult::FILTER_FALSE_OR_NULL: {
+ 		vector<unique_ptr<Expression>> children;
+ 		children.push_back(std::move(expr.left));
+ 		children.push_back(std::move(expr.right));
+-		*expr_ptr = ExpressionRewriter::ConstantOrNull(std::move(children), Value::BOOLEAN(false));
++		expr_ptr = ExpressionRewriter::ConstantOrNull(std::move(children), Value::BOOLEAN(false));
+ 		return nullptr;
+ 	}
+ 	default:
+diff --git a/src/optimizer/statistics/expression/propagate_conjunction.cpp b/src/optimizer/statistics/expression/propagate_conjunction.cpp
+index 1fce16c8cf..8c6fa08778 100644
+--- a/src/optimizer/statistics/expression/propagate_conjunction.cpp
++++ b/src/optimizer/statistics/expression/propagate_conjunction.cpp
+@@ -8,7 +8,7 @@
+ namespace duckdb {
+ 
+ unique_ptr<BaseStatistics> StatisticsPropagator::PropagateExpression(BoundConjunctionExpression &expr,
+-                                                                     unique_ptr<Expression> *expr_ptr) {
++                                                                     unique_ptr<Expression> &expr_ptr) {
+ 	auto is_and = expr.type == ExpressionType::CONJUNCTION_AND;
+ 	for (idx_t expr_idx = 0; expr_idx < expr.children.size(); expr_idx++) {
+ 		auto &child = expr.children[expr_idx];
+@@ -50,16 +50,16 @@ unique_ptr<BaseStatistics> StatisticsPropagator::PropagateExpression(BoundConjun
+ 			expr_idx--;
+ 			continue;
+ 		}
+-		*expr_ptr = make_uniq<BoundConstantExpression>(Value::BOOLEAN(constant_value));
+-		return PropagateExpression(*expr_ptr);
++		expr_ptr = make_uniq<BoundConstantExpression>(Value::BOOLEAN(constant_value));
++		return PropagateExpression(expr_ptr);
+ 	}
+ 	if (expr.children.empty()) {
+ 		// if there are no children left, replace the conjunction with TRUE (for AND) or FALSE (for OR)
+-		*expr_ptr = make_uniq<BoundConstantExpression>(Value::BOOLEAN(is_and));
+-		return PropagateExpression(*expr_ptr);
++		expr_ptr = make_uniq<BoundConstantExpression>(Value::BOOLEAN(is_and));
++		return PropagateExpression(expr_ptr);
+ 	} else if (expr.children.size() == 1) {
+ 		// if there is one child left, replace the conjunction with that one child
+-		*expr_ptr = std::move(expr.children[0]);
++		expr_ptr = std::move(expr.children[0]);
+ 	}
+ 	return nullptr;
+ }
+diff --git a/src/optimizer/statistics/expression/propagate_constant.cpp b/src/optimizer/statistics/expression/propagate_constant.cpp
+index c531311d7d..a873281071 100644
+--- a/src/optimizer/statistics/expression/propagate_constant.cpp
++++ b/src/optimizer/statistics/expression/propagate_constant.cpp
+@@ -11,7 +11,7 @@ unique_ptr<BaseStatistics> StatisticsPropagator::StatisticsFromValue(const Value
+ }
+ 
+ unique_ptr<BaseStatistics> StatisticsPropagator::PropagateExpression(BoundConstantExpression &constant,
+-                                                                     unique_ptr<Expression> *expr_ptr) {
++                                                                     unique_ptr<Expression> &expr_ptr) {
+ 	return StatisticsFromValue(constant.value);
+ }
+ 
+diff --git a/src/optimizer/statistics/expression/propagate_function.cpp b/src/optimizer/statistics/expression/propagate_function.cpp
+index 3d7a2d7a85..2a0263450e 100644
+--- a/src/optimizer/statistics/expression/propagate_function.cpp
++++ b/src/optimizer/statistics/expression/propagate_function.cpp
+@@ -4,7 +4,7 @@
+ namespace duckdb {
+ 
+ unique_ptr<BaseStatistics> StatisticsPropagator::PropagateExpression(BoundFunctionExpression &func,
+-                                                                     unique_ptr<Expression> *expr_ptr) {
++                                                                     unique_ptr<Expression> &expr_ptr) {
+ 	vector<BaseStatistics> stats;
+ 	stats.reserve(func.children.size());
+ 	for (idx_t i = 0; i < func.children.size(); i++) {
+@@ -18,7 +18,7 @@ unique_ptr<BaseStatistics> StatisticsPropagator::PropagateExpression(BoundFuncti
+ 	if (!func.function.statistics) {
+ 		return nullptr;
+ 	}
+-	FunctionStatisticsInput input(func, func.bind_info.get(), stats, expr_ptr);
++	FunctionStatisticsInput input(func, func.bind_info.get(), stats, &expr_ptr);
+ 	return func.function.statistics(context, input);
+ }
+ 
+diff --git a/src/optimizer/statistics/expression/propagate_operator.cpp b/src/optimizer/statistics/expression/propagate_operator.cpp
+index 4bb1f8fd7a..2d97357c88 100644
+--- a/src/optimizer/statistics/expression/propagate_operator.cpp
++++ b/src/optimizer/statistics/expression/propagate_operator.cpp
+@@ -5,7 +5,7 @@
+ namespace duckdb {
+ 
+ unique_ptr<BaseStatistics> StatisticsPropagator::PropagateExpression(BoundOperatorExpression &expr,
+-                                                                     unique_ptr<Expression> *expr_ptr) {
++                                                                     unique_ptr<Expression> &expr_ptr) {
+ 	bool all_have_stats = true;
+ 	vector<unique_ptr<BaseStatistics>> child_stats;
+ 	child_stats.reserve(expr.children.size());
+@@ -47,7 +47,7 @@ unique_ptr<BaseStatistics> StatisticsPropagator::PropagateExpression(BoundOperat
+ 		D_ASSERT(expr.children.size() == child_stats.size());
+ 		if (expr.children.size() == 1) {
+ 			// coalesce of one entry: simply return that entry
+-			*expr_ptr = std::move(expr.children[0]);
++			expr_ptr = std::move(expr.children[0]);
+ 		} else {
+ 			// coalesce of multiple entries
+ 			// merge the stats
+@@ -59,25 +59,25 @@ unique_ptr<BaseStatistics> StatisticsPropagator::PropagateExpression(BoundOperat
+ 	case ExpressionType::OPERATOR_IS_NULL:
+ 		if (!child_stats[0]->CanHaveNull()) {
+ 			// child has no null values: x IS NULL will always be false
+-			*expr_ptr = make_uniq<BoundConstantExpression>(Value::BOOLEAN(false));
+-			return PropagateExpression(*expr_ptr);
++			expr_ptr = make_uniq<BoundConstantExpression>(Value::BOOLEAN(false));
++			return PropagateExpression(expr_ptr);
+ 		}
+ 		if (!child_stats[0]->CanHaveNoNull()) {
+ 			// child has no valid values: x IS NULL will always be true
+-			*expr_ptr = make_uniq<BoundConstantExpression>(Value::BOOLEAN(true));
+-			return PropagateExpression(*expr_ptr);
++			expr_ptr = make_uniq<BoundConstantExpression>(Value::BOOLEAN(true));
++			return PropagateExpression(expr_ptr);
+ 		}
+ 		return nullptr;
+ 	case ExpressionType::OPERATOR_IS_NOT_NULL:
+ 		if (!child_stats[0]->CanHaveNull()) {
+ 			// child has no null values: x IS NOT NULL will always be true
+-			*expr_ptr = make_uniq<BoundConstantExpression>(Value::BOOLEAN(true));
+-			return PropagateExpression(*expr_ptr);
++			expr_ptr = make_uniq<BoundConstantExpression>(Value::BOOLEAN(true));
++			return PropagateExpression(expr_ptr);
+ 		}
+ 		if (!child_stats[0]->CanHaveNoNull()) {
+ 			// child has no valid values: x IS NOT NULL will always be false
+-			*expr_ptr = make_uniq<BoundConstantExpression>(Value::BOOLEAN(false));
+-			return PropagateExpression(*expr_ptr);
++			expr_ptr = make_uniq<BoundConstantExpression>(Value::BOOLEAN(false));
++			return PropagateExpression(expr_ptr);
+ 		}
+ 		return nullptr;
+ 	default:
+diff --git a/src/optimizer/statistics/operator/propagate_aggregate.cpp b/src/optimizer/statistics/operator/propagate_aggregate.cpp
+index 1824a4f187..677b4835a2 100644
+--- a/src/optimizer/statistics/operator/propagate_aggregate.cpp
++++ b/src/optimizer/statistics/operator/propagate_aggregate.cpp
+@@ -4,7 +4,7 @@
+ namespace duckdb {
+ 
+ unique_ptr<NodeStatistics> StatisticsPropagator::PropagateStatistics(LogicalAggregate &aggr,
+-                                                                     unique_ptr<LogicalOperator> *node_ptr) {
++                                                                     unique_ptr<LogicalOperator> &node_ptr) {
+ 	// first propagate statistics in the child node
+ 	node_stats = PropagateStatistics(aggr.children[0]);
+ 
+diff --git a/src/optimizer/statistics/operator/propagate_cross_product.cpp b/src/optimizer/statistics/operator/propagate_cross_product.cpp
+index c69c9b886d..5e9b7529f9 100644
+--- a/src/optimizer/statistics/operator/propagate_cross_product.cpp
++++ b/src/optimizer/statistics/operator/propagate_cross_product.cpp
+@@ -4,7 +4,7 @@
+ namespace duckdb {
+ 
+ unique_ptr<NodeStatistics> StatisticsPropagator::PropagateStatistics(LogicalCrossProduct &cp,
+-                                                                     unique_ptr<LogicalOperator> *node_ptr) {
++                                                                     unique_ptr<LogicalOperator> &node_ptr) {
+ 	// first propagate statistics in the child node
+ 	auto left_stats = PropagateStatistics(cp.children[0]);
+ 	auto right_stats = PropagateStatistics(cp.children[1]);
+diff --git a/src/optimizer/statistics/operator/propagate_filter.cpp b/src/optimizer/statistics/operator/propagate_filter.cpp
+index 97609fa628..68fdfdeb68 100644
+--- a/src/optimizer/statistics/operator/propagate_filter.cpp
++++ b/src/optimizer/statistics/operator/propagate_filter.cpp
+@@ -222,11 +222,11 @@ void StatisticsPropagator::UpdateFilterStatistics(Expression &condition) {
+ }
+ 
+ unique_ptr<NodeStatistics> StatisticsPropagator::PropagateStatistics(LogicalFilter &filter,
+-                                                                     unique_ptr<LogicalOperator> *node_ptr) {
++                                                                     unique_ptr<LogicalOperator> &node_ptr) {
+ 	// first propagate to the child
+ 	node_stats = PropagateStatistics(filter.children[0]);
+ 	if (filter.children[0]->type == LogicalOperatorType::LOGICAL_EMPTY_RESULT) {
+-		ReplaceWithEmptyResult(*node_ptr);
++		ReplaceWithEmptyResult(node_ptr);
+ 		return make_uniq<NodeStatistics>(0, 0);
+ 	}
+ 
+@@ -247,7 +247,7 @@ unique_ptr<NodeStatistics> StatisticsPropagator::PropagateStatistics(LogicalFilt
+ 		} else if (ExpressionIsConstant(*condition, Value::BOOLEAN(false)) ||
+ 		           ExpressionIsConstantOrNull(*condition, Value::BOOLEAN(false))) {
+ 			// filter is always false or null; this entire filter should be replaced by an empty result block
+-			ReplaceWithEmptyResult(*node_ptr);
++			ReplaceWithEmptyResult(node_ptr);
+ 			return make_uniq<NodeStatistics>(0, 0);
+ 		} else {
+ 			// cannot prune this filter: propagate statistics from the filter
+diff --git a/src/optimizer/statistics/operator/propagate_get.cpp b/src/optimizer/statistics/operator/propagate_get.cpp
+index 22979f1945..0d3d2c730c 100644
+--- a/src/optimizer/statistics/operator/propagate_get.cpp
++++ b/src/optimizer/statistics/operator/propagate_get.cpp
+@@ -31,7 +31,7 @@ void StatisticsPropagator::UpdateFilterStatistics(BaseStatistics &input, TableFi
+ }
+ 
+ unique_ptr<NodeStatistics> StatisticsPropagator::PropagateStatistics(LogicalGet &get,
+-                                                                     unique_ptr<LogicalOperator> *node_ptr) {
++                                                                     unique_ptr<LogicalOperator> &node_ptr) {
+ 	if (get.function.cardinality) {
+ 		node_stats = get.function.cardinality(context, get.bind_data.get());
+ 	}
+@@ -85,7 +85,7 @@ unique_ptr<NodeStatistics> StatisticsPropagator::PropagateStatistics(LogicalGet
+ 		case FilterPropagateResult::FILTER_FALSE_OR_NULL:
+ 		case FilterPropagateResult::FILTER_ALWAYS_FALSE:
+ 			// filter is always false; this entire filter should be replaced by an empty result block
+-			ReplaceWithEmptyResult(*node_ptr);
++			ReplaceWithEmptyResult(node_ptr);
+ 			return make_uniq<NodeStatistics>(0, 0);
+ 		default:
+ 			// general case: filter can be true or false, update this columns' statistics
+diff --git a/src/optimizer/statistics/operator/propagate_join.cpp b/src/optimizer/statistics/operator/propagate_join.cpp
+index 093a379052..16541cf653 100644
+--- a/src/optimizer/statistics/operator/propagate_join.cpp
++++ b/src/optimizer/statistics/operator/propagate_join.cpp
+@@ -14,7 +14,7 @@
+ 
+ namespace duckdb {
+ 
+-void StatisticsPropagator::PropagateStatistics(LogicalComparisonJoin &join, unique_ptr<LogicalOperator> *node_ptr) {
++void StatisticsPropagator::PropagateStatistics(LogicalComparisonJoin &join, unique_ptr<LogicalOperator> &node_ptr) {
+ 	for (idx_t i = 0; i < join.conditions.size(); i++) {
+ 		auto &condition = join.conditions[i];
+ 		const auto stats_left = PropagateExpression(condition.left);
+@@ -40,7 +40,7 @@ void StatisticsPropagator::PropagateStatistics(LogicalComparisonJoin &join, uniq
+ 				case JoinType::SEMI:
+ 				case JoinType::INNER:
+ 					// semi or inner join on false; entire node can be pruned
+-					ReplaceWithEmptyResult(*node_ptr);
++					ReplaceWithEmptyResult(node_ptr);
+ 					return;
+ 				case JoinType::RIGHT_ANTI:
+ 				case JoinType::ANTI: {
+@@ -48,7 +48,7 @@ void StatisticsPropagator::PropagateStatistics(LogicalComparisonJoin &join, uniq
+ 						std::swap(join.children[0], join.children[1]);
+ 					}
+ 					// If the filter is always false or Null, just return the left child.
+-					*node_ptr = std::move(join.children[0]);
++					node_ptr = std::move(join.children[0]);
+ 					return;
+ 				}
+ 				case JoinType::LEFT:
+@@ -106,19 +106,19 @@ void StatisticsPropagator::PropagateStatistics(LogicalComparisonJoin &join, uniq
+ 						auto limit = make_uniq<LogicalLimit>(1, 0, nullptr, nullptr);
+ 						limit->AddChild(std::move(join.children[1]));
+ 						auto cross_product = LogicalCrossProduct::Create(std::move(join.children[0]), std::move(limit));
+-						*node_ptr = std::move(cross_product);
++						node_ptr = std::move(cross_product);
+ 						return;
+ 					}
+ 					case JoinType::INNER: {
+ 						// inner, replace with cross product
+ 						auto cross_product =
+ 						    LogicalCrossProduct::Create(std::move(join.children[0]), std::move(join.children[1]));
+-						*node_ptr = std::move(cross_product);
++						node_ptr = std::move(cross_product);
+ 						return;
+ 					}
+ 					case JoinType::ANTI:
+ 					case JoinType::RIGHT_ANTI: {
+-						ReplaceWithEmptyResult(*node_ptr);
++						ReplaceWithEmptyResult(node_ptr);
+ 						return;
+ 					}
+ 					default:
+@@ -175,7 +175,7 @@ void StatisticsPropagator::PropagateStatistics(LogicalComparisonJoin &join, uniq
+ 	}
+ }
+ 
+-void StatisticsPropagator::PropagateStatistics(LogicalAnyJoin &join, unique_ptr<LogicalOperator> *node_ptr) {
++void StatisticsPropagator::PropagateStatistics(LogicalAnyJoin &join, unique_ptr<LogicalOperator> &node_ptr) {
+ 	// propagate the expression into the join condition
+ 	PropagateExpression(join.condition);
+ }
+@@ -201,7 +201,7 @@ void StatisticsPropagator::MultiplyCardinalities(unique_ptr<NodeStatistics> &sta
+ }
+ 
+ unique_ptr<NodeStatistics> StatisticsPropagator::PropagateStatistics(LogicalJoin &join,
+-                                                                     unique_ptr<LogicalOperator> *node_ptr) {
++                                                                     unique_ptr<LogicalOperator> &node_ptr) {
+ 	// first propagate through the children of the join
+ 	node_stats = PropagateStatistics(join.children[0]);
+ 	for (idx_t child_idx = 1; child_idx < join.children.size(); child_idx++) {
+@@ -274,7 +274,7 @@ static void MaxCardinalities(unique_ptr<NodeStatistics> &stats, NodeStatistics &
+ }
+ 
+ unique_ptr<NodeStatistics> StatisticsPropagator::PropagateStatistics(LogicalPositionalJoin &join,
+-                                                                     unique_ptr<LogicalOperator> *node_ptr) {
++                                                                     unique_ptr<LogicalOperator> &node_ptr) {
+ 	D_ASSERT(join.type == LogicalOperatorType::LOGICAL_POSITIONAL_JOIN);
+ 
+ 	// first propagate through the children of the join
+diff --git a/src/optimizer/statistics/operator/propagate_limit.cpp b/src/optimizer/statistics/operator/propagate_limit.cpp
+index 390e24aba1..8dd710ac3b 100644
+--- a/src/optimizer/statistics/operator/propagate_limit.cpp
++++ b/src/optimizer/statistics/operator/propagate_limit.cpp
+@@ -4,7 +4,7 @@
+ namespace duckdb {
+ 
+ unique_ptr<NodeStatistics> StatisticsPropagator::PropagateStatistics(LogicalLimit &limit,
+-                                                                     unique_ptr<LogicalOperator> *node_ptr) {
++                                                                     unique_ptr<LogicalOperator> &node_ptr) {
+ 	// propagate statistics in the child node
+ 	PropagateStatistics(limit.children[0]);
+ 	// return the node stats, with as expected cardinality the amount specified in the limit
+diff --git a/src/optimizer/statistics/operator/propagate_order.cpp b/src/optimizer/statistics/operator/propagate_order.cpp
+index 5770fcc886..d9de1607af 100644
+--- a/src/optimizer/statistics/operator/propagate_order.cpp
++++ b/src/optimizer/statistics/operator/propagate_order.cpp
+@@ -5,7 +5,7 @@
+ namespace duckdb {
+ 
+ unique_ptr<NodeStatistics> StatisticsPropagator::PropagateStatistics(LogicalOrder &order,
+-                                                                     unique_ptr<LogicalOperator> *node_ptr) {
++                                                                     unique_ptr<LogicalOperator> &node_ptr) {
+ 	// first propagate to the child
+ 	node_stats = PropagateStatistics(order.children[0]);
+ 
+diff --git a/src/optimizer/statistics/operator/propagate_projection.cpp b/src/optimizer/statistics/operator/propagate_projection.cpp
+index 83c8309554..d867343d89 100644
+--- a/src/optimizer/statistics/operator/propagate_projection.cpp
++++ b/src/optimizer/statistics/operator/propagate_projection.cpp
+@@ -4,11 +4,11 @@
+ namespace duckdb {
+ 
+ unique_ptr<NodeStatistics> StatisticsPropagator::PropagateStatistics(LogicalProjection &proj,
+-                                                                     unique_ptr<LogicalOperator> *node_ptr) {
++                                                                     unique_ptr<LogicalOperator> &node_ptr) {
+ 	// first propagate to the child
+ 	node_stats = PropagateStatistics(proj.children[0]);
+ 	if (proj.children[0]->type == LogicalOperatorType::LOGICAL_EMPTY_RESULT) {
+-		ReplaceWithEmptyResult(*node_ptr);
++		ReplaceWithEmptyResult(node_ptr);
+ 		return std::move(node_stats);
+ 	}
+ 	// then propagate to each of the expressions
+diff --git a/src/optimizer/statistics/operator/propagate_set_operation.cpp b/src/optimizer/statistics/operator/propagate_set_operation.cpp
+index 8b90aeb634..2f697719de 100644
+--- a/src/optimizer/statistics/operator/propagate_set_operation.cpp
++++ b/src/optimizer/statistics/operator/propagate_set_operation.cpp
+@@ -24,7 +24,7 @@ void StatisticsPropagator::AddCardinalities(unique_ptr<NodeStatistics> &stats, N
+ }
+ 
+ unique_ptr<NodeStatistics> StatisticsPropagator::PropagateStatistics(LogicalSetOperation &setop,
+-                                                                     unique_ptr<LogicalOperator> *node_ptr) {
++                                                                     unique_ptr<LogicalOperator> &node_ptr) {
+ 	// first propagate statistics in the child nodes
+ 	auto left_stats = PropagateStatistics(setop.children[0]);
+ 	auto right_stats = PropagateStatistics(setop.children[1]);
+diff --git a/src/optimizer/statistics/operator/propagate_window.cpp b/src/optimizer/statistics/operator/propagate_window.cpp
+index 9b6dcc493d..55dd7af734 100644
+--- a/src/optimizer/statistics/operator/propagate_window.cpp
++++ b/src/optimizer/statistics/operator/propagate_window.cpp
+@@ -5,7 +5,7 @@
+ namespace duckdb {
+ 
+ unique_ptr<NodeStatistics> StatisticsPropagator::PropagateStatistics(LogicalWindow &window,
+-                                                                     unique_ptr<LogicalOperator> *node_ptr) {
++                                                                     unique_ptr<LogicalOperator> &node_ptr) {
+ 	// first propagate to the child
+ 	node_stats = PropagateStatistics(window.children[0]);
+ 
+diff --git a/src/optimizer/statistics_propagator.cpp b/src/optimizer/statistics_propagator.cpp
+index 701697233d..d3b1b1fe3c 100644
+--- a/src/optimizer/statistics_propagator.cpp
++++ b/src/optimizer/statistics_propagator.cpp
+@@ -1,6 +1,7 @@
+ #include "duckdb/optimizer/statistics_propagator.hpp"
+ 
+ #include "duckdb/main/client_context.hpp"
++#include "duckdb/optimizer/compressed_materialization.hpp"
+ #include "duckdb/optimizer/optimizer.hpp"
+ #include "duckdb/planner/expression/list.hpp"
+ #include "duckdb/planner/expression_iterator.hpp"
+@@ -19,8 +20,9 @@
+ 
+ namespace duckdb {
+ 
+-StatisticsPropagator::StatisticsPropagator(Optimizer &optimizer_p)
+-    : optimizer(optimizer_p), context(optimizer.context) {
++StatisticsPropagator::StatisticsPropagator(Optimizer &optimizer_p, LogicalOperator &root_p)
++    : optimizer(optimizer_p), context(optimizer.context), root(&root_p) {
++	root->ResolveOperatorTypes();
+ }
+ 
+ void StatisticsPropagator::ReplaceWithEmptyResult(unique_ptr<LogicalOperator> &node) {
+@@ -28,7 +30,7 @@ void StatisticsPropagator::ReplaceWithEmptyResult(unique_ptr<LogicalOperator> &n
+ }
+ 
+ unique_ptr<NodeStatistics> StatisticsPropagator::PropagateChildren(LogicalOperator &node,
+-                                                                   unique_ptr<LogicalOperator> *node_ptr) {
++                                                                   unique_ptr<LogicalOperator> &node_ptr) {
+ 	for (idx_t child_idx = 0; child_idx < node.children.size(); child_idx++) {
+ 		PropagateStatistics(node.children[child_idx]);
+ 	}
+@@ -36,45 +38,64 @@ unique_ptr<NodeStatistics> StatisticsPropagator::PropagateChildren(LogicalOperat
+ }
+ 
+ unique_ptr<NodeStatistics> StatisticsPropagator::PropagateStatistics(LogicalOperator &node,
+-                                                                     unique_ptr<LogicalOperator> *node_ptr) {
++                                                                     unique_ptr<LogicalOperator> &node_ptr) {
++	unique_ptr<NodeStatistics> result;
+ 	switch (node.type) {
+ 	case LogicalOperatorType::LOGICAL_AGGREGATE_AND_GROUP_BY:
+-		return PropagateStatistics(node.Cast<LogicalAggregate>(), node_ptr);
++		result = PropagateStatistics(node.Cast<LogicalAggregate>(), node_ptr);
++		break;
+ 	case LogicalOperatorType::LOGICAL_CROSS_PRODUCT:
+-		return PropagateStatistics(node.Cast<LogicalCrossProduct>(), node_ptr);
++		result = PropagateStatistics(node.Cast<LogicalCrossProduct>(), node_ptr);
++		break;
+ 	case LogicalOperatorType::LOGICAL_FILTER:
+-		return PropagateStatistics(node.Cast<LogicalFilter>(), node_ptr);
++		result = PropagateStatistics(node.Cast<LogicalFilter>(), node_ptr);
++		break;
+ 	case LogicalOperatorType::LOGICAL_GET:
+-		return PropagateStatistics(node.Cast<LogicalGet>(), node_ptr);
++		result = PropagateStatistics(node.Cast<LogicalGet>(), node_ptr);
++		break;
+ 	case LogicalOperatorType::LOGICAL_PROJECTION:
+-		return PropagateStatistics(node.Cast<LogicalProjection>(), node_ptr);
++		result = PropagateStatistics(node.Cast<LogicalProjection>(), node_ptr);
++		break;
+ 	case LogicalOperatorType::LOGICAL_ANY_JOIN:
+ 	case LogicalOperatorType::LOGICAL_ASOF_JOIN:
+ 	case LogicalOperatorType::LOGICAL_COMPARISON_JOIN:
+ 	case LogicalOperatorType::LOGICAL_JOIN:
+ 	case LogicalOperatorType::LOGICAL_DELIM_JOIN:
+-		return PropagateStatistics(node.Cast<LogicalJoin>(), node_ptr);
++		result = PropagateStatistics(node.Cast<LogicalJoin>(), node_ptr);
++		break;
+ 	case LogicalOperatorType::LOGICAL_POSITIONAL_JOIN:
+-		return PropagateStatistics(node.Cast<LogicalPositionalJoin>(), node_ptr);
++		result = PropagateStatistics(node.Cast<LogicalPositionalJoin>(), node_ptr);
++		break;
+ 	case LogicalOperatorType::LOGICAL_UNION:
+ 	case LogicalOperatorType::LOGICAL_EXCEPT:
+ 	case LogicalOperatorType::LOGICAL_INTERSECT:
+-		return PropagateStatistics(node.Cast<LogicalSetOperation>(), node_ptr);
++		result = PropagateStatistics(node.Cast<LogicalSetOperation>(), node_ptr);
++		break;
+ 	case LogicalOperatorType::LOGICAL_ORDER_BY:
+-		return PropagateStatistics(node.Cast<LogicalOrder>(), node_ptr);
++		result = PropagateStatistics(node.Cast<LogicalOrder>(), node_ptr);
++		break;
+ 	case LogicalOperatorType::LOGICAL_WINDOW:
+-		return PropagateStatistics(node.Cast<LogicalWindow>(), node_ptr);
++		result = PropagateStatistics(node.Cast<LogicalWindow>(), node_ptr);
++		break;
+ 	default:
+-		return PropagateChildren(node, node_ptr);
++		result = PropagateChildren(node, node_ptr);
+ 	}
++
++	if (!optimizer.OptimizerDisabled(OptimizerType::COMPRESSED_MATERIALIZATION)) {
++		// compress data based on statistics for materializing operators
++		CompressedMaterialization compressed_materialization(optimizer, *root, statistics_map);
++		compressed_materialization.Compress(node_ptr);
++	}
++
++	return result;
+ }
+ 
+ unique_ptr<NodeStatistics> StatisticsPropagator::PropagateStatistics(unique_ptr<LogicalOperator> &node_ptr) {
+-	return PropagateStatistics(*node_ptr, &node_ptr);
++	return PropagateStatistics(*node_ptr, node_ptr);
+ }
+ 
+ unique_ptr<BaseStatistics> StatisticsPropagator::PropagateExpression(Expression &expr,
+-                                                                     unique_ptr<Expression> *expr_ptr) {
++                                                                     unique_ptr<Expression> &expr_ptr) {
+ 	switch (expr.GetExpressionClass()) {
+ 	case ExpressionClass::BOUND_AGGREGATE:
+ 		return PropagateExpression(expr.Cast<BoundAggregateExpression>(), expr_ptr);
+@@ -104,7 +125,7 @@ unique_ptr<BaseStatistics> StatisticsPropagator::PropagateExpression(Expression
+ }
+ 
+ unique_ptr<BaseStatistics> StatisticsPropagator::PropagateExpression(unique_ptr<Expression> &expr) {
+-	auto stats = PropagateExpression(*expr, &expr);
++	auto stats = PropagateExpression(*expr, expr);
+ 	if (ClientConfig::GetConfig(context).query_verification_enabled && stats) {
+ 		expr->verification_stats = stats->ToUnique();
+ 	}

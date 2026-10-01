@@ -1,0 +1,32 @@
+diff --git a/vlib/x/json2/decode_struct_test.v b/vlib/x/json2/decode_struct_test.v
+index 994cc6004..7327570cd 100644
+--- a/vlib/x/json2/decode_struct_test.v
++++ b/vlib/x/json2/decode_struct_test.v
+@@ -91,7 +91,27 @@ fn test_types() {
+ 	if x := json.decode[StructType[time.Time]]('{"val": "invalid time"}') {
+ 		assert false
+ 	} else {
+ 		// dump(err)
+ 		assert true
+ 	}
++
++	assert json.decode[StructType[Enumerates]]('{"val": 0}')!.val == .a
++	assert json.decode[StructType[Enumerates]]('{"val": 1}')!.val == .b
++	assert json.decode[StructType[Enumerates]]('{"val": 99}')!.val == .e
++	assert json.decode[StructType[Enumerates]]('{}')!.val == .a
++
++	if x := json.decode[StructTypeOption[Enumerates]]('{"val": 0}')!.val {
++		assert x == .a
++	}
++	if x := json.decode[StructTypeOption[Enumerates]]('{"val": 1}')!.val {
++		assert x == .b
++	}
++	if x := json.decode[StructTypeOption[Enumerates]]('{"val": 99}')!.val {
++		assert x == .e
++	}
++	if x := json.decode[StructTypeOption[Enumerates]]('{}')!.val {
++		assert false
++	} else {
++		assert true
++	}
+ }

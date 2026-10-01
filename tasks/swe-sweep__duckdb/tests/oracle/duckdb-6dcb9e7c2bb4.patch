@@ -1,0 +1,36 @@
+diff --git a/src/function/table/system/test_all_types.cpp b/src/function/table/system/test_all_types.cpp
+index 53e4167..a82e864 100644
+--- a/src/function/table/system/test_all_types.cpp
++++ b/src/function/table/system/test_all_types.cpp
+@@ -39,8 +39,10 @@ vector<TestType> TestAllTypesFun::GetTestTypes(bool use_large_enum) {
+ 	result.emplace_back(LogicalType::TIMESTAMP_NS, "timestamp_ns");
+ 	result.emplace_back(LogicalType::TIME_TZ, "time_tz");
+ 	result.emplace_back(LogicalType::TIMESTAMP_TZ, "timestamp_tz");
+-	result.emplace_back(LogicalType::FLOAT, "float");
+-	result.emplace_back(LogicalType::DOUBLE, "double");
++	result.emplace_back(LogicalType::FLOAT, "float", Value::FLOAT(std::numeric_limits<float>::lowest()),
++	                    Value::FLOAT(std::numeric_limits<float>::max()));
++	result.emplace_back(LogicalType::DOUBLE, "double", Value::DOUBLE(std::numeric_limits<double>::lowest()),
++	                    Value::DOUBLE(std::numeric_limits<double>::max()));
+ 	result.emplace_back(LogicalType::DECIMAL(4, 1), "dec_4_1");
+ 	result.emplace_back(LogicalType::DECIMAL(9, 4), "dec_9_4");
+ 	result.emplace_back(LogicalType::DECIMAL(18, 6), "dec_18_6");
+diff --git a/src/include/duckdb/common/limits.hpp b/src/include/duckdb/common/limits.hpp
+index 21e28f7..acbb724 100644
+--- a/src/include/duckdb/common/limits.hpp
++++ b/src/include/duckdb/common/limits.hpp
+@@ -24,10 +24,12 @@ namespace duckdb {
+ template <class T>
+ struct NumericLimits {
+ 	static constexpr T Minimum() {
+-		return std::numeric_limits<T>::lowest();
++		return std::numeric_limits<T>::has_infinity ? -std::numeric_limits<T>::infinity()
++		                                            : std::numeric_limits<T>::lowest();
+ 	}
+ 	static constexpr T Maximum() {
+-		return std::numeric_limits<T>::max();
++		return std::numeric_limits<T>::has_infinity ? std::numeric_limits<T>::infinity()
++		                                            : std::numeric_limits<T>::max();
+ 	}
+ 	DUCKDB_API static constexpr bool IsSigned() {
+ 		return std::is_signed<T>::value;

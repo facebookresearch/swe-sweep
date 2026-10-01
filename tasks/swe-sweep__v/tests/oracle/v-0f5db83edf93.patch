@@ -1,0 +1,63 @@
+diff --git a/vlib/v/checker/assign.v b/vlib/v/checker/assign.v
+index dd31975b1..fc165b865 100644
+--- a/vlib/v/checker/assign.v
++++ b/vlib/v/checker/assign.v
+@@ -336,8 +336,10 @@ fn (mut c Checker) assign_stmt(mut node ast.AssignStmt) {
+ 									}
+ 								}
+ 								if right is ast.ComptimeSelector {
+-									left.obj.ct_type_var = .field_var
+-									left.obj.typ = c.comptime_fields_default_type
++									if is_decl {
++										left.obj.ct_type_var = .field_var
++										left.obj.typ = c.comptime_fields_default_type
++									}
+ 								} else if right is ast.Ident
+ 									&& (right as ast.Ident).obj is ast.Var && (right as ast.Ident).or_expr.kind == .absent {
+ 									if ((right as ast.Ident).obj as ast.Var).ct_type_var != .no_comptime {
+diff --git a/vlib/v/gen/c/assign.v b/vlib/v/gen/c/assign.v
+index 68012552d..59363ad0a 100644
+--- a/vlib/v/gen/c/assign.v
++++ b/vlib/v/gen/c/assign.v
+@@ -238,9 +238,13 @@ fn (mut g Gen) assign_stmt(node_ ast.AssignStmt) {
+ 				} else if val is ast.ComptimeSelector {
+ 					key_str := g.get_comptime_selector_key_type(val)
+ 					if key_str != '' {
+-						var_type = g.comptime_var_type_map[key_str] or { var_type }
+-						val_type = var_type
+-						left.obj.typ = var_type
++						if is_decl {
++							var_type = g.comptime_var_type_map[key_str] or { var_type }
++							val_type = var_type
++							left.obj.typ = var_type
++						} else {
++							val_type = g.comptime_var_type_map[key_str] or { var_type }
++						}
+ 					}
+ 				} else if val is ast.ComptimeCall {
+ 					key_str := '${val.method_name}.return_type'
+@@ -283,6 +287,11 @@ fn (mut g Gen) assign_stmt(node_ ast.AssignStmt) {
+ 					val_type = g.comptime_var_type_map[key_str_right] or { var_type }
+ 				}
+ 			}
++		} else if mut left is ast.IndexExpr && val is ast.ComptimeSelector {
++			key_str := g.get_comptime_selector_key_type(val)
++			if key_str != '' {
++				val_type = g.comptime_var_type_map[key_str] or { var_type }
++			}
+ 		}
+ 		mut styp := g.typ(var_type)
+ 		mut is_fixed_array_init := false
+diff --git a/vlib/v/gen/c/cgen.v b/vlib/v/gen/c/cgen.v
+index 53348ac37..0c89bc3c4 100644
+--- a/vlib/v/gen/c/cgen.v
++++ b/vlib/v/gen/c/cgen.v
+@@ -4263,7 +4263,7 @@ fn (mut g Gen) cast_expr(node ast.CastExpr) {
+ 	node_typ := g.unwrap_generic(node.typ)
+ 	mut expr_type := node.expr_type
+ 	sym := g.table.sym(node_typ)
+-	if node.expr is ast.Ident && g.is_comptime_var(node.expr) {
++	if (node.expr is ast.Ident && g.is_comptime_var(node.expr)) || node.expr is ast.ComptimeSelector {
+ 		expr_type = g.unwrap_generic(g.get_comptime_var_type(node.expr))
+ 	}
+ 	if sym.kind in [.sum_type, .interface_] {

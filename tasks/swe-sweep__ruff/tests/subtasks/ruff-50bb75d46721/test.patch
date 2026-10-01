@@ -1,0 +1,112 @@
+diff --git a/crates/ruff_linter/resources/test/fixtures/pylint/too_many_public_methods.py b/crates/ruff_linter/resources/test/fixtures/pylint/too_many_public_methods.py
+index 80cd6e3329..8a65c245ba 100644
+--- a/crates/ruff_linter/resources/test/fixtures/pylint/too_many_public_methods.py
++++ b/crates/ruff_linter/resources/test/fixtures/pylint/too_many_public_methods.py
+@@ -1,3 +1,6 @@
++from typing import Any, Literal, overload
++
++
+ class Everything:
+     foo = 1
+ 
+@@ -34,6 +37,7 @@ class Everything:
+     def method9(self):
+         pass
+ 
++
+ class Small:
+     def __init__(self):
+         pass
+@@ -58,3 +62,26 @@ class Small:
+ 
+     def method6(self):
+         pass
++
++
++class SmallWithOverload:
++    @overload
++    def method1(self, a: Literal[1]) -> None: ...
++    @overload
++    def method1(self, a: Literal[2]) -> None: ...
++    @overload
++    def method1(self, a: Literal[3]) -> None: ...
++    @overload
++    def method1(self, a: Literal[4]) -> None: ...
++    @overload
++    def method1(self, a: Literal[5]) -> None: ...
++    @overload
++    def method1(self, a: Literal[6]) -> None: ...
++    @overload
++    def method1(self, a: Literal[7]) -> None: ...
++    @overload
++    def method1(self, a: Literal[8]) -> None: ...
++    @overload
++    def method1(self, a: Literal[9]) -> None: ...
++
++    def method1(self, a: Any) -> None: ...
+diff --git a/crates/ruff_linter/src/rules/pylint/snapshots/ruff_linter__rules__pylint__tests__too_many_public_methods.snap b/crates/ruff_linter/src/rules/pylint/snapshots/ruff_linter__rules__pylint__tests__too_many_public_methods.snap
+index e1acc49d25..7e43934f1f 100644
+--- a/crates/ruff_linter/src/rules/pylint/snapshots/ruff_linter__rules__pylint__tests__too_many_public_methods.snap
++++ b/crates/ruff_linter/src/rules/pylint/snapshots/ruff_linter__rules__pylint__tests__too_many_public_methods.snap
+@@ -1,45 +1,42 @@
+ ---
+ source: crates/ruff_linter/src/rules/pylint/mod.rs
+-snapshot_kind: text
+ ---
+-too_many_public_methods.py:1:1: PLR0904 Too many public methods (10 > 7)
++too_many_public_methods.py:4:1: PLR0904 Too many public methods (10 > 7)
+    |
+- 1 | / class Everything:
+- 2 | |     foo = 1
+- 3 | | 
+- 4 | |     def __init__(self):
+- 5 | |         pass
++ 4 | / class Everything:
++ 5 | |     foo = 1
+  6 | | 
+- 7 | |     def _private(self):
++ 7 | |     def __init__(self):
+  8 | |         pass
+  9 | | 
+-10 | |     def method1(self):
++10 | |     def _private(self):
+ 11 | |         pass
+ 12 | | 
+-13 | |     def method2(self):
++13 | |     def method1(self):
+ 14 | |         pass
+ 15 | | 
+-16 | |     def method3(self):
++16 | |     def method2(self):
+ 17 | |         pass
+ 18 | | 
+-19 | |     def method4(self):
++19 | |     def method3(self):
+ 20 | |         pass
+ 21 | | 
+-22 | |     def method5(self):
++22 | |     def method4(self):
+ 23 | |         pass
+ 24 | | 
+-25 | |     def method6(self):
++25 | |     def method5(self):
+ 26 | |         pass
+ 27 | | 
+-28 | |     def method7(self):
++28 | |     def method6(self):
+ 29 | |         pass
+ 30 | | 
+-31 | |     def method8(self):
++31 | |     def method7(self):
+ 32 | |         pass
+ 33 | | 
+-34 | |     def method9(self):
++34 | |     def method8(self):
+ 35 | |         pass
++36 | | 
++37 | |     def method9(self):
++38 | |         pass
+    | |____________^ PLR0904
+-36 |   
+-37 |   class Small:
+    |

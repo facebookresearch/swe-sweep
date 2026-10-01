@@ -1,0 +1,34 @@
+diff --git a/tests/macros/t20067.nim b/tests/macros/t20067.nim
+new file mode 100644
+index 000000000..0ee3a4712
+--- /dev/null
++++ b/tests/macros/t20067.nim
+@@ -0,0 +1,28 @@
++discard """
++  output: '''
++b.defaultVal = foo
++$c.defaultVal = bar
++'''
++"""
++
++import macros
++
++# #18976
++
++macro getString(identifier): string =
++  result = newLit($identifier)
++doAssert getString(abc) == "abc"
++doAssert getString(`a b c`) == "abc"
++
++# #20067
++
++template defaultVal*(value : typed) {.pragma.}
++
++type A = ref object
++  b {.defaultVal: "foo".}: string
++  `$c` {.defaultVal: "bar".}: string
++
++let a = A(b: "a", `$c`: "b")
++
++echo "b.defaultVal = " & a.b.getCustomPragmaVal(defaultVal)
++echo "$c.defaultVal = " & a.`$c`.getCustomPragmaVal(defaultVal)

@@ -1,0 +1,1982 @@
+{
+  "build_jobs": 4,
+  "container_repo": "/numpy",
+  "evaluation": {
+    "paths": "numpy"
+  },
+  "upstream_image": "pandora-maxbug-numpy:1.15.0",
+  "n_base_passing": 4834,
+  "n_base_test_ignore": 40,
+  "oracle_digest": "8d619634e4f7d588c5eccd37c66b5b4c4f4525df5d72dc74e9fd070f8933ad75",
+  "oracle_pristine_paths": [],
+  "upstream_commit": "9f7399e15e6172900e0591deb5a57a45769d8205",
+  "reproduction": {
+    "build_jobs_flag": "-j",
+    "jobs_env": "NPY_NUM_BUILD_JOBS"
+  },
+  "schema": 2,
+  "subtasks": [
+    {
+      "f2p": [
+        "numpy.f2py.tests.test_crackfortran.TestMarkinnerspaces::test_multiple_relevant_spaces"
+      ],
+      "id": "numpy-0056e5633373",
+      "target_files": [
+        "numpy/f2py/crackfortran.py"
+      ]
+    },
+    {
+      "f2p": [
+        "numpy.core.tests.test_datetime.TestDateTime::test_dtype_promotion"
+      ],
+      "id": "numpy-01b2a292dca3",
+      "target_files": [
+        "numpy/core/src/multiarray/convert_datatype.c"
+      ]
+    },
+    {
+      "f2p": [
+        "numpy.core.tests.test_numeric.TestNonzero::test_nonzero_exception_safe"
+      ],
+      "id": "numpy-067d297fb48f",
+      "target_files": [
+        "numpy/core/src/multiarray/item_selection.c"
+      ]
+    },
+    {
+      "f2p": [
+        "numpy.core.tests.test_numeric.TestCross::test_uint8_int32_mixed_dtypes"
+      ],
+      "id": "numpy-088a14a7ad6b",
+      "target_files": [
+        "numpy/core/numeric.py"
+      ]
+    },
+    {
+      "f2p": [
+        "numpy.core.tests.test_nditer::test_nditer_multi_index_no_segfault"
+      ],
+      "id": "numpy-09985ebbfde1",
+      "target_files": [
+        "numpy/_core/src/multiarray/nditer_pywrap.c"
+      ]
+    },
+    {
+      "f2p": [
+        "numpy.core.tests.test_numeric.TestBroadcast::test_broadcast_error_kwargs"
+      ],
+      "id": "numpy-0d6cb6df0850",
+      "target_files": [
+        "numpy/core/src/multiarray/iterators.c"
+      ]
+    },
+    {
+      "f2p": [
+        "numpy.core.tests.test_multiarray.TestStructured::test_empty_structured_array_comparison"
+      ],
+      "id": "numpy-11cfe9636aa1",
+      "target_files": [
+        "numpy/core/src/multiarray/arrayobject.c"
+      ]
+    },
+    {
+      "f2p": [
+        "numpy.core.tests.test_indexing.TestIndexing::test_gh_26542",
+        "numpy.core.tests.test_indexing.TestIndexing::test_gh_26542_2d"
+      ],
+      "id": "numpy-121800864e83",
+      "target_files": [
+        "numpy/_core/src/multiarray/mapping.c"
+      ]
+    },
+    {
+      "f2p": [
+        "numpy.core.tests.test_numeric.TestNonarrayArgs::test_squeeze"
+      ],
+      "id": "numpy-12210718fe01",
+      "target_files": [
+        "numpy/core/fromnumeric.py"
+      ]
+    },
+    {
+      "f2p": [
+        "numpy.core.tests.test_numeric.TestBroadcast::test_broadcast_error_kwargs"
+      ],
+      "id": "numpy-12bf6820919a",
+      "target_files": [
+        "numpy/core/src/multiarray/iterators.c"
+      ]
+    },
+    {
+      "f2p": [
+        "numpy.core.tests.test_multiarray::test_array_interface_offset"
+      ],
+      "id": "numpy-17d1198ba4be",
+      "target_files": [
+        "numpy/core/src/multiarray/ctors.c"
+      ]
+    },
+    {
+      "f2p": [
+        "__process_level_failure__"
+      ],
+      "id": "numpy-189661b344ae",
+      "target_files": [
+        "numpy/core/src/multiarray/descriptor.c",
+        "numpy/core/src/multiarray/descriptor.h",
+        "numpy/core/src/multiarray/scalarapi.c"
+      ]
+    },
+    {
+      "f2p": [
+        "numpy.lib.tests.test_arraysetops.TestSetOps::test_in1d_with_arrays_containing_tuples"
+      ],
+      "id": "numpy-1b9b96dec65c",
+      "target_files": [
+        "numpy/lib/arraysetops.py"
+      ]
+    },
+    {
+      "f2p": [
+        "numpy.f2py.tests.test_crackfortran.TestArrayDimCalculation::test_issue_8062"
+      ],
+      "id": "numpy-1cfa9f5c2c3b",
+      "target_files": [
+        "numpy/f2py/crackfortran.py"
+      ]
+    },
+    {
+      "f2p": [
+        "__process_level_failure__"
+      ],
+      "id": "numpy-1dacd673eb96",
+      "target_files": [
+        "numpy/core/src/multiarray/multiarraymodule.c"
+      ]
+    },
+    {
+      "f2p": [
+        "numpy.core.tests.test_numeric.TestConvolve::test_convolve_empty_input_error_message"
+      ],
+      "id": "numpy-1efdea850927",
+      "target_files": [
+        "numpy/_core/numeric.py"
+      ]
+    },
+    {
+      "f2p": [
+        "numpy.core.tests.test_multiarray.TestMethods::test_no_dgemv[d-func0]",
+        "numpy.core.tests.test_multiarray.TestMethods::test_no_dgemv[d-func1]",
+        "numpy.core.tests.test_multiarray.TestMethods::test_no_dgemv[f-func0]",
+        "numpy.core.tests.test_multiarray.TestMethods::test_no_dgemv[f-func1]",
+        "numpy.core.tests.test_multiarray.TestMethods::test_no_dgemv[i-func0]",
+        "numpy.core.tests.test_multiarray.TestMethods::test_no_dgemv[i-func1]"
+      ],
+      "id": "numpy-205aae1edc11",
+      "target_files": [
+        "numpy/core/src/common/cblasfuncs.c"
+      ]
+    },
+    {
+      "f2p": [
+        "__process_level_failure__"
+      ],
+      "id": "numpy-220a1f9e9ed0",
+      "target_files": [
+        "numpy/core/src/multiarray/descriptor.c"
+      ]
+    },
+    {
+      "f2p": [
+        "numpy.random.tests.test_random.TestRandomDist::test_choice_nan_probabilities"
+      ],
+      "id": "numpy-2357000e80b9",
+      "target_files": [
+        "numpy/random/mtrand/mtrand.pyx"
+      ]
+    },
+    {
+      "f2p": [
+        "numpy.f2py.tests.test_common.TestCommonWithUse::test_common_gh19161"
+      ],
+      "id": "numpy-2393ff6466f7",
+      "target_files": [
+        "numpy/f2py/auxfuncs.py",
+        "numpy/f2py/cfuncs.py",
+        "numpy/f2py/common_rules.py",
+        "numpy/f2py/f90mod_rules.py"
+      ]
+    },
+    {
+      "f2p": [
+        "numpy.core.tests.test_function_base.TestGeomspace::test_boundaries_match_start_and_stop_exactly",
+        "numpy.core.tests.test_function_base.TestGeomspace::test_nan_interior"
+      ],
+      "id": "numpy-25c300614e2c",
+      "target_files": [
+        "numpy/core/function_base.py"
+      ]
+    },
+    {
+      "f2p": [
+        "numpy.ma.tests.test_core.TestMaskedArrayFunctions::test_convolve"
+      ],
+      "id": "numpy-25d6f52dd7f7",
+      "target_files": [
+        "numpy/ma/core.py"
+      ]
+    },
+    {
+      "f2p": [
+        "numpy.core.tests.test_numeric.TestTypes::test_can_cast_and_promote_usertypes"
+      ],
+      "id": "numpy-25e9455e07f4",
+      "target_files": [
+        "numpy/core/src/multiarray/convert_datatype.c"
+      ]
+    },
+    {
+      "f2p": [
+        "numpy.core.tests.test_multiarray.TestArrayInterface::test_scalar_interface[val6-iface6-ValueError]",
+        "numpy.core.tests.test_multiarray.TestArrayInterface::test_scalar_interface[val8-iface8-ValueError]",
+        "numpy.core.tests.test_multiarray.TestArrayInterface::test_scalar_interface[val9-iface9-TypeError]"
+      ],
+      "id": "numpy-2710d8c2356c",
+      "target_files": [
+        "numpy/core/src/multiarray/ctors.c"
+      ]
+    },
+    {
+      "f2p": [
+        "numpy.core.tests.test_nditer::test_iter_writemasked_broadcast_error[None-mask_axes0]",
+        "numpy.core.tests.test_nditer::test_iter_writemasked_broadcast_error[mask1-mask_axes1]",
+        "numpy.core.tests.test_nditer::test_iter_writemasked_broadcast_error[mask3-mask_axes3]",
+        "numpy.core.tests.test_nditer::test_iter_writemasked_broadcast_error[mask4-mask_axes4]"
+      ],
+      "id": "numpy-292b22b8e6c1",
+      "target_files": [
+        "numpy/core/src/multiarray/nditer_constr.c"
+      ]
+    },
+    {
+      "f2p": [
+        "__process_level_failure__"
+      ],
+      "id": "numpy-2c37d0e924fe",
+      "target_files": [
+        "numpy/core/src/multiarray/multiarraymodule.c"
+      ]
+    },
+    {
+      "f2p": [
+        "numpy.ma.tests.test_core.TestMaskedArrayArithmetic::test_eq_for_strings[A-S]",
+        "numpy.ma.tests.test_core.TestMaskedArrayArithmetic::test_eq_for_strings[A-U]",
+        "numpy.ma.tests.test_core.TestMaskedArrayArithmetic::test_ne_for_strings[A-S]",
+        "numpy.ma.tests.test_core.TestMaskedArrayArithmetic::test_ne_for_strings[A-U]"
+      ],
+      "id": "numpy-2c665e619c40",
+      "target_files": [
+        "numpy/ma/core.py"
+      ]
+    },
+    {
+      "f2p": [
+        "numpy.f2py.tests.test_callback.TestExternal::test_external_as_attribute",
+        "numpy.f2py.tests.test_callback.TestExternal::test_external_as_statement"
+      ],
+      "id": "numpy-2cff502affa4",
+      "target_files": [
+        "numpy/f2py/crackfortran.py"
+      ]
+    },
+    {
+      "f2p": [
+        "numpy.core.tests.test_numeric.TestLikeFuncs::test_dtype_str_bytes[bytes-full_like]",
+        "numpy.core.tests.test_numeric.TestLikeFuncs::test_dtype_str_bytes[bytes-likefunc0]",
+        "numpy.core.tests.test_numeric.TestLikeFuncs::test_dtype_str_bytes[bytes-ones_like]",
+        "numpy.core.tests.test_numeric.TestLikeFuncs::test_dtype_str_bytes[bytes-zeros_like]",
+        "numpy.core.tests.test_numeric.TestLikeFuncs::test_dtype_str_bytes[str-full_like]",
+        "numpy.core.tests.test_numeric.TestLikeFuncs::test_dtype_str_bytes[str-likefunc0]",
+        "numpy.core.tests.test_numeric.TestLikeFuncs::test_dtype_str_bytes[str-ones_like]",
+        "numpy.core.tests.test_numeric.TestLikeFuncs::test_dtype_str_bytes[str-zeros_like]"
+      ],
+      "id": "numpy-2d8c7d8367cb",
+      "target_files": [
+        "numpy/core/src/multiarray/ctors.c"
+      ]
+    },
+    {
+      "f2p": [
+        "numpy.lib.tests.test_histograms.TestHistogram::test_signed_overflow_bounds"
+      ],
+      "id": "numpy-2f1827bfdb1f",
+      "target_files": [
+        "numpy/lib/histograms.py"
+      ]
+    },
+    {
+      "f2p": [
+        "numpy.ma.tests.test_core::test_fieldless_void"
+      ],
+      "id": "numpy-3041db056b45",
+      "target_files": [
+        "numpy/ma/core.py"
+      ]
+    },
+    {
+      "f2p": [
+        "numpy.core.tests.test_records.TestFromrecords::test_fromrecords_list_of_lists"
+      ],
+      "id": "numpy-304ce6df6d97",
+      "target_files": [
+        "numpy/core/records.py"
+      ]
+    },
+    {
+      "f2p": [
+        "numpy.lib.tests.test_function_base.TestVectorize::test_datetime_conversion"
+      ],
+      "id": "numpy-3477e0fb360d",
+      "target_files": [
+        "numpy/lib/_function_base_impl.py"
+      ]
+    },
+    {
+      "f2p": [
+        "numpy.core.tests.test_umath.TestSpecialMethods::test_failing_wrap"
+      ],
+      "id": "numpy-3746aeb78e18",
+      "target_files": [
+        "numpy/core/src/umath/ufunc_object.c"
+      ]
+    },
+    {
+      "f2p": [
+        "numpy.core.tests.test_multiarray.TestPutmask::test_writeable"
+      ],
+      "id": "numpy-396f2b31a8e6",
+      "target_files": [
+        "numpy/core/src/multiarray/item_selection.c"
+      ]
+    },
+    {
+      "f2p": [
+        "numpy.core.tests.test_multiarray.TestArange::test_require_range",
+        "numpy.core.tests.test_multiarray.TestArange::test_start_stop_kwarg"
+      ],
+      "id": "numpy-3aa4762577d4",
+      "target_files": [
+        "numpy/core/src/multiarray/multiarraymodule.c"
+      ]
+    },
+    {
+      "f2p": [
+        "numpy.testing.tests.test_utils.TestStringEqual::test_regex"
+      ],
+      "id": "numpy-3e7f935658b1",
+      "target_files": [
+        "numpy/testing/_private/utils.py"
+      ]
+    },
+    {
+      "f2p": [
+        "numpy.core.tests.test_dtype::test_pairs[pair122]",
+        "numpy.core.tests.test_dtype::test_pairs[pair147]",
+        "numpy.core.tests.test_dtype::test_pairs[pair172]",
+        "numpy.core.tests.test_dtype::test_pairs[pair197]",
+        "numpy.core.tests.test_dtype::test_pairs[pair222]",
+        "numpy.core.tests.test_dtype::test_pairs[pair22]",
+        "numpy.core.tests.test_dtype::test_pairs[pair247]",
+        "numpy.core.tests.test_dtype::test_pairs[pair272]",
+        "numpy.core.tests.test_dtype::test_pairs[pair297]",
+        "numpy.core.tests.test_dtype::test_pairs[pair322]",
+        "numpy.core.tests.test_dtype::test_pairs[pair347]",
+        "numpy.core.tests.test_dtype::test_pairs[pair372]",
+        "numpy.core.tests.test_dtype::test_pairs[pair397]",
+        "numpy.core.tests.test_dtype::test_pairs[pair422]",
+        "numpy.core.tests.test_dtype::test_pairs[pair447]",
+        "numpy.core.tests.test_dtype::test_pairs[pair472]",
+        "numpy.core.tests.test_dtype::test_pairs[pair47]",
+        "numpy.core.tests.test_dtype::test_pairs[pair497]",
+        "numpy.core.tests.test_dtype::test_pairs[pair522]",
+        "numpy.core.tests.test_dtype::test_pairs[pair547]",
+        "numpy.core.tests.test_dtype::test_pairs[pair572]",
+        "numpy.core.tests.test_dtype::test_pairs[pair575]",
+        "numpy.core.tests.test_dtype::test_pairs[pair576]",
+        "numpy.core.tests.test_dtype::test_pairs[pair577]",
+        "numpy.core.tests.test_dtype::test_pairs[pair578]",
+        "numpy.core.tests.test_dtype::test_pairs[pair579]",
+        "numpy.core.tests.test_dtype::test_pairs[pair580]",
+        "numpy.core.tests.test_dtype::test_pairs[pair581]",
+        "numpy.core.tests.test_dtype::test_pairs[pair582]",
+        "numpy.core.tests.test_dtype::test_pairs[pair583]",
+        "numpy.core.tests.test_dtype::test_pairs[pair584]",
+        "numpy.core.tests.test_dtype::test_pairs[pair585]",
+        "numpy.core.tests.test_dtype::test_pairs[pair586]",
+        "numpy.core.tests.test_dtype::test_pairs[pair587]",
+        "numpy.core.tests.test_dtype::test_pairs[pair588]",
+        "numpy.core.tests.test_dtype::test_pairs[pair589]",
+        "numpy.core.tests.test_dtype::test_pairs[pair590]",
+        "numpy.core.tests.test_dtype::test_pairs[pair591]",
+        "numpy.core.tests.test_dtype::test_pairs[pair592]",
+        "numpy.core.tests.test_dtype::test_pairs[pair593]",
+        "numpy.core.tests.test_dtype::test_pairs[pair594]",
+        "numpy.core.tests.test_dtype::test_pairs[pair595]",
+        "numpy.core.tests.test_dtype::test_pairs[pair596]",
+        "numpy.core.tests.test_dtype::test_pairs[pair597]",
+        "numpy.core.tests.test_dtype::test_pairs[pair598]",
+        "numpy.core.tests.test_dtype::test_pairs[pair599]",
+        "numpy.core.tests.test_dtype::test_pairs[pair623]",
+        "numpy.core.tests.test_dtype::test_pairs[pair648]",
+        "numpy.core.tests.test_dtype::test_pairs[pair72]",
+        "numpy.core.tests.test_dtype::test_pairs[pair97]"
+      ],
+      "id": "numpy-41d0b0003636",
+      "target_files": [
+        "numpy/core/_internal.py"
+      ]
+    },
+    {
+      "f2p": [
+        "numpy.random.tests.test_regression.TestRegression::test_permutation_subclass"
+      ],
+      "id": "numpy-42b0a558b006",
+      "target_files": [
+        "numpy/random/mtrand/mtrand.pyx"
+      ]
+    },
+    {
+      "f2p": [
+        "numpy.core.tests.test_umath::test_nextafter_signed_zero[float16]"
+      ],
+      "id": "numpy-43f85db0358c",
+      "target_files": [
+        "numpy/_core/src/npymath/halffloat.cpp"
+      ]
+    },
+    {
+      "f2p": [
+        "__process_level_failure__"
+      ],
+      "id": "numpy-44a1b4ddf6c2",
+      "target_files": [
+        "numpy/core/src/multiarray/mapping.c"
+      ]
+    },
+    {
+      "f2p": [
+        "numpy.linalg.tests.test_linalg.TestCond::test_cond_dtypes[-1-complex128]",
+        "numpy.linalg.tests.test_linalg.TestCond::test_cond_dtypes[-1-complex64]",
+        "numpy.linalg.tests.test_linalg.TestCond::test_cond_dtypes[-inf-complex128]",
+        "numpy.linalg.tests.test_linalg.TestCond::test_cond_dtypes[-inf-complex64]",
+        "numpy.linalg.tests.test_linalg.TestCond::test_cond_dtypes[1-complex128]",
+        "numpy.linalg.tests.test_linalg.TestCond::test_cond_dtypes[1-complex64]",
+        "numpy.linalg.tests.test_linalg.TestCond::test_cond_dtypes[fro-complex128]",
+        "numpy.linalg.tests.test_linalg.TestCond::test_cond_dtypes[fro-complex64]",
+        "numpy.linalg.tests.test_linalg.TestCond::test_cond_dtypes[inf-complex128]",
+        "numpy.linalg.tests.test_linalg.TestCond::test_cond_dtypes[inf-complex64]"
+      ],
+      "id": "numpy-4b9b1e3a2ca6",
+      "target_files": [
+        "numpy/linalg/_linalg.py"
+      ]
+    },
+    {
+      "f2p": [
+        "__process_level_failure__"
+      ],
+      "id": "numpy-4bc4046ea06f",
+      "target_files": [
+        "numpy/core/src/multiarray/descriptor.c"
+      ]
+    },
+    {
+      "f2p": [
+        "numpy.ma.tests.test_extras.TestMedian::test_list_of_masked_array"
+      ],
+      "id": "numpy-4d1bb8071489",
+      "target_files": [
+        "numpy/ma/extras.py"
+      ]
+    },
+    {
+      "f2p": [
+        "numpy.tests.test_ctypeslib.TestAsArray::test_segmentation_fault"
+      ],
+      "id": "numpy-4d49324842bc",
+      "target_files": [
+        "numpy/ctypeslib.py"
+      ]
+    },
+    {
+      "f2p": [
+        "numpy.core.tests.test_nditer::test_invalid_call_of_enable_external_loop"
+      ],
+      "id": "numpy-4ef03b3c051c",
+      "target_files": [
+        "numpy/_core/src/multiarray/nditer_pywrap.c"
+      ]
+    },
+    {
+      "f2p": [
+        "numpy.lib.tests.test_function_base.TestInterp::test_non_finite_behavior"
+      ],
+      "id": "numpy-511ab0b1136c",
+      "target_files": [
+        "numpy/core/src/multiarray/compiled_base.c"
+      ]
+    },
+    {
+      "f2p": [
+        "numpy.core.tests.test_multiarray::test_array_interface_offset"
+      ],
+      "id": "numpy-52ae8250b4e8",
+      "target_files": [
+        "numpy/core/src/multiarray/ctors.c"
+      ]
+    },
+    {
+      "f2p": [
+        "numpy.core.tests.test_multiarray.TestChoose::test_output_dtype[ops0]",
+        "numpy.core.tests.test_multiarray.TestChoose::test_output_dtype[ops1]"
+      ],
+      "id": "numpy-53d88796a22e",
+      "target_files": [
+        "numpy/core/src/multiarray/convert_datatype.c"
+      ]
+    },
+    {
+      "f2p": [
+        "numpy.f2py.tests.test_string.TestStringOptionalInOut::test_gh24662"
+      ],
+      "id": "numpy-596b895d33a0",
+      "target_files": [
+        "numpy/f2py/cfuncs.py"
+      ]
+    },
+    {
+      "f2p": [
+        "numpy.random.tests.test_regression.TestRegression::test_beta_expected_zero_frequency"
+      ],
+      "id": "numpy-5ac0ae3c901a",
+      "target_files": [
+        "numpy/random/src/distributions/distributions.c"
+      ]
+    },
+    {
+      "f2p": [
+        "numpy.core.tests.test_datetime.TestDateTime::test_gh_29555"
+      ],
+      "id": "numpy-5b986d3a230b",
+      "target_files": [
+        "numpy/_core/src/multiarray/descriptor.c"
+      ]
+    },
+    {
+      "f2p": [
+        "numpy.lib.tests.test_histograms.TestHistogram::test_gh_23110"
+      ],
+      "id": "numpy-5c17edc1ea42",
+      "target_files": [
+        "numpy/lib/histograms.py"
+      ]
+    },
+    {
+      "f2p": [
+        "numpy.core.tests.test_multiarray.TestStructured::test_scalar_assignment"
+      ],
+      "id": "numpy-5e60a604a368",
+      "target_files": [
+        "numpy/core/src/multiarray/methods.c"
+      ]
+    },
+    {
+      "f2p": [
+        "numpy.lib.tests.test_function_base.TestSinc::test_float_dtypes[float16]"
+      ],
+      "id": "numpy-5f21d29a3432",
+      "target_files": [
+        "numpy/lib/_function_base_impl.py"
+      ]
+    },
+    {
+      "f2p": [
+        "numpy.lib.tests.test_function_base.TestGradient::test_f_decreasing_unsigned_int[uint16]",
+        "numpy.lib.tests.test_function_base.TestGradient::test_f_decreasing_unsigned_int[uint32]",
+        "numpy.lib.tests.test_function_base.TestGradient::test_f_decreasing_unsigned_int[uint64]",
+        "numpy.lib.tests.test_function_base.TestGradient::test_f_decreasing_unsigned_int[uint8]",
+        "numpy.lib.tests.test_function_base.TestGradient::test_f_signed_int_big_jump[int16]",
+        "numpy.lib.tests.test_function_base.TestGradient::test_f_signed_int_big_jump[int32]",
+        "numpy.lib.tests.test_function_base.TestGradient::test_f_signed_int_big_jump[int64]",
+        "numpy.lib.tests.test_function_base.TestGradient::test_f_signed_int_big_jump[int8]",
+        "numpy.lib.tests.test_function_base.TestGradient::test_x_decreasing_unsigned[uint16]",
+        "numpy.lib.tests.test_function_base.TestGradient::test_x_decreasing_unsigned[uint32]",
+        "numpy.lib.tests.test_function_base.TestGradient::test_x_decreasing_unsigned[uint64]",
+        "numpy.lib.tests.test_function_base.TestGradient::test_x_decreasing_unsigned[uint8]",
+        "numpy.lib.tests.test_function_base.TestGradient::test_x_signed_int_big_jump[int16]",
+        "numpy.lib.tests.test_function_base.TestGradient::test_x_signed_int_big_jump[int32]",
+        "numpy.lib.tests.test_function_base.TestGradient::test_x_signed_int_big_jump[int64]",
+        "numpy.lib.tests.test_function_base.TestGradient::test_x_signed_int_big_jump[int8]"
+      ],
+      "id": "numpy-62ca8c33ccaf",
+      "target_files": [
+        "numpy/lib/function_base.py"
+      ]
+    },
+    {
+      "f2p": [
+        "numpy.lib.tests.test_shape_base.TestKron::test_kron_shape[shape_a3-shape_b3]",
+        "numpy.lib.tests.test_shape_base.TestKron::test_kron_shape[shape_a4-shape_b4]",
+        "numpy.lib.tests.test_shape_base.TestKron::test_kron_shape[shape_a5-shape_b5]"
+      ],
+      "id": "numpy-6968f1e0ccc1",
+      "target_files": [
+        "benchmarks/benchmarks/bench_shape_base.py",
+        "numpy/lib/shape_base.py"
+      ]
+    },
+    {
+      "f2p": [
+        "numpy.fft.tests.test_fftpack.TestFFT1D::test_rfftn"
+      ],
+      "id": "numpy-6d79f98121bb",
+      "target_files": [
+        "numpy/fft/_pocketfft.py"
+      ]
+    },
+    {
+      "f2p": [
+        "numpy.core.tests.test_datetime.TestDateTime::test_timedelta_array_nat_assignment",
+        "numpy.core.tests.test_datetime.TestDateTime::test_timedelta_array_with_nats"
+      ],
+      "id": "numpy-6e22ec5a1446",
+      "target_files": [
+        "numpy/_core/src/multiarray/datetime.c"
+      ]
+    },
+    {
+      "f2p": [
+        "numpy.core.tests.test_numeric.TestNonarrayArgs::test_var"
+      ],
+      "id": "numpy-6fb1ac614135",
+      "target_files": [
+        "numpy/core/_methods.py"
+      ]
+    },
+    {
+      "f2p": [
+        "numpy.ma.tests.test_core::test_astype_basic[?-B]",
+        "numpy.ma.tests.test_core::test_astype_basic[?-D]",
+        "numpy.ma.tests.test_core::test_astype_basic[?-F]",
+        "numpy.ma.tests.test_core::test_astype_basic[?-H]",
+        "numpy.ma.tests.test_core::test_astype_basic[?-I]",
+        "numpy.ma.tests.test_core::test_astype_basic[?-L]",
+        "numpy.ma.tests.test_core::test_astype_basic[?-Q]",
+        "numpy.ma.tests.test_core::test_astype_basic[?-b]",
+        "numpy.ma.tests.test_core::test_astype_basic[?-d]",
+        "numpy.ma.tests.test_core::test_astype_basic[?-e]",
+        "numpy.ma.tests.test_core::test_astype_basic[?-f]",
+        "numpy.ma.tests.test_core::test_astype_basic[?-g]",
+        "numpy.ma.tests.test_core::test_astype_basic[?-h]",
+        "numpy.ma.tests.test_core::test_astype_basic[?-i]",
+        "numpy.ma.tests.test_core::test_astype_basic[?-l]",
+        "numpy.ma.tests.test_core::test_astype_basic[?-q]",
+        "numpy.ma.tests.test_core::test_astype_basic[B-?]",
+        "numpy.ma.tests.test_core::test_astype_basic[B-D]",
+        "numpy.ma.tests.test_core::test_astype_basic[B-F]",
+        "numpy.ma.tests.test_core::test_astype_basic[B-H]",
+        "numpy.ma.tests.test_core::test_astype_basic[B-I]",
+        "numpy.ma.tests.test_core::test_astype_basic[B-L]",
+        "numpy.ma.tests.test_core::test_astype_basic[B-Q]",
+        "numpy.ma.tests.test_core::test_astype_basic[B-b]",
+        "numpy.ma.tests.test_core::test_astype_basic[B-d]",
+        "numpy.ma.tests.test_core::test_astype_basic[B-e]",
+        "numpy.ma.tests.test_core::test_astype_basic[B-f]",
+        "numpy.ma.tests.test_core::test_astype_basic[B-g]",
+        "numpy.ma.tests.test_core::test_astype_basic[B-h]",
+        "numpy.ma.tests.test_core::test_astype_basic[B-i]",
+        "numpy.ma.tests.test_core::test_astype_basic[B-l]",
+        "numpy.ma.tests.test_core::test_astype_basic[B-q]",
+        "numpy.ma.tests.test_core::test_astype_basic[D-?]",
+        "numpy.ma.tests.test_core::test_astype_basic[D-B]",
+        "numpy.ma.tests.test_core::test_astype_basic[D-F]",
+        "numpy.ma.tests.test_core::test_astype_basic[D-H]",
+        "numpy.ma.tests.test_core::test_astype_basic[D-I]",
+        "numpy.ma.tests.test_core::test_astype_basic[D-L]",
+        "numpy.ma.tests.test_core::test_astype_basic[D-Q]",
+        "numpy.ma.tests.test_core::test_astype_basic[D-b]",
+        "numpy.ma.tests.test_core::test_astype_basic[D-d]",
+        "numpy.ma.tests.test_core::test_astype_basic[D-e]",
+        "numpy.ma.tests.test_core::test_astype_basic[D-f]",
+        "numpy.ma.tests.test_core::test_astype_basic[D-g]",
+        "numpy.ma.tests.test_core::test_astype_basic[D-h]",
+        "numpy.ma.tests.test_core::test_astype_basic[D-i]",
+        "numpy.ma.tests.test_core::test_astype_basic[D-l]",
+        "numpy.ma.tests.test_core::test_astype_basic[D-q]",
+        "numpy.ma.tests.test_core::test_astype_basic[F-?]",
+        "numpy.ma.tests.test_core::test_astype_basic[F-B]",
+        "numpy.ma.tests.test_core::test_astype_basic[F-D]",
+        "numpy.ma.tests.test_core::test_astype_basic[F-H]",
+        "numpy.ma.tests.test_core::test_astype_basic[F-I]",
+        "numpy.ma.tests.test_core::test_astype_basic[F-L]",
+        "numpy.ma.tests.test_core::test_astype_basic[F-Q]",
+        "numpy.ma.tests.test_core::test_astype_basic[F-b]",
+        "numpy.ma.tests.test_core::test_astype_basic[F-d]",
+        "numpy.ma.tests.test_core::test_astype_basic[F-e]",
+        "numpy.ma.tests.test_core::test_astype_basic[F-f]",
+        "numpy.ma.tests.test_core::test_astype_basic[F-g]",
+        "numpy.ma.tests.test_core::test_astype_basic[F-h]",
+        "numpy.ma.tests.test_core::test_astype_basic[F-i]",
+        "numpy.ma.tests.test_core::test_astype_basic[F-l]",
+        "numpy.ma.tests.test_core::test_astype_basic[F-q]",
+        "numpy.ma.tests.test_core::test_astype_basic[H-?]",
+        "numpy.ma.tests.test_core::test_astype_basic[H-B]",
+        "numpy.ma.tests.test_core::test_astype_basic[H-D]",
+        "numpy.ma.tests.test_core::test_astype_basic[H-F]",
+        "numpy.ma.tests.test_core::test_astype_basic[H-I]",
+        "numpy.ma.tests.test_core::test_astype_basic[H-L]",
+        "numpy.ma.tests.test_core::test_astype_basic[H-Q]",
+        "numpy.ma.tests.test_core::test_astype_basic[H-b]",
+        "numpy.ma.tests.test_core::test_astype_basic[H-d]",
+        "numpy.ma.tests.test_core::test_astype_basic[H-e]",
+        "numpy.ma.tests.test_core::test_astype_basic[H-f]",
+        "numpy.ma.tests.test_core::test_astype_basic[H-g]",
+        "numpy.ma.tests.test_core::test_astype_basic[H-h]",
+        "numpy.ma.tests.test_core::test_astype_basic[H-i]",
+        "numpy.ma.tests.test_core::test_astype_basic[H-l]",
+        "numpy.ma.tests.test_core::test_astype_basic[H-q]",
+        "numpy.ma.tests.test_core::test_astype_basic[I-?]",
+        "numpy.ma.tests.test_core::test_astype_basic[I-B]",
+        "numpy.ma.tests.test_core::test_astype_basic[I-D]",
+        "numpy.ma.tests.test_core::test_astype_basic[I-F]",
+        "numpy.ma.tests.test_core::test_astype_basic[I-H]",
+        "numpy.ma.tests.test_core::test_astype_basic[I-L]",
+        "numpy.ma.tests.test_core::test_astype_basic[I-Q]",
+        "numpy.ma.tests.test_core::test_astype_basic[I-b]",
+        "numpy.ma.tests.test_core::test_astype_basic[I-d]",
+        "numpy.ma.tests.test_core::test_astype_basic[I-e]",
+        "numpy.ma.tests.test_core::test_astype_basic[I-f]",
+        "numpy.ma.tests.test_core::test_astype_basic[I-g]",
+        "numpy.ma.tests.test_core::test_astype_basic[I-h]",
+        "numpy.ma.tests.test_core::test_astype_basic[I-i]",
+        "numpy.ma.tests.test_core::test_astype_basic[I-l]",
+        "numpy.ma.tests.test_core::test_astype_basic[I-q]",
+        "numpy.ma.tests.test_core::test_astype_basic[L-?]",
+        "numpy.ma.tests.test_core::test_astype_basic[L-B]",
+        "numpy.ma.tests.test_core::test_astype_basic[L-D]",
+        "numpy.ma.tests.test_core::test_astype_basic[L-F]",
+        "numpy.ma.tests.test_core::test_astype_basic[L-H]",
+        "numpy.ma.tests.test_core::test_astype_basic[L-I]",
+        "numpy.ma.tests.test_core::test_astype_basic[L-b]",
+        "numpy.ma.tests.test_core::test_astype_basic[L-d]",
+        "numpy.ma.tests.test_core::test_astype_basic[L-e]",
+        "numpy.ma.tests.test_core::test_astype_basic[L-f]",
+        "numpy.ma.tests.test_core::test_astype_basic[L-g]",
+        "numpy.ma.tests.test_core::test_astype_basic[L-h]",
+        "numpy.ma.tests.test_core::test_astype_basic[L-i]",
+        "numpy.ma.tests.test_core::test_astype_basic[L-l]",
+        "numpy.ma.tests.test_core::test_astype_basic[L-q]",
+        "numpy.ma.tests.test_core::test_astype_basic[Q-?]",
+        "numpy.ma.tests.test_core::test_astype_basic[Q-B]",
+        "numpy.ma.tests.test_core::test_astype_basic[Q-D]",
+        "numpy.ma.tests.test_core::test_astype_basic[Q-F]",
+        "numpy.ma.tests.test_core::test_astype_basic[Q-H]",
+        "numpy.ma.tests.test_core::test_astype_basic[Q-I]",
+        "numpy.ma.tests.test_core::test_astype_basic[Q-b]",
+        "numpy.ma.tests.test_core::test_astype_basic[Q-d]",
+        "numpy.ma.tests.test_core::test_astype_basic[Q-e]",
+        "numpy.ma.tests.test_core::test_astype_basic[Q-f]",
+        "numpy.ma.tests.test_core::test_astype_basic[Q-g]",
+        "numpy.ma.tests.test_core::test_astype_basic[Q-h]",
+        "numpy.ma.tests.test_core::test_astype_basic[Q-i]",
+        "numpy.ma.tests.test_core::test_astype_basic[Q-l]",
+        "numpy.ma.tests.test_core::test_astype_basic[Q-q]",
+        "numpy.ma.tests.test_core::test_astype_basic[b-?]",
+        "numpy.ma.tests.test_core::test_astype_basic[b-B]",
+        "numpy.ma.tests.test_core::test_astype_basic[b-D]",
+        "numpy.ma.tests.test_core::test_astype_basic[b-F]",
+        "numpy.ma.tests.test_core::test_astype_basic[b-H]",
+        "numpy.ma.tests.test_core::test_astype_basic[b-I]",
+        "numpy.ma.tests.test_core::test_astype_basic[b-L]",
+        "numpy.ma.tests.test_core::test_astype_basic[b-Q]",
+        "numpy.ma.tests.test_core::test_astype_basic[b-d]",
+        "numpy.ma.tests.test_core::test_astype_basic[b-e]",
+        "numpy.ma.tests.test_core::test_astype_basic[b-f]",
+        "numpy.ma.tests.test_core::test_astype_basic[b-g]",
+        "numpy.ma.tests.test_core::test_astype_basic[b-h]",
+        "numpy.ma.tests.test_core::test_astype_basic[b-i]",
+        "numpy.ma.tests.test_core::test_astype_basic[b-l]",
+        "numpy.ma.tests.test_core::test_astype_basic[b-q]",
+        "numpy.ma.tests.test_core::test_astype_basic[d-?]",
+        "numpy.ma.tests.test_core::test_astype_basic[d-B]",
+        "numpy.ma.tests.test_core::test_astype_basic[d-D]",
+        "numpy.ma.tests.test_core::test_astype_basic[d-F]",
+        "numpy.ma.tests.test_core::test_astype_basic[d-H]",
+        "numpy.ma.tests.test_core::test_astype_basic[d-I]",
+        "numpy.ma.tests.test_core::test_astype_basic[d-L]",
+        "numpy.ma.tests.test_core::test_astype_basic[d-Q]",
+        "numpy.ma.tests.test_core::test_astype_basic[d-b]",
+        "numpy.ma.tests.test_core::test_astype_basic[d-e]",
+        "numpy.ma.tests.test_core::test_astype_basic[d-f]",
+        "numpy.ma.tests.test_core::test_astype_basic[d-g]",
+        "numpy.ma.tests.test_core::test_astype_basic[d-h]",
+        "numpy.ma.tests.test_core::test_astype_basic[d-i]",
+        "numpy.ma.tests.test_core::test_astype_basic[d-l]",
+        "numpy.ma.tests.test_core::test_astype_basic[d-q]",
+        "numpy.ma.tests.test_core::test_astype_basic[e-?]",
+        "numpy.ma.tests.test_core::test_astype_basic[e-B]",
+        "numpy.ma.tests.test_core::test_astype_basic[e-D]",
+        "numpy.ma.tests.test_core::test_astype_basic[e-F]",
+        "numpy.ma.tests.test_core::test_astype_basic[e-H]",
+        "numpy.ma.tests.test_core::test_astype_basic[e-I]",
+        "numpy.ma.tests.test_core::test_astype_basic[e-L]",
+        "numpy.ma.tests.test_core::test_astype_basic[e-Q]",
+        "numpy.ma.tests.test_core::test_astype_basic[e-b]",
+        "numpy.ma.tests.test_core::test_astype_basic[e-d]",
+        "numpy.ma.tests.test_core::test_astype_basic[e-f]",
+        "numpy.ma.tests.test_core::test_astype_basic[e-g]",
+        "numpy.ma.tests.test_core::test_astype_basic[e-h]",
+        "numpy.ma.tests.test_core::test_astype_basic[e-i]",
+        "numpy.ma.tests.test_core::test_astype_basic[e-l]",
+        "numpy.ma.tests.test_core::test_astype_basic[e-q]",
+        "numpy.ma.tests.test_core::test_astype_basic[f-?]",
+        "numpy.ma.tests.test_core::test_astype_basic[f-B]",
+        "numpy.ma.tests.test_core::test_astype_basic[f-D]",
+        "numpy.ma.tests.test_core::test_astype_basic[f-F]",
+        "numpy.ma.tests.test_core::test_astype_basic[f-H]",
+        "numpy.ma.tests.test_core::test_astype_basic[f-I]",
+        "numpy.ma.tests.test_core::test_astype_basic[f-L]",
+        "numpy.ma.tests.test_core::test_astype_basic[f-Q]",
+        "numpy.ma.tests.test_core::test_astype_basic[f-b]",
+        "numpy.ma.tests.test_core::test_astype_basic[f-d]",
+        "numpy.ma.tests.test_core::test_astype_basic[f-e]",
+        "numpy.ma.tests.test_core::test_astype_basic[f-g]",
+        "numpy.ma.tests.test_core::test_astype_basic[f-h]",
+        "numpy.ma.tests.test_core::test_astype_basic[f-i]",
+        "numpy.ma.tests.test_core::test_astype_basic[f-l]",
+        "numpy.ma.tests.test_core::test_astype_basic[f-q]",
+        "numpy.ma.tests.test_core::test_astype_basic[g-?]",
+        "numpy.ma.tests.test_core::test_astype_basic[g-B]",
+        "numpy.ma.tests.test_core::test_astype_basic[g-D]",
+        "numpy.ma.tests.test_core::test_astype_basic[g-F]",
+        "numpy.ma.tests.test_core::test_astype_basic[g-H]",
+        "numpy.ma.tests.test_core::test_astype_basic[g-I]",
+        "numpy.ma.tests.test_core::test_astype_basic[g-L]",
+        "numpy.ma.tests.test_core::test_astype_basic[g-Q]",
+        "numpy.ma.tests.test_core::test_astype_basic[g-b]",
+        "numpy.ma.tests.test_core::test_astype_basic[g-d]",
+        "numpy.ma.tests.test_core::test_astype_basic[g-e]",
+        "numpy.ma.tests.test_core::test_astype_basic[g-f]",
+        "numpy.ma.tests.test_core::test_astype_basic[g-h]",
+        "numpy.ma.tests.test_core::test_astype_basic[g-i]",
+        "numpy.ma.tests.test_core::test_astype_basic[g-l]",
+        "numpy.ma.tests.test_core::test_astype_basic[g-q]",
+        "numpy.ma.tests.test_core::test_astype_basic[h-?]",
+        "numpy.ma.tests.test_core::test_astype_basic[h-B]",
+        "numpy.ma.tests.test_core::test_astype_basic[h-D]",
+        "numpy.ma.tests.test_core::test_astype_basic[h-F]",
+        "numpy.ma.tests.test_core::test_astype_basic[h-H]",
+        "numpy.ma.tests.test_core::test_astype_basic[h-I]",
+        "numpy.ma.tests.test_core::test_astype_basic[h-L]",
+        "numpy.ma.tests.test_core::test_astype_basic[h-Q]",
+        "numpy.ma.tests.test_core::test_astype_basic[h-b]",
+        "numpy.ma.tests.test_core::test_astype_basic[h-d]",
+        "numpy.ma.tests.test_core::test_astype_basic[h-e]",
+        "numpy.ma.tests.test_core::test_astype_basic[h-f]",
+        "numpy.ma.tests.test_core::test_astype_basic[h-g]",
+        "numpy.ma.tests.test_core::test_astype_basic[h-i]",
+        "numpy.ma.tests.test_core::test_astype_basic[h-l]",
+        "numpy.ma.tests.test_core::test_astype_basic[h-q]",
+        "numpy.ma.tests.test_core::test_astype_basic[i-?]",
+        "numpy.ma.tests.test_core::test_astype_basic[i-B]",
+        "numpy.ma.tests.test_core::test_astype_basic[i-D]",
+        "numpy.ma.tests.test_core::test_astype_basic[i-F]",
+        "numpy.ma.tests.test_core::test_astype_basic[i-H]",
+        "numpy.ma.tests.test_core::test_astype_basic[i-I]",
+        "numpy.ma.tests.test_core::test_astype_basic[i-L]",
+        "numpy.ma.tests.test_core::test_astype_basic[i-Q]",
+        "numpy.ma.tests.test_core::test_astype_basic[i-b]",
+        "numpy.ma.tests.test_core::test_astype_basic[i-d]",
+        "numpy.ma.tests.test_core::test_astype_basic[i-e]",
+        "numpy.ma.tests.test_core::test_astype_basic[i-f]",
+        "numpy.ma.tests.test_core::test_astype_basic[i-g]",
+        "numpy.ma.tests.test_core::test_astype_basic[i-h]",
+        "numpy.ma.tests.test_core::test_astype_basic[i-l]",
+        "numpy.ma.tests.test_core::test_astype_basic[i-q]",
+        "numpy.ma.tests.test_core::test_astype_basic[l-?]",
+        "numpy.ma.tests.test_core::test_astype_basic[l-B]",
+        "numpy.ma.tests.test_core::test_astype_basic[l-D]",
+        "numpy.ma.tests.test_core::test_astype_basic[l-F]",
+        "numpy.ma.tests.test_core::test_astype_basic[l-H]",
+        "numpy.ma.tests.test_core::test_astype_basic[l-I]",
+        "numpy.ma.tests.test_core::test_astype_basic[l-L]",
+        "numpy.ma.tests.test_core::test_astype_basic[l-Q]",
+        "numpy.ma.tests.test_core::test_astype_basic[l-b]",
+        "numpy.ma.tests.test_core::test_astype_basic[l-d]",
+        "numpy.ma.tests.test_core::test_astype_basic[l-e]",
+        "numpy.ma.tests.test_core::test_astype_basic[l-f]",
+        "numpy.ma.tests.test_core::test_astype_basic[l-g]",
+        "numpy.ma.tests.test_core::test_astype_basic[l-h]",
+        "numpy.ma.tests.test_core::test_astype_basic[l-i]",
+        "numpy.ma.tests.test_core::test_astype_basic[q-?]",
+        "numpy.ma.tests.test_core::test_astype_basic[q-B]",
+        "numpy.ma.tests.test_core::test_astype_basic[q-D]",
+        "numpy.ma.tests.test_core::test_astype_basic[q-F]",
+        "numpy.ma.tests.test_core::test_astype_basic[q-H]",
+        "numpy.ma.tests.test_core::test_astype_basic[q-I]",
+        "numpy.ma.tests.test_core::test_astype_basic[q-L]",
+        "numpy.ma.tests.test_core::test_astype_basic[q-Q]",
+        "numpy.ma.tests.test_core::test_astype_basic[q-b]",
+        "numpy.ma.tests.test_core::test_astype_basic[q-d]",
+        "numpy.ma.tests.test_core::test_astype_basic[q-e]",
+        "numpy.ma.tests.test_core::test_astype_basic[q-f]",
+        "numpy.ma.tests.test_core::test_astype_basic[q-g]",
+        "numpy.ma.tests.test_core::test_astype_basic[q-h]",
+        "numpy.ma.tests.test_core::test_astype_basic[q-i]"
+      ],
+      "id": "numpy-72b70f771e21",
+      "target_files": [
+        "numpy/ma/core.py"
+      ]
+    },
+    {
+      "f2p": [
+        "numpy.lib.tests.test_function_base.TestVectorize::test_keywords_with_otypes_order1",
+        "numpy.lib.tests.test_function_base.TestVectorize::test_keywords_with_otypes_order2",
+        "numpy.lib.tests.test_function_base.TestVectorize::test_keywords_with_otypes_order3",
+        "numpy.lib.tests.test_function_base.TestVectorize::test_keywords_with_otypes_several_kwd_args1",
+        "numpy.lib.tests.test_function_base.TestVectorize::test_keywords_with_otypes_several_kwd_args2"
+      ],
+      "id": "numpy-72e6c6fdcfee",
+      "target_files": [
+        "numpy/lib/function_base.py"
+      ]
+    },
+    {
+      "f2p": [
+        "__process_level_failure__"
+      ],
+      "id": "numpy-73dc3e1fe81c",
+      "target_files": [
+        "numpy/core/src/multiarray/common.c"
+      ]
+    },
+    {
+      "f2p": [
+        "numpy.ma.tests.test_regression.TestRegression::test_masked_array_tostring_fortran"
+      ],
+      "id": "numpy-748747839150",
+      "target_files": [
+        "numpy/ma/core.py"
+      ]
+    },
+    {
+      "f2p": [
+        "numpy.lib.tests.test_function_base.TestGradient::test_f_decreasing_unsigned_int[uint16]",
+        "numpy.lib.tests.test_function_base.TestGradient::test_f_decreasing_unsigned_int[uint32]",
+        "numpy.lib.tests.test_function_base.TestGradient::test_f_decreasing_unsigned_int[uint64]",
+        "numpy.lib.tests.test_function_base.TestGradient::test_f_decreasing_unsigned_int[uint8]",
+        "numpy.lib.tests.test_function_base.TestGradient::test_f_signed_int_big_jump[int16]",
+        "numpy.lib.tests.test_function_base.TestGradient::test_f_signed_int_big_jump[int32]",
+        "numpy.lib.tests.test_function_base.TestGradient::test_f_signed_int_big_jump[int64]",
+        "numpy.lib.tests.test_function_base.TestGradient::test_f_signed_int_big_jump[int8]",
+        "numpy.lib.tests.test_function_base.TestGradient::test_x_decreasing_unsigned[uint16]",
+        "numpy.lib.tests.test_function_base.TestGradient::test_x_decreasing_unsigned[uint32]",
+        "numpy.lib.tests.test_function_base.TestGradient::test_x_decreasing_unsigned[uint64]",
+        "numpy.lib.tests.test_function_base.TestGradient::test_x_decreasing_unsigned[uint8]",
+        "numpy.lib.tests.test_function_base.TestGradient::test_x_signed_int_big_jump[int16]",
+        "numpy.lib.tests.test_function_base.TestGradient::test_x_signed_int_big_jump[int32]",
+        "numpy.lib.tests.test_function_base.TestGradient::test_x_signed_int_big_jump[int64]",
+        "numpy.lib.tests.test_function_base.TestGradient::test_x_signed_int_big_jump[int8]"
+      ],
+      "id": "numpy-799ddaf7ac85",
+      "target_files": [
+        "numpy/lib/function_base.py"
+      ]
+    },
+    {
+      "f2p": [
+        "numpy.core.tests.test_multiarray.TestDot::test_dot_out_aliasing",
+        "numpy.core.tests.test_multiarray.TestDot::test_dot_out_result"
+      ],
+      "id": "numpy-7e213aa243d9",
+      "target_files": [
+        "numpy/core/src/multiarray/multiarraymodule.c"
+      ]
+    },
+    {
+      "f2p": [
+        "numpy.core.tests.test_multiarray.TestArrayInterface::test_scalar_interface[val6-iface6-ValueError]",
+        "numpy.core.tests.test_multiarray.TestArrayInterface::test_scalar_interface[val8-iface8-ValueError]",
+        "numpy.core.tests.test_multiarray.TestArrayInterface::test_scalar_interface[val9-iface9-TypeError]"
+      ],
+      "id": "numpy-7f9c4849f467",
+      "target_files": [
+        "numpy/core/src/multiarray/ctors.c"
+      ]
+    },
+    {
+      "f2p": [
+        "numpy.ma.tests.test_core::test_masked_array_no_copy"
+      ],
+      "id": "numpy-8820f10d950c",
+      "target_files": [
+        "numpy/ma/core.py"
+      ]
+    },
+    {
+      "f2p": [
+        "numpy.polynomial.tests.test_polynomial.TestMisc::test_fit_degenerate_domain"
+      ],
+      "id": "numpy-8920c5de6722",
+      "target_files": [
+        "numpy/polynomial/_polybase.py"
+      ]
+    },
+    {
+      "f2p": [
+        "numpy.core.tests.test_multiarray.TestWritebackIfCopy::test_insert_noncontiguous"
+      ],
+      "id": "numpy-8bfccefaf86d",
+      "target_files": [
+        "numpy/core/src/multiarray/compiled_base.c"
+      ]
+    },
+    {
+      "f2p": [
+        "numpy.f2py.tests.test_callback.TestGH18335::test_gh18335"
+      ],
+      "id": "numpy-8c6153010c58",
+      "target_files": [
+        "numpy/f2py/cb_rules.py"
+      ]
+    },
+    {
+      "f2p": [
+        "numpy.core.tests.test_multiarray.TestMethods::test_choose",
+        "numpy.core.tests.test_multiarray.TestPutmask::test_overlaps"
+      ],
+      "id": "numpy-8ef50a81bd0b",
+      "target_files": [
+        "numpy/core/fromnumeric.py",
+        "numpy/core/src/multiarray/item_selection.c"
+      ]
+    },
+    {
+      "f2p": [
+        "numpy.core.tests.test_multiarray::test_getfield"
+      ],
+      "id": "numpy-92bd95057d28",
+      "target_files": [
+        "numpy/core/src/multiarray/methods.c"
+      ]
+    },
+    {
+      "f2p": [
+        "numpy.linalg.tests.test_linalg.TestTensorsolve::test_tensorsolve_result[shape2]"
+      ],
+      "id": "numpy-95be10d4f4bf",
+      "target_files": [
+        "numpy/linalg/linalg.py"
+      ]
+    },
+    {
+      "f2p": [
+        "numpy.lib.tests.test_arraysetops.TestUnique::test_unique_axis"
+      ],
+      "id": "numpy-969d66b4949d",
+      "target_files": [
+        "numpy/lib/arraysetops.py"
+      ]
+    },
+    {
+      "f2p": [
+        "numpy.core.tests.test_datetime.TestDateTime::test_timedelta_0_dim_object_array_conversion"
+      ],
+      "id": "numpy-97c0d08417d0",
+      "target_files": [
+        "numpy/core/src/multiarray/datetime.c"
+      ]
+    },
+    {
+      "f2p": [
+        "numpy.lib.tests.test__version::test_main_versions"
+      ],
+      "id": "numpy-9b63ce05db17",
+      "target_files": [
+        "numpy/lib/_version.py"
+      ]
+    },
+    {
+      "f2p": [
+        "numpy.lib.tests.test_function_base.TestMedian::test_keepdims_out[1]",
+        "numpy.lib.tests.test_function_base.TestMedian::test_keepdims_out[None]",
+        "numpy.lib.tests.test_function_base.TestMedian::test_keepdims_out[axis2]",
+        "numpy.lib.tests.test_function_base.TestMedian::test_keepdims_out[axis3]",
+        "numpy.lib.tests.test_function_base.TestMedian::test_keepdims_out[axis4]",
+        "numpy.lib.tests.test_function_base.TestPercentile::test_keepdims_out[1-7]",
+        "numpy.lib.tests.test_function_base.TestPercentile::test_keepdims_out[1-q1]",
+        "numpy.lib.tests.test_function_base.TestPercentile::test_keepdims_out[None-7]",
+        "numpy.lib.tests.test_function_base.TestPercentile::test_keepdims_out[None-q1]",
+        "numpy.lib.tests.test_function_base.TestPercentile::test_keepdims_out[axis2-7]",
+        "numpy.lib.tests.test_function_base.TestPercentile::test_keepdims_out[axis2-q1]",
+        "numpy.lib.tests.test_function_base.TestPercentile::test_keepdims_out[axis3-7]",
+        "numpy.lib.tests.test_function_base.TestPercentile::test_keepdims_out[axis3-q1]",
+        "numpy.lib.tests.test_function_base.TestPercentile::test_keepdims_out[axis4-7]",
+        "numpy.lib.tests.test_function_base.TestPercentile::test_keepdims_out[axis4-q1]",
+        "numpy.lib.tests.test_nanfunctions.TestNanFunctions_Median::test_keepdims_out[1]",
+        "numpy.lib.tests.test_nanfunctions.TestNanFunctions_Median::test_keepdims_out[None]",
+        "numpy.lib.tests.test_nanfunctions.TestNanFunctions_Median::test_keepdims_out[axis2]",
+        "numpy.lib.tests.test_nanfunctions.TestNanFunctions_Median::test_keepdims_out[axis3]",
+        "numpy.lib.tests.test_nanfunctions.TestNanFunctions_Median::test_keepdims_out[axis4]",
+        "numpy.lib.tests.test_nanfunctions.TestNanFunctions_Percentile::test_keepdims_out[1-7]",
+        "numpy.lib.tests.test_nanfunctions.TestNanFunctions_Percentile::test_keepdims_out[1-q1]",
+        "numpy.lib.tests.test_nanfunctions.TestNanFunctions_Percentile::test_keepdims_out[None-7]",
+        "numpy.lib.tests.test_nanfunctions.TestNanFunctions_Percentile::test_keepdims_out[None-q1]",
+        "numpy.lib.tests.test_nanfunctions.TestNanFunctions_Percentile::test_keepdims_out[axis2-7]",
+        "numpy.lib.tests.test_nanfunctions.TestNanFunctions_Percentile::test_keepdims_out[axis2-q1]",
+        "numpy.lib.tests.test_nanfunctions.TestNanFunctions_Percentile::test_keepdims_out[axis3-7]",
+        "numpy.lib.tests.test_nanfunctions.TestNanFunctions_Percentile::test_keepdims_out[axis3-q1]",
+        "numpy.lib.tests.test_nanfunctions.TestNanFunctions_Percentile::test_keepdims_out[axis4-7]",
+        "numpy.lib.tests.test_nanfunctions.TestNanFunctions_Percentile::test_keepdims_out[axis4-q1]",
+        "numpy.ma.tests.test_extras.TestMedian::test_keepdims_out[1]",
+        "numpy.ma.tests.test_extras.TestMedian::test_keepdims_out[None]",
+        "numpy.ma.tests.test_extras.TestMedian::test_keepdims_out[axis2]",
+        "numpy.ma.tests.test_extras.TestMedian::test_keepdims_out[axis3]",
+        "numpy.ma.tests.test_extras.TestMedian::test_keepdims_out[axis4]"
+      ],
+      "id": "numpy-9bd27eb57a1a",
+      "target_files": [
+        "numpy/lib/function_base.py",
+        "numpy/lib/nanfunctions.py",
+        "numpy/ma/extras.py"
+      ]
+    },
+    {
+      "f2p": [
+        "numpy.random.tests.test_random.TestRandomDist::test_shuffle"
+      ],
+      "id": "numpy-9e120f2b56a9",
+      "target_files": [
+        "numpy/random/mtrand/mtrand.pyx"
+      ]
+    },
+    {
+      "f2p": [
+        "numpy.ma.tests.test_core::test_astype_basic[?-B]",
+        "numpy.ma.tests.test_core::test_astype_basic[?-D]",
+        "numpy.ma.tests.test_core::test_astype_basic[?-F]",
+        "numpy.ma.tests.test_core::test_astype_basic[?-H]",
+        "numpy.ma.tests.test_core::test_astype_basic[?-I]",
+        "numpy.ma.tests.test_core::test_astype_basic[?-L]",
+        "numpy.ma.tests.test_core::test_astype_basic[?-Q]",
+        "numpy.ma.tests.test_core::test_astype_basic[?-b]",
+        "numpy.ma.tests.test_core::test_astype_basic[?-d]",
+        "numpy.ma.tests.test_core::test_astype_basic[?-e]",
+        "numpy.ma.tests.test_core::test_astype_basic[?-f]",
+        "numpy.ma.tests.test_core::test_astype_basic[?-g]",
+        "numpy.ma.tests.test_core::test_astype_basic[?-h]",
+        "numpy.ma.tests.test_core::test_astype_basic[?-i]",
+        "numpy.ma.tests.test_core::test_astype_basic[?-l]",
+        "numpy.ma.tests.test_core::test_astype_basic[?-q]",
+        "numpy.ma.tests.test_core::test_astype_basic[B-?]",
+        "numpy.ma.tests.test_core::test_astype_basic[B-D]",
+        "numpy.ma.tests.test_core::test_astype_basic[B-F]",
+        "numpy.ma.tests.test_core::test_astype_basic[B-H]",
+        "numpy.ma.tests.test_core::test_astype_basic[B-I]",
+        "numpy.ma.tests.test_core::test_astype_basic[B-L]",
+        "numpy.ma.tests.test_core::test_astype_basic[B-Q]",
+        "numpy.ma.tests.test_core::test_astype_basic[B-b]",
+        "numpy.ma.tests.test_core::test_astype_basic[B-d]",
+        "numpy.ma.tests.test_core::test_astype_basic[B-e]",
+        "numpy.ma.tests.test_core::test_astype_basic[B-f]",
+        "numpy.ma.tests.test_core::test_astype_basic[B-g]",
+        "numpy.ma.tests.test_core::test_astype_basic[B-h]",
+        "numpy.ma.tests.test_core::test_astype_basic[B-i]",
+        "numpy.ma.tests.test_core::test_astype_basic[B-l]",
+        "numpy.ma.tests.test_core::test_astype_basic[B-q]",
+        "numpy.ma.tests.test_core::test_astype_basic[D-?]",
+        "numpy.ma.tests.test_core::test_astype_basic[D-B]",
+        "numpy.ma.tests.test_core::test_astype_basic[D-F]",
+        "numpy.ma.tests.test_core::test_astype_basic[D-H]",
+        "numpy.ma.tests.test_core::test_astype_basic[D-I]",
+        "numpy.ma.tests.test_core::test_astype_basic[D-L]",
+        "numpy.ma.tests.test_core::test_astype_basic[D-Q]",
+        "numpy.ma.tests.test_core::test_astype_basic[D-b]",
+        "numpy.ma.tests.test_core::test_astype_basic[D-d]",
+        "numpy.ma.tests.test_core::test_astype_basic[D-e]",
+        "numpy.ma.tests.test_core::test_astype_basic[D-f]",
+        "numpy.ma.tests.test_core::test_astype_basic[D-g]",
+        "numpy.ma.tests.test_core::test_astype_basic[D-h]",
+        "numpy.ma.tests.test_core::test_astype_basic[D-i]",
+        "numpy.ma.tests.test_core::test_astype_basic[D-l]",
+        "numpy.ma.tests.test_core::test_astype_basic[D-q]",
+        "numpy.ma.tests.test_core::test_astype_basic[F-?]",
+        "numpy.ma.tests.test_core::test_astype_basic[F-B]",
+        "numpy.ma.tests.test_core::test_astype_basic[F-D]",
+        "numpy.ma.tests.test_core::test_astype_basic[F-H]",
+        "numpy.ma.tests.test_core::test_astype_basic[F-I]",
+        "numpy.ma.tests.test_core::test_astype_basic[F-L]",
+        "numpy.ma.tests.test_core::test_astype_basic[F-Q]",
+        "numpy.ma.tests.test_core::test_astype_basic[F-b]",
+        "numpy.ma.tests.test_core::test_astype_basic[F-d]",
+        "numpy.ma.tests.test_core::test_astype_basic[F-e]",
+        "numpy.ma.tests.test_core::test_astype_basic[F-f]",
+        "numpy.ma.tests.test_core::test_astype_basic[F-g]",
+        "numpy.ma.tests.test_core::test_astype_basic[F-h]",
+        "numpy.ma.tests.test_core::test_astype_basic[F-i]",
+        "numpy.ma.tests.test_core::test_astype_basic[F-l]",
+        "numpy.ma.tests.test_core::test_astype_basic[F-q]",
+        "numpy.ma.tests.test_core::test_astype_basic[H-?]",
+        "numpy.ma.tests.test_core::test_astype_basic[H-B]",
+        "numpy.ma.tests.test_core::test_astype_basic[H-D]",
+        "numpy.ma.tests.test_core::test_astype_basic[H-F]",
+        "numpy.ma.tests.test_core::test_astype_basic[H-I]",
+        "numpy.ma.tests.test_core::test_astype_basic[H-L]",
+        "numpy.ma.tests.test_core::test_astype_basic[H-Q]",
+        "numpy.ma.tests.test_core::test_astype_basic[H-b]",
+        "numpy.ma.tests.test_core::test_astype_basic[H-d]",
+        "numpy.ma.tests.test_core::test_astype_basic[H-e]",
+        "numpy.ma.tests.test_core::test_astype_basic[H-f]",
+        "numpy.ma.tests.test_core::test_astype_basic[H-g]",
+        "numpy.ma.tests.test_core::test_astype_basic[H-h]",
+        "numpy.ma.tests.test_core::test_astype_basic[H-i]",
+        "numpy.ma.tests.test_core::test_astype_basic[H-l]",
+        "numpy.ma.tests.test_core::test_astype_basic[H-q]",
+        "numpy.ma.tests.test_core::test_astype_basic[I-?]",
+        "numpy.ma.tests.test_core::test_astype_basic[I-B]",
+        "numpy.ma.tests.test_core::test_astype_basic[I-D]",
+        "numpy.ma.tests.test_core::test_astype_basic[I-F]",
+        "numpy.ma.tests.test_core::test_astype_basic[I-H]",
+        "numpy.ma.tests.test_core::test_astype_basic[I-L]",
+        "numpy.ma.tests.test_core::test_astype_basic[I-Q]",
+        "numpy.ma.tests.test_core::test_astype_basic[I-b]",
+        "numpy.ma.tests.test_core::test_astype_basic[I-d]",
+        "numpy.ma.tests.test_core::test_astype_basic[I-e]",
+        "numpy.ma.tests.test_core::test_astype_basic[I-f]",
+        "numpy.ma.tests.test_core::test_astype_basic[I-g]",
+        "numpy.ma.tests.test_core::test_astype_basic[I-h]",
+        "numpy.ma.tests.test_core::test_astype_basic[I-i]",
+        "numpy.ma.tests.test_core::test_astype_basic[I-l]",
+        "numpy.ma.tests.test_core::test_astype_basic[I-q]",
+        "numpy.ma.tests.test_core::test_astype_basic[L-?]",
+        "numpy.ma.tests.test_core::test_astype_basic[L-B]",
+        "numpy.ma.tests.test_core::test_astype_basic[L-D]",
+        "numpy.ma.tests.test_core::test_astype_basic[L-F]",
+        "numpy.ma.tests.test_core::test_astype_basic[L-H]",
+        "numpy.ma.tests.test_core::test_astype_basic[L-I]",
+        "numpy.ma.tests.test_core::test_astype_basic[L-b]",
+        "numpy.ma.tests.test_core::test_astype_basic[L-d]",
+        "numpy.ma.tests.test_core::test_astype_basic[L-e]",
+        "numpy.ma.tests.test_core::test_astype_basic[L-f]",
+        "numpy.ma.tests.test_core::test_astype_basic[L-g]",
+        "numpy.ma.tests.test_core::test_astype_basic[L-h]",
+        "numpy.ma.tests.test_core::test_astype_basic[L-i]",
+        "numpy.ma.tests.test_core::test_astype_basic[L-l]",
+        "numpy.ma.tests.test_core::test_astype_basic[L-q]",
+        "numpy.ma.tests.test_core::test_astype_basic[Q-?]",
+        "numpy.ma.tests.test_core::test_astype_basic[Q-B]",
+        "numpy.ma.tests.test_core::test_astype_basic[Q-D]",
+        "numpy.ma.tests.test_core::test_astype_basic[Q-F]",
+        "numpy.ma.tests.test_core::test_astype_basic[Q-H]",
+        "numpy.ma.tests.test_core::test_astype_basic[Q-I]",
+        "numpy.ma.tests.test_core::test_astype_basic[Q-b]",
+        "numpy.ma.tests.test_core::test_astype_basic[Q-d]",
+        "numpy.ma.tests.test_core::test_astype_basic[Q-e]",
+        "numpy.ma.tests.test_core::test_astype_basic[Q-f]",
+        "numpy.ma.tests.test_core::test_astype_basic[Q-g]",
+        "numpy.ma.tests.test_core::test_astype_basic[Q-h]",
+        "numpy.ma.tests.test_core::test_astype_basic[Q-i]",
+        "numpy.ma.tests.test_core::test_astype_basic[Q-l]",
+        "numpy.ma.tests.test_core::test_astype_basic[Q-q]",
+        "numpy.ma.tests.test_core::test_astype_basic[b-?]",
+        "numpy.ma.tests.test_core::test_astype_basic[b-B]",
+        "numpy.ma.tests.test_core::test_astype_basic[b-D]",
+        "numpy.ma.tests.test_core::test_astype_basic[b-F]",
+        "numpy.ma.tests.test_core::test_astype_basic[b-H]",
+        "numpy.ma.tests.test_core::test_astype_basic[b-I]",
+        "numpy.ma.tests.test_core::test_astype_basic[b-L]",
+        "numpy.ma.tests.test_core::test_astype_basic[b-Q]",
+        "numpy.ma.tests.test_core::test_astype_basic[b-d]",
+        "numpy.ma.tests.test_core::test_astype_basic[b-e]",
+        "numpy.ma.tests.test_core::test_astype_basic[b-f]",
+        "numpy.ma.tests.test_core::test_astype_basic[b-g]",
+        "numpy.ma.tests.test_core::test_astype_basic[b-h]",
+        "numpy.ma.tests.test_core::test_astype_basic[b-i]",
+        "numpy.ma.tests.test_core::test_astype_basic[b-l]",
+        "numpy.ma.tests.test_core::test_astype_basic[b-q]",
+        "numpy.ma.tests.test_core::test_astype_basic[d-?]",
+        "numpy.ma.tests.test_core::test_astype_basic[d-B]",
+        "numpy.ma.tests.test_core::test_astype_basic[d-D]",
+        "numpy.ma.tests.test_core::test_astype_basic[d-F]",
+        "numpy.ma.tests.test_core::test_astype_basic[d-H]",
+        "numpy.ma.tests.test_core::test_astype_basic[d-I]",
+        "numpy.ma.tests.test_core::test_astype_basic[d-L]",
+        "numpy.ma.tests.test_core::test_astype_basic[d-Q]",
+        "numpy.ma.tests.test_core::test_astype_basic[d-b]",
+        "numpy.ma.tests.test_core::test_astype_basic[d-e]",
+        "numpy.ma.tests.test_core::test_astype_basic[d-f]",
+        "numpy.ma.tests.test_core::test_astype_basic[d-g]",
+        "numpy.ma.tests.test_core::test_astype_basic[d-h]",
+        "numpy.ma.tests.test_core::test_astype_basic[d-i]",
+        "numpy.ma.tests.test_core::test_astype_basic[d-l]",
+        "numpy.ma.tests.test_core::test_astype_basic[d-q]",
+        "numpy.ma.tests.test_core::test_astype_basic[e-?]",
+        "numpy.ma.tests.test_core::test_astype_basic[e-B]",
+        "numpy.ma.tests.test_core::test_astype_basic[e-D]",
+        "numpy.ma.tests.test_core::test_astype_basic[e-F]",
+        "numpy.ma.tests.test_core::test_astype_basic[e-H]",
+        "numpy.ma.tests.test_core::test_astype_basic[e-I]",
+        "numpy.ma.tests.test_core::test_astype_basic[e-L]",
+        "numpy.ma.tests.test_core::test_astype_basic[e-Q]",
+        "numpy.ma.tests.test_core::test_astype_basic[e-b]",
+        "numpy.ma.tests.test_core::test_astype_basic[e-d]",
+        "numpy.ma.tests.test_core::test_astype_basic[e-f]",
+        "numpy.ma.tests.test_core::test_astype_basic[e-g]",
+        "numpy.ma.tests.test_core::test_astype_basic[e-h]",
+        "numpy.ma.tests.test_core::test_astype_basic[e-i]",
+        "numpy.ma.tests.test_core::test_astype_basic[e-l]",
+        "numpy.ma.tests.test_core::test_astype_basic[e-q]",
+        "numpy.ma.tests.test_core::test_astype_basic[f-?]",
+        "numpy.ma.tests.test_core::test_astype_basic[f-B]",
+        "numpy.ma.tests.test_core::test_astype_basic[f-D]",
+        "numpy.ma.tests.test_core::test_astype_basic[f-F]",
+        "numpy.ma.tests.test_core::test_astype_basic[f-H]",
+        "numpy.ma.tests.test_core::test_astype_basic[f-I]",
+        "numpy.ma.tests.test_core::test_astype_basic[f-L]",
+        "numpy.ma.tests.test_core::test_astype_basic[f-Q]",
+        "numpy.ma.tests.test_core::test_astype_basic[f-b]",
+        "numpy.ma.tests.test_core::test_astype_basic[f-d]",
+        "numpy.ma.tests.test_core::test_astype_basic[f-e]",
+        "numpy.ma.tests.test_core::test_astype_basic[f-g]",
+        "numpy.ma.tests.test_core::test_astype_basic[f-h]",
+        "numpy.ma.tests.test_core::test_astype_basic[f-i]",
+        "numpy.ma.tests.test_core::test_astype_basic[f-l]",
+        "numpy.ma.tests.test_core::test_astype_basic[f-q]",
+        "numpy.ma.tests.test_core::test_astype_basic[g-?]",
+        "numpy.ma.tests.test_core::test_astype_basic[g-B]",
+        "numpy.ma.tests.test_core::test_astype_basic[g-D]",
+        "numpy.ma.tests.test_core::test_astype_basic[g-F]",
+        "numpy.ma.tests.test_core::test_astype_basic[g-H]",
+        "numpy.ma.tests.test_core::test_astype_basic[g-I]",
+        "numpy.ma.tests.test_core::test_astype_basic[g-L]",
+        "numpy.ma.tests.test_core::test_astype_basic[g-Q]",
+        "numpy.ma.tests.test_core::test_astype_basic[g-b]",
+        "numpy.ma.tests.test_core::test_astype_basic[g-d]",
+        "numpy.ma.tests.test_core::test_astype_basic[g-e]",
+        "numpy.ma.tests.test_core::test_astype_basic[g-f]",
+        "numpy.ma.tests.test_core::test_astype_basic[g-h]",
+        "numpy.ma.tests.test_core::test_astype_basic[g-i]",
+        "numpy.ma.tests.test_core::test_astype_basic[g-l]",
+        "numpy.ma.tests.test_core::test_astype_basic[g-q]",
+        "numpy.ma.tests.test_core::test_astype_basic[h-?]",
+        "numpy.ma.tests.test_core::test_astype_basic[h-B]",
+        "numpy.ma.tests.test_core::test_astype_basic[h-D]",
+        "numpy.ma.tests.test_core::test_astype_basic[h-F]",
+        "numpy.ma.tests.test_core::test_astype_basic[h-H]",
+        "numpy.ma.tests.test_core::test_astype_basic[h-I]",
+        "numpy.ma.tests.test_core::test_astype_basic[h-L]",
+        "numpy.ma.tests.test_core::test_astype_basic[h-Q]",
+        "numpy.ma.tests.test_core::test_astype_basic[h-b]",
+        "numpy.ma.tests.test_core::test_astype_basic[h-d]",
+        "numpy.ma.tests.test_core::test_astype_basic[h-e]",
+        "numpy.ma.tests.test_core::test_astype_basic[h-f]",
+        "numpy.ma.tests.test_core::test_astype_basic[h-g]",
+        "numpy.ma.tests.test_core::test_astype_basic[h-i]",
+        "numpy.ma.tests.test_core::test_astype_basic[h-l]",
+        "numpy.ma.tests.test_core::test_astype_basic[h-q]",
+        "numpy.ma.tests.test_core::test_astype_basic[i-?]",
+        "numpy.ma.tests.test_core::test_astype_basic[i-B]",
+        "numpy.ma.tests.test_core::test_astype_basic[i-D]",
+        "numpy.ma.tests.test_core::test_astype_basic[i-F]",
+        "numpy.ma.tests.test_core::test_astype_basic[i-H]",
+        "numpy.ma.tests.test_core::test_astype_basic[i-I]",
+        "numpy.ma.tests.test_core::test_astype_basic[i-L]",
+        "numpy.ma.tests.test_core::test_astype_basic[i-Q]",
+        "numpy.ma.tests.test_core::test_astype_basic[i-b]",
+        "numpy.ma.tests.test_core::test_astype_basic[i-d]",
+        "numpy.ma.tests.test_core::test_astype_basic[i-e]",
+        "numpy.ma.tests.test_core::test_astype_basic[i-f]",
+        "numpy.ma.tests.test_core::test_astype_basic[i-g]",
+        "numpy.ma.tests.test_core::test_astype_basic[i-h]",
+        "numpy.ma.tests.test_core::test_astype_basic[i-l]",
+        "numpy.ma.tests.test_core::test_astype_basic[i-q]",
+        "numpy.ma.tests.test_core::test_astype_basic[l-?]",
+        "numpy.ma.tests.test_core::test_astype_basic[l-B]",
+        "numpy.ma.tests.test_core::test_astype_basic[l-D]",
+        "numpy.ma.tests.test_core::test_astype_basic[l-F]",
+        "numpy.ma.tests.test_core::test_astype_basic[l-H]",
+        "numpy.ma.tests.test_core::test_astype_basic[l-I]",
+        "numpy.ma.tests.test_core::test_astype_basic[l-L]",
+        "numpy.ma.tests.test_core::test_astype_basic[l-Q]",
+        "numpy.ma.tests.test_core::test_astype_basic[l-b]",
+        "numpy.ma.tests.test_core::test_astype_basic[l-d]",
+        "numpy.ma.tests.test_core::test_astype_basic[l-e]",
+        "numpy.ma.tests.test_core::test_astype_basic[l-f]",
+        "numpy.ma.tests.test_core::test_astype_basic[l-g]",
+        "numpy.ma.tests.test_core::test_astype_basic[l-h]",
+        "numpy.ma.tests.test_core::test_astype_basic[l-i]",
+        "numpy.ma.tests.test_core::test_astype_basic[q-?]",
+        "numpy.ma.tests.test_core::test_astype_basic[q-B]",
+        "numpy.ma.tests.test_core::test_astype_basic[q-D]",
+        "numpy.ma.tests.test_core::test_astype_basic[q-F]",
+        "numpy.ma.tests.test_core::test_astype_basic[q-H]",
+        "numpy.ma.tests.test_core::test_astype_basic[q-I]",
+        "numpy.ma.tests.test_core::test_astype_basic[q-L]",
+        "numpy.ma.tests.test_core::test_astype_basic[q-Q]",
+        "numpy.ma.tests.test_core::test_astype_basic[q-b]",
+        "numpy.ma.tests.test_core::test_astype_basic[q-d]",
+        "numpy.ma.tests.test_core::test_astype_basic[q-e]",
+        "numpy.ma.tests.test_core::test_astype_basic[q-f]",
+        "numpy.ma.tests.test_core::test_astype_basic[q-g]",
+        "numpy.ma.tests.test_core::test_astype_basic[q-h]",
+        "numpy.ma.tests.test_core::test_astype_basic[q-i]"
+      ],
+      "id": "numpy-a3b0dab2bc8f",
+      "target_files": [
+        "numpy/ma/core.py"
+      ]
+    },
+    {
+      "f2p": [
+        "numpy.random.tests.test_random.TestRandomDist::test_choice_exceptions"
+      ],
+      "id": "numpy-a462318f55e6",
+      "target_files": [
+        "numpy/random/mtrand/mtrand.pyx"
+      ]
+    },
+    {
+      "f2p": [
+        "numpy.ma.tests.test_core.TestMaskedArrayArithmetic::test_basic_ufuncs_masked"
+      ],
+      "id": "numpy-a483cf57062d",
+      "target_files": [
+        "numpy/ma/core.py"
+      ]
+    },
+    {
+      "f2p": [
+        "numpy.core.tests.test_multiarray.TestMethods::test_searchsorted"
+      ],
+      "id": "numpy-a5f26b904219",
+      "target_files": [
+        "numpy/core/src/multiarray/methods.c"
+      ]
+    },
+    {
+      "f2p": [
+        "numpy.core.tests.test_multiarray.TestResize::test_obj_obj_shrinking[O,O]",
+        "numpy.core.tests.test_multiarray.TestResize::test_obj_obj_shrinking[O]"
+      ],
+      "id": "numpy-a6f8ad8b9aed",
+      "target_files": [
+        "numpy/_core/src/multiarray/shape.c"
+      ]
+    },
+    {
+      "f2p": [
+        "numpy.random.tests.test_random.TestRandomDist::test_choice_exceptions"
+      ],
+      "id": "numpy-a7d4232830ad",
+      "target_files": [
+        "numpy/random/mtrand/mtrand.pyx"
+      ]
+    },
+    {
+      "f2p": [
+        "numpy.lib.tests.test_function_base.TestMedian::test_keepdims_out[1]",
+        "numpy.lib.tests.test_function_base.TestMedian::test_keepdims_out[None]",
+        "numpy.lib.tests.test_function_base.TestMedian::test_keepdims_out[axis2]",
+        "numpy.lib.tests.test_function_base.TestMedian::test_keepdims_out[axis3]",
+        "numpy.lib.tests.test_function_base.TestMedian::test_keepdims_out[axis4]",
+        "numpy.lib.tests.test_function_base.TestPercentile::test_keepdims_out[1-7]",
+        "numpy.lib.tests.test_function_base.TestPercentile::test_keepdims_out[1-q1]",
+        "numpy.lib.tests.test_function_base.TestPercentile::test_keepdims_out[None-7]",
+        "numpy.lib.tests.test_function_base.TestPercentile::test_keepdims_out[None-q1]",
+        "numpy.lib.tests.test_function_base.TestPercentile::test_keepdims_out[axis2-7]",
+        "numpy.lib.tests.test_function_base.TestPercentile::test_keepdims_out[axis2-q1]",
+        "numpy.lib.tests.test_function_base.TestPercentile::test_keepdims_out[axis3-7]",
+        "numpy.lib.tests.test_function_base.TestPercentile::test_keepdims_out[axis3-q1]",
+        "numpy.lib.tests.test_function_base.TestPercentile::test_keepdims_out[axis4-7]",
+        "numpy.lib.tests.test_function_base.TestPercentile::test_keepdims_out[axis4-q1]",
+        "numpy.lib.tests.test_nanfunctions.TestNanFunctions_Median::test_keepdims_out[1]",
+        "numpy.lib.tests.test_nanfunctions.TestNanFunctions_Median::test_keepdims_out[None]",
+        "numpy.lib.tests.test_nanfunctions.TestNanFunctions_Median::test_keepdims_out[axis2]",
+        "numpy.lib.tests.test_nanfunctions.TestNanFunctions_Median::test_keepdims_out[axis3]",
+        "numpy.lib.tests.test_nanfunctions.TestNanFunctions_Median::test_keepdims_out[axis4]",
+        "numpy.lib.tests.test_nanfunctions.TestNanFunctions_Percentile::test_keepdims_out[1-7]",
+        "numpy.lib.tests.test_nanfunctions.TestNanFunctions_Percentile::test_keepdims_out[1-q1]",
+        "numpy.lib.tests.test_nanfunctions.TestNanFunctions_Percentile::test_keepdims_out[None-7]",
+        "numpy.lib.tests.test_nanfunctions.TestNanFunctions_Percentile::test_keepdims_out[None-q1]",
+        "numpy.lib.tests.test_nanfunctions.TestNanFunctions_Percentile::test_keepdims_out[axis2-7]",
+        "numpy.lib.tests.test_nanfunctions.TestNanFunctions_Percentile::test_keepdims_out[axis2-q1]",
+        "numpy.lib.tests.test_nanfunctions.TestNanFunctions_Percentile::test_keepdims_out[axis3-7]",
+        "numpy.lib.tests.test_nanfunctions.TestNanFunctions_Percentile::test_keepdims_out[axis3-q1]",
+        "numpy.lib.tests.test_nanfunctions.TestNanFunctions_Percentile::test_keepdims_out[axis4-7]",
+        "numpy.lib.tests.test_nanfunctions.TestNanFunctions_Percentile::test_keepdims_out[axis4-q1]",
+        "numpy.ma.tests.test_extras.TestMedian::test_keepdims_out[1]",
+        "numpy.ma.tests.test_extras.TestMedian::test_keepdims_out[None]",
+        "numpy.ma.tests.test_extras.TestMedian::test_keepdims_out[axis2]",
+        "numpy.ma.tests.test_extras.TestMedian::test_keepdims_out[axis3]",
+        "numpy.ma.tests.test_extras.TestMedian::test_keepdims_out[axis4]"
+      ],
+      "id": "numpy-acea8690a14d",
+      "target_files": [
+        "numpy/lib/function_base.py",
+        "numpy/lib/nanfunctions.py",
+        "numpy/ma/extras.py"
+      ]
+    },
+    {
+      "f2p": [
+        "numpy.core.tests.test_nditer::test_nditer_multi_index_no_segfault"
+      ],
+      "id": "numpy-adc1aa29f3ae",
+      "target_files": [
+        "numpy/_core/src/multiarray/nditer_pywrap.c"
+      ]
+    },
+    {
+      "f2p": [
+        "__process_level_failure__"
+      ],
+      "id": "numpy-aec45ec10ee8",
+      "target_files": [
+        "numpy/core/src/multiarray/multiarraymodule.c"
+      ]
+    },
+    {
+      "f2p": [
+        "numpy.core.tests.test_multiarray.TestZeroRank::test_constructor"
+      ],
+      "id": "numpy-b0a0d056c97d",
+      "target_files": [
+        "numpy/core/src/multiarray/arrayobject.c",
+        "numpy/core/src/multiarray/conversion_utils.c",
+        "numpy/core/src/multiarray/conversion_utils.h"
+      ]
+    },
+    {
+      "f2p": [
+        "__process_level_failure__"
+      ],
+      "id": "numpy-b1505c6f730f",
+      "target_files": [
+        "numpy/core/src/multiarray/mapping.c"
+      ]
+    },
+    {
+      "f2p": [
+        "numpy.core.tests.test_half.TestHalf::test_half_conversion_denormal_round_even[float32-uint32-23]",
+        "numpy.core.tests.test_half.TestHalf::test_half_conversion_denormal_round_even[float64-uint64-52]",
+        "numpy.core.tests.test_half.TestHalf::test_half_conversion_rounding[float32-down-up]",
+        "numpy.core.tests.test_half.TestHalf::test_half_conversion_rounding[float32-up-up]",
+        "numpy.core.tests.test_half.TestHalf::test_half_conversion_rounding[float64-down-up]",
+        "numpy.core.tests.test_half.TestHalf::test_half_conversion_rounding[float64-up-up]"
+      ],
+      "id": "numpy-b2cd78af8963",
+      "target_files": [
+        "numpy/core/src/npymath/halffloat.c"
+      ]
+    },
+    {
+      "f2p": [
+        "numpy.core.tests.test_indexing.TestIndexing::test_gh_26844",
+        "numpy.core.tests.test_indexing.TestIndexing::test_gh_26844_segfault"
+      ],
+      "id": "numpy-b3b53d4c7367",
+      "target_files": [
+        "numpy/_core/src/multiarray/mapping.c"
+      ]
+    },
+    {
+      "f2p": [
+        "numpy.core.tests.test_scalarbuffer.TestScalarPEP3118::test_invalid_buffer_format"
+      ],
+      "id": "numpy-b488cb9c3aea",
+      "target_files": [
+        "numpy/core/src/multiarray/buffer.c"
+      ]
+    },
+    {
+      "f2p": [
+        "numpy.f2py.tests.test_string.TestStringOptionalInOut::test_gh24662"
+      ],
+      "id": "numpy-b58eab7c23f1",
+      "target_files": [
+        "numpy/f2py/cfuncs.py"
+      ]
+    },
+    {
+      "f2p": [
+        "__process_level_failure__"
+      ],
+      "id": "numpy-b5e3219f5216",
+      "target_files": [
+        "numpy/core/src/multiarray/convert_datatype.c"
+      ]
+    },
+    {
+      "f2p": [
+        "numpy.core.tests.test_ufunc.TestUfunc::test_out_broadcasts"
+      ],
+      "id": "numpy-b66f678db9dd",
+      "target_files": [
+        "numpy/core/src/umath/ufunc_object.c"
+      ]
+    },
+    {
+      "f2p": [
+        "numpy.core.tests.test_datetime.TestDateTime::test_timedelta_array_nat_assignment",
+        "numpy.core.tests.test_datetime.TestDateTime::test_timedelta_array_with_nats"
+      ],
+      "id": "numpy-ba16b4c2e542",
+      "target_files": [
+        "numpy/_core/src/multiarray/datetime.c"
+      ]
+    },
+    {
+      "f2p": [
+        "numpy.core.tests.test_dtype.TestRecord::test_empty_struct_alignment"
+      ],
+      "id": "numpy-bae3dd16ab34",
+      "target_files": [
+        "numpy/core/src/multiarray/descriptor.c"
+      ]
+    },
+    {
+      "f2p": [
+        "numpy.core.tests.test_multiarray.TestCreation::test_jagged_ndim_object"
+      ],
+      "id": "numpy-baf867f91144",
+      "target_files": [
+        "numpy/core/src/multiarray/ctors.c"
+      ]
+    },
+    {
+      "f2p": [
+        "__process_level_failure__"
+      ],
+      "id": "numpy-bb02bb409346",
+      "target_files": [
+        "numpy/core/src/multiarray/common.c"
+      ]
+    },
+    {
+      "f2p": [
+        "numpy.tests.test_ctypeslib.TestNdpointer::test_cache"
+      ],
+      "id": "numpy-bb76c61c3562",
+      "target_files": [
+        "numpy/ctypeslib.py"
+      ]
+    },
+    {
+      "f2p": [
+        "numpy.fft.tests.test_fftpack.TestFFT1D::test_rfftn"
+      ],
+      "id": "numpy-bca3fb56a7f7",
+      "target_files": [
+        "numpy/fft/_pocketfft.py"
+      ]
+    },
+    {
+      "f2p": [
+        "numpy.lib.tests.test_histograms.TestHistogram::test_gh_23110"
+      ],
+      "id": "numpy-c0482b5a8fdc",
+      "target_files": [
+        "numpy/lib/histograms.py"
+      ]
+    },
+    {
+      "f2p": [
+        "numpy.testing.tests.test_utils.TestAlmostEqual::test_error_message"
+      ],
+      "id": "numpy-c38451e1c50a",
+      "target_files": [
+        "numpy/testing/_private/utils.py"
+      ]
+    },
+    {
+      "f2p": [
+        "numpy.lib.tests.test_function_base.TestInsert::test_index_out_of_bounds[-4]",
+        "numpy.lib.tests.test_function_base.TestInsert::test_index_out_of_bounds[4]"
+      ],
+      "id": "numpy-c4b12a92d159",
+      "target_files": [
+        "numpy/lib/function_base.py"
+      ]
+    },
+    {
+      "f2p": [
+        "numpy.tests.test_ctypeslib.TestAsArray::test_segmentation_fault"
+      ],
+      "id": "numpy-c6601fe8e92c",
+      "target_files": [
+        "numpy/ctypeslib.py"
+      ]
+    },
+    {
+      "f2p": [
+        "numpy.lib.tests.test_format::test_empty_npz"
+      ],
+      "id": "numpy-c6ec4f8ca96d",
+      "target_files": [
+        "numpy/lib/npyio.py"
+      ]
+    },
+    {
+      "f2p": [
+        "numpy.f2py.tests.test_callback.TestGH18335::test_gh18335"
+      ],
+      "id": "numpy-c8a29895737b",
+      "target_files": [
+        "numpy/f2py/cb_rules.py"
+      ]
+    },
+    {
+      "f2p": [
+        "numpy.core.tests.test_indexing.TestSubclasses::test_basic"
+      ],
+      "id": "numpy-c92be25403b0",
+      "target_files": [
+        "numpy/core/src/multiarray/mapping.c"
+      ]
+    },
+    {
+      "f2p": [
+        "numpy.lib.tests.test_histograms.TestHistogram::test_signed_overflow_bounds"
+      ],
+      "id": "numpy-cb7796ec735c",
+      "target_files": [
+        "numpy/lib/histograms.py"
+      ]
+    },
+    {
+      "f2p": [
+        "numpy.core.tests.test_dtype.TestFromCTypes::test_array"
+      ],
+      "id": "numpy-cc47a77f7c20",
+      "target_files": [
+        "numpy/core/src/multiarray/descriptor.c"
+      ]
+    },
+    {
+      "f2p": [
+        "numpy.ma.tests.test_core.TestMaskedArrayArithmetic::test_basic_ufuncs_masked"
+      ],
+      "id": "numpy-cd944ae792bf",
+      "target_files": [
+        "numpy/ma/core.py"
+      ]
+    },
+    {
+      "f2p": [
+        "numpy.ma.tests.test_core.TestUfuncs::test_masked_array_underflow"
+      ],
+      "id": "numpy-ce8680b38ebd",
+      "target_files": [
+        "numpy/ma/core.py"
+      ]
+    },
+    {
+      "f2p": [
+        "numpy.core.tests.test_numeric.TestRoll::test_roll_unsigned_shift"
+      ],
+      "id": "numpy-d1522b7ecf64",
+      "target_files": [
+        "numpy/_core/numeric.py"
+      ]
+    },
+    {
+      "f2p": [
+        "__process_level_failure__"
+      ],
+      "id": "numpy-d1fcbfda38d7",
+      "target_files": [
+        "numpy/core/src/multiarray/descriptor.c"
+      ]
+    },
+    {
+      "f2p": [
+        "numpy.random.tests.test_random.TestRandomDist::test_choice_nan_probabilities"
+      ],
+      "id": "numpy-d4de179b8d6d",
+      "target_files": [
+        "numpy/random/mtrand/mtrand.pyx"
+      ]
+    },
+    {
+      "f2p": [
+        "numpy.f2py.tests.test_kind.TestKind::test_quad_precision",
+        "numpy.f2py.tests.test_kind.TestKind::test_real"
+      ],
+      "id": "numpy-d7cfc5b6320b",
+      "target_files": [
+        "numpy/f2py/crackfortran.py"
+      ]
+    },
+    {
+      "f2p": [
+        "__process_level_failure__"
+      ],
+      "id": "numpy-d95711343990",
+      "target_files": [
+        "numpy/f2py/cb_rules.py",
+        "numpy/f2py/rules.py",
+        "numpy/f2py/src/fortranobject.c",
+        "numpy/f2py/src/fortranobject.h"
+      ]
+    },
+    {
+      "f2p": [
+        "numpy.lib.tests.test_format::test_load_padded_dtype[dt0]",
+        "numpy.lib.tests.test_format::test_load_padded_dtype[dt1]",
+        "numpy.lib.tests.test_format::test_load_padded_dtype[dt2]",
+        "numpy.lib.tests.test_format::test_load_padded_dtype[dt3]",
+        "numpy.lib.tests.test_format::test_load_padded_dtype[dt4]"
+      ],
+      "id": "numpy-df400e1e9541",
+      "target_files": [
+        "numpy/lib/format.py"
+      ]
+    },
+    {
+      "f2p": [
+        "numpy.lib.tests.test_function_base.TestAverage::test_average_class_without_dtype"
+      ],
+      "id": "numpy-e05421dedcb1",
+      "target_files": [
+        "numpy/lib/function_base.py"
+      ]
+    },
+    {
+      "f2p": [
+        "numpy.f2py.tests.test_crackfortran.TestCrackFortran::test_gh2848"
+      ],
+      "id": "numpy-e17c4846d57e",
+      "target_files": [
+        "numpy/f2py/crackfortran.py"
+      ]
+    },
+    {
+      "f2p": [
+        "numpy.linalg.tests.test_linalg.TestCond::test_cond_dtypes[-1-complex128]",
+        "numpy.linalg.tests.test_linalg.TestCond::test_cond_dtypes[-1-complex64]",
+        "numpy.linalg.tests.test_linalg.TestCond::test_cond_dtypes[-inf-complex128]",
+        "numpy.linalg.tests.test_linalg.TestCond::test_cond_dtypes[-inf-complex64]",
+        "numpy.linalg.tests.test_linalg.TestCond::test_cond_dtypes[1-complex128]",
+        "numpy.linalg.tests.test_linalg.TestCond::test_cond_dtypes[1-complex64]",
+        "numpy.linalg.tests.test_linalg.TestCond::test_cond_dtypes[fro-complex128]",
+        "numpy.linalg.tests.test_linalg.TestCond::test_cond_dtypes[fro-complex64]",
+        "numpy.linalg.tests.test_linalg.TestCond::test_cond_dtypes[inf-complex128]",
+        "numpy.linalg.tests.test_linalg.TestCond::test_cond_dtypes[inf-complex64]"
+      ],
+      "id": "numpy-e8ed777937a5",
+      "target_files": [
+        "numpy/linalg/_linalg.py"
+      ]
+    },
+    {
+      "f2p": [
+        "numpy.core.tests.test_numeric.TestBinaryRepr::test_large_neg_int64"
+      ],
+      "id": "numpy-ea5992478726",
+      "target_files": [
+        "numpy/core/numeric.py"
+      ]
+    },
+    {
+      "f2p": [
+        "numpy.ma.tests.test_core.TestMaskedArrayArithmetic::test_eq_for_strings[A-S]",
+        "numpy.ma.tests.test_core.TestMaskedArrayArithmetic::test_eq_for_strings[A-U]",
+        "numpy.ma.tests.test_core.TestMaskedArrayArithmetic::test_ne_for_strings[A-S]",
+        "numpy.ma.tests.test_core.TestMaskedArrayArithmetic::test_ne_for_strings[A-U]"
+      ],
+      "id": "numpy-ebb4ea7fb14b",
+      "target_files": [
+        "numpy/ma/core.py"
+      ]
+    },
+    {
+      "f2p": [
+        "numpy.ma.tests.test_core.TestMaskedArrayArithmetic::test_minmax_dtypes"
+      ],
+      "id": "numpy-ec5453e5f32d",
+      "target_files": [
+        "numpy/ma/core.py"
+      ]
+    },
+    {
+      "f2p": [
+        "numpy.random.tests.test_regression.TestRegression::test_beta_ridiculously_small_parameters"
+      ],
+      "id": "numpy-efaf3fb30085",
+      "target_files": [
+        "numpy/random/src/distributions/distributions.c"
+      ]
+    },
+    {
+      "f2p": [
+        "numpy.core.tests.test_scalarprint.TestRealScalars::test_dragon4_interface"
+      ],
+      "id": "numpy-f59de3bf593f",
+      "target_files": [
+        "numpy/core/src/multiarray/dragon4.c"
+      ]
+    },
+    {
+      "f2p": [
+        "numpy.core.tests.test_datetime.TestDateTime::test_timedelta_np_int_construction[D]",
+        "numpy.core.tests.test_datetime.TestDateTime::test_timedelta_np_int_construction[M]",
+        "numpy.core.tests.test_datetime.TestDateTime::test_timedelta_np_int_construction[W]",
+        "numpy.core.tests.test_datetime.TestDateTime::test_timedelta_np_int_construction[Y]",
+        "numpy.core.tests.test_datetime.TestDateTime::test_timedelta_np_int_construction[as]",
+        "numpy.core.tests.test_datetime.TestDateTime::test_timedelta_np_int_construction[fs]",
+        "numpy.core.tests.test_datetime.TestDateTime::test_timedelta_np_int_construction[generic]",
+        "numpy.core.tests.test_datetime.TestDateTime::test_timedelta_np_int_construction[h]",
+        "numpy.core.tests.test_datetime.TestDateTime::test_timedelta_np_int_construction[m]",
+        "numpy.core.tests.test_datetime.TestDateTime::test_timedelta_np_int_construction[ms]",
+        "numpy.core.tests.test_datetime.TestDateTime::test_timedelta_np_int_construction[ns]",
+        "numpy.core.tests.test_datetime.TestDateTime::test_timedelta_np_int_construction[ps]",
+        "numpy.core.tests.test_datetime.TestDateTime::test_timedelta_np_int_construction[s]",
+        "numpy.core.tests.test_datetime.TestDateTime::test_timedelta_np_int_construction[us]"
+      ],
+      "id": "numpy-f67ebc94266f",
+      "target_files": [
+        "numpy/core/src/multiarray/datetime.c"
+      ]
+    },
+    {
+      "f2p": [
+        "numpy.core.tests.test_indexing.TestSubclasses::test_basic"
+      ],
+      "id": "numpy-fab0acc0c0af",
+      "target_files": [
+        "numpy/core/src/multiarray/mapping.c"
+      ]
+    },
+    {
+      "f2p": [
+        "numpy.core.tests.test_nditer::test_invalid_call_of_enable_external_loop"
+      ],
+      "id": "numpy-fc5d96cbe3f4",
+      "target_files": [
+        "numpy/_core/src/multiarray/nditer_pywrap.c"
+      ]
+    },
+    {
+      "f2p": [
+        "numpy.random.tests.test_random.TestRandomDist::test_multivariate_normal"
+      ],
+      "id": "numpy-fce43304447e",
+      "target_files": [
+        "numpy/random/mtrand/mtrand.pyx"
+      ]
+    }
+  ],
+  "task": "numpy",
+  "version": "1.15.0"
+}

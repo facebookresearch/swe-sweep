@@ -1,0 +1,35 @@
+diff --git a/tests/arc/tconst_to_sink.nim b/tests/arc/tconst_to_sink.nim
+index ddcc46e67..25f659341 100644
+--- a/tests/arc/tconst_to_sink.nim
++++ b/tests/arc/tconst_to_sink.nim
+@@ -1,6 +1,7 @@
+ discard """
+   output: '''@[(s1: "333", s2: ""), (s1: "abc", s2: "def"), (s1: "3x", s2: ""), (s1: "3x", s2: ""), (s1: "3x", s2: ""), (s1: "3x", s2: ""), (s1: "lastone", s2: "")]'''
+-  cmd: "nim c --gc:arc $file"
++  matrix: "--gc:arc"
++  targets: "c cpp"
+ """
+ 
+ # bug #13240
+diff --git a/tests/cpp/torc.nim b/tests/cpp/torc.nim
+new file mode 100644
+index 000000000..7fc474f94
+--- /dev/null
++++ b/tests/cpp/torc.nim
+@@ -0,0 +1,15 @@
++discard """
++  targets: "cpp"
++  matrix: "--gc:orc"
++"""
++
++import std/options
++
++# bug #18410
++type
++  O = object of RootObj
++   val: pointer
++
++proc p(): Option[O] = none(O)
++
++doAssert $p() == "none(O)"
+\ No newline at end of file

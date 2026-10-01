@@ -1,0 +1,155 @@
+diff --git a/extensions/smallrye-fault-tolerance/deployment/src/test/java/io/quarkus/smallrye/faulttolerance/test/circuitbreaker/maintenance/inheritance/CircuitBreakerService1.java b/extensions/smallrye-fault-tolerance/deployment/src/test/java/io/quarkus/smallrye/faulttolerance/test/circuitbreaker/maintenance/duplicate/CircuitBreakerService1.java
+similarity index 94%
+rename from extensions/smallrye-fault-tolerance/deployment/src/test/java/io/quarkus/smallrye/faulttolerance/test/circuitbreaker/maintenance/inheritance/CircuitBreakerService1.java
+rename to extensions/smallrye-fault-tolerance/deployment/src/test/java/io/quarkus/smallrye/faulttolerance/test/circuitbreaker/maintenance/duplicate/CircuitBreakerService1.java
+index 687f50da09b..884c337c7ef 100644
+--- a/extensions/smallrye-fault-tolerance/deployment/src/test/java/io/quarkus/smallrye/faulttolerance/test/circuitbreaker/maintenance/inheritance/CircuitBreakerService1.java
++++ b/extensions/smallrye-fault-tolerance/deployment/src/test/java/io/quarkus/smallrye/faulttolerance/test/circuitbreaker/maintenance/duplicate/CircuitBreakerService1.java
+@@ -1,4 +1,4 @@
+-package io.quarkus.smallrye.faulttolerance.test.circuitbreaker.maintenance.inheritance;
++package io.quarkus.smallrye.faulttolerance.test.circuitbreaker.maintenance.duplicate;
+ 
+ import jakarta.inject.Singleton;
+ 
+diff --git a/extensions/smallrye-fault-tolerance/deployment/src/test/java/io/quarkus/smallrye/faulttolerance/test/circuitbreaker/maintenance/inheritance/CircuitBreakerService2.java b/extensions/smallrye-fault-tolerance/deployment/src/test/java/io/quarkus/smallrye/faulttolerance/test/circuitbreaker/maintenance/duplicate/CircuitBreakerService2.java
+similarity index 94%
+rename from extensions/smallrye-fault-tolerance/deployment/src/test/java/io/quarkus/smallrye/faulttolerance/test/circuitbreaker/maintenance/inheritance/CircuitBreakerService2.java
+rename to extensions/smallrye-fault-tolerance/deployment/src/test/java/io/quarkus/smallrye/faulttolerance/test/circuitbreaker/maintenance/duplicate/CircuitBreakerService2.java
+index 94d7be6f34a..6aa742b9b32 100644
+--- a/extensions/smallrye-fault-tolerance/deployment/src/test/java/io/quarkus/smallrye/faulttolerance/test/circuitbreaker/maintenance/inheritance/CircuitBreakerService2.java
++++ b/extensions/smallrye-fault-tolerance/deployment/src/test/java/io/quarkus/smallrye/faulttolerance/test/circuitbreaker/maintenance/duplicate/CircuitBreakerService2.java
+@@ -1,4 +1,4 @@
+-package io.quarkus.smallrye.faulttolerance.test.circuitbreaker.maintenance.inheritance;
++package io.quarkus.smallrye.faulttolerance.test.circuitbreaker.maintenance.duplicate;
+ 
+ import jakarta.inject.Singleton;
+ 
+diff --git a/extensions/smallrye-fault-tolerance/deployment/src/test/java/io/quarkus/smallrye/faulttolerance/test/circuitbreaker/maintenance/inheritance/DuplicateCircuitBreakerNameTest.java b/extensions/smallrye-fault-tolerance/deployment/src/test/java/io/quarkus/smallrye/faulttolerance/test/circuitbreaker/maintenance/duplicate/DuplicateCircuitBreakerNameTest.java
+similarity index 97%
+rename from extensions/smallrye-fault-tolerance/deployment/src/test/java/io/quarkus/smallrye/faulttolerance/test/circuitbreaker/maintenance/inheritance/DuplicateCircuitBreakerNameTest.java
+rename to extensions/smallrye-fault-tolerance/deployment/src/test/java/io/quarkus/smallrye/faulttolerance/test/circuitbreaker/maintenance/duplicate/DuplicateCircuitBreakerNameTest.java
+index c5bb50252ed..bbc57be5a87 100644
+--- a/extensions/smallrye-fault-tolerance/deployment/src/test/java/io/quarkus/smallrye/faulttolerance/test/circuitbreaker/maintenance/inheritance/DuplicateCircuitBreakerNameTest.java
++++ b/extensions/smallrye-fault-tolerance/deployment/src/test/java/io/quarkus/smallrye/faulttolerance/test/circuitbreaker/maintenance/duplicate/DuplicateCircuitBreakerNameTest.java
+@@ -1,4 +1,4 @@
+-package io.quarkus.smallrye.faulttolerance.test.circuitbreaker.maintenance.inheritance;
++package io.quarkus.smallrye.faulttolerance.test.circuitbreaker.maintenance.duplicate;
+ 
+ import static org.junit.jupiter.api.Assertions.assertEquals;
+ import static org.junit.jupiter.api.Assertions.assertTrue;
+diff --git a/extensions/smallrye-fault-tolerance/deployment/src/test/java/io/quarkus/smallrye/faulttolerance/test/circuitbreaker/maintenance/duplicate/CircuitBreakerNameInheritanceTest.java b/extensions/smallrye-fault-tolerance/deployment/src/test/java/io/quarkus/smallrye/faulttolerance/test/circuitbreaker/maintenance/inheritance/CircuitBreakerNameInheritanceTest.java
+similarity index 96%
+rename from extensions/smallrye-fault-tolerance/deployment/src/test/java/io/quarkus/smallrye/faulttolerance/test/circuitbreaker/maintenance/duplicate/CircuitBreakerNameInheritanceTest.java
+rename to extensions/smallrye-fault-tolerance/deployment/src/test/java/io/quarkus/smallrye/faulttolerance/test/circuitbreaker/maintenance/inheritance/CircuitBreakerNameInheritanceTest.java
+index 160e0d396ba..d5fdf1a4a72 100644
+--- a/extensions/smallrye-fault-tolerance/deployment/src/test/java/io/quarkus/smallrye/faulttolerance/test/circuitbreaker/maintenance/duplicate/CircuitBreakerNameInheritanceTest.java
++++ b/extensions/smallrye-fault-tolerance/deployment/src/test/java/io/quarkus/smallrye/faulttolerance/test/circuitbreaker/maintenance/inheritance/CircuitBreakerNameInheritanceTest.java
+@@ -1,4 +1,4 @@
+-package io.quarkus.smallrye.faulttolerance.test.circuitbreaker.maintenance.duplicate;
++package io.quarkus.smallrye.faulttolerance.test.circuitbreaker.maintenance.inheritance;
+ 
+ import static org.junit.jupiter.api.Assertions.assertNotNull;
+ 
+diff --git a/extensions/smallrye-fault-tolerance/deployment/src/test/java/io/quarkus/smallrye/faulttolerance/test/circuitbreaker/maintenance/duplicate/SubCircuitBreakerService.java b/extensions/smallrye-fault-tolerance/deployment/src/test/java/io/quarkus/smallrye/faulttolerance/test/circuitbreaker/maintenance/inheritance/SubCircuitBreakerService.java
+similarity index 93%
+rename from extensions/smallrye-fault-tolerance/deployment/src/test/java/io/quarkus/smallrye/faulttolerance/test/circuitbreaker/maintenance/duplicate/SubCircuitBreakerService.java
+rename to extensions/smallrye-fault-tolerance/deployment/src/test/java/io/quarkus/smallrye/faulttolerance/test/circuitbreaker/maintenance/inheritance/SubCircuitBreakerService.java
+index b2f26bbc454..49e1c9c9bc7 100644
+--- a/extensions/smallrye-fault-tolerance/deployment/src/test/java/io/quarkus/smallrye/faulttolerance/test/circuitbreaker/maintenance/duplicate/SubCircuitBreakerService.java
++++ b/extensions/smallrye-fault-tolerance/deployment/src/test/java/io/quarkus/smallrye/faulttolerance/test/circuitbreaker/maintenance/inheritance/SubCircuitBreakerService.java
+@@ -1,4 +1,4 @@
+-package io.quarkus.smallrye.faulttolerance.test.circuitbreaker.maintenance.duplicate;
++package io.quarkus.smallrye.faulttolerance.test.circuitbreaker.maintenance.inheritance;
+ 
+ import jakarta.inject.Singleton;
+ 
+diff --git a/extensions/smallrye-fault-tolerance/deployment/src/test/java/io/quarkus/smallrye/faulttolerance/test/circuitbreaker/maintenance/duplicate/SuperCircuitBreakerService.java b/extensions/smallrye-fault-tolerance/deployment/src/test/java/io/quarkus/smallrye/faulttolerance/test/circuitbreaker/maintenance/inheritance/SuperCircuitBreakerService.java
+similarity index 94%
+rename from extensions/smallrye-fault-tolerance/deployment/src/test/java/io/quarkus/smallrye/faulttolerance/test/circuitbreaker/maintenance/duplicate/SuperCircuitBreakerService.java
+rename to extensions/smallrye-fault-tolerance/deployment/src/test/java/io/quarkus/smallrye/faulttolerance/test/circuitbreaker/maintenance/inheritance/SuperCircuitBreakerService.java
+index 0a87d76f87b..685b09931e0 100644
+--- a/extensions/smallrye-fault-tolerance/deployment/src/test/java/io/quarkus/smallrye/faulttolerance/test/circuitbreaker/maintenance/duplicate/SuperCircuitBreakerService.java
++++ b/extensions/smallrye-fault-tolerance/deployment/src/test/java/io/quarkus/smallrye/faulttolerance/test/circuitbreaker/maintenance/inheritance/SuperCircuitBreakerService.java
+@@ -1,4 +1,4 @@
+-package io.quarkus.smallrye.faulttolerance.test.circuitbreaker.maintenance.duplicate;
++package io.quarkus.smallrye.faulttolerance.test.circuitbreaker.maintenance.inheritance;
+ 
+ import jakarta.inject.Singleton;
+ 
+diff --git a/extensions/smallrye-fault-tolerance/deployment/src/test/java/io/quarkus/smallrye/faulttolerance/test/circuitbreaker/maintenance/noduplicate/CircuitBreakerService1.java b/extensions/smallrye-fault-tolerance/deployment/src/test/java/io/quarkus/smallrye/faulttolerance/test/circuitbreaker/maintenance/noduplicate/CircuitBreakerService1.java
+new file mode 100644
+index 00000000000..78431399ba5
+--- /dev/null
++++ b/extensions/smallrye-fault-tolerance/deployment/src/test/java/io/quarkus/smallrye/faulttolerance/test/circuitbreaker/maintenance/noduplicate/CircuitBreakerService1.java
+@@ -0,0 +1,16 @@
++package io.quarkus.smallrye.faulttolerance.test.circuitbreaker.maintenance.noduplicate;
++
++import jakarta.inject.Singleton;
++
++import org.eclipse.microprofile.faulttolerance.CircuitBreaker;
++
++import io.smallrye.faulttolerance.api.CircuitBreakerName;
++
++@Singleton
++public class CircuitBreakerService1 {
++    @CircuitBreaker
++    @CircuitBreakerName("hello")
++    public String hello() {
++        return "1";
++    }
++}
+diff --git a/extensions/smallrye-fault-tolerance/deployment/src/test/java/io/quarkus/smallrye/faulttolerance/test/circuitbreaker/maintenance/noduplicate/CircuitBreakerService2.java b/extensions/smallrye-fault-tolerance/deployment/src/test/java/io/quarkus/smallrye/faulttolerance/test/circuitbreaker/maintenance/noduplicate/CircuitBreakerService2.java
+new file mode 100644
+index 00000000000..5a0bdd28ffd
+--- /dev/null
++++ b/extensions/smallrye-fault-tolerance/deployment/src/test/java/io/quarkus/smallrye/faulttolerance/test/circuitbreaker/maintenance/noduplicate/CircuitBreakerService2.java
+@@ -0,0 +1,14 @@
++package io.quarkus.smallrye.faulttolerance.test.circuitbreaker.maintenance.noduplicate;
++
++import org.eclipse.microprofile.faulttolerance.CircuitBreaker;
++
++import io.smallrye.faulttolerance.api.CircuitBreakerName;
++
++public class CircuitBreakerService2 {
++    // this class is not a bean, so there's no circuit breaker and hence no duplicate circuit breaker name
++    @CircuitBreaker
++    @CircuitBreakerName("hello")
++    public String hello() {
++        return "2";
++    }
++}
+diff --git a/extensions/smallrye-fault-tolerance/deployment/src/test/java/io/quarkus/smallrye/faulttolerance/test/circuitbreaker/maintenance/noduplicate/NoDuplicateCircuitBreakerNameTest.java b/extensions/smallrye-fault-tolerance/deployment/src/test/java/io/quarkus/smallrye/faulttolerance/test/circuitbreaker/maintenance/noduplicate/NoDuplicateCircuitBreakerNameTest.java
+new file mode 100644
+index 00000000000..f513b7cbdbd
+--- /dev/null
++++ b/extensions/smallrye-fault-tolerance/deployment/src/test/java/io/quarkus/smallrye/faulttolerance/test/circuitbreaker/maintenance/noduplicate/NoDuplicateCircuitBreakerNameTest.java
+@@ -0,0 +1,29 @@
++package io.quarkus.smallrye.faulttolerance.test.circuitbreaker.maintenance.noduplicate;
++
++import static org.junit.jupiter.api.Assertions.assertEquals;
++import static org.junit.jupiter.api.Assertions.assertNotNull;
++
++import jakarta.inject.Inject;
++
++import org.junit.jupiter.api.Test;
++import org.junit.jupiter.api.extension.RegisterExtension;
++
++import io.quarkus.test.QuarkusUnitTest;
++import io.smallrye.faulttolerance.api.CircuitBreakerMaintenance;
++import io.smallrye.faulttolerance.api.CircuitBreakerState;
++
++public class NoDuplicateCircuitBreakerNameTest {
++    @RegisterExtension
++    static final QuarkusUnitTest config = new QuarkusUnitTest()
++            .withApplicationRoot((jar) -> jar
++                    .addClasses(CircuitBreakerService1.class, CircuitBreakerService2.class));
++
++    @Inject
++    CircuitBreakerMaintenance cb;
++
++    @Test
++    public void deploysWithoutError() {
++        assertNotNull(cb);
++        assertEquals(CircuitBreakerState.CLOSED, cb.currentState("hello"));
++    }
++}

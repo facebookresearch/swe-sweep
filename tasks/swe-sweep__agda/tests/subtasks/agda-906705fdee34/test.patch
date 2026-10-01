@@ -1,0 +1,20 @@
+diff --git a/test/Succeed/Issue7696.agda b/test/Succeed/Issue7696.agda
+new file mode 100644
+index 0000000000..8bb802b2f6
+--- /dev/null
++++ b/test/Succeed/Issue7696.agda
+@@ -0,0 +1,14 @@
++-- Reported by noughtmare
++
++open import Agda.Builtin.Char
++
++postulate
++  A : Set
++  a : A
++
++B : A → Set
++f : (x : A) → B x → A
++
++B = _
++f _ 'a' = a
++f _ _ = a

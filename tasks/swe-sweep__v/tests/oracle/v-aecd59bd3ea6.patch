@@ -1,0 +1,14 @@
+diff --git a/vlib/v/gen/c/if.v b/vlib/v/gen/c/if.v
+index 2d485e608..fe7cc18f7 100644
+--- a/vlib/v/gen/c/if.v
++++ b/vlib/v/gen/c/if.v
+@@ -79,6 +79,9 @@ fn (mut g Gen) need_tmp_var_in_expr(expr ast.Expr) bool {
+ 			if expr.or_block.kind != .absent {
+ 				return true
+ 			}
++			if g.need_tmp_var_in_expr(expr.left) {
++				return true
++			}
+ 			for arg in expr.args {
+ 				if g.need_tmp_var_in_expr(arg.expr) {
+ 					return true

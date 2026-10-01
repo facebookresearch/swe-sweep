@@ -1,0 +1,22 @@
+diff --git a/lib/schema/array.js b/lib/schema/array.js
+index 7dc819030..ce5fc61cf 100644
+--- a/lib/schema/array.js
++++ b/lib/schema/array.js
+@@ -451,7 +451,7 @@ SchemaArray.prototype.$toObject = SchemaArray.prototype.toObject;
+  * ignore
+  */
+ 
+-SchemaArray.prototype.discriminator = function(name, schema) {
++SchemaArray.prototype.discriminator = function(...args) {
+   let arr = this;
+   while (arr.$isMongooseArray && !arr.$isMongooseDocumentArray) {
+     arr = arr.casterConstructor;
+@@ -460,7 +460,7 @@ SchemaArray.prototype.discriminator = function(name, schema) {
+         'a document array, ' + this.path + ' is a plain array');
+     }
+   }
+-  return arr.discriminator(name, schema);
++  return arr.discriminator(...args);
+ };
+ 
+ /*!

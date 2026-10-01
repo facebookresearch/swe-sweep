@@ -1,0 +1,21 @@
+diff --git a/compiler/test/compilable/test24061.d b/compiler/test/compilable/test24061.d
+new file mode 100644
+index 0000000000..f40a38ba8e
+--- /dev/null
++++ b/compiler/test/compilable/test24061.d
+@@ -0,0 +1,15 @@
++// https://issues.dlang.org/show_bug.cgi?id=24061
++
++class Exception2
++{
++    this(string, int) {}
++}
++
++class E : Exception2
++{
++    this(int i)
++    {
++        scope (success) assert(0, "assume nothrow");
++        super("hehe", 2);
++    }
++}

@@ -1,0 +1,13 @@
+diff --git a/activemodel/lib/active_model/attribute_assignment.rb b/activemodel/lib/active_model/attribute_assignment.rb
+index 693ac70d0ac..db746b1ca79 100644
+--- a/activemodel/lib/active_model/attribute_assignment.rb
++++ b/activemodel/lib/active_model/attribute_assignment.rb
+@@ -59,7 +59,7 @@ module ActiveModel
+ 
+     private
+       def _assign_attributes(attributes)
+-        attributes.each do |k, v|
++        attributes.each_pair do |k, v|
+           _assign_attribute(k, v)
+         end
+       end

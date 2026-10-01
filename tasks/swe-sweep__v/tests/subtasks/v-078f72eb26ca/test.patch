@@ -1,0 +1,17 @@
+diff --git a/vlib/v/tests/option_multi_return_assign_test.v b/vlib/v/tests/option_multi_return_assign_test.v
+new file mode 100644
+index 000000000..7bface072
+--- /dev/null
++++ b/vlib/v/tests/option_multi_return_assign_test.v
+@@ -0,0 +1,11 @@
++fn t() (string, string) {
++	return 'foo', 'bar'
++}
++
++fn test_main() {
++	mut a := ?string(none)
++	mut b := ''
++	a, b = t()
++	assert a? == 'foo'
++	assert b == 'bar'
++}

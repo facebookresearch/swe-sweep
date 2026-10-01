@@ -1,0 +1,119 @@
+diff --git a/src/test/java/io/reactivex/internal/operators/observable/ObservableAmbTest.java b/src/test/java/io/reactivex/internal/operators/observable/ObservableAmbTest.java
+index 6e2c737f7..a76b8f22e 100644
+--- a/src/test/java/io/reactivex/internal/operators/observable/ObservableAmbTest.java
++++ b/src/test/java/io/reactivex/internal/operators/observable/ObservableAmbTest.java
+@@ -264,6 +264,23 @@ public class ObservableAmbTest {
+         .assertResult(1);
+     }
+ 
++    /**
++     * Ensures that an ObservableSource implementation can be supplied that doesn't subclass Observable
++     */
++    @Test
++    public void singleIterableNotSubclassingObservable() {
++        final ObservableSource<Integer> s1 = new ObservableSource<Integer>() {
++            @Override
++            public void subscribe (final Observer<? super Integer> observer) {
++                Observable.just(1).subscribe(observer);
++            }
++        };
++
++        Observable.amb(Collections.singletonList(s1))
++        .test()
++        .assertResult(1);
++    }
++
+     @SuppressWarnings("unchecked")
+     @Test
+     public void disposed() {
+diff --git a/src/test/java/io/reactivex/internal/operators/observable/ObservableCombineLatestTest.java b/src/test/java/io/reactivex/internal/operators/observable/ObservableCombineLatestTest.java
+index 418a19678..736a0bd9b 100644
+--- a/src/test/java/io/reactivex/internal/operators/observable/ObservableCombineLatestTest.java
++++ b/src/test/java/io/reactivex/internal/operators/observable/ObservableCombineLatestTest.java
+@@ -787,6 +787,34 @@ public class ObservableCombineLatestTest {
+         .assertResult("[1, 2]");
+     }
+ 
++    /**
++     * Ensures that an ObservableSource implementation can be supplied that doesn't subclass Observable
++     */
++    @Test
++    public void combineLatestIterableOfSourcesNotSubclassingObservable() {
++        final ObservableSource<Integer> s1 = new ObservableSource<Integer>() {
++            @Override
++            public void subscribe (final Observer<? super Integer> observer) {
++                Observable.just(1).subscribe(observer);
++            }
++        };
++        final ObservableSource<Integer> s2 = new ObservableSource<Integer>() {
++            @Override
++            public void subscribe (final Observer<? super Integer> observer) {
++                Observable.just(2).subscribe(observer);
++            }
++        };
++
++        Observable.combineLatest(Arrays.asList(s1, s2), new Function<Object[], Object>() {
++            @Override
++            public Object apply(Object[] a) throws Exception {
++                return Arrays.toString(a);
++            }
++        })
++        .test()
++        .assertResult("[1, 2]");
++    }
++
+     @Test
+     @SuppressWarnings("unchecked")
+     public void combineLatestDelayErrorArrayOfSources() {
+@@ -1216,4 +1244,5 @@ public class ObservableCombineLatestTest {
+         .awaitDone(5, TimeUnit.SECONDS)
+         .assertFailure(TestException.class, 42);
+     }
++
+ }
+diff --git a/src/test/java/io/reactivex/internal/operators/observable/ObservableZipTest.java b/src/test/java/io/reactivex/internal/operators/observable/ObservableZipTest.java
+index 14fda0058..eca18c71b 100644
+--- a/src/test/java/io/reactivex/internal/operators/observable/ObservableZipTest.java
++++ b/src/test/java/io/reactivex/internal/operators/observable/ObservableZipTest.java
+@@ -1350,6 +1350,34 @@ public class ObservableZipTest {
+         .assertResult("[1, 1, 1, 1, 1, 1, 1, 1, 1, 1]");
+     }
+ 
++    /**
++     * Ensures that an ObservableSource implementation can be supplied that doesn't subclass Observable
++     */
++    @Test
++    public void zipIterableNotSubclassingObservable() {
++        final ObservableSource<Integer> s1 = new ObservableSource<Integer>() {
++            @Override
++            public void subscribe (final Observer<? super Integer> observer) {
++                Observable.just(1).subscribe(observer);
++            }
++        };
++        final ObservableSource<Integer> s2 = new ObservableSource<Integer>() {
++            @Override
++            public void subscribe (final Observer<? super Integer> observer) {
++                Observable.just(2).subscribe(observer);
++            }
++        };
++
++        Observable.zip(Arrays.asList(s1, s2), new Function<Object[], Object>() {
++            @Override
++            public Object apply(Object[] a) throws Exception {
++                return Arrays.toString(a);
++            }
++        })
++        .test()
++        .assertResult("[1, 2]");
++    }
++
+     @Test
+     public void dispose() {
+         TestHelper.checkDisposed(Observable.zip(Observable.just(1), Observable.just(1), new BiFunction<Integer, Integer, Object>() {
+@@ -1427,5 +1455,6 @@ public class ObservableZipTest {
+         ps1.onNext(1);
+         ps2.onNext(2);
+         to.assertResult(3);
+     }
++
+ }

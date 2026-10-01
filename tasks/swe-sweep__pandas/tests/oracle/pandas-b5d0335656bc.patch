@@ -1,0 +1,18 @@
+diff --git a/pandas/_libs/groupby.pyx b/pandas/_libs/groupby.pyx
+index 61f448cbe0..0baae23a4a 100644
+--- a/pandas/_libs/groupby.pyx
++++ b/pandas/_libs/groupby.pyx
+@@ -549,6 +549,13 @@ def group_add(add_t[:, ::1] out,
+                         y = val - compensation[lab, j]
+                         t = sumx[lab, j] + y
+                         compensation[lab, j] = t - sumx[lab, j] - y
++                        if compensation[lab, j] != compensation[lab, j]:
++                            # GH#53606
++                            # If val is +/- infinity compensation is NaN
++                            # which would lead to results being NaN instead
++                            # of +/- infinity. We cannot use util.is_nan
++                            # because of no gil
++                            compensation[lab, j] = 0
+                         sumx[lab, j] = t
+ 
+             for i in range(ncounts):

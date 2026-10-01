@@ -1,0 +1,339 @@
+diff --git a/packages/babel-parser/test/fixtures/es2017/async-functions/context-division-after-expression/input.js b/packages/babel-parser/test/fixtures/es2017/async-functions/context-division-after-expression/input.js
+new file mode 100644
+index 0000000000..1415f9866a
+--- /dev/null
++++ b/packages/babel-parser/test/fixtures/es2017/async-functions/context-division-after-expression/input.js
+@@ -0,0 +1,2 @@
++void async function fn() {}
++/foo/g
+\ No newline at end of file
+diff --git a/packages/babel-parser/test/fixtures/es2017/async-functions/context-division-after-expression/output.json b/packages/babel-parser/test/fixtures/es2017/async-functions/context-division-after-expression/output.json
+new file mode 100644
+index 0000000000..9bd2028bf8
+--- /dev/null
++++ b/packages/babel-parser/test/fixtures/es2017/async-functions/context-division-after-expression/output.json
+@@ -0,0 +1,185 @@
++{
++  "type": "File",
++  "start": 0,
++  "end": 34,
++  "loc": {
++    "start": {
++      "line": 1,
++      "column": 0
++    },
++    "end": {
++      "line": 2,
++      "column": 6
++    }
++  },
++  "program": {
++    "type": "Program",
++    "start": 0,
++    "end": 34,
++    "loc": {
++      "start": {
++        "line": 1,
++        "column": 0
++      },
++      "end": {
++        "line": 2,
++        "column": 6
++      }
++    },
++    "sourceType": "script",
++    "interpreter": null,
++    "body": [
++      {
++        "type": "ExpressionStatement",
++        "start": 0,
++        "end": 34,
++        "loc": {
++          "start": {
++            "line": 1,
++            "column": 0
++          },
++          "end": {
++            "line": 2,
++            "column": 6
++          }
++        },
++        "expression": {
++          "type": "BinaryExpression",
++          "start": 0,
++          "end": 34,
++          "loc": {
++            "start": {
++              "line": 1,
++              "column": 0
++            },
++            "end": {
++              "line": 2,
++              "column": 6
++            }
++          },
++          "left": {
++            "type": "BinaryExpression",
++            "start": 0,
++            "end": 32,
++            "loc": {
++              "start": {
++                "line": 1,
++                "column": 0
++              },
++              "end": {
++                "line": 2,
++                "column": 4
++              }
++            },
++            "left": {
++              "type": "UnaryExpression",
++              "start": 0,
++              "end": 27,
++              "loc": {
++                "start": {
++                  "line": 1,
++                  "column": 0
++                },
++                "end": {
++                  "line": 1,
++                  "column": 27
++                }
++              },
++              "operator": "void",
++              "prefix": true,
++              "argument": {
++                "type": "FunctionExpression",
++                "start": 5,
++                "end": 27,
++                "loc": {
++                  "start": {
++                    "line": 1,
++                    "column": 5
++                  },
++                  "end": {
++                    "line": 1,
++                    "column": 27
++                  }
++                },
++                "id": {
++                  "type": "Identifier",
++                  "start": 20,
++                  "end": 22,
++                  "loc": {
++                    "start": {
++                      "line": 1,
++                      "column": 20
++                    },
++                    "end": {
++                      "line": 1,
++                      "column": 22
++                    },
++                    "identifierName": "fn"
++                  },
++                  "name": "fn"
++                },
++                "generator": false,
++                "async": true,
++                "params": [],
++                "body": {
++                  "type": "BlockStatement",
++                  "start": 25,
++                  "end": 27,
++                  "loc": {
++                    "start": {
++                      "line": 1,
++                      "column": 25
++                    },
++                    "end": {
++                      "line": 1,
++                      "column": 27
++                    }
++                  },
++                  "body": [],
++                  "directives": []
++                }
++              }
++            },
++            "operator": "/",
++            "right": {
++              "type": "Identifier",
++              "start": 29,
++              "end": 32,
++              "loc": {
++                "start": {
++                  "line": 2,
++                  "column": 1
++                },
++                "end": {
++                  "line": 2,
++                  "column": 4
++                },
++                "identifierName": "foo"
++              },
++              "name": "foo"
++            }
++          },
++          "operator": "/",
++          "right": {
++            "type": "Identifier",
++            "start": 33,
++            "end": 34,
++            "loc": {
++              "start": {
++                "line": 2,
++                "column": 5
++              },
++              "end": {
++                "line": 2,
++                "column": 6
++              },
++              "identifierName": "g"
++            },
++            "name": "g"
++          }
++        }
++      }
++    ],
++    "directives": []
++  }
++}
+\ No newline at end of file
+diff --git a/packages/babel-parser/test/fixtures/es2017/async-functions/context-regex-after-statement/input.js b/packages/babel-parser/test/fixtures/es2017/async-functions/context-regex-after-statement/input.js
+new file mode 100644
+index 0000000000..beb4d4ea46
+--- /dev/null
++++ b/packages/babel-parser/test/fixtures/es2017/async-functions/context-regex-after-statement/input.js
+@@ -0,0 +1,2 @@
++async function fn() {}
++/foo/g
+\ No newline at end of file
+diff --git a/packages/babel-parser/test/fixtures/es2017/async-functions/context-regex-after-statement/output.json b/packages/babel-parser/test/fixtures/es2017/async-functions/context-regex-after-statement/output.json
+new file mode 100644
+index 0000000000..05504dd073
+--- /dev/null
++++ b/packages/babel-parser/test/fixtures/es2017/async-functions/context-regex-after-statement/output.json
+@@ -0,0 +1,122 @@
++{
++  "type": "File",
++  "start": 0,
++  "end": 29,
++  "loc": {
++    "start": {
++      "line": 1,
++      "column": 0
++    },
++    "end": {
++      "line": 2,
++      "column": 6
++    }
++  },
++  "program": {
++    "type": "Program",
++    "start": 0,
++    "end": 29,
++    "loc": {
++      "start": {
++        "line": 1,
++        "column": 0
++      },
++      "end": {
++        "line": 2,
++        "column": 6
++      }
++    },
++    "sourceType": "script",
++    "interpreter": null,
++    "body": [
++      {
++        "type": "FunctionDeclaration",
++        "start": 0,
++        "end": 22,
++        "loc": {
++          "start": {
++            "line": 1,
++            "column": 0
++          },
++          "end": {
++            "line": 1,
++            "column": 22
++          }
++        },
++        "id": {
++          "type": "Identifier",
++          "start": 15,
++          "end": 17,
++          "loc": {
++            "start": {
++              "line": 1,
++              "column": 15
++            },
++            "end": {
++              "line": 1,
++              "column": 17
++            },
++            "identifierName": "fn"
++          },
++          "name": "fn"
++        },
++        "generator": false,
++        "async": true,
++        "params": [],
++        "body": {
++          "type": "BlockStatement",
++          "start": 20,
++          "end": 22,
++          "loc": {
++            "start": {
++              "line": 1,
++              "column": 20
++            },
++            "end": {
++              "line": 1,
++              "column": 22
++            }
++          },
++          "body": [],
++          "directives": []
++        }
++      },
++      {
++        "type": "ExpressionStatement",
++        "start": 23,
++        "end": 29,
++        "loc": {
++          "start": {
++            "line": 2,
++            "column": 0
++          },
++          "end": {
++            "line": 2,
++            "column": 6
++          }
++        },
++        "expression": {
++          "type": "RegExpLiteral",
++          "start": 23,
++          "end": 29,
++          "loc": {
++            "start": {
++              "line": 2,
++              "column": 0
++            },
++            "end": {
++              "line": 2,
++              "column": 6
++            }
++          },
++          "extra": {
++            "raw": "/foo/g"
++          },
++          "pattern": "foo",
++          "flags": "g"
++        }
++      }
++    ],
++    "directives": []
++  }
++}
+\ No newline at end of file

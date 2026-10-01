@@ -1,0 +1,13 @@
+diff --git a/src/theory/quantifiers/sygus/ce_guided_single_inv.cpp b/src/theory/quantifiers/sygus/ce_guided_single_inv.cpp
+index 8083ee374d..209a433086 100644
+--- a/src/theory/quantifiers/sygus/ce_guided_single_inv.cpp
++++ b/src/theory/quantifiers/sygus/ce_guided_single_inv.cpp
+@@ -248,7 +248,7 @@ Result CegSingleInv::solve()
+           << std::endl;
+     }
+     // conjecture is infeasible or unknown
+-    return res;
++    return r;
+   }
+   // now, get the instantiations
+   std::vector<Node> qs;

@@ -1,0 +1,92 @@
+diff --git a/packages/babel-parser/src/parser/expression.js b/packages/babel-parser/src/parser/expression.js
+index 48dd82d..fa489da 100644
+--- a/packages/babel-parser/src/parser/expression.js
++++ b/packages/babel-parser/src/parser/expression.js
+@@ -43,14 +43,13 @@ export default class ExpressionParser extends LValParser {
+   +parseFunctionParams: (node: N.Function, allowModifiers?: boolean) => void;
+   +takeDecorators: (node: N.HasDecorators) => void;
+ 
+-  // Check if property name clashes with already added.
+-  // Object/class getters and setters are not allowed to clash —
+-  // either with each other or with an init property — and in
+-  // strict mode, init properties are also not allowed to be repeated.
++  // Check if property __proto__ has been used more than once.
++  // If the expression is a destructuring assignment, then __proto__ may appear
++  // multiple times. Otherwise, __proto__ is a duplicated key.
+ 
+-  checkPropClash(
++  checkDuplicatedProto(
+     prop: N.ObjectMember,
+-    propHash: { [key: string]: boolean },
++    protoRef: { used: boolean, start?: number },
+   ): void {
+     if (prop.computed || prop.kind) return;
+ 
+@@ -59,10 +58,12 @@ export default class ExpressionParser extends LValParser {
+     const name = key.type === "Identifier" ? key.name : String(key.value);
+ 
+     if (name === "__proto__") {
+-      if (propHash.proto) {
+-        this.raise(key.start, "Redefinition of __proto__ property");
++      // Store the first redefinition's position
++      if (protoRef.used && !protoRef.start) {
++        protoRef.start = key.start;
+       }
+-      propHash.proto = true;
++
++      protoRef.used = true;
+     }
+   }
+ 
+@@ -1386,7 +1387,7 @@ export default class ExpressionParser extends LValParser {
+         refShorthandDefaultPos,
+         containsEsc,
+       );
+-      this.checkPropClash(prop, propHash);
++      if (!isPattern) this.checkDuplicatedProto(prop, propHash);
+ 
+       if (prop.shorthand) {
+         this.addExtra(prop, "shorthand", true);
+@@ -1395,6 +1396,10 @@ export default class ExpressionParser extends LValParser {
+       node.properties.push(prop);
+     }
+ 
++    if (!this.match(tt.eq) && propHash.start !== undefined) {
++      this.raise(propHash.start, "Redefinition of __proto__ property");
++    }
++
+     if (firstRestLocation !== null) {
+       this.unexpected(
+         firstRestLocation,
+diff --git a/packages/babel-parser/src/plugins/estree.js b/packages/babel-parser/src/plugins/estree.js
+index 3da593f..7fccc1f 100644
+--- a/packages/babel-parser/src/plugins/estree.js
++++ b/packages/babel-parser/src/plugins/estree.js
+@@ -124,9 +124,9 @@ export default (superClass: Class<Parser>): Class<Parser> =>
+       }
+     }
+ 
+-    checkPropClash(
++    checkDuplicatedProto(
+       prop: N.ObjectMember,
+-      propHash: { [key: string]: boolean },
++      protoRef: { used: boolean, start?: number },
+     ): void {
+       if (prop.computed || !isSimpleProperty(prop)) return;
+ 
+@@ -135,10 +135,12 @@ export default (superClass: Class<Parser>): Class<Parser> =>
+       const name = key.type === "Identifier" ? key.name : String(key.value);
+ 
+       if (name === "__proto__") {
+-        if (propHash.proto) {
+-          this.raise(key.start, "Redefinition of __proto__ property");
++        // Store the first redefinition's position
++        if (protoRef.used && !protoRef.start) {
++          protoRef.start = key.start;
+         }
+-        propHash.proto = true;
++
++        protoRef.used = true;
+       }
+     }
+ 

@@ -1,0 +1,25 @@
+diff --git a/tests/osproc/twaitforexit.nim b/tests/osproc/twaitforexit.nim
+new file mode 100644
+index 000000000..5db8d2566
+--- /dev/null
++++ b/tests/osproc/twaitforexit.nim
+@@ -0,0 +1,18 @@
++import std/[osproc, os, times]
++
++block: # bug #5091
++    when defined(linux):
++        const filename = "false"
++        var p = startProcess(filename, options = {poStdErrToStdOut, poUsePath})
++        os.sleep(1000) # make sure process has exited already
++
++        let atStart = getTime()
++        const msWait = 2000
++
++        try:
++            discard waitForExit(p, msWait)
++        except OSError:
++            discard
++
++        # check that we don't have to wait msWait milliseconds
++        doAssert(getTime() <  atStart + milliseconds(msWait))
+\ No newline at end of file

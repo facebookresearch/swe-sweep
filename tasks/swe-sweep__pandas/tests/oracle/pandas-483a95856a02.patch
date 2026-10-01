@@ -1,0 +1,21 @@
+diff --git a/pandas/core/indexes/category.py b/pandas/core/indexes/category.py
+index e068c1434f..d1bdedee5c 100644
+--- a/pandas/core/indexes/category.py
++++ b/pandas/core/indexes/category.py
+@@ -633,7 +633,9 @@ class CategoricalIndex(NDArrayBackedExtensionIndex):
+     def _concat(self, to_concat: list[Index], name: Hashable) -> Index:
+         # if calling index is category, don't check dtype of others
+         try:
+-            codes = np.concatenate([self._is_dtype_compat(c).codes for c in to_concat])
++            cat = Categorical._concat_same_type(
++                [self._is_dtype_compat(c) for c in to_concat]
++            )
+         except TypeError:
+             # not all to_concat elements are among our categories (or NA)
+             from pandas.core.dtypes.concat import concat_compat
+@@ -641,5 +643,4 @@ class CategoricalIndex(NDArrayBackedExtensionIndex):
+             res = concat_compat(to_concat)
+             return Index(res, name=name)
+         else:
+-            cat = self._data._from_backing_data(codes)
+             return type(self)._simple_new(cat, name=name)

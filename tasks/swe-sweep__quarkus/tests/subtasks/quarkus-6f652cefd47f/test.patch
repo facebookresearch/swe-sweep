@@ -1,0 +1,46 @@
+diff --git a/extensions/resteasy-reactive/quarkus-resteasy-reactive-jackson/deployment/src/test/java/io/quarkus/resteasy/reactive/jackson/deployment/test/streams/StreamResource.java b/extensions/resteasy-reactive/quarkus-resteasy-reactive-jackson/deployment/src/test/java/io/quarkus/resteasy/reactive/jackson/deployment/test/streams/StreamResource.java
+index 01895dfbe70..97292e3956c 100644
+--- a/extensions/resteasy-reactive/quarkus-resteasy-reactive-jackson/deployment/src/test/java/io/quarkus/resteasy/reactive/jackson/deployment/test/streams/StreamResource.java
++++ b/extensions/resteasy-reactive/quarkus-resteasy-reactive-jackson/deployment/src/test/java/io/quarkus/resteasy/reactive/jackson/deployment/test/streams/StreamResource.java
+@@ -131,6 +131,19 @@ public class StreamResource {
+                 Wrapper::getData,
+                 Wrapper::getHeaders,
+                 Wrapper::getStatus);
+     }
+ 
++    @Path("restmulti/empty")
++    @GET
++    @Produces(RestMediaType.APPLICATION_JSON)
++    public Multi<Message> restMultiEmptyJson() {
++        return RestMulti.fromUniResponse(
++                Uni.createFrom().item(
++                        () -> new Wrapper(Multi.createFrom().empty(),
++                                new AbstractMap.SimpleEntry<>("foo", "bar"), 222)),
++                Wrapper::getData,
++                Wrapper::getHeaders,
++                Wrapper::getStatus);
++    }
++
+     @Path("stream-json/multi")
+     @GET
+     @Produces(RestMediaType.APPLICATION_STREAM_JSON)
+diff --git a/extensions/resteasy-reactive/quarkus-resteasy-reactive-jackson/deployment/src/test/java/io/quarkus/resteasy/reactive/jackson/deployment/test/streams/StreamTestCase.java b/extensions/resteasy-reactive/quarkus-resteasy-reactive-jackson/deployment/src/test/java/io/quarkus/resteasy/reactive/jackson/deployment/test/streams/StreamTestCase.java
+index 915ad45721c..737390d3820 100644
+--- a/extensions/resteasy-reactive/quarkus-resteasy-reactive-jackson/deployment/src/test/java/io/quarkus/resteasy/reactive/jackson/deployment/test/streams/StreamTestCase.java
++++ b/extensions/resteasy-reactive/quarkus-resteasy-reactive-jackson/deployment/src/test/java/io/quarkus/resteasy/reactive/jackson/deployment/test/streams/StreamTestCase.java
+@@ -139,6 +139,14 @@ public class StreamTestCase {
+                 .header(HttpHeaders.CONTENT_TYPE, containsString(RestMediaType.APPLICATION_NDJSON))
+                 .header("foo", "bar");
+     }
+ 
++    @Test
++    public void testRestMultiEmptyJson() {
++        when().get(uri.toString() + "streams/restmulti/empty")
++                .then().statusCode(222)
++                .body(is("[]"))
++                .header("foo", "bar");
++    }
++
+     @Test
+     public void testStreamJsonMultiFromMulti() {
+         when().get(uri.toString() + "streams/stream-json/multi")

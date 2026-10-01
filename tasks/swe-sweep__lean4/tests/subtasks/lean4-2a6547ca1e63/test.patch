@@ -1,0 +1,8 @@
+diff --git a/tests/lean/run/4851.lean b/tests/lean/run/4851.lean
+new file mode 100644
+index 0000000000..033b794092
+--- /dev/null
++++ b/tests/lean/run/4851.lean
+@@ -0,0 +1,2 @@
++theorem T0 (α : Type) (x : α) (H: α → False) : False := by
++  contradiction

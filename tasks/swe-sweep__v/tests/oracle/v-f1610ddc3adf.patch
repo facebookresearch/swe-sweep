@@ -1,0 +1,13 @@
+diff --git a/vlib/v/gen/c/str.v b/vlib/v/gen/c/str.v
+index 2fe856be7..547be62d6 100644
+--- a/vlib/v/gen/c/str.v
++++ b/vlib/v/gen/c/str.v
+@@ -159,7 +159,7 @@ fn (mut g Gen) gen_expr_to_string(expr ast.Expr, etype ast.Type) {
+ 			if str_method_expects_ptr && !is_ptr {
+ 				g.write('&')
+ 			} else if (!str_method_expects_ptr && is_ptr && !is_shared) || is_var_mut {
+-				g.write('*')
++				g.write('*'.repeat(typ.nr_muls()))
+ 			}
+ 			g.expr_with_cast(expr, typ, typ)
+ 		} else if typ.has_flag(.option) {

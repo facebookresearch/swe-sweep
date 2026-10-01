@@ -1,0 +1,19 @@
+diff --git a/lib/elixir/lib/calendar/naive_datetime.ex b/lib/elixir/lib/calendar/naive_datetime.ex
+index df37473ee..0c7af9101 100644
+--- a/lib/elixir/lib/calendar/naive_datetime.ex
++++ b/lib/elixir/lib/calendar/naive_datetime.ex
+@@ -554,9 +554,11 @@ defmodule NaiveDateTime do
+               "and thus the result would be ambiguous"
+     end
+ 
+-    units1 = naive_datetime1 |> to_iso_days() |> Calendar.ISO.iso_days_to_unit(unit)
+-    units2 = naive_datetime2 |> to_iso_days() |> Calendar.ISO.iso_days_to_unit(unit)
+-    units1 - units2
++    diff_microsecond =
++      (naive_datetime1 |> to_iso_days() |> Calendar.ISO.iso_days_to_unit(:microsecond)) -
++        (naive_datetime2 |> to_iso_days() |> Calendar.ISO.iso_days_to_unit(:microsecond))
++
++    System.convert_time_unit(diff_microsecond, :microsecond, unit)
+   end
+ 
+   @doc """

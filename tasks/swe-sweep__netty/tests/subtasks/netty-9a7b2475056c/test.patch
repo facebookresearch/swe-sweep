@@ -1,0 +1,166 @@
+diff --git a/codec-http/src/test/java/io/netty/handler/codec/http/HttpContentCompressorTest.java b/codec-http/src/test/java/io/netty/handler/codec/http/HttpContentCompressorTest.java
+index c6ff3bd..357ef3d 100644
+--- a/codec-http/src/test/java/io/netty/handler/codec/http/HttpContentCompressorTest.java
++++ b/codec-http/src/test/java/io/netty/handler/codec/http/HttpContentCompressorTest.java
+@@ -15,6 +15,7 @@
+  */
+ package io.netty.handler.codec.http;
+ 
++import io.netty.buffer.ByteBuf;
+ import io.netty.buffer.ByteBufUtil;
+ import io.netty.buffer.Unpooled;
+ import io.netty.channel.embedded.EmbeddedChannel;
+@@ -24,6 +25,8 @@ import io.netty.util.CharsetUtil;
+ import io.netty.util.ReferenceCountUtil;
+ import org.junit.Test;
+ 
++import java.nio.charset.StandardCharsets;
++
+ import static io.netty.handler.codec.http.HttpHeadersTestUtils.of;
+ import static org.hamcrest.CoreMatchers.instanceOf;
+ import static org.hamcrest.CoreMatchers.is;
+@@ -153,6 +156,65 @@ public class HttpContentCompressorTest {
+         assertThat(ch.readOutbound(), is(nullValue()));
+     }
+ 
++    @Test
++    public void testChunkedContentWithAssembledResponseIdentityEncoding() throws Exception {
++        EmbeddedChannel ch = new EmbeddedChannel(new HttpContentCompressor());
++        ch.writeInbound(new DefaultFullHttpRequest(HttpVersion.HTTP_1_1, HttpMethod.GET, "/"));
++
++        HttpResponse res = new AssembledHttpResponse(HttpVersion.HTTP_1_1, HttpResponseStatus.OK,
++                Unpooled.copiedBuffer("Hell", CharsetUtil.US_ASCII));
++        res.headers().set(HttpHeaderNames.TRANSFER_ENCODING, HttpHeaderValues.CHUNKED);
++        ch.writeOutbound(res);
++
++        ch.writeOutbound(new DefaultHttpContent(Unpooled.copiedBuffer("o, w", CharsetUtil.US_ASCII)));
++        ch.writeOutbound(new DefaultLastHttpContent(Unpooled.copiedBuffer("orld", CharsetUtil.US_ASCII)));
++
++        HttpContent chunk;
++        chunk = ch.readOutbound();
++        assertThat(chunk.content().toString(StandardCharsets.UTF_8), is("Hell"));
++        chunk.release();
++
++        chunk = ch.readOutbound();
++        assertThat(chunk.content().toString(StandardCharsets.UTF_8), is("o, w"));
++        chunk.release();
++
++        chunk = ch.readOutbound();
++        assertThat(chunk.content().toString(StandardCharsets.UTF_8), is("orld"));
++        assertThat(chunk, is(instanceOf(LastHttpContent.class)));
++        chunk.release();
++
++        assertThat(ch.readOutbound(), is(nullValue()));
++    }
++
++    @Test
++    public void testContentWithAssembledResponseIdentityEncodingHttp10() throws Exception {
++        EmbeddedChannel ch = new EmbeddedChannel(new HttpContentCompressor());
++        ch.writeInbound(new DefaultFullHttpRequest(HttpVersion.HTTP_1_0, HttpMethod.GET, "/"));
++
++        HttpResponse res = new AssembledHttpResponse(HttpVersion.HTTP_1_0, HttpResponseStatus.OK,
++                Unpooled.copiedBuffer("Hell", CharsetUtil.US_ASCII));
++        ch.writeOutbound(res);
++
++        ch.writeOutbound(new DefaultHttpContent(Unpooled.copiedBuffer("o, w", CharsetUtil.US_ASCII)));
++        ch.writeOutbound(new DefaultLastHttpContent(Unpooled.copiedBuffer("orld", CharsetUtil.US_ASCII)));
++
++        HttpContent chunk;
++        chunk = ch.readOutbound();
++        assertThat(chunk.content().toString(StandardCharsets.UTF_8), is("Hell"));
++        chunk.release();
++
++        chunk = ch.readOutbound();
++        assertThat(chunk.content().toString(StandardCharsets.UTF_8), is("o, w"));
++        chunk.release();
++
++        chunk = ch.readOutbound();
++        assertThat(chunk.content().toString(StandardCharsets.UTF_8), is("orld"));
++        assertThat(chunk, is(instanceOf(LastHttpContent.class)));
++        chunk.release();
++
++        assertThat(ch.readOutbound(), is(nullValue()));
++    }
++
+     @Test
+     public void testChunkedContentWithTrailingHeader() throws Exception {
+         EmbeddedChannel ch = new EmbeddedChannel(new HttpContentCompressor());
+@@ -470,4 +532,78 @@ public class HttpContentCompressorTest {
+         assertThat(res.headers().get(HttpHeaderNames.CONTENT_LENGTH), is(nullValue()));
+         assertThat(res.headers().get(HttpHeaderNames.CONTENT_ENCODING), is("gzip"));
+     }
++
++    private static class AssembledHttpResponse extends DefaultHttpResponse implements HttpContent {
++
++        private final ByteBuf content;
++
++        AssembledHttpResponse(HttpVersion version, HttpResponseStatus status, ByteBuf content) {
++            super(version, status);
++            this.content = content;
++        }
++
++        @Override
++        public HttpContent copy() {
++            throw new UnsupportedOperationException();
++        }
++
++        @Override
++        public HttpContent duplicate() {
++            throw new UnsupportedOperationException();
++        }
++
++        @Override
++        public HttpContent retainedDuplicate() {
++            throw new UnsupportedOperationException();
++        }
++
++        @Override
++        public HttpContent replace(ByteBuf content) {
++            throw new UnsupportedOperationException();
++        }
++
++        @Override
++        public HttpContent retain() {
++            content.retain();
++            return this;
++        }
++
++        @Override
++        public HttpContent retain(int increment) {
++            content.retain(increment);
++            return this;
++        }
++
++        @Override
++        public HttpContent touch() {
++            content.touch();
++            return this;
++        }
++
++        @Override
++        public HttpContent touch(Object hint) {
++            content.touch(hint);
++            return this;
++        }
++
++        @Override
++        public ByteBuf content() {
++            return content;
++        }
++
++        @Override
++        public int refCnt() {
++            return content.refCnt();
++        }
++
++        @Override
++        public boolean release() {
++            return content.release();
++        }
++
++        @Override
++        public boolean release(int decrement) {
++            return content.release(decrement);
++        }
++    }
+ }

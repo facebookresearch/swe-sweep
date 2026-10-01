@@ -1,0 +1,7 @@
+diff --git a/test/Succeed/Issue8380.agda b/test/Succeed/Issue8380.agda
+new file mode 100644
+index 0000000000..9514072c89
+--- /dev/null
++++ b/test/Succeed/Issue8380.agda
+@@ -0,0 +1 @@
++--}

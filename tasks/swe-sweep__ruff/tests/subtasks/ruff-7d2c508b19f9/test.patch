@@ -1,0 +1,11 @@
+diff --git a/crates/ruff_linter/resources/test/fixtures/flake8_bugbear/B008_extended.py b/crates/ruff_linter/resources/test/fixtures/flake8_bugbear/B008_extended.py
+index 0d7175daa0..1c0f131231 100644
+--- a/crates/ruff_linter/resources/test/fixtures/flake8_bugbear/B008_extended.py
++++ b/crates/ruff_linter/resources/test/fixtures/flake8_bugbear/B008_extended.py
+@@ -35,3 +35,6 @@ def okay(obj=Class()):
+ 
+ def error(obj=OtherClass()):
+     ...
++
++
++def okay(obj: frozenset[str] = foo()): ...

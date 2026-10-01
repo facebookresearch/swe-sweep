@@ -1,0 +1,13 @@
+diff --git a/sqlglot/lineage.py b/sqlglot/lineage.py
+index 52e6ea04df..cc1aedd5b6 100644
+--- a/sqlglot/lineage.py
++++ b/sqlglot/lineage.py
+@@ -232,7 +232,7 @@ def to_node(
+             )
+ 
+     # if the select is a star add all scope sources as downstreams
+-    if select.is_star:
++    if isinstance(select, exp.Star):
+         for source in scope.sources.values():
+             if isinstance(source, Scope):
+                 source = source.expression

@@ -1,0 +1,13 @@
+diff --git a/buffer/src/main/java/io/netty/buffer/EmptyByteBuf.java b/buffer/src/main/java/io/netty/buffer/EmptyByteBuf.java
+index cbc8a1acf8..76549583d0 100644
+--- a/buffer/src/main/java/io/netty/buffer/EmptyByteBuf.java
++++ b/buffer/src/main/java/io/netty/buffer/EmptyByteBuf.java
+@@ -684,7 +684,7 @@ public final class EmptyByteBuf extends ByteBuf {
+     @Override
+     public CharSequence readCharSequence(int length, Charset charset) {
+         checkLength(length);
+-        return null;
++        return StringUtil.EMPTY_STRING;
+     }
+ 
+     @Override

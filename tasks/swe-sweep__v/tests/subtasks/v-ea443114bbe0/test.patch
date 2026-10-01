@@ -1,0 +1,24 @@
+diff --git a/vlib/v/tests/option_alias_eq_test.v b/vlib/v/tests/option_alias_eq_test.v
+new file mode 100644
+index 000000000..0e12c8df2
+--- /dev/null
++++ b/vlib/v/tests/option_alias_eq_test.v
+@@ -0,0 +1,18 @@
++struct MyStruct {
++	field int
++}
++
++pub type MyOpt = ?MyStruct
++
++fn empty() map[string]MyOpt {
++	return {}
++}
++
++fn test_empty() {
++	expected := {
++		'key': ?MyOpt(none)
++	}
++	assert dump(expected) == {
++		'key': ?MyOpt(none)
++	}
++}

@@ -1,0 +1,16 @@
+diff --git a/tests/template/t21231.nim b/tests/template/t21231.nim
+new file mode 100644
+index 000000000..51e96cdd6
+--- /dev/null
++++ b/tests/template/t21231.nim
+@@ -0,0 +1,10 @@
++discard """
++  errormsg: "undeclared identifier: 'x'"
++"""
++
++var x: int
++# bug #21231
++template f(y: untyped) = echo y.x
++for i in 1 .. 10:
++  x = i
++  f(system)

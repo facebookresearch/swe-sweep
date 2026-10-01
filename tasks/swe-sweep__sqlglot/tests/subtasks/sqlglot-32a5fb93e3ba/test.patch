@@ -1,0 +1,43 @@
+diff --git a/tests/test_transforms.py b/tests/test_transforms.py
+index 251b3ec846..69bc146695 100644
+--- a/tests/test_transforms.py
++++ b/tests/test_transforms.py
+@@ -4,6 +4,7 @@ from sqlglot.transforms import (
+     eliminate_distinct_on,
+     eliminate_join_marks,
+     eliminate_qualify,
++    eliminate_semi_and_anti_joins,
+     remove_precision_parameterized_types,
+     unalias_group,
+ )
+@@ -243,3 +244,30 @@ class TestTransforms(unittest.TestCase):
+                 f"SELECT table1.id, table2.cloumn1, table3.id FROM table1 LEFT JOIN table2 ON table1.id = table2.id LEFT JOIN (SELECT tableInner1.id FROM tableInner1 LEFT JOIN tableInner2 ON tableInner1.id = tableInner2.id) {alias}table3 ON table1.id = table3.id",
+                 dialect,
+             )
++
++    def test_eliminate_semi_and_anti_joins(self):
++        self.validate(
++            eliminate_semi_and_anti_joins,
++            "SELECT t1.id FROM t1 JOIN t2 ON t1.id = t2.id ANTI JOIN t3 ON t1.id = t3.id",
++            "SELECT t1.id FROM t1 JOIN t2 ON t1.id = t2.id WHERE NOT EXISTS(SELECT 1 FROM t3 WHERE t1.id = t3.id)",
++        )
++        self.validate(
++            eliminate_semi_and_anti_joins,
++            "SELECT t1.id FROM t1 JOIN t2 ON t1.id = t2.id SEMI JOIN t3 ON t1.id = t3.id",
++            "SELECT t1.id FROM t1 JOIN t2 ON t1.id = t2.id WHERE EXISTS(SELECT 1 FROM t3 WHERE t1.id = t3.id)",
++        )
++        self.validate(
++            eliminate_semi_and_anti_joins,
++            "SELECT t1.id FROM t1 ANTI JOIN t2 ON t1.id = t2.id ANTI JOIN t3 ON t1.id = t3.id",
++            "SELECT t1.id FROM t1 WHERE NOT EXISTS(SELECT 1 FROM t2 WHERE t1.id = t2.id) AND NOT EXISTS(SELECT 1 FROM t3 WHERE t1.id = t3.id)",
++        )
++        self.validate(
++            eliminate_semi_and_anti_joins,
++            "SELECT t1.id FROM t1 ANTI JOIN t2 ON t1.id = t2.id ANTI JOIN t3 ON t1.id = t3.id ANTI JOIN t4 ON t1.id = t4.id",
++            "SELECT t1.id FROM t1 WHERE (NOT EXISTS(SELECT 1 FROM t2 WHERE t1.id = t2.id) AND NOT EXISTS(SELECT 1 FROM t3 WHERE t1.id = t3.id)) AND NOT EXISTS(SELECT 1 FROM t4 WHERE t1.id = t4.id)",
++        )
++        self.validate(
++            eliminate_semi_and_anti_joins,
++            "SELECT t1.id FROM t1 SEMI JOIN t2 ON t1.id = t2.id SEMI JOIN t3 ON t1.id = t3.id",
++            "SELECT t1.id FROM t1 WHERE EXISTS(SELECT 1 FROM t2 WHERE t1.id = t2.id) AND EXISTS(SELECT 1 FROM t3 WHERE t1.id = t3.id)",
++        )

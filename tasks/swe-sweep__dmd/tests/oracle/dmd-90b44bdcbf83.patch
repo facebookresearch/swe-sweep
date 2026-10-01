@@ -1,0 +1,12 @@
+diff --git a/compiler/src/dmd/dtemplate.d b/compiler/src/dmd/dtemplate.d
+index 5583dd4790..23d1140fe3 100644
+--- a/compiler/src/dmd/dtemplate.d
++++ b/compiler/src/dmd/dtemplate.d
+@@ -8272,6 +8272,7 @@ MATCH matchArg(TemplateParameter tp, Scope* sc, RootObject oarg, size_t i, Templ
+              */
+             if (tap.specType)
+             {
++                tap.specType = typeSemantic(tap.specType, tap.loc, sc);
+                 Declaration d = (cast(Dsymbol)sa).isDeclaration();
+                 if (!d)
+                     return matchArgNoMatch();

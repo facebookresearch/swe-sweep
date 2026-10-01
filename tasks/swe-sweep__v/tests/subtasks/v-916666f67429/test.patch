@@ -1,0 +1,18 @@
+diff --git a/vlib/v/tests/generic_fn_call_map_keys_values_test.v b/vlib/v/tests/generic_fn_call_map_keys_values_test.v
+new file mode 100644
+index 000000000..95738a9d0
+--- /dev/null
++++ b/vlib/v/tests/generic_fn_call_map_keys_values_test.v
+@@ -0,0 +1,12 @@
++fn generic[T](a T) {
++	assert a.keys() == ['aa', 'bb']
++	assert a.values() == [11, 22]
++}
++
++fn test_generic_fn_call_map_keys_values() {
++	a := {
++		'aa': 11
++		'bb': 22
++	}
++	generic(a)
++}

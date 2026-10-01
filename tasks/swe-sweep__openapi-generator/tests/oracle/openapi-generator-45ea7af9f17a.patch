@@ -1,0 +1,13 @@
+diff --git a/modules/openapi-generator/src/main/java/org/openapitools/codegen/utils/URLPathUtils.java b/modules/openapi-generator/src/main/java/org/openapitools/codegen/utils/URLPathUtils.java
+index 289d9febe85..47c98f55741 100644
+--- a/modules/openapi-generator/src/main/java/org/openapitools/codegen/utils/URLPathUtils.java
++++ b/modules/openapi-generator/src/main/java/org/openapitools/codegen/utils/URLPathUtils.java
+@@ -235,7 +235,7 @@ public class URLPathUtils {
+     public static boolean isRelativeUrl(List<Server> servers) {
+         if (servers != null && servers.size() > 0) {
+             final Server firstServer = servers.get(0);
+-            return Pattern.matches("^(\\/[\\w\\d]+)+", firstServer.getUrl());
++            return Pattern.matches("^(\\/[\\w\\d.~@-]+)+", firstServer.getUrl());
+         }
+         return false;
+     }

@@ -1,0 +1,55 @@
+diff --git a/callbacks/callmethod.go b/callbacks/callmethod.go
+index bcaa03f..fb90003 100644
+--- a/callbacks/callmethod.go
++++ b/callbacks/callmethod.go
+@@ -13,11 +13,20 @@ func callMethod(db *gorm.DB, fc func(value interface{}, tx *gorm.DB) bool) {
+ 		case reflect.Slice, reflect.Array:
+ 			db.Statement.CurDestIndex = 0
+ 			for i := 0; i < db.Statement.ReflectValue.Len(); i++ {
+-				fc(reflect.Indirect(db.Statement.ReflectValue.Index(i)).Addr().Interface(), tx)
++				if value := reflect.Indirect(db.Statement.ReflectValue.Index(i)); value.CanAddr() {
++					fc(value.Addr().Interface(), tx)
++				} else {
++					db.AddError(gorm.ErrInvalidValue)
++					return
++				}
+ 				db.Statement.CurDestIndex++
+ 			}
+ 		case reflect.Struct:
+-			fc(db.Statement.ReflectValue.Addr().Interface(), tx)
++			if db.Statement.ReflectValue.CanAddr() {
++				fc(db.Statement.ReflectValue.Addr().Interface(), tx)
++			} else {
++				db.AddError(gorm.ErrInvalidValue)
++			}
+ 		}
+ 	}
+ }
+diff --git a/callbacks/update.go b/callbacks/update.go
+index b596df9..fe6f099 100644
+--- a/callbacks/update.go
++++ b/callbacks/update.go
+@@ -137,7 +137,9 @@ func ConvertToAssignments(stmt *gorm.Statement) (set clause.Set) {
+ 	case reflect.Slice, reflect.Array:
+ 		assignValue = func(field *schema.Field, value interface{}) {
+ 			for i := 0; i < stmt.ReflectValue.Len(); i++ {
+-				field.Set(stmt.Context, stmt.ReflectValue.Index(i), value)
++				if stmt.ReflectValue.CanAddr() {
++					field.Set(stmt.Context, stmt.ReflectValue.Index(i), value)
++				}
+ 			}
+ 		}
+ 	case reflect.Struct:
+diff --git a/schema/utils.go b/schema/utils.go
+index acf1a73..65d012e 100644
+--- a/schema/utils.go
++++ b/schema/utils.go
+@@ -133,7 +133,7 @@ func GetIdentityFieldValuesMap(ctx context.Context, reflectValue reflect.Value,
+ 		for i := 0; i < reflectValue.Len(); i++ {
+ 			elem := reflectValue.Index(i)
+ 			elemKey := elem.Interface()
+-			if elem.Kind() != reflect.Ptr {
++			if elem.Kind() != reflect.Ptr && elem.CanAddr() {
+ 				elemKey = elem.Addr().Interface()
+ 			}
+ 

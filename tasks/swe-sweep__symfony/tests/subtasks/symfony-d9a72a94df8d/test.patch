@@ -1,0 +1,58 @@
+diff --git a/src/Symfony/Component/Serializer/Tests/Fixtures/OtherSerializedNameDummy.php b/src/Symfony/Component/Serializer/Tests/Fixtures/OtherSerializedNameDummy.php
+index 86fc6ead1fd..5df125620f0 100644
+--- a/src/Symfony/Component/Serializer/Tests/Fixtures/OtherSerializedNameDummy.php
++++ b/src/Symfony/Component/Serializer/Tests/Fixtures/OtherSerializedNameDummy.php
+@@ -22,6 +22,9 @@ class OtherSerializedNameDummy
+     #[Groups(['a'])]
+     private $buz;
+ 
++    #[Groups(['a']), SerializedName('quux')]
++    public $qux;
++
+     public function setBuz($buz)
+     {
+         $this->buz = $buz;
+diff --git a/src/Symfony/Component/Serializer/Tests/NameConverter/MetadataAwareNameConverterTest.php b/src/Symfony/Component/Serializer/Tests/NameConverter/MetadataAwareNameConverterTest.php
+index 28283bca1ba..e37097524a5 100644
+--- a/src/Symfony/Component/Serializer/Tests/NameConverter/MetadataAwareNameConverterTest.php
++++ b/src/Symfony/Component/Serializer/Tests/NameConverter/MetadataAwareNameConverterTest.php
+@@ -150,6 +150,16 @@ final class MetadataAwareNameConverterTest extends TestCase
+         ];
+     }
+ 
++    public function testDenormalizeSerializedNameOfGroupedAttributeWithoutContextGroups()
++    {
++        $classMetadataFactory = new ClassMetadataFactory(new AttributeLoader());
++
++        $nameConverter = new MetadataAwareNameConverter($classMetadataFactory);
++
++        $this->assertSame('quux', $nameConverter->normalize('qux', OtherSerializedNameDummy::class));
++        $this->assertSame('qux', $nameConverter->denormalize('quux', OtherSerializedNameDummy::class));
++    }
++
+     public function testDenormalizeWithCacheContext()
+     {
+         $classMetadataFactory = new ClassMetadataFactory(new AttributeLoader());
+diff --git a/src/Symfony/Component/Serializer/Tests/Normalizer/ObjectNormalizerTest.php b/src/Symfony/Component/Serializer/Tests/Normalizer/ObjectNormalizerTest.php
+index 97be23fcd40..7b0199b1bf5 100644
+--- a/src/Symfony/Component/Serializer/Tests/Normalizer/ObjectNormalizerTest.php
++++ b/src/Symfony/Component/Serializer/Tests/Normalizer/ObjectNormalizerTest.php
+@@ -643,6 +643,18 @@ class ObjectNormalizerTest extends TestCase
+         );
+     }
+ 
++    public function testDenormalizeSerializedNameOfGroupedAttributeWithoutContextGroups()
++    {
++        $classMetadataFactory = new ClassMetadataFactory(new AttributeLoader());
++        $this->normalizer = new ObjectNormalizer($classMetadataFactory, new MetadataAwareNameConverter($classMetadataFactory));
++        $this->normalizer->setSerializer($this->serializer);
++
++        $obj = new OtherSerializedNameDummy();
++        $obj->qux = 'Aldrin';
++
++        $this->assertEquals($obj, $this->normalizer->denormalize(['quux' => 'Aldrin'], OtherSerializedNameDummy::class));
++    }
++
+     // ignored attributes
+ 
+     protected function getNormalizerForIgnoredAttributes(): ObjectNormalizer

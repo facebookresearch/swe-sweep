@@ -1,0 +1,31 @@
+diff --git a/compiler/src/dmd/backend/go.d b/compiler/src/dmd/backend/go.d
+index c38375fe8c..1590b9b4b2 100644
+--- a/compiler/src/dmd/backend/go.d
++++ b/compiler/src/dmd/backend/go.d
+@@ -281,7 +281,13 @@ void optfunc()
+                 }
+             }
+         //printf("blockopt\n");
+-        scanForInlines(funcsym_p);
++
++        /* Only scan once to prevent recursive functions from endlessly being inlined
++         * https://issues.dlang.org/show_bug.cgi?id=23857
++         */
++        if (iter == 1)
++            scanForInlines(funcsym_p);
++
+         if (go.mfoptim & MFdc)
+             blockopt(0);                // do block optimization
+         out_regcand(&globsym);          // recompute register candidates
+diff --git a/compiler/src/dmd/backend/inliner.d b/compiler/src/dmd/backend/inliner.d
+index 15d64068ab..4dce459b1b 100644
+--- a/compiler/src/dmd/backend/inliner.d
++++ b/compiler/src/dmd/backend/inliner.d
+@@ -51,6 +51,7 @@ private enum log2 = false;
+ 
+ /**********************************
+  * Determine if function can be inline'd.
++ * Used to decide to save a function's intermediate code for later inlining.
+  * Params:
+  *      sfunc = function to check
+  * Returns:

@@ -1,0 +1,18 @@
+diff --git a/src/Symfony/Component/Security/Http/HttpUtils.php b/src/Symfony/Component/Security/Http/HttpUtils.php
+index 0163bb18a95..af0c732fd03 100644
+--- a/src/Symfony/Component/Security/Http/HttpUtils.php
++++ b/src/Symfony/Component/Security/Http/HttpUtils.php
+@@ -70,7 +70,13 @@ class HttpUtils
+      */
+     public function createRequest(Request $request, string $path): Request
+     {
++        if ($trustedProxies = Request::getTrustedProxies()) {
++            Request::setTrustedProxies([], Request::getTrustedHeaderSet());
++        }
+         $newRequest = Request::create($this->generateUri($request, $path), 'get', [], $request->cookies->all(), [], $request->server->all());
++        if ($trustedProxies) {
++            Request::setTrustedProxies($trustedProxies, Request::getTrustedHeaderSet());
++        }
+ 
+         static $setSession;
+ 

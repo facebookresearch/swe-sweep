@@ -1,0 +1,153 @@
+diff --git a/codec-memcache/src/main/java/io/netty/handler/codec/memcache/binary/AbstractBinaryMemcacheMessage.java b/codec-memcache/src/main/java/io/netty/handler/codec/memcache/binary/AbstractBinaryMemcacheMessage.java
+index c40ddf48d1..c9417e9730 100644
+--- a/codec-memcache/src/main/java/io/netty/handler/codec/memcache/binary/AbstractBinaryMemcacheMessage.java
++++ b/codec-memcache/src/main/java/io/netty/handler/codec/memcache/binary/AbstractBinaryMemcacheMessage.java
+@@ -78,7 +78,7 @@ public abstract class AbstractBinaryMemcacheMessage
+         this.key = key;
+         short oldKeyLength = keyLength;
+         keyLength = key == null ? 0 : (short) key.readableBytes();
+-        totalBodyLength  = totalBodyLength + keyLength - oldKeyLength;
++        totalBodyLength = totalBodyLength + keyLength - oldKeyLength;
+         return this;
+     }
+ 
+@@ -232,4 +232,20 @@ public abstract class AbstractBinaryMemcacheMessage
+         }
+         return this;
+     }
++
++    /**
++     * Copies special metadata hold by this instance to the provided instance
++     *
++     * @param dst The instance where to copy the metadata of this instance to
++     */
++    void copyMeta(AbstractBinaryMemcacheMessage dst) {
++        dst.magic = magic;
++        dst.opcode = opcode;
++        dst.keyLength = keyLength;
++        dst.extrasLength = extrasLength;
++        dst.dataType = dataType;
++        dst.totalBodyLength = totalBodyLength;
++        dst.opaque = opaque;
++        dst.cas = cas;
++    }
+ }
+diff --git a/codec-memcache/src/main/java/io/netty/handler/codec/memcache/binary/DefaultBinaryMemcacheRequest.java b/codec-memcache/src/main/java/io/netty/handler/codec/memcache/binary/DefaultBinaryMemcacheRequest.java
+index 68feb03a30..bac5845510 100644
+--- a/codec-memcache/src/main/java/io/netty/handler/codec/memcache/binary/DefaultBinaryMemcacheRequest.java
++++ b/codec-memcache/src/main/java/io/netty/handler/codec/memcache/binary/DefaultBinaryMemcacheRequest.java
+@@ -92,4 +92,14 @@ public class DefaultBinaryMemcacheRequest extends AbstractBinaryMemcacheMessage
+         super.touch(hint);
+         return this;
+     }
++
++    /**
++     * Copies special metadata hold by this instance to the provided instance
++     *
++     * @param dst The instance where to copy the metadata of this instance to
++     */
++    void copyMeta(DefaultBinaryMemcacheRequest dst) {
++        super.copyMeta(dst);
++        dst.reserved = reserved;
++    }
+ }
+diff --git a/codec-memcache/src/main/java/io/netty/handler/codec/memcache/binary/DefaultBinaryMemcacheResponse.java b/codec-memcache/src/main/java/io/netty/handler/codec/memcache/binary/DefaultBinaryMemcacheResponse.java
+index b632dcea84..639913edd9 100644
+--- a/codec-memcache/src/main/java/io/netty/handler/codec/memcache/binary/DefaultBinaryMemcacheResponse.java
++++ b/codec-memcache/src/main/java/io/netty/handler/codec/memcache/binary/DefaultBinaryMemcacheResponse.java
+@@ -41,7 +41,7 @@ public class DefaultBinaryMemcacheResponse extends AbstractBinaryMemcacheMessage
+     /**
+      * Create a new {@link DefaultBinaryMemcacheResponse} with the header and key.
+      *
+-     * @param key    the key to use
++     * @param key    the key to use.
+      */
+     public DefaultBinaryMemcacheResponse(ByteBuf key) {
+         this(key, null);
+@@ -92,4 +92,14 @@ public class DefaultBinaryMemcacheResponse extends AbstractBinaryMemcacheMessage
+         super.touch(hint);
+         return this;
+     }
++
++    /**
++     * Copies special metadata hold by this instance to the provided instance
++     *
++     * @param dst The instance where to copy the metadata of this instance to
++     */
++    void copyMeta(DefaultBinaryMemcacheResponse dst) {
++        super.copyMeta(dst);
++        dst.status = status;
++    }
+ }
+diff --git a/codec-memcache/src/main/java/io/netty/handler/codec/memcache/binary/DefaultFullBinaryMemcacheRequest.java b/codec-memcache/src/main/java/io/netty/handler/codec/memcache/binary/DefaultFullBinaryMemcacheRequest.java
+index dbc5bacbab..8f6302dff2 100644
+--- a/codec-memcache/src/main/java/io/netty/handler/codec/memcache/binary/DefaultFullBinaryMemcacheRequest.java
++++ b/codec-memcache/src/main/java/io/netty/handler/codec/memcache/binary/DefaultFullBinaryMemcacheRequest.java
+@@ -102,7 +102,7 @@ public class DefaultFullBinaryMemcacheRequest extends DefaultBinaryMemcacheReque
+         if (extras != null) {
+             extras = extras.copy();
+         }
+-        return new DefaultFullBinaryMemcacheRequest(key, extras, content().copy());
++        return newInstance(key, extras, content().copy());
+     }
+ 
+     @Override
+@@ -115,7 +115,7 @@ public class DefaultFullBinaryMemcacheRequest extends DefaultBinaryMemcacheReque
+         if (extras != null) {
+             extras = extras.duplicate();
+         }
+-        return new DefaultFullBinaryMemcacheRequest(key, extras, content().duplicate());
++        return newInstance(key, extras, content().duplicate());
+     }
+ 
+     @Override
+@@ -133,6 +133,12 @@ public class DefaultFullBinaryMemcacheRequest extends DefaultBinaryMemcacheReque
+         if (extras != null) {
+             extras = extras.retainedDuplicate();
+         }
+-        return new DefaultFullBinaryMemcacheRequest(key, extras, content);
++        return newInstance(key, extras, content);
++    }
++
++    private DefaultFullBinaryMemcacheRequest newInstance(ByteBuf key, ByteBuf extras, ByteBuf content) {
++        DefaultFullBinaryMemcacheRequest newInstance = new DefaultFullBinaryMemcacheRequest(key, extras, content);
++        copyMeta(newInstance);
++        return newInstance;
+     }
+ }
+diff --git a/codec-memcache/src/main/java/io/netty/handler/codec/memcache/binary/DefaultFullBinaryMemcacheResponse.java b/codec-memcache/src/main/java/io/netty/handler/codec/memcache/binary/DefaultFullBinaryMemcacheResponse.java
+index 734cba8ffe..a8853a58cc 100644
+--- a/codec-memcache/src/main/java/io/netty/handler/codec/memcache/binary/DefaultFullBinaryMemcacheResponse.java
++++ b/codec-memcache/src/main/java/io/netty/handler/codec/memcache/binary/DefaultFullBinaryMemcacheResponse.java
+@@ -102,7 +102,7 @@ public class DefaultFullBinaryMemcacheResponse extends DefaultBinaryMemcacheResp
+         if (extras != null) {
+             extras = extras.copy();
+         }
+-        return new DefaultFullBinaryMemcacheResponse(key, extras, content().copy());
++        return newInstance(key, extras, content().copy());
+     }
+ 
+     @Override
+@@ -115,7 +115,7 @@ public class DefaultFullBinaryMemcacheResponse extends DefaultBinaryMemcacheResp
+         if (extras != null) {
+             extras = extras.duplicate();
+         }
+-        return new DefaultFullBinaryMemcacheResponse(key, extras, content().duplicate());
++        return newInstance(key, extras, content().duplicate());
+     }
+ 
+     @Override
+@@ -133,6 +133,12 @@ public class DefaultFullBinaryMemcacheResponse extends DefaultBinaryMemcacheResp
+         if (extras != null) {
+             extras = extras.retainedDuplicate();
+         }
+-        return new DefaultFullBinaryMemcacheResponse(key, extras, content);
++        return newInstance(key, extras, content);
++    }
++
++    private FullBinaryMemcacheResponse newInstance(ByteBuf key, ByteBuf extras, ByteBuf content) {
++        DefaultFullBinaryMemcacheResponse newInstance = new DefaultFullBinaryMemcacheResponse(key, extras, content);
++        copyMeta(newInstance);
++        return newInstance;
+     }
+ }

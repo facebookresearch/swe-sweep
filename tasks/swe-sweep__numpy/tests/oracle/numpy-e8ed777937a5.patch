@@ -1,0 +1,11 @@
+diff --git a/numpy/linalg/linalg.py b/numpy/linalg/linalg.py
+--- a/numpy/linalg/linalg.py
++++ b/numpy/linalg/linalg.py
+@@ -1656,6 +1656,7 @@ def cond(x, p=None):
+         _assertRankAtLeast2(x)
+         _assertNdSquareness(x)
+         t, result_t = _commonType(x)
++        result_t = _realType(result_t)  # condition number is always real
+         signature = 'D->D' if isComplexType(t) else 'd->d'
+         with errstate(all='ignore'):
+             invx = _umath_linalg.inv(x, signature=signature)

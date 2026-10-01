@@ -1,0 +1,35 @@
+diff --git a/sqlglot/parser.py b/sqlglot/parser.py
+index 47bcfa3d62..79a6132cc7 100644
+--- a/sqlglot/parser.py
++++ b/sqlglot/parser.py
+@@ -410,6 +410,12 @@ class Parser:
+         TokenType.SOME: exp.Any,
+     }
+ 
++    SUBQUERY_TOKENS: t.ClassVar = {
++        TokenType.SELECT,
++        TokenType.WITH,
++        TokenType.FROM,
++    }
++
+     RESERVED_TOKENS = {
+         *Tokenizer.SINGLE_TOKENS.values(),
+         TokenType.SELECT,
+@@ -3758,6 +3764,7 @@ class Parser:
+             this = self._parse_derived_table_values()
+         elif from_:
+             this = exp.select("*").from_(from_.this, copy=False)
++            this = self._parse_query_modifiers(this)
+         elif self._match(TokenType.SUMMARIZE):
+             table = self._match(TokenType.TABLE)
+             this = self._parse_select() or self._parse_string() or self._parse_table()
+@@ -5392,8 +5399,8 @@ class Parser:
+         else:
+             subquery_predicate = self.SUBQUERY_PREDICATES.get(token_type)
+ 
+-            if subquery_predicate and self._curr.token_type in (TokenType.SELECT, TokenType.WITH):
++            if subquery_predicate and self._curr.token_type in self.SUBQUERY_TOKENS:
+                 this = self.expression(
+                     subquery_predicate, comments=comments, this=self._parse_select()
+                 )
+                 self._match_r_paren()

@@ -1,0 +1,15 @@
+diff --git a/sqlglot/optimizer/pushdown_predicates.py b/sqlglot/optimizer/pushdown_predicates.py
+index e56ea743a7..09d68f3cc9 100644
+--- a/sqlglot/optimizer/pushdown_predicates.py
++++ b/sqlglot/optimizer/pushdown_predicates.py
+@@ -241,6 +241,10 @@ def nodes_for_predicate(
+                 not node.args.get("group")
+                 and scope_ref_count[id(source)] < 2
+                 and not has_window_expression
++                # A LIMIT/OFFSET picks rows before the outer predicate runs, so pushing
++                # the predicate in would filter first and change which rows survive.
++                and not node.args.get("limit")
++                and not node.args.get("offset")
+             ):
+                 nodes[table] = node
+     return nodes

@@ -1,0 +1,69 @@
+diff --git a/actionpack/lib/action_controller/metal/strong_parameters.rb b/actionpack/lib/action_controller/metal/strong_parameters.rb
+index 323138ae02f..b6fab1c5f66 100644
+--- a/actionpack/lib/action_controller/metal/strong_parameters.rb
++++ b/actionpack/lib/action_controller/metal/strong_parameters.rb
+@@ -764,7 +764,7 @@ module ActionController
+     # from the root hash and from all nested hashes and arrays. The values are unchanged.
+     def deep_transform_keys(&block)
+       new_instance_with_inherited_permitted_status(
+-        @parameters.deep_transform_keys(&block)
++        _deep_transform_keys_in_object(@parameters, &block).to_unsafe_h
+       )
+     end
+ 
+@@ -772,7 +772,7 @@ module ActionController
+     # This includes the keys from the root hash and from all nested hashes and arrays.
+     # The values are unchanged.
+     def deep_transform_keys!(&block)
+-      @parameters.deep_transform_keys!(&block)
++      @parameters = _deep_transform_keys_in_object(@parameters, &block).to_unsafe_h
+       self
+     end
+ 
+@@ -972,6 +972,46 @@ module ActionController
+         end
+       end
+ 
++      def _deep_transform_keys_in_object(object, &block)
++        case object
++        when Hash
++          object.each_with_object(self.class.new) do |(key, value), result|
++            result[yield(key)] = _deep_transform_keys_in_object(value, &block)
++          end
++        when Parameters
++          if object.permitted?
++            object.to_h.deep_transform_keys(&block)
++          else
++            object.to_unsafe_h.deep_transform_keys(&block)
++          end
++        when Array
++          object.map { |e| _deep_transform_keys_in_object(e, &block) }
++        else
++          object
++        end
++      end
++
++      def _deep_transform_keys_in_object!(object, &block)
++        case object
++        when Hash
++          object.keys.each do |key|
++            value = object.delete(key)
++            object[yield(key)] = _deep_transform_keys_in_object!(value, &block)
++          end
++          object
++        when Parameters
++          if object.permitted?
++            object.to_h.deep_transform_keys!(&block)
++          else
++            object.to_unsafe_h.deep_transform_keys!(&block)
++          end
++        when Array
++          object.map! { |e| _deep_transform_keys_in_object!(e, &block) }
++        else
++          object
++        end
++      end
++
+       def specify_numeric_keys?(filter)
+         if filter.respond_to?(:keys)
+           filter.keys.any? { |key| /\A-?\d+\z/.match?(key) }

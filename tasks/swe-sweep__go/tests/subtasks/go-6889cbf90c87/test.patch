@@ -1,0 +1,124 @@
+diff --git a/src/runtime/crash_cgo_test.go b/src/runtime/crash_cgo_test.go
+index ce7bed920f..9df6fcd48b 100644
+--- a/src/runtime/crash_cgo_test.go
++++ b/src/runtime/crash_cgo_test.go
+@@ -536,6 +536,29 @@ func TestCgoTracebackSigpanic(t *testing.T) {
+ 	}
+ }
+ 
++func TestCgoPanicCallback(t *testing.T) {
++	t.Parallel()
++	got := runTestProg(t, "testprogcgo", "PanicCallback")
++	t.Log(got)
++	want := "panic: runtime error: invalid memory address or nil pointer dereference"
++	if !strings.Contains(got, want) {
++		t.Errorf("did not see %q in output", want)
++	}
++	want = "panic_callback"
++	if !strings.Contains(got, want) {
++		t.Errorf("did not see %q in output", want)
++	}
++	want = "PanicCallback"
++	if !strings.Contains(got, want) {
++		t.Errorf("did not see %q in output", want)
++	}
++	// No runtime errors like "runtime: unexpected return pc".
++	nowant := "runtime: "
++	if strings.Contains(got, nowant) {
++		t.Errorf("did not see %q in output", want)
++	}
++}
++
+ // Test that C code called via cgo can use large Windows thread stacks
+ // and call back in to Go without crashing. See issue #20975.
+ //
+@@ -603,6 +626,28 @@ func TestSegv(t *testing.T) {
+ 	}
+ }
+ 
++func TestAbortInCgo(t *testing.T) {
++	switch runtime.GOOS {
++	case "plan9", "windows":
++		// N.B. On Windows, C abort() causes the program to exit
++		// without going through the runtime at all.
++		t.Skipf("no signals on %s", runtime.GOOS)
++	}
++
++	t.Parallel()
++	got := runTestProg(t, "testprogcgo", "Abort")
++	t.Log(got)
++	want := "SIGABRT"
++	if !strings.Contains(got, want) {
++		t.Errorf("did not see %q in output", want)
++	}
++	// No runtime errors like "runtime: unknown pc".
++	nowant := "runtime: "
++	if strings.Contains(got, nowant) {
++		t.Errorf("did not see %q in output", want)
++	}
++}
++
+ // TestEINTR tests that we handle EINTR correctly.
+ // See issue #20400 and friends.
+ func TestEINTR(t *testing.T) {
+diff --git a/src/runtime/testdata/testprogcgo/panic.go b/src/runtime/testdata/testprogcgo/panic.go
+new file mode 100644
+index 0000000000..4ddef3abcd
+--- /dev/null
++++ b/src/runtime/testdata/testprogcgo/panic.go
+@@ -0,0 +1,29 @@
++package main
++
++import "C"
++
++// This program will crash.
++// We want to test unwinding from a cgo callback.
++
++/*
++void panic_callback();
++
++static void call_callback(void) {
++	panic_callback();
++}
++*/
++import "C"
++
++func init() {
++	register("PanicCallback", PanicCallback)
++}
++
++//export panic_callback
++func panic_callback() {
++	var i *int
++	*i = 42
++}
++
++func PanicCallback() {
++	C.call_callback()
++}
+diff --git a/src/runtime/testdata/testprogcgo/sigthrow.go b/src/runtime/testdata/testprogcgo/sigthrow.go
+new file mode 100644
+index 0000000000..665e3b02df
+--- /dev/null
++++ b/src/runtime/testdata/testprogcgo/sigthrow.go
+@@ -0,0 +1,20 @@
++// Copyright 2021 The Go Authors. All rights reserved.
++// Use of this source code is governed by a BSD-style
++// license that can be found in the LICENSE file.
++
++package main
++
++// This program will abort.
++
++/*
++#include <stdlib.h>
++*/
++import "C"
++
++func init() {
++	register("Abort", Abort)
++}
++
++func Abort() {
++	C.abort()
++}

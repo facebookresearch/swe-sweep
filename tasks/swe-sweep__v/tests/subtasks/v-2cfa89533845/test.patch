@@ -1,0 +1,22 @@
+diff --git a/vlib/v/tests/fns/method_call_on_rangeexpr_test.v b/vlib/v/tests/fns/method_call_on_rangeexpr_test.v
+new file mode 100644
+index 000000000..514b7d272
+--- /dev/null
++++ b/vlib/v/tests/fns/method_call_on_rangeexpr_test.v
+@@ -0,0 +1,16 @@
++type Buffer = []u8
++
++pub fn (mut sb Buffer) vbytes() string {
++	return sb[0..sb.len].a().str()
++}
++
++pub fn (mut sb Buffer) a() Buffer {
++	return sb
++}
++
++fn test_main() {
++	mut b := Buffer([]u8{cap: 10})
++	b << 1
++	b << 2
++	assert b.vbytes() == 'Buffer([1, 2])'
++}

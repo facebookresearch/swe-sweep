@@ -1,0 +1,17 @@
+diff --git a/tests/dialects/test_bigquery.py b/tests/dialects/test_bigquery.py
+index 3b78c321a4..4b9b719fd8 100644
+--- a/tests/dialects/test_bigquery.py
++++ b/tests/dialects/test_bigquery.py
+@@ -2317,3 +2317,12 @@ OPTIONS (
+                 "snowflake": "SELECT TO_CHAR(CAST(CAST('2050-12-25 15:30:55+00' AS TIMESTAMPTZ) AS TIMESTAMP), 'mon-DD-yyyy')",
+             },
+         )
++
++    def test_bitwise_and(self):
++        self.validate_all(
++            "SELECT 1 & 1",
++            write={
++                "bigquery": "SELECT 1 & 1",
++                "snowflake": "SELECT BITAND(1, 1)",
++            },
++        )

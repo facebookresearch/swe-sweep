@@ -1,0 +1,17 @@
+diff --git a/lib/matplotlib/axes/_axes.py b/lib/matplotlib/axes/_axes.py
+index da22d53664..6a9353f451 100644
+--- a/lib/matplotlib/axes/_axes.py
++++ b/lib/matplotlib/axes/_axes.py
+@@ -4916,10 +4916,10 @@
+                 )
+ 
+         # Set normalizer if bins is 'log'
+-        if bins == 'log':
++        if cbook._str_equal(bins, 'log'):
+             if norm is not None:
+                 _api.warn_external("Only one of 'bins' and 'norm' arguments "
+-                                   f"can be supplied, ignoring bins={bins}")
++                                   f"can be supplied, ignoring {bins=}")
+             else:
+                 norm = mcolors.LogNorm()
+             bins = None

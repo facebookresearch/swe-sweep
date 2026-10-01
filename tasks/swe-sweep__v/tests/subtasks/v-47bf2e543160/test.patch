@@ -1,0 +1,41 @@
+diff --git a/vlib/v/checker/tests/comptime_assign_missing_mut_err.out b/vlib/v/checker/tests/comptime_assign_missing_mut_err.out
+new file mode 100644
+index 000000000..1ece9e3d4
+--- /dev/null
++++ b/vlib/v/checker/tests/comptime_assign_missing_mut_err.out
+@@ -0,0 +1,7 @@
++vlib/v/checker/tests/comptime_assign_missing_mut_err.vv:13:4: error: `res` is immutable, declare it with `mut` to make it mutable
++   11 |         val := doc.value(field.name)
++   12 |         $if field.typ is string {
++   13 |             res.$(field.name) = val.string()
++      |             ~~~
++   14 |         }
++   15 |     }
+\ No newline at end of file
+diff --git a/vlib/v/checker/tests/comptime_assign_missing_mut_err.vv b/vlib/v/checker/tests/comptime_assign_missing_mut_err.vv
+new file mode 100644
+index 000000000..acf91f62e
+--- /dev/null
++++ b/vlib/v/checker/tests/comptime_assign_missing_mut_err.vv
+@@ -0,0 +1,21 @@
++import toml
++
++struct Person {
++	name string
++}
++
++fn decode[T](toml_str string) !T {
++	res := T{}
++	doc := toml.parse_text(toml_str)!.to_any()
++	$for field in T.fields {
++		val := doc.value(field.name)
++		$if field.typ is string {
++			res.$(field.name) = val.string()
++		}
++	}
++	return res
++}
++
++p_str := 'name = "John"'
++
++decode[Person](p_str)!

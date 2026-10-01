@@ -1,0 +1,55 @@
+diff --git a/activerecord/lib/active_record/associations/association_scope.rb b/activerecord/lib/active_record/associations/association_scope.rb
+index 190b00897a9..9282c5e3a95 100644
+--- a/activerecord/lib/active_record/associations/association_scope.rb
++++ b/activerecord/lib/active_record/associations/association_scope.rb
+@@ -149,7 +149,7 @@ module ActiveRecord
+                 scope.includes_values |= item.includes_values
+               end
+ 
+-              scope.unscope!(*item.unscope_values)
++              scope.unscope!(*item.table_name_qualified_unscope_values)
+               scope.where_clause += item.where_clause
+               scope.order_values = item.order_values | scope.order_values
+             end
+diff --git a/activerecord/lib/active_record/relation/query_methods.rb b/activerecord/lib/active_record/relation/query_methods.rb
+index 0021cc91448..476c4a3532d 100644
+--- a/activerecord/lib/active_record/relation/query_methods.rb
++++ b/activerecord/lib/active_record/relation/query_methods.rb
+@@ -863,6 +863,26 @@ module ActiveRecord
+       self
+     end
+ 
++    def table_name_qualified_unscope_values
++      self.unscope_values.map do |scope|
++        case scope
++        when Hash
++          scope.transform_values do |target_value|
++            case target_value
++            when Array
++              target_value.map { |value| qualify_attribute_with_table_name(value) }
++            when Symbol, String
++              qualify_attribute_with_table_name(target_value)
++            else
++              target_value
++            end
++          end
++        else
++          scope
++        end
++      end
++    end
++
+     # Performs JOINs on +args+. The given symbol(s) should match the name of
+     # the association(s).
+     #
+@@ -2243,6 +2263,10 @@ module ActiveRecord
+         end
+       end
+ 
++      def qualify_attribute_with_table_name(attr)
++        attr.to_s.include?(".") ? attr : predicate_builder.resolve_arel_attribute(table_name, attr)
++      end
++
+       # Checks to make sure that the arguments are not blank. Note that if some
+       # blank-like object were initially passed into the query method, then this
+       # method will not raise an error.

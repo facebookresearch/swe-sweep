@@ -1,0 +1,26 @@
+diff --git a/src/include/duckdb/storage/table/segment_tree.hpp b/src/include/duckdb/storage/table/segment_tree.hpp
+index e267d2e351..218cdac9b1 100644
+--- a/src/include/duckdb/storage/table/segment_tree.hpp
++++ b/src/include/duckdb/storage/table/segment_tree.hpp
+@@ -145,6 +145,7 @@ public:
+ 		}
+ 		SegmentNode<T> node;
+ 		segment->index = nodes.size();
++		segment->next = nullptr;
+ 		node.row_start = segment->start;
+ 		node.node = std::move(segment);
+ 		nodes.push_back(std::move(node));
+diff --git a/src/storage/table/row_group_collection.cpp b/src/storage/table/row_group_collection.cpp
+index b0eb5022f7..4dfb194921 100644
+--- a/src/storage/table/row_group_collection.cpp
++++ b/src/storage/table/row_group_collection.cpp
+@@ -962,8 +962,8 @@ unique_ptr<CheckpointTask> RowGroupCollection::GetCheckpointTask(CollectionCheck
+ }
+ 
+ void RowGroupCollection::Checkpoint(TableDataWriter &writer, TableStatistics &global_stats) {
+-	auto segments = row_groups->MoveSegments();
+ 	auto l = row_groups->Lock();
++	auto segments = row_groups->MoveSegments(l);
+ 
+ 	CollectionCheckpointState checkpoint_state(*this, writer, segments, global_stats);
+ 

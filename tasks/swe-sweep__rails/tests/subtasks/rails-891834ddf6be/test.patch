@@ -1,0 +1,78 @@
+diff --git a/actionview/test/template/form_helper/form_with_test.rb b/actionview/test/template/form_helper/form_with_test.rb
+index 76c761fba9d..7b30400d885 100644
+--- a/actionview/test/template/form_helper/form_with_test.rb
++++ b/actionview/test/template/form_helper/form_with_test.rb
+@@ -309,6 +309,7 @@ class FormWithActsLikeFormForTest < FormWithTest
+     @controller.singleton_class.include Routes.url_helpers
+   end
+ 
++  RecordForm = Struct.new(:to_model, keyword_init: true)
+   Routes = ActionDispatch::Routing::RouteSet.new
+   Routes.draw do
+     resources :posts do
+@@ -381,6 +382,26 @@ class FormWithActsLikeFormForTest < FormWithTest
+     assert_dom_equal expected, output_buffer
+   end
+ 
++  def test_form_with_with_persisted_to_model
++    post_form = RecordForm.new(to_model: @post)
++
++    form_with(model: post_form) { }
++
++    expected = whole_form("/posts/123", method: :post) { "" }
++
++    assert_dom_equal expected, output_buffer
++  end
++
++  def test_form_with_with_new_record_to_model
++    post_form = RecordForm.new(to_model: Post.new)
++
++    form_with(model: post_form) { }
++
++    expected = whole_form("/posts", method: :post) { "" }
++
++    assert_dom_equal expected, output_buffer
++  end
++
+   def test_form_with_button_yields_translation
+     form_with(model: @post) do |f|
+       concat(f.button { |value| concat content_tag(:span, value) })
+diff --git a/actionview/test/template/form_helper_test.rb b/actionview/test/template/form_helper_test.rb
+index edbb964c6ca..d08f00cd36c 100644
+--- a/actionview/test/template/form_helper_test.rb
++++ b/actionview/test/template/form_helper_test.rb
+@@ -143,6 +143,7 @@ class FormHelperTest < ActionView::TestCase
+     @controller.singleton_class.include Routes.url_helpers
+   end
+ 
++  RecordForm = Struct.new(:to_model, keyword_init: true)
+   Routes = ActionDispatch::Routing::RouteSet.new
+   Routes.draw do
+     resources :posts do
+@@ -2076,6 +2077,26 @@ class FormHelperTest < ActionView::TestCase
+     assert_dom_equal expected, output_buffer
+   end
+ 
++  def test_form_for_with_persisted_to_model
++    post_form = RecordForm.new(to_model: @post)
++
++    form_for(post_form) { }
++
++    expected = whole_form("/posts/123", "edit_post_123", "edit_post", method: :patch) { "" }
++
++    assert_dom_equal expected, output_buffer
++  end
++
++  def test_form_for_with_new_record_to_model
++    post_form = RecordForm.new(to_model: Post.new)
++
++    form_for(post_form) { }
++
++    expected = whole_form("/posts", "new_post", "new_post", method: :post) { "" }
++
++    assert_dom_equal expected, output_buffer
++  end
++
+   def test_form_for_with_file_field_generate_multipart
+     form_for(@post, html: { id: "create-post" }) do |f|
+       concat f.file_field(:file)

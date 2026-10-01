@@ -1,0 +1,11 @@
+diff --git a/mpmath/tests/test_eigen.py b/mpmath/tests/test_eigen.py
+index 2daa6819..c7c22f0c 100644
+--- a/mpmath/tests/test_eigen.py
++++ b/mpmath/tests/test_eigen.py
+@@ -172,3 +172,6 @@ def test_eig():
+         run_hessenberg(A, verbose = v)
+         run_schur(A, verbose = v)
+         run_eig(A, verbose = v)
++
++    A = mp.matrix(1)
++    assert mp.eig(A, left=False, right=False) == [0]

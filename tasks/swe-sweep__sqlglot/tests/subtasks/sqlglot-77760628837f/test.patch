@@ -1,0 +1,32 @@
+diff --git a/tests/dialects/test_spark.py b/tests/dialects/test_spark.py
+index 9d422dde5d..4a54482116 100644
+--- a/tests/dialects/test_spark.py
++++ b/tests/dialects/test_spark.py
+@@ -263,6 +263,14 @@ TBLPROPERTIES (
+         self.validate_identity("TRIM(LEADING 'SL' FROM 'SSparkSQLS')")
+         self.validate_identity("TRIM(TRAILING 'SL' FROM 'SSparkSQLS')")
+         self.validate_identity("SPLIT(str, pattern, lim)")
++        self.validate_identity(
++            "SELECT 1 limit",
++            "SELECT 1 AS limit",
++        )
++        self.validate_identity(
++            "SELECT 1 offset",
++            "SELECT 1 AS offset",
++        )
+         self.validate_identity(
+             "SELECT UNIX_TIMESTAMP()",
+             "SELECT UNIX_TIMESTAMP(CURRENT_TIMESTAMP())",
+diff --git a/tests/fixtures/identity.sql b/tests/fixtures/identity.sql
+index e2d97b43ba..d9b809b419 100644
+--- a/tests/fixtures/identity.sql
++++ b/tests/fixtures/identity.sql
+@@ -882,4 +882,6 @@ GRANT SELECT ON orders TO ROLE PUBLIC
+ GRANT SELECT ON nation TO alice WITH GRANT OPTION
+ GRANT DELETE ON SCHEMA finance TO bob
+ SELECT attach
+-SELECT detach
+\ No newline at end of file
++SELECT detach
++SELECT 1 OFFSET 1
++SELECT 1 LIMIT 1

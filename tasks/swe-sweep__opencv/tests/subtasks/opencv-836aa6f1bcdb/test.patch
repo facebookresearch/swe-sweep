@@ -1,0 +1,39 @@
+diff --git a/modules/core/test/test_mat.cpp b/modules/core/test/test_mat.cpp
+index 7aa79c4d8c..3fa8442d69 100644
+--- a/modules/core/test/test_mat.cpp
++++ b/modules/core/test/test_mat.cpp
+@@ -1969,6 +1969,18 @@ TEST(Core_Vectors, issue_13078_workaround)
+     ASSERT_EQ(7, ints[3]);
+ }
+ 
++TEST(Core_MatExpr, issue_16655)
++{
++    Mat a(Size(5, 5), CV_32FC3, Scalar::all(1));
++    Mat b(Size(5, 5), CV_32FC3, Scalar::all(2));
++    MatExpr ab_expr = a != b;
++    Mat ab_mat = ab_expr;
++    EXPECT_EQ(CV_8UC3, ab_expr.type())
++        << "MatExpr: CV_8UC3 != " << typeToString(ab_expr.type());
++    EXPECT_EQ(CV_8UC3, ab_mat.type())
++        << "Mat: CV_8UC3 != " << typeToString(ab_mat.type());
++}
++
+ 
+ #ifdef HAVE_EIGEN
+ TEST(Core_Eigen, eigen2cv_check_Mat_type)
+diff --git a/modules/dnn/test/test_misc.cpp b/modules/dnn/test/test_misc.cpp
+index eccf171539..10929b29bc 100644
+--- a/modules/dnn/test/test_misc.cpp
++++ b/modules/dnn/test/test_misc.cpp
+@@ -56,7 +56,10 @@ TEST(imagesFromBlob, Regression)
+ 
+     for (int i = 0; i < nbOfImages; i++)
+     {
+-        ASSERT_EQ(cv::countNonZero(inputImgs[i] != outputImgs[i]), 0);
++        EXPECT_EQ(0, cvtest::norm(inputImgs[i], outputImgs[i], NORM_INF))
++            << "i=" << i
++            << " inputImgs[i]=" << inputImgs[i].size
++            << " outputImgs[i]=" << outputImgs[i].size;
+     }
+ }
+ 

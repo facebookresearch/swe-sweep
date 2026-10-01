@@ -1,0 +1,22 @@
+diff --git a/plugin/datasource/src/test/java/com/alibaba/nacos/plugin/datasource/impl/mysql/ConfigInfoMapperByMySqlTest.java b/plugin/datasource/src/test/java/com/alibaba/nacos/plugin/datasource/impl/mysql/ConfigInfoMapperByMySqlTest.java
+index 0000000..1111111 100644
+--- a/plugin/datasource/src/test/java/com/alibaba/nacos/plugin/datasource/impl/mysql/ConfigInfoMapperByMySqlTest.java
++++ b/plugin/datasource/src/test/java/com/alibaba/nacos/plugin/datasource/impl/mysql/ConfigInfoMapperByMySqlTest.java
+@@ -234,6 +234,17 @@ class ConfigInfoMapperByMySqlTest {
+         assertArrayEquals(mapperResult.getParamList().toArray(), emptyObjs);
+     }
+     
++    @Test
++    void testFindConfigInfoBaseLikeFetchRowsWithGroupKeepsPlaceholderAndParamsAligned() {
++        context.putWhereParameter(FieldConstant.DATA_ID, "dataId");
++        context.putWhereParameter(FieldConstant.GROUP_ID, groupId);
++        MapperResult mapperResult = configInfoMapperByMySql.findConfigInfoBaseLikeFetchRows(context);
++        assertEquals("SELECT id,data_id,group_id,tenant_id,content FROM config_info WHERE "
++                + " 1=1 AND tenant_id='public'  AND data_id LIKE ?  AND group_id LIKE ?  LIMIT " + startRow + ","
++                + pageSize, mapperResult.getSql());
++        assertArrayEquals(new Object[] {"dataId", groupId}, mapperResult.getParamList().toArray());
++    }
++    
+     @Test
+     void testFindConfigInfo4PageCountRows() {
+         MapperResult mapperResult = configInfoMapperByMySql.findConfigInfo4PageCountRows(context);

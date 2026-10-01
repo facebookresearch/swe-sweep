@@ -1,0 +1,13 @@
+diff --git a/lib/Stats.js b/lib/Stats.js
+index 3c859300f..c6949117d 100644
+--- a/lib/Stats.js
++++ b/lib/Stats.js
+@@ -35,7 +35,7 @@ class Stats {
+ 	 */
+ 	hasWarnings() {
+ 		return (
+-			this.compilation.warnings.length > 0 ||
++			this.compilation.getWarnings().length > 0 ||
+ 			this.compilation.children.some(child => child.getStats().hasWarnings())
+ 		);
+ 	}

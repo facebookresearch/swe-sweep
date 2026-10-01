@@ -1,0 +1,116 @@
+diff --git a/tests/ui/checked_unwrap/simple_conditionals.rs b/tests/ui/checked_unwrap/simple_conditionals.rs
+index 4101897d3..5589d8cc4 100644
+--- a/tests/ui/checked_unwrap/simple_conditionals.rs
++++ b/tests/ui/checked_unwrap/simple_conditionals.rs
+@@ -188,6 +188,58 @@ fn issue11371() {
+     }
+ }
+ 
++fn gen_option() -> Option<()> {
++    Some(())
++    // Or None
++}
++
++fn gen_result() -> Result<(), ()> {
++    Ok(())
++    // Or Err(())
++}
++
++fn issue14725() {
++    let option = Some(());
++
++    if option.is_some() {
++        let _ = option.as_ref().unwrap();
++        //~^ unnecessary_unwrap
++    } else {
++        let _ = option.as_ref().unwrap();
++        //~^ panicking_unwrap
++    }
++
++    let result = Ok::<(), ()>(());
++
++    if result.is_ok() {
++        let _y = 1;
++        result.as_ref().unwrap();
++        //~^ unnecessary_unwrap
++    } else {
++        let _y = 1;
++        result.as_ref().unwrap();
++        //~^ panicking_unwrap
++    }
++
++    let mut option = Some(());
++    if option.is_some() {
++        option = gen_option();
++        option.as_mut().unwrap();
++    } else {
++        option = gen_option();
++        option.as_mut().unwrap();
++    }
++
++    let mut result = Ok::<(), ()>(());
++    if result.is_ok() {
++        result = gen_result();
++        result.as_mut().unwrap();
++    } else {
++        result = gen_result();
++        result.as_mut().unwrap();
++    }
++}
++
+ fn check_expect() {
+     let x = Some(());
+     if x.is_some() {
+diff --git a/tests/ui/checked_unwrap/simple_conditionals.stderr b/tests/ui/checked_unwrap/simple_conditionals.stderr
+index ad3c42027..82a36aa50 100644
+--- a/tests/ui/checked_unwrap/simple_conditionals.stderr
++++ b/tests/ui/checked_unwrap/simple_conditionals.stderr
+@@ -236,6 +236,41 @@ LL |     if result.is_ok() {
+ LL |         result.as_mut().unwrap();
+    |         ^^^^^^^^^^^^^^^^^^^^^^^^
+ 
++error: called `unwrap` on `option` after checking its variant with `is_some`
++  --> tests/ui/checked_unwrap/simple_conditionals.rs:205:17
++   |
++LL |     if option.is_some() {
++   |     ------------------- help: try: `if let Some(<item>) = &option`
++LL |         let _ = option.as_ref().unwrap();
++   |                 ^^^^^^^^^^^^^^^^^^^^^^^^
++
++error: this call to `unwrap()` will always panic
++  --> tests/ui/checked_unwrap/simple_conditionals.rs:208:17
++   |
++LL |     if option.is_some() {
++   |        ---------------- because of this check
++...
++LL |         let _ = option.as_ref().unwrap();
++   |                 ^^^^^^^^^^^^^^^^^^^^^^^^
++
++error: called `unwrap` on `result` after checking its variant with `is_ok`
++  --> tests/ui/checked_unwrap/simple_conditionals.rs:216:9
++   |
++LL |     if result.is_ok() {
++   |     ----------------- help: try: `if let Ok(<item>) = &result`
++LL |         let _y = 1;
++LL |         result.as_ref().unwrap();
++   |         ^^^^^^^^^^^^^^^^^^^^^^^^
++
++error: this call to `unwrap()` will always panic
++  --> tests/ui/checked_unwrap/simple_conditionals.rs:220:9
++   |
++LL |     if result.is_ok() {
++   |        -------------- because of this check
++...
++LL |         result.as_ref().unwrap();
++   |         ^^^^^^^^^^^^^^^^^^^^^^^^
++
+ error: creating a shared reference to mutable static
+   --> tests/ui/checked_unwrap/simple_conditionals.rs:183:12
+    |
+@@ -246,5 +281,5 @@ LL |         if X.is_some() {
+    = note: shared references to mutable statics are dangerous; it's undefined behavior if the static is mutated or if a mutable reference is created for it while the shared reference lives
+    = note: `#[deny(static_mut_refs)]` on by default
+ 
+-error: aborting due to 26 previous errors
++error: aborting due to 30 previous errors
+ 

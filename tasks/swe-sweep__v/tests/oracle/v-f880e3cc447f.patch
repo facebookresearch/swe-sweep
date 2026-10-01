@@ -1,0 +1,17 @@
+diff --git a/vlib/v/checker/fn.v b/vlib/v/checker/fn.v
+index 7553461d3..4b1c5b42d 100644
+--- a/vlib/v/checker/fn.v
++++ b/vlib/v/checker/fn.v
+@@ -486,7 +486,11 @@ fn (mut c Checker) anon_fn(mut node ast.AnonFn) ast.Type {
+ 			c.error('original `${parent_var.name}` is immutable, declare it with `mut` to make it mutable',
+ 				var.pos)
+ 		}
+-		var.typ = parent_var.typ
++		if parent_var.expr is ast.IfGuardExpr {
++			var.typ = parent_var.expr.expr_type.clear_flags(.option, .result)
++		} else {
++			var.typ = parent_var.typ
++		}
+ 		if var.typ.has_flag(.generic) {
+ 			has_generic = true
+ 		}

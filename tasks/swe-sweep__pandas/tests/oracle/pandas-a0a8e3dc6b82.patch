@@ -1,0 +1,13 @@
+diff --git a/pandas/core/dtypes/dtypes.py b/pandas/core/dtypes/dtypes.py
+index 196c95c367..9f85f82df6 100644
+--- a/pandas/core/dtypes/dtypes.py
++++ b/pandas/core/dtypes/dtypes.py
+@@ -456,7 +456,7 @@ class CategoricalDtype(PandasExtensionDtype, ExtensionDtype):
+ 
+             # With object-dtype we need a comparison that identifies
+             #  e.g. int(2) as distinct from float(2)
+-            return hash(self) == hash(other)
++            return set(left) == set(right)
+ 
+     def __repr__(self) -> str_type:
+         if self.categories is None:

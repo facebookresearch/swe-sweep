@@ -1,0 +1,82 @@
+diff --git a/src/api/add.js b/src/api/add.js
+index 8dc45609..d8a5d612 100644
+--- a/src/api/add.js
++++ b/src/api/add.js
+@@ -50,15 +50,32 @@
+   }
+ }
+ 
++// True for a path the index already holds, and for a folder holding one. The
++// exact lookup is a Map hit; the prefix scan only runs for folders, since a
++// tracked file always answers on the first check.
++function isTracked(index, filepath) {
++  if (index.entriesMap.has(filepath)) return true
++  const prefix = `${filepath}/`
++  for (const entry of index.entriesMap.keys()) {
++    if (entry.startsWith(prefix)) return true
++  }
++  return false
++}
++
+ async function addToIndex({ dir, gitdir, fs, filepath, index }) {
+-  // TODO: Should ignore UNLESS it's already in the index.
+-  const ignored = await GitIgnoreManager.isIgnored({
+-    fs,
+-    dir,
+-    gitdir,
+-    filepath,
+-  })
+-  if (ignored) return
++  // .gitignore governs untracked paths. Once a path is in the index, adding a
++  // matching rule does not stop canonical git from staging further changes,
++  // and an ignored folder is still walked for the sake of what it tracks:
++  // the recursion below re-checks every child, so only tracked ones get in.
++  if (!isTracked(index, filepath)) {
++    const ignored = await GitIgnoreManager.isIgnored({
++      fs,
++      dir,
++      gitdir,
++      filepath,
++    })
++    if (ignored) return
++  }
+   const stats = await fs.lstat(join(dir, filepath))
+   if (!stats) throw new NotFoundError(filepath)
+   if (stats.isDirectory()) {
+diff --git a/src/api/status.js b/src/api/status.js
+index 98b18e0b..d417c767 100644
+--- a/src/api/status.js
++++ b/src/api/status.js
+@@ -63,13 +63,4 @@
+     const fs = new FileSystem(_fs)
+-    const ignored = await GitIgnoreManager.isIgnored({
+-      fs,
+-      gitdir,
+-      dir,
+-      filepath,
+-    })
+-    if (ignored) {
+-      return 'ignored'
+-    }
+     const headTree = await getHeadTree({ fs, cache, gitdir })
+     const treeOid = await getOidAtPath({
+       fs,
+@@ -87,4 +78,18 @@
+         return null
+       }
+     )
++    // .gitignore governs untracked files. A file in HEAD or in the index is
++    // tracked, so canonical git keeps reporting its real state, and
++    // `git check-ignore` does not match it. statusMatrix already does this.
++    if (treeOid === null && indexEntry === null) {
++      const ignored = await GitIgnoreManager.isIgnored({
++        fs,
++        gitdir,
++        dir,
++        filepath,
++      })
++      if (ignored) {
++        return 'ignored'
++      }
++    }
+     const stats = await fs.lstat(join(dir, filepath))

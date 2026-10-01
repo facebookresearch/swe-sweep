@@ -1,0 +1,16 @@
+diff --git a/xarray/tests/test_plot.py b/xarray/tests/test_plot.py
+index 3c7d83d2..c2db5d6b 100644
+--- a/xarray/tests/test_plot.py
++++ b/xarray/tests/test_plot.py
+@@ -2438,9 +2438,9 @@ class TestDatasetStreamplotPlots(PlotTestCase):
+     def setUp(self):
+         das = [
+             DataArray(
+-                np.random.randn(3, 3, 2, 2),
++                np.random.randn(3, 4, 2, 2),
+                 dims=["x", "y", "row", "col"],
+-                coords=[range(k) for k in [3, 3, 2, 2]],
++                coords=[range(k) for k in [3, 4, 2, 2]],
+             )
+             for _ in [1, 2]
+         ]

@@ -1,0 +1,45 @@
+diff --git a/astropy/units/quantity_helper/function_helpers.py b/astropy/units/quantity_helper/function_helpers.py
+index 4554b7ae9c..24a689622d 100644
+--- a/astropy/units/quantity_helper/function_helpers.py
++++ b/astropy/units/quantity_helper/function_helpers.py
+@@ -75,7 +75,7 @@ SUBCLASS_SAFE_FUNCTIONS |= {
+     np.round, np.around,
+     np.fix, np.angle, np.i0, np.clip,
+     np.isposinf, np.isneginf, np.isreal, np.iscomplex,
+-    np.average, np.mean, np.std, np.var, np.median, np.trace,
++    np.mean, np.std, np.var, np.median, np.trace,
+     np.nanmax, np.nanmin, np.nanargmin, np.nanargmax, np.nanmean,
+     np.nanmedian, np.nansum, np.nancumsum, np.nanstd, np.nanvar,
+     np.nanprod, np.nancumprod,
+@@ -316,6 +316,31 @@ def _as_quantities(*args):
+         raise NotImplementedError
+ 
+ 
++@function_helper
++def average(a, axis=None, weights=None, returned=False, *, keepdims=np._NoValue):
++    # This override should no longer be needed once
++    # https://github.com/numpy/numpy/pull/30522 is merged (likely for
++    # "not NUMPY_LT_2_4_1").
++
++    a_value, a_unit = (_a := _as_quantity(a)).value, _a.unit
++    w_value, w_unit = (
++        (None, dimensionless_unscaled)
++        if weights is None
++        else ((_w := _as_quantity(weights)).value, _w.unit)
++    )
++    return (
++        (a_value,),
++        {
++            "axis": axis,
++            "weights": w_value,
++            "returned": returned,
++            "keepdims": keepdims,
++        },
++        ((a_unit, w_unit) if returned else a_unit),
++        None,
++    )
++
++
+ def _quantities2arrays(*args, unit_from_first=False):
+     """Convert to arrays in units of the first argument that has a unit.
+ 

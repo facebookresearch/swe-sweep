@@ -1,0 +1,14 @@
+diff --git a/lib/matplotlib/axes/_axes.py b/lib/matplotlib/axes/_axes.py
+index a52ed419c0..8f1417d555 100644
+--- a/lib/matplotlib/axes/_axes.py
++++ b/lib/matplotlib/axes/_axes.py
+@@ -4799,7 +4799,8 @@ default: :rc:`scatter.edgecolors`
+                 _api.warn_external("Only one of 'bins' and 'norm' arguments "
+                                    f"can be supplied, ignoring bins={bins}")
+             else:
+-                norm = mcolors.LogNorm()
++                norm = mcolors.LogNorm(vmin=vmin, vmax=vmax)
++                vmin = vmax = None
+             bins = None
+ 
+         if isinstance(norm, mcolors.LogNorm):

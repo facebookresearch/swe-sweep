@@ -1,0 +1,13 @@
+diff --git a/activerecord/lib/active_record/core.rb b/activerecord/lib/active_record/core.rb
+index 423c4708d10..7fdebab5e21 100644
+--- a/activerecord/lib/active_record/core.rb
++++ b/activerecord/lib/active_record/core.rb
+@@ -350,7 +350,7 @@ module ActiveRecord
+ 
+       # Returns a string like 'Post(id:integer, title:string, body:text)'
+       def inspect # :nodoc:
+-        if self == Base
++        if self == Base || singleton_class?
+           super
+         elsif abstract_class?
+           "#{super}(abstract)"

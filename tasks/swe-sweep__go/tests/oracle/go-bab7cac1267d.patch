@@ -1,0 +1,25 @@
+diff --git a/src/net/http/cgi/host.go b/src/net/http/cgi/host.go
+index 0d43e140d5..349dda15ac 100644
+--- a/src/net/http/cgi/host.go
++++ b/src/net/http/cgi/host.go
+@@ -138,7 +138,6 @@ func (h *Handler) ServeHTTP(rw http.ResponseWriter, req *http.Request) {
+ 
+ 	env := []string{
+ 		"SERVER_SOFTWARE=go",
+-		"SERVER_NAME=" + req.Host,
+ 		"SERVER_PROTOCOL=HTTP/1.1",
+ 		"HTTP_HOST=" + req.Host,
+ 		"GATEWAY_INTERFACE=CGI/1.1",
+@@ -158,6 +157,12 @@ func (h *Handler) ServeHTTP(rw http.ResponseWriter, req *http.Request) {
+ 		env = append(env, "REMOTE_ADDR="+req.RemoteAddr, "REMOTE_HOST="+req.RemoteAddr)
+ 	}
+ 
++	if hostDomain, _, err := net.SplitHostPort(req.Host); err == nil {
++		env = append(env, "SERVER_NAME="+hostDomain)
++	} else {
++		env = append(env, "SERVER_NAME="+req.Host)
++	}
++
+ 	if req.TLS != nil {
+ 		env = append(env, "HTTPS=on")
+ 	}

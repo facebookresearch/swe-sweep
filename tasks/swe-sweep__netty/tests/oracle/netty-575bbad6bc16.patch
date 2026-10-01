@@ -1,0 +1,42 @@
+diff --git a/codec-mqtt/src/main/java/io/netty/handler/codec/mqtt/MqttSubscribePayload.java b/codec-mqtt/src/main/java/io/netty/handler/codec/mqtt/MqttSubscribePayload.java
+index eb1b9c9c57..aa3a324474 100644
+--- a/codec-mqtt/src/main/java/io/netty/handler/codec/mqtt/MqttSubscribePayload.java
++++ b/codec-mqtt/src/main/java/io/netty/handler/codec/mqtt/MqttSubscribePayload.java
+@@ -39,11 +39,12 @@ public final class MqttSubscribePayload {
+     @Override
+     public String toString() {
+         StringBuilder builder = new StringBuilder(StringUtil.simpleClassName(this)).append('[');
+-        for (int i = 0; i < topicSubscriptions.size() - 1; i++) {
++        for (int i = 0; i < topicSubscriptions.size(); i++) {
+             builder.append(topicSubscriptions.get(i)).append(", ");
+         }
+-        builder.append(topicSubscriptions.get(topicSubscriptions.size() - 1));
+-        builder.append(']');
+-        return builder.toString();
++        if (!topicSubscriptions.isEmpty()) {
++            builder.setLength(builder.length() - 2);
++        }
++        return builder.append(']').toString();
+     }
+ }
+diff --git a/codec-mqtt/src/main/java/io/netty/handler/codec/mqtt/MqttUnsubscribePayload.java b/codec-mqtt/src/main/java/io/netty/handler/codec/mqtt/MqttUnsubscribePayload.java
+index b032d12067..9812bd9923 100644
+--- a/codec-mqtt/src/main/java/io/netty/handler/codec/mqtt/MqttUnsubscribePayload.java
++++ b/codec-mqtt/src/main/java/io/netty/handler/codec/mqtt/MqttUnsubscribePayload.java
+@@ -39,11 +39,12 @@ public final class MqttUnsubscribePayload {
+     @Override
+     public String toString() {
+         StringBuilder builder = new StringBuilder(StringUtil.simpleClassName(this)).append('[');
+-        for (int i = 0; i < topics.size() - 1; i++) {
++        for (int i = 0; i < topics.size(); i++) {
+             builder.append("topicName = ").append(topics.get(i)).append(", ");
+         }
+-        builder.append("topicName = ").append(topics.get(topics.size() - 1))
+-               .append(']');
+-        return builder.toString();
++        if (!topics.isEmpty()) {
++            builder.setLength(builder.length() - 2);
++        }
++        return builder.append("]").toString();
+     }
+ }

@@ -1,0 +1,66 @@
+diff --git a/packages/babel-parser/src/parser/expression.js b/packages/babel-parser/src/parser/expression.js
+index 48dd82d..aa8a3c5 100644
+--- a/packages/babel-parser/src/parser/expression.js
++++ b/packages/babel-parser/src/parser/expression.js
+@@ -19,6 +19,7 @@
+ // [opp]: http://en.wikipedia.org/wiki/Operator-precedence_parser
+ 
+ import { types as tt, type TokenType } from "../tokenizer/types";
++import { types as ct } from "../tokenizer/context";
+ import * as N from "../types";
+ import LValParser from "./lval";
+ import { reservedWords } from "../util/identifier";
+@@ -792,6 +793,19 @@ export default class ExpressionParser extends LValParser {
+           this.match(tt._function) &&
+           !this.canInsertSemicolon()
+         ) {
++          const last = this.state.context.length - 1;
++          if (this.state.context[last] !== ct.functionStatement) {
++            // Since "async" is an identifier and normally identifiers
++            // can't be followed by expression, the tokenizer assumes
++            // that "function" starts a statement.
++            // Fixing it in the tokenizer would mean tracking not only the
++            // previous token ("async"), but also the one before to know
++            // its beforeExpr value.
++            // It's easier and more efficient to adjust the context here.
++            throw new Error("Internal error");
++          }
++          this.state.context[last] = ct.functionExpression;
++
+           this.next();
+           return this.parseFunction(node, false, false, true);
+         } else if (canBeArrow && id.name === "async" && this.match(tt.name)) {
+diff --git a/packages/babel-parser/src/tokenizer/context.js b/packages/babel-parser/src/tokenizer/context.js
+index 11fe53d..88887c8 100644
+--- a/packages/babel-parser/src/tokenizer/context.js
++++ b/packages/babel-parser/src/tokenizer/context.js
+@@ -36,6 +36,7 @@ export const types: {
+   parenExpression: new TokContext("(", true),
+   template: new TokContext("`", true, true, p => p.readTmplToken()),
+   functionExpression: new TokContext("function", true),
++  functionStatement: new TokContext("function", false),
+ };
+ 
+ // Token-specific context update code
+@@ -53,6 +54,12 @@ tt.parenR.updateContext = tt.braceR.updateContext = function() {
+   ) {
+     this.state.context.pop();
+     this.state.exprAllowed = false;
++  } else if (
++    out === types.braceStatement &&
++    this.curContext() === types.functionStatement
++  ) {
++    this.state.context.pop();
++    this.state.exprAllowed = true;
+   } else if (out === types.templateQuasi) {
+     this.state.exprAllowed = true;
+   } else {
+@@ -109,6 +116,8 @@ tt.incDec.updateContext = function() {
+ tt._function.updateContext = function(prevType) {
+   if (this.state.exprAllowed && !this.braceIsBlock(prevType)) {
+     this.state.context.push(types.functionExpression);
++  } else if (prevType === tt.name) {
++    this.state.context.push(types.functionStatement);
+   }
+ 
+   this.state.exprAllowed = false;

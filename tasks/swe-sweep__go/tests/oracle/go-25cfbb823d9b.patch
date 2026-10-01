@@ -1,0 +1,49 @@
+diff --git a/src/image/jpeg/huffman.go b/src/image/jpeg/huffman.go
+index 95aaf71e2f..72444369ab 100644
+--- a/src/image/jpeg/huffman.go
++++ b/src/image/jpeg/huffman.go
+@@ -49,7 +49,7 @@ func (d *decoder) ensureNBits(n int32) error {
+ 	for {
+ 		c, err := d.readByteStuffedByte()
+ 		if err != nil {
+-			if err == io.EOF {
++			if err == io.ErrUnexpectedEOF {
+ 				return errShortHuffmanData
+ 			}
+ 			return err
+diff --git a/src/image/jpeg/reader.go b/src/image/jpeg/reader.go
+index b34072396c..61f2b4020d 100644
+--- a/src/image/jpeg/reader.go
++++ b/src/image/jpeg/reader.go
+@@ -164,7 +164,10 @@ func (d *decoder) fill() error {
+ 	n, err := d.r.Read(d.bytes.buf[d.bytes.j:])
+ 	d.bytes.j += n
+ 	if n > 0 {
+-		err = nil
++		return nil
++	}
++	if err == io.EOF {
++		err = io.ErrUnexpectedEOF
+ 	}
+ 	return err
+ }
+@@ -261,9 +264,6 @@ func (d *decoder) readFull(p []byte) error {
+ 			break
+ 		}
+ 		if err := d.fill(); err != nil {
+-			if err == io.EOF {
+-				err = io.ErrUnexpectedEOF
+-			}
+ 			return err
+ 		}
+ 	}
+@@ -291,9 +291,6 @@ func (d *decoder) ignore(n int) error {
+ 			break
+ 		}
+ 		if err := d.fill(); err != nil {
+-			if err == io.EOF {
+-				err = io.ErrUnexpectedEOF
+-			}
+ 			return err
+ 		}
+ 	}

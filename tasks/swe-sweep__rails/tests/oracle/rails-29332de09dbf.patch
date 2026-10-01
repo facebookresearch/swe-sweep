@@ -1,0 +1,15 @@
+diff --git a/activerecord/lib/active_record/migration/command_recorder.rb b/activerecord/lib/active_record/migration/command_recorder.rb
+index e04fef7d3ba..1024444298c 100644
+--- a/activerecord/lib/active_record/migration/command_recorder.rb
++++ b/activerecord/lib/active_record/migration/command_recorder.rb
+@@ -239,7 +239,9 @@ module ActiveRecord
+         end
+ 
+         def invert_remove_column(args)
+-          raise ActiveRecord::IrreversibleMigration, "remove_column is only reversible if given a type." if args.size <= 2
++          if args.size <= 2 || args[2].is_a?(Hash)
++            raise ActiveRecord::IrreversibleMigration, "remove_column is only reversible if given a type."
++          end
+           super
+         end
+ 

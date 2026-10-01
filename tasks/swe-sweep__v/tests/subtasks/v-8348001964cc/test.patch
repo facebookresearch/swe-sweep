@@ -1,0 +1,12 @@
+diff --git a/vlib/math/floor_test.v b/vlib/math/floor_test.v
+new file mode 100644
+index 000000000..e6c5ddf06
+--- /dev/null
++++ b/vlib/math/floor_test.v
+@@ -0,0 +1,6 @@
++import math
++
++fn test_round_to_even() {
++	assert math.round_to_even(0.123) == 0.0
++	assert math.round_to_even(123.12345) == 123.00
++}

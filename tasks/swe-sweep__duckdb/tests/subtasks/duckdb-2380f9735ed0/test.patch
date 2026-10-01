@@ -1,0 +1,20 @@
+diff --git a/test/sql/excel/test_excel_numformat.test b/test/sql/excel/test_excel_numformat.test
+index c35a6fc106..5d900e32a4 100644
+--- a/test/sql/excel/test_excel_numformat.test
++++ b/test/sql/excel/test_excel_numformat.test
+@@ -554,3 +554,15 @@ SELECT text('hello', 1.0)
+ statement error
+ SELECT text('hello', '@')
+ ----
++
++# Days
++query T
++SELECT excel_text(i, 'dddd') FROM range(7) as t(i);
++----
++Saturday
++Sunday
++Monday
++Tuesday
++Wednesday
++Thursday
++Friday

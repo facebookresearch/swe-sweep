@@ -1,0 +1,18 @@
+diff --git a/apps/gdal_translate_lib.cpp b/apps/gdal_translate_lib.cpp
+index e3fd64e608..998b2540f3 100644
+--- a/apps/gdal_translate_lib.cpp
++++ b/apps/gdal_translate_lib.cpp
+@@ -1867,11 +1867,11 @@ GDALDatasetH GDALTranslate(const char *pszDest, GDALDatasetH hSrcDataset,
+     /* -------------------------------------------------------------------- */
+     if (bSpatialArrangementPreserved)
+     {
+-        char **papszMD = poSrcDSOri->GetMetadata("RPC");
++        char **papszMD = poSrcDS->GetMetadata("RPC");
+         if (papszMD != nullptr)
+             poVDS->SetMetadata(papszMD, "RPC");
+ 
+-        papszMD = poSrcDSOri->GetMetadata("GEOLOCATION");
++        papszMD = poSrcDS->GetMetadata("GEOLOCATION");
+         if (papszMD != nullptr)
+             poVDS->SetMetadata(papszMD, "GEOLOCATION");
+     }

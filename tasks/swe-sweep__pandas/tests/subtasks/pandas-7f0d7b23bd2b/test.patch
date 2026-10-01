@@ -1,0 +1,18 @@
+diff --git a/pandas/tests/test_multilevel.py b/pandas/tests/test_multilevel.py
+index 8f661edf0f..e874987420 100644
+--- a/pandas/tests/test_multilevel.py
++++ b/pandas/tests/test_multilevel.py
+@@ -400,6 +400,13 @@ class TestMultiLevel:
+         result = df.a.b.dtypes
+         tm.assert_series_equal(result, expected)
+ 
++    @pytest.mark.parametrize("na", [None, np.nan])
++    def test_multiindex_insert_level_with_na(self, na):
++        # GH 59003
++        df = DataFrame([0], columns=[["A"], ["B"]])
++        df[na, "B"] = 1
++        tm.assert_frame_equal(df[na], DataFrame([1], columns=["B"]))
++
+ 
+ class TestSorted:
+     """everything you wanted to test about sorting"""

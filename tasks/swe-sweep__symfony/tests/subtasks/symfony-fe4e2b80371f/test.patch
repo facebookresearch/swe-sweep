@@ -1,0 +1,33 @@
+diff --git a/src/Symfony/Component/DependencyInjection/Tests/Compiler/CheckTypeDeclarationsPassTest.php b/src/Symfony/Component/DependencyInjection/Tests/Compiler/CheckTypeDeclarationsPassTest.php
+index 90a5248f1e4..9101f7fb5b8 100644
+--- a/src/Symfony/Component/DependencyInjection/Tests/Compiler/CheckTypeDeclarationsPassTest.php
++++ b/src/Symfony/Component/DependencyInjection/Tests/Compiler/CheckTypeDeclarationsPassTest.php
+@@ -1015,6 +1015,17 @@ class CheckTypeDeclarationsPassTest extends TestCase
+         $this->addToAssertionCount(1);
+     }
+ 
++    public function testStaticCallableClass()
++    {
++        $container = new ContainerBuilder();
++        $container->register('foo', StaticCallableClass::class)
++            ->setFactory([StaticCallableClass::class, 'staticMethodCall']);
++
++        (new CheckTypeDeclarationsPass())->process($container);
++
++        $this->addToAssertionCount(1);
++    }
++
+     public function testIgnoreDefinitionFactoryArgument()
+     {
+         $container = new ContainerBuilder();
+@@ -1050,3 +1061,10 @@ class CallableClass
+     {
+     }
+ }
++
++class StaticCallableClass
++{
++    public static function __callStatic($name, $arguments)
++    {
++    }
++}

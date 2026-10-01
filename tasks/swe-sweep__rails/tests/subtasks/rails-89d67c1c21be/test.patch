@@ -1,0 +1,112 @@
+diff --git a/activerecord/test/cases/base_test.rb b/activerecord/test/cases/base_test.rb
+index 68693e0fd2b..e5b99fc31ed 100644
+--- a/activerecord/test/cases/base_test.rb
++++ b/activerecord/test/cases/base_test.rb
+@@ -1332,7 +1332,7 @@ class BasicsTest < ActiveRecord::TestCase
+   end
+ 
+   def test_attribute_names
+-    expected = ["id", "type", "firm_id", "firm_name", "name", "client_of", "rating", "account_id", "description", "metadata"]
++    expected = ["id", "type", "firm_id", "firm_name", "name", "client_of", "rating", "account_id", "description", "status", "metadata"]
+     assert_equal expected, Company.attribute_names
+   end
+ 
+diff --git a/activerecord/test/cases/calculations_test.rb b/activerecord/test/cases/calculations_test.rb
+index 5cae512ece5..c7570db27b7 100644
+--- a/activerecord/test/cases/calculations_test.rb
++++ b/activerecord/test/cases/calculations_test.rb
+@@ -644,6 +644,14 @@ class CalculationsTest < ActiveRecord::TestCase
+     [1, 6, 2, 9].each { |firm_id| assert_includes c.keys, firm_id }
+   end
+ 
++  def test_should_count_field_in_joined_table_with_group_by_when_tables_share_column_names
++    assert Company.columns_hash.key?("status")
++    assert Account.columns_hash.key?("status")
++
++    counts = Company.joins(:account).group("accounts.status").count
++    assert_equal({ "active" => 2, "trial" => 2, "suspended" => 1 }, counts)
++  end
++
+   def test_should_count_field_of_root_table_with_conflicting_group_by_column
+     expected = { 1 => 2, 2 => 1, 4 => 5, 5 => 3, 7 => 1 }
+     assert_equal expected, Post.joins(:comments).group(:post_id).count
+@@ -766,9 +774,9 @@ class CalculationsTest < ActiveRecord::TestCase
+ 
+   def test_pluck_without_column_names
+     if current_adapter?(:OracleAdapter)
+-      assert_equal [[1, "Firm", 1, nil, "37signals", nil, 1, nil, nil]], Company.order(:id).limit(1).pluck
++      assert_equal [[1, "Firm", 1, nil, "37signals", nil, 1, nil, nil, "active"]], Company.order(:id).limit(1).pluck
+     else
+-      assert_equal [[1, "Firm", 1, nil, "37signals", nil, 1, nil, ""]], Company.order(:id).limit(1).pluck
++      assert_equal [[1, "Firm", 1, nil, "37signals", nil, 1, nil, "", "active"]], Company.order(:id).limit(1).pluck
+     end
+   end
+ 
+diff --git a/activerecord/test/fixtures/accounts.yml b/activerecord/test/fixtures/accounts.yml
+index 32583042a8a..f4b3b47e6e8 100644
+--- a/activerecord/test/fixtures/accounts.yml
++++ b/activerecord/test/fixtures/accounts.yml
+@@ -3,6 +3,7 @@ signals37:
+   firm_id: 1
+   credit_limit: 50
+   firm_name: 37signals
++  status: "active"
+ 
+ unknown:
+   id: 2
+@@ -12,18 +13,22 @@ rails_core_account:
+   id: 3
+   firm_id: 6
+   credit_limit: 50
++  status: "suspended"
+ 
+ last_account:
+   id: 4
+   firm_id: 2
+   credit_limit: 60
++  status: "trial"
+ 
+ rails_core_account_2:
+   id: 5
+   firm_id: 6
+   credit_limit: 55
++  status: "active"
+ 
+ odegy_account:
+   id: 6
+   firm_id: 9
+   credit_limit: 53
++  status: "trial"
+diff --git a/activerecord/test/models/company.rb b/activerecord/test/models/company.rb
+index 527033531a8..d2511e41e51 100644
+--- a/activerecord/test/models/company.rb
++++ b/activerecord/test/models/company.rb
+@@ -7,6 +7,8 @@ end
+ class Company < AbstractCompany
+   self.sequence_name = :companies_nonstd_seq
+ 
++  enum :status, [:active, :suspended]
++
+   validates_presence_of :name
+ 
+   has_one :account, foreign_key: "firm_id"
+diff --git a/activerecord/test/schema/schema.rb b/activerecord/test/schema/schema.rb
+index d30f69c5699..a2d6258ef1c 100644
+--- a/activerecord/test/schema/schema.rb
++++ b/activerecord/test/schema/schema.rb
+@@ -16,6 +16,7 @@ ActiveRecord::Schema.define do
+     t.references :firm, index: false
+     t.string  :firm_name
+     t.integer :credit_limit
++    t.string :status
+     t.integer "a" * max_identifier_length
+   end
+ 
+@@ -286,6 +287,7 @@ ActiveRecord::Schema.define do
+     t.bigint :rating, default: 1
+     t.integer :account_id
+     t.string :description, default: ""
++    t.integer :status, default: 0
+     t.index [:name, :rating], order: :desc
+     t.index [:name, :description], length: 10
+     t.index [:firm_id, :type, :rating], name: "company_index", length: { type: 10 }, order: { rating: :desc }

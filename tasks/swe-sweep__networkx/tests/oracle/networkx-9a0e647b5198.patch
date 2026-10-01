@@ -1,0 +1,31 @@
+diff --git a/networkx/algorithms/clique.py b/networkx/algorithms/clique.py
+index 741baa4d7..a562c37f0 100644
+--- a/networkx/algorithms/clique.py
++++ b/networkx/algorithms/clique.py
+@@ -235,7 +235,7 @@ def find_cliques(G, nodes=None):
+         pass
+ 
+ 
+-# TODO Should this also be not implemented for directed graphs?
++@not_implemented_for("directed")
+ def find_cliques_recursive(G, nodes=None):
+     """Returns all maximal cliques in a graph.
+ 
+@@ -256,6 +256,7 @@ def find_cliques_recursive(G, nodes=None):
+     Parameters
+     ----------
+     G : NetworkX graph
++        An undirected graph.
+ 
+     nodes : list, optional (default=None)
+         If provided, only yield *maximal cliques* containing all nodes in `nodes`.
+@@ -271,6 +272,9 @@ def find_cliques_recursive(G, nodes=None):
+ 
+     Raises
+     ------
++    NetworkXNotImplemented
++        If `G` is directed.
++
+     ValueError
+         If `nodes` is not a clique.
+ 

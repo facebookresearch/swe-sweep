@@ -1,0 +1,49 @@
+diff --git a/modules/openapi-generator/src/test/java/org/openapitools/codegen/utils/ModelUtilsTest.java b/modules/openapi-generator/src/test/java/org/openapitools/codegen/utils/ModelUtilsTest.java
+index 76bd51b43a5..d99c2fa678c 100644
+--- a/modules/openapi-generator/src/test/java/org/openapitools/codegen/utils/ModelUtilsTest.java
++++ b/modules/openapi-generator/src/test/java/org/openapitools/codegen/utils/ModelUtilsTest.java
+@@ -293,5 +293,16 @@ public class ModelUtilsTest {
+     public void testSimpleRefDecoding() {
+         String decoded = ModelUtils.getSimpleRef("#/components/~01%20Hallo~1Welt");
+         Assert.assertEquals(decoded, "~1 Hallo/Welt");
+     }
++
++    @Test
++    public void testObjectAndComplexComposedSchema() {
++        OpenAPI openAPI = TestUtils.parseSpec("src/test/resources/3_1/schema.yaml");
++
++        Schema objectSchema = ModelUtils.getSchema(openAPI, "ObjectSchema");
++        Assert.assertTrue(ModelUtils.isMapSchema(objectSchema));
++
++        Schema complexComposedSchema = ModelUtils.getSchema(openAPI, "ComplexComposedSchema");
++        Assert.assertTrue(ModelUtils.isComplexComposedSchema(complexComposedSchema));
++    }
+ }
+diff --git a/modules/openapi-generator/src/test/resources/3_1/schema.yaml b/modules/openapi-generator/src/test/resources/3_1/schema.yaml
+new file mode 100644
+index 00000000000..1c3137ecf11
+--- /dev/null
++++ b/modules/openapi-generator/src/test/resources/3_1/schema.yaml
+@@ -0,0 +1,22 @@
++openapi: 3.1.0
++info:
++  title: schema test
++  version: 1.0.0
++paths: {}
++components:
++  schemas:
++    ObjectSchema:
++      type: object
++      additionalProperties: false
++      properties:
++        name:
++          type: string
++        address:
++          type: string
++    ComplexComposedSchema:
++      oneOf:
++        - type: string
++        - type: integer
++      anyOf:
++        - type: string
++        - type: number

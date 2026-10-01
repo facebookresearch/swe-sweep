@@ -1,0 +1,19 @@
+diff --git a/src/Symfony/Component/Validator/Constraints/UniqueValidator.php b/src/Symfony/Component/Validator/Constraints/UniqueValidator.php
+index 1e692fe682a..b0eefd84cb8 100644
+--- a/src/Symfony/Component/Validator/Constraints/UniqueValidator.php
++++ b/src/Symfony/Component/Validator/Constraints/UniqueValidator.php
+@@ -43,12 +43,12 @@ class UniqueValidator extends ConstraintValidator
+         $collectionElements = [];
+         $normalizer = $this->getNormalizer($constraint);
+         foreach ($value as $element) {
++            $element = $normalizer($element);
++
+             if ($fields && !$element = $this->reduceElementKeys($fields, $element)) {
+                 continue;
+             }
+ 
+-            $element = $normalizer($element);
+-
+             if (\in_array($element, $collectionElements, true)) {
+                 $this->context->buildViolation($constraint->message)
+                     ->setParameter('{{ value }}', $this->formatValue($value))

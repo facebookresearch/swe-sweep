@@ -1,0 +1,44 @@
+diff --git a/actionview/test/template/dependency_tracker_test.rb b/actionview/test/template/dependency_tracker_test.rb
+index 75b1808d8e2..4512afa46c6 100644
+--- a/actionview/test/template/dependency_tracker_test.rb
++++ b/actionview/test/template/dependency_tracker_test.rb
+@@ -22,6 +22,10 @@ class FakeTemplate
+   def type
+     ["text/html"]
+   end
++
++  def encode!
++    source
++  end
+ end
+ 
+ Neckbeard = lambda { |template, source| source }
+@@ -337,4 +341,28 @@ class RubyTrackerTest < Minitest::Test
+ 
+     assert_equal [], tracker.dependencies
+   end
++
++  def test_dependencies_encode_binary_non_ascii_source_before_handler
++    handler = lambda do |_template, source|
++      # Mimic Temple::Filters::StaticMerger concatenating a UTF-8 literal with
++      # template content. This raises Encoding::CompatibilityError when +source+
++      # is still tagged ASCII-8BIT and contains bytes > 0x7F.
++      _ = source + "介護"
++      'render "posts/child"'
++    end
++
++    binary_source = (+"= render \"posts/child\"\n介護").force_encoding(Encoding::BINARY)
++    template = ActionView::Template.new(
++      binary_source,
++      "posts/show",
++      handler,
++      virtual_path: "posts/show",
++      format: :html,
++      locals: []
++    )
++
++    tracker = make_tracker("posts/show", template)
++
++    assert_equal ["posts/child"], tracker.dependencies
++  end
+ end

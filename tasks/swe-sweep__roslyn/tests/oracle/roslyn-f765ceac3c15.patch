@@ -1,0 +1,14 @@
+diff --git a/src/Compilers/Core/Portable/Syntax/SyntaxNode.cs b/src/Compilers/Core/Portable/Syntax/SyntaxNode.cs
+index 9274cc9d1c0..81f23202ced 100644
+--- a/src/Compilers/Core/Portable/Syntax/SyntaxNode.cs
++++ b/src/Compilers/Core/Portable/Syntax/SyntaxNode.cs
+@@ -799,7 +799,8 @@ namespace Microsoft.CodeAnalysis
+         /// </summary>
+         public IEnumerable<SyntaxNode> Ancestors(bool ascendOutOfTrivia = true)
+         {
+-            return this.Parent?
++            var parent = GetParent(this, ascendOutOfTrivia);
++            return parent?
+                 .AncestorsAndSelf(ascendOutOfTrivia) ??
+                 SpecializedCollections.EmptyEnumerable<SyntaxNode>();
+         }

@@ -1,0 +1,13 @@
+diff --git a/pandas/core/frame.py b/pandas/core/frame.py
+index 95de613fd2..40b63c0984 100644
+--- a/pandas/core/frame.py
++++ b/pandas/core/frame.py
+@@ -4110,7 +4110,7 @@ class DataFrame(NDFrame, OpsMixin):
+         if key in self.columns:
+             loc = self.columns.get_loc(key)
+             cols = self.columns[loc]
+-            len_cols = 1 if is_scalar(cols) else len(cols)
++            len_cols = 1 if is_scalar(cols) or isinstance(cols, tuple) else len(cols)
+             if len_cols != len(value.columns):
+                 raise ValueError("Columns must be same length as key")
+ 

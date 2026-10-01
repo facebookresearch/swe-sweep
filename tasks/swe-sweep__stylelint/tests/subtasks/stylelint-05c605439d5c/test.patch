@@ -1,0 +1,110 @@
+diff --git a/lib/rules/selector-pseudo-class-no-unknown/__tests__/index.mjs b/lib/rules/selector-pseudo-class-no-unknown/__tests__/index.mjs
+index 15cc916f4..a1c6f8fa5 100644
+--- a/lib/rules/selector-pseudo-class-no-unknown/__tests__/index.mjs
++++ b/lib/rules/selector-pseudo-class-no-unknown/__tests__/index.mjs
+@@ -1,3 +1,5 @@
++import { stripIndent } from 'common-tags';
++
+ import rule from '../index.mjs';
+ const { messages, ruleName } = rule;
+ 
+@@ -128,6 +130,26 @@ testRule({
+ 		{
+ 			code: ':seeking, :stalled, :buffering, :volume-locked, :muted {}',
+ 		},
++		{
++			code: stripIndent`
++				/* stylelint-disable-next-line selector-pseudo-class-no-unknown */
++				:unknown, /* stylelint-disable-next-line selector-pseudo-class-no-unknown */
++				:unknown,
++				/* stylelint-disable-next-line selector-pseudo-class-no-unknown */
++				:unknown
++				{}
++			`,
++		},
++		{
++			code: stripIndent`
++				/* stylelint-disable-next-line selector-pseudo-class-no-unknown */
++				@page :unknown, /* stylelint-disable-next-line selector-pseudo-class-no-unknown */
++				@page :unknown,
++				/* stylelint-disable-next-line selector-pseudo-class-no-unknown */
++				@page :unknown
++				{}
++			`,
++		},
+ 	],
+ 
+ 	reject: [
+@@ -262,6 +284,72 @@ testRule({
+ 				},
+ 			],
+ 		},
++		{
++			code: stripIndent`
++				/* a comment */
++				:unknown, /* a comment */
++				:unknown,
++				/* a comment */
++				:unknown
++				{}
++			`,
++			warnings: [
++				{
++					message: messages.rejected(':unknown'),
++					line: 2,
++					column: 1,
++					endLine: 2,
++					endColumn: 9,
++				},
++				{
++					message: messages.rejected(':unknown'),
++					line: 3,
++					column: 1,
++					endLine: 3,
++					endColumn: 9,
++				},
++				{
++					message: messages.rejected(':unknown'),
++					line: 5,
++					column: 1,
++					endLine: 5,
++					endColumn: 9,
++				},
++			],
++		},
++		{
++			code: stripIndent`
++				/* a comment */
++				@page :unknown, /* a comment */
++				@page :unknown,
++				/* a comment */
++				@page :unknown
++				{}
++			`,
++			warnings: [
++				{
++					message: messages.rejected(':unknown'),
++					line: 2,
++					column: 7,
++					endLine: 2,
++					endColumn: 15,
++				},
++				{
++					message: messages.rejected(':unknown'),
++					line: 3,
++					column: 7,
++					endLine: 3,
++					endColumn: 15,
++				},
++				{
++					message: messages.rejected(':unknown'),
++					line: 5,
++					column: 7,
++					endLine: 5,
++					endColumn: 15,
++				},
++			],
++		},
+ 	],
+ });
+ 

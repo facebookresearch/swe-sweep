@@ -1,0 +1,27 @@
+diff --git a/src/debug/dwarf/buf.go b/src/debug/dwarf/buf.go
+index c3822a0dac..7ac53efcb6 100644
+--- a/src/debug/dwarf/buf.go
++++ b/src/debug/dwarf/buf.go
+@@ -67,7 +67,7 @@ func (b *buf) uint8() uint8 {
+ }
+ 
+ func (b *buf) bytes(n int) []byte {
+-	if len(b.data) < n {
++	if n < 0 || len(b.data) < n {
+ 		b.error("underflow")
+ 		return nil
+ 	}
+diff --git a/src/debug/dwarf/unit.go b/src/debug/dwarf/unit.go
+index 9b3d6e902d..8b810d0a00 100644
+--- a/src/debug/dwarf/unit.go
++++ b/src/debug/dwarf/unit.go
+@@ -63,6 +63,9 @@ func (d *Data) parseUnits() ([]unit, error) {
+ 		u := &units[i]
+ 		u.base = b.off
+ 		var n Offset
++		if b.err != nil {
++			return nil, b.err
++		}
+ 		for n == 0 {
+ 			n, u.is64 = b.unitLength()
+ 		}

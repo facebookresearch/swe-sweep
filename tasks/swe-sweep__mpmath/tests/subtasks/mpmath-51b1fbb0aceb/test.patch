@@ -1,0 +1,13 @@
+diff --git a/mpmath/tests/test_matrices.py b/mpmath/tests/test_matrices.py
+index a5b20677..88eb7cd9 100644
+--- a/mpmath/tests/test_matrices.py
++++ b/mpmath/tests/test_matrices.py
+@@ -49,6 +49,8 @@ def test_matrix_basic():
+     A9[0,0] = -100
+     assert A9 != A10
+     assert nstr(A9)
++    pytest.raises(IndexError, lambda: zeros(1,1)[:, 1])  # issue 318
++    pytest.raises(IndexError, lambda: zeros(1,1)[1, :])
+ 
+ def test_matrix_slices():
+     A = matrix([    [1, 2, 3],

@@ -1,0 +1,32 @@
+diff --git a/tests/data/preview/long_strings__regression.py b/tests/data/preview/long_strings__regression.py
+index 123342f5..58fe3209 100644
+--- a/tests/data/preview/long_strings__regression.py
++++ b/tests/data/preview/long_strings__regression.py
+@@ -560,6 +560,14 @@ s = (
+ 
+ s = f'Lorem Ipsum is simply dummy text of the printing and typesetting industry:\'{my_dict["foo"]}\''
+ 
++# Regression test for https://github.com/psf/black/issues/4510.
++# Don't merge multi-line strings when a pragma comment follows.
++(
++    "A very very very very very very very very very very very very long string "
++    "annotated with a type ignore pragma gets merged into a single very long line "
++    "which is against the line length rule."
++)  # type: ignore
++
+ 
+ # output
+ 
+@@ -1252,4 +1260,12 @@ s = (
+ s = (
+     "Lorem Ipsum is simply dummy text of the printing and typesetting"
+     f" industry:'{my_dict['foo']}'"
+ )
++
++# Regression test for https://github.com/psf/black/issues/4510.
++# Don't merge multi-line strings when a pragma comment follows.
++(
++    "A very very very very very very very very very very very very long string "
++    "annotated with a type ignore pragma gets merged into a single very long line "
++    "which is against the line length rule."
++)  # type: ignore

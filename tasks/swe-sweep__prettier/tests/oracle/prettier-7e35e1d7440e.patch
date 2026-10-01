@@ -1,0 +1,28 @@
+diff --git a/src/language-markdown/printer-markdown.js b/src/language-markdown/printer-markdown.js
+index cf72ce53e..79b5b37fd 100644
+--- a/src/language-markdown/printer-markdown.js
++++ b/src/language-markdown/printer-markdown.js
+@@ -48,7 +48,12 @@ function genericPrint(path, options, print) {
+   const { node } = path;
+ 
+   if (shouldRemainTheSameContent(path)) {
+-    /** @type {Doc} */
++    /*
++     * We assume parts always meet following conditions:
++     * - parts.length is odd
++     * - odd (0-indexed) elements are line-like doc
++     */
++    /** @type {Doc[]} */
+     const parts = [""];
+     const textsNodes = splitText(
+       options.originalText.slice(
+@@ -66,7 +71,8 @@ function genericPrint(path, options, print) {
+         parts.push([parts.pop(), doc]);
+         continue;
+       }
+-      parts.push(doc);
++      // In this path, doc is line. To meet the condition, we need additional element "".
++      parts.push(doc, "");
+     }
+     return fill(parts);
+   }

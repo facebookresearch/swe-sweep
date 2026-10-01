@@ -1,0 +1,13 @@
+diff --git a/vlib/v/gen/c/json.v b/vlib/v/gen/c/json.v
+index 27f9f4d98..13d647c07 100644
+--- a/vlib/v/gen/c/json.v
++++ b/vlib/v/gen/c/json.v
+@@ -673,7 +673,7 @@ fn (mut g Gen) gen_struct_enc_dec(utyp ast.Type, type_info ast.TypeInfo, styp st
+ 				is_option_field := field.typ.has_flag(.option)
+ 				if field.typ.has_flag(.option) {
+ 					gen_js_get_opt(js_dec_name(field_type), field_type, styp, tmp, name, mut
+-						dec, true)
++						dec, is_required)
+ 					dec.writeln('\tif (jsonroot_${tmp} && !cJSON_IsNull(jsonroot_${tmp})) {')
+ 				} else {
+ 					gen_js_get(styp, tmp, name, mut dec, is_required)

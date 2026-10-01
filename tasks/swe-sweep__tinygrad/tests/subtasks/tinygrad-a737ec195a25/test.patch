@@ -1,0 +1,20 @@
+diff --git a/test/test_tensor.py b/test/test_tensor.py
+index a535eb0a9..71f654b0e 100644
+--- a/test/test_tensor.py
++++ b/test/test_tensor.py
+@@ -888,6 +888,15 @@ class TestTensorMetadata(unittest.TestCase):
+       si = out.schedule()[-1]
+       self.assertEqual(si.metadata, ())
+ 
++class TestTraceMetaShutdown(unittest.TestCase):
++  def test_tracemeta_del_no_shutdown_error(self):
++    import subprocess, os
++    result = subprocess.run(['python3', '-c', 'from tinygrad import Tensor\n'
++                             'x=Tensor.eye(3,requires_grad=True); (x@x).sum().backward()'],
++                            env={**os.environ, "TRACEMETA": "2"}, capture_output=True)
++    self.assertEqual(result.returncode, 0)
++    self.assertNotIn(b"Exception", result.stderr)
++
+ class TestIdxUpcast(unittest.TestCase):
+   def _find_op(self, ast: UOp, op: Ops):
+     if ast.op is op: return ast

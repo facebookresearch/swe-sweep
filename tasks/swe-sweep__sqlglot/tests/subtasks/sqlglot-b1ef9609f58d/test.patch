@@ -1,0 +1,21 @@
+diff --git a/tests/dialects/test_tsql.py b/tests/dialects/test_tsql.py
+index e2eda73a65..99591f00da 100644
+--- a/tests/dialects/test_tsql.py
++++ b/tests/dialects/test_tsql.py
+@@ -1062,6 +1062,16 @@ WHERE
+                 "tsql": "ALTER TABLE a ADD b INTEGER, c INTEGER",
+             },
+         )
++        self.validate_all(
++            "ALTER TABLE a ALTER COLUMN b INTEGER",
++            read={
++                "": "ALTER TABLE a ALTER COLUMN b INT",
++            },
++            write={
++                "": "ALTER TABLE a ALTER COLUMN b SET DATA TYPE INT",
++                "tsql": "ALTER TABLE a ALTER COLUMN b INTEGER",
++            },
++        )
+         self.validate_all(
+             "CREATE TABLE #mytemp (a INTEGER, b CHAR(2), c TIME(4), d FLOAT(24))",
+             write={

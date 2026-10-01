@@ -1,0 +1,14 @@
+diff --git a/numpy/core/tests/test_regression.py b/numpy/core/tests/test_regression.py
+index 1ba0cda2134c..4b551d8aaaf2 100644
+--- a/numpy/core/tests/test_regression.py
++++ b/numpy/core/tests/test_regression.py
+@@ -2403,3 +2403,9 @@ class TestRegression(object):
+             v = str(data[['f1']])
+             if HAS_REFCOUNT:
+                 assert_(base <= sys.getrefcount(s))
++
++    def test_bad_array_interface(self):
++        class T(object):
++            __array_interface__ = {}
++
++        np.array([T()])

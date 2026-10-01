@@ -1,0 +1,18 @@
+diff --git a/packages/@aws-cdk/cloudformation-diff/test/network/rule.test.ts b/packages/@aws-cdk/cloudformation-diff/test/network/rule.test.ts
+index 234eb3ebd7..4d46501e85 100644
+--- a/packages/@aws-cdk/cloudformation-diff/test/network/rule.test.ts
++++ b/packages/@aws-cdk/cloudformation-diff/test/network/rule.test.ts
+@@ -105,3 +105,12 @@ const twoArbitraryRules = fc.record({
+ 
+   return { rule1: original, rule2: modified };
+ });
++
++test('can describe protocol', () => {
++  expect(new SecurityGroupRule({ IpProtocol: -1 }).describeProtocol()).toEqual('Everything');
++  expect(new SecurityGroupRule({ IpProtocol: '-1' }).describeProtocol()).toEqual('Everything');
++  expect(new SecurityGroupRule({ FromPort: -1 }).describeProtocol()).toEqual('All *UNKNOWN*');
++  expect(new SecurityGroupRule({ IpProtocol: 'tcp', FromPort: -1, ToPort: -1 }).describeProtocol()).toEqual('All TCP');
++  expect(new SecurityGroupRule({ IpProtocol: 'tcp', FromPort: 10, ToPort: 20 }).describeProtocol()).toEqual('TCP 10-20');
++  expect(new SecurityGroupRule({ IpProtocol: 'tcp', FromPort: 10, ToPort: 10 }).describeProtocol()).toEqual('TCP 10');
++});
+\ No newline at end of file

@@ -1,0 +1,13 @@
+diff --git a/modules/imgproc/src/subdivision2d.cpp b/modules/imgproc/src/subdivision2d.cpp
+index 2a2ab1dfeb..86a0f72852 100644
+--- a/modules/imgproc/src/subdivision2d.cpp
++++ b/modules/imgproc/src/subdivision2d.cpp
+@@ -493,7 +493,7 @@ void Subdiv2D::initDelaunay( Rect rect )
+ {
+     CV_INSTRUMENT_REGION();
+ 
+-    float big_coord = 3.f * MAX( rect.width, rect.height );
++    float big_coord = 6.f * MAX( rect.width, rect.height );
+     float rx = (float)rect.x;
+     float ry = (float)rect.y;
+ 

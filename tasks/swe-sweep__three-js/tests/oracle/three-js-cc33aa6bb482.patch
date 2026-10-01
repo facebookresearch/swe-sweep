@@ -1,0 +1,13 @@
+diff --git a/src/math/Ray.js b/src/math/Ray.js
+index 8edd1a7497..94391ddd44 100644
+--- a/src/math/Ray.js
++++ b/src/math/Ray.js
+@@ -306,6 +306,8 @@ class Ray {
+ 	 */
+ 	intersectSphere( sphere, target ) {
+ 
++		if ( sphere.radius < 0 ) return null; // handle empty spheres, see #31187
++
+ 		_vector.subVectors( sphere.center, this.origin );
+ 		const tca = _vector.dot( this.direction );
+ 		const d2 = _vector.dot( _vector ) - tca * tca;

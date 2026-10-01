@@ -1,0 +1,91 @@
+diff --git a/tests/fixtures/optimizer/merge_subqueries.sql b/tests/fixtures/optimizer/merge_subqueries.sql
+index 3ce11b9dfd..6cbac627d6 100644
+--- a/tests/fixtures/optimizer/merge_subqueries.sql
++++ b/tests/fixtures/optimizer/merge_subqueries.sql
+@@ -464,3 +464,86 @@ WITH tbl AS (select 1 as id)
+   LEFT OUTER JOIN tbl AS ITBL ON OTBL.id = ITBL.id
+ ) AS ITBL;
+ WITH tbl AS (SELECT 1 AS id) SELECT OTBL.id AS id FROM tbl AS OTBL LEFT OUTER JOIN tbl AS ITBL_2 ON OTBL.id = ITBL_2.id LEFT OUTER JOIN tbl AS ITBL_3 ON OTBL.id = ITBL_3.id LEFT OUTER JOIN tbl AS ITBL ON OTBL.id = ITBL.id;
++
++# title: replace INNER JOIN with LEFT JOIN when it exists in a subquery used as the RHS of a LEFT JOIN
++WITH 
++t0 AS (
++  SELECT 5 as id
++),
++t1 AS (
++  SELECT 1 AS id, 'US' AS cid
++),
++t2 AS (
++  SELECT 1 AS id, 'US' AS cid
++)
++SELECT
++  t0.id,
++  t3.cid AS cid
++FROM t0
++LEFT JOIN (
++  SELECT
++    t1.id,
++    t2.cid
++  FROM t1
++  INNER JOIN t2
++    ON t1.cid = t2.cid
++) AS t3
++  ON t0.id = t3.id;
++WITH t0 AS (SELECT 5 AS id), t1 AS (SELECT 1 AS id, 'US' AS cid), t2 AS (SELECT 1 AS id, 'US' AS cid) SELECT t0.id AS id, t2.cid AS cid FROM t0 AS t0 LEFT JOIN t1 AS t1 ON t0.id = t1.id LEFT JOIN t2 AS t2 ON t1.cid = t2.cid;
++
++# title: preserve INNER JOIN when it exists in a subquery used as the RHS of a RIGHT JOIN
++WITH 
++t0 AS (
++  SELECT 5 as id
++),
++t1 AS (
++  SELECT 1 AS id, 'US' AS cid
++),
++t2 AS (
++  SELECT 1 AS id, 'US' AS cid
++)
++SELECT
++  t0.id,
++  t3.cid AS cid
++FROM t0
++RIGHT JOIN (
++  SELECT
++    t1.id,
++    t2.cid
++  FROM t1
++  INNER JOIN t2
++    ON t1.cid = t2.cid
++) AS t3
++  ON t0.id = t3.id;
++WITH t0 AS (SELECT 5 AS id), t1 AS (SELECT 1 AS id, 'US' AS cid), t2 AS (SELECT 1 AS id, 'US' AS cid) SELECT t0.id AS id, t2.cid AS cid FROM t0 AS t0 RIGHT JOIN t1 AS t1 ON t0.id = t1.id INNER JOIN t2 AS t2 ON t1.cid = t2.cid;
++
++# title: replace multiple INNER JOINS with LEFT JOINS when they exist in a subquery used as the RHS of a LEFT JOIN
++WITH
++t0 AS (
++  SELECT 5 as id
++),
++t1 AS (
++  SELECT 1 AS id, 'US' AS cid
++),
++t2 AS (
++  SELECT 1 AS id, 'US' AS cid
++),
++t3 AS (
++  SELECT 1 AS id, 'CA' AS cid
++)
++SELECT
++  t0.id,
++  t4.cid AS cid
++FROM t0
++LEFT JOIN (
++  SELECT
++    t1.id,
++    t3.cid
++  FROM t1
++  INNER JOIN t2
++    ON t1.cid = t2.cid
++  INNER JOIN t3
++    ON t2.id = t3.id
++) AS t4
++  ON t0.id = t4.id;
++WITH t0 AS (SELECT 5 AS id), t1 AS (SELECT 1 AS id, 'US' AS cid), t2 AS (SELECT 1 AS id, 'US' AS cid), t3 AS (SELECT 1 AS id, 'CA' AS cid) SELECT t0.id AS id, t3.cid AS cid FROM t0 AS t0 LEFT JOIN t1 AS t1 ON t0.id = t1.id LEFT JOIN t2 AS t2 ON t1.cid = t2.cid LEFT JOIN t3 AS t3 ON t2.id = t3.id;

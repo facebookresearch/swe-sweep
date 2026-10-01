@@ -1,0 +1,47 @@
+diff --git a/tests/format/markdown/linkReference/__snapshots__/format.test.js.snap b/tests/format/markdown/linkReference/__snapshots__/format.test.js.snap
+index 52b166889..bb0820aed 100644
+--- a/tests/format/markdown/linkReference/__snapshots__/format.test.js.snap
++++ b/tests/format/markdown/linkReference/__snapshots__/format.test.js.snap
+@@ -349,3 +349,35 @@ proseWrap: "never"
+ 
+ ================================================================================
+ `;
++
++exports[`wrap.md - {"proseWrap":"always"} format 1`] = `
++====================================options=====================================
++parsers: ["markdown"]
++printWidth: 80
++proseWrap: "always"
++                                                                                | printWidth
++=====================================input======================================
++This folder has [VHS] tape files to create gifs for the [Widget Showcase]. To run them, install VHS from main (the theme and screenshot commands are not yet released).
++
++=====================================output=====================================
++This folder has [VHS] tape files to create gifs for the [Widget Showcase]. To
++run them, install VHS from main (the theme and screenshot commands are not yet
++released).
++
++================================================================================
++`;
++
++exports[`wrap.md - {"proseWrap":"never"} format 1`] = `
++====================================options=====================================
++parsers: ["markdown"]
++printWidth: 80
++proseWrap: "never"
++                                                                                | printWidth
++=====================================input======================================
++This folder has [VHS] tape files to create gifs for the [Widget Showcase]. To run them, install VHS from main (the theme and screenshot commands are not yet released).
++
++=====================================output=====================================
++This folder has [VHS] tape files to create gifs for the [Widget Showcase]. To run them, install VHS from main (the theme and screenshot commands are not yet released).
++
++================================================================================
++`;
+diff --git a/tests/format/markdown/linkReference/wrap.md b/tests/format/markdown/linkReference/wrap.md
+new file mode 100644
+index 000000000..ed6c3e789
+--- /dev/null
++++ b/tests/format/markdown/linkReference/wrap.md
+@@ -0,0 +1 @@
++This folder has [VHS] tape files to create gifs for the [Widget Showcase]. To run them, install VHS from main (the theme and screenshot commands are not yet released).

@@ -1,0 +1,14 @@
+diff --git a/compiler/test/compilable/test23705.d b/compiler/test/compilable/test23705.d
+new file mode 100644
+index 0000000000..d50e0bf04f
+--- /dev/null
++++ b/compiler/test/compilable/test23705.d
+@@ -0,0 +1,8 @@
++// https://issues.dlang.org/show_bug.cgi?id=23705
++
++// DISABLED: win32
++
++void main ()
++{
++    ubyte [0x7fff_fffe] x;
++}

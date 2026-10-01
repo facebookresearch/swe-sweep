@@ -1,0 +1,13 @@
+diff --git a/src/Lean/Parser/Term.lean b/src/Lean/Parser/Term.lean
+index 5a88595b7e..e9980bea79 100644
+--- a/src/Lean/Parser/Term.lean
++++ b/src/Lean/Parser/Term.lean
+@@ -763,7 +763,7 @@ We use them to implement `macro_rules` and `elab_rules`
+ def namedArgument  := leading_parser (withAnonymousAntiquot := false)
+   atomic ("(" >> ident >> " := ") >> withoutPosition termParser >> ")"
+ def ellipsis       := leading_parser (withAnonymousAntiquot := false)
+-  ".." >> notFollowedBy "." "`.` immediately after `..`"
++  ".." >> notFollowedBy (checkNoWsBefore >> ".") "`.` immediately after `..`"
+ def argument       :=
+   checkWsBefore "expected space" >>
+   checkColGt "expected to be indented" >>

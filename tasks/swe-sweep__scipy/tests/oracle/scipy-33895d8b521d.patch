@@ -1,0 +1,22 @@
+diff --git a/scipy/special/lambertw.pxd b/scipy/special/lambertw.pxd
+index ac306943dd..3d601f7b93 100644
+--- a/scipy/special/lambertw.pxd
++++ b/scipy/special/lambertw.pxd
+@@ -87,7 +87,7 @@ cdef inline double complex lambertw_scalar(double complex z, long k, double tol)
+             ew = zexp(-w)
+             wewz = w - z*ew
+             wn = w - wewz/(w + 1 - (w + 2)*wewz/(2*w + 2))
+-            if zabs(wn - w) < tol*zabs(wn):
++            if zabs(wn - w) <= tol*zabs(wn):
+                 return wn
+             else:
+                 w = wn
+@@ -97,7 +97,7 @@ cdef inline double complex lambertw_scalar(double complex z, long k, double tol)
+             wew = w*ew
+             wewz = wew - z
+             wn = w - wewz/(wew + ew - (w + 2)*wewz/(2*w + 2))
+-            if zabs(wn - w) < tol*zabs(wn):
++            if zabs(wn - w) <= tol*zabs(wn):
+                 return wn
+             else:
+                 w = wn

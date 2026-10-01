@@ -1,0 +1,21 @@
+diff --git a/test/Succeed/Issue7590.agda b/test/Succeed/Issue7590.agda
+new file mode 100644
+index 0000000000..25695b099e
+--- /dev/null
++++ b/test/Succeed/Issue7590.agda
+@@ -0,0 +1,15 @@
++{-# OPTIONS --allow-unsolved-metas --type-in-type #-}
++
++postulate Fill : {A : Set} → A
++
++a b : (A : Set) → ? A
++a = Fill
++b = Fill
++
++c d : (A : Set)(B : A → Set) → B ?
++c = Fill
++d = Fill
++
++f g : ∀ x → ? ?
++f = Fill
++g = Fill

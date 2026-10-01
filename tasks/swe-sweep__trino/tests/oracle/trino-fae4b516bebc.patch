@@ -1,0 +1,61 @@
+diff --git a/lib/trino-parquet/src/main/java/io/trino/parquet/reader/FilteredOffsetIndex.java b/lib/trino-parquet/src/main/java/io/trino/parquet/reader/FilteredOffsetIndex.java
+index 32b6a34e785..8ae54646e41 100644
+--- a/lib/trino-parquet/src/main/java/io/trino/parquet/reader/FilteredOffsetIndex.java
++++ b/lib/trino-parquet/src/main/java/io/trino/parquet/reader/FilteredOffsetIndex.java
+@@ -112,29 +112,22 @@ class FilteredOffsetIndex
+                 ranges.add(new OffsetRange(rowGroupOffset, firstPageOffset - rowGroupOffset));
+             }
+ 
+-            long currentOffset = -1;
+-            long currentLength = 0;
+-            for (int i = 0; i < pageCount; ++i) {
++            long currentOffset = getOffset(0);
++            long currentLength = getCompressedPageSize(0);
++            for (int i = 1; i < pageCount; ++i) {
+                 long offset = getOffset(i);
+                 int length = getCompressedPageSize(i);
+ 
+-                if (currentOffset == -1) {
+-                    currentOffset = offset;
+-                    currentLength = length;
+-                }
+-                else if (currentOffset + currentLength == offset) {
++                if (currentOffset + currentLength == offset) {
+                     currentLength += length;
+                 }
+                 else {
+                     ranges.add(new OffsetRange(currentOffset, currentLength));
+-                    currentOffset = -1;
+-                    currentLength = 0;
++                    currentOffset = offset;
++                    currentLength = length;
+                 }
+             }
+-
+-            if (currentOffset != -1) {
+-                ranges.add(new OffsetRange(currentOffset, currentLength));
+-            }
++            ranges.add(new OffsetRange(currentOffset, currentLength));
+         }
+         return ranges;
+     }
+diff --git a/lib/trino-parquet/src/main/java/io/trino/parquet/reader/ParquetColumnChunk.java b/lib/trino-parquet/src/main/java/io/trino/parquet/reader/ParquetColumnChunk.java
+index 51e1c1b7753..14e25b75df2 100644
+--- a/lib/trino-parquet/src/main/java/io/trino/parquet/reader/ParquetColumnChunk.java
++++ b/lib/trino-parquet/src/main/java/io/trino/parquet/reader/ParquetColumnChunk.java
+@@ -34,6 +34,7 @@ import java.util.List;
+ import java.util.Optional;
+ import java.util.OptionalLong;
+ 
++import static com.google.common.base.Verify.verify;
+ import static io.trino.parquet.ParquetTypeUtils.getParquetEncoding;
+ import static java.util.Objects.requireNonNull;
+ 
+@@ -73,6 +74,7 @@ public class ParquetColumnChunk
+     protected PageHeader readPageHeader()
+             throws IOException
+     {
++        verify(input.available() > 0, "Reached end of input unexpectedly");
+         PageHeader pageHeader = Util.readPageHeader(input);
+         advanceIfNecessary();
+         return pageHeader;

@@ -1,0 +1,16 @@
+diff --git a/lib/LibManifestPlugin.js b/lib/LibManifestPlugin.js
+index 32939ed46..e3d5c3ec3 100644
+--- a/lib/LibManifestPlugin.js
++++ b/lib/LibManifestPlugin.js
+@@ -46,7 +46,10 @@ class LibManifestPlugin {
+ 	 */
+ 	apply(compiler) {
+ 		compiler.hooks.emit.tapAsync(
+-			"LibManifestPlugin",
++			{
++				name: "LibManifestPlugin",
++				stage: 110
++			},
+ 			(compilation, callback) => {
+ 				const moduleGraph = compilation.moduleGraph;
+ 				asyncLib.forEach(

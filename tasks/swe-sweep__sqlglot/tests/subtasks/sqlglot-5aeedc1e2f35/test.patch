@@ -1,0 +1,9 @@
+diff --git a/tests/fixtures/optimizer/qualify_columns__invalid.sql b/tests/fixtures/optimizer/qualify_columns__invalid.sql
+index 09a9ddc483..a8e646cc79 100644
+--- a/tests/fixtures/optimizer/qualify_columns__invalid.sql
++++ b/tests/fixtures/optimizer/qualify_columns__invalid.sql
+@@ -12,3 +12,4 @@ SELECT a, SUM(b) FROM x GROUP BY 3;
+ SELECT p FROM (SELECT x from xx) y CROSS JOIN yy CROSS JOIN zz
+ SELECT a FROM (SELECT * FROM x CROSS JOIN y);
+ SELECT x FROM tbl AS tbl(a);
++SELECT a JOIN b USING (a);

@@ -1,0 +1,185 @@
+{
+  "build_jobs": 4,
+  "container_repo": "/sunpy",
+  "evaluation": {
+    "paths": "sunpy",
+    "visible_timeout": 7200
+  },
+  "upstream_image": "pandora-maxbug-sunpy:3.0.0",
+  "n_base_passing": 0,
+  "n_base_test_ignore": 1,
+  "oracle_digest": "9e4235e330f2b599e46489f964b1c50f0d68ab7152aad69b94dc24d3c5cd6dc2",
+  "oracle_pristine_paths": [],
+  "upstream_commit": "9f7399e15e6172900e0591deb5a57a45769d8205",
+  "reproduction": {
+    "needs_build": false,
+    "test_timeout": 900
+  },
+  "schema": 2,
+  "subtasks": [
+    {
+      "f2p": [
+        "sunpy.coordinates.tests.test_transformations::test_hee_earth"
+      ],
+      "id": "sunpy-072a618a8c59",
+      "target_files": [
+        "sunpy/coordinates/transformations.py"
+      ]
+    },
+    {
+      "f2p": [
+        "sunpy.map.tests.test_maputils::test_all_corner_coordinates_from_map"
+      ],
+      "id": "sunpy-0eb2be7df017",
+      "target_files": [
+        "sunpy/map/maputils.py"
+      ]
+    },
+    {
+      "f2p": [
+        "sunpy.coordinates.tests.test_wcs_utils::test_sunpybaseframe_external"
+      ],
+      "id": "sunpy-3880adedcf97",
+      "target_files": [
+        "sunpy/coordinates/wcs_utils.py"
+      ]
+    },
+    {
+      "f2p": [
+        "sunpy.coordinates.tests.test_wcs_utils::test_sunpybaseframe_external"
+      ],
+      "id": "sunpy-486af3491297",
+      "target_files": [
+        "sunpy/coordinates/wcs_utils.py"
+      ]
+    },
+    {
+      "f2p": [
+        "sunpy.coordinates.tests.test_transformations::test_hee_earth"
+      ],
+      "id": "sunpy-4d8d39cbaee6",
+      "target_files": [
+        "sunpy/coordinates/_transformations.py"
+      ]
+    },
+    {
+      "f2p": [
+        "sunpy.coordinates.tests.test_frameattributes::test_observer_in_heeq[Heliocentric]",
+        "sunpy.coordinates.tests.test_frameattributes::test_observer_in_heeq[HeliographicCarrington]",
+        "sunpy.coordinates.tests.test_frameattributes::test_observer_in_heeq[Helioprojective]",
+        "sunpy.coordinates.tests.test_frameattributes::test_observer_not_default_representation"
+      ],
+      "id": "sunpy-6689b0933bfc",
+      "target_files": [
+        "sunpy/coordinates/frameattributes.py"
+      ]
+    },
+    {
+      "f2p": [
+        "sunpy.map.tests.test_mapbase::test_rotation_matrix_defaults[1-1-CD]",
+        "sunpy.map.tests.test_mapbase::test_rotation_matrix_defaults[1-1-PC]",
+        "sunpy.map.tests.test_mapbase::test_rotation_matrix_defaults[1-2-CD]",
+        "sunpy.map.tests.test_mapbase::test_rotation_matrix_defaults[1-2-PC]",
+        "sunpy.map.tests.test_mapbase::test_rotation_matrix_defaults[2-1-CD]",
+        "sunpy.map.tests.test_mapbase::test_rotation_matrix_defaults[2-1-PC]",
+        "sunpy.map.tests.test_mapbase::test_rotation_matrix_defaults[2-2-CD]",
+        "sunpy.map.tests.test_mapbase::test_rotation_matrix_defaults[2-2-PC]"
+      ],
+      "id": "sunpy-680ce41f11ee",
+      "target_files": [
+        "sunpy/map/mapbase.py"
+      ]
+    },
+    {
+      "f2p": [
+        "sunpy.map.tests.test_map_factory.TestMap::test_mapsequence_sortby"
+      ],
+      "id": "sunpy-783546d9943b",
+      "target_files": [
+        "sunpy/map/mapbase.py"
+      ]
+    },
+    {
+      "f2p": [
+        "sunpy.map.tests.test_mapbase::test_rotation_matrix_defaults[1-1-CD]",
+        "sunpy.map.tests.test_mapbase::test_rotation_matrix_defaults[1-1-PC]",
+        "sunpy.map.tests.test_mapbase::test_rotation_matrix_defaults[1-2-CD]",
+        "sunpy.map.tests.test_mapbase::test_rotation_matrix_defaults[1-2-PC]",
+        "sunpy.map.tests.test_mapbase::test_rotation_matrix_defaults[2-1-CD]",
+        "sunpy.map.tests.test_mapbase::test_rotation_matrix_defaults[2-1-PC]",
+        "sunpy.map.tests.test_mapbase::test_rotation_matrix_defaults[2-2-CD]",
+        "sunpy.map.tests.test_mapbase::test_rotation_matrix_defaults[2-2-PC]"
+      ],
+      "id": "sunpy-7df330da0199",
+      "target_files": [
+        "sunpy/map/mapbase.py"
+      ]
+    },
+    {
+      "f2p": [
+        "sunpy.map.sources.tests.test_xrt_source::test_wcs"
+      ],
+      "id": "sunpy-93f918a48cde",
+      "target_files": [
+        "sunpy/map/sources/hinode.py"
+      ]
+    },
+    {
+      "f2p": [
+        "sunpy.map.sources.tests.test_hmi_synoptic_source::test_date"
+      ],
+      "id": "sunpy-c37b6e61eba0",
+      "target_files": [
+        "sunpy/map/mapbase.py"
+      ]
+    },
+    {
+      "f2p": [
+        "sunpy.data.data_manager.tests.test_downloader::test_ParfiveDownloader_errors"
+      ],
+      "id": "sunpy-d19106bc0617",
+      "target_files": [
+        "sunpy/data/data_manager/downloader.py"
+      ]
+    },
+    {
+      "f2p": [
+        "sunpy.time.tests.test_time::test_parse_time_astropy_table_column[inputs2]",
+        "sunpy.time.tests.test_time::test_parse_time_pandas_series[inputs1-Index]",
+        "sunpy.time.tests.test_time::test_parse_time_pandas_series[inputs2-Index]",
+        "sunpy.time.tests.test_time::test_parse_time_pandas_series[inputs2-Series]"
+      ],
+      "id": "sunpy-de742aa623ab",
+      "target_files": [
+        "sunpy/time/time.py"
+      ]
+    },
+    {
+      "f2p": [
+        "sunpy.map.tests.test_header_helper::test_hgc_header"
+      ],
+      "id": "sunpy-e50eafb125ae",
+      "target_files": [
+        "sunpy/map/header_helper.py"
+      ]
+    },
+    {
+      "f2p": [
+        "sunpy.map.tests.test_mapbase::test_rotation_matrix_defaults[1-1-CD]",
+        "sunpy.map.tests.test_mapbase::test_rotation_matrix_defaults[1-1-PC]",
+        "sunpy.map.tests.test_mapbase::test_rotation_matrix_defaults[1-2-CD]",
+        "sunpy.map.tests.test_mapbase::test_rotation_matrix_defaults[1-2-PC]",
+        "sunpy.map.tests.test_mapbase::test_rotation_matrix_defaults[2-1-CD]",
+        "sunpy.map.tests.test_mapbase::test_rotation_matrix_defaults[2-1-PC]",
+        "sunpy.map.tests.test_mapbase::test_rotation_matrix_defaults[2-2-CD]",
+        "sunpy.map.tests.test_mapbase::test_rotation_matrix_defaults[2-2-PC]"
+      ],
+      "id": "sunpy-fd253db3a713",
+      "target_files": [
+        "sunpy/map/mapbase.py"
+      ]
+    }
+  ],
+  "task": "sunpy",
+  "version": "3.0.0"
+}

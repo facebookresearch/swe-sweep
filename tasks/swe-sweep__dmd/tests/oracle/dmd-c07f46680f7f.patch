@@ -1,0 +1,13 @@
+diff --git a/compiler/src/dmd/mtype.d b/compiler/src/dmd/mtype.d
+index e0bb0be9d5..e393b4f9d0 100644
+--- a/compiler/src/dmd/mtype.d
++++ b/compiler/src/dmd/mtype.d
+@@ -2301,7 +2301,7 @@ Type substWildTo(Type type, uint mod)
+                     t = new TypeSArray(t, (cast(TypeSArray)this).dim.syntaxCopy());
+                 else if (ty == Taarray)
+                 {
+-                    t = new TypeAArray(t, (cast(TypeAArray)this).index.syntaxCopy());
++                    t = new TypeAArray(t, (cast(TypeAArray)this).index.substWildTo(mod));
+                 }
+                 else if (ty == Tdelegate)
+                 {

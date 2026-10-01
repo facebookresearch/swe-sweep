@@ -1,0 +1,12 @@
+diff --git a/gix/src/open/repository.rs b/gix/src/open/repository.rs
+index c44d96933..6d56cd98c 100644
+--- a/gix/src/open/repository.rs
++++ b/gix/src/open/repository.rs
+@@ -153,6 +153,7 @@ impl ThreadSafeRepository {
+ 
+         let git_dir_trust = gix_sec::Trust::from_path_ownership(&git_dir)?;
+         let mut options = trust_map.into_value_by_level(git_dir_trust);
++        options.git_dir_trust = git_dir_trust.into();
+         options.current_dir = Some(cwd);
+         ThreadSafeRepository::open_from_paths(git_dir, worktree_dir, options)
+     }

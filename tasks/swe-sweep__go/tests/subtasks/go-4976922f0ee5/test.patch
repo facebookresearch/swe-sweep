@@ -1,0 +1,26 @@
+diff --git a/src/html/template/escape_test.go b/src/html/template/escape_test.go
+index a39d696c42..aef5e01957 100644
+--- a/src/html/template/escape_test.go
++++ b/src/html/template/escape_test.go
+@@ -232,6 +232,21 @@ func TestEscape(t *testing.T) {
+ 			"<script>alert({{.A}})</script>",
+ 			`<script>alert(["\u003ca\u003e","\u003cb\u003e"])</script>`,
+ 		},
++		{
++			"scriptTypeSpace",
++			"<script type=\" \">{{.H}}</script>",
++			"<script type=\" \">\"\\u003cHello\\u003e\"</script>",
++		},
++		{
++			"scriptTypeTab",
++			"<script type=\"\t\">{{.H}}</script>",
++			"<script type=\"\t\">\"\\u003cHello\\u003e\"</script>",
++		},
++		{
++			"scriptTypeEmpty",
++			"<script type=\"\">{{.H}}</script>",
++			"<script type=\"\">\"\\u003cHello\\u003e\"</script>",
++		},
+ 		{
+ 			"jsObjValueNotOverEscaped",
+ 			"<button onclick='alert({{.A | html}})'>",

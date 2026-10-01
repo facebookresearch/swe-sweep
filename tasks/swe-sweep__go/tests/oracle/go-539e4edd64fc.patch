@@ -1,0 +1,44 @@
+diff --git a/src/crypto/tls/handshake_messages.go b/src/crypto/tls/handshake_messages.go
+index 17cf85910f..7ab0f100b8 100644
+--- a/src/crypto/tls/handshake_messages.go
++++ b/src/crypto/tls/handshake_messages.go
+@@ -384,6 +384,7 @@ func (m *clientHelloMsg) unmarshal(data []byte) bool {
+ 		return false
+ 	}
+ 
++	seenExts := make(map[uint16]bool)
+ 	for !extensions.Empty() {
+ 		var extension uint16
+ 		var extData cryptobyte.String
+@@ -392,6 +393,11 @@ func (m *clientHelloMsg) unmarshal(data []byte) bool {
+ 			return false
+ 		}
+ 
++		if seenExts[extension] {
++			return false
++		}
++		seenExts[extension] = true
++
+ 		switch extension {
+ 		case extensionServerName:
+ 			// RFC 6066, Section 3
+@@ -750,6 +756,7 @@ func (m *serverHelloMsg) unmarshal(data []byte) bool {
+ 		return false
+ 	}
+ 
++	seenExts := make(map[uint16]bool)
+ 	for !extensions.Empty() {
+ 		var extension uint16
+ 		var extData cryptobyte.String
+@@ -758,6 +765,11 @@ func (m *serverHelloMsg) unmarshal(data []byte) bool {
+ 			return false
+ 		}
+ 
++		if seenExts[extension] {
++			return false
++		}
++		seenExts[extension] = true
++
+ 		switch extension {
+ 		case extensionStatusRequest:
+ 			m.ocspStapling = true

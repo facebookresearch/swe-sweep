@@ -1,0 +1,15 @@
+diff --git a/core/math/geometry_3d.h b/core/math/geometry_3d.h
+index bd8dbe439e..fd945c17f8 100644
+--- a/core/math/geometry_3d.h
++++ b/core/math/geometry_3d.h
+@@ -292,6 +292,10 @@ public:
+ 			real_t den = p.normal.dot(dir);
+ 
+ 			if (Math::abs(den) <= (real_t)CMP_EPSILON) {
++				if (p.is_point_over(p_from)) {
++					// Separating plane.
++					return false;
++				}
+ 				continue; // Ignore parallel plane.
+ 			}
+ 

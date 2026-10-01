@@ -1,0 +1,69 @@
+diff --git a/src/Compilers/CSharp/Portable/Binder/Binder_Expressions.cs b/src/Compilers/CSharp/Portable/Binder/Binder_Expressions.cs
+index 4be320e5531..41cdf1a94f3 100644
+--- a/src/Compilers/CSharp/Portable/Binder/Binder_Expressions.cs
++++ b/src/Compilers/CSharp/Portable/Binder/Binder_Expressions.cs
+@@ -6136,7 +6136,6 @@ namespace Microsoft.CodeAnalysis.CSharp
+                                 if (handlerPlaceholders.Any(static placeholder => placeholder.ArgumentIndex is BoundInterpolatedStringArgumentPlaceholder.InstanceParameter or BoundInterpolatedStringArgumentPlaceholder.ExtensionReceiver))
+                                 {
+                                     diagnostics.Add(ErrorCode.ERR_InterpolatedStringsReferencingInstanceCannotBeInObjectInitializers, argument.Syntax.Location);
+-                                    hasErrors = true;
+                                 }
+                             }
+                         }
+diff --git a/src/Compilers/Core/Portable/Operations/ControlFlowGraphBuilder.InterpolatedStringContext.cs b/src/Compilers/Core/Portable/Operations/ControlFlowGraphBuilder.InterpolatedStringContext.cs
+index 7136476fc2d..7e83b7ad3ba 100644
+--- a/src/Compilers/Core/Portable/Operations/ControlFlowGraphBuilder.InterpolatedStringContext.cs
++++ b/src/Compilers/Core/Portable/Operations/ControlFlowGraphBuilder.InterpolatedStringContext.cs
+@@ -58,10 +58,21 @@ namespace Microsoft.CodeAnalysis.FlowAnalysis
+             Debug.Assert(operation != null);
+             Debug.Assert(_currentInterpolatedStringHandlerCreationContext.ApplicableCreationOperation == operation);
+ 
++            // Note: _currentInterpolatedStringHandlerArgumentContext may be null in error scenarios
++            // (for example, indexer with no setter in object initializer where the handler creation is visited
++            // as a child of an InvalidOperation rather than through VisitAndPushArguments).
++            // If a new test triggers this assert because a different ancestor has the error, it will likely be fine to just add
++            // that case to the assert.
+             if (assertArgumentContext)
+             {
+-                Debug.Assert(_currentInterpolatedStringHandlerArgumentContext != null);
+-                Debug.Assert(_currentInterpolatedStringHandlerArgumentContext.ApplicableCreationOperations.Contains((IInterpolatedStringHandlerCreationOperation)operation));
++                if (_currentInterpolatedStringHandlerArgumentContext != null)
++                {
++                    Debug.Assert(_currentInterpolatedStringHandlerArgumentContext.ApplicableCreationOperations.Contains((IInterpolatedStringHandlerCreationOperation)operation));
++                }
++                else
++                {
++                    Debug.Assert(placeholderOperation.Parent!.Parent is IObjectCreationOperation objectCreation && objectCreation.HasErrors(_compilation));
++                }
+             }
+         }
+     }
+diff --git a/src/Compilers/Core/Portable/Operations/ControlFlowGraphBuilder.cs b/src/Compilers/Core/Portable/Operations/ControlFlowGraphBuilder.cs
+index 9ed8d1815fb..8697889a071 100644
+--- a/src/Compilers/Core/Portable/Operations/ControlFlowGraphBuilder.cs
++++ b/src/Compilers/Core/Portable/Operations/ControlFlowGraphBuilder.cs
+@@ -6996,8 +6996,10 @@ oneMoreTime:
+ 
+                 case InterpolatedStringArgumentPlaceholderKind.CallsiteReceiver:
+                     AssertContainingContextIsForThisCreation(operation, assertArgumentContext: true);
+-                    Debug.Assert(_currentInterpolatedStringHandlerArgumentContext != null);
+-                    if (_currentInterpolatedStringHandlerArgumentContext.HasReceiver && tryGetArgumentOrReceiver(-1) is IOperation receiverCapture)
++                    // Context may be null in error scenarios (for example, indexer with no setter in object initializer)
++                    if (_currentInterpolatedStringHandlerArgumentContext != null &&
++                        _currentInterpolatedStringHandlerArgumentContext.HasReceiver &&
++                        tryGetArgumentOrReceiver(-1) is IOperation receiverCapture)
+                     {
+                         Debug.Assert(receiverCapture is IFlowCaptureReferenceOperation);
+                         return OperationCloner.CloneOperation(receiverCapture);
+@@ -7009,8 +7011,9 @@ oneMoreTime:
+ 
+                 case InterpolatedStringArgumentPlaceholderKind.CallsiteArgument:
+                     AssertContainingContextIsForThisCreation(operation, assertArgumentContext: true);
+-                    Debug.Assert(_currentInterpolatedStringHandlerArgumentContext != null);
+-                    if (tryGetArgumentOrReceiver(operation.ArgumentIndex) is IOperation argumentCapture)
++                    // Context may be null in error scenarios (for example, indexer with no setter in object initializer)
++                    if (_currentInterpolatedStringHandlerArgumentContext != null &&
++                        tryGetArgumentOrReceiver(operation.ArgumentIndex) is IOperation argumentCapture)
+                     {
+                         Debug.Assert(argumentCapture is IFlowCaptureReferenceOperation or IDiscardOperation);
+                         return OperationCloner.CloneOperation(argumentCapture);

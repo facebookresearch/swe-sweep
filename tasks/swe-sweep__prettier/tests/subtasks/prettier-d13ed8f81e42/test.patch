@@ -1,0 +1,84 @@
+diff --git a/tests/format/typescript/no-semi/__snapshots__/format.test.js.snap b/tests/format/typescript/no-semi/__snapshots__/format.test.js.snap
+index e13af981f..2d94c08d5 100644
+--- a/tests/format/typescript/no-semi/__snapshots__/format.test.js.snap
++++ b/tests/format/typescript/no-semi/__snapshots__/format.test.js.snap
+@@ -105,3 +105,64 @@ const el = ReactDOM.findDOMNode(ref);
+ 
+ ================================================================================
+ `;
++
++exports[`type-assertion.ts - {"semi":false} format 1`] = `
++====================================options=====================================
++parsers: ["typescript"]
++printWidth: 80
++semi: false
++                                                                                | printWidth
++=====================================input======================================
++// #14039
++a;
++<b>c;
++
++a;
++(<b>c).foo();
++
++a;
++<b>c + 1;
++
++=====================================output=====================================
++// #14039
++a
++;<b>c
++
++a
++;(<b>c).foo()
++
++a
++;<b>c + 1
++
++================================================================================
++`;
++
++exports[`type-assertion.ts format 1`] = `
++====================================options=====================================
++parsers: ["typescript"]
++printWidth: 80
++                                                                                | printWidth
++=====================================input======================================
++// #14039
++a;
++<b>c;
++
++a;
++(<b>c).foo();
++
++a;
++<b>c + 1;
++
++=====================================output=====================================
++// #14039
++a;
++<b>c;
++
++a;
++(<b>c).foo();
++
++a;
++<b>c + 1;
++
++================================================================================
++`;
+diff --git a/tests/format/typescript/no-semi/type-assertion.ts b/tests/format/typescript/no-semi/type-assertion.ts
+new file mode 100644
+index 000000000..11d85be4b
+--- /dev/null
++++ b/tests/format/typescript/no-semi/type-assertion.ts
+@@ -0,0 +1,9 @@
++// #14039
++a;
++<b>c;
++
++a;
++(<b>c).foo();
++
++a;
++<b>c + 1;

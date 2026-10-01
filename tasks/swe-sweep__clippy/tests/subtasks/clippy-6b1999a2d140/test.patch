@@ -1,0 +1,161 @@
+diff --git a/tests/ui/identity_op.fixed b/tests/ui/identity_op.fixed
+index a1b556029..4e14e1a5e 100644
+--- a/tests/ui/identity_op.fixed
++++ b/tests/ui/identity_op.fixed
+@@ -312,3 +312,49 @@ fn issue_13470() {
+     let _: u64 = 1u64 + ((x as i32 + y as i32) as u64);
+     //~^ identity_op
+ }
++
++fn issue_14932() {
++    let _ = 0usize + &Default::default(); // no error
++
++    0usize + &Default::default(); // no error
++
++    <usize as Default>::default();
++    //~^ identity_op
++
++    let _ = usize::default();
++    //~^ identity_op
++
++    let _n: usize = Default::default();
++    //~^ identity_op
++}
++
++// Expr's type can be inferred by the function's return type
++fn issue_14932_2() -> usize {
++    Default::default()
++    //~^ identity_op
++}
++
++trait Def {
++    fn def() -> Self;
++}
++
++impl Def for usize {
++    fn def() -> Self {
++        0
++    }
++}
++
++fn issue_14932_3() {
++    let _ = 0usize + &Def::def(); // no error
++
++    0usize + &Def::def(); // no error
++
++    <usize as Def>::def();
++    //~^ identity_op
++
++    let _ = usize::def();
++    //~^ identity_op
++
++    let _n: usize = Def::def();
++    //~^ identity_op
++}
+diff --git a/tests/ui/identity_op.rs b/tests/ui/identity_op.rs
+index f603e1078..ebbef5723 100644
+--- a/tests/ui/identity_op.rs
++++ b/tests/ui/identity_op.rs
+@@ -312,3 +312,49 @@ fn issue_13470() {
+     let _: u64 = 1u64 + ((x as i32 + y as i32) as u64 + 0u64);
+     //~^ identity_op
+ }
++
++fn issue_14932() {
++    let _ = 0usize + &Default::default(); // no error
++
++    0usize + &Default::default(); // no error
++
++    0usize + &<usize as Default>::default();
++    //~^ identity_op
++
++    let _ = 0usize + &usize::default();
++    //~^ identity_op
++
++    let _n: usize = 0usize + &Default::default();
++    //~^ identity_op
++}
++
++// Expr's type can be inferred by the function's return type
++fn issue_14932_2() -> usize {
++    0usize + &Default::default()
++    //~^ identity_op
++}
++
++trait Def {
++    fn def() -> Self;
++}
++
++impl Def for usize {
++    fn def() -> Self {
++        0
++    }
++}
++
++fn issue_14932_3() {
++    let _ = 0usize + &Def::def(); // no error
++
++    0usize + &Def::def(); // no error
++
++    0usize + &<usize as Def>::def();
++    //~^ identity_op
++
++    let _ = 0usize + &usize::def();
++    //~^ identity_op
++
++    let _n: usize = 0usize + &Def::def();
++    //~^ identity_op
++}
+diff --git a/tests/ui/identity_op.stderr b/tests/ui/identity_op.stderr
+index 8f9c2b603..24fa5db08 100644
+--- a/tests/ui/identity_op.stderr
++++ b/tests/ui/identity_op.stderr
+@@ -379,5 +379,47 @@ error: this operation has no effect
+ LL |     let _: u64 = 1u64 + ((x as i32 + y as i32) as u64 + 0u64);
+    |                         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ help: consider reducing it to: `((x as i32 + y as i32) as u64)`
+ 
+-error: aborting due to 63 previous errors
++error: this operation has no effect
++  --> tests/ui/identity_op.rs:321:5
++   |
++LL |     0usize + &<usize as Default>::default();
++   |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ help: consider reducing it to: `<usize as Default>::default()`
++
++error: this operation has no effect
++  --> tests/ui/identity_op.rs:324:13
++   |
++LL |     let _ = 0usize + &usize::default();
++   |             ^^^^^^^^^^^^^^^^^^^^^^^^^^ help: consider reducing it to: `usize::default()`
++
++error: this operation has no effect
++  --> tests/ui/identity_op.rs:327:21
++   |
++LL |     let _n: usize = 0usize + &Default::default();
++   |                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^ help: consider reducing it to: `Default::default()`
++
++error: this operation has no effect
++  --> tests/ui/identity_op.rs:333:5
++   |
++LL |     0usize + &Default::default()
++   |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^ help: consider reducing it to: `Default::default()`
++
++error: this operation has no effect
++  --> tests/ui/identity_op.rs:352:5
++   |
++LL |     0usize + &<usize as Def>::def();
++   |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ help: consider reducing it to: `<usize as Def>::def()`
++
++error: this operation has no effect
++  --> tests/ui/identity_op.rs:355:13
++   |
++LL |     let _ = 0usize + &usize::def();
++   |             ^^^^^^^^^^^^^^^^^^^^^^ help: consider reducing it to: `usize::def()`
++
++error: this operation has no effect
++  --> tests/ui/identity_op.rs:358:21
++   |
++LL |     let _n: usize = 0usize + &Def::def();
++   |                     ^^^^^^^^^^^^^^^^^^^^ help: consider reducing it to: `Def::def()`
++
++error: aborting due to 70 previous errors
+ 

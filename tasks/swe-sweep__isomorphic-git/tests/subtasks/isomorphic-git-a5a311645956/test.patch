@@ -1,0 +1,103 @@
+diff --git a/__tests__/test-add.js b/__tests__/test-add.js
+--- a/__tests__/test-add.js
++++ b/__tests__/test-add.js
+@@ -1,5 +1,5 @@
+ /* eslint-env node, browser, jasmine */
+-const { init, add, listFiles } = require('isomorphic-git')
++const { init, add, listFiles, walk, STAGE, readBlob } = require('isomorphic-git')
+ 
+ const { makeFixture } = require('./__helpers__/FixtureFS.js')
+ 
+@@ -33,6 +33,59 @@
+     await init({ fs, dir })
+     await add({ fs, dir, filepath: 'i.txt' })
+     expect((await listFiles({ fs, dir })).length).toEqual(0)
++  })
++  it('ignored file that is already tracked', async () => {
++    // Setup
++    const { fs, dir } = await makeFixture('test-add')
++    await init({ fs, dir })
++    // Track the file before it becomes ignored. That is how a file ends up
++    // tracked and ignored at the same time in a real repository.
++    await add({ fs, dir, filepath: 'i.txt' })
++    await writeGitIgnore(fs, dir)
++    await fs.write(dir + '/i.txt', 'changed after being ignored')
++    // Test
++    await add({ fs, dir, filepath: 'i.txt' })
++    // .gitignore applies to untracked files only, so canonical git stages this
++    // change instead of silently doing nothing.
++    const staged = await walk({
++      fs,
++      dir,
++      trees: [STAGE()],
++      map: async (filepath, [stage]) =>
++        filepath === 'i.txt' && stage ? stage.oid() : undefined,
++    })
++    const { blob } = await readBlob({ fs, dir, oid: staged[0] })
++    expect(Buffer.from(blob).toString('utf8')).toEqual(
++      'changed after being ignored'
++    )
++  })
++  it('tracked file inside an ignored folder', async () => {
++    // Setup
++    const { fs, dir } = await makeFixture('test-add')
++    await init({ fs, dir })
++    // Track one file inside the folder before the folder becomes ignored.
++    await add({ fs, dir, filepath: 'js_modules/awesome/index.js' })
++    await writeGitIgnore(fs, dir)
++    await fs.write(dir + '/js_modules/awesome/index.js', 'changed')
++    await fs.write(dir + '/js_modules/untracked.js', 'never staged')
++    // Test
++    await add({ fs, dir, filepath: '.' })
++    // Canonical git recurses into an ignored folder for the sake of the paths
++    // it already tracks, and stages those while leaving the rest alone.
++    const staged = await walk({
++      fs,
++      dir,
++      trees: [STAGE()],
++      map: async (filepath, [stage]) =>
++        filepath === 'js_modules/awesome/index.js' && stage
++          ? stage.oid()
++          : undefined,
++    })
++    const { blob } = await readBlob({ fs, dir, oid: staged[0] })
++    expect(Buffer.from(blob).toString('utf8')).toEqual('changed')
++    expect(await listFiles({ fs, dir })).not.toContain(
++      'js_modules/untracked.js'
++    )
+   })
+   it('non-existant file', async () => {
+     // Setup
+diff --git a/__tests__/test-status.js b/__tests__/test-status.js
+--- a/__tests__/test-status.js
++++ b/__tests__/test-status.js
+@@ -1,7 +1,7 @@
+ /* eslint-env node, browser, jasmine */
+ const path = require('path')
+ 
+-const { status, add, remove } = require('isomorphic-git')
++const { status, add, init, remove } = require('isomorphic-git')
+ 
+ const { makeFixture } = require('./__helpers__/FixtureFS.js')
+ 
+@@ -78,4 +78,20 @@
+     const b = await status({ fs, dir, gitdir, filepath: 'b.txt' })
+     expect(b).toEqual('added')
+   })
++
++  it('tracked file that matches a .gitignore rule', async () => {
++    // Setup
++    const { fs, dir, gitdir } = await makeFixture('test-add')
++    await init({ fs, dir, gitdir })
++    // Track the file before it becomes ignored, then change it on disk.
++    await add({ fs, dir, gitdir, filepath: 'i.txt' })
++    await fs.write(path.join(dir, '.gitignore'), 'i.txt\n')
++    await fs.write(path.join(dir, 'i.txt'), 'changed after being ignored')
++    // Test
++    // .gitignore applies to untracked files only. canonical git reports this
++    // file as modified, and `git check-ignore` does not match it at all.
++    expect(await status({ fs, dir, gitdir, filepath: 'i.txt' })).toEqual(
++      '*added'
++    )
++  })
+ })

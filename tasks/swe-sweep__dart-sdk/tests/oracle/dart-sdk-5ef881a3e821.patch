@@ -1,0 +1,12 @@
+diff --git a/pkg/analyzer/lib/src/dart/resolver/variable_declaration_resolver.dart b/pkg/analyzer/lib/src/dart/resolver/variable_declaration_resolver.dart
+index be50088f3c5..c68e4650475 100644
+--- a/pkg/analyzer/lib/src/dart/resolver/variable_declaration_resolver.dart
++++ b/pkg/analyzer/lib/src/dart/resolver/variable_declaration_resolver.dart
+@@ -59,6 +59,7 @@ class VariableDeclarationResolver {
+ 
+     if (isTopLevel) {
+       _resolver.flowAnalysis.topLevelDeclaration_exit();
++      _resolver.nullSafetyDeadCodeVerifier.flowEnd(node);
+     } else if (element.isLate) {
+       _resolver.flowAnalysis.flow?.lateInitializer_end();
+     }

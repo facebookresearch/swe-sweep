@@ -1,0 +1,31 @@
+diff --git a/sklearn/dummy.py b/sklearn/dummy.py
+index 84d42e7..bab9ca2 100644
+--- a/sklearn/dummy.py
++++ b/sklearn/dummy.py
+@@ -435,16 +435,18 @@ class DummyRegressor(BaseEstimator, RegressorMixin):
+                 raise TypeError("Constant target value has to be specified "
+                                 "when the constant strategy is used.")
+ 
+-            self.constant = check_array(self.constant,
+-                                        accept_sparse=['csr', 'csc', 'coo'],
+-                                        ensure_2d=False, ensure_min_samples=0)
+-
+-            if self.output_2d_ and self.constant.shape[0] != y.shape[1]:
++            self.constant_ = check_array(
++                self.constant,
++                accept_sparse=['csr', 'csc', 'coo'],
++                ensure_2d=False,
++                ensure_min_samples=0,
++            )
++
++            if self.output_2d_ and self.constant_.shape[0] != y.shape[1]:
+                 raise ValueError(
+                     "Constant target value should have "
+-                    "shape (%d, 1)." % y.shape[1])
+-
+-            self.constant_ = self.constant
++                    "shape (%d, 1)." % y.shape[1]
++                )
+ 
+         self.constant_ = np.reshape(self.constant_, (1, -1))
+         return self

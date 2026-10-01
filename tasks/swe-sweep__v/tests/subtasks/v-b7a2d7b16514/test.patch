@@ -1,0 +1,23 @@
+diff --git a/vlib/v/tests/multi_return_nil_voidptr_test.v b/vlib/v/tests/multi_return_nil_voidptr_test.v
+new file mode 100644
+index 000000000..d1b7cae7d
+--- /dev/null
++++ b/vlib/v/tests/multi_return_nil_voidptr_test.v
+@@ -0,0 +1,17 @@
++fn ret_int_ptr(arg int) !(int, voidptr) {
++	if arg < 0 {
++		return error('argument is smaller then zero')
++	}
++	return 1, [1, 2, 3].data
++}
++
++fn test_main() {
++	mut val1 := 0
++	mut val2 := unsafe { nil }
++	val1, val2 = ret_int_ptr(-1) or {
++		println(err)
++		val1, val2
++	}
++	assert val1 == 0
++	assert val2 == unsafe { nil }
++}

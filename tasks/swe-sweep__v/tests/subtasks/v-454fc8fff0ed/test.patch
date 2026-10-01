@@ -1,0 +1,47 @@
+diff --git a/vlib/strconv/atoi_test.v b/vlib/strconv/atoi_test.v
+index 626bc9dc1..220e5138c 100644
+--- a/vlib/strconv/atoi_test.v
++++ b/vlib/strconv/atoi_test.v
+@@ -27,6 +27,9 @@ fn test_atoi() {
+ }
+ 
+ fn test_parse_int() {
++	// symbols coverage
++	assert strconv.parse_int('1234567890', 10, 32)! == 1234567890
++	assert strconv.parse_int('19aAbBcCdDeEfF', 16, 64)! == 0x19aAbBcCdDeEfF
+ 	// Different bases
+ 	assert strconv.parse_int('16', 16, 0)! == 0x16
+ 	assert strconv.parse_int('16', 8, 0)! == 0o16
+@@ -83,6 +86,32 @@ fn test_common_parse_uint2() {
+ 	assert error == 4
+ }
+ 
++fn test_common_parse_uint2_fail() {
++	mut ascii_characters := [' ', '!', '"', '#', '\$', '%', '&', "'", '(', ')', '*', '+', ',',
++		'-', '.', '/', ':', ';', '<', '=', '>', '?', '@', '[', '\\', ']', '^', '_', '`', '{', '|',
++		'}', '~']
++	mut special_characters := [':', ';', '<', '=', '>', '?', '@', 'X', 'Y', 'Z', '[', '\\', ']',
++		'^', '_', '`']
++
++	num0, err0 := strconv.common_parse_uint2('1Ab', 16, 32)
++	assert num0 == 427
++	assert err0 == 0
++
++	for ch in ascii_characters {
++		// println("ch: [${ch}]")
++		txt_str := '${ch[0]:c}12Ab'
++		num, err := strconv.common_parse_uint2(txt_str, 16, 32)
++		assert err != 0
++	}
++
++	for ch in special_characters {
++		// println("ch: [${ch}]")
++		txt_str := '${ch[0]:c}12Ab'
++		num, err := strconv.common_parse_uint2(txt_str, 16, 32)
++		assert err != 0
++	}
++}
++
+ fn test_common_parse_uint2_compatibility() {
+ 	test_list := [
+ 		'1234,1234',

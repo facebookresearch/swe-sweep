@@ -1,0 +1,19 @@
+diff --git a/tests/dialects/test_postgres.py b/tests/dialects/test_postgres.py
+index e5827fd4eb..54e65dd62f 100644
+--- a/tests/dialects/test_postgres.py
++++ b/tests/dialects/test_postgres.py
+@@ -1316,3 +1316,14 @@ CROSS JOIN JSON_ARRAY_ELEMENTS(CAST(JSON_EXTRACT_PATH(tbox, 'boxes') AS JSON)) A
+         self.validate_identity(
+             "SELECT XMLELEMENT(NAME foo, XMLATTRIBUTES('xyz' AS bar), XMLELEMENT(NAME abc), XMLCOMMENT('test'), XMLELEMENT(NAME xyz))"
+         )
++
++    def test_udt(self):
++        def _validate_udt(sql: str):
++            self.validate_identity(sql).to.assert_is(exp.DataType)
++
++        _validate_udt("CAST(5 AS MyType)")
++        _validate_udt('CAST(5 AS "MyType")')
++        _validate_udt("CAST(5 AS MySchema.MyType)")
++        _validate_udt('CAST(5 AS "MySchema"."MyType")')
++        _validate_udt('CAST(5 AS MySchema."MyType")')
++        _validate_udt('CAST(5 AS "MyCatalog"."MySchema"."MyType")')

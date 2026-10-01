@@ -1,0 +1,40 @@
+diff --git a/vlib/v/tests/modules/module_a/module_a.v b/vlib/v/tests/modules/module_a/module_a.v
+new file mode 100644
+index 000000000..17b301548
+--- /dev/null
++++ b/vlib/v/tests/modules/module_a/module_a.v
+@@ -0,0 +1,5 @@
++module module_a
++
++pub interface Writer {
++	write(name string) string
++}
+diff --git a/vlib/v/tests/modules/module_b/module_b.v b/vlib/v/tests/modules/module_b/module_b.v
+new file mode 100644
+index 000000000..515fa5bc2
+--- /dev/null
++++ b/vlib/v/tests/modules/module_b/module_b.v
+@@ -0,0 +1,5 @@
++module module_b
++
++pub interface Reader {
++	read(name string) string
++}
+diff --git a/vlib/v/tests/multiple_embed_external_interface_test.v b/vlib/v/tests/multiple_embed_external_interface_test.v
+new file mode 100644
+index 000000000..ac5465912
+--- /dev/null
++++ b/vlib/v/tests/multiple_embed_external_interface_test.v
+@@ -0,0 +1,12 @@
++import module_a
++import module_b
++
++pub interface MyInterface {
++	module_a.Writer
++	module_b.Reader
++}
++
++fn test_multiple_embed_external_interface() {
++	println('abc')
++	assert true
++}

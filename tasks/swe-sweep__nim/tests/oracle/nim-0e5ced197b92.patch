@@ -1,0 +1,49 @@
+diff --git a/compiler/semtempl.nim b/compiler/semtempl.nim
+index 49ce55a..d4db6c6 100644
+--- a/compiler/semtempl.nim
++++ b/compiler/semtempl.nim
+@@ -535,13 +535,20 @@ proc semTemplBody(c: var TemplCtx, n: PNode): PNode =
+   of nkConverterDef:
+     result = semRoutineInTemplBody(c, n, skConverter)
+   of nkPragmaExpr:
+-    result[0] = semTemplBody(c, n[0])
++    result = semTemplBodySons(c, n)
+   of nkPostfix:
+     result[1] = semTemplBody(c, n[1])
+   of nkPragma:
+-    for x in n:
+-      if x.kind == nkExprColonExpr:
+-        x[1] = semTemplBody(c, x[1])
++    for i in 0 ..< n.len:
++      let x = n[i]
++      let prag = whichPragma(x)
++      if prag == wInvalid:
++        # only sem if not a language-level pragma 
++        result[i] = semTemplBody(c, x)
++      elif x.kind in nkPragmaCallKinds:
++        # is pragma, but value still needs to be checked
++        for j in 1 ..< x.len:
++          x[j] = semTemplBody(c, x[j])
+   of nkBracketExpr:
+     result = newNodeI(nkCall, n.info)
+     result.add newIdentNode(getIdent(c.c.cache, "[]"), n.info)
+diff --git a/compiler/trees.nim b/compiler/trees.nim
+index 05c0605..05c0605 100644
+--- a/compiler/trees.nim
++++ b/compiler/trees.nim
+@@ -134,6 +134,13 @@ proc whichPragma*(n: PNode): TSpecialWord =
+   of nkIdent: result = whichKeyword(key.ident)
+   of nkSym: result = whichKeyword(key.sym.name)
+   of nkCast: result = wCast
+   of nkClosedSymChoice, nkOpenSymChoice:
+     result = whichPragma(key[0])
++  of nkBracketExpr:
++    if n.kind notin nkPragmaCallKinds: return wInvalid
++    result = whichPragma(key[0])
++    if result notin {wHint, wHintAsError, wWarning, wWarningAsError}:
++      # note bracket pragmas, see processNote
++      result = wInvalid
++    return
+   else: result = wInvalid
+   if result in nonPragmaWordsLow..nonPragmaWordsHigh:
+     result = wInvalid

@@ -1,0 +1,49 @@
+diff --git a/lib/elixir/lib/partition_supervisor.ex b/lib/elixir/lib/partition_supervisor.ex
+index 07b443d..e193059 100644
+--- a/lib/elixir/lib/partition_supervisor.ex
++++ b/lib/elixir/lib/partition_supervisor.ex
+@@ -143,6 +143,8 @@ def handle_call({:collect, msg}, _from, state) do
+   """
+   @type name :: atom() | {:via, module(), term()}
+ 
++  defguardp is_name(name) when is_atom(name) or elem(name, 0) == :via
++
+   @doc false
+   def child_spec(opts) when is_list(opts) do
+     id =
+@@ -326,7 +328,7 @@ defp init_partitions({:via, _, _}, partitions) do
+   """
+   @doc since: "1.14.0"
+   @spec partitions(name()) :: pos_integer()
+-  def partitions(name) do
++  def partitions(name) when is_name(name) do
+     {_name, partitions} = name_partitions(name)
+     partitions
+   end
+@@ -371,7 +373,7 @@ defp name_partitions(name) when is_tuple(name) do
+           # Inlining [module()] | :dynamic here because :supervisor.modules() is not exported
+           {:undefined, pid | :restarting, :worker | :supervisor, [module()] | :dynamic}
+         ]
+-  def which_children(name) when is_atom(name) or elem(name, 0) == :via do
++  def which_children(name) when is_name(name) do
+     Supervisor.which_children(name)
+   end
+ 
+@@ -399,7 +401,7 @@ def which_children(name) when is_atom(name) or elem(name, 0) == :via do
+           supervisors: non_neg_integer,
+           workers: non_neg_integer
+         }
+-  def count_children(supervisor) when is_atom(supervisor) do
++  def count_children(supervisor) when is_name(supervisor) do
+     Supervisor.count_children(supervisor)
+   end
+ 
+@@ -415,7 +417,7 @@ def count_children(supervisor) when is_atom(supervisor) do
+   """
+   @doc since: "1.14.0"
+   @spec stop(name(), reason :: term, timeout) :: :ok
+-  def stop(supervisor, reason \\ :normal, timeout \\ :infinity) when is_atom(supervisor) do
++  def stop(supervisor, reason \\ :normal, timeout \\ :infinity) when is_name(supervisor) do
+     Supervisor.stop(supervisor, reason, timeout)
+   end
+ 

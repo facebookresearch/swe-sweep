@@ -1,0 +1,18 @@
+diff --git a/tests/test_black.py b/tests/test_black.py
+index 86fabb89..358206b0 100644
+--- a/tests/test_black.py
++++ b/tests/test_black.py
+@@ -1979,6 +1979,13 @@ class TestCaching:
+             cache = black.read_cache(mode)
+             assert str(src) in cache
+ 
++    def test_cache_empty_file(self) -> None:
++        mode = DEFAULT_MODE
++        with cache_dir():
++            cache_file = get_cache_file(mode)
++            cache_file.touch()
++            assert black.read_cache(mode) == {}
++
+     def test_cache_single_file_already_cached(self) -> None:
+         mode = DEFAULT_MODE
+         with cache_dir() as workspace:

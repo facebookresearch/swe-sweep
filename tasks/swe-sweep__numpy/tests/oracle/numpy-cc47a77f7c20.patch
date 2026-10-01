@@ -1,0 +1,13 @@
+diff --git a/numpy/core/src/multiarray/descriptor.c b/numpy/core/src/multiarray/descriptor.c
+index bb3cc9d4e138..a0dc98f0e424 100644
+--- a/numpy/core/src/multiarray/descriptor.c
++++ b/numpy/core/src/multiarray/descriptor.c
+@@ -83,7 +83,7 @@ _arraydescr_fromctypes(PyObject *obj)
+                 /* derived type */
+                 PyObject *newtup;
+                 PyArray_Descr *derived;
+-                newtup = Py_BuildValue("NN", newdescr, length);
++                newtup = Py_BuildValue("N(N)", newdescr, length);
+                 ret = PyArray_DescrConverter(newtup, &derived);
+                 Py_DECREF(newtup);
+                 if (ret == NPY_SUCCEED) {

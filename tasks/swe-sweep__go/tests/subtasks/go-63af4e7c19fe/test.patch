@@ -1,0 +1,14 @@
+diff --git a/src/net/url/url_test.go b/src/net/url/url_test.go
+index 6807d58f1a..7c807d7a38 100644
+--- a/src/net/url/url_test.go
++++ b/src/net/url/url_test.go
+@@ -1244,6 +1244,9 @@ var resolveReferenceTests = []struct {
+ 	{"https://a/b/c/d;p?q", "//g/d/e/f?y#s", "https://g/d/e/f?y#s"},
+ 	{"https://a/b/c/d;p#s", "?y", "https://a/b/c/d;p?y"},
+ 	{"https://a/b/c/d;p?q#s", "?y", "https://a/b/c/d;p?y"},
++
++	// Empty path and query but with ForceQuery (issue 46033).
++	{"https://a/b/c/d;p?q#s", "?", "https://a/b/c/d;p?"},
+ }
+ 
+ func TestResolveReference(t *testing.T) {

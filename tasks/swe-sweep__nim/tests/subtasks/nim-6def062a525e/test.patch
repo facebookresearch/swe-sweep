@@ -1,0 +1,17 @@
+diff --git a/tests/tools/tctags2.nim b/tests/tools/tctags2.nim
+new file mode 100644
+index 000000000..16299544f
+--- /dev/null
++++ b/tests/tools/tctags2.nim
+@@ -0,0 +1,11 @@
++discard """
++  cmd: '''nim ctags $file'''
++  action: "compile"
++"""
++
++type
++  Foo = object
++
++proc hello() = discard
++
++proc `$`(x: Foo): string = "foo"

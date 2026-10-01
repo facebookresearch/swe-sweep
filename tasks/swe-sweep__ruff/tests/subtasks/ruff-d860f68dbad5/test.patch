@@ -1,0 +1,79 @@
+diff --git a/crates/ruff_linter/resources/test/fixtures/flake8_django/DJ008.py b/crates/ruff_linter/resources/test/fixtures/flake8_django/DJ008.py
+index ccf4bc36cd..3def81855f 100644
+--- a/crates/ruff_linter/resources/test/fixtures/flake8_django/DJ008.py
++++ b/crates/ruff_linter/resources/test/fixtures/flake8_django/DJ008.py
+@@ -181,3 +181,51 @@ class SubclassTestModel2(TestModel4):
+ # Subclass without __str__
+ class SubclassTestModel3(TestModel1):
+     pass
++
++
++# Test cases for type-annotated abstract models - these should NOT trigger DJ008
++from typing import ClassVar
++from django_stubs_ext.db.models import TypedModelMeta
++
++
++class TypeAnnotatedAbstractModel1(models.Model):
++    """Model with type-annotated abstract = True - should not trigger DJ008"""
++    new_field = models.CharField(max_length=10)
++
++    class Meta(TypedModelMeta):
++        abstract: ClassVar[bool] = True
++
++
++class TypeAnnotatedAbstractModel2(models.Model):
++    """Model with type-annotated abstract = True using regular Meta - should not trigger DJ008"""  
++    new_field = models.CharField(max_length=10)
++
++    class Meta:
++        abstract: ClassVar[bool] = True
++
++
++class TypeAnnotatedAbstractModel3(models.Model):
++    """Model with type-annotated abstract = True but without ClassVar - should not trigger DJ008"""
++    new_field = models.CharField(max_length=10)
++
++    class Meta:
++        abstract: bool = True
++
++
++class TypeAnnotatedNonAbstractModel(models.Model):
++    """Model with type-annotated abstract = False - should trigger DJ008"""
++    new_field = models.CharField(max_length=10)
++
++    class Meta:
++        abstract: ClassVar[bool] = False
++
++
++class TypeAnnotatedAbstractModelWithStr(models.Model):
++    """Model with type-annotated abstract = True and __str__ method - should not trigger DJ008"""
++    new_field = models.CharField(max_length=10)
++
++    class Meta(TypedModelMeta):
++        abstract: ClassVar[bool] = True
++
++    def __str__(self):
++        return self.new_field
+diff --git a/crates/ruff_linter/src/rules/flake8_django/snapshots/ruff_linter__rules__flake8_django__tests__DJ008_DJ008.py.snap b/crates/ruff_linter/src/rules/flake8_django/snapshots/ruff_linter__rules__flake8_django__tests__DJ008_DJ008.py.snap
+index e24f8f8cfd..5a6f1e4c9d 100644
+--- a/crates/ruff_linter/src/rules/flake8_django/snapshots/ruff_linter__rules__flake8_django__tests__DJ008_DJ008.py.snap
++++ b/crates/ruff_linter/src/rules/flake8_django/snapshots/ruff_linter__rules__flake8_django__tests__DJ008_DJ008.py.snap
+@@ -1,6 +1,5 @@
+ ---
+ source: crates/ruff_linter/src/rules/flake8_django/mod.rs
+-snapshot_kind: text
+ ---
+ DJ008.py:6:7: DJ008 Model does not define `__str__` method
+   |
+@@ -31,3 +30,11 @@ DJ008.py:182:7: DJ008 Model does not define `__str__` method
+     |       ^^^^^^^^^^^^^^^^^^ DJ008
+ 183 |     pass
+     |
++
++DJ008.py:215:7: DJ008 Model does not define `__str__` method
++    |
++215 | class TypeAnnotatedNonAbstractModel(models.Model):
++    |       ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ DJ008
++216 |     """Model with type-annotated abstract = False - should trigger DJ008"""
++217 |     new_field = models.CharField(max_length=10)
++    |

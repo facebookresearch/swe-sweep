@@ -1,0 +1,31 @@
+diff --git a/core/trino-main/src/test/java/io/trino/operator/scalar/TestMathFunctions.java b/core/trino-main/src/test/java/io/trino/operator/scalar/TestMathFunctions.java
+index 9e0f262f6f4..a3b841fcafe 100644
+--- a/core/trino-main/src/test/java/io/trino/operator/scalar/TestMathFunctions.java
++++ b/core/trino-main/src/test/java/io/trino/operator/scalar/TestMathFunctions.java
+@@ -784,6 +784,12 @@ public class TestMathFunctions
+         assertFunction("round(0.3E0)", DOUBLE, 0.0);
+         assertFunction("round(-0.3E0)", DOUBLE, -0.0);
+ 
++        // 923 * 10^16 exceeds Long.MAX_VALUE
++        assertFunction("round(923e0, 16)", DOUBLE, 923.0);
++
++        // 3000 * 10^16 exceeds Long.MAX_VALUE. Note that value has limited precision even before round is invoked
++        assertFunction("round(DOUBLE '3000.1234567890123456789', 16)", DOUBLE, 3000.1234567890124);
++
+         assertFunction("round(TINYINT '3', TINYINT '1')", TINYINT, (byte) 3);
+         assertFunction("round(TINYINT '3', 1)", TINYINT, (byte) 3);
+         assertFunction("round(SMALLINT '3', SMALLINT '1')", SMALLINT, (short) 3);
+@@ -797,6 +803,13 @@ public class TestMathFunctions
+         assertFunction("round(REAL '-3.5', 0)", REAL, -4.0f);
+         assertFunction("round(REAL '-3.5001', 0)", REAL, -4.0f);
+         assertFunction("round(REAL '-3.99', 0)", REAL, -4.0f);
++
++        // 923 * 10^16 exceeds Long.MAX_VALUE
++        assertFunction("round(REAL '923', 16)", REAL, 923f);
++
++        // 3000 * 10^16 exceeds Long.MAX_VALUE. Note that value has limited precision even before round is invoked
++        assertFunction("round(REAL '3000.1234567890123456789', 16)", REAL, 3000.1235f);
++
+         assertFunction("round(3, 1)", INTEGER, 3);
+         assertFunction("round(-3, 1)", INTEGER, -3);
+         assertFunction("round(-3, INTEGER '1')", INTEGER, -3);

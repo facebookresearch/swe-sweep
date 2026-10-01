@@ -1,0 +1,31 @@
+diff --git a/tests/objvariant/treassign.nim b/tests/objvariant/treassign.nim
+index 9549cb29c..527204616 100644
+--- a/tests/objvariant/treassign.nim
++++ b/tests/objvariant/treassign.nim
+@@ -34,3 +34,25 @@ proc passToVar(x: var Token) = discard
+   t.curr = TokenObject(kind: t.curr.kind, foo: "abc")
+ 
+   t.curr.kind = Token.foo
++
++
++block:
++  type
++    TokenKind = enum
++      strLit, intLit
++    Token = object
++      case kind*: TokenKind
++      of strLit:
++        s*: string
++      of intLit:
++        i*: int64
++
++  var t = Token(kind: strLit, s: "abc")
++
++  {.cast(uncheckedAssign).}:
++
++    # inside the 'cast' section it is allowed to assign to the 't.kind' field directly:
++    t.kind = intLit
++
++  {.cast(uncheckedAssign).}:
++    t.kind = strLit
+\ No newline at end of file

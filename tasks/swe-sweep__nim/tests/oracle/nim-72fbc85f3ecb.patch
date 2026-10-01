@@ -1,0 +1,78 @@
+diff --git a/compiler/semexprs.nim b/compiler/semexprs.nim
+index c11cecf..417f261 100644
+--- a/compiler/semexprs.nim
++++ b/compiler/semexprs.nim
+@@ -583,14 +583,34 @@ proc arrayConstrType(c: PContext, n: PNode): PType =
+ 
+ proc semArrayConstr(c: PContext, n: PNode, flags: TExprFlags): PNode =
+   result = newNodeI(nkBracket, n.info)
+-  result.typ = newTypeS(tyArray, c)
+-  rawAddSon(result.typ, nil)     # index type
++  # nkBracket nodes can also be produced by the VM as seq constant nodes
++  # in which case, we cannot produce a new array type for the node,
++  # as this might lose type info even when the node has array type
++  let constructType = n.typ.isNil
++  var expectedElementType, expectedIndexType: PType = nil
++  var expectedBase: PType = nil
++  if constructType:
++    result.typ = newTypeS(tyArray, c)
++    rawAddSon(result.typ, nil)     # index type
++  else:
++    result.typ = n.typ
++    expectedBase = n.typ.skipTypes(abstractRange) # include tyDistinct this time
++  if expectedBase != nil:
++    case expectedBase.kind
++    of tyArray:
++      expectedIndexType = expectedBase[0]
++      expectedElementType = expectedBase[1]
++    of tyOpenArray, tySequence:
++      # typed bracket expressions can also have seq type
++      expectedElementType = expectedBase[0]
++    else: discard
+   var
+     firstIndex, lastIndex: Int128
+     indexType = getSysType(c.graph, n.info, tyInt)
+     lastValidIndex = lastOrd(c.config, indexType)
+   if n.len == 0:
+-    rawAddSon(result.typ, newTypeS(tyEmpty, c)) # needs an empty basetype!
++    if constructType:
++      rawAddSon(result.typ, newTypeS(tyEmpty, c)) # needs an empty basetype!
+     lastIndex = toInt128(-1)
+   else:
+     var x = n[0]
+@@ -607,7 +627,11 @@ proc semArrayConstr(c: PContext, n: PNode, flags: TExprFlags): PNode =
+         x = x[1]
+ 
+     let yy = semExprWithType(c, x)
+-    var typ = yy.typ
++    var typ: PType
++    if constructType:
++      typ = yy.typ
++    else:
++      typ = expectedElementType
+     result.add yy
+     #var typ = skipTypes(result[0].typ, {tyGenericInst, tyVar, tyLent, tyOrdinal})
+     for i in 1..<n.len:
+@@ -627,15 +651,18 @@ proc semArrayConstr(c: PContext, n: PNode, flags: TExprFlags): PNode =
+ 
+       let xx = semExprWithType(c, x, {})
+       result.add xx
+-      typ = commonType(c, typ, xx.typ)
++      if constructType:
++        typ = commonType(c, typ, xx.typ)
+       #n[i] = semExprWithType(c, x, {})
+       #result.add fitNode(c, typ, n[i])
+       inc(lastIndex)
+-    addSonSkipIntLit(result.typ, typ, c.idgen)
++    if constructType:
++      addSonSkipIntLit(result.typ, typ, c.idgen)
+     for i in 0..<result.len:
+       result[i] = fitNode(c, typ, result[i], result[i].info)
+-  result.typ[0] = makeRangeType(c, toInt64(firstIndex), toInt64(lastIndex), n.info,
+-                                     indexType)
++  if constructType:
++    result.typ[0] = makeRangeType(c, toInt64(firstIndex), toInt64(lastIndex), n.info,
++                                       indexType)
+ 
+ proc fixAbstractType(c: PContext, n: PNode) =
+   for i in 1..<n.len:

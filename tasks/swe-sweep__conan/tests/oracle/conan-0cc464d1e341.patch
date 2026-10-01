@@ -1,0 +1,19 @@
+diff --git a/conans/client/graph/compatibility.py b/conans/client/graph/compatibility.py
+index a23669c88..7805878c2 100644
+--- a/conans/client/graph/compatibility.py
++++ b/conans/client/graph/compatibility.py
+@@ -65,10 +65,10 @@ def cppstd_compat(conanfile):
+         new_combinations = []
+         for comb in combinations:
+             for f in factor:
+-                comb = comb.copy()
+-                comb.update(f)
+-                new_combinations.append(comb)
+-        combinations = new_combinations
++                new_comb = comb.copy()
++                new_comb.update(f)
++                new_combinations.append(new_comb)
++        combinations.extend(new_combinations)
+ 
+     ret = []
+     for comb in combinations:

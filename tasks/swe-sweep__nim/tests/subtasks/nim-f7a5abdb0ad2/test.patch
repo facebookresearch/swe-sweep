@@ -1,0 +1,24 @@
+diff --git a/tests/notnil/tparse.nim b/tests/notnil/tparse.nim
+new file mode 100644
+index 000000000..5c938ff04
+--- /dev/null
++++ b/tests/notnil/tparse.nim
+@@ -0,0 +1,18 @@
++# issue #16324
++
++{.push experimental: "notnil".}
++
++block:
++  type Foo = ref object
++    value: int
++    
++  proc newFoo1(): Foo not nil =               # This compiles
++    return Foo(value: 1)
++    
++  proc newFoo2(): Foo not nil {.inline.} =    # This does not
++    return Foo(value: 1)
++
++  doAssert newFoo1().value == 1
++  doAssert newFoo2().value == 1
++
++{.pop.}

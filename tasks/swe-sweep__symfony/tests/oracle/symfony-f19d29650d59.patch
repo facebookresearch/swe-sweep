@@ -1,0 +1,13 @@
+diff --git a/src/Symfony/Component/Messenger/Bridge/Doctrine/Transport/Connection.php b/src/Symfony/Component/Messenger/Bridge/Doctrine/Transport/Connection.php
+index 73a388e..519dc64 100644
+--- a/src/Symfony/Component/Messenger/Bridge/Doctrine/Transport/Connection.php
++++ b/src/Symfony/Component/Messenger/Bridge/Doctrine/Transport/Connection.php
+@@ -290,7 +290,7 @@ class Connection implements ResetInterface
+     {
+         $configuration = $this->driverConnection->getConfiguration();
+         $assetFilter = $configuration->getSchemaAssetsFilter();
+-        $configuration->setSchemaAssetsFilter(static fn () => true);
++        $configuration->setSchemaAssetsFilter(function (string $tableName) { return $tableName === $this->configuration['table_name']; });
+         $this->updateSchema();
+         $configuration->setSchemaAssetsFilter($assetFilter);
+         $this->autoSetup = false;

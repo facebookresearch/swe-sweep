@@ -1,0 +1,46 @@
+diff --git a/test/regress/cli/CMakeLists.txt b/test/regress/cli/CMakeLists.txt
+index 22211e3d2f..c3658cc402 100644
+--- a/test/regress/cli/CMakeLists.txt
++++ b/test/regress/cli/CMakeLists.txt
+@@ -1452,6 +1452,7 @@ set(regress_0_tests
+   regress0/sets/proj-issue486-sets-split-eq.smt2
+   regress0/sets/proj-issue493-choose-det.smt2
+   regress0/sets/proj-issue501-choose-bool-term-var.smt2
++  regress0/sets/proj-issue583.smt2
+   regress0/sets/rec_copy_loop_check_heap_access_43_4.smt2
+   regress0/sets/setel-eq.smt2
+   regress0/sets/sets-deq-dd.smt2
+@@ -2707,6 +2708,7 @@ set(regress_1_tests
+   regress1/sets/proj-issue164.smt2
+   regress1/sets/proj-issue178.smt2
+   regress1/sets/proj-issue494-finite-leafof.smt2
++  regress1/sets/proj-issue610.smt2
+   regress1/sets/relation_aggregate1.smt2
+   regress1/sets/relation_group1.smt2
+   regress1/sets/relation_group2.smt2
+diff --git a/test/regress/cli/regress0/sets/proj-issue583.smt2 b/test/regress/cli/regress0/sets/proj-issue583.smt2
+new file mode 100644
+index 0000000000..9f1baf0535
+--- /dev/null
++++ b/test/regress/cli/regress0/sets/proj-issue583.smt2
+@@ -0,0 +1,6 @@
++; EXPECT: sat
++(set-logic ALL)
++(set-option :sets-ext true)
++(set-option :produce-unsat-cores true)
++(assert (set.choose (set.insert (set.is_singleton (set.complement (set.singleton true))) (set.complement (set.complement (set.singleton true))))))
++(check-sat)
+diff --git a/test/regress/cli/regress1/sets/proj-issue610.smt2 b/test/regress/cli/regress1/sets/proj-issue610.smt2
+new file mode 100644
+index 0000000000..01bb44f399
+--- /dev/null
++++ b/test/regress/cli/regress1/sets/proj-issue610.smt2
+@@ -0,0 +1,8 @@
++; COMMAND-LINE: -q
++; EXPECT: sat
++(set-logic ALL)
++(set-option :sets-ext true)
++(declare-const x (Set (Array Bool Bool)))
++(assert (select (set.choose (set.minus (set.singleton (set.choose (set.complement x))) (set.minus (set.singleton (set.choose (set.complement x))) (set.minus (set.singleton (set.choose (set.complement x))) (set.minus (set.singleton (set.choose (set.complement x))) (set.minus (set.singleton (set.choose (set.complement x))) x)))))) (seq.prefixof seq.empty seq.empty)))
++(assert (select (set.choose (set.minus (set.singleton (set.choose (set.complement x))) (ite (select (set.choose x) false) x (set.complement x)))) (seq.prefixof seq.empty seq.empty)))
++(check-sat)

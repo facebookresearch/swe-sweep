@@ -1,0 +1,13 @@
+diff --git a/codec/src/main/java/io/netty/handler/codec/CodecOutputList.java b/codec/src/main/java/io/netty/handler/codec/CodecOutputList.java
+index bd707ec5d3..5cf161fc69 100644
+--- a/codec/src/main/java/io/netty/handler/codec/CodecOutputList.java
++++ b/codec/src/main/java/io/netty/handler/codec/CodecOutputList.java
+@@ -148,7 +148,7 @@ final class CodecOutputList extends AbstractList<Object> implements RandomAccess
+             expandArray();
+         }
+ 
+-        if (index != size - 1) {
++        if (index != size) {
+             System.arraycopy(array, index, array, index + 1, size - index);
+         }
+ 

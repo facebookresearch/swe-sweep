@@ -1,0 +1,38 @@
+diff --git a/modules/gdscript/tests/scripts/runtime/features/release_at_end_of_statement.gd b/modules/gdscript/tests/scripts/runtime/features/release_at_end_of_statement.gd
+new file mode 100644
+index 0000000000..ba16acd168
+--- /dev/null
++++ b/modules/gdscript/tests/scripts/runtime/features/release_at_end_of_statement.gd
+@@ -0,0 +1,19 @@
++class TestRefCounted:
++	extends RefCounted
++	func _notification(what: int) -> void:
++		if what == NOTIFICATION_PREDELETE:
++			print("    TestRefCounted released")
++
++func test() -> void:
++	test1()
++	test2()
++
++func test1(_a: Array = []) -> void:
++	print("test1 (untyped Array default)")
++	var _count = TestRefCounted.new().get_reference_count()
++	print("    end of statement")
++
++func test2(_a: Array[String] = []) -> void:
++	print("test2 (typed Array[String] default)")
++	var _count = TestRefCounted.new().get_reference_count()
++	print("    end of statement")
+diff --git a/modules/gdscript/tests/scripts/runtime/features/release_at_end_of_statement.out b/modules/gdscript/tests/scripts/runtime/features/release_at_end_of_statement.out
+new file mode 100644
+index 0000000000..a242eab92e
+--- /dev/null
++++ b/modules/gdscript/tests/scripts/runtime/features/release_at_end_of_statement.out
+@@ -0,0 +1,7 @@
++GDTEST_OK
++test1 (untyped Array default)
++    TestRefCounted released
++    end of statement
++test2 (typed Array[String] default)
++    TestRefCounted released
++    end of statement

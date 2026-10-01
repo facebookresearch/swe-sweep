@@ -1,0 +1,38 @@
+diff --git a/xarray/tests/test_conventions.py b/xarray/tests/test_conventions.py
+index d5d8e00d..b8b9d19e 100644
+--- a/xarray/tests/test_conventions.py
++++ b/xarray/tests/test_conventions.py
+@@ -9,6 +9,7 @@ from xarray import (
+     Dataset,
+     SerializationWarning,
+     Variable,
++    cftime_range,
+     coding,
+     conventions,
+     open_dataset,
+@@ -416,3 +417,25 @@ class TestCFEncodedDataStore(CFEncodedBase):
+     def test_encoding_kwarg_fixed_width_string(self) -> None:
+         # CFEncodedInMemoryStore doesn't support explicit string encodings.
+         pass
++
++
++def test_decode_cf_variable_timedelta64():
++    variable = Variable(["time"], pd.timedelta_range("1D", periods=2))
++    decoded = conventions.decode_cf_variable("time", variable)
++    assert decoded.encoding == {}
++    assert_identical(decoded, variable)
++
++
++def test_decode_cf_variable_datetime64():
++    variable = Variable(["time"], pd.date_range("2000", periods=2))
++    decoded = conventions.decode_cf_variable("time", variable)
++    assert decoded.encoding == {}
++    assert_identical(decoded, variable)
++
++
++@requires_cftime
++def test_decode_cf_variable_cftime():
++    variable = Variable(["time"], cftime_range("2000", periods=2))
++    decoded = conventions.decode_cf_variable("time", variable)
++    assert decoded.encoding == {}
++    assert_identical(decoded, variable)

@@ -1,0 +1,13 @@
+diff --git a/clippy_lints/src/exhaustive_items.rs b/clippy_lints/src/exhaustive_items.rs
+index b3361e2f7..e1215b22b 100644
+--- a/clippy_lints/src/exhaustive_items.rs
++++ b/clippy_lints/src/exhaustive_items.rs
+@@ -76,7 +76,7 @@ impl LateLintPass<'_> for ExhaustiveItems {
+                 "exported enums should not be exhaustive",
+                 [].as_slice(),
+             ),
+-            ItemKind::Struct(_, v, ..) => (
++            ItemKind::Struct(_, v, ..) if v.fields().iter().all(|f| f.default.is_none()) => (
+                 EXHAUSTIVE_STRUCTS,
+                 "exported structs should not be exhaustive",
+                 v.fields(),

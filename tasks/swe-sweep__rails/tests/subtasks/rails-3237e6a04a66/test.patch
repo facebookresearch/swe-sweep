@@ -1,0 +1,66 @@
+diff --git a/activerecord/test/cases/associations/eager_test.rb b/activerecord/test/cases/associations/eager_test.rb
+index e1298fa81d5..143318a6d09 100644
+--- a/activerecord/test/cases/associations/eager_test.rb
++++ b/activerecord/test/cases/associations/eager_test.rb
+@@ -30,6 +30,9 @@ require "models/categorization"
+ require "models/sponsor"
+ require "models/mentor"
+ require "models/contract"
++require "models/pirate"
++require "models/matey"
++require "models/parrot"
+ 
+ class EagerLoadingTooManyIdsTest < ActiveRecord::TestCase
+   fixtures :citations
+@@ -47,7 +50,8 @@ class EagerAssociationTest < ActiveRecord::TestCase
+   fixtures :posts, :comments, :authors, :essays, :author_addresses, :categories, :categories_posts,
+             :companies, :accounts, :tags, :taggings, :ratings, :people, :readers, :categorizations,
+             :owners, :pets, :author_favorites, :jobs, :references, :subscribers, :subscriptions, :books,
+-            :developers, :projects, :developers_projects, :members, :memberships, :clubs, :sponsors
++            :developers, :projects, :developers_projects, :members, :memberships, :clubs, :sponsors,
++            :pirates, :mateys
+ 
+   def test_eager_with_has_one_through_join_model_with_conditions_on_the_through
+     member = Member.all.merge!(includes: :favorite_club).find(members(:some_other_guy).id)
+@@ -199,6 +203,27 @@ class EagerAssociationTest < ActiveRecord::TestCase
+     assert_no_queries { authors.map(&:post) }
+   end
+ 
++  def test_eager_loaded_has_one_association_without_primary_key
++    pirate = pirates(:redbeard)
++    attacker_matey = pirate.attacker_matey
++    eager_loaded = Pirate.eager_load(:attacker_matey).where(id: pirate).first
++
++    assert_no_queries do
++      assert_equal attacker_matey.attributes, eager_loaded.attacker_matey.attributes
++    end
++  end
++
++  def test_eager_loaded_has_many_association_without_primary_key
++    pirate = pirates(:blackbeard)
++    mateys = pirate.mateys.to_a
++    eager_loaded = Pirate.eager_load(:mateys).where(id: pirate).first
++
++    assert_not_empty mateys
++    assert_no_queries do
++      assert_equal mateys.map(&:attributes), eager_loaded.mateys.map(&:attributes)
++    end
++  end
++
+   def test_type_cast_in_where_references_association_name
+     parent = comments(:greetings)
+     child = parent.children.create!(label: "child", body: "hi", post_id: parent.post_id)
+diff --git a/activerecord/test/models/pirate.rb b/activerecord/test/models/pirate.rb
+index 6b903bc19f6..f5bcb47610f 100644
+--- a/activerecord/test/models/pirate.rb
++++ b/activerecord/test/models/pirate.rb
+@@ -44,6 +44,9 @@ class Pirate < ActiveRecord::Base
+ 
+   has_one :foo_bulb, -> { where name: "foo" }, foreign_key: :car_id, class_name: "Bulb"
+ 
++  has_many :mateys, foreign_key: :pirate_id
++  has_one :attacker_matey, foreign_key: :target_id, class_name: "Matey"
++
+   accepts_nested_attributes_for :parrots, :birds, allow_destroy: true, reject_if: proc(&:empty?)
+   accepts_nested_attributes_for :ship, allow_destroy: true, reject_if: proc(&:empty?)
+   accepts_nested_attributes_for :update_only_ship, update_only: true

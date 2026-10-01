@@ -1,0 +1,84 @@
+diff --git a/pkg/analyzer/lib/src/dart/element/member.dart b/pkg/analyzer/lib/src/dart/element/member.dart
+index 201032eaf4b..e46a7ebfe94 100644
+--- a/pkg/analyzer/lib/src/dart/element/member.dart
++++ b/pkg/analyzer/lib/src/dart/element/member.dart
+@@ -97,6 +97,9 @@ class ConstructorMember extends ExecutableMember
+   @override
+   InterfaceType get returnType => type.returnType as InterfaceType;
+ 
++  @override
++  Source get source => _declaration.source!;
++
+   @override
+   T? accept<T>(ElementVisitor<T> visitor) =>
+       visitor.visitConstructorElement(this);
+@@ -396,6 +399,9 @@ class FieldMember extends VariableMember implements FieldElement {
+         _typeProvider, baseSetter, _substitution, isLegacy);
+   }
+ 
++  @override
++  Source? get source => _declaration.source;
++
+   @override
+   T? accept<T>(ElementVisitor<T> visitor) => visitor.visitFieldElement(this);
+ 
+@@ -458,6 +464,9 @@ class FunctionMember extends ExecutableMember implements FunctionElement {
+   @override
+   String get name => declaration.name;
+ 
++  @override
++  Source get source => _declaration.source!;
++
+   @override
+   T? accept<T>(ElementVisitor<T> visitor) {
+     return visitor.visitFunctionElement(this);
+@@ -620,9 +629,6 @@ abstract class Member implements Element {
+   @override
+   AnalysisSession? get session => _declaration.session;
+ 
+-  @override
+-  Source get source => _declaration.source!;
+-
+   /// The substitution for type parameters referenced in the base element.
+   MapSubstitution get substitution => _substitution;
+ 
+@@ -807,6 +813,9 @@ class MethodMember extends ExecutableMember implements MethodElement {
+   @override
+   String get name => declaration.name;
+ 
++  @override
++  Source get source => _declaration.source!;
++
+   @override
+   T? accept<T>(ElementVisitor<T> visitor) => visitor.visitMethodElement(this);
+ 
+@@ -929,6 +938,9 @@ class ParameterMember extends VariableMember
+     return const <ParameterElement>[];
+   }
+ 
++  @override
++  Source? get source => _declaration.source;
++
+   @override
+   T? accept<T>(ElementVisitor<T> visitor) =>
+       visitor.visitParameterElement(this);
+@@ -1043,6 +1055,9 @@ class PropertyAccessorMember extends ExecutableMember
+   @override
+   String get name => declaration.name;
+ 
++  @override
++  Source get source => _declaration.source!;
++
+   @override
+   PropertyInducingElement get variable {
+     // TODO
+@@ -1188,6 +1203,9 @@ class TopLevelVariableMember extends VariableMember
+         _typeProvider, baseSetter, _substitution, isLegacy);
+   }
+ 
++  @override
++  Source get source => _declaration.source!;
++
+   @override
+   T? accept<T>(ElementVisitor<T> visitor) {
+     return visitor.visitTopLevelVariableElement(this);

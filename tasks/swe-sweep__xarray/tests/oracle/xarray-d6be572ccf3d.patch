@@ -1,0 +1,20 @@
+diff --git a/xarray/core/variable.py b/xarray/core/variable.py
+index ec284e41..1f18f614 100644
+--- a/xarray/core/variable.py
++++ b/xarray/core/variable.py
+@@ -195,8 +195,13 @@ def as_compatible_data(data, fastpath=False):
+         # can't use fastpath (yet) for scalars
+         return _maybe_wrap_data(data)
+ 
+-    if isinstance(data, (Variable, DataArray)):
+-        return data.data
++    # TODO: do this uwrapping in the Variable/NamedArray constructor instead.
++    if isinstance(data, Variable):
++        return data._data
++
++    # TODO: do this uwrapping in the DataArray constructor instead.
++    if isinstance(data, DataArray):
++        return data._variable._data
+ 
+     if isinstance(data, NON_NUMPY_SUPPORTED_ARRAY_TYPES):
+         return _maybe_wrap_data(data)

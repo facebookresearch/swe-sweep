@@ -1,0 +1,41 @@
+diff --git a/tests/whenstmt/twhen_nimvm_push.nim b/tests/whenstmt/twhen_nimvm_push.nim
+new file mode 100644
+index 000000000..7991239fc
+--- /dev/null
++++ b/tests/whenstmt/twhen_nimvm_push.nim
+@@ -0,0 +1,21 @@
++discard """
++  output: "ok"
++"""
++
++var overflowDetected = false
++when nimvm:
++  {.push overflowChecks: off.}
++else:
++  var branchX = high(int)
++  try:
++    inc branchX
++  except OverflowDefect:
++    overflowDetected = true
++
++doAssert overflowDetected
++
++var x = high(int)
++try:
++  inc x
++except OverflowDefect:
++  echo "ok"
+diff --git a/tests/whenstmt/twhen_nimvm_push_pop.nim b/tests/whenstmt/twhen_nimvm_push_pop.nim
+new file mode 100644
+index 000000000..31f44c405
+--- /dev/null
++++ b/tests/whenstmt/twhen_nimvm_push_pop.nim
+@@ -0,0 +1,8 @@
++discard """
++  errormsg: "{.pop.} without a corresponding {.push.}"
++  line: 8
++"""
++
++when nimvm:
++  {.push checks: off.}
++else: {.pop.}

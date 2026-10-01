@@ -1,0 +1,19 @@
+diff --git a/src/Symfony/Component/Routing/RouteCollection.php b/src/Symfony/Component/Routing/RouteCollection.php
+index 7032b3e1a0d..a253bc56d62 100644
+--- a/src/Symfony/Component/Routing/RouteCollection.php
++++ b/src/Symfony/Component/Routing/RouteCollection.php
+@@ -239,7 +239,13 @@ class RouteCollection implements \IteratorAggregate, \Countable
+         }
+ 
+         foreach ($this->aliases as $name => $alias) {
+-            $prefixedAliases[$prefix.$name] = $alias->withId($prefix.$alias->getId());
++            $targetId = $alias->getId();
++
++            if (isset($this->routes[$targetId]) || isset($this->aliases[$targetId])) {
++                $targetId = $prefix.$targetId;
++            }
++
++            $prefixedAliases[$prefix.$name] = $alias->withId($targetId);
+         }
+ 
+         $this->routes = $prefixedRoutes;

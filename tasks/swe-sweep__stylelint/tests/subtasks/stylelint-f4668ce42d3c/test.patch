@@ -1,0 +1,95 @@
+diff --git a/lib/rules/function-calc-no-unspaced-operator/__tests__/index.mjs b/lib/rules/function-calc-no-unspaced-operator/__tests__/index.mjs
+index 622ec8f3a..1dfeb5fad 100644
+--- a/lib/rules/function-calc-no-unspaced-operator/__tests__/index.mjs
++++ b/lib/rules/function-calc-no-unspaced-operator/__tests__/index.mjs
+@@ -68,6 +68,14 @@ testRule({
+ 		{
+ 			code: 'a { top: calc(calc(1em * 2) / 3); }',
+ 		},
++		{
++			code: 'a { top: calc(1px*2*3); }',
++			description: 'chained multiplication without addition or subtraction',
++		},
++		{
++			code: 'a { top: calc(8px/2/2); }',
++			description: 'chained division without addition or subtraction',
++		},
+ 		{
+ 			code: 'a { padding: calc(1px + 2px) calc(1px + 2px); }',
+ 		},
+@@ -291,6 +299,75 @@ testRule({
+ 				{ message: messages.expectedBefore('+'), line: 1, column: 30, endLine: 1, endColumn: 31 },
+ 			],
+ 		},
++		{
++			code: 'a { top: calc(1px*2px+3px); }',
++			fixed: 'a { top: calc(1px*2px + 3px); }',
++			description: 'unspaced "+" after a multiplication',
++			warnings: [
++				{
++					message: messages.expectedAfter('+'),
++					line: 1,
++					column: 22,
++					endLine: 1,
++					endColumn: 23,
++					fix: { range: [21, 22], text: '+ ' },
++				},
++				{
++					message: messages.expectedBefore('+'),
++					line: 1,
++					column: 22,
++					endLine: 1,
++					endColumn: 23,
++					fix: undefined,
++				},
++			],
++		},
++		{
++			code: 'a { top: calc(1px/2-3px); }',
++			fixed: 'a { top: calc(1px/2 - 3px); }',
++			description: 'unspaced "-" after a division',
++			warnings: [
++				{
++					message: messages.expectedAfter('-'),
++					line: 1,
++					column: 20,
++					endLine: 1,
++					endColumn: 21,
++					fix: { range: [19, 20], text: '- ' },
++				},
++				{
++					message: messages.expectedBefore('-'),
++					line: 1,
++					column: 20,
++					endLine: 1,
++					endColumn: 21,
++					fix: undefined,
++				},
++			],
++		},
++		{
++			code: 'a { top: calc(1px + 2px*3px+4px); }',
++			fixed: 'a { top: calc(1px + 2px*3px + 4px); }',
++			description: 'unspaced "+" after a multiplication that follows a spaced operator',
++			warnings: [
++				{
++					message: messages.expectedAfter('+'),
++					line: 1,
++					column: 28,
++					endLine: 1,
++					endColumn: 29,
++					fix: { range: [27, 28], text: '+ ' },
++				},
++				{
++					message: messages.expectedBefore('+'),
++					line: 1,
++					column: 28,
++					endLine: 1,
++					endColumn: 29,
++					fix: undefined,
++				},
++			],
++		},
+ 		{
+ 			code: 'a { top: calc(1px +\t-1px); }',
+ 			fixed: 'a { top: calc(1px + -1px); }',

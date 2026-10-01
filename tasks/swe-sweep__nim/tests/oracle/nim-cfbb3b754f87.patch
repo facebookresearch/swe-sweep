@@ -1,0 +1,15 @@
+diff --git a/compiler/closureiters.nim b/compiler/closureiters.nim
+index ae4fde0f6..87c5b795e 100644
+--- a/compiler/closureiters.nim
++++ b/compiler/closureiters.nim
+@@ -855,7 +855,9 @@ proc transformReturnsInTry(ctx: var Ctx, n: PNode): PNode =
+   case n.kind
+   of nkReturnStmt:
+     # We're somewhere in try, transform to finally unrolling
+-    assert(ctx.nearestFinally != 0)
++    if ctx.nearestFinally == 0:
++      # return is within the finally
++      return
+ 
+     result = newNodeI(nkStmtList, n.info)
+ 

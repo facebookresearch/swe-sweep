@@ -1,0 +1,94 @@
+{
+  "build_jobs": 4,
+  "container_repo": "/gson",
+  "evaluation": {
+    "suite": "reproduction",
+    "visible_timeout": 3600
+  },
+  "upstream_image": "pandora-maxbug-gson:2.8.0",
+  "n_base_passing": 1013,
+  "n_base_test_ignore": 1,
+  "oracle_digest": "419987bd315f66014b06889bff30af79305c9f3cc836d0a954711e121dd7b3bf",
+  "oracle_pristine_paths": [],
+  "upstream_commit": "9f7399e15e6172900e0591deb5a57a45769d8205",
+  "reproduction": {
+    "jobs_env": "SWESWEEP_BUILD_JOBS",
+    "needs_build": false,
+    "suite": {
+      "goal": "test",
+      "mvn_args": [
+        "-Dmaven.javadoc.skip=true",
+        "-Dmaven.source.skip=true",
+        "-Denforcer.skip=true",
+        "-Dlicense.skip=true",
+        "-Dgpg.skip=true",
+        "-Danimal.sniffer.skip=true"
+      ],
+      "type": "maven"
+    },
+    "test_timeout": 1800
+  },
+  "schema": 2,
+  "subtasks": [
+    {
+      "f2p": [
+        "com.google.gson.internal.bind.JsonElementReaderTest.testHasNext_endOfDocument",
+        "com.google.gson.stream.JsonReaderTest.testHasNextEndOfDocument"
+      ],
+      "id": "gson-797489de243a",
+      "target_files": [
+        "gson/src/main/java/com/google/gson/internal/bind/JsonTreeReader.java",
+        "gson/src/main/java/com/google/gson/stream/JsonReader.java"
+      ]
+    },
+    {
+      "f2p": [
+        "com.google.gson.JsonPrimitiveTest.testBigDecimalEquals"
+      ],
+      "id": "gson-89ed2dfbe1b3",
+      "target_files": [
+        "gson/src/main/java/com/google/gson/JsonPrimitive.java"
+      ]
+    },
+    {
+      "f2p": [
+        "com.google.gson.functional.JsonAdapterSerializerDeserializerTest.testJsonAdapterNullSafe"
+      ],
+      "id": "gson-b22995c188d0",
+      "target_files": [
+        "gson/src/main/java/com/google/gson/internal/bind/JsonAdapterAnnotationTypeAdapterFactory.java",
+        "gson/src/main/java/com/google/gson/internal/bind/TreeTypeAdapter.java"
+      ]
+    },
+    {
+      "f2p": [
+        "com.google.gson.internal.bind.JsonTreeReaderTest.testSkipValue_emptyJsonObject",
+        "com.google.gson.internal.bind.JsonTreeReaderTest.testSkipValue_filledJsonObject"
+      ],
+      "id": "gson-f14521f7bdc3",
+      "target_files": [
+        "gson/src/main/java/com/google/gson/internal/bind/JsonTreeReader.java"
+      ]
+    },
+    {
+      "f2p": [
+        "com.google.gson.functional.CollectionTest.testIssue1107"
+      ],
+      "id": "gson-f9267b01483c",
+      "target_files": [
+        "gson/src/main/java/com/google/gson/internal/$Gson$Types.java"
+      ]
+    },
+    {
+      "f2p": [
+        "com.google.gson.stream.JsonReaderTest.testNegativeZero"
+      ],
+      "id": "gson-fb142f42b58d",
+      "target_files": [
+        "gson/src/main/java/com/google/gson/stream/JsonReader.java"
+      ]
+    }
+  ],
+  "task": "gson",
+  "version": "2.8.0"
+}

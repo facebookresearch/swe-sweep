@@ -1,0 +1,12 @@
+diff --git a/lib/matplotlib/tests/test_image.py b/lib/matplotlib/tests/test_image.py
+index 46dbe4cfe8..ad0ec2a4c6 100644
+--- a/lib/matplotlib/tests/test_image.py
++++ b/lib/matplotlib/tests/test_image.py
+@@ -249,6 +249,7 @@ def test_imsave_pil_kwargs_tiff():
+     buf = io.BytesIO()
+     pil_kwargs = {"description": "test image"}
+     plt.imsave(buf, [[0, 1], [2, 3]], format="tiff", pil_kwargs=pil_kwargs)
++    assert len(pil_kwargs) == 1
+     im = Image.open(buf)
+     tags = {TAGS[k].name: v for k, v in im.tag_v2.items()}
+     assert tags["ImageDescription"] == "test image"

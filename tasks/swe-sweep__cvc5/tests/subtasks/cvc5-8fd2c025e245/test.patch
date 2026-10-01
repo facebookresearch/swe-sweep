@@ -1,0 +1,22 @@
+diff --git a/test/regress/cli/CMakeLists.txt b/test/regress/cli/CMakeLists.txt
+--- a/test/regress/cli/CMakeLists.txt
++++ b/test/regress/cli/CMakeLists.txt
+@@ -2466,5 +2466,6 @@
+   regress1/quantifiers/proj-issue155.smt2
+   regress1/quantifiers/proj-issue295.smt2
+   regress1/quantifiers/proj-issue532-set-comp-fv-trigger.smt2
++  regress1/quantifiers/proj-issue546-ee-rep.smt2
+   regress1/quantifiers/psyco-001-bv.smt2
+   regress1/quantifiers/psyco-107-bv.smt2
+diff --git a/test/regress/cli/regress1/quantifiers/proj-issue546-ee-rep.smt2 b/test/regress/cli/regress1/quantifiers/proj-issue546-ee-rep.smt2
+new file mode 100644
+index 0000000000..85025e9100
+--- /dev/null
++++ b/test/regress/cli/regress1/quantifiers/proj-issue546-ee-rep.smt2
+@@ -0,0 +1,6 @@
++; EXPECT: sat
++(set-logic ALL)
++(set-option :quant-rep-mode ee)
++(declare-const x String)
++(assert (str.is_digit (str.rev x)))
++(check-sat)

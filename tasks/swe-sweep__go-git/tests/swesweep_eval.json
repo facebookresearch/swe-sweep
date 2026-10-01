@@ -1,0 +1,238 @@
+{
+  "build_jobs": 4,
+  "container_repo": "/go-git",
+  "evaluation": {
+    "suite": "reproduction",
+    "visible_timeout": 14400
+  },
+  "upstream_image": "pandora-maxbug-go-git:v5.5.0",
+  "n_base_passing": 54,
+  "n_base_test_ignore": 3,
+  "oracle_digest": "bbf6ed697a94fe483b2380735f899e3ec0bd8f547a70739380012fd8cad64d8f",
+  "oracle_pristine_paths": [],
+  "upstream_commit": "9f7399e15e6172900e0591deb5a57a45769d8205",
+  "reproduction": {
+    "needs_build": false,
+    "suite": {
+      "eval_roots": [
+        "."
+      ],
+      "type": "go"
+    },
+    "test_timeout": 900
+  },
+  "schema": 2,
+  "subtasks": [
+    {
+      "f2p": [
+        ".::Test"
+      ],
+      "id": "go-git-0ca8094961ed",
+      "target_files": [
+        "worktree_status.go"
+      ]
+    },
+    {
+      "f2p": [
+        "plumbing/format/gitignore::Test"
+      ],
+      "id": "go-git-40e2c91eb549",
+      "target_files": [
+        "plumbing/format/gitignore/pattern.go"
+      ]
+    },
+    {
+      "f2p": [
+        "storage/filesystem/dotgit::Test"
+      ],
+      "id": "go-git-42329d3cdee2",
+      "target_files": [
+        "storage/filesystem/dotgit/dotgit.go"
+      ]
+    },
+    {
+      "f2p": [
+        "utils/merkletrie/index::Test"
+      ],
+      "id": "go-git-43c3aed2b3c4",
+      "target_files": [
+        "utils/merkletrie/change.go",
+        "utils/merkletrie/index/node.go"
+      ]
+    },
+    {
+      "f2p": [
+        "plumbing/transport/ssh::Test"
+      ],
+      "id": "go-git-441f7ccccf27",
+      "target_files": [
+        "plumbing/transport/ssh/common.go"
+      ]
+    },
+    {
+      "f2p": [
+        ".::Test"
+      ],
+      "id": "go-git-522d97237adc",
+      "target_files": [
+        "submodule.go"
+      ]
+    },
+    {
+      "f2p": [
+        "plumbing/object::Test"
+      ],
+      "id": "go-git-524a024d936a",
+      "target_files": [
+        "plumbing/object/commit_walker_path.go"
+      ]
+    },
+    {
+      "f2p": [
+        "__process_level_failure__"
+      ],
+      "id": "go-git-529339ebd22f",
+      "target_files": [
+        "plumbing/format/idxfile/idxfile.go"
+      ]
+    },
+    {
+      "f2p": [
+        ".::Test"
+      ],
+      "id": "go-git-581fa05443c7",
+      "target_files": [
+        "worktree_status.go"
+      ]
+    },
+    {
+      "f2p": [
+        ".::Test"
+      ],
+      "id": "go-git-594c0e2e397e",
+      "target_files": [
+        "worktree_commit.go"
+      ]
+    },
+    {
+      "f2p": [
+        "plumbing/format/gitignore::Test"
+      ],
+      "id": "go-git-5b135825cde2",
+      "target_files": [
+        "plumbing/format/gitignore/dir.go"
+      ]
+    },
+    {
+      "f2p": [
+        ".::Test"
+      ],
+      "id": "go-git-622e02d925aa",
+      "target_files": [
+        "worktree_status.go"
+      ]
+    },
+    {
+      "f2p": [
+        ".::Test"
+      ],
+      "id": "go-git-6992e5e5c37e",
+      "target_files": [
+        "worktree_status.go"
+      ]
+    },
+    {
+      "f2p": [
+        ".::Test"
+      ],
+      "id": "go-git-6a97b723498a",
+      "target_files": [
+        "remote.go"
+      ]
+    },
+    {
+      "f2p": [
+        ".::Test"
+      ],
+      "id": "go-git-76736048ce50",
+      "target_files": [
+        "worktree.go",
+        "worktree_status.go"
+      ]
+    },
+    {
+      "f2p": [
+        "storage/filesystem::Test"
+      ],
+      "id": "go-git-7a40c359805d",
+      "target_files": [
+        "storage/filesystem/object.go"
+      ]
+    },
+    {
+      "f2p": [
+        "config::Test"
+      ],
+      "id": "go-git-934acf9cbe26",
+      "target_files": [
+        "config/branch.go"
+      ]
+    },
+    {
+      "f2p": [
+        ".::Test"
+      ],
+      "id": "go-git-9c6bb58e4e26",
+      "target_files": [
+        "worktree_commit.go"
+      ]
+    },
+    {
+      "f2p": [
+        "plumbing/format/gitignore::Test"
+      ],
+      "id": "go-git-ad01c0a8bce9",
+      "target_files": [
+        "plumbing/format/gitignore/dir.go"
+      ]
+    },
+    {
+      "f2p": [
+        "storage/filesystem::Test"
+      ],
+      "id": "go-git-c93c333c6bd8",
+      "target_files": [
+        "storage/filesystem/object.go"
+      ]
+    },
+    {
+      "f2p": [
+        "plumbing/protocol/packp::Test"
+      ],
+      "id": "go-git-e5731ad38a24",
+      "target_files": [
+        "plumbing/protocol/packp/srvresp.go"
+      ]
+    },
+    {
+      "f2p": [
+        ".::Test"
+      ],
+      "id": "go-git-f13cfb6b2faa",
+      "target_files": [
+        "options.go"
+      ]
+    },
+    {
+      "f2p": [
+        "plumbing/transport::Test"
+      ],
+      "id": "go-git-f5a9632d3c1e",
+      "target_files": [
+        "plumbing/transport/common.go"
+      ]
+    }
+  ],
+  "task": "go-git",
+  "version": "v5.5.0"
+}

@@ -1,0 +1,15 @@
+diff --git a/apps/gdalmdiminfo_lib.cpp b/apps/gdalmdiminfo_lib.cpp
+index e029bcbdcb..2356d9b95c 100644
+--- a/apps/gdalmdiminfo_lib.cpp
++++ b/apps/gdalmdiminfo_lib.cpp
+@@ -395,6 +395,10 @@ static void DumpAttrValue(const std::shared_ptr<GDALAttribute> &attr,
+                         serializer.Add(pszStr);
+                     }
+                 }
++                else
++                {
++                    serializer.AddNull();
++                }
+             }
+             else
+             {

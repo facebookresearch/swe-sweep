@@ -1,0 +1,10 @@
+diff --git a/src/math/big/int.go b/src/math/big/int.go
+--- a/src/math/big/int.go
++++ b/src/math/big/int.go
+@@ -196,3 +196,6 @@
+ // Binomial sets z to the binomial coefficient of (n, k) and returns z.
+ func (z *Int) Binomial(n, k int64) *Int {
++	if k > n || k < 0 {
++		return z.SetInt64(0)
++	}
+ 	// reduce the number of multiplications by reducing k

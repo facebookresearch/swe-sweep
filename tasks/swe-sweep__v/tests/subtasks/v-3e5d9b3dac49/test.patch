@@ -1,0 +1,59 @@
+diff --git a/vlib/v/tests/generics_with_generics_fn_return_generics_map_type_test.v b/vlib/v/tests/generics_with_generics_fn_return_generics_map_type_test.v
+new file mode 100644
+index 000000000..0c3446617
+--- /dev/null
++++ b/vlib/v/tests/generics_with_generics_fn_return_generics_map_type_test.v
+@@ -0,0 +1,28 @@
++fn generic1[K, V](a map[K]V) string {
++	t := expect_map[K, V](a)
++	dump(t)
++	return '${t}'
++}
++
++fn generic2[K, V](a map[K]V) string {
++	t := expect_map(a)
++	dump(t)
++	return '${t}'
++}
++
++fn expect_map[K, V](a map[K]V) map[K]V {
++	return a
++}
++
++fn test_generics_with_generics_fn_return_map_type() {
++	a := {
++		'a': 1
++	}
++	b := {
++		1: 'a'
++	}
++	assert generic1(a) == "{'a': 1}"
++	assert generic1(b) == "{1: 'a'}"
++	assert generic2(a) == "{'a': 1}"
++	assert generic2(b) == "{1: 'a'}"
++}
+diff --git a/vlib/v/tests/multiple_generic_resolve_test.v b/vlib/v/tests/multiple_generic_resolve_test.v
+index 49df8a5f5..f1c4ab4a7 100644
+--- a/vlib/v/tests/multiple_generic_resolve_test.v
++++ b/vlib/v/tests/multiple_generic_resolve_test.v
+@@ -9,16 +9,17 @@ fn pre_start[T, R](app T, config R) string {
+ 	return start(app, config.val)
+ }
+ 
+-fn start[T, R](app T, otherthing R) R {
++fn start[T, R](app T, otherthing R) string {
+ 	println(otherthing)
+-	return otherthing
++	return '${otherthing}'
+ }
+ 
+-fn test_main() {
++fn test_multiple_generic_resolve() {
+ 	app := App{}
+ 	testval := 'hello'
+ 	config := Config[string]{
+ 		val: testval
+ 	}
++
+ 	assert pre_start(app, config) == 'hello'
+ }

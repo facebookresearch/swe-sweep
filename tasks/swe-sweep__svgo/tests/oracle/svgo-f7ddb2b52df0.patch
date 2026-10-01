@@ -1,0 +1,23 @@
+diff --git a/lib/svgo/coa.js b/lib/svgo/coa.js
+index 9602568..3af0850 100644
+--- a/lib/svgo/coa.js
++++ b/lib/svgo/coa.js
+@@ -6,7 +6,7 @@ const colors = require('picocolors');
+ const { loadConfig, optimize } = require('../svgo-node.js');
+ const { builtin } = require('../builtin.js');
+ const PKG = require('../../package.json');
+-const { encodeSVGDatauri, decodeSVGDatauri } = require('./tools.js');
++const { decodeSVGDatauri } = require('./tools.js');
+ 
+ const regSVGFile = /\.svg$/i;
+ 
+@@ -396,9 +396,6 @@ function processSVGData(config, info, data, output, input) {
+       throw error;
+     }
+   }
+-  if (config.datauri) {
+-    result.data = encodeSVGDatauri(result.data, config.datauri);
+-  }
+   var resultFileSize = Buffer.byteLength(result.data, 'utf8'),
+     processingTime = Date.now() - startTime;
+ 

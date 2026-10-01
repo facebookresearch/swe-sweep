@@ -1,0 +1,37 @@
+diff --git a/tests/lean/242.lean b/tests/lean/242.lean
+index df964c9236..56d5698371 100644
+--- a/tests/lean/242.lean
++++ b/tests/lean/242.lean
+@@ -2,3 +2,7 @@ syntax "0" : term
+ syntax "'a'" : term
+ syntax "`a" : term
+ syntax "\"a" : term
++syntax " 0" : term
++syntax " 'a'" : term
++syntax " `a" : term
++syntax " \"a" : term
+diff --git a/tests/lean/242.lean.expected.out b/tests/lean/242.lean.expected.out
+index 70de8ea84b..39f7550ca2 100644
+--- a/tests/lean/242.lean.expected.out
++++ b/tests/lean/242.lean.expected.out
+@@ -2,3 +2,7 @@
+ 242.lean:2:7-2:12: error: invalid atom
+ 242.lean:3:7-3:11: error: invalid atom
+ 242.lean:4:7-4:12: error: invalid atom
++242.lean:5:7-5:11: error: invalid atom
++242.lean:6:7-6:13: error: invalid atom
++242.lean:7:7-7:12: error: invalid atom
++242.lean:8:7-8:13: error: invalid atom
+diff --git "a/tests/lean/run/utf8\350\213\261\350\252\236.lean" "b/tests/lean/run/utf8\350\213\261\350\252\236.lean"
+index 9cb644503e..b55f0dfc11 100644
+--- "a/tests/lean/run/utf8\350\213\261\350\252\236.lean"
++++ "b/tests/lean/run/utf8\350\213\261\350\252\236.lean"
+@@ -15,7 +15,7 @@ def checkGet (s : String) (arr : Array UInt8) :=
+     let c := if h : _ then s.getUtf8Byte i h else unreachable!
+     c == arr.get! i
+ 
+-macro "validate" arr:term " => ↯" : command =>
++macro "validate" arr:term " => " "↯" : command =>
+   `(test_extern' String.validateUTF8 $arr => false)
+ macro "validate" arr:term " => " str:term : command =>
+   `(test_extern' String.validateUTF8 $arr => true

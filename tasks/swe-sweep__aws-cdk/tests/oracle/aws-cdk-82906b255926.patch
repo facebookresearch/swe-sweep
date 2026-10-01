@@ -1,0 +1,13 @@
+diff --git a/packages/@aws-cdk/aws-cognito/lib/user-pool.ts b/packages/@aws-cdk/aws-cognito/lib/user-pool.ts
+index 6277ee0f46..adc3f51bf3 100644
+--- a/packages/@aws-cdk/aws-cognito/lib/user-pool.ts
++++ b/packages/@aws-cdk/aws-cognito/lib/user-pool.ts
+@@ -830,7 +830,7 @@ export class UserPool extends UserPoolBase {
+    */
+   public addTrigger(operation: UserPoolOperation, fn: lambda.IFunction): void {
+     if (operation.operationName in this.triggers) {
+-      throw new Error(`A trigger for the operation ${operation} already exists.`);
++      throw new Error(`A trigger for the operation ${operation.operationName} already exists.`);
+     }
+ 
+     this.addLambdaPermission(fn, operation.operationName);

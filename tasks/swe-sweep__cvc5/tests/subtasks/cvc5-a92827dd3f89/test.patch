@@ -1,0 +1,43 @@
+diff --git a/test/regress/cli/CMakeLists.txt b/test/regress/cli/CMakeLists.txt
+index f258ed6a5a..83da543934 100644
+--- a/test/regress/cli/CMakeLists.txt
++++ b/test/regress/cli/CMakeLists.txt
+@@ -146,6 +146,8 @@ set(regress_0_tests
+   regress0/arrays/issue9043_3.smt2
+   regress0/arrays/issue9043_4.smt2
+   regress0/arrays/proj-issue506-ms-var-elim.smt2
++  regress0/arrays/proj-issue545-array-nconst.smt2
++  regress0/arrays/proj-issue563.smt2
+   regress0/arrays/swap_t1_np_nf_ai_00005_007.cvc.smtv1.smt2
+   regress0/arrays/x2.smtv1.smt2
+   regress0/arrays/x3.smtv1.smt2
+diff --git a/test/regress/cli/regress0/arrays/proj-issue545-array-nconst.smt2 b/test/regress/cli/regress0/arrays/proj-issue545-array-nconst.smt2
+new file mode 100644
+index 0000000000..69e789ccb8
+--- /dev/null
++++ b/test/regress/cli/regress0/arrays/proj-issue545-array-nconst.smt2
+@@ -0,0 +1,10 @@
++; SCRUBBER: sed -e 's/((f.*/((f/g'
++; EXPECT: sat
++; EXPECT: ((f
++(set-logic ALL)
++(set-option :produce-models true)
++(declare-sort u 0)
++(declare-const x u)
++(define-fun f ((_f5_1 u) (_f5_2 Bool)) u (ite _f5_2 _f5_1 x))
++(check-sat)
++(get-value (f))
+diff --git a/test/regress/cli/regress0/arrays/proj-issue563.smt2 b/test/regress/cli/regress0/arrays/proj-issue563.smt2
+new file mode 100644
+index 0000000000..2efc29c716
+--- /dev/null
++++ b/test/regress/cli/regress0/arrays/proj-issue563.smt2
+@@ -0,0 +1,8 @@
++; SCRUBBER: sed -e 's/((f.*/((f/g'
++; EXPECT: sat
++; EXPECT: ((f
++(set-logic ALL)
++(set-option :produce-models true)
++(define-fun f ((_f1_2 RoundingMode) (_f1_4 Bool)) RoundingMode (ite _f1_4 _f1_2 RTZ))
++(check-sat)
++(get-value (f))

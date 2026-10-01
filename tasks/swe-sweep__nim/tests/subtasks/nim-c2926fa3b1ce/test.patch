@@ -1,0 +1,16 @@
+diff --git a/tests/arc/t18971.nim b/tests/arc/t18971.nim
+new file mode 100644
+index 000000000..9b587d956
+--- /dev/null
++++ b/tests/arc/t18971.nim
+@@ -0,0 +1,10 @@
++discard """
++  cmd: "nim c --gc:arc $file"
++"""
++
++type MyObj = ref object
++
++var o = MyObj()
++proc x: var MyObj = o
++
++var o2 = x()

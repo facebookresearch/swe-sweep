@@ -1,0 +1,13 @@
+diff --git a/numpy/core/src/multiarray/common.c b/numpy/core/src/multiarray/common.c
+index addb67732f3..52694d49122 100644
+--- a/numpy/core/src/multiarray/common.c
++++ b/numpy/core/src/multiarray/common.c
+@@ -343,7 +343,7 @@ PyArray_DTypeFromObjectHelper(PyObject *obj, int maxdims,
+             typestr = PyDict_GetItemString(ip, "typestr");
+ #if defined(NPY_PY3K)
+             /* Allow unicode type strings */
+-            if (PyUnicode_Check(typestr)) {
++            if (typestr && PyUnicode_Check(typestr)) {
+                 tmp = PyUnicode_AsASCIIString(typestr);
+                 typestr = tmp;
+             }

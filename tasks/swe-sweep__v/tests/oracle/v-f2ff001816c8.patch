@@ -1,0 +1,34 @@
+diff --git a/vlib/v/gen/c/cgen.v b/vlib/v/gen/c/cgen.v
+index d8a5cef46..89aa4762c 100644
+--- a/vlib/v/gen/c/cgen.v
++++ b/vlib/v/gen/c/cgen.v
+@@ -4159,7 +4159,14 @@ fn (mut g Gen) ident(node ast.Ident) {
+ 						} else {
+ 							mut is_ptr := false
+ 							if i == 0 {
+-								g.write(name)
++								if node.obj.typ.nr_muls() > 1 {
++									g.write('(')
++									g.write('*'.repeat(node.obj.typ.nr_muls() - 1))
++									g.write(name)
++									g.write(')')
++								} else {
++									g.write(name)
++								}
+ 								if node.obj.orig_type.is_ptr() {
+ 									is_ptr = true
+ 								}
+diff --git a/vlib/v/gen/c/infix.v b/vlib/v/gen/c/infix.v
+index 47bbf9989..31c1319d6 100644
+--- a/vlib/v/gen/c/infix.v
++++ b/vlib/v/gen/c/infix.v
+@@ -633,6 +633,9 @@ fn (mut g Gen) infix_expr_is_op(node ast.InfixExpr) {
+ 
+ 	cmp_op := if node.op == .key_is { '==' } else { '!=' }
+ 	g.write('(')
++	if node.left_type.nr_muls() > 1 {
++		g.write('*'.repeat(node.left_type.nr_muls() - 1))
++	}
+ 	if is_aggregate {
+ 		g.write('${node.left}')
+ 	} else {

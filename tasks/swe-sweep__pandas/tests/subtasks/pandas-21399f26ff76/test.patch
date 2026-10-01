@@ -1,0 +1,20 @@
+diff --git a/pandas/tests/reshape/merge/test_merge.py b/pandas/tests/reshape/merge/test_merge.py
+index c7d7d1b0da..9edc73797b 100644
+--- a/pandas/tests/reshape/merge/test_merge.py
++++ b/pandas/tests/reshape/merge/test_merge.py
+@@ -2487,3 +2487,15 @@ def test_mergeerror_on_left_index_mismatched_dtypes():
+     df_2 = DataFrame(data=["X"], columns=["C"], index=[999])
+     with pytest.raises(MergeError, match="Can only pass argument"):
+         merge(df_1, df_2, on=["C"], left_index=True)
++
++
++def test_merge_on_left_categoricalindex():
++    # GH#48464 don't raise when left_on is a CategoricalIndex
++    ci = CategoricalIndex(range(3))
++
++    right = DataFrame({"A": ci, "B": range(3)})
++    left = DataFrame({"C": range(3, 6)})
++
++    res = merge(left, right, left_on=ci, right_on="A")
++    expected = merge(left, right, left_on=ci._data, right_on="A")
++    tm.assert_frame_equal(res, expected)

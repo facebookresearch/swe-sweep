@@ -1,0 +1,18 @@
+diff --git a/pkg/analysis_server/lib/src/lsp/handlers/handler_change_workspace_folders.dart b/pkg/analysis_server/lib/src/lsp/handlers/handler_change_workspace_folders.dart
+index 00000000000..00000000000 100644
+--- a/pkg/analysis_server/lib/src/lsp/handlers/handler_change_workspace_folders.dart
++++ b/pkg/analysis_server/lib/src/lsp/handlers/handler_change_workspace_folders.dart
+@@ -41,7 +41,10 @@ class WorkspaceFoldersHandler
+   }
+ 
+   /// Return the result of converting the list of workspace [folders] to file
+-  /// paths.
++  /// paths, removing any that are not file URIs.
+   List<String> _convertWorkspaceFolders(List<WorkspaceFolder> folders) {
+-    return folders.map((wf) => wf.uri.toFilePath()).toList();
++    return folders
++        .where((wf) => wf.uri.isScheme('file'))
++        .map((wf) => wf.uri.toFilePath())
++        .toList();
+   }
+ }

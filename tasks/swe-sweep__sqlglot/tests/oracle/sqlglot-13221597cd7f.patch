@@ -1,0 +1,26 @@
+diff --git a/sqlglot/tokens.py b/sqlglot/tokens.py
+index 81d14048fd..c20036eb3a 100644
+--- a/sqlglot/tokens.py
++++ b/sqlglot/tokens.py
+@@ -1109,7 +1109,7 @@ class Tokenizer(metaclass=_Tokenizer):
+         if self.WHITE_SPACE.get(self._char) is TokenType.BREAK:
+             # Ensures we don't count an extra line if we get a \r\n line break sequence
+             if not (self._char == "\r" and self._peek == "\n"):
+-                self._col = 1
++                self._col = i
+                 self._line += 1
+         else:
+             self._col += i
+diff --git a/sqlglotrs/src/tokenizer.rs b/sqlglotrs/src/tokenizer.rs
+index 461311263d..9849299a10 100644
+--- a/sqlglotrs/src/tokenizer.rs
++++ b/sqlglotrs/src/tokenizer.rs
+@@ -173,7 +173,7 @@ impl<'a> TokenizerState<'a> {
+         if Some(&self.token_types.break_) == self.settings.white_space.get(&self.current_char) {
+             // Ensures we don't count an extra line if we get a \r\n line break sequence.
+             if !(self.current_char == '\r' && self.peek_char == '\n') {
+-                self.column = 1;
++                self.column = i as usize;
+                 self.line += 1;
+             }
+         } else {

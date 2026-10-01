@@ -1,0 +1,22 @@
+diff --git a/crates/ruff_linter/src/rules/flake8_bandit/rules/hardcoded_sql_expression.rs b/crates/ruff_linter/src/rules/flake8_bandit/rules/hardcoded_sql_expression.rs
+index 607db1eb56..bd88da1072 100644
+--- a/crates/ruff_linter/src/rules/flake8_bandit/rules/hardcoded_sql_expression.rs
++++ b/crates/ruff_linter/src/rules/flake8_bandit/rules/hardcoded_sql_expression.rs
+@@ -12,7 +12,16 @@ use crate::checkers::ast::Checker;
+ use crate::Locator;
+ 
+ static SQL_REGEX: LazyLock<Regex> = LazyLock::new(|| {
+-    Regex::new(r"(?i)\b(select\s+.*\s+from\s|delete\s+from\s|(insert|replace)\s+.*\s+values\s|update\s+.*\s+set\s)")
++    Regex::new(
++        r"(?isx)
++        \b
++        (select\s+.*\s+from\s
++        |delete\s+from\s
++        |(insert|replace)\s+.*\s+values\s
++        |update\s+.*\s+set\s
++        )
++    ",
++    )
+     .unwrap()
+ });
+ 

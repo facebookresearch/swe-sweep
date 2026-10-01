@@ -1,0 +1,14 @@
+diff --git a/pint/measurement.py b/pint/measurement.py
+index 1c5292b..01262eb 100644
+--- a/pint/measurement.py
++++ b/pint/measurement.py
+@@ -83,6 +83,9 @@ class Measurement(Quantity):
+         return "{}".format(self)
+ 
+     def __format__(self, spec):
++
++        spec = spec or self.default_format
++
+         # special cases
+         if "Lx" in spec:  # the LaTeX siunitx code
+             # the uncertainties module supports formatting

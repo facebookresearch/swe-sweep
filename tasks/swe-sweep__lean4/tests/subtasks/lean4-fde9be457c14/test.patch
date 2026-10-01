@@ -1,0 +1,20 @@
+diff --git a/tests/lean/4591.lean b/tests/lean/4591.lean
+new file mode 100644
+index 0000000000..cadfb18537
+--- /dev/null
++++ b/tests/lean/4591.lean
+@@ -0,0 +1,7 @@
++def Nat.foo : Nat → Nat
++  | 0 => 0
++  | n+1 => foo n
++decreasing_by decreasing_tactic
++
++theorem Nat.Bar.foo : foo 2 = 0 := by
++  simp? [Nat.foo]
+diff --git a/tests/lean/4591.lean.expected.out b/tests/lean/4591.lean.expected.out
+new file mode 100644
+index 0000000000..1a05d83bb2
+--- /dev/null
++++ b/tests/lean/4591.lean.expected.out
+@@ -0,0 +1 @@
++Try this: simp only [Nat.foo]

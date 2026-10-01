@@ -1,0 +1,14 @@
+diff --git a/pandas/core/indexing.py b/pandas/core/indexing.py
+index fdcb55f3a6..6cc9691df3 100644
+--- a/pandas/core/indexing.py
++++ b/pandas/core/indexing.py
+@@ -659,7 +659,8 @@ class _LocationIndexer(NDFrameIndexerBase):
+                 return self._convert_tuple(key, is_setter=True)
+ 
+         if isinstance(key, range):
+-            return list(key)
++            # GH#45479 test_loc_setitem_range_key
++            key = list(key)
+ 
+         try:
+             return self._convert_to_indexer(key, axis=0, is_setter=True)

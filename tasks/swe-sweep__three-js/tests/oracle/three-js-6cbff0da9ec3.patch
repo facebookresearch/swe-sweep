@@ -1,0 +1,183 @@
+diff --git a/src/core/RenderTarget.js b/src/core/RenderTarget.js
+index 48be3e9e7f..b018576e16 100644
+--- a/src/core/RenderTarget.js
++++ b/src/core/RenderTarget.js
+@@ -125,10 +125,6 @@ class RenderTarget extends EventDispatcher {
+ 		}, options );
+ 
+-		const texture = new Texture( image, options.mapping, options.wrapS, options.wrapT, options.magFilter, options.minFilter, options.format, options.type, options.anisotropy, options.colorSpace );
+-
+-		texture.flipY = false;
+-		texture.generateMipmaps = options.generateMipmaps;
+-		texture.internalFormat = options.internalFormat;
++		const texture = new Texture( image );
+ 
+ 		/**
+ 		 * An array of textures. Each color attachment is represented as a separate texture.
+@@ -149,6 +145,8 @@ class RenderTarget extends EventDispatcher {
+ 
+ 		}
+ 
++		this._setTextureOptions( options );
++
+ 		/**
+ 		 * Whether to allocate a depth buffer or not.
+ 		 *
+@@ -204,6 +202,38 @@ class RenderTarget extends EventDispatcher {
+ 
+ 	}
+ 
++	_setTextureOptions( options = {} ) {
++
++		const values = {
++			minFilter: LinearFilter,
++			generateMipmaps: false,
++			flipY: false,
++			internalFormat: null
++		};
++
++		if ( options.mapping !== undefined ) values.mapping = options.mapping;
++		if ( options.wrapS !== undefined ) values.wrapS = options.wrapS;
++		if ( options.wrapT !== undefined ) values.wrapT = options.wrapT;
++		if ( options.wrapR !== undefined ) values.wrapR = options.wrapR;
++		if ( options.magFilter !== undefined ) values.magFilter = options.magFilter;
++		if ( options.minFilter !== undefined ) values.minFilter = options.minFilter;
++		if ( options.format !== undefined ) values.format = options.format;
++		if ( options.type !== undefined ) values.type = options.type;
++		if ( options.anisotropy !== undefined ) values.anisotropy = options.anisotropy;
++		if ( options.colorSpace !== undefined ) values.colorSpace = options.colorSpace;
++		if ( options.flipY !== undefined ) values.flipY = options.flipY;
++		if ( options.generateMipmaps !== undefined ) values.generateMipmaps = options.generateMipmaps;
++		if ( options.internalFormat !== undefined ) values.internalFormat = options.internalFormat;
++
++		for ( let i = 0; i < this.textures.length; i ++ ) {
++
++			const texture = this.textures[ i ];
++			texture.setValues( values );
++
++		}
++
++	}
++
+ 	/**
+ 	 * The texture representing the default color attachment.
+ 	 *
+diff --git a/src/core/RenderTarget3D.js b/src/core/RenderTarget3D.js
+index c7d7ce305b..4d9fcf08d3 100644
+--- a/src/core/RenderTarget3D.js
++++ b/src/core/RenderTarget3D.js
+@@ -37,6 +37,7 @@ class RenderTarget3D extends RenderTarget {
+ 		 * @type {Data3DTexture}
+ 		 */
+ 		this.texture = new Data3DTexture( null, width, height, depth );
++		this._setTextureOptions( options );
+ 
+ 		this.texture.isRenderTargetTexture = true;
+ 
+diff --git a/src/renderers/WebGL3DRenderTarget.js b/src/renderers/WebGL3DRenderTarget.js
+index 3713884c8b..619feb92dd 100644
+--- a/src/renderers/WebGL3DRenderTarget.js
++++ b/src/renderers/WebGL3DRenderTarget.js
+@@ -37,6 +37,7 @@ class WebGL3DRenderTarget extends WebGLRenderTarget {
+ 		 * @type {Data3DTexture}
+ 		 */
+ 		this.texture = new Data3DTexture( null, width, height, depth );
++		this._setTextureOptions( options );
+ 
+ 		this.texture.isRenderTargetTexture = true;
+ 
+diff --git a/src/renderers/WebGLArrayRenderTarget.js b/src/renderers/WebGLArrayRenderTarget.js
+index 8bf20c8ae9..d96904efbe 100644
+--- a/src/renderers/WebGLArrayRenderTarget.js
++++ b/src/renderers/WebGLArrayRenderTarget.js
+@@ -37,6 +37,7 @@ class WebGLArrayRenderTarget extends WebGLRenderTarget {
+ 		 * @type {DataArrayTexture}
+ 		 */
+ 		this.texture = new DataArrayTexture( null, width, height, depth );
++		this._setTextureOptions( options );
+ 
+ 		this.texture.isRenderTargetTexture = true;
+ 
+diff --git a/src/renderers/WebGLCubeRenderTarget.js b/src/renderers/WebGLCubeRenderTarget.js
+index 049face640..fe75d8e5b2 100644
+--- a/src/renderers/WebGLCubeRenderTarget.js
++++ b/src/renderers/WebGLCubeRenderTarget.js
+@@ -41,7 +41,8 @@ class WebGLCubeRenderTarget extends WebGLRenderTarget {
+ 		 *
+ 		 * @type {DataArrayTexture}
+ 		 */
+-		this.texture = new CubeTexture( images, options.mapping, options.wrapS, options.wrapT, options.magFilter, options.minFilter, options.format, options.type, options.anisotropy, options.colorSpace );
++		this.texture = new CubeTexture( images );
++		this._setTextureOptions( options );
+ 
+ 		// By convention -- likely based on the RenderMan spec from the 1990's -- cube maps are specified by WebGL (and three.js)
+ 		// in a coordinate system in which positive-x is to the right when looking up the positive-z axis -- in other words,
+@@ -53,9 +54,6 @@ class WebGLCubeRenderTarget extends WebGLRenderTarget {
+ 
+ 		this.texture.isRenderTargetTexture = true;
+ 
+-		this.texture.generateMipmaps = options.generateMipmaps !== undefined ? options.generateMipmaps : false;
+-		this.texture.minFilter = options.minFilter !== undefined ? options.minFilter : LinearFilter;
+-
+ 	}
+ 
+ 	/**
+diff --git a/src/textures/Texture.js b/src/textures/Texture.js
+index 496971e6ee..2157772ded 100644
+--- a/src/textures/Texture.js
++++ b/src/textures/Texture.js
+@@ -509,6 +509,54 @@ class Texture extends EventDispatcher {
+ 
+ 	}
+ 
++	/**
++	 * Sets this texture's properties based on `values`.
++	 * @param {Object} values - A container with texture parameters.
++	 */
++	setValues( values ) {
++
++		for ( const key in values ) {
++
++			const newValue = values[ key ];
++
++			if ( newValue === undefined ) {
++
++				console.warn( `THREE.Texture.setValues(): parameter '${ key }' has value of undefined.` );
++				continue;
++
++			}
++
++			const currentValue = this[ key ];
++
++			if ( currentValue === undefined ) {
++
++				console.warn( `THREE.Texture.setValues(): property '${ key }' does not exist.` );
++				continue;
++
++			}
++
++			if ( ( currentValue && newValue ) && ( currentValue.isVector2 && newValue.isVector2 ) ) {
++
++				currentValue.copy( newValue );
++
++			} else if ( ( currentValue && newValue ) && ( currentValue.isVector3 && newValue.isVector3 ) ) {
++
++				currentValue.copy( newValue );
++
++			} else if ( ( currentValue && newValue ) && ( currentValue.isMatrix3 && newValue.isMatrix3 ) ) {
++
++				currentValue.copy( newValue );
++
++			} else {
++
++				this[ key ] = newValue;
++
++			}
++
++		}
++
++	}
++
+ 	/**
+ 	 * Serializes the texture into JSON.
+ 	 *

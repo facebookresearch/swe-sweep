@@ -1,0 +1,33 @@
+diff --git a/src/catalog/catalog_search_path.cpp b/src/catalog/catalog_search_path.cpp
+index 6be5f491c0..9368e300f4 100644
+--- a/src/catalog/catalog_search_path.cpp
++++ b/src/catalog/catalog_search_path.cpp
+@@ -67,6 +67,11 @@ quoted:
+ 		if (input[idx] == '"') {
+ 			//! unquote
+ 			idx++;
++			if (idx < input.size() && input[idx] == '"') {
++				// escaped quote
++				entry += input[idx];
++				continue;
++			}
+ 			goto normal;
+ 		}
+ 		entry += input[idx];
+diff --git a/src/parser/transform/statement/transform_use.cpp b/src/parser/transform/statement/transform_use.cpp
+index a4d7684372..4bb8a2b864 100644
+--- a/src/parser/transform/statement/transform_use.cpp
++++ b/src/parser/transform/statement/transform_use.cpp
+@@ -11,9 +11,10 @@ unique_ptr<SetStatement> Transformer::TransformUse(duckdb_libpgquery::PGUseStmt
+ 	}
+ 	string name;
+ 	if (IsInvalidSchema(qualified_name.schema)) {
+-		name = qualified_name.name;
++		name = KeywordHelper::WriteOptionallyQuoted(qualified_name.name, '"');
+ 	} else {
+-		name = qualified_name.schema + "." + qualified_name.name;
++		name = KeywordHelper::WriteOptionallyQuoted(qualified_name.schema, '"') + "." +
++		       KeywordHelper::WriteOptionallyQuoted(qualified_name.name, '"');
+ 	}
+ 	auto name_expr = make_uniq<ConstantExpression>(Value(name));
+ 	return make_uniq<SetVariableStatement>("schema", std::move(name_expr), SetScope::AUTOMATIC);

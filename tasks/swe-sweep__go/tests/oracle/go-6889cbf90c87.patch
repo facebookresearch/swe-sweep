@@ -1,0 +1,36 @@
+diff --git a/src/runtime/signal_unix.go b/src/runtime/signal_unix.go
+index 07f371cefe..8854629224 100644
+--- a/src/runtime/signal_unix.go
++++ b/src/runtime/signal_unix.go
+@@ -688,9 +688,11 @@ func sighandler(sig uint32, info *siginfo, ctxt unsafe.Pointer, gp *g) {
+ 	}
+ 
+ 	print("PC=", hex(c.sigpc()), " m=", _g_.m.id, " sigcode=", c.sigcode(), "\n")
+-	if _g_.m.lockedg != 0 && _g_.m.ncgo > 0 && gp == _g_.m.g0 {
++	if _g_.m.incgo && gp == _g_.m.g0 && _g_.m.curg != nil {
+ 		print("signal arrived during cgo execution\n")
+-		gp = _g_.m.lockedg.ptr()
++		// Switch to curg so that we get a traceback of the Go code
++		// leading up to the cgocall, which switched from curg to g0.
++		gp = _g_.m.curg
+ 	}
+ 	if sig == _SIGILL || sig == _SIGFPE {
+ 		// It would be nice to know how long the instruction is.
+diff --git a/src/runtime/signal_windows.go b/src/runtime/signal_windows.go
+index 3fe352ef57..16c36d07f1 100644
+--- a/src/runtime/signal_windows.go
++++ b/src/runtime/signal_windows.go
+@@ -218,11 +218,11 @@ func winthrow(info *exceptionrecord, r *context, gp *g) {
+ 	print("Exception ", hex(info.exceptioncode), " ", hex(info.exceptioninformation[0]), " ", hex(info.exceptioninformation[1]), " ", hex(r.ip()), "\n")
+ 
+ 	print("PC=", hex(r.ip()), "\n")
+-	if _g_.m.lockedg != 0 && _g_.m.ncgo > 0 && gp == _g_.m.g0 {
++	if _g_.m.incgo && gp == _g_.m.g0 && _g_.m.curg != nil {
+ 		if iscgo {
+ 			print("signal arrived during external code execution\n")
+ 		}
+-		gp = _g_.m.lockedg.ptr()
++		gp = _g_.m.curg
+ 	}
+ 	print("\n")
+ 

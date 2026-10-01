@@ -1,0 +1,16 @@
+diff --git a/src/full/Agda/TypeChecking/InstanceArguments.hs b/src/full/Agda/TypeChecking/InstanceArguments.hs
+index a5bdc1e..f895fb4 100644
+--- a/src/full/Agda/TypeChecking/InstanceArguments.hs
++++ b/src/full/Agda/TypeChecking/InstanceArguments.hs
+@@ -579,7 +579,10 @@ applyDroppingParameters t vs = do
+     Con c ci [] -> do
+       def <- theDef <$> getConInfo c
+       case def of
+-        Constructor {conPars = n} -> return $ Con c ci (map Apply $ drop n vs)
++        Constructor {conPars = n, conData = d} -> do
++          -- Szumi, 2025-05-05, issue #7853: don't drop parameters from the current module.
++          fv <- getDefFreeVars d
++          return $ Con c ci (map Apply $ drop (n - fv) vs)
+         _ -> __IMPOSSIBLE__
+     Def f [] -> do
+       mp <- isProjection f

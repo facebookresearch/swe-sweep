@@ -1,0 +1,13 @@
+diff --git a/lib/matplotlib/tests/test_lines.py b/lib/matplotlib/tests/test_lines.py
+index 68e378a20f..80261b0ddb 100644
+--- a/lib/matplotlib/tests/test_lines.py
++++ b/lib/matplotlib/tests/test_lines.py
+@@ -209,6 +209,8 @@ def test_nan_is_sorted():
+     assert line._is_sorted(np.array([1, 2, 3]))
+     assert line._is_sorted(np.array([1, np.nan, 3]))
+     assert not line._is_sorted([3, 5] + [np.nan] * 100 + [0, 2])
++    # [2, 256] byteswapped:
++    assert not line._is_sorted(np.array([33554432, 65536], ">i4"))
+ 
+ 
+ @check_figures_equal()

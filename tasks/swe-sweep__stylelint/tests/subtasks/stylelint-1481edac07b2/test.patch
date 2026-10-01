@@ -1,0 +1,67 @@
+diff --git a/lib/rules/selector-combinator-allowed-list/__tests__/index.mjs b/lib/rules/selector-combinator-allowed-list/__tests__/index.mjs
+index 639fdc319..5a808d3a6 100644
+--- a/lib/rules/selector-combinator-allowed-list/__tests__/index.mjs
++++ b/lib/rules/selector-combinator-allowed-list/__tests__/index.mjs
+@@ -1,3 +1,5 @@
++import { stripIndent } from 'common-tags';
++
+ import rule from '../index.mjs';
+ const { messages, ruleName } = rule;
+ 
+@@ -30,6 +32,16 @@ testRule({
+ 		{
+ 			code: 'a\nb {}',
+ 		},
++		{
++			code: stripIndent`
++				/* stylelint-disable-next-line selector-combinator-allowed-list */
++				a + b, /* stylelint-disable-next-line selector-combinator-allowed-list */
++				a + b,
++				/* stylelint-disable-next-line selector-combinator-allowed-list */
++				a + b
++				{}
++			`,
++		},
+ 	],
+ 
+ 	reject: [
+@@ -57,6 +69,39 @@ testRule({
+ 			endLine: 2,
+ 			endColumn: 4,
+ 		},
++		{
++			code: stripIndent`
++				/* a comment */
++				a + b, /* a comment */
++				a + b,
++				/* a comment */
++				a + b
++				{}
++			`,
++			warnings: [
++				{
++					line: 2,
++					column: 3,
++					endLine: 2,
++					endColumn: 4,
++					message: messages.rejected('+'),
++				},
++				{
++					line: 3,
++					column: 3,
++					endLine: 3,
++					endColumn: 4,
++					message: messages.rejected('+'),
++				},
++				{
++					line: 5,
++					column: 3,
++					endLine: 5,
++					endColumn: 4,
++					message: messages.rejected('+'),
++				},
++			],
++		},
+ 	],
+ });
+ 

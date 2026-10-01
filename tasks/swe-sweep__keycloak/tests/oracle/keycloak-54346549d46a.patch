@@ -1,0 +1,115 @@
+diff --git a/crypto/default/src/main/java/org/keycloak/crypto/def/BCCertificateUtilsProvider.java b/crypto/default/src/main/java/org/keycloak/crypto/def/BCCertificateUtilsProvider.java
+index e5b657a8e5..26dde03c71 100755
+--- a/crypto/default/src/main/java/org/keycloak/crypto/def/BCCertificateUtilsProvider.java
++++ b/crypto/default/src/main/java/org/keycloak/crypto/def/BCCertificateUtilsProvider.java
+@@ -22,6 +22,8 @@ import org.bouncycastle.asn1.ASN1Sequence;
+ import org.bouncycastle.asn1.DERIA5String;
+ import org.bouncycastle.asn1.DEROctetString;
+ import org.bouncycastle.asn1.x500.X500Name;
++import org.bouncycastle.asn1.x500.X500NameBuilder;
++import org.bouncycastle.asn1.x500.style.BCStyle;
+ import org.bouncycastle.asn1.x509.BasicConstraints;
+ import org.bouncycastle.asn1.x509.CRLDistPoint;
+ import org.bouncycastle.asn1.x509.CertificatePolicies;
+@@ -88,7 +90,7 @@ public class BCCertificateUtilsProvider implements CertificateUtilsProvider {
+     public X509Certificate generateV3Certificate(KeyPair keyPair, PrivateKey caPrivateKey, X509Certificate caCert,
+                                                  String subject) throws Exception {
+         try {
+-            X500Name subjectDN = new X500Name("CN=" + subject);
++            X500Name subjectDN = new X500NameBuilder(BCStyle.INSTANCE).addRDN(BCStyle.CN, subject).build();
+ 
+             // Serial Number
+             SecureRandom random = SecureRandom.getInstance("SHA1PRNG");
+@@ -152,7 +154,7 @@ public class BCCertificateUtilsProvider implements CertificateUtilsProvider {
+ 
+     public X509Certificate generateV1SelfSignedCertificate(KeyPair caKeyPair, String subject, BigInteger serialNumber) {
+         try {
+-            X500Name subjectDN = new X500Name("CN=" + subject);
++            X500Name subjectDN = new X500NameBuilder(BCStyle.INSTANCE).addRDN(BCStyle.CN, subject).build();
+             Date validityStartDate = new Date(System.currentTimeMillis() - 100000);
+             Calendar calendar = Calendar.getInstance();
+             calendar.add(Calendar.YEAR, 10);
+diff --git a/crypto/elytron/src/main/java/org/keycloak/crypto/elytron/ElytronCertificateUtilsProvider.java b/crypto/elytron/src/main/java/org/keycloak/crypto/elytron/ElytronCertificateUtilsProvider.java
+index f88aa2fd90..48d2c0d1d1 100644
+--- a/crypto/elytron/src/main/java/org/keycloak/crypto/elytron/ElytronCertificateUtilsProvider.java
++++ b/crypto/elytron/src/main/java/org/keycloak/crypto/elytron/ElytronCertificateUtilsProvider.java
+@@ -42,6 +42,8 @@ import org.wildfly.security.asn1.ASN1;
+ import org.wildfly.security.asn1.DERDecoder;
+ import org.wildfly.security.x500.GeneralName;
+ import org.wildfly.security.x500.X500;
++import org.wildfly.security.x500.X500AttributeTypeAndValue;
++import org.wildfly.security.x500.X500PrincipalBuilder;
+ import org.wildfly.security.x500.cert.AuthorityKeyIdentifierExtension;
+ import org.wildfly.security.x500.cert.BasicConstraintsExtension;
+ import org.wildfly.security.x500.cert.CertificatePoliciesExtension;
+@@ -82,7 +84,7 @@ public class ElytronCertificateUtilsProvider implements CertificateUtilsProvider
+             String subject) throws Exception {
+         try {
+ 
+-            X500Principal subjectdn = subjectToX500Principle(subject);
++            X500Principal subjectdn = cnToX500Principal(subject);
+             X500Principal issuerdn = caCert.getSubjectX500Principal();
+ 
+             // Validity
+@@ -164,7 +166,7 @@ public class ElytronCertificateUtilsProvider implements CertificateUtilsProvider
+             BigInteger serialNumber) {
+         try {
+ 
+-            X500Principal subjectdn = subjectToX500Principle(subject);
++            X500Principal subjectdn = cnToX500Principal(subject);
+ 
+             ZonedDateTime notBefore = ZonedDateTime.ofInstant(
+                     (new Date(System.currentTimeMillis() - 100000)).toInstant(),
+@@ -201,6 +203,21 @@ public class ElytronCertificateUtilsProvider implements CertificateUtilsProvider
+         return new X500Principal(subject);
+     }
+ 
++    /**
++     * Builds an {@link X500Principal} with a single CN RDN, encoding the given value directly as the
++     * RDN's attribute value rather than parsing it as part of an RFC 2253 DN string. This allows the
++     * value (e.g. a client ID) to contain characters that would otherwise need escaping, such as '=' or ','.
++     *
++     * @param commonName the raw CN value
++     *
++     * @return the X500Principal with a single CN RDN set to the given value
++     */
++    private static X500Principal cnToX500Principal(String commonName) {
++        return new X500PrincipalBuilder()
++                .addItem(X500AttributeTypeAndValue.createUtf8(X500.OID_AT_COMMON_NAME, commonName))
++                .build();
++    }
++
+     @Override
+     public List<String> getCertificatePolicyList(X509Certificate cert) throws GeneralSecurityException {
+         byte[] policy = cert.getExtensionValue("2.5.29.32");
+diff --git a/crypto/fips1402/src/main/java/org/keycloak/crypto/fips/BCFIPSCertificateUtilsProvider.java b/crypto/fips1402/src/main/java/org/keycloak/crypto/fips/BCFIPSCertificateUtilsProvider.java
+index 28c8bb0c47..c6ef8495e7 100755
+--- a/crypto/fips1402/src/main/java/org/keycloak/crypto/fips/BCFIPSCertificateUtilsProvider.java
++++ b/crypto/fips1402/src/main/java/org/keycloak/crypto/fips/BCFIPSCertificateUtilsProvider.java
+@@ -22,6 +22,8 @@ import org.bouncycastle.asn1.ASN1Sequence;
+ import org.bouncycastle.asn1.DERIA5String;
+ import org.bouncycastle.asn1.DEROctetString;
+ import org.bouncycastle.asn1.x500.X500Name;
++import org.bouncycastle.asn1.x500.X500NameBuilder;
++import org.bouncycastle.asn1.x500.style.BCStyle;
+ import org.bouncycastle.asn1.x509.BasicConstraints;
+ import org.bouncycastle.asn1.x509.CRLDistPoint;
+ import org.bouncycastle.asn1.x509.CertificatePolicies;
+@@ -90,7 +92,7 @@ public class BCFIPSCertificateUtilsProvider implements CertificateUtilsProvider{
+     public X509Certificate generateV3Certificate(KeyPair keyPair, PrivateKey caPrivateKey, X509Certificate caCert,
+             String subject) throws Exception {
+         try {
+-            X500Name subjectDN = new X500Name("CN=" + subject);
++            X500Name subjectDN = new X500NameBuilder(BCStyle.INSTANCE).addRDN(BCStyle.CN, subject).build();
+ 
+             // Serial Number
+             SecureRandom random = SecureRandom.getInstance("SHA1PRNG");
+@@ -156,7 +158,7 @@ public class BCFIPSCertificateUtilsProvider implements CertificateUtilsProvider{
+ 
+     public X509Certificate generateV1SelfSignedCertificate(KeyPair caKeyPair, String subject, BigInteger serialNumber) {
+         try {
+-            X500Name subjectDN = new X500Name("CN=" + subject);
++            X500Name subjectDN = new X500NameBuilder(BCStyle.INSTANCE).addRDN(BCStyle.CN, subject).build();
+             Date validityStartDate = new Date(System.currentTimeMillis() - 100000);
+             Calendar calendar = Calendar.getInstance();
+             calendar.add(Calendar.YEAR, 10);

@@ -1,0 +1,30 @@
+diff --git a/kernel/data-pipeline/api/src/main/java/org/apache/shardingsphere/data/pipeline/api/ingest/position/StringPrimaryKeyPosition.java b/kernel/data-pipeline/api/src/main/java/org/apache/shardingsphere/data/pipeline/api/ingest/position/StringPrimaryKeyPosition.java
+--- a/kernel/data-pipeline/api/src/main/java/org/apache/shardingsphere/data/pipeline/api/ingest/position/StringPrimaryKeyPosition.java
++++ b/kernel/data-pipeline/api/src/main/java/org/apache/shardingsphere/data/pipeline/api/ingest/position/StringPrimaryKeyPosition.java
+@@ -17,13 +17,12 @@
+ 
+ package org.apache.shardingsphere.data.pipeline.api.ingest.position;
+ 
++import com.google.common.base.Strings;
+ import lombok.Getter;
+-import lombok.RequiredArgsConstructor;
+ 
+ /**
+  * String primary key position.
+  */
+-@RequiredArgsConstructor
+ @Getter
+ public final class StringPrimaryKeyPosition extends PrimaryKeyPosition<String> implements IngestPosition<StringPrimaryKeyPosition> {
+     
+@@ -31,6 +30,11 @@ public final class StringPrimaryKeyPosition extends PrimaryKeyPosition<String> im
+     
+     private final String endValue;
+     
++    public StringPrimaryKeyPosition(final String beginValue, final String endValue) {
++        this.beginValue = Strings.emptyToNull(beginValue);
++        this.endValue = Strings.emptyToNull(endValue);
++    }
++    
+     @Override
+     protected String convert(final String value) {
+         return value;

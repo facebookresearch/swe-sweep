@@ -1,0 +1,15 @@
+diff --git a/tests/lean/linterUnusedVariables.lean b/tests/lean/linterUnusedVariables.lean
+index aa285db063..3640b533ad 100644
+--- a/tests/lean/linterUnusedVariables.lean
++++ b/tests/lean/linterUnusedVariables.lean
+@@ -255,3 +255,10 @@ def ignoreEverything : Lean.Linter.IgnoreFunction :=
+   fun _ _ _ => true
+ 
+ def ignored (x : Nat) := 0
++
++/-!
++The wildcard pattern introduces a copy of `x` that should not be linted as it is in an
++inaccessible annotation.
++-/
++example : (x = y) → y = x
++  | .refl _ => .refl _

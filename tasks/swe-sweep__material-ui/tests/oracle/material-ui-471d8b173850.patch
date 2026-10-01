@@ -1,0 +1,13 @@
+diff --git a/packages/mui-material/src/internal/SwitchBase.js b/packages/mui-material/src/internal/SwitchBase.js
+index fb488c2061..b2242deb86 100644
+--- a/packages/mui-material/src/internal/SwitchBase.js
++++ b/packages/mui-material/src/internal/SwitchBase.js
+@@ -159,7 +159,7 @@ const SwitchBase = React.forwardRef(function SwitchBase(props, ref) {
+         defaultChecked={defaultChecked}
+         className={classes.input}
+         disabled={disabled}
+-        id={hasLabelFor && id}
++        id={hasLabelFor ? id : undefined}
+         name={name}
+         onChange={handleInputChange}
+         readOnly={readOnly}

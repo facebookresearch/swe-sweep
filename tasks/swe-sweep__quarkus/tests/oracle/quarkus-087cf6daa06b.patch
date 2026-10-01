@@ -1,0 +1,94 @@
+diff --git a/extensions/kubernetes/vanilla/deployment/src/main/java/io/quarkus/kubernetes/deployment/AddSidecarDecorator.java b/extensions/kubernetes/vanilla/deployment/src/main/java/io/quarkus/kubernetes/deployment/AddSidecarDecorator.java
+index b7d9ea8c3b7..c2bfd91bf60 100644
+--- a/extensions/kubernetes/vanilla/deployment/src/main/java/io/quarkus/kubernetes/deployment/AddSidecarDecorator.java
++++ b/extensions/kubernetes/vanilla/deployment/src/main/java/io/quarkus/kubernetes/deployment/AddSidecarDecorator.java
+@@ -1,5 +1,6 @@
+ package io.quarkus.kubernetes.deployment;
+ 
++import io.dekorate.kubernetes.adapter.ContainerAdapter;
+ import io.dekorate.kubernetes.config.Container;
+ import io.dekorate.kubernetes.decorator.Decorator;
+ import io.dekorate.kubernetes.decorator.NamedResourceDecorator;
+@@ -8,7 +9,9 @@ import io.fabric8.kubernetes.api.model.ObjectMeta;
+ import io.fabric8.kubernetes.api.model.PodSpecBuilder;
+ 
+ /**
+- * Copied from dekorate in order to fix some issues
++ * Copied from dekorate in order to fix some issues.
++ * TODO: This decorator should be removed and replaced by the Dekorate AddSidecarDecorator class after
++ * https://github.com/dekorateio/dekorate/pull/1234 is merged and Dekorate is bumped.
+  */
+ class AddSidecarDecorator extends NamedResourceDecorator<PodSpecBuilder> {
+ 
+@@ -26,7 +29,10 @@ class AddSidecarDecorator extends NamedResourceDecorator<PodSpecBuilder> {
+     @Override
+     public void andThenVisit(PodSpecBuilder podSpec, ObjectMeta resourceMeta) {
+         // this was changed to use our patched adapter
+-        podSpec.addToContainers(ContainerAdapter.adapt(container));
++        var sidecarContainer = ContainerAdapter.adapt(container);
++        // This is necessary because of the issue that this pull request fixes https://github.com/dekorateio/dekorate/pull/1234
++        sidecarContainer.setWorkingDir(container.getWorkingDir());
++        podSpec.addToContainers(sidecarContainer);
+     }
+ 
+     public Class<? extends Decorator>[] after() {
+diff --git a/extensions/kubernetes/vanilla/deployment/src/main/java/io/quarkus/kubernetes/deployment/ContainerAdapter.java b/extensions/kubernetes/vanilla/deployment/src/main/java/io/quarkus/kubernetes/deployment/ContainerAdapter.java
+deleted file mode 100644
+index 85eef9a7647..00000000000
+--- a/extensions/kubernetes/vanilla/deployment/src/main/java/io/quarkus/kubernetes/deployment/ContainerAdapter.java
++++ /dev/null
+@@ -1,54 +0,0 @@
+-package io.quarkus.kubernetes.deployment;
+-
+-import io.dekorate.kubernetes.config.Env;
+-import io.dekorate.kubernetes.config.Mount;
+-import io.dekorate.kubernetes.config.Port;
+-import io.dekorate.kubernetes.decorator.AddEnvVarDecorator;
+-import io.dekorate.kubernetes.decorator.AddLivenessProbeDecorator;
+-import io.dekorate.kubernetes.decorator.AddMountDecorator;
+-import io.dekorate.kubernetes.decorator.AddPortDecorator;
+-import io.dekorate.kubernetes.decorator.AddReadinessProbeDecorator;
+-import io.dekorate.kubernetes.decorator.ApplyImagePullPolicyDecorator;
+-import io.dekorate.utils.Images;
+-import io.dekorate.utils.Strings;
+-import io.fabric8.kubernetes.api.model.Container;
+-import io.fabric8.kubernetes.api.model.ContainerBuilder;
+-
+-/**
+- * Copied from dekorate in order to fix some issues
+- */
+-public class ContainerAdapter {
+-
+-    private static final String ANY = null;
+-
+-    public static Container adapt(io.dekorate.kubernetes.config.Container container) {
+-        String name = container.getName();
+-        if (Strings.isNullOrEmpty(name)) {
+-            name = Images.getName(container.getImage());
+-        }
+-
+-        ContainerBuilder builder = new ContainerBuilder()
+-                .withName(name)
+-                .withImage(container.getImage())
+-                // this was changed to add working dir
+-                .withWorkingDir(container.getWorkingDir())
+-                .withCommand(container.getCommand())
+-                .withArgs(container.getArguments());
+-
+-        for (Env env : container.getEnvVars()) {
+-            builder.accept(new AddEnvVarDecorator(ANY, name, env));
+-        }
+-        for (Port port : container.getPorts()) {
+-            // this was changed to use our patched port decorator
+-            builder.accept(new AddPortDecorator(ANY, name, port));
+-        }
+-        for (Mount mount : container.getMounts()) {
+-            builder.accept(new AddMountDecorator(ANY, name, mount));
+-        }
+-
+-        builder.accept(new ApplyImagePullPolicyDecorator(name, container.getImagePullPolicy()));
+-        builder.accept(new AddLivenessProbeDecorator(name, container.getLivenessProbe()));
+-        builder.accept(new AddReadinessProbeDecorator(name, container.getReadinessProbe()));
+-        return builder.build();
+-    }
+-}

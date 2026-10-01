@@ -1,0 +1,47 @@
+diff --git a/managed-ledger/src/main/java/org/apache/bookkeeper/mledger/impl/ManagedLedgerFactoryImpl.java b/managed-ledger/src/main/java/org/apache/bookkeeper/mledger/impl/ManagedLedgerFactoryImpl.java
+index f076f68299d..9107b76c88a 100644
+--- a/managed-ledger/src/main/java/org/apache/bookkeeper/mledger/impl/ManagedLedgerFactoryImpl.java
++++ b/managed-ledger/src/main/java/org/apache/bookkeeper/mledger/impl/ManagedLedgerFactoryImpl.java
+@@ -505,9 +505,19 @@ public class ManagedLedgerFactoryImpl implements ManagedLedgerFactory {
+     }
+ 
+     void close(ManagedLedger ledger) {
+-        // Remove the ledger from the internal factory cache
+-        ledgers.remove(ledger.getName());
+-        entryCacheManager.removeEntryCache(ledger.getName());
++        // If the future in map is not done or has exceptionally complete, it means that @param-ledger is not in the
++        // map.
++        CompletableFuture<ManagedLedgerImpl> ledgerFuture = ledgers.get(ledger.getName());
++        if (ledgerFuture == null || !ledgerFuture.isDone() || ledgerFuture.isCompletedExceptionally()){
++            return;
++        }
++        if (ledgerFuture.join() != ledger){
++            return;
++        }
++        // Remove the ledger from the internal factory cache.
++        if (ledgers.remove(ledger.getName(), ledgerFuture)) {
++            entryCacheManager.removeEntryCache(ledger.getName());
++        }
+     }
+ 
+     public CompletableFuture<Void> shutdownAsync() throws ManagedLedgerException {
+diff --git a/managed-ledger/src/main/java/org/apache/bookkeeper/mledger/impl/ManagedLedgerImpl.java b/managed-ledger/src/main/java/org/apache/bookkeeper/mledger/impl/ManagedLedgerImpl.java
+index 9b3d7e46aaa..10f7948f553 100644
+--- a/managed-ledger/src/main/java/org/apache/bookkeeper/mledger/impl/ManagedLedgerImpl.java
++++ b/managed-ledger/src/main/java/org/apache/bookkeeper/mledger/impl/ManagedLedgerImpl.java
+@@ -1528,6 +1528,15 @@ public class ManagedLedgerImpl implements ManagedLedger, CreateCallback {
+ 
+     @Override
+     public synchronized void createComplete(int rc, final LedgerHandle lh, Object ctx) {
++        if (STATE_UPDATER.get(this) == State.Closed) {
++            if (lh != null) {
++                log.warn("[{}] ledger create completed after the managed ledger is closed rc={} ledger={}, so just"
++                        + " close this ledger handle.", name, rc, lh != null ? lh.getId() : -1);
++                lh.closeAsync();
++            }
++            return;
++        }
++
+         if (log.isDebugEnabled()) {
+             log.debug("[{}] createComplete rc={} ledger={}", name, rc, lh != null ? lh.getId() : -1);
+         }

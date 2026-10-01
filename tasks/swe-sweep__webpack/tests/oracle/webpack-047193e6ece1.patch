@@ -1,0 +1,53 @@
+diff --git a/lib/dependencies/HarmonyExportImportedSpecifierDependency.js b/lib/dependencies/HarmonyExportImportedSpecifierDependency.js
+index 9b46b1e41..1b211436b 100644
+--- a/lib/dependencies/HarmonyExportImportedSpecifierDependency.js
++++ b/lib/dependencies/HarmonyExportImportedSpecifierDependency.js
+@@ -5,6 +5,7 @@
+ 
+ "use strict";
+ 
++const ConditionalInitFragment = require("../ConditionalInitFragment");
+ const Dependency = require("../Dependency");
+ const { UsageState } = require("../ExportsInfo");
+ const HarmonyLinkingError = require("../HarmonyLinkingError");
+@@ -14,7 +15,11 @@ const { countIterable } = require("../util/IterableHelpers");
+ const { first, combine } = require("../util/SetHelpers");
+ const makeSerializable = require("../util/makeSerializable");
+ const propertyAccess = require("../util/propertyAccess");
+-const { getRuntimeKey, keyToRuntime } = require("../util/runtime");
++const {
++	getRuntimeKey,
++	keyToRuntime,
++	filterRuntime
++} = require("../util/runtime");
+ const HarmonyExportInitFragment = require("./HarmonyExportInitFragment");
+ const HarmonyImportDependency = require("./HarmonyImportDependency");
+ const processExportInfo = require("./processExportInfo");
+@@ -1045,8 +1050,15 @@ HarmonyExportImportedSpecifierDependency.Template = class HarmonyExportImportedS
+ 				for (const { name, ids, checked, hidden } of mode.items) {
+ 					if (hidden) continue;
+ 					if (checked) {
++						const connection = moduleGraph.getConnection(dep);
++						const key = `harmony reexport (checked) ${importVar} ${name}`;
++						const runtimeCondition = dep.weak
++							? false
++							: connection
++								? filterRuntime(runtime, r => connection.isTargetActive(r))
++								: true;
+ 						initFragments.push(
+-							new InitFragment(
++							new ConditionalInitFragment(
+ 								"/* harmony reexport (checked) */ " +
+ 									this.getConditionalReexportStatement(
+ 										module,
+@@ -1058,7 +1070,9 @@ HarmonyExportImportedSpecifierDependency.Template = class HarmonyExportImportedS
+ 								moduleGraph.isAsync(importedModule)
+ 									? InitFragment.STAGE_ASYNC_HARMONY_IMPORTS
+ 									: InitFragment.STAGE_HARMONY_IMPORTS,
+-								dep.sourceOrder
++								dep.sourceOrder,
++								key,
++								runtimeCondition
+ 							)
+ 						);
+ 					} else {

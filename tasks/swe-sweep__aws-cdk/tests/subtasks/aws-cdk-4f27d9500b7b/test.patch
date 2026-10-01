@@ -1,0 +1,37 @@
+diff --git a/packages/aws-cdk/test/settings.test.ts b/packages/aws-cdk/test/settings.test.ts
+index 0738febc43..fde5c1c746 100644
+--- a/packages/aws-cdk/test/settings.test.ts
++++ b/packages/aws-cdk/test/settings.test.ts
+@@ -1,4 +1,5 @@
+ import { Command, Context, Settings } from '../lib/settings';
++import { Tag } from '../lib/cdk-toolkit';
+ 
+ test('can delete values from Context object', () => {
+   // GIVEN
+@@ -80,6 +81,26 @@ test('can parse string context from command line arguments with equals sign in v
+   expect(settings2.get(['context']).foo).toEqual( 'bar=');
+ });
+ 
++test('can parse tag values from command line arguments', () => {
++  // GIVEN
++  const settings1 = Settings.fromCommandLineArguments({ tags: ['foo=bar'], _: [Command.DEPLOY] });
++  const settings2 = Settings.fromCommandLineArguments({ tags: ['foo='], _: [Command.DEPLOY] });
++
++  // THEN
++  expect(settings1.get(['tags']).find((tag: Tag) => tag.Key === 'foo').Value).toEqual('bar');
++  expect(settings2.get(['tags']).find((tag: Tag) => tag.Key === 'foo').Value).toEqual('');
++});
++
++test('can parse tag values from command line arguments with equals sign in value', () => {
++  // GIVEN
++  const settings1 = Settings.fromCommandLineArguments({ tags: ['foo==bar='], _: [Command.DEPLOY] });
++  const settings2 = Settings.fromCommandLineArguments({ tags: ['foo=bar='], _: [Command.DEPLOY] });
++
++  // THEN
++  expect(settings1.get(['tags']).find((tag: Tag) => tag.Key === 'foo').Value).toEqual('=bar=');
++  expect(settings2.get(['tags']).find((tag: Tag) => tag.Key === 'foo').Value).toEqual('bar=');
++});
++
+ test('bundling stacks defaults to an empty list', () => {
+   // GIVEN
+   const settings = Settings.fromCommandLineArguments({

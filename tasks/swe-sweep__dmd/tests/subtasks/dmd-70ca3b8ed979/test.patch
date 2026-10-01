@@ -1,0 +1,57 @@
+diff --git a/compiler/test/compilable/imports/test24511_c.c b/compiler/test/compilable/imports/test24511_c.c
+new file mode 100644
+index 0000000000..c77efbc5d1
+--- /dev/null
++++ b/compiler/test/compilable/imports/test24511_c.c
+@@ -0,0 +1,17 @@
++typedef void (*CFunctionPointer)();
++typedef void (__stdcall *StdCallFunctionPointer)();
++
++void cFunction()
++{}
++
++void __stdcall stdcallFunction()
++{}
++
++void __stdcall takesCFunctionPointer(CFunctionPointer f)
++{}
++
++void takesStdCallFunctionPointer(StdCallFunctionPointer f)
++{}
++
++typedef void (__stdcall *StdCallFunctionPointerTakingCFunctionPointer)(CFunctionPointer f);
++typedef void (*CFunctionPointerTakingStdCallFunctionPointer)(StdCallFunctionPointer f);
+diff --git a/compiler/test/compilable/test24511.d b/compiler/test/compilable/test24511.d
+new file mode 100644
+index 0000000000..4e5b75d845
+--- /dev/null
++++ b/compiler/test/compilable/test24511.d
+@@ -0,0 +1,28 @@
++// REQUIRED_ARGS: -os=windows
++// EXTRA_SOURCES: imports/test24511_c.c
++// DISABLED: osx
++// This is disabled on macOS because ld complains about _main being undefined
++// when clang attempts to preprocess the C file.
++
++import test24511_c;
++
++static assert(__traits(getLinkage, CFunctionPointer) == "C");
++static assert(__traits(getLinkage, StdCallFunctionPointer) == "Windows");
++static assert(__traits(getLinkage, cFunction) == "C");
++static assert(__traits(getLinkage, stdcallFunction) == "Windows");
++
++static assert(__traits(getLinkage, takesCFunctionPointer) == "Windows");
++static if (is(typeof(&takesCFunctionPointer) ParamsA == __parameters))
++    static assert(__traits(getLinkage, ParamsA[0]) == "C");
++
++static assert(__traits(getLinkage, takesStdCallFunctionPointer) == "C");
++static if (is(typeof(&takesStdCallFunctionPointer) ParamsB == __parameters))
++    static assert(__traits(getLinkage, ParamsB[0]) == "Windows");
++
++static assert(__traits(getLinkage, StdCallFunctionPointerTakingCFunctionPointer) == "Windows");
++static if (is(typeof(&StdCallFunctionPointerTakingCFunctionPointer) ParamsC == __parameters))
++    static assert(__traits(getLinkage, ParamsC[0]) == "C");
++
++static assert(__traits(getLinkage, CFunctionPointerTakingStdCallFunctionPointer) == "C");
++static if (is(typeof(&CFunctionPointerTakingStdCallFunctionPointer) ParamsD == __parameters))
++    static assert(__traits(getLinkage, ParamsD[0]) == "Windows");

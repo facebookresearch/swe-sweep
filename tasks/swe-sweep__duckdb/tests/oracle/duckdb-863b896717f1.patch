@@ -1,0 +1,37 @@
+diff --git a/src/storage/table/array_column_data.cpp b/src/storage/table/array_column_data.cpp
+index 95ba4df380..148f3fd84f 100644
+--- a/src/storage/table/array_column_data.cpp
++++ b/src/storage/table/array_column_data.cpp
+@@ -114,7 +114,13 @@ void ArrayColumnData::InitializeAppend(ColumnAppendState &state) {
+ }
+ 
+ void ArrayColumnData::Append(BaseStatistics &stats, ColumnAppendState &state, Vector &vector, idx_t count) {
+-	vector.Flatten(count);
++	if (vector.GetVectorType() != VectorType::FLAT_VECTOR) {
++		Vector append_vector(vector);
++		append_vector.Flatten(count);
++		Append(stats, state, append_vector, count);
++		return;
++	}
++
+ 	// Append validity
+ 	validity.Append(stats, state.child_appends[0], vector, count);
+ 	// Append child column
+diff --git a/src/storage/table/struct_column_data.cpp b/src/storage/table/struct_column_data.cpp
+index 9ac2b0c0f0..d6e2ef8d4e 100644
+--- a/src/storage/table/struct_column_data.cpp
++++ b/src/storage/table/struct_column_data.cpp
+@@ -127,7 +127,12 @@ void StructColumnData::InitializeAppend(ColumnAppendState &state) {
+ }
+ 
+ void StructColumnData::Append(BaseStatistics &stats, ColumnAppendState &state, Vector &vector, idx_t count) {
+-	vector.Flatten(count);
++	if (vector.GetVectorType() != VectorType::FLAT_VECTOR) {
++		Vector append_vector(vector);
++		append_vector.Flatten(count);
++		Append(stats, state, append_vector, count);
++		return;
++	}
+ 
+ 	// append the null values
+ 	validity.Append(stats, state.child_appends[0], vector, count);

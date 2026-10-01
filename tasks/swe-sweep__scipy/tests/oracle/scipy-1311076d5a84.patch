@@ -1,0 +1,13 @@
+diff --git a/scipy/stats/_stats.pyx b/scipy/stats/_stats.pyx
+index 402e926632..8f184cf4ca 100644
+--- a/scipy/stats/_stats.pyx
++++ b/scipy/stats/_stats.pyx
+@@ -164,7 +164,7 @@ def _toint64(x):
+         if x[perm[i]] != x[perm[i + 1]]:
+             j += 1
+ 
+-    result[perm[i + 1]] = j
++    result[perm[l - 1]] = j
+     return np.array(result, dtype=np.int64)
+ 
+ 

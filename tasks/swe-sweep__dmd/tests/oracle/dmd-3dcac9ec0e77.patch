@@ -1,0 +1,24 @@
+diff --git a/compiler/src/dmd/expressionsem.d b/compiler/src/dmd/expressionsem.d
+index 9fe2686e5e..2b44f53591 100644
+--- a/compiler/src/dmd/expressionsem.d
++++ b/compiler/src/dmd/expressionsem.d
+@@ -4850,10 +4850,17 @@ private extern (C++) final class ExpressionSemanticVisitor : Visitor
+                         return null;
+                     if (f)
+                     {
+-                        /* Error if match in more than one overload set,
++                        /* Match in more than one overload set,
+                          * even if one is a 'better' match than the other.
+                          */
+-                        ScopeDsymbol.multiplyDefined(loc, f, f2);
++                        if (f.isCsymbol() && f2.isCsymbol())
++                        {
++                            /* C has global name space, so just pick one, such as f.
++                             * If f and f2 are not compatible, that's how C rolls.
++                             */
++                        }
++                        else
++                            ScopeDsymbol.multiplyDefined(loc, f, f2); // issue error
+                     }
+                     else
+                         f = f2;

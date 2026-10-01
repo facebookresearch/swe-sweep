@@ -1,0 +1,259 @@
+diff --git a/pendulum/formatting/formatter.py b/pendulum/formatting/formatter.py
+index d400c28..5678a42 100644
+--- a/pendulum/formatting/formatter.py
++++ b/pendulum/formatting/formatter.py
+@@ -11,27 +11,27 @@ from pendulum.locales.locale import Locale
+ from pendulum.utils._compat import decode
+ 
+ 
+-_MATCH_1 = "\d"
+-_MATCH_2 = "\d\d"
+-_MATCH_3 = "\d{3}"
+-_MATCH_4 = "\d{4}"
+-_MATCH_6 = "[+-]?\d{6}"
+-_MATCH_1_TO_2 = "\d\d?"
+-_MATCH_1_TO_2_LEFT_PAD = "[0-9 ]\d?"
+-_MATCH_1_TO_3 = "\d{1,3}"
+-_MATCH_1_TO_4 = "\d{1,4}"
+-_MATCH_1_TO_6 = "[+-]?\d{1,6}"
+-_MATCH_3_TO_4 = "\d{3}\d?"
+-_MATCH_5_TO_6 = "\d{5}\d?"
+-_MATCH_UNSIGNED = "\d+"
+-_MATCH_SIGNED = "[+-]?\d+"
+-_MATCH_OFFSET = "[Zz]|[+-]\d\d:?\d\d"
+-_MATCH_SHORT_OFFSET = "[Zz]|[+-]\d\d(?::?\d\d)?"
+-_MATCH_TIMESTAMP = "[+-]?\d+(\.\d{1,6})?"
++_MATCH_1 = r"\d"
++_MATCH_2 = r"\d\d"
++_MATCH_3 = r"\d{3}"
++_MATCH_4 = r"\d{4}"
++_MATCH_6 = r"[+-]?\d{6}"
++_MATCH_1_TO_2 = r"\d\d?"
++_MATCH_1_TO_2_LEFT_PAD = r"[0-9 ]\d?"
++_MATCH_1_TO_3 = r"\d{1,3}"
++_MATCH_1_TO_4 = r"\d{1,4}"
++_MATCH_1_TO_6 = r"[+-]?\d{1,6}"
++_MATCH_3_TO_4 = r"\d{3}\d?"
++_MATCH_5_TO_6 = r"\d{5}\d?"
++_MATCH_UNSIGNED = r"\d+"
++_MATCH_SIGNED = r"[+-]?\d+"
++_MATCH_OFFSET = r"[Zz]|[+-]\d\d:?\d\d"
++_MATCH_SHORT_OFFSET = r"[Zz]|[+-]\d\d(?::?\d\d)?"
++_MATCH_TIMESTAMP = r"[+-]?\d+(\.\d{1,6})?"
+ _MATCH_WORD = (
+     "(?i)[0-9]*"
+     "['a-z\u00A0-\u05FF\u0700-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]+"
+-    "|[\u0600-\u06FF\/]+(\s*?[\u0600-\u06FF]+){1,2}"
++    r"|[\u0600-\u06FF/]+(\s*?[\u0600-\u06FF]+){1,2}"
+ )
+ _MATCH_TIMEZONE = "[A-za-z0-9-+]+(/[A-Za-z0-9-+_]+)?"
+ 
+@@ -39,7 +39,7 @@ _MATCH_TIMEZONE = "[A-za-z0-9-+]+(/[A-Za-z0-9-+_]+)?"
+ class Formatter:
+ 
+     _TOKENS = (
+-        "\[([^\[]*)\]|\\\(.)|"
++        r"\[([^\[]*)\]|\\(.)|"
+         "("
+         "Mo|MM?M?M?"
+         "|Do|DDDo|DD?D?D?|ddd?d?|do?"
+@@ -67,7 +67,7 @@ class Formatter:
+         "Mo": None,
+         "DDDo": None,
+         "Do": lambda locale: tuple(
+-            "\d+{}".format(o) for o in locale.get("custom.ordinal").values()
++            r"\d+{}".format(o) for o in locale.get("custom.ordinal").values()
+         ),
+         "dddd": "days.wide",
+         "ddd": "days.abbreviated",
+@@ -615,7 +615,7 @@ class Formatter:
+             unit = "month"
+             match = "months.abbreviated"
+         elif token == "Do":
+-            parsed["day"] = int(re.match("(\d+)", value).group(1))
++            parsed["day"] = int(re.match(r"(\d+)", value).group(1))
+ 
+             return
+         elif token == "dddd":
+diff --git a/pendulum/parsing/__init__.py b/pendulum/parsing/__init__.py
+index eef430d..103fce1 100644
+--- a/pendulum/parsing/__init__.py
++++ b/pendulum/parsing/__init__.py
+@@ -24,21 +24,21 @@ COMMON = re.compile(
+     "^"
+     "(?P<date>"
+     "    (?P<classic>"  # Classic date (YYYY-MM-DD)
+-    "        (?P<year>\d{4})"  # Year
++    r"        (?P<year>\d{4})"  # Year
+     "        (?P<monthday>"
+-    "            (?P<monthsep>[/:])?(?P<month>\d{2})"  # Month (optional)
+-    "            ((?P<daysep>[/:])?(?P<day>\d{2}))"  # Day (optional)
++    r"            (?P<monthsep>[/:])?(?P<month>\d{2})"  # Month (optional)
++    r"            ((?P<daysep>[/:])?(?P<day>\d{2}))"  # Day (optional)
+     "        )?"
+     "    )"
+     ")?"
+     # Time (optional)
+     "(?P<time>"
+-    "    (?P<timesep>\ )?"  # Separator (space)
+-    "    (?P<hour>\d{1,2}):(?P<minute>\d{1,2})?(?::(?P<second>\d{1,2}))?"  # HH:mm:ss (optional mm and ss)
++    r"    (?P<timesep>\ )?"  # Separator (space)
++    r"    (?P<hour>\d{1,2}):(?P<minute>\d{1,2})?(?::(?P<second>\d{1,2}))?"  # HH:mm:ss (optional mm and ss)
+     # Subsecond part (optional)
+     "    (?P<subsecondsection>"
+     "        (?:[.|,])"  # Subsecond separator (optional)
+-    "        (?P<subsecond>\d{1,9})"  # Subsecond
++    r"        (?P<subsecond>\d{1,9})"  # Subsecond
+     "    )?"
+     ")?"
+     "$",
+diff --git a/pendulum/parsing/iso8601.py b/pendulum/parsing/iso8601.py
+index 38e42f3..ab4c24a 100644
+--- a/pendulum/parsing/iso8601.py
++++ b/pendulum/parsing/iso8601.py
+@@ -20,34 +20,34 @@ ISO8601_DT = re.compile(
+     "^"
+     "(?P<date>"
+     "    (?P<classic>"  # Classic date (YYYY-MM-DD) or ordinal (YYYY-DDD)
+-    "        (?P<year>\d{4})"  # Year
++    r"        (?P<year>\d{4})"  # Year
+     "        (?P<monthday>"
+-    "            (?P<monthsep>-)?(?P<month>\d{2})"  # Month (optional)
+-    "            ((?P<daysep>-)?(?P<day>\d{1,2}))?"  # Day (optional)
++    r"            (?P<monthsep>-)?(?P<month>\d{2})"  # Month (optional)
++    r"            ((?P<daysep>-)?(?P<day>\d{1,2}))?"  # Day (optional)
+     "        )?"
+     "    )"
+     "    |"
+     "    (?P<isocalendar>"  # Calendar date (2016-W05 or 2016-W05-5)
+-    "        (?P<isoyear>\d{4})"  # Year
++    r"        (?P<isoyear>\d{4})"  # Year
+     "        (?P<weeksep>-)?"  # Separator (optional)
+     "        W"  # W separator
+-    "        (?P<isoweek>\d{2})"  # Week number
++    r"        (?P<isoweek>\d{2})"  # Week number
+     "        (?P<weekdaysep>-)?"  # Separator (optional)
+-    "        (?P<isoweekday>\d)?"  # Weekday (optional)
++    r"        (?P<isoweekday>\d)?"  # Weekday (optional)
+     "    )"
+     ")?"
+     # Time (optional)
+     "(?P<time>"
+-    "    (?P<timesep>[T\ ])?"  # Separator (T or space)
+-    "    (?P<hour>\d{1,2})(?P<minsep>:)?(?P<minute>\d{1,2})?(?P<secsep>:)?(?P<second>\d{1,2})?"  # HH:mm:ss (optional mm and ss)
++    r"    (?P<timesep>[T\ ])?"  # Separator (T or space)
++    r"    (?P<hour>\d{1,2})(?P<minsep>:)?(?P<minute>\d{1,2})?(?P<secsep>:)?(?P<second>\d{1,2})?"  # HH:mm:ss (optional mm and ss)
+     # Subsecond part (optional)
+     "    (?P<subsecondsection>"
+     "        (?:[.,])"  # Subsecond separator (optional)
+-    "        (?P<subsecond>\d{1,9})"  # Subsecond
++    r"        (?P<subsecond>\d{1,9})"  # Subsecond
+     "    )?"
+     # Timezone offset
+     "    (?P<tz>"
+-    "        (?:[-+])\d{2}:?(?:\d{2})?|Z"  # Offset (+HH:mm or +HHmm or +HH or Z)
++    r"        (?:[-+])\d{2}:?(?:\d{2})?|Z"  # Offset (+HH:mm or +HHmm or +HH or Z)
+     "    )?"
+     ")?"
+     "$",
+@@ -59,18 +59,18 @@ ISO8601_DURATION = re.compile(
+     "^P"  # Duration P indicator
+     # Years, months and days (optional)
+     "(?P<w>"
+-    "    (?P<weeks>\d+(?:[.,]\d+)?W)"
++    r"    (?P<weeks>\d+(?:[.,]\d+)?W)"
+     ")?"
+     "(?P<ymd>"
+-    "    (?P<years>\d+(?:[.,]\d+)?Y)?"
+-    "    (?P<months>\d+(?:[.,]\d+)?M)?"
+-    "    (?P<days>\d+(?:[.,]\d+)?D)?"
++    r"    (?P<years>\d+(?:[.,]\d+)?Y)?"
++    r"    (?P<months>\d+(?:[.,]\d+)?M)?"
++    r"    (?P<days>\d+(?:[.,]\d+)?D)?"
+     ")?"
+     "(?P<hms>"
+     "    (?P<timesep>T)"  # Separator (T)
+-    "    (?P<hours>\d+(?:[.,]\d+)?H)?"
+-    "    (?P<minutes>\d+(?:[.,]\d+)?M)?"
+-    "    (?P<seconds>\d+(?:[.,]\d+)?S)?"
++    r"    (?P<hours>\d+(?:[.,]\d+)?H)?"
++    r"    (?P<minutes>\d+(?:[.,]\d+)?M)?"
++    r"    (?P<seconds>\d+(?:[.,]\d+)?S)?"
+     ")?"
+     "$",
+     re.VERBOSE,
+diff --git a/pendulum/period.py b/pendulum/period.py
+index 31a4eb1..dd2f6c1 100644
+--- a/pendulum/period.py
++++ b/pendulum/period.py
+@@ -372,8 +372,11 @@ class Period(Duration):
+         return hash((self.start, self.end, self._absolute))
+ 
+     def __eq__(self, other):
+-        return (self.start, self.end, self._absolute) == (
+-            other.start,
+-            other.end,
+-            other._absolute,
+-        )
++        if isinstance(other, Period):
++            return (self.start, self.end, self._absolute) == (
++                other.start,
++                other.end,
++                other._absolute,
++            )
++        else:
++            return self.as_interval() == other
+diff --git a/pendulum/tz/local_timezone.py b/pendulum/tz/local_timezone.py
+index 1bbbf38..de366f8 100644
+--- a/pendulum/tz/local_timezone.py
++++ b/pendulum/tz/local_timezone.py
+@@ -177,8 +177,8 @@ def _get_unix_timezone(_root="/"):  # type: (str) -> Timezone
+     # OpenSUSE has a TIMEZONE setting in /etc/sysconfig/clock and
+     # Gentoo has a TIMEZONE setting in /etc/conf.d/clock
+     # We look through these files for a timezone:
+-    zone_re = re.compile('\s*ZONE\s*=\s*"')
+-    timezone_re = re.compile('\s*TIMEZONE\s*=\s*"')
++    zone_re = re.compile(r'\s*ZONE\s*=\s*"')
++    timezone_re = re.compile(r'\s*TIMEZONE\s*=\s*"')
+     end_re = re.compile('"')
+ 
+     for filename in ("etc/sysconfig/clock", "etc/conf.d/clock"):
+diff --git a/pendulum/tz/zoneinfo/posix_timezone.py b/pendulum/tz/zoneinfo/posix_timezone.py
+index da5e866..1160d17 100644
+--- a/pendulum/tz/zoneinfo/posix_timezone.py
++++ b/pendulum/tz/zoneinfo/posix_timezone.py
+@@ -12,21 +12,21 @@ from .exceptions import InvalidPosixSpec
+ 
+ _spec = re.compile(
+     "^"
+-    "(?P<std_abbr><.*?>|[^-+,\d]{3,})"
+-    "(?P<std_offset>([+-])?(\d{1,2})(:\d{2}(:\d{2})?)?)"
+-    "(?P<dst_info>"
+-    "    (?P<dst_abbr><.*?>|[^-+,\d]{3,})"
+-    "    (?P<dst_offset>([+-])?(\d{1,2})(:\d{2}(:\d{2})?)?)?"
+-    ")?"
+-    "(?:,(?P<rules>"
+-    "    (?P<dst_start>"
+-    "        (?:J\d+|\d+|M\d{1,2}.\d.[0-6])"
+-    "        (?:/(?P<dst_start_offset>([+-])?(\d+)(:\d{2}(:\d{2})?)?))?"
++    r"(?P<std_abbr><.*?>|[^-+,\d]{3,})"
++    r"(?P<std_offset>([+-])?(\d{1,2})(:\d{2}(:\d{2})?)?)"
++    r"(?P<dst_info>"
++    r"    (?P<dst_abbr><.*?>|[^-+,\d]{3,})"
++    r"    (?P<dst_offset>([+-])?(\d{1,2})(:\d{2}(:\d{2})?)?)?"
++    r")?"
++    r"(?:,(?P<rules>"
++    r"    (?P<dst_start>"
++    r"        (?:J\d+|\d+|M\d{1,2}.\d.[0-6])"
++    r"        (?:/(?P<dst_start_offset>([+-])?(\d+)(:\d{2}(:\d{2})?)?))?"
+     "    )"
+     "    ,"
+-    "    (?P<dst_end>"
+-    "        (?:J\d+|\d+|M\d{1,2}.\d.[0-6])"
+-    "        (?:/(?P<dst_end_offset>([+-])?(\d+)(:\d{2}(:\d{2})?)?))?"
++    r"    (?P<dst_end>"
++    r"        (?:J\d+|\d+|M\d{1,2}.\d.[0-6])"
++    r"        (?:/(?P<dst_end_offset>([+-])?(\d+)(:\d{2}(:\d{2})?)?))?"
+     "    )"
+     "))?"
+     "$",

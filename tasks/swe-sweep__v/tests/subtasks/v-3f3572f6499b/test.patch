@@ -1,0 +1,40 @@
+diff --git a/vlib/encoding/csv/csv_reader_eol_test.v b/vlib/encoding/csv/csv_reader_eol_test.v
+new file mode 100644
+index 000000000..2f0b59793
+--- /dev/null
++++ b/vlib/encoding/csv/csv_reader_eol_test.v
+@@ -0,0 +1,34 @@
++import encoding.csv
++
++fn test_no_ending() {
++	data := 'x,y,d
++a,b
++w'
++	mut parser := csv.new_reader(data)
++	mut arr := []string{}
++	for {
++		items := parser.read() or { break }
++		arr << items.join('-')
++	}
++	dump(arr)
++	assert arr[0].str() == 'x-y-d'
++	assert arr[1].str() == 'a-b'
++	assert arr[2].str() == 'w'
++}
++
++fn test_with_ending() {
++	data := 'x,y,d
++a,b
++w
++'
++	mut parser := csv.new_reader(data)
++	mut arr := []string{}
++	for {
++		items := parser.read() or { break }
++		arr << items.join('-')
++	}
++	dump(arr)
++	assert arr[0].str() == 'x-y-d'
++	assert arr[1].str() == 'a-b'
++	assert arr[2].str() == 'w'
++}

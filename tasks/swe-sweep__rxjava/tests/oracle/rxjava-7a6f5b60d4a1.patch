@@ -1,0 +1,18 @@
+diff --git a/src/main/java/io/reactivex/internal/operators/flowable/FlowableMap.java b/src/main/java/io/reactivex/internal/operators/flowable/FlowableMap.java
+index 208baca0b..6bae80697 100644
+--- a/src/main/java/io/reactivex/internal/operators/flowable/FlowableMap.java
++++ b/src/main/java/io/reactivex/internal/operators/flowable/FlowableMap.java
+@@ -113,7 +113,12 @@ public final class FlowableMap<T, U> extends AbstractFlowableWithUpstream<T, U> {
+         @Override
+         public boolean tryOnNext(T t) {
+             if (done) {
+-                return false;
++                return true;
++            }
++
++            if (sourceMode != NONE) {
++                downstream.tryOnNext(null);
++                return true;
+             }
+ 
+             U v;

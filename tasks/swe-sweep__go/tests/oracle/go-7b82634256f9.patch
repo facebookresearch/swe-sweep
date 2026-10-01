@@ -1,0 +1,14 @@
+diff --git a/src/time/format.go b/src/time/format.go
+index ed2a0a8fc6..a278cd9e6b 100644
+--- a/src/time/format.go
++++ b/src/time/format.go
+@@ -1135,6 +1135,9 @@ func parse(layout, value string, defaultLocation, local *Location) (Time, error)
+ 			}
+ 		case stdSecond, stdZeroSecond:
+ 			sec, value, err = getnum(value, std == stdZeroSecond)
++			if err != nil {
++				break
++			}
+ 			if sec < 0 || 60 <= sec {
+ 				rangeErrString = "second"
+ 				break

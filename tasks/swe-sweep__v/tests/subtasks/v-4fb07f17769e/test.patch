@@ -1,0 +1,27 @@
+diff --git a/vlib/v/checker/tests/for_mut_compare_rune_string_err.out b/vlib/v/checker/tests/for_mut_compare_rune_string_err.out
+new file mode 100644
+index 000000000..55d8ad51c
+--- /dev/null
++++ b/vlib/v/checker/tests/for_mut_compare_rune_string_err.out
+@@ -0,0 +1,7 @@
++vlib/v/checker/tests/for_mut_compare_rune_string_err.vv:4:6: error: infix expr: cannot use `string` (right expression) as `rune`
++    2 |     s := 'Hello, World!'
++    3 |     for mut c in s.runes() {
++    4 |         if c == ' ' {
++      |            ~~~~~~~~
++    5 |             c = `x`
++    6 |         }
+diff --git a/vlib/v/checker/tests/for_mut_compare_rune_string_err.vv b/vlib/v/checker/tests/for_mut_compare_rune_string_err.vv
+new file mode 100644
+index 000000000..8e37f0bba
+--- /dev/null
++++ b/vlib/v/checker/tests/for_mut_compare_rune_string_err.vv
+@@ -0,0 +1,8 @@
++fn main() {
++	s := 'Hello, World!'
++	for mut c in s.runes() {
++		if c == ' ' {
++			c = `x`
++		}
++	}
++}

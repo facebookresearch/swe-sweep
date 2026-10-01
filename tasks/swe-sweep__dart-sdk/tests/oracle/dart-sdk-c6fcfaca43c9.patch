@@ -1,0 +1,36 @@
+diff --git a/runtime/vm/object.cc b/runtime/vm/object.cc
+index 5a08d162350..6a4137c3d47 100644
+--- a/runtime/vm/object.cc
++++ b/runtime/vm/object.cc
+@@ -20727,6 +20727,9 @@ ObjectPtr Instance::HashCode() const {
+ // Keep in sync with AsmIntrinsifier::Object_getHash.
+ IntegerPtr Instance::IdentityHashCode(Thread* thread) const {
+   if (IsInteger()) return Integer::Cast(*this).ptr();
++  if (IsString()) {
++    return Smi::New(String::Cast(*this).Hash());
++  }
+ 
+ #if defined(HASH_IN_OBJECT_HEADER)
+   intptr_t hash = Object::GetCachedHash(ptr());
+diff --git a/runtime/vm/object_test.cc b/runtime/vm/object_test.cc
+index 62a1d0331be..e5da6cd6709 100644
+--- a/runtime/vm/object_test.cc
++++ b/runtime/vm/object_test.cc
+@@ -824,6 +824,17 @@ ISOLATE_UNIT_TEST_CASE(String) {
+     EXPECT_EQ(0x7FFF, str16.CharAt(1));
+     EXPECT_EQ(0xFFFF, str16.CharAt(2));
+   }
++
++  // Check that String's identity hash and hashCode are the same.
++  {
++    for (auto str : {"Hello", "Hell\xC3\x98"}) {
++      const String& s = String::Handle(String::New(str));
++      const String& s2 = String::Handle(String::New(str));
++      EXPECT_EQ(s.Hash(),
++                static_cast<uword>(
++                    Integer::Handle(s2.IdentityHashCode(thread)).Value()));
++    }
++  }
+ }
+ 
+ ISOLATE_UNIT_TEST_CASE(StringFormat) {

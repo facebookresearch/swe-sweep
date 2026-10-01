@@ -1,0 +1,13 @@
+diff --git a/crates/ruff_linter/src/rules/flake8_comprehensions/rules/unnecessary_literal_within_tuple_call.rs b/crates/ruff_linter/src/rules/flake8_comprehensions/rules/unnecessary_literal_within_tuple_call.rs
+index b2d3af263f..30a250e7ce 100644
+--- a/crates/ruff_linter/src/rules/flake8_comprehensions/rules/unnecessary_literal_within_tuple_call.rs
++++ b/crates/ruff_linter/src/rules/flake8_comprehensions/rules/unnecessary_literal_within_tuple_call.rs
+@@ -124,7 +124,7 @@ pub(crate) fn unnecessary_literal_within_tuple_call(
+                 let needs_trailing_comma = if let [item] = elts.as_slice() {
+                     SimpleTokenizer::new(
+                         checker.locator().contents(),
+-                        TextRange::new(item.end(), call.end()),
++                        TextRange::new(item.end(), argument.end()),
+                     )
+                     .all(|token| token.kind != SimpleTokenKind::Comma)
+                 } else {

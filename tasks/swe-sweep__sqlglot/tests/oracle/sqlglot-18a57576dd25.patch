@@ -1,0 +1,12 @@
+diff --git a/sqlglot/parser.py b/sqlglot/parser.py
+index 34a2bea10e..e67961503f 100644
+--- a/sqlglot/parser.py
++++ b/sqlglot/parser.py
+@@ -577,7 +577,6 @@ class Parser(metaclass=_Parser):
+ 
+     TABLE_ALIAS_TOKENS = ID_VAR_TOKENS - {
+         TokenType.ANTI,
+-        TokenType.APPLY,
+         TokenType.ASOF,
+         TokenType.FULL,
+         TokenType.LEFT,

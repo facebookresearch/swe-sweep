@@ -1,0 +1,50 @@
+diff --git a/src/Compiler/Driver/fsc.fs b/src/Compiler/Driver/fsc.fs
+index 1d17950a9a..696761f43d 100644
+--- a/src/Compiler/Driver/fsc.fs
++++ b/src/Compiler/Driver/fsc.fs
+@@ -1129,7 +1129,10 @@ let main6
+     DoesNotRequireCompilerThreadTokenAndCouldPossiblyBeMadeConcurrent ctok
+ 
+     let pdbfile =
+-        pdbfile |> Option.map (tcConfig.MakePathAbsolute >> FileSystem.GetFullPathShim)
++        pdbfile
++        |> Option.map (fun s ->
++            let absolutePath = tcConfig.MakePathAbsolute s
++            FileSystem.GetFullPathShim(absolutePath))
+ 
+     let normalizeAssemblyRefs (aref: ILAssemblyRef) =
+         match tcImports.TryFindDllInfo(ctok, rangeStartup, aref.Name, lookupOnly = false) with
+diff --git a/src/Compiler/TypedTree/TcGlobals.fs b/src/Compiler/TypedTree/TcGlobals.fs
+index 0bf99b8657..4f4a45c735 100644
+--- a/src/Compiler/TypedTree/TcGlobals.fs
++++ b/src/Compiler/TypedTree/TcGlobals.fs
+@@ -680,8 +680,14 @@ type TcGlobals(
+ 
+   let mkSourceDoc fileName = ILSourceDocument.Create(language=None, vendor=None, documentType=None, file=fileName)
+ 
++  let compute i =
++      let path = fileOfFileIndex i
++      let fullPath = FileSystem.GetFullFilePathInDirectoryShim directoryToResolveRelativePaths path
++      mkSourceDoc fullPath
++
+   // Build the memoization table for files
+-  let v_memoize_file = MemoizationTable<int, ILSourceDocument>((fileOfFileIndex >> FileSystem.GetFullFilePathInDirectoryShim directoryToResolveRelativePaths >> mkSourceDoc), keyComparer=HashIdentity.Structural)
++  let v_memoize_file =
++      MemoizationTable<int, ILSourceDocument>(compute, keyComparer = HashIdentity.Structural)
+ 
+   let v_and_info =                   makeIntrinsicValRef(fslib_MFIntrinsicOperators_nleref,                    CompileOpName "&"                      , None                 , None          , [],         mk_rel_sig v_bool_ty)
+   let v_addrof_info =                makeIntrinsicValRef(fslib_MFIntrinsicOperators_nleref,                    CompileOpName "~&"                     , None                 , None          , [vara],     ([[varaTy]], mkByrefTy varaTy))
+diff --git a/src/LegacyMSBuildResolver/LegacyMSBuildReferenceResolver.fs b/src/LegacyMSBuildResolver/LegacyMSBuildReferenceResolver.fs
+index c423086874..54c2f2d32b 100644
+--- a/src/LegacyMSBuildResolver/LegacyMSBuildReferenceResolver.fs
++++ b/src/LegacyMSBuildResolver/LegacyMSBuildReferenceResolver.fs
+@@ -432,7 +432,8 @@ let getResolver () =
+                 |]
+ 
+             let rooted, unrooted =
+-                references |> Array.partition (fst >> FileSystem.IsPathRootedShim)
++                references
++                |> Array.partition (fun (path, _) -> FileSystem.IsPathRootedShim(path))
+ 
+             let rootedResults =
+                 ResolveCore(

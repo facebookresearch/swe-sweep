@@ -1,0 +1,325 @@
+{
+  "build_jobs": 4,
+  "container_repo": "/fsharp",
+  "evaluation": {
+    "suite": "reproduction",
+    "test_dirs": [
+      "tests"
+    ],
+    "visible_timeout": 21600
+  },
+  "upstream_image": "pandora-maxbug-fsharp:main-20240807",
+  "n_base_passing": 12261,
+  "n_base_test_ignore": 296,
+  "oracle_digest": "3526ae87e4b9622776ab52c3809a61a3050016e6ddd9209e340ec2e601fbff50",
+  "oracle_pristine_paths": [],
+  "upstream_commit": "9f7399e15e6172900e0591deb5a57a45769d8205",
+  "reproduction": {
+    "needs_build": false,
+    "suite": {
+      "configuration": "Release",
+      "dotnet": "./.dotnet/dotnet",
+      "solution": "FSharp.sln",
+      "test_roots": [
+        "tests",
+        "vsintegration/tests"
+      ],
+      "type": "dotnet-test"
+    },
+    "test_timeout": 3600
+  },
+  "schema": 2,
+  "subtasks": [
+    {
+      "f2p": [
+        "ErrorMessages.TailCall Attribute.Don't warn for tail rec call returning unit"
+      ],
+      "id": "fsharp-03e44273bd52",
+      "target_files": [
+        "src/Compiler/Checking/TailCallChecks.fs"
+      ]
+    },
+    {
+      "f2p": [
+        "Conformance.BasicGrammarElements.StaticMethodResolution.Static extension on generic type resolves with explicit type arguments",
+        "Conformance.BasicGrammarElements.StaticPropertyResolution.Static property on generic type resolves the extension accessor when the other is intrinsic"
+      ],
+      "id": "fsharp-1976ed2cc84e",
+      "target_files": [
+        "src/Compiler/Checking/NameResolution.fs"
+      ]
+    },
+    {
+      "f2p": [
+        "Language.CopyAndUpdateTests.N-Nested copy-and-update works when the starting expression is not a simple identifier"
+      ],
+      "id": "fsharp-20451b4caa9e",
+      "target_files": [
+        "src/Compiler/Checking/CheckRecordSyntaxHelpers.fs",
+        "src/Compiler/Checking/CheckRecordSyntaxHelpers.fsi",
+        "src/Compiler/Checking/Expressions/CheckExpressions.fs"
+      ]
+    },
+    {
+      "f2p": [
+        "Conformance.BasicGrammarElements.CustomAttributes_Basic.OptionalAttributeArgs_fs(compilation: OptionalAttributeArgs.fs)"
+      ],
+      "id": "fsharp-2440fe1cc776",
+      "target_files": [
+        "src/Compiler/CodeGen/IlxGen.fs"
+      ]
+    },
+    {
+      "f2p": [
+        "TypeChecks.CompilationTests.Compile a valid scenario using graph-based type-checking(scenario: Library with using global namespace as module alias)",
+        "TypeChecks.CompilationTests.Compile a valid scenario using graph-based type-checking(scenario: Library with using global namespace)"
+      ],
+      "id": "fsharp-270432d5ccf8",
+      "target_files": [
+        "src/Compiler/Driver/GraphChecking/DependencyResolution.fs",
+        "src/Compiler/Driver/GraphChecking/FileContentMapping.fs",
+        "src/Compiler/Driver/GraphChecking/Types.fs",
+        "src/Compiler/Driver/GraphChecking/Types.fsi"
+      ]
+    },
+    {
+      "f2p": [
+        "FSharp.Compiler.Service.Tests.FileSystemTests.File system shim should not leak"
+      ],
+      "id": "fsharp-2c6de0eca9e0",
+      "target_files": [
+        "src/Compiler/Driver/fsc.fs",
+        "src/Compiler/TypedTree/TcGlobals.fs",
+        "src/LegacyMSBuildResolver/LegacyMSBuildReferenceResolver.fs"
+      ]
+    },
+    {
+      "f2p": [
+        "Conformance.Types.TypesAndTypeConstraints_IWSAMsAndSRTPs.SRTP get_Item works on strings"
+      ],
+      "id": "fsharp-3426c97bb15d",
+      "target_files": [
+        "src/Compiler/TypedTree/TcGlobals.fs"
+      ]
+    },
+    {
+      "f2p": [
+        "ErrorMessages.Modules.Recursive module nested siblings with duplicate name emit FS0037",
+        "ErrorMessages.Modules.Recursive module with duplicate sibling modules emits FS0037",
+        "ErrorMessages.Modules.Recursive module with duplicate sibling modules still analyzes second module body",
+        "ErrorMessages.Modules.Recursive namespace with duplicate sibling modules emits FS0037"
+      ],
+      "id": "fsharp-44003cc88d10",
+      "target_files": [
+        "src/Compiler/Checking/CheckDeclarations.fs"
+      ]
+    },
+    {
+      "f2p": [
+        "XmlComments.XmlCommentChecking.OverrideXmlCommentsWithSameRange"
+      ],
+      "id": "fsharp-49f67436b66a",
+      "target_files": [
+        "src/Compiler/SyntaxTree/XmlDoc.fs"
+      ]
+    },
+    {
+      "f2p": [
+        "Language.NullableReferenceTypes.Can have nullable prop of same type T within a custom type T"
+      ],
+      "id": "fsharp-4b0016e2d473",
+      "target_files": [
+        "src/Compiler/TypedTree/TypedTree.fs",
+        "src/Compiler/TypedTree/TypedTree.fsi",
+        "src/Compiler/TypedTree/TypedTreeBasics.fs"
+      ]
+    },
+    {
+      "f2p": [
+        "FSharp.Compiler.ComponentTests.ErrorMessages.IndexedSetterNamedArgTests.Default Item indexer setter with named arg compiles",
+        "FSharp.Compiler.ComponentTests.ErrorMessages.IndexedSetterNamedArgTests.Indexed property setter with named argument does not ICE - extension",
+        "FSharp.Compiler.ComponentTests.ErrorMessages.IndexedSetterNamedArgTests.Indexed property setter with named argument does not ICE - intrinsic",
+        "FSharp.Compiler.ComponentTests.ErrorMessages.IndexedSetterNamedArgTests.Indexed property setter with named argument does not ICE - named property",
+        "FSharp.Compiler.ComponentTests.ErrorMessages.IndexedSetterNamedArgTests.Indexed setter call shapes compile(call: \"t.indexed1(a1 = \\\"x\\\") <- 1\")",
+        "FSharp.Compiler.ComponentTests.ErrorMessages.IndexedSetterNamedArgTests.Multi-arg indexer setter with named args compiles"
+      ],
+      "id": "fsharp-4eef492fec44",
+      "target_files": [
+        "src/Compiler/Checking/Expressions/CheckExpressions.fs",
+        "src/Compiler/Checking/MethodCalls.fs",
+        "src/Compiler/Checking/MethodCalls.fsi"
+      ]
+    },
+    {
+      "f2p": [
+        "ErrorMessages.Active pattern arg counts+Enough+Recursive active pattern definition with and.match expr1 with P expr2 pat -> \u2026"
+      ],
+      "id": "fsharp-4fd45bbe1662",
+      "target_files": [
+        "src/Compiler/Checking/Expressions/CheckExpressions.fs"
+      ]
+    },
+    {
+      "f2p": [
+        "FSharp.Compiler.Service.Tests.Symbols+Event.CLIEvent 01 - Synthetic range"
+      ],
+      "id": "fsharp-527466cc7526",
+      "target_files": [
+        "src/Compiler/Checking/Expressions/CheckExpressions.fs"
+      ]
+    },
+    {
+      "f2p": [
+        "Language.NullableReferenceTypes.Nullness support for flexible types"
+      ],
+      "id": "fsharp-56663c904108",
+      "target_files": [
+        "src/Compiler/Checking/ConstraintSolver.fs"
+      ]
+    },
+    {
+      "f2p": [
+        "Conformance.Types.TypesAndTypeConstraints_IWSAMsAndSRTPs.Direct call to static abstract on interface produces error 3866(memberDef: \"static abstract Name : string\", call: \"ITest.Name\", memberName: \"get_Name\", l1: 3, c1: 9, l2: 3, c2: 19)",
+        "Conformance.Types.TypesAndTypeConstraints_IWSAMsAndSRTPs.Direct call to static abstract on interface produces error 3866(memberDef: \"static abstract Parse : string -> int\", call: \"ITest.Parse \\\"42\\\"\", memberName: \"Parse\", l1: 3, c1: 9, l2: 3, c2: 25)",
+        "Conformance.Types.TypesAndTypeConstraints_IWSAMsAndSRTPs.Inherited static abstract without impl produces error 3866"
+      ],
+      "id": "fsharp-63fdecff1797",
+      "target_files": [
+        "src/Compiler/Checking/ConstraintSolver.fs"
+      ]
+    },
+    {
+      "f2p": [
+        "FSharp.Compiler.Service.Tests.CompletionTests.Expr - Qualifier 04",
+        "FSharp.Compiler.Service.Tests.CompletionTests.Expr - Qualifier 07"
+      ],
+      "id": "fsharp-6baf9a1cb9c5",
+      "target_files": [
+        "src/Compiler/Service/ServiceParseTreeWalk.fs"
+      ]
+    },
+    {
+      "f2p": [
+        "Language.NullableReferenceTypes.Does report when null goes to DateTime Parse"
+      ],
+      "id": "fsharp-8b5f6d77106b",
+      "target_files": [
+        "src/Compiler/Checking/ConstraintSolver.fs"
+      ]
+    },
+    {
+      "f2p": [
+        "FSharp.Compiler.Service.Tests.GeneratedCodeSymbolsTests.IsUnionCaseTester for Is* generated property in DU",
+        "FSharp.Compiler.Service.Tests.GeneratedCodeSymbolsTests.IsUnionCaseTester for Is* member in a class",
+        "FSharp.Compiler.Service.Tests.GeneratedCodeSymbolsTests.IsUnionCaseTester for Is* user property in DU"
+      ],
+      "id": "fsharp-8e4edf4675c7",
+      "target_files": [
+        "src/Compiler/Symbols/Symbols.fs"
+      ]
+    },
+    {
+      "f2p": [
+        "FSharp.Compiler.Service.Tests.CompletionTests.Expr - Qualifier 02",
+        "FSharp.Compiler.Service.Tests.CompletionTests.Expr - Qualifier 03"
+      ],
+      "id": "fsharp-a7ca07e35c6b",
+      "target_files": [
+        "src/Compiler/Service/ServiceParseTreeWalk.fs"
+      ]
+    },
+    {
+      "f2p": [
+        "Conformance.PatternMatching.Tuple.Tuple - tuples02_fs - --test:ErrorRanges(compilation: tuples02.fs)",
+        "Conformance.PatternMatching.Tuple.Tuple - tuples04_fs - --test:ErrorRanges(compilation: tuples04.fs)"
+      ],
+      "id": "fsharp-ab1d304b4003",
+      "target_files": [
+        "src/Compiler/Checking/PostInferenceChecks.fs"
+      ]
+    },
+    {
+      "f2p": [
+        "FSharp.Core.UnitTests.Operators.OperatorsModule2.string"
+      ],
+      "id": "fsharp-ad738f506321",
+      "target_files": [
+        "src/FSharp.Core/prim-types.fs"
+      ]
+    },
+    {
+      "f2p": [
+        "Language.NullableRegressions.Issue 19644 - match-null narrowing inside array comprehension",
+        "Language.NullableRegressions.Issue 19644 - match-null narrowing inside list comprehension",
+        "Language.NullableRegressions.Issue 19644 - match-null narrowing inside list comprehension (no for)",
+        "Language.NullableRegressions.Issue 19644 - match-null narrowing inside seq expression"
+      ],
+      "id": "fsharp-b11c15b43455",
+      "target_files": [
+        "src/Compiler/Checking/Expressions/CheckExpressions.fs",
+        "src/Compiler/Checking/Expressions/CheckExpressions.fsi",
+        "src/Compiler/Checking/Expressions/CheckSequenceExpressions.fs"
+      ]
+    },
+    {
+      "f2p": [
+        "FSharp.Core.UnitTests.Collections.ArrayModule2.InsertManyAt"
+      ],
+      "id": "fsharp-b2e12edebf9d",
+      "target_files": [
+        "src/FSharp.Core/array.fs",
+        "src/FSharp.Core/array.fsi"
+      ]
+    },
+    {
+      "f2p": [
+        "ErrorMessages.ExtendedDiagnosticData.TypeMismatchDiagnosticExtendedData 08"
+      ],
+      "id": "fsharp-c79e0fed185a",
+      "target_files": [
+        "src/Compiler/Symbols/FSharpDiagnostic.fs"
+      ]
+    },
+    {
+      "f2p": [
+        "Conformance.BasicGrammarElements.CustomAttributes_AttributeUsage.CLIMutableAttribute01 preview(compilation: CLIMutableAttribute01.fs)",
+        "Conformance.BasicGrammarElements.CustomAttributes_AttributeUsage.E_CLIMutableAttribute preview(compilation: E_CLIMutableAttribute.fs)"
+      ],
+      "id": "fsharp-e7d149a9eefd",
+      "target_files": [
+        "src/Compiler/Checking/CheckDeclarations.fs",
+        "src/FSharp.Core/prim-types.fs",
+        "src/FSharp.Core/prim-types.fsi"
+      ]
+    },
+    {
+      "f2p": [
+        "ErrorMessages.TailCall Attribute.Warn for rec call in Sequential in use scope"
+      ],
+      "id": "fsharp-edf130618d99",
+      "target_files": [
+        "src/Compiler/Checking/TailCallChecks.fs"
+      ]
+    },
+    {
+      "f2p": [
+        "FSharp.Compiler.Service.Tests.EditorTests.Format specifier locations not duplicated in CE"
+      ],
+      "id": "fsharp-f0de0da932a3",
+      "target_files": [
+        "src/Compiler/Checking/NameResolution.fs"
+      ]
+    },
+    {
+      "f2p": [
+        "Conformance.BasicGrammarElements.StaticLet.Static let - record optimizer regression(compilation: RecordOptimizerRegression.fs)"
+      ],
+      "id": "fsharp-f3d4f3dcfa3e",
+      "target_files": [
+        "src/Compiler/TypedTree/TypedTree.fs"
+      ]
+    }
+  ],
+  "task": "fsharp",
+  "version": "main-20240807"
+}

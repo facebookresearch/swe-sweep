@@ -1,0 +1,53 @@
+diff --git a/src/_backend_agg.h b/src/_backend_agg.h
+index 55795a7789..d61dd5baa9 100644
+--- a/src/_backend_agg.h
++++ b/src/_backend_agg.h
+@@ -470,7 +470,7 @@ RendererAgg::draw_path(GCAgg &gc, PathIterator &path, agg::trans_affine &trans,
+ 
+     trans *= agg::trans_affine_scaling(1.0, -1.0);
+     trans *= agg::trans_affine_translation(0.0, (double)height);
+-    bool clip = !face.first && !gc.has_hatchpath() && !path.has_curves();
++    bool clip = !face.first && !gc.has_hatchpath();
+     bool simplify = path.should_simplify() && clip;
+     double snapping_linewidth = points_to_pixels(gc.linewidth);
+     if (gc.color.a == 0.0) {
+@@ -992,7 +992,7 @@ inline void RendererAgg::_draw_path_collection_generic(GCAgg &gc,
+             }
+         }
+ 
+-        bool do_clip = !face.first && !gc.has_hatchpath() && !has_curves;
++        bool do_clip = !face.first && !gc.has_hatchpath();
+ 
+         if (check_snap) {
+             gc.isaa = antialiaseds(i % Naa);
+diff --git a/src/_path.h b/src/_path.h
+index 49d862eafc..577b90032a 100644
+--- a/src/_path.h
++++ b/src/_path.h
+@@ -985,7 +985,7 @@ void convert_path_to_polygons(PathIterator &path,
+ 
+     transformed_path_t tpath(path, trans);
+     nan_removal_t nan_removed(tpath, true, path.has_curves());
+-    clipped_t clipped(nan_removed, do_clip && !path.has_curves(), width, height);
++    clipped_t clipped(nan_removed, do_clip, width, height);
+     simplify_t simplified(clipped, simplify, path.simplify_threshold());
+     curve_t curve(simplified);
+ 
+@@ -1050,7 +1050,7 @@ void cleanup_path(PathIterator &path,
+ 
+     transformed_path_t tpath(path, trans);
+     nan_removal_t nan_removed(tpath, remove_nans, path.has_curves());
+-    clipped_t clipped(nan_removed, do_clip && !path.has_curves(), rect);
++    clipped_t clipped(nan_removed, do_clip, rect);
+     snapped_t snapped(clipped, snap_mode, path.total_vertices(), stroke_width);
+     simplify_t simplified(snapped, do_simplify, path.simplify_threshold());
+ 
+@@ -1209,7 +1209,7 @@ bool convert_to_string(PathIterator &path,
+ 
+     transformed_path_t tpath(path, trans);
+     nan_removal_t nan_removed(tpath, true, path.has_curves());
+-    clipped_t clipped(nan_removed, do_clip && !path.has_curves(), clip_rect);
++    clipped_t clipped(nan_removed, do_clip, clip_rect);
+     simplify_t simplified(clipped, simplify, path.simplify_threshold());
+ 
+     buffersize = path.total_vertices() * (precision + 5) * 4;

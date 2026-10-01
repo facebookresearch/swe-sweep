@@ -1,0 +1,18 @@
+diff --git a/vlib/v/gen/c/cgen.v b/vlib/v/gen/c/cgen.v
+index c3ff07c38..4aec3a14d 100644
+--- a/vlib/v/gen/c/cgen.v
++++ b/vlib/v/gen/c/cgen.v
+@@ -4697,10 +4697,10 @@ fn (mut g Gen) return_stmt(node ast.Return) {
+ 			if expr.is_auto_deref_var() {
+ 				g.write('*')
+ 			}
+-			if g.table.sym(mr_info.types[i]).kind in [.sum_type, .interface_] {
+-				g.expr_with_cast(expr, node.types[i], mr_info.types[i])
+-			} else if mr_info.types[i].has_flag(.option) {
++			if mr_info.types[i].has_flag(.option) {
+ 				g.expr_with_opt(expr, node.types[i], mr_info.types[i])
++			} else if g.table.sym(mr_info.types[i]).kind in [.sum_type, .interface_] {
++				g.expr_with_cast(expr, node.types[i], mr_info.types[i])
+ 			} else {
+ 				g.expr(expr)
+ 			}

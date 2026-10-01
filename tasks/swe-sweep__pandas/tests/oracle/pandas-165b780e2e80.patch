@@ -1,0 +1,16 @@
+diff --git a/pandas/_libs/lib.pyx b/pandas/_libs/lib.pyx
+index 38d9a8f624..cded299f77 100644
+--- a/pandas/_libs/lib.pyx
++++ b/pandas/_libs/lib.pyx
+@@ -726,7 +726,10 @@ cpdef ndarray[object] ensure_string_array(
+ 
+         arr = arr.to_numpy()
+     elif not isinstance(arr, np.ndarray):
+-        arr = np.array(arr, dtype="object")
++        # GH#61155: Guarantee a 1-d result when array is a list of lists
++        input_arr = arr
++        arr = np.empty(len(arr), dtype="object")
++        arr[:] = input_arr
+ 
+     result = np.asarray(arr, dtype="object")
+ 

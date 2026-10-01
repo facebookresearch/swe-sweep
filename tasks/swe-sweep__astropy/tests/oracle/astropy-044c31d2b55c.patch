@@ -1,0 +1,13 @@
+diff --git a/astropy/table/column.py b/astropy/table/column.py
+index adb96a0eba..0803e9f2ae 100644
+--- a/astropy/table/column.py
++++ b/astropy/table/column.py
+@@ -1142,7 +1142,7 @@ class BaseColumn(_ColumnGetitemShim, np.ndarray):
+                 arr = np.char.encode(arr, encoding="utf-8")
+                 if isinstance(value, np.ma.MaskedArray):
+                     arr = np.ma.array(arr, mask=value.mask, copy=False)
+-            value = arr
++                value = arr
+ 
+         return value
+ 

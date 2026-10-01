@@ -1,0 +1,32 @@
+diff --git a/datafusion/sqllogictest/test_files/ddl.slt b/datafusion/sqllogictest/test_files/ddl.slt
+--- a/datafusion/sqllogictest/test_files/ddl.slt
++++ b/datafusion/sqllogictest/test_files/ddl.slt
+@@ -325,7 +325,28 @@
+ # create_table_with_schema_as_select_mismatch
+ statement error table 'datafusion.public.aggregate_simple' not found
+ CREATE TABLE my_table(c1 float, c2 double, c3 boolean, c4 varchar) AS SELECT * FROM aggregate_simple;
+ 
++# create_table_with_schema_as_select_qualified_duplicate_names
++statement ok
++CREATE TABLE dup_src AS VALUES(1, 2);
++
++statement ok
++CREATE TABLE dup_ctas_with_schema(left_c1 bigint, right_c1 bigint) AS
++SELECT dup_src.column1, right_src.column1
++FROM dup_src
++CROSS JOIN (SELECT column2 AS column1 FROM dup_src) right_src;
++
++query II
++SELECT left_c1, right_c1 FROM dup_ctas_with_schema;
++----
++1 2
++
++statement ok
++DROP TABLE dup_ctas_with_schema;
++
++statement ok
++DROP TABLE dup_src;
++
+ 
+ # create_table_with_schema_as_values
+ statement ok

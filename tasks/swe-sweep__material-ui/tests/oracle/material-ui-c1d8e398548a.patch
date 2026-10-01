@@ -1,0 +1,20 @@
+diff --git a/packages/mui-material/src/Menu/Menu.js b/packages/mui-material/src/Menu/Menu.js
+index 3bda0c8d0e..6ca9a6fa6b 100644
+--- a/packages/mui-material/src/Menu/Menu.js
++++ b/packages/mui-material/src/Menu/Menu.js
+@@ -158,7 +158,6 @@ const Menu = React.forwardRef(function Menu(inProps, ref) {
+ 
+   return (
+     <MenuRoot
+-      classes={PopoverClasses}
+       onClose={onClose}
+       anchorOrigin={{
+         vertical: 'bottom',
+@@ -180,6 +179,7 @@ const Menu = React.forwardRef(function Menu(inProps, ref) {
+       TransitionProps={{ onEntering: handleEntering, ...TransitionProps }}
+       ownerState={ownerState}
+       {...other}
++      classes={PopoverClasses}
+     >
+       <MenuMenuList
+         onKeyDown={handleListKeyDown}

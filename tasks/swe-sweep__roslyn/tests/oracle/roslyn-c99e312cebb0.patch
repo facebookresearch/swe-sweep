@@ -1,0 +1,38 @@
+diff --git a/src/Compilers/CSharp/Portable/Syntax/SyntaxFactory.cs b/src/Compilers/CSharp/Portable/Syntax/SyntaxFactory.cs
+index fee4dd5258e..0800ea7252b 100644
+--- a/src/Compilers/CSharp/Portable/Syntax/SyntaxFactory.cs
++++ b/src/Compilers/CSharp/Portable/Syntax/SyntaxFactory.cs
+@@ -2169,6 +2169,7 @@ namespace Microsoft.CodeAnalysis.CSharp
+                 case SyntaxKind.IndexerMemberCref:
+                 case SyntaxKind.OperatorMemberCref:
+                 case SyntaxKind.ConversionOperatorMemberCref:
++                case SyntaxKind.ExtensionMemberCref:
+                 case SyntaxKind.ArrayType:
+                 case SyntaxKind.NullableType:
+                     // Adjustment may be required.
+@@ -2225,8 +2226,8 @@ namespace Microsoft.CodeAnalysis.CSharp
+                     if (((NameMemberCrefSyntax)parent).Name == node)
+                     {
+                         CSharpSyntaxNode? grandparent = parent.Parent;
+-                        return grandparent != null && grandparent.Kind() == SyntaxKind.QualifiedCref
+-                            ? grandparent
++                        return grandparent != null && grandparent is CrefSyntax
++                            ? GetStandaloneNode(grandparent)
+                             : parent;
+                     }
+ 
+@@ -2240,6 +2241,14 @@ namespace Microsoft.CodeAnalysis.CSharp
+ 
+                     break;
+ 
++                case SyntaxKind.ExtensionMemberCref:
++                    if (((ExtensionMemberCrefSyntax)parent).Member == node)
++                    {
++                        return GetStandaloneNode(parent);
++                    }
++
++                    break;
++
+                 case SyntaxKind.ArrayCreationExpression:
+                     if (((ArrayCreationExpressionSyntax)parent).Type == node)
+                     {

@@ -1,0 +1,12 @@
+diff --git a/compiler/test/compilable/test23529.d b/compiler/test/compilable/test23529.d
+new file mode 100644
+index 0000000000..712c284bb1
+--- /dev/null
++++ b/compiler/test/compilable/test23529.d
+@@ -0,0 +1,6 @@
++static assert(!__traits(compiles, ()
++{
++    char[24] x;
++    int myNumber = 4;
++    return cast(char[4]) (x[myNumber .. myNumber + 4]);
++} ()));

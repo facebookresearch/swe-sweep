@@ -1,0 +1,86 @@
+diff --git a/lib/helpers/populate/setPopulatedVirtualValue.js b/lib/helpers/populate/setPopulatedVirtualValue.js
+new file mode 100644
+index 000000000..786e54005
+--- /dev/null
++++ b/lib/helpers/populate/setPopulatedVirtualValue.js
+@@ -0,0 +1,33 @@
++'use strict';
++
++/**
++ * Set a populated virtual value on a document's `$$populatedVirtuals` value
++ *
++ * @param {*} populatedVirtuals A document's `$$populatedVirtuals`
++ * @param {*} name The virtual name
++ * @param {*} v The result of the populate query
++ * @param {*} options The populate options. This function handles `justOne` and `count` options.
++ * @returns {Array<Document>|Document|Object|Array<Object>} the populated virtual value that was set
++ */
++
++module.exports = function setPopulatedVirtualValue(populatedVirtuals, name, v, options) {
++  if (options.justOne || options.count) {
++    populatedVirtuals[name] = Array.isArray(v) ?
++      v[0] :
++      v;
++
++    if (typeof populatedVirtuals[name] !== 'object') {
++      populatedVirtuals[name] = options.count ? v : null;
++    }
++  } else {
++    populatedVirtuals[name] = Array.isArray(v) ?
++      v :
++      v == null ? [] : [v];
++
++    populatedVirtuals[name] = populatedVirtuals[name].filter(function(doc) {
++      return doc && typeof doc === 'object';
++    });
++  }
++
++  return populatedVirtuals[name];
++};
+diff --git a/lib/schema.js b/lib/schema.js
+--- a/lib/schema.js
++++ b/lib/schema.js
+@@ -20,5 +20,6 @@ const merge = require('./helpers/schema/merge');
+ const mpath = require('mpath');
+ const readPref = require('./driver').get().ReadPreference;
++const setPopulatedVirtualValue = require('./helpers/populate/setPopulatedVirtualValue');
+ const setupTimestamps = require('./helpers/timestamps/setupTimestamps');
+ const utils = require('./utils');
+ const validateRef = require('./helpers/populate/validateRef');
+@@ -2037,29 +2038,18 @@ Schema.prototype.virtual = function(name, options) {
+     const virtual = this.virtual(name);
+     virtual.options = options;
+ 
+     virtual.
+-      set(function(_v) {
++      set(function(v) {
+         if (!this.$$populatedVirtuals) {
+           this.$$populatedVirtuals = {};
+         }
+ 
+-        if (options.justOne || options.count) {
+-          this.$$populatedVirtuals[name] = Array.isArray(_v) ?
+-            _v[0] :
+-            _v;
+-
+-          if (typeof this.$$populatedVirtuals[name] !== 'object') {
+-            this.$$populatedVirtuals[name] = options.count ? _v : null;
+-          }
+-        } else {
+-          this.$$populatedVirtuals[name] = Array.isArray(_v) ?
+-            _v :
+-            _v == null ? [] : [_v];
+-
+-          this.$$populatedVirtuals[name] = this.$$populatedVirtuals[name].filter(function(doc) {
+-            return doc && typeof doc === 'object';
+-          });
+-        }
++        return setPopulatedVirtualValue(
++          this.$$populatedVirtuals,
++          name,
++          v,
++          options
++        );
+       });
+ 
+     if (typeof options.get === 'function') {

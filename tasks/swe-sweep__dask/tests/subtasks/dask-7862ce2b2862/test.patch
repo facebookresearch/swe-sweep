@@ -1,0 +1,16 @@
+diff --git a/dask/dataframe/tests/test_dataframe.py b/dask/dataframe/tests/test_dataframe.py
+index 6529263d9..cb0b1fbd0 100644
+--- a/dask/dataframe/tests/test_dataframe.py
++++ b/dask/dataframe/tests/test_dataframe.py
+@@ -4405,3 +4405,11 @@ def test_fuse_roots():
+     res = ddf1.where(ddf2)
+     hlg = fuse_roots(res.__dask_graph__(), keys=res.__dask_keys__())
+     hlg.validate()
++
++
++def test_join_series():
++    df = pd.DataFrame({"x": [1, 2, 3, 4, 5, 6, 7, 8]})
++    ddf = dd.from_pandas(df, npartitions=1)
++    expected_df = dd.from_pandas(df.join(df["x"], lsuffix="_"), npartitions=1)
++    actual_df = ddf.join(ddf["x"], lsuffix="_")
++    assert_eq(actual_df, expected_df)

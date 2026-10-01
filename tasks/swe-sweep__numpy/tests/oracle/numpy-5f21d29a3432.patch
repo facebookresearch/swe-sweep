@@ -1,0 +1,16 @@
+diff --git a/numpy/lib/function_base.py b/numpy/lib/function_base.py
+index 3fa9c5f99d9..14fa32721b9 100644
+--- a/numpy/lib/function_base.py
++++ b/numpy/lib/function_base.py
+@@ -3165,7 +3165,10 @@ def sinc(x):
+ 
+     """
+     x = np.asanyarray(x)
+-    y = pi * where(x == 0, 1.0e-20, x)
++    x = pi * x
++    # Hope that 1e-20 is sufficient for objects...
++    eps = np.finfo(x.dtype).eps if x.dtype.kind == "f" else 1e-20
++    y = where(x, x, eps)
+     return sin(y)/y
+ 
+ 

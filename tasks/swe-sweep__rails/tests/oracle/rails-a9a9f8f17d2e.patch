@@ -1,0 +1,20 @@
+diff --git a/actionpack/lib/action_controller/metal/request_forgery_protection.rb b/actionpack/lib/action_controller/metal/request_forgery_protection.rb
+index 215b1bfb1b0..30492df2e99 100644
+--- a/actionpack/lib/action_controller/metal/request_forgery_protection.rb
++++ b/actionpack/lib/action_controller/metal/request_forgery_protection.rb
+@@ -635,6 +635,15 @@ module ActionController # :nodoc:
+ 
+       def normalize_action_path(action_path) # :doc:
+         uri = URI.parse(action_path)
++
++        if uri.relative? && (action_path.blank? || !action_path.start_with?("/"))
++          uri = URI.parse(request.path)
++          # add the action path to the request.path
++          uri.path += "/#{action_path}"
++          # relative path with "./path"
++          uri.path.gsub!("/./", "/")
++        end
++
+         uri.path.chomp("/")
+       end
+ 

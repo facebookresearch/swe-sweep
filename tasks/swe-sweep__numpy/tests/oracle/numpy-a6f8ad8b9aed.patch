@@ -1,0 +1,20 @@
+diff --git a/numpy/core/src/multiarray/shape.c b/numpy/core/src/multiarray/shape.c
+index 0000000..0000000 100644
+--- a/numpy/core/src/multiarray/shape.c
++++ b/numpy/core/src/multiarray/shape.c
+@@ -113,6 +113,15 @@ PyArray_Resize(PyArrayObject *self, PyArray_Dims *newshape, int refcheck,
+         }
+ 
+         /* Reallocate space if needed - allocating 0 is forbidden */
++        if (newnbytes < oldnbytes &&
++                PyDataType_FLAGCHK(PyArray_DESCR(self), NPY_ITEM_REFCOUNT)) {
++            /* Clear now removed data (if dtype has references) */
++            char *optr = PyArray_BYTES(self) + newnbytes;
++            for (k = 0; k < oldsize - newsize; k++) {
++                PyArray_Item_XDECREF(optr, PyArray_DESCR(self));
++                optr += elsize;
++            }
++        }
+         new_data = PyDataMem_RENEW(
+             PyArray_DATA(self), newnbytes == 0 ? elsize : newnbytes);
+         if (new_data == NULL) {

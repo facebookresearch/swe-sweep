@@ -1,0 +1,13 @@
+diff --git a/compiler/src/dmd/traits.d b/compiler/src/dmd/traits.d
+index 0d9c95ff17..2bde9f2aee 100644
+--- a/compiler/src/dmd/traits.d
++++ b/compiler/src/dmd/traits.d
+@@ -1920,7 +1920,7 @@ Expression semanticTraits(TraitsExp e, Scope* sc)
+         StringExp se = ex ? ex.ctfeInterpret().toStringExp() : null;
+         if (!ex || !se || se.len == 0)
+         {
+-            e.error("string expected as argument of __traits `%s` instead of `%s`", e.ident.toChars(), ex.toChars());
++            e.error("string expected as argument of __traits `%s` instead of `%s`", e.ident.toChars(), (*e.args)[0].toChars());
+             return ErrorExp.get();
+         }
+         se = se.toUTF8(sc);

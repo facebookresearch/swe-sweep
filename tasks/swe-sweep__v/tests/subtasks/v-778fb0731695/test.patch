@@ -1,0 +1,31 @@
+diff --git a/vlib/v/tests/struct_field_default_fn_type_value_init_test.v b/vlib/v/tests/struct_field_default_fn_type_value_init_test.v
+new file mode 100644
+index 000000000..77371f5f7
+--- /dev/null
++++ b/vlib/v/tests/struct_field_default_fn_type_value_init_test.v
+@@ -0,0 +1,25 @@
++struct Flip {
++	name    string  = 'NULL'
++	execute fn () ! = unsafe { nil }
++}
++
++fn (flip Flip) exec() ! {
++	if isnil(flip.execute) {
++		return
++	}
++
++	println('Executing ${flip.name}')
++	flip.execute()!
++}
++
++fn test_struct_field_default_fn_type_value() {
++	fl := Flip{
++		name: 'a function'
++		execute: fn () ! {
++			println('Hello, World!')
++		}
++	}
++
++	fl.exec()!
++	assert true
++}

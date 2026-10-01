@@ -1,0 +1,12 @@
+diff --git a/vlib/math/invhyp_test.v b/vlib/math/invhyp_test.v
+new file mode 100644
+index 000000000..27326890f
+--- /dev/null
++++ b/vlib/math/invhyp_test.v
+@@ -0,0 +1,6 @@
++import math
++
++fn test_acosh() {
++	assert math.close(math.acosh(1234567890.12345), 21.627134039822003)
++	assert math.close(math.acosh(12.123456789), 3.1865840454481904)
++}

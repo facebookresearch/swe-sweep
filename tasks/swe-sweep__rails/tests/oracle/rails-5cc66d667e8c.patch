@@ -1,0 +1,13 @@
+diff --git a/activejob/lib/active_job/arguments.rb b/activejob/lib/active_job/arguments.rb
+index b50f24e5b4e..fc1cc1228ce 100644
+--- a/activejob/lib/active_job/arguments.rb
++++ b/activejob/lib/active_job/arguments.rb
+@@ -111,7 +111,7 @@ module ActiveJob
+           result = serialize_hash(argument)
+           result[aj_hash_key] = symbol_keys
+           result
+-        when -> (arg) { arg.respond_to?(:permitted?) }
++        when -> (arg) { arg.respond_to?(:permitted?) && arg.respond_to?(:to_h) }
+           serialize_indifferent_hash(argument.to_h)
+         else
+           Serializers.serialize(argument)

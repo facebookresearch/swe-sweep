@@ -1,0 +1,25 @@
+diff --git a/tests/lean/syntheticOpaqueReadOnly.lean b/tests/lean/syntheticOpaqueReadOnly.lean
+new file mode 100644
+index 0000000000..dbdd6ee9b5
+--- /dev/null
++++ b/tests/lean/syntheticOpaqueReadOnly.lean
+@@ -0,0 +1,12 @@
++import Lean
++
++open Lean Meta
++
++-- In a new MCtx depth, metavariables should not be assignable by `isDefEq`.
++
++run_meta do
++  let m ← mkFreshExprMVar (Expr.sort levelOne) MetavarKind.syntheticOpaque
++  withAssignableSyntheticOpaque do
++  withNewMCtxDepth do
++  let eq ← isDefEq m (.const ``Nat [])
++  Lean.logInfo m! "{eq}"
+diff --git a/tests/lean/syntheticOpaqueReadOnly.lean.expected.out b/tests/lean/syntheticOpaqueReadOnly.lean.expected.out
+new file mode 100644
+index 0000000000..1fe92a5d80
+--- /dev/null
++++ b/tests/lean/syntheticOpaqueReadOnly.lean.expected.out
+@@ -0,0 +1 @@
++false

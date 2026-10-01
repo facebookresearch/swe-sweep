@@ -1,0 +1,455 @@
+{
+  "build_jobs": 4,
+  "container_repo": "/agda",
+  "evaluation": {
+    "suite": "reproduction",
+    "test_dirs": [
+      "test"
+    ],
+    "visible_timeout": 7200
+  },
+  "upstream_image": "pandora-maxbug-agda:2.6.3-dev-20210817",
+  "n_base_passing": 2955,
+  "n_base_test_ignore": 3,
+  "oracle_digest": "7136c6d164de2cba601b77aca07de21a0005317a707ee276202a706b817de504",
+  "oracle_pristine_paths": [],
+  "upstream_commit": "9f7399e15e6172900e0591deb5a57a45769d8205",
+  "reproduction": {
+    "build_cmd": "agda-build",
+    "build_timeout": 5400,
+    "jobs_env": "SWESWEEP_BUILD_JOBS",
+    "suite": {
+      "type": "agda-tasty"
+    },
+    "test_timeout": 900
+  },
+  "schema": 2,
+  "subtasks": [
+    {
+      "f2p": [
+        "all/Succeed/Issue8626"
+      ],
+      "id": "agda-00ed1f7545b4",
+      "target_files": [
+        "src/full/Agda/TypeChecking/CompiledClause/Compile.hs"
+      ]
+    },
+    {
+      "f2p": [
+        "all/Succeed/Issue5610"
+      ],
+      "id": "agda-08f606d43370",
+      "target_files": [
+        "src/full/Agda/TypeChecking/Rules/Builtin/Coinduction.hs"
+      ]
+    },
+    {
+      "f2p": [
+        "all/Succeed/Issue8380"
+      ],
+      "id": "agda-0aba6df09d68",
+      "target_files": [
+        "src/full/Agda/Syntax/Parser/Lexer.x"
+      ]
+    },
+    {
+      "f2p": [
+        "all/Succeed/Issue5683"
+      ],
+      "id": "agda-0c7b0572aced",
+      "target_files": [
+        "src/full/Agda/Syntax/Translation/ConcreteToAbstract.hs"
+      ]
+    },
+    {
+      "f2p": [
+        "all/Succeed/Issue7618"
+      ],
+      "id": "agda-0d36ab05fed6",
+      "target_files": [
+        "src/full/Agda/TypeChecking/MetaVars.hs"
+      ]
+    },
+    {
+      "f2p": [
+        "all/Fail/Issue6059"
+      ],
+      "id": "agda-0d6ea92a0c56",
+      "target_files": [
+        "src/full/Agda/Termination/TermCheck.hs"
+      ]
+    },
+    {
+      "f2p": [
+        "all/Succeed/Issue7181"
+      ],
+      "id": "agda-0dce10fb4863",
+      "target_files": [
+        "src/full/Agda/TypeChecking/Patterns/Match.hs",
+        "src/full/Agda/TypeChecking/Patterns/Match.hs-boot",
+        "src/full/Agda/TypeChecking/Reduce.hs"
+      ]
+    },
+    {
+      "f2p": [
+        "all/Succeed/Issue5727"
+      ],
+      "id": "agda-10e92929101a",
+      "target_files": [
+        "src/full/Agda/TypeChecking/Conversion.hs",
+        "src/full/Agda/TypeChecking/SyntacticEquality.hs"
+      ]
+    },
+    {
+      "f2p": [
+        "all/Succeed/TranspPathPLevel"
+      ],
+      "id": "agda-14425238234d",
+      "target_files": [
+        "src/full/Agda/TypeChecking/Primitive/Cubical.hs"
+      ]
+    },
+    {
+      "f2p": [
+        "all/Fail/Issue5920a",
+        "all/Fail/Issue5920b"
+      ],
+      "id": "agda-1f4d1b18f777",
+      "target_files": [
+        "src/full/Agda/TypeChecking/Irrelevance.hs"
+      ]
+    },
+    {
+      "f2p": [
+        "all/Fail/Issue7266"
+      ],
+      "id": "agda-23f83cdb7225",
+      "target_files": [
+        "src/full/Agda/TypeChecking/Patterns/Match.hs"
+      ]
+    },
+    {
+      "f2p": [
+        "all/Succeed/Issue6205"
+      ],
+      "id": "agda-2ee7f4b38325",
+      "target_files": [
+        "src/full/Agda/TypeChecking/CheckInternal.hs"
+      ]
+    },
+    {
+      "f2p": [
+        "all/Succeed/Issue6095"
+      ],
+      "id": "agda-2f5c443cadbc",
+      "target_files": [
+        "src/full/Agda/Syntax/Scope/Monad.hs"
+      ]
+    },
+    {
+      "f2p": [
+        "all/Fail/Issue5923",
+        "all/Succeed/Issue5923-OP"
+      ],
+      "id": "agda-37f32ecd54a4",
+      "target_files": [
+        "src/full/Agda/TypeChecking/Rewriting/NonLinMatch.hs"
+      ]
+    },
+    {
+      "f2p": [
+        "all/Succeed/Issue5712"
+      ],
+      "id": "agda-40cb4ebd868f",
+      "target_files": [
+        "src/full/Agda/Interaction/MakeCase.hs",
+        "src/full/Agda/TypeChecking/Coverage.hs",
+        "src/full/Agda/TypeChecking/Coverage/CoverResult.hs"
+      ]
+    },
+    {
+      "f2p": [
+        "all/Succeed/Issue5563"
+      ],
+      "id": "agda-43784cbec835",
+      "target_files": [
+        "src/full/Agda/TypeChecking/Rules/Term.hs"
+      ]
+    },
+    {
+      "f2p": [
+        "all/Succeed/Issue5506"
+      ],
+      "id": "agda-536097066aec",
+      "target_files": [
+        "src/full/Agda/TypeChecking/Rules/LHS/Unify.hs"
+      ]
+    },
+    {
+      "f2p": [
+        "all/Fail/Issue5657"
+      ],
+      "id": "agda-53e966a5efa4",
+      "target_files": [
+        "src/full/Agda/TypeChecking/Rules/Application.hs"
+      ]
+    },
+    {
+      "f2p": [
+        "all/Succeed/Issue7590"
+      ],
+      "id": "agda-62e423e6a4e2",
+      "target_files": [
+        "src/full/Agda/TypeChecking/MetaVars.hs",
+        "src/full/Agda/TypeChecking/Rules/Term.hs"
+      ]
+    },
+    {
+      "f2p": [
+        "all/Succeed/Issue5787"
+      ],
+      "id": "agda-6b8bb9f0abbf",
+      "target_files": [
+        "src/full/Agda/TypeChecking/InstanceArguments.hs"
+      ]
+    },
+    {
+      "f2p": [
+        "all/Succeed/Issue5922"
+      ],
+      "id": "agda-75caeec4612c",
+      "target_files": [
+        "src/full/Agda/Interaction/Options/Base.hs",
+        "src/full/Agda/TypeChecking/Substitute.hs"
+      ]
+    },
+    {
+      "f2p": [
+        "all/Succeed/Issue7853"
+      ],
+      "id": "agda-781dda41df34",
+      "target_files": [
+        "src/full/Agda/TypeChecking/InstanceArguments.hs"
+      ]
+    },
+    {
+      "f2p": [
+        "all/Succeed/Issue5784"
+      ],
+      "id": "agda-84adb484c52e",
+      "target_files": [
+        "src/full/Agda/TypeChecking/Primitive.hs"
+      ]
+    },
+    {
+      "f2p": [
+        "all/Succeed/Issue7187"
+      ],
+      "id": "agda-8a34207d920f",
+      "target_files": [
+        "src/full/Agda/TypeChecking/Quote.hs"
+      ]
+    },
+    {
+      "f2p": [
+        "all/Succeed/Issue6931"
+      ],
+      "id": "agda-8b1a7c5b2637",
+      "target_files": [
+        "src/full/Agda/Interaction/Imports.hs",
+        "src/full/Agda/TypeChecking/DeadCode.hs",
+        "src/full/Agda/TypeChecking/Serialise.hs"
+      ]
+    },
+    {
+      "f2p": [
+        "all/Succeed/EtaSingletonField"
+      ],
+      "id": "agda-8fca608df566",
+      "target_files": [
+        "src/full/Agda/TypeChecking/Conversion.hs"
+      ]
+    },
+    {
+      "f2p": [
+        "all/Succeed/Issue7696"
+      ],
+      "id": "agda-906705fdee34",
+      "target_files": [
+        "src/full/Agda/TypeChecking/Rules/LHS.hs"
+      ]
+    },
+    {
+      "f2p": [
+        "all/Succeed/Issue7182"
+      ],
+      "id": "agda-913044ec0aff",
+      "target_files": [
+        "src/full/Agda/TypeChecking/Monad/Signature.hs"
+      ]
+    },
+    {
+      "f2p": [
+        "all/Succeed/Issue7167"
+      ],
+      "id": "agda-918aeead17fb",
+      "target_files": [
+        "src/full/Agda/Syntax/Abstract.hs",
+        "src/full/Agda/TypeChecking/Rules/Application.hs"
+      ]
+    },
+    {
+      "f2p": [
+        "all/Fail/Issue6687"
+      ],
+      "id": "agda-942c4b577347",
+      "target_files": [
+        "src/full/Agda/TypeChecking/Coverage.hs"
+      ]
+    },
+    {
+      "f2p": [
+        "all/Succeed/Issue5291"
+      ],
+      "id": "agda-9669dfc827bb",
+      "target_files": [
+        "src/full/Agda/Syntax/Parser/LookAhead.hs"
+      ]
+    },
+    {
+      "f2p": [
+        "all/Succeed/Issue5583"
+      ],
+      "id": "agda-96dec8dd2635",
+      "target_files": [
+        "src/full/Agda/TypeChecking/Monad/Signature.hs"
+      ]
+    },
+    {
+      "f2p": [
+        "all/Succeed/Issue5620"
+      ],
+      "id": "agda-a559886ae2bd",
+      "target_files": [
+        "src/full/Agda/TypeChecking/Rules/Def.hs"
+      ]
+    },
+    {
+      "f2p": [
+        "all/Succeed/Issue7738",
+        "all/Succeed/Issue7738b"
+      ],
+      "id": "agda-a752a1037a4a",
+      "target_files": [
+        "src/full/Agda/TypeChecking/Rewriting.hs"
+      ]
+    },
+    {
+      "f2p": [
+        "all/Fail/Issue5819"
+      ],
+      "id": "agda-a8d0c6405bf2",
+      "target_files": [
+        "src/full/Agda/Termination/TermCheck.hs"
+      ]
+    },
+    {
+      "f2p": [
+        "all/Succeed/Issue6868"
+      ],
+      "id": "agda-ab85003d2462",
+      "target_files": [
+        "src/full/Agda/TypeChecking/InstanceArguments.hs",
+        "src/full/Agda/TypeChecking/Rules/Term.hs"
+      ]
+    },
+    {
+      "f2p": [
+        "all/Succeed/Issue5765"
+      ],
+      "id": "agda-b16c3fdaa50c",
+      "target_files": [
+        "src/full/Agda/TypeChecking/Rules/LHS/Unify.hs"
+      ]
+    },
+    {
+      "f2p": [
+        "all/Fail/Issue5838",
+        "all/Fail/Issue5838b"
+      ],
+      "id": "agda-b2ae5f46790e",
+      "target_files": [
+        "src/full/Agda/TypeChecking/Primitive/Cubical.hs"
+      ]
+    },
+    {
+      "f2p": [
+        "all/Succeed/Issue6003"
+      ],
+      "id": "agda-b94feaf0b066",
+      "target_files": [
+        "src/full/Agda/TypeChecking/Rules/LHS/Implicit.hs"
+      ]
+    },
+    {
+      "f2p": [
+        "all/Succeed/Issue7044"
+      ],
+      "id": "agda-caa77d88794c",
+      "target_files": [
+        "src/full/Agda/TypeChecking/Serialise.hs",
+        "src/full/Agda/TypeChecking/Serialise/Instances/Internal.hs"
+      ]
+    },
+    {
+      "f2p": [
+        "all/Succeed/Issue7440"
+      ],
+      "id": "agda-db4713752144",
+      "target_files": [
+        "src/full/Agda/Syntax/Translation/ConcreteToAbstract.hs"
+      ]
+    },
+    {
+      "f2p": [
+        "all/Succeed/Issue6767"
+      ],
+      "id": "agda-efa34f35f93a",
+      "target_files": [
+        "src/full/Agda/TypeChecking/Rules/LHS/Unify.hs"
+      ]
+    },
+    {
+      "f2p": [
+        "all/Succeed/Issue6581"
+      ],
+      "id": "agda-f215ad1a3a6c",
+      "target_files": [
+        "src/full/Agda/TypeChecking/Primitive/Cubical.hs",
+        "src/full/Agda/TypeChecking/Rules/Record.hs"
+      ]
+    },
+    {
+      "f2p": [
+        "all/Succeed/Issue5544"
+      ],
+      "id": "agda-fb06f1550bcc",
+      "target_files": [
+        "src/full/Agda/Compiler/MAlonzo/Compiler.hs",
+        "src/full/Agda/TypeChecking/Monad/Base.hs",
+        "src/full/Agda/TypeChecking/Reduce.hs"
+      ]
+    },
+    {
+      "f2p": [
+        "all/Succeed/Issue7753"
+      ],
+      "id": "agda-ffc569e90153",
+      "target_files": [
+        "src/full/Agda/TypeChecking/Coverage/Match.hs"
+      ]
+    }
+  ],
+  "task": "agda",
+  "version": "2.6.3-dev-20210817"
+}

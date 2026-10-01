@@ -1,0 +1,42 @@
+diff --git a/vlib/v/gen/c/fn.v b/vlib/v/gen/c/fn.v
+index 52bd2cc20..01670392e 100644
+--- a/vlib/v/gen/c/fn.v
++++ b/vlib/v/gen/c/fn.v
+@@ -1259,7 +1259,7 @@ fn (mut g Gen) method_call(node ast.CallExpr) {
+ 		}
+ 		g.get_free_method(rec_type)
+ 	}
+-	mut has_cast := false
++	mut cast_n := 0
+ 	if left_sym.kind == .map && node.name in ['clone', 'move'] {
+ 		receiver_type_name = 'map'
+ 	}
+@@ -1271,7 +1271,7 @@ fn (mut g Gen) method_call(node ast.CallExpr) {
+ 		}
+ 		if node.name in ['last', 'first', 'pop'] {
+ 			return_type_str := g.typ(node.return_type)
+-			has_cast = true
++			cast_n++
+ 			g.write('(*(${return_type_str}*)')
+ 		}
+ 	}
+@@ -1375,7 +1375,7 @@ fn (mut g Gen) method_call(node ast.CallExpr) {
+ 		if !is_range_slice {
+ 			if !node.left.is_lvalue() {
+ 				g.write('ADDR(${rec_cc_type}, ')
+-				has_cast = true
++				cast_n++
+ 			} else if !is_array_method_first_last_repeat && !(left_type.has_flag(.shared_f)
+ 				&& left_type == node.receiver_type) {
+ 				g.write('&')
+@@ -1444,8 +1444,8 @@ fn (mut g Gen) method_call(node ast.CallExpr) {
+ 			g.write('->val')
+ 		}
+ 	}
+-	if has_cast {
+-		g.write(')')
++	if cast_n > 0 {
++		g.write(')'.repeat(cast_n))
+ 	}
+ 	is_variadic := node.expected_arg_types.len > 0
+ 		&& node.expected_arg_types.last().has_flag(.variadic)

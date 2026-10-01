@@ -1,0 +1,14 @@
+diff --git a/sklearn/linear_model/coordinate_descent.py b/sklearn/linear_model/coordinate_descent.py
+index 100c0afdd8..5871c29738 100644
+--- a/sklearn/linear_model/coordinate_descent.py
++++ b/sklearn/linear_model/coordinate_descent.py
+@@ -1737,7 +1737,8 @@ class MultiTaskElasticNet(Lasso):
+ 
+         if self.dual_gap_ > self.eps_:
+             warnings.warn('Objective did not converge, you might want'
+-                          ' to increase the number of iterations')
++                          ' to increase the number of iterations',
++                          ConvergenceWarning)
+ 
+         # return self for chaining fit and predict calls
+         return self

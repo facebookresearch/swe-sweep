@@ -1,0 +1,28 @@
+diff --git a/Mathlib/Tactic/GCongr/Core.lean b/Mathlib/Tactic/GCongr/Core.lean
+index 8c60fc6368..0d9909adb9 100644
+--- a/Mathlib/Tactic/GCongr/Core.lean
++++ b/Mathlib/Tactic/GCongr/Core.lean
+@@ -196,7 +196,8 @@ def getCongrAppFnArgs (e : Expr) : Option (Name × Array Expr) :=
+       some (`_Implies, #[d, b])
+   | e => e.withApp fun f args => f.constName?.map (·, args)
+ 
+-/-- If `e` is of the form `r a b`, return `(r, a, b)`. -/
++/-- If `e` is of the form `r a b`, return `(r, a, b)`.
++Note: we assume that `e` does not have an `Expr.mdata` annotation. -/
+ def getRel (e : Expr) : Option (Name × Expr × Expr) :=
+   match e with
+   | .app (.app rel lhs) rhs => rel.getAppFn.constName?.map (·, lhs, rhs)
+diff --git a/Mathlib/Tactic/GRewrite/Core.lean b/Mathlib/Tactic/GRewrite/Core.lean
+index 59031b8e36..1932b4768e 100644
+--- a/Mathlib/Tactic/GRewrite/Core.lean
++++ b/Mathlib/Tactic/GRewrite/Core.lean
+@@ -78,6 +78,9 @@ def _root_.Lean.MVarId.grewrite (goal : MVarId) (e : Expr) (hrel : Expr)
+         pure none
+     let (newMVars, binderInfos, hrelType) ←
+       withReducible <| forallMetaTelescopeReducing hrelType maxMVars?
++    /- We don't reduce `hrelType` because if it is `a > b`, turning it into `b < a` would
++    reverse the direction of the rewrite. However, we do need to clear metadata annotations. -/
++    let hrelType := hrelType.cleanupAnnotations
+ 
+     -- If we can use the normal `rewrite` tactic, we default to using that.
+     if (hrelType.isAppOfArity ``Iff 2 || hrelType.isAppOfArity ``Eq 3) && config.useRewrite then

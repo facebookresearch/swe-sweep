@@ -1,0 +1,23 @@
+diff --git a/src/box/memtx_hash.cc b/src/box/memtx_hash.cc
+index 3b64207faa..836b213f8a 100644
+--- a/src/box/memtx_hash.cc
++++ b/src/box/memtx_hash.cc
+@@ -516,7 +516,7 @@ hash_snapshot_iterator_next(struct snapshot_iterator *iterator,
+ 		tuple = memtx_tx_snapshot_clarify(&it->cleaner, tuple);
+ 
+ 		if (tuple != NULL) {
+-			*data = tuple_data_range(*res, size);
++			*data = tuple_data_range(tuple, size);
+ 			return 0;
+ 		}
+ 	}
+@@ -542,6 +542,9 @@ memtx_hash_index_create_snapshot_iterator(struct index *base)
+ 		return NULL;
+ 	}
+ 
++	struct space *space = space_cache_find(base->def->space_id);
++	memtx_tx_snapshot_cleaner_create(&it->cleaner, space);
++
+ 	it->base.next = hash_snapshot_iterator_next;
+ 	it->base.free = hash_snapshot_iterator_free;
+ 	it->index = index;

@@ -1,0 +1,48 @@
+diff --git a/pandas/tests/frame/methods/test_copy.py b/pandas/tests/frame/methods/test_copy.py
+index be52cf55fc..1c0b0755e7 100644
+--- a/pandas/tests/frame/methods/test_copy.py
++++ b/pandas/tests/frame/methods/test_copy.py
+@@ -1,5 +1,8 @@
++import numpy as np
+ import pytest
+ 
++import pandas.util._test_decorators as td
++
+ from pandas import DataFrame
+ import pandas._testing as tm
+ 
+@@ -41,3 +44,20 @@ class TestCopy:
+         # copy objects
+         copy = float_string_frame.copy()
+         assert copy._mgr is not float_string_frame._mgr
++
++    @td.skip_array_manager_invalid_test
++    def test_copy_consolidates(self):
++        # GH#42477
++        df = DataFrame(
++            {
++                "a": np.random.randint(0, 100, size=55),
++                "b": np.random.randint(0, 100, size=55),
++            }
++        )
++
++        for i in range(0, 10):
++            df.loc[:, f"n_{i}"] = np.random.randint(0, 100, size=55)
++
++        assert len(df._mgr.blocks) == 11
++        result = df.copy()
++        assert len(result._mgr.blocks) == 1
+diff --git a/pandas/tests/internals/test_internals.py b/pandas/tests/internals/test_internals.py
+index 0f4a30cfa9..38a6209283 100644
+--- a/pandas/tests/internals/test_internals.py
++++ b/pandas/tests/internals/test_internals.py
+@@ -461,6 +461,9 @@ class TestBlockManager:
+                 # DatetimeTZBlock has DatetimeIndex values
+                 assert cp_blk.values._data.base is blk.values._data.base
+ 
++        # copy(deep=True) consolidates, so the block-wise assertions will
++        #  fail is mgr is not consolidated
++        mgr._consolidate_inplace()
+         cp = mgr.copy(deep=True)
+         for blk, cp_blk in zip(mgr.blocks, cp.blocks):
+ 

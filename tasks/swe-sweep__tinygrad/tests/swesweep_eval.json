@@ -1,0 +1,164 @@
+{
+  "build_jobs": 4,
+  "container_repo": "/tinygrad",
+  "evaluation": {
+    "paths": "test",
+    "visible_args": [
+      "--timeout=900"
+    ],
+    "visible_timeout": 7200
+  },
+  "upstream_image": "pandora-maxbug-tinygrad:v0.12.0",
+  "n_base_passing": 2025,
+  "n_base_test_ignore": 1099,
+  "oracle_digest": "d087f4ea03685bf250f6860281403471a19ea7158f30888699b7f374ebe57cc8",
+  "oracle_pristine_paths": [],
+  "upstream_commit": "9f7399e15e6172900e0591deb5a57a45769d8205",
+  "reproduction": {
+    "needs_build": false,
+    "suite": "pytest",
+    "test_timeout": 1800
+  },
+  "schema": 2,
+  "subtasks": [
+    {
+      "f2p": [
+        "test.test_uops.TestExecALU::test_trunc_nonfinite"
+      ],
+      "id": "tinygrad-26499c13a30d",
+      "target_files": [
+        "tinygrad/uop/ops.py"
+      ]
+    },
+    {
+      "f2p": [
+        "test.unit.test_helpers.TestDisableGC::test_recursive_decorator"
+      ],
+      "id": "tinygrad-2fa64a68ef43",
+      "target_files": [
+        "tinygrad/helpers.py"
+      ]
+    },
+    {
+      "f2p": [
+        "test.unit.test_indexing.TestIndexing::test_variable_with_tensor_index"
+      ],
+      "id": "tinygrad-368ae50d0f78",
+      "target_files": [
+        "tinygrad/tensor.py"
+      ]
+    },
+    {
+      "f2p": [
+        "test.unit.test_device.TestRunAsModule::test_module_runs"
+      ],
+      "id": "tinygrad-3f8b7c1b1fe3",
+      "target_files": [
+        "tinygrad/device.py"
+      ]
+    },
+    {
+      "f2p": [
+        "test.unit.test_winograd.TestWinograd::test_padded_conv2d"
+      ],
+      "id": "tinygrad-3fefc793ae1e",
+      "target_files": [
+        "tinygrad/tensor.py"
+      ]
+    },
+    {
+      "f2p": [
+        "test.unit.test_tensor_data.TestTensorData::test_tolist_empty_shapes"
+      ],
+      "id": "tinygrad-53ccec902f4f",
+      "target_files": [
+        "tinygrad/tensor.py"
+      ]
+    },
+    {
+      "f2p": [
+        "test.unit.test_helpers.TestWordWrap::test_wrap_colored_at_boundary"
+      ],
+      "id": "tinygrad-57bc418a44bf",
+      "target_files": [
+        "tinygrad/helpers.py"
+      ]
+    },
+    {
+      "f2p": [
+        "test.unit.test_llm_server.TestTransformerGenerate::test_start_pos_parameter_is_used"
+      ],
+      "id": "tinygrad-716c6ecbbd07",
+      "target_files": [
+        "tinygrad/apps/llm.py"
+      ]
+    },
+    {
+      "f2p": [
+        "test.test_multitensor.TestMultiTensor::test_sdpa_causal_shard_batch"
+      ],
+      "id": "tinygrad-8848026c9da5",
+      "target_files": [
+        "tinygrad/tensor.py"
+      ]
+    },
+    {
+      "f2p": [
+        "test.test_custom_kernel.TestUOpWhere::test_uop_where_both_const"
+      ],
+      "id": "tinygrad-8a9eb689cd31",
+      "target_files": [
+        "tinygrad/mixin/elementwise.py"
+      ]
+    },
+    {
+      "f2p": [
+        "test.test_tensor.TestTraceMetaShutdown::test_tracemeta_del_no_shutdown_error"
+      ],
+      "id": "tinygrad-a737ec195a25",
+      "target_files": [
+        "tinygrad/tensor.py"
+      ]
+    },
+    {
+      "f2p": [
+        "test.unit.test_uop_symbolic.TestSymbolic::test_mul_lt"
+      ],
+      "id": "tinygrad-c36b94d5db37",
+      "target_files": [
+        "tinygrad/uop/symbolic.py"
+      ]
+    },
+    {
+      "f2p": [
+        "test.test_ops.TestOps::test_logsumexp"
+      ],
+      "id": "tinygrad-cde88b456a57",
+      "target_files": [
+        "tinygrad/tensor.py"
+      ]
+    },
+    {
+      "f2p": [
+        "test.unit.test_schedule_cache.TestScheduleCache::test_custom_kernel"
+      ],
+      "id": "tinygrad-f8d0038a3a63",
+      "target_files": [
+        "tinygrad/uop/ops.py"
+      ]
+    },
+    {
+      "f2p": [
+        "test.test_rangeify.TestRangeifyEdgeCase::test_pcontig_multi_gather"
+      ],
+      "id": "tinygrad-fbfa8b45f371",
+      "target_files": [
+        "tinygrad/schedule/indexing.py",
+        "tinygrad/schedule/rangeify.py",
+        "tinygrad/viz/serve.py"
+      ]
+    }
+  ],
+  "task": "tinygrad",
+  "version": "v0.12.0"
+}

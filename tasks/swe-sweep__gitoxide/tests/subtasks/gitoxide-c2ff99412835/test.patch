@@ -1,0 +1,63 @@
+diff --git a/gix/tests/fixtures/make_submodules.sh b/gix/tests/fixtures/make_submodules.sh
+index 83858d8b4..790ecf3b9 100755
+--- a/gix/tests/fixtures/make_submodules.sh
++++ b/gix/tests/fixtures/make_submodules.sh
+@@ -120,6 +120,25 @@ git init with-submodules
+   git submodule add ../module1 dir/m1
+ )
+ 
++# Git permits absolute-looking submodule names because it appends them textually below
++# `.git/modules/` instead of joining them as paths. Keep committed gitlinks for both Unix and
++# Windows spellings so consumers can verify that these are ordinary submodules made by Git.
++git init absolute-looking-submodule-names
++(cd absolute-looking-submodule-names
++  # Use portable names while cloning, then change only the committed configuration. Passing a
++  # leading slash through Git Bash on Windows would be translated to its installation directory.
++  git submodule add ../module1 unix
++  git submodule add ../module1 windows
++  git config -f .gitmodules --rename-section submodule.unix submodule./absolute/unix
++  git config -f .gitmodules --rename-section submodule.windows 'submodule.\absolute\windows'
++  git commit -m "add submodules with absolute-looking names"
++
++  # A backslash is a filename character on Unix but a separator on Windows. The test only needs
++  # Git's committed configuration and gitlinks, so omit the cloned repositories from the fixture
++  # to keep its generated representation portable.
++  rm -rf .git/modules
++)
++
+ git init submodule-with-divergent-gitlink
+ (cd submodule-with-divergent-gitlink
+   git submodule add ../module1 outer/inner
+diff --git a/gix/tests/gix/submodule.rs b/gix/tests/gix/submodule.rs
+index 75a957693..7ee0d26fd 100644
+--- a/gix/tests/gix/submodule.rs
++++ b/gix/tests/gix/submodule.rs
+@@ -127,6 +127,28 @@ mod open {
+         Ok(())
+     }
+ 
++    #[test]
++    fn absolute_looking_names_remain_below_the_modules_directory() -> crate::Result {
++        let repo = repo("absolute-looking-submodule-names")?;
++        let modules_dir = repo.common_dir().join("modules");
++        let mut count = 0;
++        for sm in repo.submodules()?.expect("submodule configuration present") {
++            let git_dir = sm.git_dir()?;
++            assert!(
++                git_dir.starts_with(&modules_dir),
++                "Git-compatible name {:?} must remain below {} instead of producing {}",
++                sm.name(),
++                modules_dir.display(),
++                git_dir.display()
++            );
++            assert!(sm.index_id()?.is_some(), "Git added the submodule to the index");
++            assert!(sm.head_id()?.is_some(), "Git committed the submodule as a gitlink");
++            count += 1;
++        }
++        assert_eq!(count, 2, "both absolute-looking names were parsed as submodules");
++        Ok(())
++    }
++
+     /// Reproducer for GHSA-p3hw-mv63-rf9w: `Submodule::open()` must not inherit
+     /// `git_dir_trust` from the parent repository because doing so skips recomputing
+     /// trust for the submodule git-dir and can bypass ownership-based trust checks.

@@ -1,0 +1,32 @@
+diff --git a/lib/rules/function-linear-gradient-no-nonstandard-direction/index.cjs b/lib/rules/function-linear-gradient-no-nonstandard-direction/index.cjs
+index f01b5ea70..ec4062491 100644
+--- a/lib/rules/function-linear-gradient-no-nonstandard-direction/index.cjs
++++ b/lib/rules/function-linear-gradient-no-nonstandard-direction/index.cjs
+@@ -87,6 +87,11 @@ const rule = (primary) => {
+ 							return;
+ 						}
+ 
++						// Skip direction validation for CSS variables
++						if (firstArg.startsWith('var(')) {
++							return;
++						}
++
+ 						// Ignore gradients with modern syntax that have color space interpolation arguments
+ 						if (IN_KEYWORD.test(firstArg)) {
+ 							return;
+diff --git a/lib/rules/function-linear-gradient-no-nonstandard-direction/index.mjs b/lib/rules/function-linear-gradient-no-nonstandard-direction/index.mjs
+index f71c053e2..c5643a220 100644
+--- a/lib/rules/function-linear-gradient-no-nonstandard-direction/index.mjs
++++ b/lib/rules/function-linear-gradient-no-nonstandard-direction/index.mjs
+@@ -84,6 +84,11 @@ const rule = (primary) => {
+ 							return;
+ 						}
+ 
++						// Skip direction validation for CSS variables
++						if (firstArg.startsWith('var(')) {
++							return;
++						}
++
+ 						// Ignore gradients with modern syntax that have color space interpolation arguments
+ 						if (IN_KEYWORD.test(firstArg)) {
+ 							return;

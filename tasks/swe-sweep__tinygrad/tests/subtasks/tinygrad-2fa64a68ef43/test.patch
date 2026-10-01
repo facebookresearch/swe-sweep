@@ -1,0 +1,35 @@
+diff --git a/test/unit/test_helpers.py b/test/unit/test_helpers.py
+index 994497fd2..4fee1ce71 100644
+--- a/test/unit/test_helpers.py
++++ b/test/unit/test_helpers.py
+@@ -1,8 +1,8 @@
+-import ctypes, gzip, unittest, timeit, pickle
++import ctypes, gzip, unittest, timeit, pickle, gc
+ from tinygrad import Variable
+ from tinygrad.helpers import Context, ContextVar, argfix, colored, word_wrap, is_numpy_ndarray, mv_address, get_contraction, count
+ from tinygrad.helpers import merge_dicts, strip_parens, prod, round_up, fetch, fully_flatten, from_mv, to_mv, polyN, time_to_str, cdiv, cmod, getbits
+-from tinygrad.helpers import ceildiv
++from tinygrad.helpers import ceildiv, disable_gc
+ from tinygrad.tensor import Tensor, get_shape
+ import numpy as np
+ 
+@@ -463,5 +463,19 @@ class TestIsNumpyNdarray(unittest.TestCase):
+   def test_tensor_numpy(self):
+     self.assertTrue(is_numpy_ndarray(Tensor([1, 2, 3]).numpy()))
+ 
++class TestDisableGC(unittest.TestCase):
++  def test_recursive_decorator(self):
++    was_enabled = gc.isenabled()
++    @disable_gc()
++    def recurse(depth:int):
++      self.assertFalse(gc.isenabled())
++      if depth: recurse(depth-1)
++      self.assertFalse(gc.isenabled())
++    try:
++      recurse(2)
++      self.assertEqual(gc.isenabled(), was_enabled)
++    finally:
++      (gc.enable if was_enabled else gc.disable)()
++
+ if __name__ == '__main__':
+   unittest.main()

@@ -1,0 +1,18 @@
+diff --git a/pandas/tests/libs/test_lib.py b/pandas/tests/libs/test_lib.py
+index 17dae1879f..f619ba4dd2 100644
+--- a/pandas/tests/libs/test_lib.py
++++ b/pandas/tests/libs/test_lib.py
+@@ -206,3 +206,13 @@ def test_no_default_pickle():
+     # GH#40397
+     obj = tm.round_trip_pickle(lib.no_default)
+     assert obj is lib.no_default
++
++
++def test_ensure_string_array_list_of_lists():
++    # GH#61155: ensure list of lists doesn't get converted to string
++    arr = [list("test"), list("word")]
++    result = lib.ensure_string_array(arr)
++
++    # Each item in result should still be a list, not a stringified version
++    expected = np.array(["['t', 'e', 's', 't']", "['w', 'o', 'r', 'd']"], dtype=object)
++    tm.assert_numpy_array_equal(result, expected)

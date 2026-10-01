@@ -1,0 +1,55 @@
+diff --git a/packages/mui-base/src/SliderUnstyled/SliderUnstyledProps.ts b/packages/mui-base/src/SliderUnstyled/SliderUnstyledProps.ts
+index c6b638f8cf..839446f8de 100644
+--- a/packages/mui-base/src/SliderUnstyled/SliderUnstyledProps.ts
++++ b/packages/mui-base/src/SliderUnstyled/SliderUnstyledProps.ts
+@@ -158,7 +158,7 @@ export interface SliderUnstyledTypeMap<P = {}, D extends React.ElementType = 'span
+      * When step is `null`, the thumb can only be slid onto marks provided with the `marks` prop.
+      * @default 1
+      */
+-    step?: number | null;
++    step?: number | null | 'any';
+     /**
+      * Tab index attribute of the hidden `input` element.
+      */
+diff --git a/packages/mui-base/src/SliderUnstyled/useSlider.ts b/packages/mui-base/src/SliderUnstyled/useSlider.ts
+index a1574cd84b..fa76c12ba3 100644
+--- a/packages/mui-base/src/SliderUnstyled/useSlider.ts
++++ b/packages/mui-base/src/SliderUnstyled/useSlider.ts
+@@ -326,20 +326,18 @@ export default function useSlider(parameters: UseSliderProps) {
+       let newValue = event.target.valueAsNumber;
+ 
+       if (marks && step == null) {
+-        newValue = newValue < value ? marksValues[marksIndex - 1] : marksValues[marksIndex + 1];
++        const maxMarksValue = marksValues[marksValues.length - 1];
++        if (newValue > maxMarksValue) {
++          newValue = maxMarksValue;
++        } else if (newValue < marksValues[0]) {
++          newValue = marksValues[0];
++        } else {
++          newValue = newValue < value ? marksValues[marksIndex - 1] : marksValues[marksIndex + 1];
++        }
+       }
+ 
+       newValue = clamp(newValue, min, max);
+ 
+-      if (marks && step == null) {
+-        const currentMarkIndex = marksValues.indexOf(values[index]);
+-
+-        newValue =
+-          newValue < values[index]
+-            ? marksValues[currentMarkIndex - 1]
+-            : marksValues[currentMarkIndex + 1];
+-      }
+-
+       if (range) {
+         // Bound the new value to the thumb's neighbours.
+         if (disableSwap) {
+@@ -678,7 +676,7 @@ export default function useSlider(parameters: UseSliderProps) {
+       type: 'range',
+       min: props.min,
+       max: props.max,
+-      step: props.step,
++      step: props.step === null && marks ? 'any' : props.step,
+       disabled,
+       ...mergedEventHandlers,
+       style: {

@@ -1,0 +1,40 @@
+diff --git a/src/math/big/floatmarsh_test.go b/src/math/big/floatmarsh_test.go
+index c056d78b80..401f45a51f 100644
+--- a/src/math/big/floatmarsh_test.go
++++ b/src/math/big/floatmarsh_test.go
+@@ -137,3 +137,15 @@ func TestFloatJSONEncoding(t *testing.T) {
+ 		}
+ 	}
+ }
++
++func TestFloatGobDecodeShortBuffer(t *testing.T) {
++	for _, tc := range [][]byte{
++		[]byte{0x1, 0x0, 0x0, 0x0},
++		[]byte{0x1, 0xfa, 0x0, 0x0, 0x0, 0x0},
++	} {
++		err := NewFloat(0).GobDecode(tc)
++		if err == nil {
++			t.Error("expected GobDecode to return error for malformed input")
++		}
++	}
++}
+diff --git a/src/math/big/ratmarsh_test.go b/src/math/big/ratmarsh_test.go
+index 351d109f8d..55a9878bb8 100644
+--- a/src/math/big/ratmarsh_test.go
++++ b/src/math/big/ratmarsh_test.go
+@@ -123,3 +123,15 @@ func TestRatXMLEncoding(t *testing.T) {
+ 		}
+ 	}
+ }
++
++func TestRatGobDecodeShortBuffer(t *testing.T) {
++	for _, tc := range [][]byte{
++		[]byte{0x2},
++		[]byte{0x2, 0x0, 0x0, 0x0, 0xff},
++	} {
++		err := NewRat(1, 2).GobDecode(tc)
++		if err == nil {
++			t.Error("expected GobDecode to return error for malformed input")
++		}
++	}
++}

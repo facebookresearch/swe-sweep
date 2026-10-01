@@ -1,0 +1,22 @@
+diff --git a/independent-projects/qute/core/src/main/java/io/quarkus/qute/ValueResolvers.java b/independent-projects/qute/core/src/main/java/io/quarkus/qute/ValueResolvers.java
+index 257cee875aa..d02acd0e20b 100644
+--- a/independent-projects/qute/core/src/main/java/io/quarkus/qute/ValueResolvers.java
++++ b/independent-projects/qute/core/src/main/java/io/quarkus/qute/ValueResolvers.java
+@@ -27,8 +27,15 @@ public final class ValueResolvers {
+         return new ValueResolver() {
+ 
+             public boolean appliesTo(EvalContext context) {
+-                return context.getBase() != null
+-                        && (context.getName().equals("raw") || context.getName().equals("safe"));
++                Object base = context.getBase();
++                if (base == null) {
++                    return false;
++                }
++                // Skip Results.NotFound - let the property-not-found-strategy handle it
++                if (Results.isNotFound(base)) {
++                    return false;
++                }
++                return context.getName().equals("raw") || context.getName().equals("safe");
+             }
+ 
+             @Override

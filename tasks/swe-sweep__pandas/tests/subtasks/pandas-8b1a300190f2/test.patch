@@ -1,0 +1,17 @@
+diff --git a/pandas/tests/frame/constructors/test_from_records.py b/pandas/tests/frame/constructors/test_from_records.py
+index 5be42d41af..ed2f0aa9c4 100644
+--- a/pandas/tests/frame/constructors/test_from_records.py
++++ b/pandas/tests/frame/constructors/test_from_records.py
+@@ -128,6 +128,12 @@ class TestFromRecords:
+         result = DataFrame.from_records([])
+         assert len(result) == 0
+         assert len(result.columns) == 0
+ 
++    def test_from_records_sequencelike_empty_index(self):
++        result = DataFrame.from_records([], index=[])
++        assert len(result) == 0
++        assert len(result.columns) == 0
++        assert len(result.index) == 0
++
+     def test_from_records_dictlike(self):
+ 

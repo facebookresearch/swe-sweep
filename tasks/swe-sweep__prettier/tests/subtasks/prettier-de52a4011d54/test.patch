@@ -1,0 +1,86 @@
+diff --git a/tests/format/js/template-literals/__snapshots__/format.test.js.snap b/tests/format/js/template-literals/__snapshots__/format.test.js.snap
+index b635df2fd..d4470d987 100644
+--- a/tests/format/js/template-literals/__snapshots__/format.test.js.snap
++++ b/tests/format/js/template-literals/__snapshots__/format.test.js.snap
+@@ -164,6 +164,8 @@ descirbe('something', () => {
+ 
+ throw new Error(\`pretty-format: Option "theme" has a key "\${key}" whose value "\${value}" is undefined in ansi-styles.\`,)
+ 
++a = \`\${[[1, 2, 3], [4, 5, 6]]}\`
++
+ =====================================output=====================================
+ const long1 = \`long \${
+   a.b //comment
+@@ -224,6 +226,11 @@ throw new Error(
+   \`pretty-format: Option "theme" has a key "\${key}" whose value "\${value}" is undefined in ansi-styles.\`,
+ );
+ 
++a = \`\${[
++  [1, 2, 3],
++  [4, 5, 6],
++]}\`;
++
+ ================================================================================
+ `;
+ 
+diff --git a/tests/format/js/template-literals/expressions.js b/tests/format/js/template-literals/expressions.js
+index c68f1176a..c2f98b36b 100644
+--- a/tests/format/js/template-literals/expressions.js
++++ b/tests/format/js/template-literals/expressions.js
+@@ -44,3 +44,5 @@ descirbe('something', () => {
+ })
+ 
+ throw new Error(`pretty-format: Option "theme" has a key "${key}" whose value "${value}" is undefined in ansi-styles.`,)
++
++a = `${[[1, 2, 3], [4, 5, 6]]}`
+diff --git a/tests/unit/doc-printer.js b/tests/unit/doc-printer.js
+new file mode 100644
+index 000000000..bf4dbf81d
+--- /dev/null
++++ b/tests/unit/doc-printer.js
+@@ -0,0 +1,45 @@
++// TODO: Find a better way to test the performance
++import { fill, join, line } from "../../src/document/builders.js";
++import { printDocToString } from "../../src/document/printer.js";
++
++test("`printDocToString` should not manipulate docs", () => {
++  const printOptions = { printWidth: 40, tabWidth: 2 };
++  const doc = fill(
++    join(
++      line,
++      Array.from({ length: 255 }, (_, index) => String(index + 1)),
++    ),
++  );
++
++  expect(doc.parts.length).toBe(255 + 254);
++
++  const { formatted: firstPrint } = printDocToString(doc, printOptions);
++
++  expect(doc.parts.length).toBe(255 + 254);
++
++  const { formatted: secondPrint } = printDocToString(doc, printOptions);
++
++  expect(firstPrint).toBe(secondPrint);
++
++  {
++    // About 1000 lines, #3263
++    const WORD = "word";
++    const hugeParts = join(
++      line,
++      Array.from(
++        { length: 1000 * Math.ceil(printOptions.printWidth / WORD.length) },
++        () => WORD,
++      ),
++    );
++    const orignalLength = hugeParts.length;
++
++    const startTime = performance.now();
++    const { formatted } = printDocToString(fill(hugeParts), printOptions);
++    const endTime = performance.now();
++    expect(hugeParts.length).toBe(orignalLength);
++
++    const lines = formatted.split("\n");
++    expect(lines.length).toBeGreaterThan(1000);
++    expect(endTime - startTime).toBeLessThan(1000);
++  }
++});

@@ -1,0 +1,57 @@
+diff --git a/crates/swc_ecma_parser/src/lexer/state.rs b/crates/swc_ecma_parser/src/lexer/state.rs
+index fdf8dfca18..66c5a08906 100644
+--- a/crates/swc_ecma_parser/src/lexer/state.rs
++++ b/crates/swc_ecma_parser/src/lexer/state.rs
+@@ -21,6 +21,8 @@ pub(super) struct State {
+     pub is_expr_allowed: bool,
+     /// if line break exists between previous token and new token?
+     pub had_line_break: bool,
++    /// if line break exists before last?
++    pub had_line_break_before_last: bool,
+     /// TODO: Remove this field.
+     is_first: bool,
+     pub start: BytePos,
+@@ -348,8 +350,10 @@ impl<'a, I: Input> Iterator for Lexer<'a, I> {
+                     });
+                 }
+             }
++
+             self.state.update(start, token);
+             self.state.prev_hi = self.last_pos();
++            self.state.had_line_break_before_last = self.had_line_break_before_last();
+         }
+ 
+         token.map(|token| {
+@@ -370,6 +374,7 @@ impl State {
+             is_expr_allowed: true,
+             is_first: true,
+             had_line_break: false,
++            had_line_break_before_last: false,
+             prev_hi: start_pos,
+             context,
+             token_type: None,
+@@ -432,6 +437,7 @@ impl State {
+             start,
+             next,
+             self.had_line_break,
++            self.had_line_break_before_last,
+             self.is_expr_allowed,
+         );
+     }
+@@ -445,6 +451,7 @@ impl State {
+         start: BytePos,
+         next: &Token,
+         had_line_break: bool,
++        had_line_break_before_last: bool,
+         is_expr_allowed: bool,
+     ) -> bool {
+         let is_next_keyword = matches!(*next, Word(Word::Keyword(..)));
+@@ -538,7 +545,7 @@ impl State {
+                             TokenType::Keyword(Let)
+                             | TokenType::Keyword(Const)
+                             | TokenType::Keyword(Var)
+-                                if had_line_break =>
++                                if had_line_break_before_last =>
+                             {
+                                 true
+                             }

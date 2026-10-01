@@ -1,0 +1,64 @@
+diff --git a/src/language-css/printer-postcss.js b/src/language-css/printer-postcss.js
+index 8b1e54905..4e8f9eb85 100644
+--- a/src/language-css/printer-postcss.js
++++ b/src/language-css/printer-postcss.js
+@@ -35,7 +35,7 @@ import {
+   hasComposesNode,
+   hasParensAroundNode,
+   insideAtRuleNode,
+-  insideICSSRuleNode,
++  insideIcssRuleNode,
+   insideValueFunctionNode,
+   isDetachedRulesetCallNode,
+   isDetachedRulesetDeclarationNode,
+@@ -126,7 +126,7 @@ function genericPrint(path, options, print) {
+         node.raws.before.replaceAll(/[\s;]/gu, ""),
+         // Less variable
+         (parentNode.type === "css-atrule" && parentNode.variable) ||
+-        insideICSSRuleNode(path)
++        insideIcssRuleNode(path)
+           ? node.prop
+           : maybeToLowerCase(node.prop),
+         trimmedBetween.startsWith("//") ? " " : "",
+diff --git a/src/language-css/utils/index.js b/src/language-css/utils/index.js
+index 2d1555c9e..04b7816be 100644
+--- a/src/language-css/utils/index.js
++++ b/src/language-css/utils/index.js
+@@ -66,16 +66,19 @@ function insideValueFunctionNode(path, functionName) {
+   return funcAncestorNode?.value?.toLowerCase() === functionName;
+ }
+ 
+-function insideICSSRuleNode(path) {
+-  const ruleAncestorNode = path.findAncestor(
+-    (node) => node.type === "css-rule",
+-  );
+-  const selector = ruleAncestorNode?.raws?.selector;
++// https://github.com/css-modules/icss
++function insideIcssRuleNode(path) {
++  return path.hasAncestor((node) => {
++    if (node.type !== "css-rule") {
++      return false;
++    }
+ 
+-  return (
+-    selector &&
+-    (selector.startsWith(":import") || selector.startsWith(":export"))
+-  );
++    const selector = node.raws?.selector;
++    return (
++      selector &&
++      (selector.startsWith(":import") || selector.startsWith(":export"))
++    );
++  });
+ }
+ 
+ function insideAtRuleNode(path, atRuleNameOrAtRuleNames) {
+@@ -386,7 +389,7 @@ export {
+   hasEmptyRawBefore,
+   hasParensAroundNode,
+   insideAtRuleNode,
+-  insideICSSRuleNode,
++  insideIcssRuleNode,
+   insideURLFunctionInImportAtRuleNode,
+   insideValueFunctionNode,
+   isAdditionNode,

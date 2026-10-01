@@ -1,0 +1,19 @@
+diff --git a/packages/babel-parser/test/fixtures/es2015/modules/duplicate-named-export-destructuring-assignment/input.js b/packages/babel-parser/test/fixtures/es2015/modules/duplicate-named-export-destructuring-assignment/input.js
+new file mode 100644
+index 0000000000..9e0ccdcfd3
+--- /dev/null
++++ b/packages/babel-parser/test/fixtures/es2015/modules/duplicate-named-export-destructuring-assignment/input.js
+@@ -0,0 +1,2 @@
++export { foo };
++export const { foo = 1 } = bar;
+diff --git a/packages/babel-parser/test/fixtures/es2015/modules/duplicate-named-export-destructuring-assignment/options.json b/packages/babel-parser/test/fixtures/es2015/modules/duplicate-named-export-destructuring-assignment/options.json
+new file mode 100644
+index 0000000000..d3d3a199e6
+--- /dev/null
++++ b/packages/babel-parser/test/fixtures/es2015/modules/duplicate-named-export-destructuring-assignment/options.json
+@@ -0,0 +1,4 @@
++{
++  "sourceType": "module",
++  "throws": "`foo` has already been exported. Exported identifiers must be unique. (2:15)"
++}
+\ No newline at end of file

@@ -1,0 +1,14 @@
+diff --git a/tests/basics/builtin_pow3.py b/tests/basics/builtin_pow3.py
+index 2dbe0d33e..33b8b198d 100644
+--- a/tests/basics/builtin_pow3.py
++++ b/tests/basics/builtin_pow3.py
+@@ -12,6 +12,9 @@ print(pow(1, 1, 1))
+ print(pow(0, 1, 1))
+ print(pow(1, 0, 1))
+ print(pow(1, 0, 2))
++print(pow(0, 0, 5))
++print(pow(0, 1, 5))
++print(pow(0, 0, 1))
+ 
+ # 3 arg pow is defined to only work on integers
+ try:

@@ -1,0 +1,34 @@
+diff --git a/test/regress/cli/CMakeLists.txt b/test/regress/cli/CMakeLists.txt
+index 2cdfbc7e70..be4d31b0b8 100644
+--- a/test/regress/cli/CMakeLists.txt
++++ b/test/regress/cli/CMakeLists.txt
+@@ -743,6 +743,7 @@ set(regress_0_tests
+   regress0/datatypes/v3l60006.cvc.smt2
+   regress0/datatypes/v5l30058.cvc.smt2
+   regress0/datatypes/wrong-sel-simp.cvc.smt2
++  regress0/datatypes/yoni-cyclic.smt2
+   regress0/dd.bad-conv-rewrite.smt2
+   regress0/decision/aufbv-fuzz01.smtv1.smt2
+   regress0/decision/bitvec0.delta01.smtv1.smt2
+diff --git a/test/regress/cli/regress0/datatypes/yoni-cyclic.smt2 b/test/regress/cli/regress0/datatypes/yoni-cyclic.smt2
+new file mode 100644
+index 0000000000..2b8b07e6e4
+--- /dev/null
++++ b/test/regress/cli/regress0/datatypes/yoni-cyclic.smt2
+@@ -0,0 +1,16 @@
++; EXPECT: unsat
++(set-logic ALL)
++
++(declare-datatypes ((T1 0)(T2 0))
++ (((cons1 (id1 Int) (tail1 T2)))
++ ((Nil) (cons2 (id2 Int) (tail2 T1))))
++)
++
++(declare-const x T1)
++(declare-const y T2)
++
++(assert (= x (tail2 y)))
++(assert (= y (tail1 x)))
++(assert (not (= Nil y)))
++
++(check-sat)

@@ -1,0 +1,29 @@
+diff --git a/compiler/test/compilable/test23617.d b/compiler/test/compilable/test23617.d
+new file mode 100644
+index 0000000000..2d03ee7fae
+--- /dev/null
++++ b/compiler/test/compilable/test23617.d
+@@ -0,0 +1,23 @@
++// https://issues.dlang.org/show_bug.cgi?id=23617
++
++struct S
++{
++    void foo() {}
++}
++
++struct Wrapper
++{
++    size_t currentIndex;
++    S[] arrayOfS;
++
++    auto opDispatch(string name, T ...)(T t)
++    {
++        return __traits(child, arrayOfS[this.currentIndex], __traits(getMember, S, name))(t);
++    }
++}
++
++void main()
++{
++        Wrapper w;
++        w.opDispatch!"foo"();
++}

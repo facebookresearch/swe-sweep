@@ -1,0 +1,15 @@
+diff --git a/lib/elixir/test/elixir/calendar/date_range_test.exs b/lib/elixir/test/elixir/calendar/date_range_test.exs
+index 39465421c..fe6cab37e 100644
+--- a/lib/elixir/test/elixir/calendar/date_range_test.exs
++++ b/lib/elixir/test/elixir/calendar/date_range_test.exs
+@@ -101,6 +101,10 @@ defmodule Date.RangeTest do
+     end
+   end
+ 
++  test "Enum.take/1 for empty range with negative step" do
++    assert Enum.take(@empty_range, -1) == []
++  end
++
+   test "works with date-like structs" do
+     range = Date.range(~N[2000-01-01 09:00:00], ~U[2000-01-02 09:00:00Z])
+     assert range.first == ~D[2000-01-01]

@@ -1,0 +1,12 @@
+diff --git a/lib/matplotlib/backends/backend_ps.py b/lib/matplotlib/backends/backend_ps.py
+index 61e51b7711..9fbff692cb 100644
+--- a/lib/matplotlib/backends/backend_ps.py
++++ b/lib/matplotlib/backends/backend_ps.py
+@@ -783,6 +783,7 @@ grestore
+             self.set_linejoin(gc.get_joinstyle())
+             self.set_linecap(gc.get_capstyle())
+             self.set_linedash(*gc.get_dashes())
++        if mightstroke or hatch:
+             self.set_color(*gc.get_rgb()[:3])
+         write('gsave\n')
+ 

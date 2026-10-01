@@ -1,0 +1,97 @@
+diff --git a/testsuite/integration-arquillian/tests/base/src/test/java/org/keycloak/testsuite/oauth/ClientAuthSecretSignedJWTTest.java b/testsuite/integration-arquillian/tests/base/src/test/java/org/keycloak/testsuite/oauth/ClientAuthSecretSignedJWTTest.java
+index ff43586b86..5e4e2a9bd3 100644
+--- a/testsuite/integration-arquillian/tests/base/src/test/java/org/keycloak/testsuite/oauth/ClientAuthSecretSignedJWTTest.java
++++ b/testsuite/integration-arquillian/tests/base/src/test/java/org/keycloak/testsuite/oauth/ClientAuthSecretSignedJWTTest.java
+@@ -42,7 +42,9 @@ import org.jetbrains.annotations.NotNull;
+ import org.junit.Rule;
+ import org.junit.Test;
+ import org.keycloak.OAuth2Constants;
++import org.keycloak.OAuthErrorException;
+ import org.keycloak.admin.client.resource.ClientResource;
++import org.keycloak.authentication.authenticators.client.JWTClientAuthenticator;
+ import org.keycloak.authentication.authenticators.client.JWTClientSecretAuthenticator;
+ import org.keycloak.common.Profile;
+ import org.keycloak.common.util.KeycloakUriBuilder;
+@@ -128,6 +130,41 @@ public class ClientAuthSecretSignedJWTTest extends AbstractKeycloakTest {
+         testCodeToTokenRequestSuccess(Algorithm.HS512);
+     }
+ 
++
++    // Issue 34547
++    @Test
++    public void testCodeToTokenRequestSuccessWhenClientHasGeneratedKeys() throws Exception {
++        // Test when client has public/private keys generated despite the fact that it uses client-secret for the client authentication (and not those keys)
++        ApiUtil.findClientByClientId(adminClient.realm("test"), "test-app").getCertficateResource("jwt.credential").generate();
++
++        testCodeToTokenRequestSuccess(Algorithm.HS256);
++    }
++
++    @Test
++    public void testCodeToTokenRequestFailureWhenClientHasPrivateKeyJWT() throws Exception {
++        // Setup client for "private_key_jwt" authentication
++        ClientResource client = ApiUtil.findClientByClientId(adminClient.realm("test"), "test-app");
++        client.getCertficateResource("jwt.credential").generate();
++        ClientRepresentation clientRep = client.toRepresentation();
++        clientRep.setClientAuthenticatorType(JWTClientAuthenticator.PROVIDER_ID);
++        client.update(clientRep);
++
++        // Client should not be able to authenticate with "client_secret_jwt"
++        try {
++            oauth.clientId("test-app");
++            oauth.doLogin("test-user@localhost", "password");
++            events.expectLogin().client("test-app").assertEvent();
++
++            String code = oauth.getCurrentQuery().get(OAuth2Constants.CODE);
++            OAuthClient.AccessTokenResponse response = doAccessTokenRequest(code, getClientSignedJWT(CLIENT_SECRET, 20, Algorithm.HS256));
++            assertEquals(400, response.getStatusCode());
++            assertEquals(OAuthErrorException.INVALID_CLIENT, response.getError());
++        } finally {
++            clientRep.setClientAuthenticatorType(JWTClientSecretAuthenticator.PROVIDER_ID);
++            client.update(clientRep);
++        }
++    }
++
+     @Test
+     public void testInvalidIssuer() throws Exception {
+         oauth.clientId("test-app");
+diff --git a/testsuite/integration-arquillian/tests/base/src/test/java/org/keycloak/testsuite/oauth/ClientAuthSignedJWTTest.java b/testsuite/integration-arquillian/tests/base/src/test/java/org/keycloak/testsuite/oauth/ClientAuthSignedJWTTest.java
+index b48ce003aa..5949855ae7 100644
+--- a/testsuite/integration-arquillian/tests/base/src/test/java/org/keycloak/testsuite/oauth/ClientAuthSignedJWTTest.java
++++ b/testsuite/integration-arquillian/tests/base/src/test/java/org/keycloak/testsuite/oauth/ClientAuthSignedJWTTest.java
+@@ -27,6 +27,7 @@ import org.keycloak.OAuthErrorException;
+ import org.keycloak.admin.client.resource.ClientResource;
+ import org.keycloak.authentication.AuthenticationFlowError;
+ import org.keycloak.authentication.authenticators.client.JWTClientAuthenticator;
++import org.keycloak.authentication.authenticators.client.JWTClientSecretAuthenticator;
+ import org.keycloak.common.constants.ServiceAccountConstants;
+ import org.keycloak.common.util.KeystoreUtil.KeystoreFormat;
+ import org.keycloak.crypto.Algorithm;
+@@ -671,6 +672,28 @@ public class ClientAuthSignedJWTTest extends AbstractClientAuthSignedJWTTest {
+         assertEquals(OAuthErrorException.INVALID_CLIENT, response.getError());
+     }
+ 
++    @Test
++    public void testAuthenticationFailsWhenClientSecretJWTAuthenticatorSet() throws Exception {
++        // Set client authenticator to JWT signed by client secret.
++        ClientResource clientResource = ApiUtil.findClientByClientId(adminClient.realm("test"), "client1");
++        ClientRepresentation clientRep = clientResource.toRepresentation();
++        clientRep.setClientAuthenticatorType(JWTClientSecretAuthenticator.PROVIDER_ID);
++        clientResource.update(clientRep);
++
++        // It should not be possible to use private_key_jwt for the authentication
++        try {
++            String clientJwt = getClient1SignedJWT();
++
++            OAuthClient.AccessTokenResponse response = doClientCredentialsGrantRequest(clientJwt);
++
++            assertEquals(400, response.getStatusCode());
++            assertEquals(OAuthErrorException.UNAUTHORIZED_CLIENT, response.getError());
++        } finally {
++            clientRep.setClientAuthenticatorType(JWTClientAuthenticator.PROVIDER_ID);
++            clientResource.update(clientRep);
++        }
++    }
++
+     @Test
+     public void testMissingIdClaim() throws Exception {
+         OAuthClient.AccessTokenResponse response = testMissingClaim("id");

@@ -1,0 +1,15 @@
+diff --git a/src/utils/compareStats.js b/src/utils/compareStats.js
+index 21256eb0..b6bb9fe2 100644
+--- a/src/utils/compareStats.js
++++ b/src/utils/compareStats.js
+@@ -7,8 +7,8 @@ export function compareStats(entry, stats) {
+   const s = normalizeStats(stats)
+   const staleness =
+     e.mode !== s.mode ||
+-    e.mtimeSeconds !== s.mtimeSeconds ||
+-    e.ctimeSeconds !== s.ctimeSeconds ||
++    e.mtimeNanoseconds !== s.mtimeNanoseconds ||
++    e.ctimeNanoseconds !== s.ctimeNanoseconds ||
+     e.uid !== s.uid ||
+     e.gid !== s.gid ||
+     e.ino !== s.ino ||

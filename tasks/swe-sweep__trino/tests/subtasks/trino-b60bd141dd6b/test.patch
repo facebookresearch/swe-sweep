@@ -1,0 +1,16 @@
+diff --git a/core/trino-main/src/test/java/io/trino/type/TestCharacterStringCasts.java b/core/trino-main/src/test/java/io/trino/type/TestCharacterStringCasts.java
+index e461d771faa..3469efcc302 100644
+--- a/core/trino-main/src/test/java/io/trino/type/TestCharacterStringCasts.java
++++ b/core/trino-main/src/test/java/io/trino/type/TestCharacterStringCasts.java
+@@ -67,6 +67,11 @@ public class TestCharacterStringCasts
+         String maxCodePoint = new String(Character.toChars(Character.MAX_CODE_POINT));
+         String codePointBeforeSpace = new String(Character.toChars(' ' - 1));
+ 
++        assertEquals(varcharToCharSaturatedFloorCast(
++                5L,
++                utf8Slice("123" + new String(Character.toChars(0xE000)))),
++                utf8Slice("123" + new String(Character.toChars(0xD7FF)) + maxCodePoint));
++
+         // Truncation
+         assertEquals(varcharToCharSaturatedFloorCast(
+                 4L,

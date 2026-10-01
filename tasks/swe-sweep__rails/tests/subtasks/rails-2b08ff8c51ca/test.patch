@@ -1,0 +1,41 @@
+diff --git a/activerecord/test/cases/validations/uniqueness_validation_test.rb b/activerecord/test/cases/validations/uniqueness_validation_test.rb
+index 5073e349344..f602bff305a 100644
+--- a/activerecord/test/cases/validations/uniqueness_validation_test.rb
++++ b/activerecord/test/cases/validations/uniqueness_validation_test.rb
+@@ -11,6 +11,7 @@ require "models/uuid_item"
+ require "models/author"
+ require "models/person"
+ require "models/essay"
++require "models/keyboard"
+ 
+ class Wizard < ActiveRecord::Base
+   self.abstract_class = true
+@@ -66,6 +67,14 @@ class TopicWithAfterCreate < Topic
+   end
+ end
+ 
++class LessonWithUniqKeyboard < ActiveRecord::Base
++  self.table_name = "lessons"
++
++  belongs_to :keyboard, primary_key: :name, foreign_key: :name
++
++  validates_uniqueness_of :keyboard
++end
++
+ class UniquenessValidationTest < ActiveRecord::TestCase
+   INT_MAX_VALUE = 2147483647
+ 
+@@ -617,4 +626,13 @@ class UniquenessValidationTest < ActiveRecord::TestCase
+ 
+     assert_equal(["has already been taken"], item2.errors[:id])
+   end
++
++  def test_uniqueness_on_custom_relation_primary_key
++    Keyboard.create!(name: "Keyboard #1")
++    LessonWithUniqKeyboard.create!(name: "Keyboard #1")
++
++    another = LessonWithUniqKeyboard.new(name: "Keyboard #1")
++    assert_not_predicate another, :valid?
++    assert_equal ["has already been taken"], another.errors[:keyboard]
++  end
+ end

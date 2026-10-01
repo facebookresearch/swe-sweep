@@ -1,0 +1,13 @@
+diff --git a/compiler/test/fail_compilation/fail24422.c b/compiler/test/fail_compilation/fail24422.c
+new file mode 100644
+index 0000000000..d148b492c3
+--- /dev/null
++++ b/compiler/test/fail_compilation/fail24422.c
+@@ -0,0 +1,7 @@
++/*
++TEST_OUTPUT:
++---
++fail_compilation/fail24422.c(7): Error: type-specifier missing for declaration of `a`
++---
++*/
++void f24422(a) a; { }

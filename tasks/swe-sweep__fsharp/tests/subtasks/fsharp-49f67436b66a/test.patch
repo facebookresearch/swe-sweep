@@ -1,0 +1,25 @@
+diff --git a/tests/FSharp.Compiler.ComponentTests/Language/XmlComments.fs b/tests/FSharp.Compiler.ComponentTests/Language/XmlComments.fs
+index eed0e37e4d..47aee9362b 100644
+--- a/tests/FSharp.Compiler.ComponentTests/Language/XmlComments.fs
++++ b/tests/FSharp.Compiler.ComponentTests/Language/XmlComments.fs
+@@ -242,3 +242,19 @@ module M =
+          |> withXmlCommentChecking
+          |> compile
+          |> withDiagnostics [ ]
++
++    // regression test for #18433
++    [<Fact>]
++    let OverrideXmlCommentsWithSameRange () =
++        Fs"""
++        module A
++        # 1
++        /// A is int
++        type A = {a: int}
++        # 1
++        /// B is int
++        type B = {b: int}
++        """
++        |> withXmlCommentChecking
++        |> compile
++        |> shouldSucceed
+\ No newline at end of file

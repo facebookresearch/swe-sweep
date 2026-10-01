@@ -1,0 +1,13 @@
+diff --git a/core/trino-main/src/main/java/io/trino/operator/scalar/MathFunctions.java b/core/trino-main/src/main/java/io/trino/operator/scalar/MathFunctions.java
+index 41bbd367926..b0e9028bb50 100644
+--- a/core/trino-main/src/main/java/io/trino/operator/scalar/MathFunctions.java
++++ b/core/trino-main/src/main/java/io/trino/operator/scalar/MathFunctions.java
+@@ -914,7 +914,7 @@ public final class MathFunctions
+                 @SqlType("decimal(p, s)") long num,
+                 @SqlType(StandardTypes.INTEGER) long decimals)
+         {
+-            if (num == 0 || numPrecision - numScale + decimals <= 0) {
++            if (num == 0 || numPrecision - numScale + decimals < 0) {
+                 return 0;
+             }
+             if (decimals >= numScale) {

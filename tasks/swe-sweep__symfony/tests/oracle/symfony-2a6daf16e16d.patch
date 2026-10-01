@@ -1,0 +1,15 @@
+diff --git a/src/Symfony/Component/HttpKernel/EventListener/LocaleListener.php b/src/Symfony/Component/HttpKernel/EventListener/LocaleListener.php
+index 4516048..2983397 100644
+--- a/src/Symfony/Component/HttpKernel/EventListener/LocaleListener.php
++++ b/src/Symfony/Component/HttpKernel/EventListener/LocaleListener.php
+@@ -68,8 +68,8 @@ class LocaleListener implements EventSubscriberInterface
+     {
+         if ($locale = $request->attributes->get('_locale')) {
+             $request->setLocale($locale);
+-        } elseif ($this->useAcceptLanguageHeader) {
+-            if ($preferredLanguage = $request->getPreferredLanguage($this->enabledLocales)) {
++        } elseif ($this->useAcceptLanguageHeader && $this->enabledLocales) {
++            if ($request->getLanguages() && $preferredLanguage = $request->getPreferredLanguage($this->enabledLocales)) {
+                 $request->setLocale($preferredLanguage);
+             }
+             $request->attributes->set('_vary_by_language', true);

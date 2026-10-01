@@ -1,0 +1,260 @@
+{
+  "build_jobs": 4,
+  "container_repo": "/proj",
+  "evaluation": {
+    "suite": {
+      "suites": [
+        {
+          "bin_dir": "/build/bin",
+          "binary_glob": "*_test*",
+          "binary_re": "^test/unit/.*\\.(cpp|hpp|h|c)$",
+          "build_dir": "/build",
+          "type": "gtest"
+        },
+        {
+          "binary": "/build/bin/gie",
+          "roots": [
+            "test/gie",
+            "test/gigs"
+          ],
+          "type": "gie"
+        }
+      ],
+      "type": "union"
+    },
+    "visible_timeout": 5400
+  },
+  "upstream_image": "pandora-maxbug-proj:6.3.0",
+  "n_base_passing": 1023,
+  "n_base_test_ignore": 0,
+  "oracle_digest": "c3b197971a3f27ed42c78599c823401cfefd9c26e23bcb6e227e324d68dd0965",
+  "oracle_pristine_paths": [],
+  "upstream_commit": "9f7399e15e6172900e0591deb5a57a45769d8205",
+  "reproduction": {
+    "build_cmd": "cmake --build /build -j $SWESWEEP_BUILD_JOBS",
+    "build_timeout": 3600,
+    "jobs_env": "SWESWEEP_BUILD_JOBS",
+    "suite": {
+      "suites": [
+        {
+          "bin_dir": "/build/bin",
+          "binary_glob": "*_test*",
+          "binary_re": "^test/unit/.*\\.(cpp|hpp|h|c)$",
+          "build_dir": "/build",
+          "type": "gtest"
+        },
+        {
+          "binary": "/build/bin/gie",
+          "roots": [
+            "test/gie",
+            "test/gigs"
+          ],
+          "type": "gie"
+        }
+      ],
+      "type": "union"
+    },
+    "test_timeout": 1800
+  },
+  "schema": 2,
+  "subtasks": [
+    {
+      "f2p": [
+        "factory.AuthorityFactory_createUnitOfMeasure_linear_us_survey_foot"
+      ],
+      "id": "proj-06b0cf9e684f",
+      "target_files": [
+        "src/iso19111/factory.cpp"
+      ]
+    },
+    {
+      "f2p": [
+        "json_export.coordinate_system_id"
+      ],
+      "id": "proj-082e3620a0bb",
+      "target_files": [
+        "src/iso19111/coordinatesystem.cpp"
+      ]
+    },
+    {
+      "f2p": [
+        "crs.promoteTo3D_and_demoteTo2D"
+      ],
+      "id": "proj-1ddd02a36695",
+      "target_files": [
+        "src/iso19111/io.cpp"
+      ]
+    },
+    {
+      "f2p": [
+        "operation.nadgrids_with_pm"
+      ],
+      "id": "proj-210490c1df4f",
+      "target_files": [
+        "src/iso19111/coordinateoperation.cpp",
+        "src/iso19111/crs.cpp",
+        "src/iso19111/io.cpp"
+      ]
+    },
+    {
+      "f2p": [
+        "crs.EPSG_5482_projected_south_pole_south_west"
+      ],
+      "id": "proj-26c69d9d4768",
+      "target_files": [
+        "src/iso19111/crs.cpp"
+      ]
+    },
+    {
+      "f2p": [
+        "crs.promoteTo3D_and_demoteTo2D"
+      ],
+      "id": "proj-4831a51d8731",
+      "target_files": [
+        "src/iso19111/io.cpp"
+      ]
+    },
+    {
+      "f2p": [
+        "wkt_parse.LOCAL_CS_long_three_axis"
+      ],
+      "id": "proj-54e0eae5c2da",
+      "target_files": [
+        "src/iso19111/io.cpp"
+      ]
+    },
+    {
+      "f2p": [
+        "operation.projCRS_3D_to_geogCRS_3D_context"
+      ],
+      "id": "proj-5819b33a303f",
+      "target_files": [
+        "src/iso19111/crs.cpp"
+      ]
+    },
+    {
+      "f2p": [
+        "datum.ellipsoid_from_inverse_flattening"
+      ],
+      "id": "proj-5ea62cb8daa4",
+      "target_files": [
+        "src/iso19111/datum.cpp"
+      ]
+    },
+    {
+      "f2p": [
+        "factory.AuthorityFactory_createUnitOfMeasure_linear_us_survey_foot"
+      ],
+      "id": "proj-6e4ea9d02a9a",
+      "target_files": [
+        "src/iso19111/factory.cpp"
+      ]
+    },
+    {
+      "f2p": [
+        "CApi.proj_alter_id"
+      ],
+      "id": "proj-75bf558d4fa2",
+      "target_files": [
+        "src/iso19111/common.cpp"
+      ]
+    },
+    {
+      "f2p": [
+        "crs.boundCRS_identify_db"
+      ],
+      "id": "proj-782c2a51cca6",
+      "target_files": [
+        "src/iso19111/crs.cpp"
+      ]
+    },
+    {
+      "f2p": [
+        "operation.compoundCRS_to_compoundCRS_context_helmert_noop"
+      ],
+      "id": "proj-97485ea29440",
+      "target_files": [
+        "src/iso19111/coordinateoperation.cpp"
+      ]
+    },
+    {
+      "f2p": [
+        "operation.nadgrids_with_pm"
+      ],
+      "id": "proj-a289af9c5fe7",
+      "target_files": [
+        "src/iso19111/coordinateoperation.cpp",
+        "src/iso19111/crs.cpp",
+        "src/iso19111/io.cpp"
+      ]
+    },
+    {
+      "f2p": [
+        "test/gie/builtins.gie"
+      ],
+      "id": "proj-a2dc13a77ea7",
+      "target_files": [
+        "src/projections/stere.cpp",
+        "src/projections/tmerc.cpp"
+      ]
+    },
+    {
+      "f2p": [
+        "operation.compoundCRS_to_compoundCRS_context_helmert_noop"
+      ],
+      "id": "proj-b6a07d893aa2",
+      "target_files": [
+        "src/iso19111/coordinateoperation.cpp"
+      ]
+    },
+    {
+      "f2p": [
+        "crs.promoteTo3D_and_demoteTo2D"
+      ],
+      "id": "proj-bfab0375ca89",
+      "target_files": [
+        "src/iso19111/io.cpp"
+      ]
+    },
+    {
+      "f2p": [
+        "crs.compoundCRS_identify_db"
+      ],
+      "id": "proj-caba6901ef48",
+      "target_files": [
+        "src/iso19111/factory.cpp"
+      ]
+    },
+    {
+      "f2p": [
+        "test/gie/builtins.gie"
+      ],
+      "id": "proj-ccce4196bb18",
+      "target_files": [
+        "src/projections/moll.cpp"
+      ]
+    },
+    {
+      "f2p": [
+        "operation.nadgrids_with_pm"
+      ],
+      "id": "proj-d1e39e45b0a6",
+      "target_files": [
+        "src/iso19111/coordinateoperation.cpp",
+        "src/iso19111/crs.cpp",
+        "src/iso19111/io.cpp"
+      ]
+    },
+    {
+      "f2p": [
+        "crs.projectedCRS_identify_db"
+      ],
+      "id": "proj-ded2371a16af",
+      "target_files": [
+        "src/iso19111/crs.cpp"
+      ]
+    }
+  ],
+  "task": "proj",
+  "version": "6.3.0"
+}

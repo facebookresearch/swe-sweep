@@ -1,0 +1,141 @@
+diff --git a/extension/tpcds/tpcds_extension.cpp b/extension/tpcds/tpcds_extension.cpp
+index c6157b67ae..44c92d9133 100644
+--- a/extension/tpcds/tpcds_extension.cpp
++++ b/extension/tpcds/tpcds_extension.cpp
+@@ -43,13 +43,17 @@ static duckdb::unique_ptr<FunctionData> DsdgenBind(ClientContext &context, Table
+ 			result->keys = kv.second.GetValue<bool>();
+ 		}
+ 	}
++	if (input.binder) {
++		auto &catalog = Catalog::GetCatalog(context, result->catalog);
++		input.binder->properties.modified_databases.insert(catalog.GetName());
++	}
+ 	return_types.emplace_back(LogicalType::BOOLEAN);
+ 	names.emplace_back("Success");
+ 	return std::move(result);
+ }
+ 
+ static void DsdgenFunction(ClientContext &context, TableFunctionInput &data_p, DataChunk &output) {
+-	auto &data = (DSDGenFunctionData &)*data_p.bind_data;
++	auto &data = data_p.bind_data->CastNoConst<DSDGenFunctionData>();
+ 	if (data.finished) {
+ 		return;
+ 	}
+@@ -82,7 +86,7 @@ static duckdb::unique_ptr<FunctionData> TPCDSQueryBind(ClientContext &context, T
+ }
+ 
+ static void TPCDSQueryFunction(ClientContext &context, TableFunctionInput &data_p, DataChunk &output) {
+-	auto &data = (TPCDSData &)*data_p.global_state;
++	auto &data = data_p.global_state->Cast<TPCDSData>();
+ 	idx_t tpcds_queries = tpcds::DSDGenWrapper::QueriesCount();
+ 	if (data.offset >= tpcds_queries) {
+ 		// finished returning values
+@@ -116,7 +120,7 @@ static duckdb::unique_ptr<FunctionData> TPCDSQueryAnswerBind(ClientContext &cont
+ }
+ 
+ static void TPCDSQueryAnswerFunction(ClientContext &context, TableFunctionInput &data_p, DataChunk &output) {
+-	auto &data = (TPCDSData &)*data_p.global_state;
++	auto &data = data_p.global_state->Cast<TPCDSData>();
+ 	idx_t tpcds_queries = tpcds::DSDGenWrapper::QueriesCount();
+ 	vector<double> scale_factors {1, 10};
+ 	idx_t total_answers = tpcds_queries * scale_factors.size();
+diff --git a/extension/tpch/tpch_extension.cpp b/extension/tpch/tpch_extension.cpp
+index 68548438ab..e1d6016b06 100644
+--- a/extension/tpch/tpch_extension.cpp
++++ b/extension/tpch/tpch_extension.cpp
+@@ -8,6 +8,7 @@
+ #include "duckdb/parser/parser.hpp"
+ #include "duckdb/parser/statement/select_statement.hpp"
+ #include "duckdb/main/extension_util.hpp"
++#include "duckdb/transaction/transaction.hpp"
+ #endif
+ 
+ #include "dbgen/dbgen.hpp"
+@@ -51,14 +52,17 @@ static duckdb::unique_ptr<FunctionData> DbgenBind(ClientContext &context, TableF
+ 	if (result->children != 1 && result->step == -1) {
+ 		throw InvalidInputException("Step must be defined when children are defined");
+ 	}
+-
++	if (input.binder) {
++		auto &catalog = Catalog::GetCatalog(context, result->catalog);
++		input.binder->properties.modified_databases.insert(catalog.GetName());
++	}
+ 	return_types.emplace_back(LogicalType::BOOLEAN);
+ 	names.emplace_back("Success");
+ 	return std::move(result);
+ }
+ 
+ static void DbgenFunction(ClientContext &context, TableFunctionInput &data_p, DataChunk &output) {
+-	auto &data = (DBGenFunctionData &)*data_p.bind_data;
++	auto &data = data_p.bind_data->CastNoConst<DBGenFunctionData>();
+ 	if (data.finished) {
+ 		return;
+ 	}
+@@ -92,7 +96,7 @@ static duckdb::unique_ptr<FunctionData> TPCHQueryBind(ClientContext &context, Ta
+ }
+ 
+ static void TPCHQueryFunction(ClientContext &context, TableFunctionInput &data_p, DataChunk &output) {
+-	auto &data = (TPCHData &)*data_p.global_state;
++	auto &data = data_p.global_state->Cast<TPCHData>();
+ 	idx_t tpch_queries = 22;
+ 	if (data.offset >= tpch_queries) {
+ 		// finished returning values
+@@ -126,7 +130,7 @@ static duckdb::unique_ptr<FunctionData> TPCHQueryAnswerBind(ClientContext &conte
+ }
+ 
+ static void TPCHQueryAnswerFunction(ClientContext &context, TableFunctionInput &data_p, DataChunk &output) {
+-	auto &data = (TPCHData &)*data_p.global_state;
++	auto &data = data_p.global_state->Cast<TPCHData>();
+ 	idx_t tpch_queries = 22;
+ 	vector<double> scale_factors {0.01, 0.1, 1};
+ 	idx_t total_answers = tpch_queries * scale_factors.size();
+diff --git a/src/include/duckdb/function/table_function.hpp b/src/include/duckdb/function/table_function.hpp
+index 30cc0d9f8d..3321d274f9 100644
+--- a/src/include/duckdb/function/table_function.hpp
++++ b/src/include/duckdb/function/table_function.hpp
+@@ -83,9 +83,9 @@ struct LocalTableFunctionState {
+ struct TableFunctionBindInput {
+ 	TableFunctionBindInput(vector<Value> &inputs, named_parameter_map_t &named_parameters,
+ 	                       vector<LogicalType> &input_table_types, vector<string> &input_table_names,
+-	                       optional_ptr<TableFunctionInfo> info)
++	                       optional_ptr<TableFunctionInfo> info, optional_ptr<Binder> binder)
+ 	    : inputs(inputs), named_parameters(named_parameters), input_table_types(input_table_types),
+-	      input_table_names(input_table_names), info(info) {
++	      input_table_names(input_table_names), info(info), binder(binder) {
+ 	}
+ 
+ 	vector<Value> &inputs;
+@@ -93,6 +93,7 @@ struct TableFunctionBindInput {
+ 	vector<LogicalType> &input_table_types;
+ 	vector<string> &input_table_names;
+ 	optional_ptr<TableFunctionInfo> info;
++	optional_ptr<Binder> binder;
+ };
+ 
+ struct TableFunctionInitInput {
+diff --git a/src/planner/binder/tableref/bind_table_function.cpp b/src/planner/binder/tableref/bind_table_function.cpp
+index 16a60ce1cd..be9848683b 100644
+--- a/src/planner/binder/tableref/bind_table_function.cpp
++++ b/src/planner/binder/tableref/bind_table_function.cpp
+@@ -140,7 +140,7 @@ Binder::BindTableFunctionInternal(TableFunction &table_function, const string &f
+ 	vector<string> return_names;
+ 	if (table_function.bind || table_function.bind_replace) {
+ 		TableFunctionBindInput bind_input(parameters, named_parameters, input_table_types, input_table_names,
+-		                                  table_function.function_info.get());
++		                                  table_function.function_info.get(), this);
+ 		if (table_function.bind_replace) {
+ 			auto new_plan = table_function.bind_replace(context, bind_input);
+ 			if (new_plan != nullptr) {
+diff --git a/src/planner/operator/logical_get.cpp b/src/planner/operator/logical_get.cpp
+index 1ee9256189..077eb6cbba 100644
+--- a/src/planner/operator/logical_get.cpp
++++ b/src/planner/operator/logical_get.cpp
+@@ -165,7 +165,7 @@ unique_ptr<LogicalOperator> LogicalGet::Deserialize(Deserializer &deserializer)
+ 		deserializer.ReadProperty(208, "input_table_types", result->input_table_types);
+ 		deserializer.ReadProperty(209, "input_table_names", result->input_table_names);
+ 		TableFunctionBindInput input(result->parameters, result->named_parameters, result->input_table_types,
+-		                             result->input_table_names, function.function_info.get());
++		                             result->input_table_names, function.function_info.get(), nullptr);
+ 
+ 		vector<LogicalType> bind_return_types;
+ 		vector<string> bind_names;

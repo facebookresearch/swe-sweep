@@ -1,0 +1,73 @@
+diff --git a/src/Symfony/Bundle/FrameworkBundle/Tests/Functional/Bundle/TestBundle/TestServiceContainer/ResettableService.php b/src/Symfony/Bundle/FrameworkBundle/Tests/Functional/Bundle/TestBundle/TestServiceContainer/ResettableService.php
+new file mode 100644
+index 0000000..e723da8
+--- /dev/null
++++ b/src/Symfony/Bundle/FrameworkBundle/Tests/Functional/Bundle/TestBundle/TestServiceContainer/ResettableService.php
+@@ -0,0 +1,27 @@
++<?php
++
++/*
++ * This file is part of the Symfony package.
++ *
++ * (c) Fabien Potencier <fabien@symfony.com>
++ *
++ * For the full copyright and license information, please view the LICENSE
++ * file that was distributed with this source code.
++ */
++
++namespace Symfony\Bundle\FrameworkBundle\Tests\Functional\Bundle\TestBundle\TestServiceContainer;
++
++class ResettableService
++{
++    private $count = 0;
++
++    public function myCustomName(): void
++    {
++        ++$this->count;
++    }
++
++    public function getCount(): int
++    {
++        return $this->count;
++    }
++}
+diff --git a/src/Symfony/Bundle/FrameworkBundle/Tests/Functional/TestServiceContainerTest.php b/src/Symfony/Bundle/FrameworkBundle/Tests/Functional/TestServiceContainerTest.php
+index fe70930..a2ff306 100644
+--- a/src/Symfony/Bundle/FrameworkBundle/Tests/Functional/TestServiceContainerTest.php
++++ b/src/Symfony/Bundle/FrameworkBundle/Tests/Functional/TestServiceContainerTest.php
+@@ -14,6 +14,7 @@ use Symfony\Bundle\FrameworkBundle\Test\TestContainer;
+ use Symfony\Bundle\FrameworkBundle\Tests\Functional\Bundle\TestBundle\TestServiceContainer\NonPublicService;
+ use Symfony\Bundle\FrameworkBundle\Tests\Functional\Bundle\TestBundle\TestServiceContainer\PrivateService;
+ use Symfony\Bundle\FrameworkBundle\Tests\Functional\Bundle\TestBundle\TestServiceContainer\PublicService;
++use Symfony\Bundle\FrameworkBundle\Tests\Functional\Bundle\TestBundle\TestServiceContainer\ResettableService;
+ use Symfony\Bundle\FrameworkBundle\Tests\Functional\Bundle\TestBundle\TestServiceContainer\UnusedPrivateService;
+ use Symfony\Component\DependencyInjection\Exception\InvalidArgumentException;
+ 
+@@ -82,4 +83,14 @@ class TestServiceContainerTest extends AbstractWebTestCase
+         self::assertNull(self::$kernel);
+         self::assertFalse(self::$booted);
+     }
++
++    public function testServicesAreResetOnEnsureKernelShutdown()
++    {
++        static::bootKernel(['test_case' => 'TestServiceContainer']);
++
++        $resettableService = static::getContainer()->get(ResettableService::class);
++
++        self::ensureKernelShutdown();
++        self::assertSame(1, $resettableService->getCount());
++    }
+ }
+diff --git a/src/Symfony/Bundle/FrameworkBundle/Tests/Functional/app/TestServiceContainer/services.yml b/src/Symfony/Bundle/FrameworkBundle/Tests/Functional/app/TestServiceContainer/services.yml
+index 46cb7be..baeab3f 100644
+--- a/src/Symfony/Bundle/FrameworkBundle/Tests/Functional/app/TestServiceContainer/services.yml
++++ b/src/Symfony/Bundle/FrameworkBundle/Tests/Functional/app/TestServiceContainer/services.yml
+@@ -23,3 +23,8 @@ services:
+         decorates: decorated
+         properties:
+             inner: '@.inner'
++
++    Symfony\Bundle\FrameworkBundle\Tests\Functional\Bundle\TestBundle\TestServiceContainer\ResettableService:
++        public: true
++        tags:
++            - kernel.reset: { method: 'myCustomName' }

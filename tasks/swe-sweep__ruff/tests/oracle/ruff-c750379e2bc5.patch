@@ -1,0 +1,15 @@
+diff --git a/crates/ruff_linter/src/rules/refurb/rules/bit_count.rs b/crates/ruff_linter/src/rules/refurb/rules/bit_count.rs
+index 0cd0df8bec..a5b99e89ff 100644
+--- a/crates/ruff_linter/src/rules/refurb/rules/bit_count.rs
++++ b/crates/ruff_linter/src/rules/refurb/rules/bit_count.rs
+@@ -110,6 +110,10 @@ pub(crate) fn bit_count(checker: &Checker, call: &ExprCall) {
+         return;
+     }
+ 
++    // If is a starred expression, it returns.
++    if arg.is_starred_expr() {
++        return;
++    }
+     // Extract, e.g., `x` in `bin(x)`.
+     let literal_text = checker.locator().slice(arg);
+ 

@@ -1,0 +1,25 @@
+diff --git a/datafusion/sqllogictest/test_files/window.slt b/datafusion/sqllogictest/test_files/window.slt
+index 8ac8724..aafcb2c 100644
+--- a/datafusion/sqllogictest/test_files/window.slt
++++ b/datafusion/sqllogictest/test_files/window.slt
+@@ -6081,3 +6081,20 @@ WHERE acctbal > (
+ );
+ ----
+ 1
++
++# A RANGE frame can transition from non-empty to empty and back to non-empty
++# when the ORDER BY values contain gaps. The sliding accumulator must discard
++# the state from the previous non-empty frame.
++query IIIII
++SELECT k,
++       SUM(v) OVER w,
++       COUNT(v) OVER w,
++       MIN(v) OVER w,
++       MAX(v) OVER w
++FROM (VALUES (0, 100), (10, 90), (30, 10), (40, 20)) AS t(k, v)
++WINDOW w AS (ORDER BY k RANGE BETWEEN 10 PRECEDING AND 5 PRECEDING);
++----
++0 NULL 0 NULL NULL
++10 100 1 100 100
++30 NULL 0 NULL NULL
++40 10 1 10 10

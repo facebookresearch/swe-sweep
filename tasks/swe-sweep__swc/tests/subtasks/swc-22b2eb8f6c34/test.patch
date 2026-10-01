@@ -1,0 +1,54 @@
+diff --git a/crates/swc_ecma_transforms_base/tests/resolver/minifier/13/input.js b/crates/swc_ecma_transforms_base/tests/resolver/minifier/13/input.js
+new file mode 100644
+index 0000000000..aff98aadb3
+--- /dev/null
++++ b/crates/swc_ecma_transforms_base/tests/resolver/minifier/13/input.js
+@@ -0,0 +1,8 @@
++try {
++    console.log(111);
++} catch (Ic) {
++    throw Ic;
++}
++
++var jc, Ic;
++(Ic = jc).PV = "page_view";
+diff --git a/crates/swc_ecma_transforms_base/tests/resolver/minifier/13/output.js b/crates/swc_ecma_transforms_base/tests/resolver/minifier/13/output.js
+new file mode 100644
+index 0000000000..b208a9fdcb
+--- /dev/null
++++ b/crates/swc_ecma_transforms_base/tests/resolver/minifier/13/output.js
+@@ -0,0 +1,7 @@
++try {
++    console.log(111);
++} catch (Ic__3) {
++    throw Ic__3;
++}
++var jc__1, Ic__1;
++(Ic__1 = jc__1).PV = "page_view";
+diff --git a/crates/swc_ecma_transforms_base/tests/resolver/minifier/14/input.js b/crates/swc_ecma_transforms_base/tests/resolver/minifier/14/input.js
+new file mode 100644
+index 0000000000..58c2f92230
+--- /dev/null
++++ b/crates/swc_ecma_transforms_base/tests/resolver/minifier/14/input.js
+@@ -0,0 +1,8 @@
++try {
++    console.log(111);
++} catch (Ic) {
++    throw Ic;
++}
++
++export var jc, Ic;
++(Ic = jc).PV = "page_view";
+diff --git a/crates/swc_ecma_transforms_base/tests/resolver/minifier/14/output.js b/crates/swc_ecma_transforms_base/tests/resolver/minifier/14/output.js
+new file mode 100644
+index 0000000000..01eb00f9ee
+--- /dev/null
++++ b/crates/swc_ecma_transforms_base/tests/resolver/minifier/14/output.js
+@@ -0,0 +1,7 @@
++try {
++    console.log(111);
++} catch (Ic__3) {
++    throw Ic__3;
++}
++export var jc__1, Ic__1;
++(Ic__1 = jc__1).PV = "page_view";

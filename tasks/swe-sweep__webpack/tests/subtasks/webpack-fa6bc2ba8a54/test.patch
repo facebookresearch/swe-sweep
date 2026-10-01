@@ -1,0 +1,28 @@
+diff --git a/test/configCases/library/issue-18932/index.js b/test/configCases/library/issue-18932/index.js
+new file mode 100644
+index 000000000..78b38524c
+--- /dev/null
++++ b/test/configCases/library/issue-18932/index.js
+@@ -0,0 +1,7 @@
++it("should don't have variable name conflict", function() {
++	expect(true).toBe(true);
++});
++
++const i = 1;
++
++export default "test";
+diff --git a/test/configCases/library/issue-18932/webpack.config.js b/test/configCases/library/issue-18932/webpack.config.js
+new file mode 100644
+index 000000000..74ee19646
+--- /dev/null
++++ b/test/configCases/library/issue-18932/webpack.config.js
+@@ -0,0 +1,9 @@
++/** @type {import("../../../../").Configuration} */
++module.exports = {
++	mode: "production",
++	output: {
++		library: {
++			type: "commonjs"
++		}
++	}
++};

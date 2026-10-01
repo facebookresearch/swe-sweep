@@ -1,0 +1,14 @@
+diff --git a/xarray/core/variable.py b/xarray/core/variable.py
+index c19cb21c..b4026ed3 100644
+--- a/xarray/core/variable.py
++++ b/xarray/core/variable.py
+@@ -274,8 +274,7 @@ def as_compatible_data(data, fastpath=False):
+         mask = np.ma.getmaskarray(data)
+         if mask.any():
+             dtype, fill_value = dtypes.maybe_promote(data.dtype)
+-            data = np.asarray(data, dtype=dtype)
+-            data[mask] = fill_value
++            data = duck_array_ops.where_method(data, ~mask, fill_value)
+         else:
+             data = np.asarray(data)
+ 

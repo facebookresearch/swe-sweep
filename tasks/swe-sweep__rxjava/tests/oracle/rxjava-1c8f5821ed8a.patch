@@ -1,0 +1,266 @@
+diff --git a/src/main/java/io/reactivex/internal/operators/completable/CompletableAmb.java b/src/main/java/io/reactivex/internal/operators/completable/CompletableAmb.java
+index cc603acbd..7de1c648e 100644
+--- a/src/main/java/io/reactivex/internal/operators/completable/CompletableAmb.java
++++ b/src/main/java/io/reactivex/internal/operators/completable/CompletableAmb.java
+@@ -63,8 +63,6 @@ public final class CompletableAmb extends Completable {
+ 
+         final AtomicBoolean once = new AtomicBoolean();
+ 
+-        CompletableObserver inner = new Amb(once, set, observer);
+-
+         for (int i = 0; i < count; i++) {
+             CompletableSource c = sources[i];
+             if (set.isDisposed()) {
+@@ -82,7 +80,7 @@ public final class CompletableAmb extends Completable {
+             }
+ 
+             // no need to have separate subscribers because inner is stateless
+-            c.subscribe(inner);
++            c.subscribe(new Amb(once, set, observer));
+         }
+ 
+         if (count == 0) {
+@@ -91,9 +89,14 @@ public final class CompletableAmb extends Completable {
+     }
+ 
+     static final class Amb implements CompletableObserver {
+-        private final AtomicBoolean once;
+-        private final CompositeDisposable set;
+-        private final CompletableObserver downstream;
++
++        final AtomicBoolean once;
++
++        final CompositeDisposable set;
++
++        final CompletableObserver downstream;
++
++        Disposable upstream;
+ 
+         Amb(AtomicBoolean once, CompositeDisposable set, CompletableObserver observer) {
+             this.once = once;
+@@ -104,6 +107,7 @@ public final class CompletableAmb extends Completable {
+         @Override
+         public void onComplete() {
+             if (once.compareAndSet(false, true)) {
++                set.delete(upstream);
+                 set.dispose();
+                 downstream.onComplete();
+             }
+@@ -112,6 +116,7 @@ public final class CompletableAmb extends Completable {
+         @Override
+         public void onError(Throwable e) {
+             if (once.compareAndSet(false, true)) {
++                set.delete(upstream);
+                 set.dispose();
+                 downstream.onError(e);
+             } else {
+@@ -121,8 +126,8 @@ public final class CompletableAmb extends Completable {
+ 
+         @Override
+         public void onSubscribe(Disposable d) {
++            upstream = d;
+             set.add(d);
+         }
+-
+     }
+ }
+diff --git a/src/main/java/io/reactivex/internal/operators/maybe/MaybeAmb.java b/src/main/java/io/reactivex/internal/operators/maybe/MaybeAmb.java
+index d9c1c6963..8efc69b24 100644
+--- a/src/main/java/io/reactivex/internal/operators/maybe/MaybeAmb.java
++++ b/src/main/java/io/reactivex/internal/operators/maybe/MaybeAmb.java
+@@ -64,64 +64,63 @@ public final class MaybeAmb<T> extends Maybe<T> {
+             count = sources.length;
+         }
+ 
+-        AmbMaybeObserver<T> parent = new AmbMaybeObserver<T>(observer);
+-        observer.onSubscribe(parent);
++        CompositeDisposable set = new CompositeDisposable();
++        observer.onSubscribe(set);
++
++        AtomicBoolean winner = new AtomicBoolean();
+ 
+         for (int i = 0; i < count; i++) {
+             MaybeSource<? extends T> s = sources[i];
+-            if (parent.isDisposed()) {
++            if (set.isDisposed()) {
+                 return;
+             }
+ 
+             if (s == null) {
+-                parent.onError(new NullPointerException("One of the MaybeSources is null"));
++                set.dispose();
++                NullPointerException ex = new NullPointerException("One of the MaybeSources is null");
++                if (winner.compareAndSet(false, true)) {
++                    observer.onError(ex);
++                } else {
++                    RxJavaPlugins.onError(ex);
++                }
+                 return;
+             }
+ 
+-            s.subscribe(parent);
++            s.subscribe(new AmbMaybeObserver<T>(observer, set, winner));
+         }
+ 
+         if (count == 0) {
+             observer.onComplete();
+         }
+-
+     }
+ 
+     static final class AmbMaybeObserver<T>
+-    extends AtomicBoolean
+-    implements MaybeObserver<T>, Disposable {
+-
+-        private static final long serialVersionUID = -7044685185359438206L;
++    implements MaybeObserver<T> {
+ 
+         final MaybeObserver<? super T> downstream;
+ 
++        final AtomicBoolean winner;
++
+         final CompositeDisposable set;
+ 
+-        AmbMaybeObserver(MaybeObserver<? super T> downstream) {
++        Disposable upstream;
++
++        AmbMaybeObserver(MaybeObserver<? super T> downstream, CompositeDisposable set, AtomicBoolean winner) {
+             this.downstream = downstream;
+-            this.set = new CompositeDisposable();
+-        }
+-
+-        @Override
+-        public void dispose() {
+-            if (compareAndSet(false, true)) {
+-                set.dispose();
+-            }
+-        }
+-
+-        @Override
+-        public boolean isDisposed() {
+-            return get();
++            this.set = set;
++            this.winner = winner;
+         }
+ 
+         @Override
+         public void onSubscribe(Disposable d) {
++            upstream = d;
+             set.add(d);
+         }
+ 
+         @Override
+         public void onSuccess(T value) {
+-            if (compareAndSet(false, true)) {
++            if (winner.compareAndSet(false, true)) {
++                set.delete(upstream);
+                 set.dispose();
+ 
+                 downstream.onSuccess(value);
+@@ -130,7 +129,8 @@ public final class MaybeAmb<T> extends Maybe<T> {
+ 
+         @Override
+         public void onError(Throwable e) {
+-            if (compareAndSet(false, true)) {
++            if (winner.compareAndSet(false, true)) {
++                set.delete(upstream);
+                 set.dispose();
+ 
+                 downstream.onError(e);
+@@ -141,12 +141,12 @@ public final class MaybeAmb<T> extends Maybe<T> {
+ 
+         @Override
+         public void onComplete() {
+-            if (compareAndSet(false, true)) {
++            if (winner.compareAndSet(false, true)) {
++                set.delete(upstream);
+                 set.dispose();
+ 
+                 downstream.onComplete();
+             }
+         }
+-
+     }
+ }
+diff --git a/src/main/java/io/reactivex/internal/operators/single/SingleAmb.java b/src/main/java/io/reactivex/internal/operators/single/SingleAmb.java
+index d7508c3a7..2584506b5 100644
+--- a/src/main/java/io/reactivex/internal/operators/single/SingleAmb.java
++++ b/src/main/java/io/reactivex/internal/operators/single/SingleAmb.java
+@@ -59,21 +59,21 @@ public final class SingleAmb<T> extends Single<T> {
+             count = sources.length;
+         }
+ 
++        final AtomicBoolean winner = new AtomicBoolean();
+         final CompositeDisposable set = new CompositeDisposable();
+ 
+-        AmbSingleObserver<T> shared = new AmbSingleObserver<T>(observer, set);
+         observer.onSubscribe(set);
+ 
+         for (int i = 0; i < count; i++) {
+             SingleSource<? extends T> s1 = sources[i];
+-            if (shared.get()) {
++            if (set.isDisposed()) {
+                 return;
+             }
+ 
+             if (s1 == null) {
+                 set.dispose();
+                 Throwable e = new NullPointerException("One of the sources is null");
+-                if (shared.compareAndSet(false, true)) {
++                if (winner.compareAndSet(false, true)) {
+                     observer.onError(e);
+                 } else {
+                     RxJavaPlugins.onError(e);
+@@ -81,31 +81,36 @@ public final class SingleAmb<T> extends Single<T> {
+                 return;
+             }
+ 
+-            s1.subscribe(shared);
++            s1.subscribe(new AmbSingleObserver<T>(observer, set, winner));
+         }
+     }
+ 
+-    static final class AmbSingleObserver<T> extends AtomicBoolean implements SingleObserver<T> {
+-
+-        private static final long serialVersionUID = -1944085461036028108L;
++    static final class AmbSingleObserver<T> implements SingleObserver<T> {
+ 
+         final CompositeDisposable set;
+ 
+         final SingleObserver<? super T> downstream;
+ 
+-        AmbSingleObserver(SingleObserver<? super T> observer, CompositeDisposable set) {
++        final AtomicBoolean winner;
++
++        Disposable upstream;
++
++        AmbSingleObserver(SingleObserver<? super T> observer, CompositeDisposable set, AtomicBoolean winner) {
+             this.downstream = observer;
+             this.set = set;
++            this.winner = winner;
+         }
+ 
+         @Override
+         public void onSubscribe(Disposable d) {
++            this.upstream = d;
+             set.add(d);
+         }
+ 
+         @Override
+         public void onSuccess(T value) {
+-            if (compareAndSet(false, true)) {
++            if (winner.compareAndSet(false, true)) {
++                set.delete(upstream);
+                 set.dispose();
+                 downstream.onSuccess(value);
+             }
+@@ -113,7 +118,8 @@ public final class SingleAmb<T> extends Single<T> {
+ 
+         @Override
+         public void onError(Throwable e) {
+-            if (compareAndSet(false, true)) {
++            if (winner.compareAndSet(false, true)) {
++                set.delete(upstream);
+                 set.dispose();
+                 downstream.onError(e);
+             } else {

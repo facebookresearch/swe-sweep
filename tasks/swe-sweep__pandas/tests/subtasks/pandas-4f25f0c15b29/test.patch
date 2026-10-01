@@ -1,0 +1,33 @@
+diff --git a/pandas/tests/indexing/interval/test_interval.py b/pandas/tests/indexing/interval/test_interval.py
+index 3a77d516d6..52a1d43371 100644
+--- a/pandas/tests/indexing/interval/test_interval.py
++++ b/pandas/tests/indexing/interval/test_interval.py
+@@ -1,6 +1,8 @@
+ import numpy as np
+ import pytest
+ 
++from pandas.compat import IS64
++
+ import pandas as pd
+ from pandas import (
+     DataFrame,
+@@ -162,3 +164,19 @@ class TestIntervalIndexInsideMultiIndex:
+         result = df.value.loc[query_df.index]
+         expected = Series([1, 6, 2, 8, 7], index=idx, name="value")
+         tm.assert_series_equal(result, expected)
++
++    @pytest.mark.xfail(not IS64, reason="GH 23440")
++    @pytest.mark.parametrize(
++        "base",
++        [101, 1010],
++    )
++    def test_reindex_behavior_with_interval_index(self, base):
++        # GH 51826
++
++        ser = Series(
++            range(base),
++            index=IntervalIndex.from_arrays(range(base), range(1, base + 1)),
++        )
++        expected_result = Series([np.nan, 0], index=[np.nan, 1.0], dtype=float)
++        result = ser.reindex(index=[np.nan, 1.0])
++        tm.assert_series_equal(result, expected_result)

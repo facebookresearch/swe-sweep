@@ -1,0 +1,20 @@
+diff --git a/tests/js/t21439.nim b/tests/js/t21439.nim
+new file mode 100644
+index 000000000..972356cd0
+--- /dev/null
++++ b/tests/js/t21439.nim
+@@ -0,0 +1,14 @@
++discard """
++  action: "compile"
++"""
++
++proc test(a: openArray[string]): proc =
++  result = proc =
++    for i in a:
++      discard i
++
++
++const a = ["t1", "t2"]
++
++discard test(a)
++

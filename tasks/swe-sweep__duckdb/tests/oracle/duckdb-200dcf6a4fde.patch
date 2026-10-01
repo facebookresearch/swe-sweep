@@ -1,0 +1,14 @@
+diff --git a/src/optimizer/pushdown/pushdown_mark_join.cpp b/src/optimizer/pushdown/pushdown_mark_join.cpp
+index b336cd3..797e932 100644
+--- a/src/optimizer/pushdown/pushdown_mark_join.cpp
++++ b/src/optimizer/pushdown/pushdown_mark_join.cpp
+@@ -35,7 +35,8 @@ unique_ptr<LogicalOperator> FilterPushdown::PushdownMarkJoin(unique_ptr<LogicalO
+ #endif
+ 			// this filter references the marker
+ 			// we can turn this into a SEMI join if the filter is on only the marker
+-			if (filters[i]->filter->type == ExpressionType::BOUND_COLUMN_REF) {
++			if (filters[i]->filter->type == ExpressionType::BOUND_COLUMN_REF &&
++			    op->type != LogicalOperatorType::LOGICAL_DELIM_JOIN) {
+ 				// filter just references the marker: turn into semi join
+ #ifdef DEBUG
+ 				simplified_mark_join = true;

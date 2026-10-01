@@ -1,0 +1,49 @@
+diff --git a/test/document.test.js b/test/document.test.js
+index 80380ec26..2f08ce0c2 100644
+--- a/test/document.test.js
++++ b/test/document.test.js
+@@ -11876,6 +11876,44 @@ describe('document', function() {
+     const addedDoc = await Model.findOne({ name: 'Test' });
+     assert.strictEqual(addedDoc.count, 1);
+   });
++
++  it('saves single nested subdoc defaults (gh-12905)', async function() {
++    const nestedSchema = new mongoose.Schema({
++      refOriginal: String,
++      refAnother: {
++        type: String,
++        default: () => 'goodbye'
++      }
++    });
++    const testSchema = new mongoose.Schema({
++      original: String,
++      another: {
++        type: String,
++        default: 'hello'
++      },
++      referenced: {
++        type: nestedSchema,
++        default: () => ({})
++      }
++    });
++    const Test = db.model('Test', testSchema);
++
++    const _id = new mongoose.Types.ObjectId();
++    await Test.collection.insertOne({
++      _id,
++      original: 'foo',
++      referenced: { refOriginal: 'hello' }
++    });
++
++    const doc = await Test.findById(_id);
++    assert.equal(doc.referenced.refOriginal, 'hello');
++    assert.equal(doc.referenced.refAnother, 'goodbye');
++
++    await doc.save();
++    const rawDoc = await Test.findById(_id).lean();
++    assert.equal(rawDoc.referenced.refOriginal, 'hello');
++    assert.equal(rawDoc.referenced.refAnother, 'goodbye');
++  });
+ });
+ 
+ describe('Check if instance function that is supplied in schema option is availabe', function() {

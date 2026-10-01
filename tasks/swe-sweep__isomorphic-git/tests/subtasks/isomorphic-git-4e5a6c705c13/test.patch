@@ -1,0 +1,44 @@
+diff --git a/__tests__/__fixtures__/test-deleteBranch.git/refs/heads/collision b/__tests__/__fixtures__/test-deleteBranch.git/refs/heads/collision
+new file mode 100644
+index 00000000..89237f1d
+--- /dev/null
++++ b/__tests__/__fixtures__/test-deleteBranch.git/refs/heads/collision
+@@ -0,0 +1 @@
++46938a722feab415225be56085fe08f233301211
+diff --git a/__tests__/__fixtures__/test-deleteBranch.git/refs/tags/collision b/__tests__/__fixtures__/test-deleteBranch.git/refs/tags/collision
+new file mode 100644
+index 00000000..89237f1d
+--- /dev/null
++++ b/__tests__/__fixtures__/test-deleteBranch.git/refs/tags/collision
+@@ -0,0 +1 @@
++46938a722feab415225be56085fe08f233301211
+diff --git a/__tests__/test-deleteBranch.js b/__tests__/test-deleteBranch.js
+index 1f856e38..d06a66cc 100644
+--- a/__tests__/test-deleteBranch.js
++++ b/__tests__/test-deleteBranch.js
+@@ -4,6 +4,7 @@ const {
+   deleteBranch,
+   currentBranch,
+   listBranches,
++  listTags,
+ } = require('isomorphic-git')
+ 
+ const { makeFixture } = require('./__helpers__/FixtureFS.js')
+@@ -18,6 +19,17 @@ describe('deleteBranch', () => {
+     expect(branches.includes('test')).toBe(false)
+   })
+ 
++  it('deletes the branch when an identically named tag exists', async () => {
++    // Setup
++    const { fs, gitdir } = await makeFixture('test-deleteBranch')
++    // Test
++    await deleteBranch({ fs, gitdir, ref: 'collision' })
++    const branches = await listBranches({ fs, gitdir })
++    expect(branches.includes('collision')).toBe(false)
++    const tags = await listTags({ fs, gitdir })
++    expect(tags.includes('collision')).toBe(true)
++  })
++
+   it('branch not exist', async () => {
+     // Setup
+     const { fs, gitdir } = await makeFixture('test-deleteBranch')

@@ -1,0 +1,13 @@
+diff --git a/actionview/lib/action_view/helpers/tag_helper.rb b/actionview/lib/action_view/helpers/tag_helper.rb
+index d37dc6cfb26..34cf37098ee 100644
+--- a/actionview/lib/action_view/helpers/tag_helper.rb
++++ b/actionview/lib/action_view/helpers/tag_helper.rb
+@@ -363,7 +363,7 @@ module ActionView
+       #   token_list(nil, false, 123, "", "foo", { bar: true })
+       #    # => "123 foo bar"
+       def token_list(*args)
+-        tokens = build_tag_values(*args).flat_map { |value| value.to_s.split(/\s+/) }.uniq
++        tokens = build_tag_values(*args).flat_map { |value| CGI.unescape_html(value.to_s).split(/\s+/) }.uniq
+ 
+         safe_join(tokens, " ")
+       end

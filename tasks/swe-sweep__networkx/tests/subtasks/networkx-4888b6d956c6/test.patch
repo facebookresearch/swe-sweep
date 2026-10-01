@@ -1,0 +1,40 @@
+diff --git a/networkx/algorithms/approximation/tests/test_treewidth.py b/networkx/algorithms/approximation/tests/test_treewidth.py
+index 37619db6d..fdccfd14f 100644
+--- a/networkx/algorithms/approximation/tests/test_treewidth.py
++++ b/networkx/algorithms/approximation/tests/test_treewidth.py
+@@ -132,13 +132,16 @@ class TestTreewidthMinDegree:
+         _, _ = treewidth_min_degree(G)
+ 
+     def test_two_component_graph(self):
+-        """Test empty graph"""
+         G = nx.Graph()
+         G.add_node(1)
+         G.add_node(2)
+         treewidth, _ = treewidth_min_degree(G)
+         assert treewidth == 0
+ 
++    def test_not_sortable_nodes(self):
++        G = nx.Graph([(0, "a")])
++        treewidth_min_degree(G)
++
+     def test_heuristic_first_steps(self):
+         """Test first steps of min_degree heuristic"""
+         graph = {
+@@ -237,13 +240,16 @@ class TestTreewidthMinFillIn:
+         _, _ = treewidth_min_fill_in(G)
+ 
+     def test_two_component_graph(self):
+-        """Test empty graph"""
+         G = nx.Graph()
+         G.add_node(1)
+         G.add_node(2)
+         treewidth, _ = treewidth_min_fill_in(G)
+         assert treewidth == 0
+ 
++    def test_not_sortable_nodes(self):
++        G = nx.Graph([(0, "a")])
++        treewidth_min_fill_in(G)
++
+     def test_heuristic_first_steps(self):
+         """Test first steps of min_fill_in heuristic"""
+         graph = {

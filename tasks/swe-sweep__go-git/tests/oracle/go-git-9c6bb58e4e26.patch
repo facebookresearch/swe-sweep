@@ -1,0 +1,13 @@
+diff --git a/worktree_commit.go b/worktree_commit.go
+index a25386ac..b6b9e1da 100644
+--- a/worktree_commit.go
++++ b/worktree_commit.go
+@@ -355,7 +355,7 @@ func (se sortableEntries) Swap(i, j int)      { se[i], se[j] = se[j], se[i] }
+ func (h *buildTreeHelper) copyTreeToStorageRecursive(parent string, t *object.Tree) (plumbing.Hash, error) {
+ 	sort.Sort(sortableEntries(t.Entries))
+ 	for i, e := range t.Entries {
+-		if e.Mode != filemode.Dir && !e.Hash.IsZero() {
++		if e.Mode != filemode.Dir {
+ 			continue
+ 		}
+ 

@@ -1,0 +1,27 @@
+diff --git a/pkg/analyzer/lib/src/dart/constant/evaluation.dart b/pkg/analyzer/lib/src/dart/constant/evaluation.dart
+index 93e3a8b855c..7bc29dfde44 100644
+--- a/pkg/analyzer/lib/src/dart/constant/evaluation.dart
++++ b/pkg/analyzer/lib/src/dart/constant/evaluation.dart
+@@ -590,6 +590,11 @@ class ConstantVisitor extends UnifyingAstVisitor<DartObjectImpl> {
+ 
+   @override
+   DartObjectImpl? visitBinaryExpression(BinaryExpression node) {
++    if (node.staticElement?.enclosingElement is ExtensionElement) {
++      _error(node, null);
++      return null;
++    }
++
+     TokenType operatorType = node.operator.type;
+     var leftResult = node.leftOperand.accept(this);
+     // evaluate lazy operators
+@@ -1021,6 +1026,10 @@ class ConstantVisitor extends UnifyingAstVisitor<DartObjectImpl> {
+       _error(node, CompileTimeErrorCode.CONST_EVAL_THROWS_EXCEPTION);
+       return null;
+     }
++    if (node.staticElement?.enclosingElement is ExtensionElement) {
++      _error(node, null);
++      return null;
++    }
+     if (node.operator.type == TokenType.BANG) {
+       return _dartObjectComputer.logicalNot(node, operand);
+     } else if (node.operator.type == TokenType.TILDE) {

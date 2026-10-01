@@ -1,0 +1,47 @@
+diff --git a/lib/elixir/lib/calendar/datetime.ex b/lib/elixir/lib/calendar/datetime.ex
+index ee2ae7208..f4b1d6e69 100644
+--- a/lib/elixir/lib/calendar/datetime.ex
++++ b/lib/elixir/lib/calendar/datetime.ex
+@@ -1516,6 +1516,12 @@ defmodule DateTime do
+         %{utc_offset: utc_offset2, std_offset: std_offset2} = datetime2,
+         unit
+       ) do
++    if not is_integer(unit) and
++         unit not in ~w(second millisecond microsecond nanosecond)a do
++      raise ArgumentError,
++            "unsupported time unit. Expected :day, :hour, :minute, :second, :millisecond, :microsecond, :nanosecond, or a positive integer, got #{inspect(unit)}"
++    end
++
+     naive_diff =
+       (datetime1 |> to_iso_days() |> Calendar.ISO.iso_days_to_unit(unit)) -
+         (datetime2 |> to_iso_days() |> Calendar.ISO.iso_days_to_unit(unit))
+diff --git a/lib/elixir/lib/calendar/naive_datetime.ex b/lib/elixir/lib/calendar/naive_datetime.ex
+index d5b3f3102..a23f320b6 100644
+--- a/lib/elixir/lib/calendar/naive_datetime.ex
++++ b/lib/elixir/lib/calendar/naive_datetime.ex
+@@ -471,6 +471,12 @@ defmodule NaiveDateTime do
+         unit
+       )
+       when is_integer(amount_to_add) do
++    if not is_integer(unit) and
++         unit not in ~w(second millisecond microsecond nanosecond)a do
++      raise ArgumentError,
++            "unsupported time unit. Expected :day, :hour, :minute, :second, :millisecond, :microsecond, :nanosecond, or a positive integer, got #{inspect(unit)}"
++    end
++
+     ppd = System.convert_time_unit(86400, :second, unit)
+     precision = max(Calendar.ISO.time_unit_to_precision(unit), precision)
+ 
+@@ -554,6 +560,12 @@ defmodule NaiveDateTime do
+               "and thus the result would be ambiguous"
+     end
+ 
++    if not is_integer(unit) and
++         unit not in ~w(second millisecond microsecond nanosecond)a do
++      raise ArgumentError,
++            "unsupported time unit. Expected :day, :hour, :minute, :second, :millisecond, :microsecond, :nanosecond, or a positive integer, got #{inspect(unit)}"
++    end
++
+     units1 = naive_datetime1 |> to_iso_days() |> Calendar.ISO.iso_days_to_unit(unit)
+     units2 = naive_datetime2 |> to_iso_days() |> Calendar.ISO.iso_days_to_unit(unit)
+     units1 - units2

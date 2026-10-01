@@ -1,0 +1,23 @@
+diff --git a/test-data/unit/check-classes.test b/test-data/unit/check-classes.test
+index 62f538260..23dbe2bc0 100644
+--- a/test-data/unit/check-classes.test
++++ b/test-data/unit/check-classes.test
+@@ -8054,3 +8054,18 @@ class C:
+     def f(self) -> None:
+         __module__  # E: Name "__module__" is not defined
+         __qualname__  # E: Name "__qualname__" is not defined
++
++[case testLambdaInAttributeCallValue]
++# https://github.com/python/mypy/issues/19632
++import foo
++
++def nop(fn: object) -> foo.Bar:
++    return foo.Bar()
++
++class Bar:
++    foo: foo.Bar = nop(
++        lambda: 0
++    )
++[file foo.py]
++class Bar:
++    ...

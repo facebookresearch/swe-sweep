@@ -1,0 +1,14 @@
+diff --git a/core/trino-main/src/main/java/io/trino/server/DynamicFilterService.java b/core/trino-main/src/main/java/io/trino/server/DynamicFilterService.java
+index c0da1fe0ad9..f59969a2822 100644
+--- a/core/trino-main/src/main/java/io/trino/server/DynamicFilterService.java
++++ b/core/trino-main/src/main/java/io/trino/server/DynamicFilterService.java
+@@ -418,7 +418,8 @@ public class DynamicFilterService
+                                 return applySaturatedCasts(metadata, typeOperators, dynamicFilterContext.getSession(), updatedSummary, targetType);
+                             }
+                             return updatedSummary;
+-                        })));
++                        },
++                        Domain::intersect)));
+     }
+ 
+     private static Set<DynamicFilterId> getLazyDynamicFilters(PlanFragment plan)

@@ -1,0 +1,71 @@
+diff --git a/tests/ui/assertions_on_result_states.fixed b/tests/ui/assertions_on_result_states.fixed
+index 09c1a8d0e..b2b7318c1 100644
+--- a/tests/ui/assertions_on_result_states.fixed
++++ b/tests/ui/assertions_on_result_states.fixed
+@@ -82,9 +82,18 @@ fn main() {
+     assert!(r.is_err());
+ }
+ 
+-#[allow(dead_code)]
+ fn issue9450() {
+     let res: Result<i32, i32> = Ok(1);
+     res.unwrap_err();
+     //~^ assertions_on_result_states
+ }
++
++fn issue9916(res: Result<u32, u32>) {
++    let a = 0;
++    match a {
++        0 => {},
++        1 => { res.unwrap(); },
++        //~^ assertions_on_result_states
++        _ => todo!(),
++    }
++}
+diff --git a/tests/ui/assertions_on_result_states.rs b/tests/ui/assertions_on_result_states.rs
+index c63c2502b..33f148532 100644
+--- a/tests/ui/assertions_on_result_states.rs
++++ b/tests/ui/assertions_on_result_states.rs
+@@ -82,9 +82,18 @@ fn main() {
+     assert!(r.is_err());
+ }
+ 
+-#[allow(dead_code)]
+ fn issue9450() {
+     let res: Result<i32, i32> = Ok(1);
+     assert!(res.is_err())
+     //~^ assertions_on_result_states
+ }
++
++fn issue9916(res: Result<u32, u32>) {
++    let a = 0;
++    match a {
++        0 => {},
++        1 => assert!(res.is_ok()),
++        //~^ assertions_on_result_states
++        _ => todo!(),
++    }
++}
+diff --git a/tests/ui/assertions_on_result_states.stderr b/tests/ui/assertions_on_result_states.stderr
+index 3bf811588..826f04955 100644
+--- a/tests/ui/assertions_on_result_states.stderr
++++ b/tests/ui/assertions_on_result_states.stderr
+@@ -38,10 +38,16 @@ LL |     assert!(r.is_err());
+    |     ^^^^^^^^^^^^^^^^^^^ help: replace with: `r.unwrap_err()`
+ 
+ error: called `assert!` with `Result::is_err`
+-  --> tests/ui/assertions_on_result_states.rs:88:5
++  --> tests/ui/assertions_on_result_states.rs:87:5
+    |
+ LL |     assert!(res.is_err())
+    |     ^^^^^^^^^^^^^^^^^^^^^ help: replace with: `res.unwrap_err();`
+ 
+-error: aborting due to 7 previous errors
++error: called `assert!` with `Result::is_ok`
++  --> tests/ui/assertions_on_result_states.rs:95:14
++   |
++LL |         1 => assert!(res.is_ok()),
++   |              ^^^^^^^^^^^^^^^^^^^^ help: replace with: `{ res.unwrap(); }`
++
++error: aborting due to 8 previous errors
+ 

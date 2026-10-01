@@ -1,0 +1,156 @@
+diff --git a/numpy/core/src/multiarray/descriptor.c b/numpy/core/src/multiarray/descriptor.c
+index bb3cc9d..d4c07ed 100644
+--- a/numpy/core/src/multiarray/descriptor.c
++++ b/numpy/core/src/multiarray/descriptor.c
+@@ -115,6 +115,58 @@ _arraydescr_fromctypes(PyObject *obj)
+ }
+ 
+ /*
++ * This function creates a dtype object when the object has a "dtype" attribute,
++ * and it can be converted to a dtype object.
++ *
++ * Returns a new reference to a dtype object, or NULL
++ * if this is not possible.
++ * When the return value is true, the dtype attribute should have been used
++ * and parsed. Currently the only failure mode for a 1 return is a
++ * RecursionError and the descriptor is set to NULL.
++ * When the return value is false, no error will be set.
++ */
++int
++_arraydescr_from_dtype_attr(PyObject *obj, PyArray_Descr **newdescr)
++{
++    PyObject *dtypedescr;
++    int ret;
++
++    /* For arbitrary objects that have a "dtype" attribute */
++    dtypedescr = PyObject_GetAttrString(obj, "dtype");
++    if (dtypedescr == NULL) {
++        /*
++         * This can be reached due to recursion limit being hit while fetching
++         * the attribute (tested for py3.7). This removes the custom message.
++         */
++        goto fail;
++    }
++
++    if (Py_EnterRecursiveCall(
++            " while trying to convert the given data type from its "
++            "`.dtype` attribute.") != 0) {
++        return 1;
++    }
++
++    ret = PyArray_DescrConverter(dtypedescr, newdescr);
++
++    Py_DECREF(dtypedescr);
++    Py_LeaveRecursiveCall();
++    if (ret != NPY_SUCCEED) {
++        goto fail;
++    }
++
++    return 1;
++
++  fail:
++    /* Ignore all but recursion errors, to give ctypes a full try. */
++    if (!PyErr_ExceptionMatches(PyExc_RecursionError)) {
++        PyErr_Clear();
++        return 0;
++    }
++    return 1;
++}
++
++/*
+  * This function creates a dtype object when:
+  *  - The object has a "dtype" attribute, and it can be converted
+  *    to a dtype object.
+@@ -128,20 +180,18 @@ _arraydescr_fromctypes(PyObject *obj)
+ NPY_NO_EXPORT PyArray_Descr *
+ _arraydescr_fromobj(PyObject *obj)
+ {
+-    PyObject *dtypedescr;
+     PyArray_Descr *newdescr = NULL;
+-    int ret;
+ 
+     /* For arbitrary objects that have a "dtype" attribute */
+-    dtypedescr = PyObject_GetAttrString(obj, "dtype");
+-    PyErr_Clear();
+-    if (dtypedescr != NULL) {
+-        ret = PyArray_DescrConverter(dtypedescr, &newdescr);
+-        Py_DECREF(dtypedescr);
+-        if (ret == NPY_SUCCEED) {
+-            return newdescr;
++    if (_arraydescr_from_dtype_attr(obj, &newdescr)) {
++        /*
++         * Using dtype attribute, newdescr may be NULL if a
++         * RecursionError occurred.
++         */
++        if (newdescr == NULL) {
++            return NULL;
+         }
+-        PyErr_Clear();
++        return newdescr;
+     }
+     return _arraydescr_fromctypes(obj);
+ }
+@@ -1427,6 +1477,13 @@ PyArray_DescrConverter(PyObject *obj, PyArray_Descr **at)
+             if (*at) {
+                 return NPY_SUCCEED;
+             }
++            /*
++             * _arraydescr_fromobj may set an exception (e.g. RecursionError)
++             * which must be propagated rather than ignored.
++             */
++            if (PyErr_Occurred()) {
++                goto error;
++            }
+         }
+         goto finish;
+     }
+@@ -1595,7 +1652,7 @@ PyArray_DescrConverter(PyObject *obj, PyArray_Descr **at)
+             return NPY_SUCCEED;
+         }
+         if (PyErr_Occurred()) {
+-            return NPY_FAIL;
++            goto error;
+         }
+         goto fail;
+     }
+diff --git a/numpy/core/src/multiarray/descriptor.h b/numpy/core/src/multiarray/descriptor.h
+index f950411..c21ef58 100644
+--- a/numpy/core/src/multiarray/descriptor.h
++++ b/numpy/core/src/multiarray/descriptor.h
+@@ -7,6 +7,9 @@ NPY_NO_EXPORT PyObject *arraydescr_protocol_descr_get(PyArray_Descr *self);
+ NPY_NO_EXPORT PyObject *
+ array_set_typeDict(PyObject *NPY_UNUSED(ignored), PyObject *args);
+ 
++int
++_arraydescr_from_dtype_attr(PyObject *obj, PyArray_Descr **newdescr);
++
+ NPY_NO_EXPORT PyArray_Descr *
+ _arraydescr_fromobj(PyObject *obj);
+ 
+diff --git a/numpy/core/src/multiarray/scalarapi.c b/numpy/core/src/multiarray/scalarapi.c
+index 5ef6c0b..2953bfc 100644
+--- a/numpy/core/src/multiarray/scalarapi.c
++++ b/numpy/core/src/multiarray/scalarapi.c
+@@ -471,12 +471,18 @@ PyArray_DescrFromTypeObject(PyObject *type)
+     /* Do special thing for VOID sub-types */
+     if (PyType_IsSubtype((PyTypeObject *)type, &PyVoidArrType_Type)) {
+         new = PyArray_DescrNewFromType(NPY_VOID);
+-        conv = _arraydescr_fromobj(type);
+-        if (conv) {
++        if (new == NULL) {
++            return NULL;
++        }
++        if (_arraydescr_from_dtype_attr(type, &conv)) {
++            if (conv == NULL) {
++                Py_DECREF(new);
++                return NULL;
++            }
+             new->fields = conv->fields;
+-            Py_INCREF(new->fields);
++            Py_XINCREF(new->fields);
+             new->names = conv->names;
+-            Py_INCREF(new->names);
++            Py_XINCREF(new->names);
+             new->elsize = conv->elsize;
+             new->subarray = conv->subarray;
+             conv->subarray = NULL;

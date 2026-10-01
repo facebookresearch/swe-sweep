@@ -1,0 +1,78 @@
+diff --git a/src/test/java/io/reactivex/internal/operators/flowable/FlowableZipTest.java b/src/test/java/io/reactivex/internal/operators/flowable/FlowableZipTest.java
+index ef1223d66..12f81c33e 100644
+--- a/src/test/java/io/reactivex/internal/operators/flowable/FlowableZipTest.java
++++ b/src/test/java/io/reactivex/internal/operators/flowable/FlowableZipTest.java
+@@ -1895,4 +1895,34 @@ public class FlowableZipTest {
+ 
+         ts.assertResult(4);
+     }
++
++    @Test
++    public void firstErrorPreventsSecondSubscription() {
++        final AtomicInteger counter = new AtomicInteger();
++
++        List<Flowable<?>> flowableList = new ArrayList<Flowable<?>>();
++        flowableList.add(Flowable.create(new FlowableOnSubscribe<Object>() {
++            @Override
++            public void subscribe(FlowableEmitter<Object> e)
++                    throws Exception { throw new TestException(); }
++        }, BackpressureStrategy.MISSING));
++        flowableList.add(Flowable.create(new FlowableOnSubscribe<Object>() {
++            @Override
++            public void subscribe(FlowableEmitter<Object> e)
++                    throws Exception { counter.getAndIncrement(); }
++        }, BackpressureStrategy.MISSING));
++
++        Flowable.zip(flowableList,
++                new Function<Object[], Object>() {
++                    @Override
++                    public Object apply(Object[] a) throws Exception {
++                        return a;
++                    }
++                })
++        .test()
++        .assertFailure(TestException.class)
++        ;
++
++        assertEquals(0, counter.get());
++    }
+ }
+diff --git a/src/test/java/io/reactivex/internal/operators/observable/ObservableZipTest.java b/src/test/java/io/reactivex/internal/operators/observable/ObservableZipTest.java
+index 2fc7d7cb5..ba86f1617 100644
+--- a/src/test/java/io/reactivex/internal/operators/observable/ObservableZipTest.java
++++ b/src/test/java/io/reactivex/internal/operators/observable/ObservableZipTest.java
+@@ -1428,4 +1428,34 @@ public class ObservableZipTest {
+         ps2.onNext(2);
+         to.assertResult(3);
+     }
++
++    @Test
++    public void firstErrorPreventsSecondSubscription() {
++        final AtomicInteger counter = new AtomicInteger();
++
++        List<Observable<?>> observableList = new ArrayList<Observable<?>>();
++        observableList.add(Observable.create(new ObservableOnSubscribe<Object>() {
++            @Override
++            public void subscribe(ObservableEmitter<Object> e)
++                    throws Exception { throw new TestException(); }
++        }));
++        observableList.add(Observable.create(new ObservableOnSubscribe<Object>() {
++            @Override
++            public void subscribe(ObservableEmitter<Object> e)
++                    throws Exception { counter.getAndIncrement(); }
++        }));
++
++        Observable.zip(observableList,
++                new Function<Object[], Object>() {
++                    @Override
++                    public Object apply(Object[] a) throws Exception {
++                        return a;
++                    }
++                })
++        .test()
++        .assertFailure(TestException.class)
++        ;
++
++        assertEquals(0, counter.get());
++    }
+ }

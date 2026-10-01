@@ -1,0 +1,22 @@
+diff --git a/tests/generics/tgenerics_various.nim b/tests/generics/tgenerics_various.nim
+index b6ace4e7d..53661236e 100644
+--- a/tests/generics/tgenerics_various.nim
++++ b/tests/generics/tgenerics_various.nim
+@@ -253,3 +253,17 @@ block:
+ 
+   var x: Que[int]
+   doAssert(x.x == 0)
++
++
++block: # issue #9381
++  var evalCount {.compileTime.} = 0
++
++  macro test(t: typed): untyped =
++    inc evalCount
++    t
++
++  type GenericObj[T] = object
++    f: test(T)
++
++  var x: GenericObj[int]
++  static: doAssert evalCount == 1

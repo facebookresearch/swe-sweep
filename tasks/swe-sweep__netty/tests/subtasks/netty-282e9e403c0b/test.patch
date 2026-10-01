@@ -1,0 +1,22 @@
+diff --git a/codec-http/src/test/java/io/netty/handler/codec/http/HttpRequestDecoderTest.java b/codec-http/src/test/java/io/netty/handler/codec/http/HttpRequestDecoderTest.java
+index 5d1e8d63e1..69ad149f51 100644
+--- a/codec-http/src/test/java/io/netty/handler/codec/http/HttpRequestDecoderTest.java
++++ b/codec-http/src/test/java/io/netty/handler/codec/http/HttpRequestDecoderTest.java
+@@ -320,4 +320,17 @@ public class HttpRequestDecoderTest {
+         assertTrue(request.decoderResult().cause() instanceof TooLongFrameException);
+         assertFalse(channel.finish());
+     }
++
++    @Test
++    public void testLeadingWhitespaceInFirstHeaderName() {
++        testInvalidHeaders0("POST / HTTP/1.1\r\n\tContent-Length: 1\r\n\r\nX");
++    }
++
++    private static void testInvalidHeaders0(String requestStr) {
++        EmbeddedChannel channel = new EmbeddedChannel(new HttpRequestDecoder());
++        assertTrue(channel.writeInbound(Unpooled.copiedBuffer(requestStr, CharsetUtil.US_ASCII)));
++        HttpRequest request = channel.readInbound();
++        assertTrue(request.decoderResult().isFailure());
++        assertFalse(channel.finish());
++    }
+ }

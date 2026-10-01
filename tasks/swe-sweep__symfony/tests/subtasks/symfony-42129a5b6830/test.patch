@@ -1,0 +1,128 @@
+diff --git a/src/Symfony/Component/DependencyInjection/Tests/Fixtures/RemoteCaller.php b/src/Symfony/Component/DependencyInjection/Tests/Fixtures/RemoteCaller.php
+new file mode 100644
+index 00000000000..c5b8e86b2e0
+--- /dev/null
++++ b/src/Symfony/Component/DependencyInjection/Tests/Fixtures/RemoteCaller.php
+@@ -0,0 +1,16 @@
++<?php
++
++/*
++ * This file is part of the Symfony package.
++ *
++ * (c) Fabien Potencier <fabien@symfony.com>
++ *
++ * For the full copyright and license information, please view the LICENSE
++ * file that was distributed with this source code.
++ */
++
++namespace Symfony\Component\DependencyInjection\Tests\Fixtures;
++
++interface RemoteCaller
++{
++}
+diff --git a/src/Symfony/Component/DependencyInjection/Tests/Fixtures/RemoteCallerHttp.php b/src/Symfony/Component/DependencyInjection/Tests/Fixtures/RemoteCallerHttp.php
+new file mode 100644
+index 00000000000..4b3872a8edc
+--- /dev/null
++++ b/src/Symfony/Component/DependencyInjection/Tests/Fixtures/RemoteCallerHttp.php
+@@ -0,0 +1,16 @@
++<?php
++
++/*
++ * This file is part of the Symfony package.
++ *
++ * (c) Fabien Potencier <fabien@symfony.com>
++ *
++ * For the full copyright and license information, please view the LICENSE
++ * file that was distributed with this source code.
++ */
++
++namespace Symfony\Component\DependencyInjection\Tests\Fixtures;
++
++class RemoteCallerHttp implements RemoteCaller
++{
++}
+diff --git a/src/Symfony/Component/DependencyInjection/Tests/Fixtures/RemoteCallerSocket.php b/src/Symfony/Component/DependencyInjection/Tests/Fixtures/RemoteCallerSocket.php
+new file mode 100644
+index 00000000000..9bef1a635d7
+--- /dev/null
++++ b/src/Symfony/Component/DependencyInjection/Tests/Fixtures/RemoteCallerSocket.php
+@@ -0,0 +1,16 @@
++<?php
++
++/*
++ * This file is part of the Symfony package.
++ *
++ * (c) Fabien Potencier <fabien@symfony.com>
++ *
++ * For the full copyright and license information, please view the LICENSE
++ * file that was distributed with this source code.
++ */
++
++namespace Symfony\Component\DependencyInjection\Tests\Fixtures;
++
++class RemoteCallerSocket implements RemoteCaller
++{
++}
+diff --git a/src/Symfony/Component/DependencyInjection/Tests/Fixtures/xml/when-env-services.xml b/src/Symfony/Component/DependencyInjection/Tests/Fixtures/xml/when-env-services.xml
+new file mode 100644
+index 00000000000..2a0885b64ff
+--- /dev/null
++++ b/src/Symfony/Component/DependencyInjection/Tests/Fixtures/xml/when-env-services.xml
+@@ -0,0 +1,23 @@
++<?xml version="1.0" ?>
++
++<container xmlns="http://symfony.com/schema/dic/services"
++           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
++           xsi:schemaLocation="http://symfony.com/schema/dic/services https://symfony.com/schema/dic/services/services-1.0.xsd">
++    <services>
++        <service id="Symfony\Component\DependencyInjection\Tests\Fixtures\RemoteCaller"
++                 alias="Symfony\Component\DependencyInjection\Tests\Fixtures\RemoteCallerHttp"/>
++
++        <service id="Symfony\Component\DependencyInjection\Tests\Fixtures\RemoteCallerHttp"
++                 class="Symfony\Component\DependencyInjection\Tests\Fixtures\RemoteCallerHttp"/>
++
++        <service id="Symfony\Component\DependencyInjection\Tests\Fixtures\RemoteCallerSocket"
++                 class="Symfony\Component\DependencyInjection\Tests\Fixtures\RemoteCallerSocket"/>
++    </services>
++
++    <when env="dev">
++        <services>
++            <service id="Symfony\Component\DependencyInjection\Tests\Fixtures\RemoteCaller"
++                     alias="Symfony\Component\DependencyInjection\Tests\Fixtures\RemoteCallerSocket"/>
++        </services>
++    </when>
++</container>
+diff --git a/src/Symfony/Component/DependencyInjection/Tests/Loader/XmlFileLoaderTest.php b/src/Symfony/Component/DependencyInjection/Tests/Loader/XmlFileLoaderTest.php
+index c61fb0b..8af68cf 100644
+--- a/src/Symfony/Component/DependencyInjection/Tests/Loader/XmlFileLoaderTest.php
++++ b/src/Symfony/Component/DependencyInjection/Tests/Loader/XmlFileLoaderTest.php
+@@ -45,6 +45,9 @@ use Symfony\Component\DependencyInjection\Tests\Fixtures\FooUnitEnum;
+ use Symfony\Component\DependencyInjection\Tests\Fixtures\FooWithAbstractArgument;
+ use Symfony\Component\DependencyInjection\Tests\Fixtures\NamedArgumentsDummy;
+ use Symfony\Component\DependencyInjection\Tests\Fixtures\Prototype;
++use Symfony\Component\DependencyInjection\Tests\Fixtures\RemoteCaller;
++use Symfony\Component\DependencyInjection\Tests\Fixtures\RemoteCallerHttp;
++use Symfony\Component\DependencyInjection\Tests\Fixtures\RemoteCallerSocket;
+ use Symfony\Component\ExpressionLanguage\Expression;
+ 
+ class XmlFileLoaderTest extends TestCase
+@@ -1268,4 +1271,18 @@ class XmlFileLoaderTest extends TestCase
+         $this->expectExceptionMessage('The "static_constructor" service cannot declare a factory as well as a constructor.');
+         $loader->load('static_constructor_and_factory.xml');
+     }
++    public function testLoadServicesWithEnvironment()
++    {
++        $container = new ContainerBuilder();
++
++        $loader = new XmlFileLoader($container, new FileLocator(self::$fixturesPath.'/xml'), 'prod');
++        $loader->load('when-env-services.xml');
++
++        self::assertInstanceOf(RemoteCallerHttp::class, $container->get(RemoteCaller::class));
++
++        $loader = new XmlFileLoader($container, new FileLocator(self::$fixturesPath.'/xml'), 'dev');
++        $loader->load('when-env-services.xml');
++
++        self::assertInstanceOf(RemoteCallerSocket::class, $container->get(RemoteCaller::class));
++    }
+ }

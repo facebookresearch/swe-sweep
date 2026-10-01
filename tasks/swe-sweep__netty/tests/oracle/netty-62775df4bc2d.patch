@@ -1,0 +1,37 @@
+diff --git a/handler/src/main/java/io/netty/handler/flush/FlushConsolidationHandler.java b/handler/src/main/java/io/netty/handler/flush/FlushConsolidationHandler.java
+index 472a83bffc..b532f8134e 100644
+--- a/handler/src/main/java/io/netty/handler/flush/FlushConsolidationHandler.java
++++ b/handler/src/main/java/io/netty/handler/flush/FlushConsolidationHandler.java
+@@ -23,6 +23,7 @@ import io.netty.channel.ChannelOutboundHandler;
+ import io.netty.channel.ChannelOutboundInvoker;
+ import io.netty.channel.ChannelPipeline;
+ import io.netty.channel.ChannelPromise;
++import io.netty.util.internal.ObjectUtil;
+ 
+ import java.util.concurrent.Future;
+ 
+@@ -95,20 +96,17 @@ public class FlushConsolidationHandler extends ChannelDuplexHandler {
+      *                                        ongoing.
+      */
+     public FlushConsolidationHandler(int explicitFlushAfterFlushes, boolean consolidateWhenNoReadInProgress) {
+-        if (explicitFlushAfterFlushes <= 0) {
+-            throw new IllegalArgumentException("explicitFlushAfterFlushes: "
+-                    + explicitFlushAfterFlushes + " (expected: > 0)");
+-        }
+-        this.explicitFlushAfterFlushes = explicitFlushAfterFlushes;
++        this.explicitFlushAfterFlushes =
++                ObjectUtil.checkPositive(explicitFlushAfterFlushes, "explicitFlushAfterFlushes");
+         this.consolidateWhenNoReadInProgress = consolidateWhenNoReadInProgress;
+-        flushTask = consolidateWhenNoReadInProgress ?
++        this.flushTask = consolidateWhenNoReadInProgress ?
+                 new Runnable() {
+                     @Override
+                     public void run() {
+                         if (flushPendingCount > 0 && !readInProgress) {
+                             flushPendingCount = 0;
+-                            ctx.flush();
+                             nextScheduledFlush = null;
++                            ctx.flush();
+                         } // else we'll flush when the read completes
+                     }
+                 }

@@ -1,0 +1,26 @@
+diff --git a/compiler/docgen.nim b/compiler/docgen.nim
+index c3865bb4b..a1bb20967 100644
+--- a/compiler/docgen.nim
++++ b/compiler/docgen.nim
+@@ -1528,6 +1528,9 @@ proc commandJson*(cache: IdentCache, conf: ConfigRef) =
+   else:
+     #echo getOutFile(gProjectFull, JsonExt)
+     let filename = getOutFile(conf, RelativeFile conf.projectName, JsonExt)
++    conf.outFile = filename.relativeTo(conf.outDir)
++    let dir = filename.splitFile.dir
++    createDir(dir)
+     try:
+       writeFile(filename, content)
+     except:
+@@ -1549,8 +1552,10 @@ proc commandTags*(cache: IdentCache, conf: ConfigRef) =
+   if optStdout in d.conf.globalOptions:
+     write(stdout, content)
+   else:
+-    #echo getOutFile(gProjectFull, TagsExt)
+     let filename = getOutFile(conf, RelativeFile conf.projectName, TagsExt)
++    conf.outFile = filename.relativeTo(conf.outDir)
++    let dir = filename.splitFile.dir
++    createDir(dir)
+     try:
+       writeFile(filename, content)
+     except:

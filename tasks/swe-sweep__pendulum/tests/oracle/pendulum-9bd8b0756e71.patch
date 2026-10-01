@@ -1,0 +1,13 @@
+diff --git a/pendulum/datetime.py b/pendulum/datetime.py
+index d79257c..feb140f 100644
+--- a/pendulum/datetime.py
++++ b/pendulum/datetime.py
+@@ -1494,6 +1494,8 @@ class DateTime(datetime.datetime, Date):
+             microsecond = self.microsecond
+         if tzinfo is True:
+             tzinfo = self.tzinfo
++        if fold is None:
++            fold = self.fold
+ 
+         transition_rule = pendulum.POST_TRANSITION
+         if fold is not None:

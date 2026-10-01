@@ -1,0 +1,90 @@
+diff --git a/test/configCases/clean/lib-manifest-plugin/index.js b/test/configCases/clean/lib-manifest-plugin/index.js
+new file mode 100644
+index 000000000..bbd9de415
+--- /dev/null
++++ b/test/configCases/clean/lib-manifest-plugin/index.js
+@@ -0,0 +1 @@
++it("should compile and run the test", function() {});
+diff --git a/test/configCases/clean/lib-manifest-plugin/readdir.js b/test/configCases/clean/lib-manifest-plugin/readdir.js
+new file mode 100644
+index 000000000..b2f404e7f
+--- /dev/null
++++ b/test/configCases/clean/lib-manifest-plugin/readdir.js
+@@ -0,0 +1,38 @@
++const fs = require('fs');
++const path = require('path');
++
++function handlePath(path) {
++	return path.replace(/\\/g, "/");
++}
++
++module.exports = function readDir(from) {
++	const collectedFiles = [];
++	const collectedDirectories = [];
++	const stack = [from];
++	let cursor;
++
++	while ((cursor = stack.pop())) {
++		const stat = fs.statSync(cursor);
++
++		if (stat.isDirectory()) {
++			const items = fs.readdirSync(cursor);
++
++			if (from !== cursor) {
++				const relative = path.relative(from, cursor);
++				collectedDirectories.push(handlePath(relative));
++			}
++
++			for (let i = 0; i < items.length; i++) {
++				stack.push(path.join(cursor, items[i]));
++			}
++		} else {
++			const relative = path.relative(from, cursor);
++			collectedFiles.push(handlePath(relative));
++		}
++	}
++
++	return {
++		files: collectedFiles,
++		directories: collectedDirectories
++	};
++}
+diff --git a/test/configCases/clean/lib-manifest-plugin/webpack.config.js b/test/configCases/clean/lib-manifest-plugin/webpack.config.js
+new file mode 100644
+index 000000000..0efe44f4d
+--- /dev/null
++++ b/test/configCases/clean/lib-manifest-plugin/webpack.config.js
+@@ -0,0 +1,33 @@
++const path = require("path");
++const readDir = require("./readdir");
++const webpack = require("../../../../");
++
++/** @type {import("../../../../").Configuration} */
++module.exports = {
++	output: {
++		clean: true
++	},
++	plugins: [
++		compiler => {
++			compiler.hooks.thisCompilation.tap("Test", compilation => {
++				const outputPath = compilation.getPath(compiler.outputPath, {});
++				new webpack.DllPlugin({
++					name: "[name]_dll",
++					path: path.resolve(outputPath, "manifest.json")
++				}).apply(compiler);
++			});
++			compiler.hooks.afterEmit.tap("Test", compilation => {
++				const outputPath = compilation.getPath(compiler.outputPath, {});
++				expect(readDir(outputPath)).toMatchInlineSnapshot(`
++			Object {
++			  "directories": Array [],
++			  "files": Array [
++			    "manifest.json",
++			    "bundle0.js",
++			  ],
++			}
++		`);
++			});
++		}
++	]
++};

@@ -1,0 +1,245 @@
+{
+  "build_jobs": 4,
+  "container_repo": "/conan",
+  "evaluation": {
+    "paths": "test",
+    "visible_timeout": 7200
+  },
+  "upstream_image": "pandora-maxbug-conan:2.4.1",
+  "n_base_passing": 3987,
+  "n_base_test_ignore": 562,
+  "oracle_digest": "e4f005e68eb589cd6b41c16f50e5d4c436ccc149df41f1f20354cc63a28d2388",
+  "oracle_pristine_paths": [],
+  "upstream_commit": "9f7399e15e6172900e0591deb5a57a45769d8205",
+  "reproduction": {
+    "needs_build": false,
+    "test_timeout": 900
+  },
+  "schema": 2,
+  "subtasks": [
+    {
+      "f2p": [
+        "test.integration.symlinks.symlinks_test::test_exports_with_uppercase_symlink_folder"
+      ],
+      "id": "conan-02f36ba2a3c3",
+      "target_files": [
+        "conan/tools/files/copy_pattern.py"
+      ]
+    },
+    {
+      "f2p": [
+        "test.integration.package_id.compatible_test.TestNewCompatibility::test_compatibility_msvc_and_cppstd"
+      ],
+      "id": "conan-0cc464d1e341",
+      "target_files": [
+        "conans/client/graph/compatibility.py"
+      ]
+    },
+    {
+      "f2p": [
+        "test.integration.graph.test_skip_binaries::test_skip_tool_requires_context"
+      ],
+      "id": "conan-15ee93c85b68",
+      "target_files": [
+        "conans/client/graph/graph_binaries.py"
+      ]
+    },
+    {
+      "f2p": [
+        "test.functional.tools.scm.test_git.TestGitTreelessRemote::test_treeless_clone",
+        "test.functional.tools.scm.test_git.TestGitTreelessRemote::test_treeless_clone_with_parenthesis"
+      ],
+      "id": "conan-184677a843d5",
+      "target_files": [
+        "conan/tools/scm/git.py"
+      ]
+    },
+    {
+      "f2p": [
+        "test.integration.command.source_test.SourceTest::test_local_source_layout_root"
+      ],
+      "id": "conan-1a2b619be03d",
+      "target_files": [
+        "conan/api/subapi/local.py"
+      ]
+    },
+    {
+      "f2p": [
+        "test.unittests.model.test_conf::test_unset_basic_same_behaviour[choices1]"
+      ],
+      "id": "conan-2236d2e5f74f",
+      "target_files": [
+        "conans/model/conf.py"
+      ]
+    },
+    {
+      "f2p": [
+        "test.integration.cache.backup_sources_test.TestDownloadCacheBackupSources::test_unknown_handling"
+      ],
+      "id": "conan-26520903d1c6",
+      "target_files": [
+        "conans/client/downloaders/download_cache.py"
+      ]
+    },
+    {
+      "f2p": [
+        "test.integration.toolchains.meson.test_mesontoolchain::test_cross_x86_64_to_riscv64"
+      ],
+      "id": "conan-2654cff8bac2",
+      "target_files": [
+        "conan/tools/meson/helpers.py"
+      ]
+    },
+    {
+      "f2p": [
+        "test.integration.graph.conflict_diamond_test::test_conflict_user[True]",
+        "test.integration.graph.conflict_diamond_test::test_conflict_user_order"
+      ],
+      "id": "conan-3272e8a4e9a0",
+      "target_files": [
+        "conans/client/graph/graph_builder.py"
+      ]
+    },
+    {
+      "f2p": [
+        "test.integration.remote.test_local_recipes_index.TestUserChannel::test_user_channel_requirement"
+      ],
+      "id": "conan-411a3815fa81",
+      "target_files": [
+        "conans/client/rest_client_local_recipe_index.py"
+      ]
+    },
+    {
+      "f2p": [
+        "test.integration.toolchains.apple.test_xcodedeps::test_dont_add_skipped_xcconfigs_when_required_by_components"
+      ],
+      "id": "conan-415bf2f723a2",
+      "target_files": [
+        "conan/tools/apple/xcodedeps.py"
+      ]
+    },
+    {
+      "f2p": [
+        "test.unittests.tools.files.test_tool_copy.ToolCopyTest::test_excludes_symlink_folder"
+      ],
+      "id": "conan-48326c847a4f",
+      "target_files": [
+        "conan/tools/files/copy_pattern.py"
+      ]
+    },
+    {
+      "f2p": [
+        "test.integration.command_v2.list_test.TestListCompact::test_list_compact_patterns[pkg/1.0#a69a86bbd19ae2ef7eedc64ae645c531:da39a3ee5e6b4b0d3255bfef95601890afd80709#*]",
+        "test.integration.command_v2.list_test.TestListCompact::test_list_compact_patterns[pkg/1.0#a69a86bbd19ae2ef7eedc64ae645c531:da39a3ee5e6b4b0d3255bfef95601890afd80709#0ba8627bd47edc3a501e8f0eb9a79e5e]"
+      ],
+      "id": "conan-507cda357c9d",
+      "target_files": [
+        "conan/cli/commands/list.py"
+      ]
+    },
+    {
+      "f2p": [
+        "test.integration.toolchains.apple.test_xcodetoolchain::test_flags_generated_if_only_defines"
+      ],
+      "id": "conan-52bfb4bda63c",
+      "target_files": [
+        "conan/tools/apple/xcodetoolchain.py"
+      ]
+    },
+    {
+      "f2p": [
+        "test.functional.tools.scm.test_git.TestGitCaptureSCM::test_capture_commit_local_repository"
+      ],
+      "id": "conan-6f31c911ab23",
+      "target_files": [
+        "conan/tools/scm/git.py"
+      ]
+    },
+    {
+      "f2p": [
+        "test.integration.environment.test_buildenv_profile::test_buildenv_priority_copy"
+      ],
+      "id": "conan-7173de029576",
+      "target_files": [
+        "conan/tools/env/environment.py"
+      ]
+    },
+    {
+      "f2p": [
+        "test.integration.toolchains.env.test_environment::test_env_and_scope_none"
+      ],
+      "id": "conan-7858e1fe7b80",
+      "target_files": [
+        "conans/client/subsystems.py"
+      ]
+    },
+    {
+      "f2p": [
+        "test.unittests.model.test_conf::test_conf_rebase_patterns"
+      ],
+      "id": "conan-7925294fa97e",
+      "target_files": [
+        "conan/internal/model/conf.py"
+      ]
+    },
+    {
+      "f2p": [
+        "test.integration.command_v2.custom_commands_test.TestCommandAPI::test_command_verbosity_leak"
+      ],
+      "id": "conan-7bef018bff98",
+      "target_files": [
+        "conan/api/subapi/command.py"
+      ]
+    },
+    {
+      "f2p": [
+        "test.integration.graph.core.test_provides::test_name_provide_error_message"
+      ],
+      "id": "conan-aa4c21e64e74",
+      "target_files": [
+        "conans/client/graph/graph_error.py"
+      ]
+    },
+    {
+      "f2p": [
+        "test.integration.package_id.compatible_test.TestNewCompatibility::test_compatibility_erase_package_id"
+      ],
+      "id": "conan-c361d9c283a6",
+      "target_files": [
+        "conans/client/graph/graph_binaries.py",
+        "conans/model/settings.py"
+      ]
+    },
+    {
+      "f2p": [
+        "test.unittests.model.version.test_version_range_intersection::test_range_intersection_prerelease[>=1.0-pre.1 <1.0-pre.99, include_prerelease->=1.0-pre.1 <1.0-pre.99, include_prerelease->=1.0-pre.1 <1.0-pre.99, include_prerelease]",
+        "test.unittests.model.version.test_version_range_intersection::test_range_intersection_prerelease[>=1.0-pre.1 <1.0-pre.99, include_prerelease->=1.0-pre.12 <1.0-pre.98, include_prerelease->=1.0-pre.12 <1.0-pre.98, include_prerelease]",
+        "test.unittests.model.version.test_version_range_intersection::test_range_intersection_prerelease[>=1.0-pre.12 <1.0-pre.99, include_prerelease->=1.0-pre.1 <1.0-pre.98, include_prerelease->=1.0-pre.12 <1.0-pre.98, include_prerelease]"
+      ],
+      "id": "conan-d4ddb461127e",
+      "target_files": [
+        "conans/model/version_range.py"
+      ]
+    },
+    {
+      "f2p": [
+        "test.integration.cache.backup_sources_test.TestDownloadCacheBackupSources::test_absolute_core_sources_conf"
+      ],
+      "id": "conan-e948da48635f",
+      "target_files": [
+        "conan/internal/rest/caching_file_downloader.py"
+      ]
+    },
+    {
+      "f2p": [
+        "test.integration.command_v2.test_info_build_order.TestBuildOrderReduce::test_reduce_should_remove_recipe"
+      ],
+      "id": "conan-ff1570ba2606",
+      "target_files": [
+        "conans/client/graph/install_graph.py"
+      ]
+    }
+  ],
+  "task": "conan",
+  "version": "2.4.1"
+}

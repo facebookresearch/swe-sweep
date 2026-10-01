@@ -1,0 +1,13 @@
+diff --git a/scipy/optimize/zeros.py b/scipy/optimize/zeros.py
+index 881d93fb4a..04228f269f 100644
+--- a/scipy/optimize/zeros.py
++++ b/scipy/optimize/zeros.py
+@@ -1347,7 +1347,7 @@
+     if xtol <= 0:
+         raise ValueError("xtol too small (%g <= 0)" % xtol)
+     if rtol < _rtol / 4:
+-        raise ValueError("rtol too small (%g < %g)" % (rtol, _rtol))
++        raise ValueError("rtol too small (%g < %g)" % (rtol, _rtol/4))
+     if maxiter < 1:
+         raise ValueError("maxiter must be greater than 0")
+     if not np.isfinite(a):

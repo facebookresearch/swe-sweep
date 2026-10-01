@@ -1,0 +1,102 @@
+diff --git a/mypy/checkexpr.py b/mypy/checkexpr.py
+index 4b7e39d20..286ef0dab 100644
+--- a/mypy/checkexpr.py
++++ b/mypy/checkexpr.py
+@@ -15,7 +15,12 @@ import mypy.checker
+ import mypy.errorcodes as codes
+ from mypy import applytype, erasetype, join, message_registry, nodes, operators, types
+ from mypy.argmap import ArgTypeExpander, map_actuals_to_formals, map_formals_to_actuals
+-from mypy.checkmember import analyze_member_access, freeze_all_type_vars, type_object_type
++from mypy.checkmember import (
++    analyze_member_access,
++    freeze_all_type_vars,
++    type_object_type,
++    typeddict_callable,
++)
+ from mypy.checkstrformat import StringFormatterChecker
+ from mypy.erasetype import erase_type, remove_instance_last_known_values, replace_meta_vars
+ from mypy.errors import ErrorWatcher, report_internal_error
+@@ -949,20 +954,7 @@ class ExpressionChecker(ExpressionVisitor[Type]):
+         Note it is not safe to move this to type_object_type() since it will crash
+         on plugin-generated TypedDicts, that may not have the special_alias.
+         """
+-        assert info.special_alias is not None
+-        target = info.special_alias.target
+-        assert isinstance(target, ProperType) and isinstance(target, TypedDictType)
+-        expected_types = list(target.items.values())
+-        kinds = [ArgKind.ARG_NAMED] * len(expected_types)
+-        names = list(target.items.keys())
+-        return CallableType(
+-            expected_types,
+-            kinds,
+-            names,
+-            target,
+-            self.named_type("builtins.type"),
+-            variables=info.defn.type_vars,
+-        )
++        return typeddict_callable(info, self.named_type)
+ 
+     def typeddict_callable_from_context(self, callee: TypedDictType) -> CallableType:
+         return CallableType(
+diff --git a/mypy/checkmember.py b/mypy/checkmember.py
+index f6b5e6be2..515f0c12c 100644
+--- a/mypy/checkmember.py
++++ b/mypy/checkmember.py
+@@ -18,6 +18,7 @@ from mypy.nodes import (
+     ARG_STAR,
+     ARG_STAR2,
+     SYMBOL_FUNCBASE_TYPES,
++    ArgKind,
+     Context,
+     Decorator,
+     FuncBase,
+@@ -1117,8 +1118,16 @@ def analyze_class_attribute_access(
+         )
+         return AnyType(TypeOfAny.from_error)
+ 
++    # TODO: some logic below duplicates analyze_ref_expr in checkexpr.py
+     if isinstance(node.node, TypeInfo):
+-        return type_object_type(node.node, mx.named_type)
++        if node.node.typeddict_type:
++            # We special-case TypedDict, because they don't define any constructor.
++            return typeddict_callable(node.node, mx.named_type)
++        elif node.node.fullname == "types.NoneType":
++            # We special case NoneType, because its stub definition is not related to None.
++            return TypeType(NoneType())
++        else:
++            return type_object_type(node.node, mx.named_type)
+ 
+     if isinstance(node.node, MypyFile):
+         # Reference to a module object.
+@@ -1298,6 +1307,31 @@ def add_class_tvars(
+     return t
+ 
+ 
++def typeddict_callable(info: TypeInfo, named_type: Callable[[str], Instance]) -> CallableType:
++    """Construct a reasonable type for a TypedDict type in runtime context.
++
++    If it appears as a callee, it will be special-cased anyway, e.g. it is
++    also allowed to accept a single positional argument if it is a dict literal.
++
++    Note it is not safe to move this to type_object_type() since it will crash
++    on plugin-generated TypedDicts, that may not have the special_alias.
++    """
++    assert info.special_alias is not None
++    target = info.special_alias.target
++    assert isinstance(target, ProperType) and isinstance(target, TypedDictType)
++    expected_types = list(target.items.values())
++    kinds = [ArgKind.ARG_NAMED] * len(expected_types)
++    names = list(target.items.keys())
++    return CallableType(
++        expected_types,
++        kinds,
++        names,
++        target,
++        named_type("builtins.type"),
++        variables=info.defn.type_vars,
++    )
++
++
+ def type_object_type(info: TypeInfo, named_type: Callable[[str], Instance]) -> ProperType:
+     """Return the type of a type object.
+ 

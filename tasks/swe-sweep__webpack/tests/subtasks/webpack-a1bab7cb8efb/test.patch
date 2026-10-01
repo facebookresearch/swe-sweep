@@ -1,0 +1,26 @@
+diff --git a/test/cases/parsing/harmony-export-import-specifier-asi/a.js b/test/cases/parsing/harmony-export-import-specifier-asi/a.js
+new file mode 100644
+index 000000000..9549e18a5
+--- /dev/null
++++ b/test/cases/parsing/harmony-export-import-specifier-asi/a.js
+@@ -0,0 +1,3 @@
++export const fn = (num) => {
++	return num;
++};
+diff --git a/test/cases/parsing/harmony-export-import-specifier-asi/index.js b/test/cases/parsing/harmony-export-import-specifier-asi/index.js
+new file mode 100644
+index 000000000..3c0ae95aa
+--- /dev/null
++++ b/test/cases/parsing/harmony-export-import-specifier-asi/index.js
+@@ -0,0 +1,11 @@
++import { fn } from './a.js';
++
++const num = 1
++
++export { fn } from './a.js';
++
++fn(num);
++
++it("should work", function() {
++	expect(fn(num)).toBe(1);
++});

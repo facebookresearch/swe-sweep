@@ -1,0 +1,14 @@
+--- a/sqlglot/expressions.py
++++ b/sqlglot/expressions.py
+@@ -204,8 +204,9 @@
+         """
+         Returns the alias of the expression, or an empty string if it's not aliased.
+         """
+-        if isinstance(self.args.get("alias"), TableAlias):
+-            return self.args["alias"].name
++        alias = self.args.get("alias")
++        if isinstance(alias, Expression):
++            return alias.name
+         return self.text("alias")
+ 
+     @property

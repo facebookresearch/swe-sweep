@@ -1,0 +1,13 @@
+diff --git a/pendulum/formatting/formatter.py b/pendulum/formatting/formatter.py
+index 76a4db4..b41873c 100644
+--- a/pendulum/formatting/formatter.py
++++ b/pendulum/formatting/formatter.py
+@@ -403,7 +403,7 @@ class Formatter:
+             lambda m: self._replace_tokens(m.group(0), locale), escaped_fmt
+         )
+ 
+-        if not re.match(pattern, time):
++        if not re.search("^" + pattern + "$", time):
+             raise ValueError("String does not match format {}".format(fmt))
+ 
+         re.sub(pattern, lambda m: self._get_parsed_values(m, parsed, locale, now), time)

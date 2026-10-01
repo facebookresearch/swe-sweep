@@ -1,0 +1,133 @@
+diff --git a/test/configCases/custom-hash-function/debug-hash/files/file1.js b/test/configCases/custom-hash-function/debug-hash/files/file1.js
+new file mode 100644
+index 000000000..3cec1b77a
+--- /dev/null
++++ b/test/configCases/custom-hash-function/debug-hash/files/file1.js
+@@ -0,0 +1 @@
++module.exports = module.id;
+diff --git a/test/configCases/custom-hash-function/debug-hash/files/file10.js b/test/configCases/custom-hash-function/debug-hash/files/file10.js
+new file mode 100644
+index 000000000..3cec1b77a
+--- /dev/null
++++ b/test/configCases/custom-hash-function/debug-hash/files/file10.js
+@@ -0,0 +1 @@
++module.exports = module.id;
+diff --git a/test/configCases/custom-hash-function/debug-hash/files/file11.js b/test/configCases/custom-hash-function/debug-hash/files/file11.js
+new file mode 100644
+index 000000000..3cec1b77a
+--- /dev/null
++++ b/test/configCases/custom-hash-function/debug-hash/files/file11.js
+@@ -0,0 +1 @@
++module.exports = module.id;
+diff --git a/test/configCases/custom-hash-function/debug-hash/files/file12.js b/test/configCases/custom-hash-function/debug-hash/files/file12.js
+new file mode 100644
+index 000000000..3cec1b77a
+--- /dev/null
++++ b/test/configCases/custom-hash-function/debug-hash/files/file12.js
+@@ -0,0 +1 @@
++module.exports = module.id;
+diff --git a/test/configCases/custom-hash-function/debug-hash/files/file13.js b/test/configCases/custom-hash-function/debug-hash/files/file13.js
+new file mode 100644
+index 000000000..3cec1b77a
+--- /dev/null
++++ b/test/configCases/custom-hash-function/debug-hash/files/file13.js
+@@ -0,0 +1 @@
++module.exports = module.id;
+diff --git a/test/configCases/custom-hash-function/debug-hash/files/file14.js b/test/configCases/custom-hash-function/debug-hash/files/file14.js
+new file mode 100644
+index 000000000..3cec1b77a
+--- /dev/null
++++ b/test/configCases/custom-hash-function/debug-hash/files/file14.js
+@@ -0,0 +1 @@
++module.exports = module.id;
+diff --git a/test/configCases/custom-hash-function/debug-hash/files/file15.js b/test/configCases/custom-hash-function/debug-hash/files/file15.js
+new file mode 100644
+index 000000000..3cec1b77a
+--- /dev/null
++++ b/test/configCases/custom-hash-function/debug-hash/files/file15.js
+@@ -0,0 +1 @@
++module.exports = module.id;
+diff --git a/test/configCases/custom-hash-function/debug-hash/files/file2.js b/test/configCases/custom-hash-function/debug-hash/files/file2.js
+new file mode 100644
+index 000000000..3cec1b77a
+--- /dev/null
++++ b/test/configCases/custom-hash-function/debug-hash/files/file2.js
+@@ -0,0 +1 @@
++module.exports = module.id;
+diff --git a/test/configCases/custom-hash-function/debug-hash/files/file3.js b/test/configCases/custom-hash-function/debug-hash/files/file3.js
+new file mode 100644
+index 000000000..3cec1b77a
+--- /dev/null
++++ b/test/configCases/custom-hash-function/debug-hash/files/file3.js
+@@ -0,0 +1 @@
++module.exports = module.id;
+diff --git a/test/configCases/custom-hash-function/debug-hash/files/file4.js b/test/configCases/custom-hash-function/debug-hash/files/file4.js
+new file mode 100644
+index 000000000..3cec1b77a
+--- /dev/null
++++ b/test/configCases/custom-hash-function/debug-hash/files/file4.js
+@@ -0,0 +1 @@
++module.exports = module.id;
+diff --git a/test/configCases/custom-hash-function/debug-hash/files/file5.js b/test/configCases/custom-hash-function/debug-hash/files/file5.js
+new file mode 100644
+index 000000000..3cec1b77a
+--- /dev/null
++++ b/test/configCases/custom-hash-function/debug-hash/files/file5.js
+@@ -0,0 +1 @@
++module.exports = module.id;
+diff --git a/test/configCases/custom-hash-function/debug-hash/files/file6.js b/test/configCases/custom-hash-function/debug-hash/files/file6.js
+new file mode 100644
+index 000000000..3cec1b77a
+--- /dev/null
++++ b/test/configCases/custom-hash-function/debug-hash/files/file6.js
+@@ -0,0 +1 @@
++module.exports = module.id;
+diff --git a/test/configCases/custom-hash-function/debug-hash/files/file7.js b/test/configCases/custom-hash-function/debug-hash/files/file7.js
+new file mode 100644
+index 000000000..3cec1b77a
+--- /dev/null
++++ b/test/configCases/custom-hash-function/debug-hash/files/file7.js
+@@ -0,0 +1 @@
++module.exports = module.id;
+diff --git a/test/configCases/custom-hash-function/debug-hash/files/file8.js b/test/configCases/custom-hash-function/debug-hash/files/file8.js
+new file mode 100644
+index 000000000..3cec1b77a
+--- /dev/null
++++ b/test/configCases/custom-hash-function/debug-hash/files/file8.js
+@@ -0,0 +1 @@
++module.exports = module.id;
+diff --git a/test/configCases/custom-hash-function/debug-hash/files/file9.js b/test/configCases/custom-hash-function/debug-hash/files/file9.js
+new file mode 100644
+index 000000000..3cec1b77a
+--- /dev/null
++++ b/test/configCases/custom-hash-function/debug-hash/files/file9.js
+@@ -0,0 +1 @@
++module.exports = module.id;
+diff --git a/test/configCases/custom-hash-function/debug-hash/index.js b/test/configCases/custom-hash-function/debug-hash/index.js
+new file mode 100644
+index 000000000..7b74a5a38
+--- /dev/null
++++ b/test/configCases/custom-hash-function/debug-hash/index.js
+@@ -0,0 +1,8 @@
++it("debug hash should works", function () {
++	var ids = [];
++	for(var i = 1; i <= 15; i++) {
++		var id = require("./files/file" + i + ".js");
++		expect(ids.indexOf(id)).toBe(-1);
++		ids.push(id);
++	}
++});
+diff --git a/test/configCases/custom-hash-function/debug-hash/webpack.config.js b/test/configCases/custom-hash-function/debug-hash/webpack.config.js
+new file mode 100644
+index 000000000..ee9e650c7
+--- /dev/null
++++ b/test/configCases/custom-hash-function/debug-hash/webpack.config.js
+@@ -0,0 +1,8 @@
++/** @type {import("../../../../").Configuration[]} */
++module.exports = [
++	{
++		output: {
++			hashFunction: "debug"
++		}
++	}
++];

@@ -1,0 +1,14 @@
+diff --git a/packages/jest-transform/src/shouldInstrument.ts b/packages/jest-transform/src/shouldInstrument.ts
+index 837a8417d0..2c1a5b796f 100644
+--- a/packages/jest-transform/src/shouldInstrument.ts
++++ b/packages/jest-transform/src/shouldInstrument.ts
+@@ -114,5 +114,9 @@ export default function shouldInstrument(
+     }
+   }
+ 
++  if (filename.endsWith('.json')) {
++    return false;
++  }
++
+   return true;
+ }

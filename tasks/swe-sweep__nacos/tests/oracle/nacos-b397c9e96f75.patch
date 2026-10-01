@@ -1,0 +1,28 @@
+diff --git a/plugin-default-impl/nacos-default-auth-plugin/src/main/java/com/alibaba/nacos/plugin/auth/impl/configuration/AuthConfigs.java b/plugin-default-impl/nacos-default-auth-plugin/src/main/java/com/alibaba/nacos/plugin/auth/impl/configuration/AuthConfigs.java
+index c6ecea67a..8d3c2743e 100644
+--- a/plugin-default-impl/nacos-default-auth-plugin/src/main/java/com/alibaba/nacos/plugin/auth/impl/configuration/AuthConfigs.java
++++ b/plugin-default-impl/nacos-default-auth-plugin/src/main/java/com/alibaba/nacos/plugin/auth/impl/configuration/AuthConfigs.java
+@@ -89,7 +89,7 @@ public class AuthConfigs extends Subscriber<ServerConfigChangeEvent> {
+     
+     private boolean hasGlobalAdminRole;
+     
+-    private Map<String, Properties> authPluginProperties = new HashMap<>();
++    private volatile Map<String, Properties> authPluginProperties = new HashMap<>();
+     
+     public AuthConfigs() {
+         NotifyCenter.registerSubscriber(this);
+@@ -196,11 +196,12 @@ public class AuthConfigs extends Subscriber<ServerConfigChangeEvent> {
+     }
+     
+     public Properties getAuthPluginProperties(String authType) {
+-        if (!authPluginProperties.containsKey(authType)) {
++        Properties properties = authPluginProperties.get(authType);
++        if (properties == null) {
+             LOGGER.warn("Can't find properties for type {}, will use empty properties", authType);
+             return new Properties();
+         }
+-        return authPluginProperties.get(authType);
++        return properties;
+     }
+     
+     @JustForTest

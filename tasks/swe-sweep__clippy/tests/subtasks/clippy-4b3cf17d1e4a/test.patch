@@ -1,0 +1,51 @@
+diff --git a/tests/ui/unused_unit.edition2021.fixed b/tests/ui/unused_unit.edition2021.fixed
+index 93dd58b8e..def8ef86e 100644
+--- a/tests/ui/unused_unit.edition2021.fixed
++++ b/tests/ui/unused_unit.edition2021.fixed
+@@ -143,4 +143,10 @@ mod issue14577 {
+             todo!()
+         }
+     }
+-}
+\ No newline at end of file
++}
++
++mod pr14962 {
++    #[allow(unused_parens)]
++    type UnusedParensButNoUnit = Box<dyn (Fn())>;
++}
++
+diff --git a/tests/ui/unused_unit.edition2024.fixed b/tests/ui/unused_unit.edition2024.fixed
+index 987d901b9..f908b958b 100644
+--- a/tests/ui/unused_unit.edition2024.fixed
++++ b/tests/ui/unused_unit.edition2024.fixed
+@@ -143,4 +143,10 @@ mod issue14577 {
+             todo!()
+         }
+     }
+-}
+\ No newline at end of file
++}
++
++mod pr14962 {
++    #[allow(unused_parens)]
++    type UnusedParensButNoUnit = Box<dyn (Fn())>;
++}
++
+diff --git a/tests/ui/unused_unit.rs b/tests/ui/unused_unit.rs
+index b7645f7b6..7298ec40c 100644
+--- a/tests/ui/unused_unit.rs
++++ b/tests/ui/unused_unit.rs
+@@ -143,4 +143,10 @@ mod issue14577 {
+             todo!()
+         }
+     }
+-}
+\ No newline at end of file
++}
++
++mod pr14962 {
++    #[allow(unused_parens)]
++    type UnusedParensButNoUnit = Box<dyn (Fn())>;
++}
++

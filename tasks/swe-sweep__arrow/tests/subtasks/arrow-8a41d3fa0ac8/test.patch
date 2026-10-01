@@ -1,0 +1,93 @@
+diff --git a/cpp/src/arrow/compute/kernels/vector_replace_test.cc b/cpp/src/arrow/compute/kernels/vector_replace_test.cc
+index 587b9f2a60..9dc8e70ab6 100644
+--- a/cpp/src/arrow/compute/kernels/vector_replace_test.cc
++++ b/cpp/src/arrow/compute/kernels/vector_replace_test.cc
+@@ -199,6 +199,13 @@ class TestReplaceBoolean : public TestReplaceKernel<BooleanType> {
+   }
+ };
+ 
++class TestReplaceNull : public TestReplaceKernel<NullType> {
++ protected:
++  std::shared_ptr<DataType> type() override {
++    return TypeTraits<NullType>::type_singleton();
++  }
++};
++
+ class TestReplaceFixedSizeBinary : public TestReplaceKernel<FixedSizeBinaryType> {
+  protected:
+   std::shared_ptr<DataType> type() override { return fixed_size_binary(3); }
+@@ -538,6 +545,35 @@ TEST_F(TestReplaceBoolean, ReplaceWithMask) {
+   }
+ }
+ 
++TEST_F(TestReplaceNull, ReplaceWithMask) {
++  std::vector<ReplaceWithMaskCase> cases = {
++      {this->array("[]"), this->mask_scalar(false), this->array("[]"), this->array("[]")},
++      {this->array("[]"), this->mask_scalar(true), this->array("[]"), this->array("[]")},
++      {this->array("[]"), this->null_mask_scalar(), this->array("[]"), this->array("[]")},
++
++      {this->array("[null]"), this->mask_scalar(false), this->array("[]"),
++       this->array("[null]")},
++
++      {this->array("[null]"), this->mask_scalar(true), this->array("[null]"),
++       this->array("[null]")},
++
++      {this->array("[null]"), this->null_mask_scalar(), this->array("[]"),
++       this->array("[null]")},
++
++      {this->array("[null, null]"), this->mask("[false, false]"), this->array("[]"),
++       this->array("[null, null]")},
++      {this->array("[null, null]"), this->mask("[true, true]"),
++       this->array("[null, null]"), this->array("[null, null]")},
++      {this->array("[null, null]"), this->mask("[null, null]"), this->array("[]"),
++       this->array("[null, null]")},
++  };
++
++  for (auto test_case : cases) {
++    this->Assert(ReplaceWithMask, test_case.input, test_case.mask, test_case.replacements,
++                 test_case.expected);
++  }
++}
++
+ TEST_F(TestReplaceBoolean, ReplaceWithMaskErrors) {
+   EXPECT_RAISES_WITH_MESSAGE_THAT(
+       Invalid,
+diff --git a/python/pyarrow/tests/test_compute.py b/python/pyarrow/tests/test_compute.py
+index 4e44a912d9..1c82d6c944 100644
+--- a/python/pyarrow/tests/test_compute.py
++++ b/python/pyarrow/tests/test_compute.py
+@@ -1269,6 +1269,34 @@ def test_extract_regex_span():
+     assert struct.tolist() == expected
+ 
+ 
++def test_replace_with_mask_null_type():
++    # GH-47447: replace_with_mask crashed for null type arrays
++    input = pa.array([None], pa.null())
++    replacements = pa.array([None], pa.null())
++
++    result = pc.replace_with_mask(input, True, replacements)
++    assert result.type == pa.null()
++    result.validate(full=True)
++    assert result.to_pylist() == [None]
++
++    result = pc.replace_with_mask(input, False, replacements)
++    assert result.type == pa.null()
++    result.validate(full=True)
++    assert result.to_pylist() == [None]
++
++    mask = pa.array([True])
++    result = pc.replace_with_mask(input, mask, replacements)
++    assert result.type == pa.null()
++    result.validate(full=True)
++    assert result.to_pylist() == [None]
++
++    mask = pa.array([False])
++    result = pc.replace_with_mask(input, mask, replacements)
++    assert result.type == pa.null()
++    result.validate(full=True)
++    assert result.to_pylist() == [None]
++
++
+ def test_binary_join():
+     ar_list = pa.array([['foo', 'bar'], None, []])
+     expected = pa.array(['foo-bar', None, ''])

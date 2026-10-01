@@ -1,0 +1,27 @@
+diff --git a/tests/FSharp.Compiler.ComponentTests/ErrorMessages/TailCallAttribute.fs b/tests/FSharp.Compiler.ComponentTests/ErrorMessages/TailCallAttribute.fs
+index e120848130..4eb2d3b2a1 100644
+--- a/tests/FSharp.Compiler.ComponentTests/ErrorMessages/TailCallAttribute.fs
++++ b/tests/FSharp.Compiler.ComponentTests/ErrorMessages/TailCallAttribute.fs
+@@ -1722,3 +1722,22 @@ module M =
+         |> withLangVersion80
+         |> compile
+         |> shouldSucceed
++
++    [<FSharp.Test.FactForNETCOREAPP>]
++    let ``Don't warn for tail rec call returning unit`` () =
++        """
++namespace N
++
++module M =
++
++    [<TailCall>]
++    let rec go (args: string list) =
++        match args with
++        | [] -> ()
++        | "--" :: _ -> ()
++        | arg :: args -> go args
++        """
++        |> FSharp
++        |> withLangVersion80
++        |> compile
++        |> shouldSucceed

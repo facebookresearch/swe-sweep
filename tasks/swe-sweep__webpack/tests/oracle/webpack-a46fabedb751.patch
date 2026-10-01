@@ -1,0 +1,21 @@
+diff --git a/lib/NodeStuffPlugin.js b/lib/NodeStuffPlugin.js
+index 46bd0156c..c8e151739 100644
+--- a/lib/NodeStuffPlugin.js
++++ b/lib/NodeStuffPlugin.js
+@@ -69,6 +69,16 @@ class NodeStuffPlugin {
+ 									);
+ 								}
+ 							});
++						parser.hooks.rename.for("global").tap("NodeStuffPlugin", expr => {
++							const dep = new ConstDependency(
++								RuntimeGlobals.global,
++								expr.range,
++								[RuntimeGlobals.global]
++							);
++							dep.loc = expr.loc;
++							parser.state.module.addPresentationalDependency(dep);
++							return false;
++						});
+ 					}
+ 
+ 					const setModuleConstant = (expressionName, fn, warning) => {

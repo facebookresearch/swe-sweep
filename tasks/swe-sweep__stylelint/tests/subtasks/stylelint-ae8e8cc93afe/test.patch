@@ -1,0 +1,67 @@
+diff --git a/lib/rules/selector-type-no-unknown/__tests__/index.mjs b/lib/rules/selector-type-no-unknown/__tests__/index.mjs
+index cd82fe099..b36b60a71 100644
+--- a/lib/rules/selector-type-no-unknown/__tests__/index.mjs
++++ b/lib/rules/selector-type-no-unknown/__tests__/index.mjs
+@@ -1,3 +1,5 @@
++import { stripIndent } from 'common-tags';
++
+ import naiveCssInJs from '../../../__tests__/fixtures/postcss-naive-css-in-js.cjs';
+ 
+ import rule from '../index.mjs';
+@@ -149,6 +151,16 @@ testRule({
+ 			code: '.foo /for/ .bar {}',
+ 			description: 'reference combinators',
+ 		},
++		{
++			code: stripIndent`
++				/* stylelint-disable-next-line selector-type-no-unknown */
++				unknown, /* stylelint-disable-next-line selector-type-no-unknown */
++				unknown,
++				/* stylelint-disable-next-line selector-type-no-unknown */
++				unknown
++				{}
++			`,
++		},
+ 	],
+ 
+ 	reject: [
+@@ -243,6 +255,39 @@ testRule({
+ 			endLine: 1,
+ 			endColumn: 6,
+ 		},
++		{
++			code: stripIndent`
++				/* a comment */
++				unknown, /* a comment */
++				unknown,
++				/* a comment */
++				unknown
++				{}
++			`,
++			warnings: [
++				{
++					message: messages.rejected('unknown'),
++					line: 2,
++					column: 1,
++					endLine: 2,
++					endColumn: 8,
++				},
++				{
++					message: messages.rejected('unknown'),
++					line: 3,
++					column: 1,
++					endLine: 3,
++					endColumn: 8,
++				},
++				{
++					message: messages.rejected('unknown'),
++					line: 5,
++					column: 1,
++					endLine: 5,
++					endColumn: 8,
++				},
++			],
++		},
+ 	],
+ });
+ 

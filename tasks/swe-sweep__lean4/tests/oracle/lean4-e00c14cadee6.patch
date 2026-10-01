@@ -1,0 +1,16 @@
+diff --git a/src/runtime/sharecommon.cpp b/src/runtime/sharecommon.cpp
+index 67951044d0..e8132a146d 100644
+--- a/src/runtime/sharecommon.cpp
++++ b/src/runtime/sharecommon.cpp
+@@ -233,7 +233,10 @@ public:
+ 
+     obj_res operator()(obj_arg a) {
+         if (push_child(a)) {
+-            return m_state.pack(a);
++            object * r = m_children.back();
++            lean_inc(r);
++            lean_dec(a);
++            return m_state.pack(r);
+         }
+         while (!m_todo.empty()) {
+             b_obj_arg curr = m_todo.back();

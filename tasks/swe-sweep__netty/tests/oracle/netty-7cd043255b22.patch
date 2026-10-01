@@ -1,0 +1,70 @@
+diff --git a/codec/src/main/java/io/netty/handler/codec/compression/CompressionUtil.java b/codec/src/main/java/io/netty/handler/codec/compression/CompressionUtil.java
+index 8b43e7f..f25f1ee 100644
+--- a/codec/src/main/java/io/netty/handler/codec/compression/CompressionUtil.java
++++ b/codec/src/main/java/io/netty/handler/codec/compression/CompressionUtil.java
+@@ -40,4 +40,9 @@ final class CompressionUtil {
+         return buffer.nioBufferCount() == 1 ? buffer.internalNioBuffer(buffer.readerIndex(), buffer.readableBytes())
+                 : buffer.nioBuffer();
+     }
++
++    static ByteBuffer safeNioBuffer(ByteBuf buffer, int index, int length) {
++        return buffer.nioBufferCount() == 1 ? buffer.internalNioBuffer(index, length)
++                : buffer.nioBuffer(index, length);
++    }
+ }
+diff --git a/codec/src/main/java/io/netty/handler/codec/compression/Lz4FrameDecoder.java b/codec/src/main/java/io/netty/handler/codec/compression/Lz4FrameDecoder.java
+index c1d39b3cc4..6595cf288d 100644
+--- a/codec/src/main/java/io/netty/handler/codec/compression/Lz4FrameDecoder.java
++++ b/codec/src/main/java/io/netty/handler/codec/compression/Lz4FrameDecoder.java
+@@ -20,9 +20,10 @@ import io.netty.channel.ChannelHandlerContext;
+ import io.netty.handler.codec.ByteToMessageDecoder;
+ import net.jpountz.lz4.LZ4Exception;
+ import net.jpountz.lz4.LZ4Factory;
+-import net.jpountz.lz4.LZ4FastDecompressor;
++import net.jpountz.lz4.LZ4SafeDecompressor;
+ import net.jpountz.xxhash.XXHashFactory;
+ 
++import java.nio.ByteBuffer;
+ import java.util.List;
+ import java.util.zip.Checksum;
+ 
+@@ -60,7 +61,7 @@ public class Lz4FrameDecoder extends ByteToMessageDecoder {
+     /**
+      * Underlying decompressor in use.
+      */
+-    private LZ4FastDecompressor decompressor;
++    private LZ4SafeDecompressor decompressor;
+ 
+     /**
+      * Underlying checksum calculator in use.
+@@ -142,7 +143,7 @@ public class Lz4FrameDecoder extends ByteToMessageDecoder {
+         if (factory == null) {
+             throw new NullPointerException("factory");
+         }
+-        decompressor = factory.fastDecompressor();
++        decompressor = factory.safeDecompressor();
+         this.checksum = checksum == null ? null : ByteBufChecksum.wrapChecksum(checksum);
+     }
+ 
+@@ -226,8 +227,19 @@ public class Lz4FrameDecoder extends ByteToMessageDecoder {
+                         case BLOCK_TYPE_COMPRESSED:
+                             uncompressed = ctx.alloc().buffer(decompressedLength, decompressedLength);
+ 
+-                            decompressor.decompress(CompressionUtil.safeNioBuffer(in),
+-                                    uncompressed.internalNioBuffer(uncompressed.writerIndex(), decompressedLength));
++                            ByteBuffer source = CompressionUtil.safeNioBuffer(
++                                    in, in.readerIndex(), compressedLength);
++                            ByteBuffer destination = uncompressed.internalNioBuffer(
++                                    uncompressed.writerIndex(), decompressedLength);
++                            int actualDecompressedLength = decompressor.decompress(
++                                    source, source.position(), compressedLength,
++                                    destination, destination.position(), decompressedLength);
++                            if (actualDecompressedLength != decompressedLength) {
++                                throw new DecompressionException(String.format(
++                                        "stream corrupted: decompressedLength(%d) and " +
++                                                "actualDecompressedLength(%d) mismatch",
++                                        decompressedLength, actualDecompressedLength));
++                            }
+                             // Update the writerIndex now to reflect what we decompressed.
+                             uncompressed.writerIndex(uncompressed.writerIndex() + decompressedLength);
+                             break;

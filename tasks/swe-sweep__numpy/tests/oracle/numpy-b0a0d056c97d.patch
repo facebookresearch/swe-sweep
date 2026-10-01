@@ -1,0 +1,78 @@
+diff --git a/numpy/core/src/multiarray/arrayobject.c b/numpy/core/src/multiarray/arrayobject.c
+index 16896aa1253f..dedaf38eb6d1 100644
+--- a/numpy/core/src/multiarray/arrayobject.c
++++ b/numpy/core/src/multiarray/arrayobject.c
+@@ -41,6 +41,7 @@ maintainer email:  oliphant.travis@ieee.org
+ #include "arraytypes.h"
+ #include "scalartypes.h"
+ #include "arrayobject.h"
++#include "conversion_utils.h"
+ #include "ctors.h"
+ #include "methods.h"
+ #include "descriptor.h"
+@@ -1624,7 +1625,7 @@ array_new(PyTypeObject *subtype, PyObject *args, PyObject *kwds)
+     PyArray_Descr *descr = NULL;
+     int itemsize;
+     PyArray_Dims dims = {NULL, 0};
+-    PyArray_Dims strides = {NULL, 0};
++    PyArray_Dims strides = {NULL, -1};
+     PyArray_Chunk buffer;
+     npy_longlong offset = 0;
+     NPY_ORDER order = NPY_CORDER;
+@@ -1645,7 +1646,7 @@ array_new(PyTypeObject *subtype, PyObject *args, PyObject *kwds)
+                                      PyArray_BufferConverter,
+                                      &buffer,
+                                      &offset,
+-                                     &PyArray_IntpConverter,
++                                     &PyArray_OptionalIntpConverter,
+                                      &strides,
+                                      &PyArray_OrderConverter,
+                                      &order)) {
+@@ -1660,7 +1661,7 @@ array_new(PyTypeObject *subtype, PyObject *args, PyObject *kwds)
+ 
+     itemsize = descr->elsize;
+ 
+-    if (strides.ptr != NULL) {
++    if (strides.len != -1) {
+         npy_intp nb, off;
+         if (strides.len != dims.len) {
+             PyErr_SetString(PyExc_ValueError,
+diff --git a/numpy/core/src/multiarray/conversion_utils.c b/numpy/core/src/multiarray/conversion_utils.c
+index 484a13134561..260ae7080325 100644
+--- a/numpy/core/src/multiarray/conversion_utils.c
++++ b/numpy/core/src/multiarray/conversion_utils.c
+@@ -137,6 +137,20 @@ PyArray_IntpConverter(PyObject *obj, PyArray_Dims *seq)
+     return NPY_SUCCEED;
+ }
+ 
++/*
++ * Like PyArray_IntpConverter, but leaves `seq` untouched if `None` is passed
++ * rather than treating `None` as `()`.
++ */
++NPY_NO_EXPORT int
++PyArray_OptionalIntpConverter(PyObject *obj, PyArray_Dims *seq)
++{
++    if (obj == Py_None) {
++        return NPY_SUCCEED;
++    }
++
++    return PyArray_IntpConverter(obj, seq);
++}
++
+ /*NUMPY_API
+  * Get buffer chunk from object
+  *
+diff --git a/numpy/core/src/multiarray/conversion_utils.h b/numpy/core/src/multiarray/conversion_utils.h
+index 9bf712c3b530..bee0c6064d05 100644
+--- a/numpy/core/src/multiarray/conversion_utils.h
++++ b/numpy/core/src/multiarray/conversion_utils.h
+@@ -6,6 +6,9 @@
+ NPY_NO_EXPORT int
+ PyArray_IntpConverter(PyObject *obj, PyArray_Dims *seq);
+ 
++NPY_NO_EXPORT int
++PyArray_OptionalIntpConverter(PyObject *obj, PyArray_Dims *seq);
++
+ NPY_NO_EXPORT int
+ PyArray_BufferConverter(PyObject *obj, PyArray_Chunk *buf);
+ 

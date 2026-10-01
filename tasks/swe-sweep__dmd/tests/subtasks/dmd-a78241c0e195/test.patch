@@ -1,0 +1,23 @@
+diff --git a/compiler/test/compilable/test23912.d b/compiler/test/compilable/test23912.d
+new file mode 100644
+index 0000000000..d89d3026e8
+--- /dev/null
++++ b/compiler/test/compilable/test23912.d
+@@ -0,0 +1,17 @@
++// https://issues.dlang.org/show_bug.cgi?id=23912
++// REQUIRED_ARGS: -preview=dip1000
++
++struct Test
++{
++    string val;
++
++    this(return scope string val) scope @safe {}
++    ~this() scope @safe {}
++}
++
++void giver(scope string input) @safe
++{
++    accepts(Test(input));
++}
++
++void accepts(scope Test test) @safe {}

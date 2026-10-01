@@ -1,0 +1,98 @@
+diff --git a/modules/openapi-generator/src/main/java/org/openapitools/codegen/IJsonSchemaValidationProperties.java b/modules/openapi-generator/src/main/java/org/openapitools/codegen/IJsonSchemaValidationProperties.java
+index 1becfcc9591..7abc0e39d6f 100644
+--- a/modules/openapi-generator/src/main/java/org/openapitools/codegen/IJsonSchemaValidationProperties.java
++++ b/modules/openapi-generator/src/main/java/org/openapitools/codegen/IJsonSchemaValidationProperties.java
+@@ -329,6 +329,8 @@ public interface IJsonSchemaValidationProperties {
+             setIsFreeFormObject(true);
+             // TODO: remove below later after updating generators to properly use isFreeFormObject
+             setIsMap(true);
++        } else if (ModelUtils.isMapSchema(p)) {
++            setIsMap(true);
+         } else if (ModelUtils.isTypeObjectSchema(p)) {
+             setIsMap(true);
+         }
+diff --git a/modules/openapi-generator/src/main/java/org/openapitools/codegen/utils/ModelUtils.java b/modules/openapi-generator/src/main/java/org/openapitools/codegen/utils/ModelUtils.java
+index d19c4f9e7ed..ddf13554968 100644
+--- a/modules/openapi-generator/src/main/java/org/openapitools/codegen/utils/ModelUtils.java
++++ b/modules/openapi-generator/src/main/java/org/openapitools/codegen/utils/ModelUtils.java
+@@ -417,7 +417,16 @@ public class ModelUtils {
+      * @return true if the specified schema is an Object schema.
+      */
+     public static boolean isTypeObjectSchema(Schema schema) {
+-        return SchemaTypeUtil.OBJECT_TYPE.equals(schema.getType());
++        if (schema instanceof JsonSchema) { // 3.1 spec
++            if (schema.getTypes() != null && schema.getTypes().size() == 1) {
++                return SchemaTypeUtil.OBJECT_TYPE.equals(schema.getTypes().iterator().next());
++            } else {
++                // null type or  multiple types, e.g. [string, integer]
++                return false;
++            }
++        } else { // 3.0.x or 2.0 spec
++            return SchemaTypeUtil.OBJECT_TYPE.equals(schema.getType());
++        }
+     }
+ 
+     /**
+@@ -567,9 +576,14 @@ public class ModelUtils {
+             return false;
+         }
+ 
+-        return (schema instanceof MapSchema) ||
+-                (schema.getAdditionalProperties() instanceof Schema) ||
+-                (schema.getAdditionalProperties() instanceof Boolean && (Boolean) schema.getAdditionalProperties());
++        if (schema instanceof JsonSchema) { // 3.1 spec
++            return ((schema.getAdditionalProperties() instanceof JsonSchema) ||
++                    (schema.getAdditionalProperties() instanceof Boolean && (Boolean) schema.getAdditionalProperties()));
++        } else { // 3.0 or 2.x spec
++            return (schema instanceof MapSchema) ||
++                    (schema.getAdditionalProperties() instanceof Schema) ||
++                    (schema.getAdditionalProperties() instanceof Boolean && (Boolean) schema.getAdditionalProperties());
++        }
+     }
+ 
+     /**
+@@ -790,6 +804,31 @@ public class ModelUtils {
+             return false;
+         }
+ 
++        if (schema instanceof JsonSchema) { // 3.1 spec
++            if (isComposedSchema(schema)) { // composed schema, e.g. allOf, oneOf, anyOf
++                return false;
++            }
++
++            if (schema.getProperties() != null && !schema.getProperties().isEmpty()) { // has properties
++                return false;
++            }
++
++            if (schema.getAdditionalProperties() instanceof Boolean && (Boolean) schema.getAdditionalProperties()) {
++                return true;
++            } else if (schema.getAdditionalProperties() instanceof JsonSchema) {
++                return true;
++            } else if (schema.getTypes() != null) {
++                if (schema.getTypes().size() == 1) { // types = [object]
++                    return SchemaTypeUtil.OBJECT_TYPE.equals(schema.getTypes().iterator().next());
++                } else { // has more than 1 type, e.g. types = [integer, string]
++                    return false;
++                }
++            }
++
++            return false;
++        }
++
++        // 3.0.x spec or 2.x spec
+         // not free-form if allOf, anyOf, oneOf is not empty
+         if (isComposedSchema(schema)) {
+             List<Schema> interfaces = ModelUtils.getInterfaces(schema);
+diff --git a/modules/openapi-generator/src/main/resources/rust/model.mustache b/modules/openapi-generator/src/main/resources/rust/model.mustache
+index e193499d44c..4038a14ed58 100644
+--- a/modules/openapi-generator/src/main/resources/rust/model.mustache
++++ b/modules/openapi-generator/src/main/resources/rust/model.mustache
+@@ -82,7 +82,7 @@ impl {{{classname}}} {
+     pub fn new({{#requiredVars}}{{{name}}}: {{#isNullable}}Option<{{/isNullable}}{{#isEnum}}{{#isArray}}{{#uniqueItems}}std::collections::HashSet<{{/uniqueItems}}{{^uniqueItems}}Vec<{{/uniqueItems}}{{/isArray}}{{{enumName}}}{{#isArray}}>{{/isArray}}{{/isEnum}}{{^isEnum}}{{{dataType}}}{{/isEnum}}{{#isNullable}}>{{/isNullable}}{{^-last}}, {{/-last}}{{/requiredVars}}) -> {{{classname}}} {
+         {{{classname}}} {
+             {{#vars}}
+-            {{{name}}}{{^required}}{{#isContainer}}{{#isArray}}: None{{/isArray}}{{#isMap}}: None{{/isMap}}{{^isArray}}{{^isMap}}{{#isNullable}}: None{{/isNullable}}{{/isMap}}{{/isArray}}{{/isContainer}}{{^isContainer}}: None{{/isContainer}}{{/required}}{{#required}}{{#isModel}}: {{^isNullable}}Box::new({{{name}}}){{/isNullable}}{{#isNullable}}if let Some(x) = {{{name}}} {Some(Box::new(x))} else {None}{{/isNullable}}{{/isModel}}{{/required}},
++            {{{name}}}{{^required}}{{#isFreeFormObject}}: None{{/isFreeFormObject}}{{#isContainer}}{{#isArray}}: None{{/isArray}}{{#isMap}}: None{{/isMap}}{{^isArray}}{{^isMap}}{{#isNullable}}: None{{/isNullable}}{{/isMap}}{{/isArray}}{{/isContainer}}{{^isContainer}}: None{{/isContainer}}{{/required}}{{#required}}{{#isModel}}: {{^isNullable}}Box::new({{{name}}}){{/isNullable}}{{#isNullable}}if let Some(x) = {{{name}}} {Some(Box::new(x))} else {None}{{/isNullable}}{{/isModel}}{{/required}},
+             {{/vars}}
+         }
+     }

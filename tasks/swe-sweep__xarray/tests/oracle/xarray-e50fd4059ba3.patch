@@ -1,0 +1,13 @@
+diff --git a/xarray/core/dataset.py b/xarray/core/dataset.py
+index 3ca222b1..9c2c2f60 100644
+--- a/xarray/core/dataset.py
++++ b/xarray/core/dataset.py
+@@ -4063,7 +4063,7 @@ class Dataset(
+             if name != dim:
+                 if dim in var.dims:
+                     if isinstance(fill_value, Mapping):
+-                        fill_value_ = fill_value[name]
++                        fill_value_ = fill_value.get(name, dtypes.NA)
+                     else:
+                         fill_value_ = fill_value
+ 

@@ -1,0 +1,55 @@
+diff --git a/scipy/ndimage/tests/test_ndimage.py b/scipy/ndimage/tests/test_ndimage.py
+--- a/scipy/ndimage/tests/test_ndimage.py
++++ b/scipy/ndimage/tests/test_ndimage.py
+@@ -1728,7 +1728,32 @@ class TestNdimage:
+             ndimage.map_coordinates(a, [[n - 1.5], [n - 1.5]], order=1)
+         except MemoryError:
+             raise pytest.skip("Not enough memory available")
+ 
++    @pytest.mark.parametrize('n_channels', range(1, 4))
++    @pytest.mark.parametrize('order', range(2, 6))
++    def test_map_coordinates_reflect_multichannel(self, n_channels, order):
++        # Regression test for gh-24550: reflect mode spline prefilter had an
++        # aliasing bug that caused accuracy loss for multi-channel images.
++        rng = numpy.random.RandomState(4567)
++        image = rng.random_sample((8, 8)).astype(numpy.float64)
++        coords = rng.random_sample((2, 5, 5)) * 7
++
++        single = ndimage.map_coordinates(image, coords, order=order,
++                                         mode='reflect')
++
++        color = numpy.stack([image] * n_channels, axis=-1)
++        channels = numpy.broadcast_to(numpy.arange(n_channels),
++                                      (1, 5, 5, n_channels))
++        coords_color = numpy.broadcast_to(
++            coords[..., numpy.newaxis], (2, 5, 5, n_channels))
++        coords_color = numpy.concatenate(
++            (coords_color, channels), axis=0)
++
++        multi = ndimage.map_coordinates(color, coords_color, order=order,
++                                        mode='reflect')
++        expected = numpy.stack([single] * n_channels, axis=-1)
++        assert_array_almost_equal(multi, expected)
++
+     def test_affine_transform01(self):
+         data = numpy.array([1])
+         for order in range(0, 6):
+diff --git a/scipy/ndimage/tests/test_splines.py b/scipy/ndimage/tests/test_splines.py
+--- a/scipy/ndimage/tests/test_splines.py
++++ b/scipy/ndimage/tests/test_splines.py
+@@ -66,3 +66,15 @@ def test_spline_filter_vs_matrix_solution(order, mode):
+     matrix = make_spline_knot_matrix(n, order, mode=mode)
+     assert_almost_equal(eye, np.dot(spline_filter_axis_0, matrix))
+     assert_almost_equal(eye, np.dot(spline_filter_axis_1, matrix.T))
++
++
++@pytest.mark.parametrize('order', [2, 3, 4, 5])
++@pytest.mark.parametrize('n', [2, 3, 4, 5])
++def test_spline_filter_reflect_small_n(order, n):
++    # Regression test for gh-24550: the causal reflect initialization had an
++    # aliasing bug where c[0] was read back after mutation via c[n-1-i].
++    # For large n the error is negligible, but for small n it is significant.
++    eye = np.eye(n, dtype=np.float64)
++    filtered = ndimage.spline_filter1d(eye, axis=0, order=order, mode='reflect')
++    matrix = make_spline_knot_matrix(n, order, mode='reflect')
++    np.testing.assert_allclose(np.dot(filtered, matrix), eye, atol=1e-12)

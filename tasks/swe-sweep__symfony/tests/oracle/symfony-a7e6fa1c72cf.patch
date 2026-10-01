@@ -1,0 +1,35 @@
+diff --git a/src/Symfony/Component/VarDumper/Caster/ReflectionCaster.php b/src/Symfony/Component/VarDumper/Caster/ReflectionCaster.php
+index db87239ef4a..ec09da4fef3 100644
+--- a/src/Symfony/Component/VarDumper/Caster/ReflectionCaster.php
++++ b/src/Symfony/Component/VarDumper/Caster/ReflectionCaster.php
+@@ -231,7 +231,7 @@ class ReflectionCaster
+         if (isset($a[$prefix.'returnType'])) {
+             $v = $a[$prefix.'returnType'];
+             $v = $v instanceof \ReflectionNamedType ? $v->getName() : (string) $v;
+-            $a[$prefix.'returnType'] = new ClassStub($a[$prefix.'returnType'] instanceof \ReflectionNamedType && $a[$prefix.'returnType']->allowsNull() && 'mixed' !== $v ? '?'.$v : $v, [class_exists($v, false) || interface_exists($v, false) || trait_exists($v, false) ? $v : '', '']);
++            $a[$prefix.'returnType'] = new ClassStub($a[$prefix.'returnType'] instanceof \ReflectionNamedType && $a[$prefix.'returnType']->allowsNull() && !\in_array($v, ['mixed', 'null'], true) ? '?'.$v : $v, [class_exists($v, false) || interface_exists($v, false) || trait_exists($v, false) ? $v : '', '']);
+         }
+         if (isset($a[$prefix.'class'])) {
+             $a[$prefix.'class'] = new ClassStub($a[$prefix.'class']);
+@@ -413,7 +413,7 @@ class ReflectionCaster
+                     if (!$type instanceof \ReflectionNamedType) {
+                         $signature .= $type.' ';
+                     } else {
+-                        if (!$param->isOptional() && $param->allowsNull() && 'mixed' !== $type->getName()) {
++                        if ($param->allowsNull() && !\in_array($type->getName(), ['mixed', 'null'], true)) {
+                             $signature .= '?';
+                         }
+                         $signature .= substr(strrchr('\\'.$type->getName(), '\\'), 1).' ';
+diff --git a/src/Symfony/Component/VarExporter/ProxyHelper.php b/src/Symfony/Component/VarExporter/ProxyHelper.php
+index 51e0d2afa7d..9105d0c71da 100644
+--- a/src/Symfony/Component/VarExporter/ProxyHelper.php
++++ b/src/Symfony/Component/VarExporter/ProxyHelper.php
+@@ -311,7 +311,7 @@ final class ProxyHelper
+             return '';
+         }
+         if (null === $glue) {
+-            return (!$noBuiltin && $type->allowsNull() && 'mixed' !== $name ? '?' : '').$types[0];
++            return (!$noBuiltin && $type->allowsNull() && !\in_array($name, ['mixed', 'null'], true) ? '?' : '').$types[0];
+         }
+         sort($types);
+ 

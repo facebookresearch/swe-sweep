@@ -1,0 +1,12 @@
+diff --git a/router.go b/router.go
+index 86a986a..597660d 100644
+--- a/router.go
++++ b/router.go
+@@ -524,7 +524,6 @@ func optionsMethodHandler(allowMethods string) func(c Context) error {
+ // - Return it `Echo#ReleaseContext()`.
+ func (r *Router) Find(method, path string, c Context) {
+ 	ctx := c.(*context)
+-	ctx.path = path
+ 	currentNode := r.tree // Current node as root
+ 
+ 	var (

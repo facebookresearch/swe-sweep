@@ -1,0 +1,452 @@
+diff --git a/tests/FSharp.Compiler.ComponentTests/Signatures/TypeTests.fs b/tests/FSharp.Compiler.ComponentTests/Signatures/TypeTests.fs
+index e3be13782f..1494c465af 100644
+--- a/tests/FSharp.Compiler.ComponentTests/Signatures/TypeTests.fs
++++ b/tests/FSharp.Compiler.ComponentTests/Signatures/TypeTests.fs
+@@ -263,3 +263,50 @@ type Foo =
+   member Bar: a: int -> int with get
+ 
+   member Bar: a: int -> int with set"""
++
++[<Fact>]
++let ``get_Is* method has IsUnionCaseTester = true`` () =
++    FSharp """
++module Lib
++
++type Foo =
++    | Bar of int
++    | Baz of string
++    member this.IsP
++      with get () = 42
++
++let bar = Bar 5
++
++let f = bar.get_IsBar
++"""
++    |> withLangVersionPreview
++    |> typecheckResults
++    |> fun results ->
++        let isBarSymbolUse = results.GetSymbolUseAtLocation(12, 21, "let f = bar.get_IsBar", [ "get_IsBar" ]).Value
++        match isBarSymbolUse.Symbol with
++        | :? FSharpMemberOrFunctionOrValue as mfv ->
++            Assert.True(mfv.IsUnionCaseTester, "IsUnionCaseTester returned true")
++            Assert.True(mfv.IsMethod, "IsMethod returned true")
++            Assert.False(mfv.IsProperty, "IsProptery returned true")
++            Assert.True(mfv.IsPropertyGetterMethod, "IsPropertyGetterMethod returned false")
++        | _ -> failwith "Expected FSharpMemberOrFunctionOrValue"
++
++[<Fact>]
++let ``IsUnionCaseTester does not throw for non-method non-property`` () =
++    FSharp """
++module Lib
++
++type Foo() =
++    member _.Bar x = x
++
++let foo = Foo()
++"""
++    |> withLangVersionPreview
++    |> typecheckResults
++    |> fun results ->
++        let isBarSymbolUse = results.GetSymbolUseAtLocation(7, 13, "let foo = Foo()", [ "Foo" ]).Value
++        match isBarSymbolUse.Symbol with
++        | :? FSharpMemberOrFunctionOrValue as mfv ->
++            Assert.False(mfv.IsUnionCaseTester, "IsUnionCaseTester returned true")
++            Assert.True(mfv.IsConstructor)
++        | _ -> failwith "Expected FSharpMemberOrFunctionOrValue"
+\ No newline at end of file
+diff --git a/tests/FSharp.Compiler.Service.Tests/Common.fs b/tests/FSharp.Compiler.Service.Tests/Common.fs
+index 68e5c68598..ad9195d25c 100644
+--- a/tests/FSharp.Compiler.Service.Tests/Common.fs
++++ b/tests/FSharp.Compiler.Service.Tests/Common.fs
+@@ -5,10 +5,10 @@ open System
+ open System.Diagnostics
+ open System.IO
+ open System.Collections.Generic
++open System.Threading
+ open System.Threading.Tasks
+ open FSharp.Compiler.CodeAnalysis
+ open FSharp.Compiler.IO
+-open FSharp.Compiler.Diagnostics
+ open FSharp.Compiler.Symbols
+ open FSharp.Compiler.Syntax
+ open FSharp.Compiler.Text
+@@ -473,3 +473,63 @@ let assertRange
+     Assert.Equal(Position.mkPos expectedStartLine expectedStartColumn, actualRange.Start)
+     Assert.Equal(Position.mkPos expectedEndLine expectedEndColumn, actualRange.End)
+ 
++[<AutoOpen>]
++module TempDirUtils =
++    let getTempPath dir =
++        Path.Combine(Path.GetTempPath(), dir)
++
++    /// Returns the file name part of a temp file name created with tryCreateTemporaryFileName ()
++    /// and an added process id and thread id to ensure uniqueness between threads.
++    let getTempFileName() =
++        let tempFileName = tryCreateTemporaryFileName ()
++        try
++            let tempFile, tempExt = Path.GetFileNameWithoutExtension tempFileName, Path.GetExtension tempFileName
++            let procId, threadId = Process.GetCurrentProcess().Id, Thread.CurrentThread.ManagedThreadId
++            String.concat "" [tempFile; "_"; string procId; "_"; string threadId; tempExt]  // ext includes dot
++        finally
++            try
++                FileSystem.FileDeleteShim tempFileName
++            with _ -> ()
++
++    /// Given just a file name, returns it with changed extension located in %TEMP%\ExprTests
++    let getTempFilePathChangeExt dir tmp ext =
++        Path.Combine(getTempPath dir, Path.ChangeExtension(tmp, ext))
++
++    /// If it doesn't exists, create a folder 'ExprTests' in local user's %TEMP% folder
++    let createTempDir dirName =
++        let tempPath = getTempPath dirName
++        do
++            if Directory.Exists tempPath then ()
++            else Directory.CreateDirectory tempPath |> ignore
++
++    /// Clean up after a test is run. If you need to inspect the create *.fs files, change this function to do nothing, or just break here.
++    let cleanupTempFiles dirName files =
++        { new IDisposable with
++            member _.Dispose() =
++                for fileName in files do
++                    try
++                        // cleanup: only the source file is written to the temp dir.
++                        FileSystem.FileDeleteShim fileName
++                    with _ -> ()
++
++                try
++                    // remove the dir when empty
++                    let tempPath = getTempPath dirName
++                    if Directory.GetFiles tempPath |> Array.isEmpty then
++                        Directory.Delete tempPath
++                with _ -> () }
++
++    let createProjectOptions dirName fileSources extraArgs =
++        let fileNames = fileSources |> List.map (fun _ -> getTempFileName())
++        let temp2 = getTempFileName()
++        let fileNames = fileNames |> List.map (fun temp1 -> getTempFilePathChangeExt dirName temp1 ".fs")
++        let dllName = getTempFilePathChangeExt dirName temp2 ".dll"
++        let projFileName = getTempFilePathChangeExt dirName temp2 ".fsproj"
++
++        createTempDir dirName
++        for fileSource: string, fileName in List.zip fileSources fileNames do
++             FileSystem.OpenFileForWriteShim(fileName).Write(fileSource)
++        let args = [| yield! extraArgs; yield! mkProjectCommandLineArgs (dllName, []) |]
++        let options = { checker.GetProjectOptionsFromCommandLineArgs (projFileName, args) with SourceFiles = fileNames |> List.toArray }
++
++        cleanupTempFiles dirName (fileNames @ [dllName; projFileName]), options
+diff --git a/tests/FSharp.Compiler.Service.Tests/ExprTests.fs b/tests/FSharp.Compiler.Service.Tests/ExprTests.fs
+index 6c7c755b0c..523a70cbea 100644
+--- a/tests/FSharp.Compiler.Service.Tests/ExprTests.fs
++++ b/tests/FSharp.Compiler.Service.Tests/ExprTests.fs
+@@ -3,18 +3,14 @@
+ open Xunit
+ open FsUnit
+ open System
+-open System.IO
+ open System.Text
+ open System.Collections.Generic
+-open System.Diagnostics
+-open System.Threading
+ open FSharp.Compiler.CodeAnalysis
+ open FSharp.Compiler.Diagnostics
+ open FSharp.Compiler.IO
+ open FSharp.Compiler.Service.Tests.Common
+ open FSharp.Compiler.Symbols
+ open FSharp.Compiler.Symbols.FSharpExprPatterns
+-open TestFramework
+ 
+ type FSharpCore =
+     | FC45
+@@ -29,52 +25,11 @@ type FSharpCore =
+         | FC47 -> "FSharp.Core 4.7"
+         | FC50 -> "FSharp.Core 5.0"
+ 
++[<Literal>]
++let dirName = "ExprTests"
+ 
+ [<AutoOpen>]
+ module internal Utils =
+-    let getTempPath() =
+-        Path.Combine(Path.GetTempPath(), "ExprTests")
+-
+-    /// If it doesn't exists, create a folder 'ExprTests' in local user's %TEMP% folder
+-    let createTempDir() =
+-        let tempPath = getTempPath()
+-        do
+-            if Directory.Exists tempPath then ()
+-            else Directory.CreateDirectory tempPath |> ignore
+-
+-    /// Returns the file name part of a temp file name created with tryCreateTemporaryFileName ()
+-    /// and an added process id and thread id to ensure uniqueness between threads.
+-    let getTempFileName() =
+-        let tempFileName = tryCreateTemporaryFileName ()
+-        try
+-            let tempFile, tempExt = Path.GetFileNameWithoutExtension tempFileName, Path.GetExtension tempFileName
+-            let procId, threadId = Process.GetCurrentProcess().Id, Thread.CurrentThread.ManagedThreadId
+-            String.concat "" [tempFile; "_"; string procId; "_"; string threadId; tempExt]  // ext includes dot
+-        finally
+-            try
+-                FileSystem.FileDeleteShim tempFileName
+-            with _ -> ()
+-
+-    /// Clean up after a test is run. If you need to inspect the create *.fs files, change this function to do nothing, or just break here.
+-    let cleanupTempFiles files =
+-        { new IDisposable with
+-            member _.Dispose() =
+-                for fileName in files do
+-                    try
+-                        // cleanup: only the source file is written to the temp dir.
+-                        FileSystem.FileDeleteShim fileName
+-                    with _ -> ()
+-
+-                try
+-                    // remove the dir when empty
+-                    let tempPath = getTempPath()
+-                    if Directory.GetFiles tempPath |> Array.isEmpty then
+-                        Directory.Delete tempPath
+-                with _ -> () }
+-
+-    /// Given just a file name, returns it with changed extension located in %TEMP%\ExprTests
+-    let getTempFilePathChangeExt tmp ext =
+-        Path.Combine(getTempPath(), Path.ChangeExtension(tmp, ext))
+ 
+     // This behaves slightly differently on Mono versions, 'null' is printed somethimes, 'None' other times
+     // Presumably this is very small differences in Mono reflection causing F# printing to change behaviour
+@@ -345,22 +300,6 @@ module internal Utils =
+                 yield! collectMembers e |> Seq.map printMemberSignature
+         }
+ 
+-
+-let createOptionsAux fileSources extraArgs =
+-    let fileNames = fileSources |> List.map (fun _ -> Utils.getTempFileName())
+-    let temp2 = Utils.getTempFileName()
+-    let fileNames = fileNames |> List.map (fun temp1 -> Utils.getTempFilePathChangeExt temp1 ".fs")
+-    let dllName = Utils.getTempFilePathChangeExt temp2 ".dll"
+-    let projFileName = Utils.getTempFilePathChangeExt temp2 ".fsproj"
+-
+-    Utils.createTempDir()
+-    for fileSource: string, fileName in List.zip fileSources fileNames do
+-         FileSystem.OpenFileForWriteShim(fileName).Write(fileSource)
+-    let args = [| yield! extraArgs; yield! mkProjectCommandLineArgs (dllName, []) |]
+-    let options = { checker.GetProjectOptionsFromCommandLineArgs (projFileName, args) with SourceFiles = fileNames |> List.toArray }
+-
+-    Utils.cleanupTempFiles (fileNames @ [dllName; projFileName]), options
+-
+ //---------------------------------------------------------------------------------------------------------
+ // This project is a smoke test for a whole range of standard and obscure expressions
+ 
+@@ -653,7 +592,7 @@ let testMutableVar = mutableVar 1
+ let testMutableConst = mutableConst ()
+     """
+ 
+-    let createOptionsWithArgs args = createOptionsAux [ fileSource1; fileSource2 ] args
++    let createOptionsWithArgs args = createProjectOptions dirName [ fileSource1; fileSource2 ] args
+ 
+     let createOptions() = createOptionsWithArgs []
+ 
+@@ -1002,15 +941,15 @@ let ``Test Optimized Declarations Project1`` useTransparentCompiler =
+ 
+ let testOperators dnName fsName excludedTests expectedUnoptimized expectedOptimized =
+ 
+-    let tempFileName = Utils.getTempFileName()
+-    let filePath = Utils.getTempFilePathChangeExt tempFileName ".fs"
+-    let dllPath =Utils.getTempFilePathChangeExt tempFileName ".dll"
+-    let projFilePath = Utils.getTempFilePathChangeExt tempFileName ".fsproj"
++    let tempFileName = getTempFileName()
++    let filePath = getTempFilePathChangeExt dirName tempFileName ".fs"
++    let dllPath =getTempFilePathChangeExt dirName tempFileName ".dll"
++    let projFilePath = getTempFilePathChangeExt dirName tempFileName ".fsproj"
+     let exprChecker = FSharpChecker.Create(keepAssemblyContents=true, useTransparentCompiler=true)
+ 
+     begin
+-        use _cleanup = Utils.cleanupTempFiles [filePath; dllPath; projFilePath]
+-        createTempDir()
++        use _cleanup = cleanupTempFiles dirName [filePath; dllPath; projFilePath]
++        createTempDir dirName
+         let source = String.Format(Project1.operatorTests, dnName, fsName)
+         let replace (s:string) r = s.Replace("let " + r, "// let " + r)
+         let fileSource = excludedTests |> List.fold replace source
+@@ -3192,7 +3131,7 @@ let BigSequenceExpression(outFileOpt,docFileOpt,baseAddressOpt) =
+     """
+ 
+ 
+-    let createOptions() = createOptionsAux [fileSource1] []
++    let createOptions() = createProjectOptions dirName [fileSource1] []
+ 
+ #if !NETFRAMEWORK && DEBUG
+ [<Fact(Skip = "Test is known to fail in DEBUG when not using NetFramework. Use RELEASE configuration or NetFramework to run it.")>]
+@@ -3279,7 +3218,7 @@ let f7() = callXY (C()) (D())
+ let f8() = callXY (D()) (C())
+     """
+ 
+-    let createOptions() = createOptionsAux [fileSource1] ["--langversion:7.0"]
++    let createOptions() = createProjectOptions dirName [fileSource1] ["--langversion:7.0"]
+ 
+ [<Theory>]
+ [<InlineData(false)>]
+@@ -3407,7 +3346,7 @@ type MyNumberWrapper =
+     { MyNumber: MyNumber }
+     """
+ 
+-    let createOptions() = createOptionsAux [fileSource1] ["--langversion:7.0"]
++    let createOptions() = createProjectOptions dirName [fileSource1] ["--langversion:7.0"]
+ 
+ [<Theory>]
+ [<InlineData(false)>]
+@@ -3465,13 +3404,13 @@ let s2 = sign p1
+ 
+     """
+ 
+-    let createOptions() = createOptionsAux [fileSource1] ["--langversion:7.0"]
++    let createOptions() = createProjectOptions dirName [fileSource1] ["--langversion:7.0"]
+ 
+ [<Theory>]
+ [<InlineData(false)>]
+ [<InlineData(true)>]
+ let ``Test ProjectForWitnesses3`` useTransparentCompiler =
+-    let cleanup, options = createOptionsAux [ ProjectForWitnesses3.fileSource1 ] ["--langversion:7.0"]
++    let cleanup, options = createProjectOptions dirName [ ProjectForWitnesses3.fileSource1 ] ["--langversion:7.0"]
+     use _holder = cleanup
+     let exprChecker = FSharpChecker.Create(keepAssemblyContents=true, useTransparentCompiler=useTransparentCompiler)
+     let wholeProjectResults = exprChecker.ParseAndCheckProject(options) |> Async.RunImmediate
+@@ -3563,7 +3502,7 @@ let isNullQuoted (ts : 't[]) =
+ 
+ """
+ 
+-    let createOptions() = createOptionsAux [fileSource1] ["--langversion:7.0"]
++    let createOptions() = createProjectOptions dirName [fileSource1] ["--langversion:7.0"]
+ 
+ [<Theory>]
+ [<InlineData(false)>]
+@@ -3603,7 +3542,7 @@ module N.M
+ let rec f = new System.EventHandler(fun _ _ -> f.Invoke(null,null))
+ """
+     
+-    let createOptions() = createOptionsAux [fileSource1] []
++    let createOptions() = createProjectOptions dirName [fileSource1] []
+     
+ [<Theory>]
+ [<InlineData(false)>]
+diff --git a/tests/FSharp.Compiler.Service.Tests/FSharp.Compiler.Service.Tests.fsproj b/tests/FSharp.Compiler.Service.Tests/FSharp.Compiler.Service.Tests.fsproj
+index bcaa3c0b99..9f0c7f230b 100644
+--- a/tests/FSharp.Compiler.Service.Tests/FSharp.Compiler.Service.Tests.fsproj
++++ b/tests/FSharp.Compiler.Service.Tests/FSharp.Compiler.Service.Tests.fsproj
+@@ -25,6 +25,7 @@
+       <Link>FsUnit.fs</Link>
+     </Compile>
+     <Compile Include="Common.fs" />
++    <Compile Include="GeneratedCodeSymbolsTests.fs" />
+     <Compile Include="AssemblyReaderShim.fs" />
+     <Compile Include="ModuleReaderCancellationTests.fs" />
+     <Compile Include="EditorTests.fs" />
+diff --git a/tests/FSharp.Compiler.Service.Tests/GeneratedCodeSymbolsTests.fs b/tests/FSharp.Compiler.Service.Tests/GeneratedCodeSymbolsTests.fs
+new file mode 100644
+index 0000000000..66b9782fb2
+--- /dev/null
++++ b/tests/FSharp.Compiler.Service.Tests/GeneratedCodeSymbolsTests.fs
+@@ -0,0 +1,104 @@
++module FSharp.Compiler.Service.Tests.GeneratedCodeSymbolsTests
++
++open Xunit
++open FSharp.Compiler.CodeAnalysis
++open FSharp.Compiler.Service.Tests.Common
++open FSharp.Compiler.Symbols
++
++[<Literal>]
++let dirName = "GeneratedCodeSymbolsTests"
++
++[<Fact>]
++let ``IsUnionCaseTester for Is* member in a class`` () =
++    let source = """
++module Lib
++
++type T () =
++    member x.IsM = 1
++"""
++    let cleanup, options = createProjectOptions dirName [ source ] [ "--langversion:preview" ]
++    use _holder = cleanup
++    let exprChecker = FSharpChecker.Create(keepAssemblyContents=true, useTransparentCompiler=false)
++    let wholeProjectResults = exprChecker.ParseAndCheckProject(options) |> Async.RunImmediate
++
++    let mfvs =
++        seq {
++            for implFile in wholeProjectResults.AssemblyContents.ImplementationFiles do
++                for decl in implFile.Declarations do
++                    match decl with
++                    | FSharpImplementationFileDeclaration.Entity(e,ds) ->
++                        for d in ds do
++                            match d with
++                            | FSharpImplementationFileDeclaration.MemberOrFunctionOrValue (mfv, args, body) ->
++                                yield mfv
++                            | _ -> ()
++                    | _ -> ()
++        }
++
++    Assert.Contains(mfvs, fun x -> x.LogicalName = "get_IsM")
++    let mfv = mfvs |> Seq.filter (fun x -> x.LogicalName = "get_IsM") |> Seq.exactlyOne
++    Assert.False(mfv.IsUnionCaseTester, $"get_IsM has IsUnionCaseTester = {mfv.IsUnionCaseTester}")
++
++[<Fact>]
++let ``IsUnionCaseTester for Is* generated property in DU`` () =
++    let source = """
++module Lib
++
++type T = A | B
++"""
++    let cleanup, options = createProjectOptions dirName [ source ] [ "--langversion:preview" ]
++    use _holder = cleanup
++    let exprChecker = FSharpChecker.Create(keepAssemblyContents=true, useTransparentCompiler=false)
++    let wholeProjectResults = exprChecker.ParseAndCheckProject(options) |> Async.RunImmediate
++
++    let mfvs =
++        seq {
++            for implFile in wholeProjectResults.AssemblyContents.ImplementationFiles do
++                for decl in implFile.Declarations do
++                    match decl with
++                    | FSharpImplementationFileDeclaration.Entity(e,ds) ->
++                        for d in ds do
++                            match d with
++                            | FSharpImplementationFileDeclaration.MemberOrFunctionOrValue (mfv, args, body) ->
++                                yield mfv
++                            | _ -> ()
++                    | _ -> ()
++        }
++
++    Assert.Contains(mfvs, fun x -> x.LogicalName = "get_IsA")
++    let mfv = mfvs |> Seq.filter (fun x -> x.LogicalName = "get_IsA") |> Seq.exactlyOne
++    Assert.True(mfv.IsUnionCaseTester, $"get_IsA has IsUnionCaseTester = {mfv.IsUnionCaseTester}")
++
++[<Fact>]
++let ``IsUnionCaseTester for Is* user property in DU`` () =
++    let source = """
++module Lib
++
++type T =
++    | A
++    | B
++    member x.IsC
++        with get () = false
++"""
++    let cleanup, options = createProjectOptions dirName [ source ] [ "--langversion:preview" ]
++    use _holder = cleanup
++    let exprChecker = FSharpChecker.Create(keepAssemblyContents=true, useTransparentCompiler=false)
++    let wholeProjectResults = exprChecker.ParseAndCheckProject(options) |> Async.RunImmediate
++
++    let mfvs =
++        seq {
++            for implFile in wholeProjectResults.AssemblyContents.ImplementationFiles do
++                for decl in implFile.Declarations do
++                    match decl with
++                    | FSharpImplementationFileDeclaration.Entity(e,ds) ->
++                        for d in ds do
++                            match d with
++                            | FSharpImplementationFileDeclaration.MemberOrFunctionOrValue (mfv, args, body) ->
++                                yield mfv
++                            | _ -> ()
++                    | _ -> ()
++        }
++
++    Assert.Contains(mfvs, fun x -> x.LogicalName = "get_IsC")
++    let mfv = mfvs |> Seq.filter (fun x -> x.LogicalName = "get_IsC") |> Seq.exactlyOne
++    Assert.False(mfv.IsUnionCaseTester, $"get_IsC has IsUnionCaseTester = {mfv.IsUnionCaseTester}")
+\ No newline at end of file

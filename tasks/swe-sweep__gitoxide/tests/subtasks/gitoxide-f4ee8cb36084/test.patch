@@ -1,0 +1,69 @@
+diff --git a/gix/tests/fixtures/make_worktree_repo.sh b/gix/tests/fixtures/make_worktree_repo.sh
+index b9617b953..d30d27802 100755
+--- a/gix/tests/fixtures/make_worktree_repo.sh
++++ b/gix/tests/fixtures/make_worktree_repo.sh
+@@ -64,3 +64,8 @@ git init non-bare-turned-bare
+ 
+   git worktree add ../worktree-of-bare-repo
+ )
++
++git clone --bare --shared repo natively-bare-repo
++(cd natively-bare-repo
++  git worktree add ../worktree-of-natively-bare-repo
++)
+diff --git a/gix/tests/gix/repository/open.rs b/gix/tests/gix/repository/open.rs
+index 6341500f9..6e5a5feac 100644
+--- a/gix/tests/gix/repository/open.rs
++++ b/gix/tests/gix/repository/open.rs
+@@ -190,6 +190,51 @@ fn worktree_of_bare_repo() -> crate::Result {
+     Ok(())
+ }
+ 
++#[test]
++fn worktree_of_natively_bare_repo() -> crate::Result {
++    let repo = named_subrepo_opts(
++        "make_worktree_repo.sh",
++        "worktree-of-natively-bare-repo",
++        gix::open::Options::isolated(),
++    )?;
++    assert_ne!(
++        repo.workdir(),
++        None,
++        "we have opened the repo through a worktree, which is never bare"
++    );
++    assert!(
++        !repo
++            .worktree()
++            .expect("the worktree is available, it's linked")
++            .is_main(),
++        "linked worktrees can exist for any repository, even bare"
++    );
++    assert!(
++        repo.is_bare(),
++        "the shared config has core.bare=true, which a linked worktree inherits even though it has a workdir"
++    );
++    assert_eq!(repo.kind(), gix::repository::Kind::LinkedWorkTree);
++    Ok(())
++}
++
++#[test]
++fn natively_bare_repo_itself_is_common() -> crate::Result {
++    let repo = named_subrepo_opts(
++        "make_worktree_repo.sh",
++        "natively-bare-repo",
++        gix::open::Options::isolated(),
++    )?;
++    assert!(repo.is_bare());
++    assert_eq!(repo.workdir(), None, "the bare repository itself has no worktree");
++    assert_eq!(
++        repo.git_dir(),
++        repo.common_dir(),
++        "there is no linked-worktree redirection"
++    );
++    assert_eq!(repo.kind(), gix::repository::Kind::Common);
++    Ok(())
++}
++
+ #[test]
+ fn non_bare_non_git_repo_without_worktree() -> crate::Result {
+     let repo = named_subrepo_opts(

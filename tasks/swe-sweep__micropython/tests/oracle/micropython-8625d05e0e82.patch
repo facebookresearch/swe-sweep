@@ -1,0 +1,45 @@
+diff --git a/py/objarray.c b/py/objarray.c
+index c66070538..0d9411d7c 100644
+--- a/py/objarray.c
++++ b/py/objarray.c
+@@ -53,6 +53,7 @@
+ #if MICROPY_PY_BUILTINS_MEMORYVIEW
+ #define TYPECODE_MASK (0x7f)
+ #define memview_offset free
++#define memview_offset_max ((1LL << MP_OBJ_ARRAY_FREE_SIZE_BITS) - 1)
+ #else
+ // make (& TYPECODE_MASK) a null operation if memorview not enabled
+ #define TYPECODE_MASK (~(size_t)0)
+@@ -522,6 +523,9 @@ STATIC mp_obj_t array_subscr(mp_obj_t self_in, mp_obj_t index_in, mp_obj_t value
+             assert(sz > 0);
+             #if MICROPY_PY_BUILTINS_MEMORYVIEW
+             if (o->base.type == &mp_type_memoryview) {
++                if (slice.start > memview_offset_max) {
++                    mp_raise_msg(&mp_type_OverflowError, MP_ERROR_TEXT("memoryview offset too large"));
++                }
+                 res = m_new_obj(mp_obj_array_t);
+                 *res = *o;
+                 res->memview_offset += slice.start;
+diff --git a/py/objarray.h b/py/objarray.h
+index 48a26c3fb..4a0e8a983 100644
+--- a/py/objarray.h
++++ b/py/objarray.h
+@@ -32,6 +32,9 @@
+ // Used only for memoryview types, set in "typecode" to indicate a writable memoryview
+ #define MP_OBJ_ARRAY_TYPECODE_FLAG_RW (0x80)
+ 
++// Bit size used for mp_obj_array_t.free member.
++#define MP_OBJ_ARRAY_FREE_SIZE_BITS (8 * sizeof(size_t) - 8)
++
+ // This structure is used for all of bytearray, array.array, memoryview
+ // objects.  Note that memoryview has different meaning for some fields,
+ // see comment at the beginning of objarray.c.
+@@ -44,7 +47,7 @@ typedef struct _mp_obj_array_t {
+     // parent object. (Union is not used to not go into a complication of
+     // union-of-bitfields with different toolchains). See comments in
+     // objarray.c.
+-    size_t free : (8 * sizeof(size_t) - 8);
++    size_t free : MP_OBJ_ARRAY_FREE_SIZE_BITS;
+     size_t len; // in elements
+     void *items;
+ } mp_obj_array_t;

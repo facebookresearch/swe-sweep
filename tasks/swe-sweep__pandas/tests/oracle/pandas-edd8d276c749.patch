@@ -1,0 +1,36 @@
+diff --git a/pandas/core/generic.py b/pandas/core/generic.py
+index fc15c846b1..7efbb29972 100644
+--- a/pandas/core/generic.py
++++ b/pandas/core/generic.py
+@@ -6399,6 +6399,11 @@ class NDFrame(PandasObject, indexing.IndexingMixin):
+         else:
+             if self.ndim == 1:
+                 if isinstance(value, (dict, ABCSeries)):
++                    if not len(value):
++                        # test_fillna_nonscalar
++                        if inplace:
++                            return None
++                        return self.copy()
+                     value = create_series_with_explicit_dtype(
+                         value, dtype_if_empty=object
+                     )
+diff --git a/pandas/core/internals/blocks.py b/pandas/core/internals/blocks.py
+index 3f50cb2c60..9558b82d95 100644
+--- a/pandas/core/internals/blocks.py
++++ b/pandas/core/internals/blocks.py
+@@ -518,11 +518,11 @@ class Block(PandasObject):
+     def _maybe_downcast(self, blocks: list[Block], downcast=None) -> list[Block]:
+ 
+         if self.dtype == _dtype_obj:
+-            # TODO: why is behavior different for object dtype?
+-            if downcast is not None:
+-                return blocks
+-
++            # GH#44241 We downcast regardless of the argument;
++            #  respecting 'downcast=None' may be worthwhile at some point,
++            #  but ATM it breaks too much existing code.
+             # split and convert the blocks
++
+             return extend_blocks(
+                 [blk.convert(datetime=True, numeric=False) for blk in blocks]
+             )

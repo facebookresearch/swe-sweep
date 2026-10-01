@@ -1,0 +1,28 @@
+diff --git a/vlib/v/checker/checker.v b/vlib/v/checker/checker.v
+index 4875fbe11..46bc9334c 100644
+--- a/vlib/v/checker/checker.v
++++ b/vlib/v/checker/checker.v
+@@ -1554,11 +1554,23 @@ fn (mut c Checker) const_decl(mut node ast.ConstDecl) {
+ 					field.expr.is_expr = true
+ 					field.expr.typ = (first_stmts.last() as ast.ExprStmt).typ
+ 					field.typ = field.expr.typ
++					// update ConstField object's type in table
++					if mut obj := c.file.global_scope.find(field.name) {
++						if mut obj is ast.ConstField {
++							obj.typ = field.typ
++						}
++					}
+ 				} else if second_stmts.len > 0 && second_stmts.last() is ast.ExprStmt
+ 					&& (second_stmts.last() as ast.ExprStmt).typ != ast.void_type {
+ 					field.expr.is_expr = true
+ 					field.expr.typ = (second_stmts.last() as ast.ExprStmt).typ
+ 					field.typ = field.expr.typ
++					// update ConstField object's type in table
++					if mut obj := c.file.global_scope.find(field.name) {
++						if mut obj is ast.ConstField {
++							obj.typ = field.typ
++						}
++					}
+ 				}
+ 			}
+ 		}

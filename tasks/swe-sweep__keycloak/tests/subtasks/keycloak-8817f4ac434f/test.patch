@@ -1,0 +1,84 @@
+diff --git a/services/src/test/java/org/keycloak/protocol/oidc/utils/RedirectUtilsTest.java b/services/src/test/java/org/keycloak/protocol/oidc/utils/RedirectUtilsTest.java
+index 24dc10d3b4..5d429e2193 100644
+--- a/services/src/test/java/org/keycloak/protocol/oidc/utils/RedirectUtilsTest.java
++++ b/services/src/test/java/org/keycloak/protocol/oidc/utils/RedirectUtilsTest.java
+@@ -71,6 +71,45 @@ public class RedirectUtilsTest {
+         Assert.assertNull(RedirectUtils.verifyRedirectUri(session, null, "https://keycloak.com/test", set, false));
+     }
+ 
++    @Test
++    public void testVerifyRedirectUriNative() {
++        Set<String> set = Stream.of(
++                "http://127.0.0.1",
++                "http://127.0.0.1/callback",
++                "http://[::1]",
++                "http://[::1]/callback",
++                "http://127.0.0.1/callback",
++                "http://localhost",
++                "http://localhost/callback"
++        ).collect(Collectors.toSet());
++
++        Assert.assertEquals("http://127.0.0.1", RedirectUtils.verifyRedirectUri(session, null, "http://127.0.0.1", set, false));
++        Assert.assertEquals("http://127.0.0.1:12324", RedirectUtils.verifyRedirectUri(session, null, "http://127.0.0.1:12324", set, false));
++        Assert.assertEquals("http://127.0.0.1/callback", RedirectUtils.verifyRedirectUri(session, null, "http://127.0.0.1/callback", set, false));
++        Assert.assertEquals("http://127.0.0.1:12324/callback", RedirectUtils.verifyRedirectUri(session, null, "http://127.0.0.1:12324/callback", set, false));
++        Assert.assertEquals("http://[::1]", RedirectUtils.verifyRedirectUri(session, null, "http://[::1]", set, false));
++        Assert.assertEquals("http://[::1]:12324", RedirectUtils.verifyRedirectUri(session, null, "http://[::1]:12324", set, false));
++        Assert.assertEquals("http://[::1]/callback", RedirectUtils.verifyRedirectUri(session, null, "http://[::1]/callback", set, false));
++        Assert.assertEquals("http://[::1]:12324/callback", RedirectUtils.verifyRedirectUri(session, null, "http://[::1]:12324/callback", set, false));
++        Assert.assertEquals("http://localhost", RedirectUtils.verifyRedirectUri(session, null, "http://localhost", set, false));
++        Assert.assertEquals("http://localhost:12324", RedirectUtils.verifyRedirectUri(session, null, "http://localhost:12324", set, false));
++        Assert.assertEquals("http://localhost/callback", RedirectUtils.verifyRedirectUri(session, null, "http://localhost/callback", set, false));
++        Assert.assertEquals("http://localhost:12324/callback", RedirectUtils.verifyRedirectUri(session, null, "http://localhost:12324/callback", set, false));
++
++        Assert.assertNull(RedirectUtils.verifyRedirectUri(session, null, "http://127.0.0.1@invalid.com", set, false));
++        Assert.assertNull(RedirectUtils.verifyRedirectUri(session, null, "http://127.0.0.1:12324@invalid.com", set, false));
++        Assert.assertNull(RedirectUtils.verifyRedirectUri(session, null, "http://127.0.0.1@invalid.com/callback", set, false));
++        Assert.assertNull(RedirectUtils.verifyRedirectUri(session, null, "http://127.0.0.1:12324@invalid.com/callback", set, false));
++        Assert.assertNull(RedirectUtils.verifyRedirectUri(session, null, "http://[::1]@invalid.com", set, false));
++        Assert.assertNull(RedirectUtils.verifyRedirectUri(session, null, "http://[::1]:12324@invalid.com", set, false));
++        Assert.assertNull(RedirectUtils.verifyRedirectUri(session, null, "http://[::1]@invalid.com/callback", set, false));
++        Assert.assertNull(RedirectUtils.verifyRedirectUri(session, null, "http://[::1]:12324@invalid.com/callback", set, false));
++        Assert.assertNull(RedirectUtils.verifyRedirectUri(session, null, "http://localhost@invalid.com", set, false));
++        Assert.assertNull(RedirectUtils.verifyRedirectUri(session, null, "http://localhost:12324@invalid.com", set, false));
++        Assert.assertNull(RedirectUtils.verifyRedirectUri(session, null, "http://localhost@invalid.com/callback", set, false));
++        Assert.assertNull(RedirectUtils.verifyRedirectUri(session, null, "http://localhost:12324@invalid.com/callback", set, false));
++    }
++
+     @Test
+     public void testverifyRedirectUriMixedSchemes() {
+         Set<String> set = Stream.of(
+diff --git a/testsuite/integration-arquillian/tests/base/src/test/java/org/keycloak/testsuite/oauth/OAuthRedirectUriTest.java b/testsuite/integration-arquillian/tests/base/src/test/java/org/keycloak/testsuite/oauth/OAuthRedirectUriTest.java
+index 64644063a4..251f362f11 100755
+--- a/testsuite/integration-arquillian/tests/base/src/test/java/org/keycloak/testsuite/oauth/OAuthRedirectUriTest.java
++++ b/testsuite/integration-arquillian/tests/base/src/test/java/org/keycloak/testsuite/oauth/OAuthRedirectUriTest.java
+@@ -106,12 +106,12 @@ public class OAuthRedirectUriTest extends AbstractKeycloakTest {
+         RealmBuilder realm = RealmBuilder.edit(realmRepresentation).testEventListener();
+ 
+         ClientBuilder installedApp = ClientBuilder.create().clientId("test-installed").name("test-installed")
+-                .redirectUris(Constants.INSTALLED_APP_URN, Constants.INSTALLED_APP_URL)
++                .redirectUris(Constants.INSTALLED_APP_URN, "http://localhost")
+                 .secret("password");
+         realm.client(installedApp);
+ 
+         ClientBuilder installedApp2 = ClientBuilder.create().clientId("test-installed2").name("test-installed2")
+-                .redirectUris(Constants.INSTALLED_APP_URL + "/myapp")
++                .redirectUris("http://localhost/myapp")
+                 .secret("password");
+         realm.client(installedApp2);
+ 
+@@ -158,12 +158,12 @@ public class OAuthRedirectUriTest extends AbstractKeycloakTest {
+         realm.client(installedAppCustomScheme);
+ 
+         ClientBuilder installedAppLoopback = ClientBuilder.create().clientId("test-installed-loopback").name("test-installed-loopback")
+-                .redirectUris(Constants.INSTALLED_APP_LOOPBACK)
++                .redirectUris("http://127.0.0.1")
+                 .secret("password");
+         realm.client(installedAppLoopback);
+ 
+         ClientBuilder installedAppLoopback2 = ClientBuilder.create().clientId("test-installed-loopback2").name("test-installed-loopback2")
+-                .redirectUris(Constants.INSTALLED_APP_LOOPBACK + "/myapp")
++                .redirectUris("http://127.0.0.1/myapp")
+                 .secret("password");
+         realm.client(installedAppLoopback2);
+ 

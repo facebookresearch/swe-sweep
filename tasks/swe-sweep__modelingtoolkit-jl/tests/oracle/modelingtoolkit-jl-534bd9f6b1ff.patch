@@ -1,0 +1,11 @@
+diff --git a/src/utils.jl b/src/utils.jl
+--- a/src/utils.jl
++++ b/src/utils.jl
+@@ -480,6 +480,7 @@
+ 
+ function collect_var!(unknowns, parameters, var, iv)
+     isequal(var, iv) && return nothing
++    getmetadata(var, SymScope, LocalScope()) == LocalScope() || return nothing
+     if isparameter(var) || (iscall(var) && isparameter(operation(var)))
+         push!(parameters, var)
+     elseif !isconstant(var)

@@ -1,0 +1,17 @@
+diff --git a/middleware/proxy_test.go b/middleware/proxy_test.go
+index a1b7f2c..122ddde 100644
+--- a/middleware/proxy_test.go
++++ b/middleware/proxy_test.go
+@@ -290,3 +290,12 @@ func TestProxyRewriteRegex(t *testing.T) {
+ 		})
+ 	}
+ }
++
++// Assert balancer with empty targets does return `nil` on `Next()`
++func TestProxyBalancerWithNoTargets(t *testing.T) {
++	rb := NewRandomBalancer(nil)
++	assert.Nil(t, rb.Next(nil))
++
++	rrb := NewRoundRobinBalancer([]*ProxyTarget{})
++	assert.Nil(t, rrb.Next(nil))
++}

@@ -1,0 +1,12 @@
+diff --git a/src/main/java/io/reactivex/processors/MulticastProcessor.java b/src/main/java/io/reactivex/processors/MulticastProcessor.java
+index fbf3f1752..50497473a 100644
+--- a/src/main/java/io/reactivex/processors/MulticastProcessor.java
++++ b/src/main/java/io/reactivex/processors/MulticastProcessor.java
+@@ -568,6 +568,7 @@ public final class MulticastProcessor<T> extends FlowableProcessor<T> {
+                 }
+             }
+ 
++            consumed = c;
+             missed = wip.addAndGet(-missed);
+             if (missed == 0) {
+                 break;

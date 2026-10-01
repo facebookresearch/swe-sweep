@@ -1,0 +1,68 @@
+diff --git a/server-spi-private/src/main/java/org/keycloak/models/Constants.java b/server-spi-private/src/main/java/org/keycloak/models/Constants.java
+index 6fd1188276..fb2b29faf8 100755
+--- a/server-spi-private/src/main/java/org/keycloak/models/Constants.java
++++ b/server-spi-private/src/main/java/org/keycloak/models/Constants.java
+@@ -43,8 +43,6 @@ public final class Constants {
+     public static final Collection<String> defaultClients = Arrays.asList(ACCOUNT_MANAGEMENT_CLIENT_ID, ADMIN_CLI_CLIENT_ID, BROKER_SERVICE_CLIENT_ID, REALM_MANAGEMENT_CLIENT_ID, ADMIN_CONSOLE_CLIENT_ID);
+ 
+     public static final String INSTALLED_APP_URN = "urn:ietf:wg:oauth:2.0:oob";
+-    public static final String INSTALLED_APP_URL = "http://localhost";
+-    public static final String INSTALLED_APP_LOOPBACK = "http://127.0.0.1";
+ 
+     public static final String READ_TOKEN_ROLE = "read-token";
+     public static final String[] BROKER_SERVICE_ROLES = {READ_TOKEN_ROLE};
+diff --git a/services/src/main/java/org/keycloak/protocol/oidc/utils/RedirectUtils.java b/services/src/main/java/org/keycloak/protocol/oidc/utils/RedirectUtils.java
+index 500cc2bb80..e2be2a8355 100644
+--- a/services/src/main/java/org/keycloak/protocol/oidc/utils/RedirectUtils.java
++++ b/services/src/main/java/org/keycloak/protocol/oidc/utils/RedirectUtils.java
+@@ -18,6 +18,7 @@
+ package org.keycloak.protocol.oidc.utils;
+ 
+ import org.jboss.logging.Logger;
++import org.keycloak.common.util.KeycloakUriBuilder;
+ import org.keycloak.common.util.UriUtils;
+ import org.keycloak.models.ClientModel;
+ import org.keycloak.models.Constants;
+@@ -28,7 +29,9 @@ import org.keycloak.services.Urls;
+ import org.keycloak.services.util.ResolveRelative;
+ 
+ import java.net.URI;
++import java.util.Arrays;
+ import java.util.Collection;
++import java.util.HashSet;
+ import java.util.Set;
+ import java.util.TreeSet;
+ import java.util.regex.Pattern;
+@@ -38,6 +41,8 @@ import java.util.regex.Pattern;
+  */
+ public class RedirectUtils {
+ 
++    public static final Set<String> LOOPBACK_INTERFACES = new HashSet<>(Arrays.asList("localhost", "127.0.0.1", "[::1]"));
++
+     private static final Logger logger = Logger.getLogger(RedirectUtils.class);
+ 
+     /**
+@@ -95,20 +100,9 @@ public class RedirectUtils {
+ 
+             String valid = matchesRedirects(resolveValidRedirects, r, allowWildcards);
+ 
+-            if (valid == null && (r.startsWith(Constants.INSTALLED_APP_URL) || r.startsWith(Constants.INSTALLED_APP_LOOPBACK)) && r.indexOf(':', Constants.INSTALLED_APP_URL.length()) >= 0) {
+-                int i = r.indexOf(':', Constants.INSTALLED_APP_URL.length());
+-
+-                StringBuilder sb = new StringBuilder();
+-                sb.append(r.substring(0, i));
+-
+-                i = r.indexOf('/', i);
+-                if (i >= 0) {
+-                    sb.append(r.substring(i));
+-                }
+-
+-                r = sb.toString();
+-
+-                valid = matchesRedirects(resolveValidRedirects, r, allowWildcards);
++            if (valid == null && "http".equals(originalRedirect.getScheme()) && LOOPBACK_INTERFACES.contains(originalRedirect.getHost())) {
++                String redirectWithDefaultPort = KeycloakUriBuilder.fromUri(originalRedirect).port(80).buildAsString();
++                valid = matchesRedirects(resolveValidRedirects, redirectWithDefaultPort, allowWildcards);
+             }
+ 
+             if (valid != null && !originalRedirect.isAbsolute()) {

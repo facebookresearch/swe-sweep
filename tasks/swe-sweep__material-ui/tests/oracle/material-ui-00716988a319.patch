@@ -1,0 +1,31 @@
+diff --git a/packages/mui-material/src/OutlinedInput/OutlinedInput.js b/packages/mui-material/src/OutlinedInput/OutlinedInput.js
+index 1b4c9fcf57..2f87004254 100644
+--- a/packages/mui-material/src/OutlinedInput/OutlinedInput.js
++++ b/packages/mui-material/src/OutlinedInput/OutlinedInput.js
+@@ -155,11 +155,26 @@ const OutlinedInput = React.forwardRef(function OutlinedInput(inProps, ref) {
+     states: ['required'],
+   });
+ 
++  const ownerState = {
++    ...props,
++    color: fcs.color || 'primary',
++    disabled: fcs.disabled,
++    error: fcs.error,
++    focused: fcs.focused,
++    formControl: muiFormControl,
++    fullWidth,
++    hiddenLabel: fcs.hiddenLabel,
++    multiline,
++    size: fcs.size,
++    type,
++  };
++
+   return (
+     <InputBase
+       components={{ Root: OutlinedInputRoot, Input: OutlinedInputInput, ...components }}
+       renderSuffix={(state) => (
+         <NotchedOutlineRoot
++          ownerState={ownerState}
+           className={classes.notchedOutline}
+           label={
+             label != null && label !== '' && fcs.required ? (

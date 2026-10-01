@@ -1,0 +1,13 @@
+diff --git a/pandas/core/construction.py b/pandas/core/construction.py
+index 8261162afe..cf8cd070ec 100644
+--- a/pandas/core/construction.py
++++ b/pandas/core/construction.py
+@@ -528,6 +528,8 @@ def sanitize_array(
+ 
+     # GH#846
+     if isinstance(data, np.ndarray):
++        if isinstance(data, np.matrix):
++            data = data.A
+ 
+         if dtype is not None and is_float_dtype(data.dtype) and is_integer_dtype(dtype):
+             # possibility of nan -> garbage

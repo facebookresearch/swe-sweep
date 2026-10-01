@@ -1,0 +1,34 @@
+diff --git a/packages/jest-core/src/runJest.ts b/packages/jest-core/src/runJest.ts
+index d60861e01f..1bebdebb2e 100644
+--- a/packages/jest-core/src/runJest.ts
++++ b/packages/jest-core/src/runJest.ts
+@@ -203,6 +203,14 @@ export default async function runJest({
+ 
+   allTests = await sequencer.sort(allTests);
+ 
++  if (globalConfig.onlyFailures) {
++    if (failedTestsCache) {
++      allTests = failedTestsCache.filterTests(allTests);
++    } else {
++      allTests = await sequencer.allFailedTests(allTests);
++    }
++  }
++
+   if (globalConfig.listTests) {
+     const testsPaths = Array.from(new Set(allTests.map(test => test.path)));
+     /* eslint-disable no-console */
+@@ -217,14 +225,6 @@ export default async function runJest({
+     return;
+   }
+ 
+-  if (globalConfig.onlyFailures) {
+-    if (failedTestsCache) {
+-      allTests = failedTestsCache.filterTests(allTests);
+-    } else {
+-      allTests = await sequencer.allFailedTests(allTests);
+-    }
+-  }
+-
+   const hasTests = allTests.length > 0;
+ 
+   if (!hasTests) {

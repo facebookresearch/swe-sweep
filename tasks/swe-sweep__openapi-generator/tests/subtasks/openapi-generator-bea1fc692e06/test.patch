@@ -1,0 +1,90 @@
+diff --git a/modules/openapi-generator/src/test/java/org/openapitools/codegen/go/GoClientCodegenTest.java b/modules/openapi-generator/src/test/java/org/openapitools/codegen/go/GoClientCodegenTest.java
+index 7d6e7de5002..32950625457 100644
+--- a/modules/openapi-generator/src/test/java/org/openapitools/codegen/go/GoClientCodegenTest.java
++++ b/modules/openapi-generator/src/test/java/org/openapitools/codegen/go/GoClientCodegenTest.java
+@@ -332,4 +332,27 @@ public class GoClientCodegenTest {
+         Path goSumFile = Paths.get(output + "/go.sum");
+         TestUtils.assertFileNotExists(goSumFile);
+     }
++
++    @Test
++    public void testEscapingInExamples() throws IOException {
++        File output = Files.createTempDirectory("test").toFile();
++        output.deleteOnExit();
++
++        final CodegenConfigurator configurator = new CodegenConfigurator()
++                .setGeneratorName("go")
++                .setInputSpec("src/test/resources/3_0/go/petstore-with-special-chars-in-examples.yaml")
++                .setOutputDir(output.getAbsolutePath().replace("\\", "/"));
++
++        DefaultGenerator generator = new DefaultGenerator();
++        List<File> files = generator.opts(configurator.toClientOptInput()).generate();
++        files.forEach(File::deleteOnExit);
++
++        Path docPath = Paths.get(output + "/docs/TestAPI.md");
++        // Verify that quotes are properly escaped in parameter examples
++        TestUtils.assertFileContains(docPath, "stringWithQuotes := \"John \\\"Johnny\\\" Doe\"");
++        // Verify that backslashes are properly escaped in parameter examples
++        TestUtils.assertFileContains(docPath, "stringWithBackslash := \"C:\\\\path\\\\to\\\\file\"");
++        // Verify that quotes are properly escaped in email parameter examples
++        TestUtils.assertFileContains(docPath, "emailWithQuotes := \"test\\\"user@example.com\"");
++    }
+ }
+diff --git a/modules/openapi-generator/src/test/resources/3_0/go/petstore-with-special-chars-in-examples.yaml b/modules/openapi-generator/src/test/resources/3_0/go/petstore-with-special-chars-in-examples.yaml
+new file mode 100644
+index 00000000000..f9ad0fd52de
+--- /dev/null
++++ b/modules/openapi-generator/src/test/resources/3_0/go/petstore-with-special-chars-in-examples.yaml
+@@ -0,0 +1,52 @@
++openapi: 3.0.0
++info:
++  title: Test Escaping in Examples
++  version: 1.0.0
++paths:
++  /test:
++    get:
++      operationId: testEscaping
++      tags:
++        - test
++      parameters:
++        - name: stringWithQuotes
++          in: query
++          required: true
++          schema:
++            type: string
++          example: 'John "Johnny" Doe'
++        - name: stringWithBackslash
++          in: query
++          required: true
++          schema:
++            type: string
++          example: 'C:\path\to\file'
++        - name: emailWithQuotes
++          in: query
++          required: true
++          schema:
++            type: string
++            format: email
++          example: 'test"user@example.com'
++      responses:
++        '200':
++          description: Success
++          content:
++            application/json:
++              schema:
++                $ref: '#/components/schemas/TestResponse'
++components:
++  schemas:
++    TestResponse:
++      type: object
++      properties:
++        name:
++          type: string
++          example: 'Name with "quotes" inside'
++        path:
++          type: string
++          example: 'C:\Windows\System32'
++        email:
++          type: string
++          format: email
++          example: 'user"name@example.com'

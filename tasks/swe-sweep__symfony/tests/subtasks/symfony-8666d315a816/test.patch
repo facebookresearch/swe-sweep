@@ -1,0 +1,34 @@
+diff --git a/src/Symfony/Component/HtmlSanitizer/Tests/HtmlSanitizerCustomTest.php b/src/Symfony/Component/HtmlSanitizer/Tests/HtmlSanitizerCustomTest.php
+index fe507cec523..ae7b5a25828 100644
+--- a/src/Symfony/Component/HtmlSanitizer/Tests/HtmlSanitizerCustomTest.php
++++ b/src/Symfony/Component/HtmlSanitizer/Tests/HtmlSanitizerCustomTest.php
+@@ -232,10 +232,17 @@ class HtmlSanitizerCustomTest extends TestCase
+     {
+         $config = (new HtmlSanitizerConfig())
+             ->allowElement('div')
++            ->allowElement('img', '*')
+             ->allowElement('a', ['href'])
+             ->forceAttribute('a', 'rel', 'noopener noreferrer')
++            ->forceAttribute('img', 'loading', 'lazy')
+         ;
+ 
++        $this->assertSame(
++            '<img title="My image" src="https://example.com/image.png" loading="lazy" />',
++            $this->sanitize($config, '<img title="My image" src="https://example.com/image.png" loading="eager" onerror="alert(\'1234\')" />')
++        );
++
+         $this->assertSame(
+             '<a rel="noopener noreferrer">Hello</a> world',
+             $this->sanitize($config, '<a>Hello</a> world')
+@@ -250,6 +257,11 @@ class HtmlSanitizerCustomTest extends TestCase
+             '<div>Hello</div> world',
+             $this->sanitize($config, '<div style="width: 100px">Hello</div> world')
+         );
++
++        $this->assertSame(
++            '<a href="https://symfony.com" rel="noopener noreferrer">Hello</a> world',
++            $this->sanitize($config, '<a href="https://symfony.com" rel="noopener">Hello</a> world')
++        );
+     }
+ 
+     public function testForceHttps()

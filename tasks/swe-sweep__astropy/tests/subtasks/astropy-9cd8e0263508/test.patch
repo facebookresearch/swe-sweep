@@ -1,0 +1,17 @@
+diff --git a/astropy/units/tests/test_format.py b/astropy/units/tests/test_format.py
+index e3b9d7053a..9d8d679937 100644
+--- a/astropy/units/tests/test_format.py
++++ b/astropy/units/tests/test_format.py
+@@ -264,6 +264,12 @@ def test_ogip_grammar_fail(string):
+         u_format.OGIP.parse(string)
+ 
+ 
++@pytest.mark.parametrize("string", ["sqrt(m)**3", "sqrt(m**3)", "(sqrt(m))**3"])
++def test_ogip_sqrt(string):
++    # Regression test for #16743 - sqrt(m)**3 caused a ValueError
++    assert u_format.OGIP.parse(string) == u.m ** Fraction(3, 2)
++
++
+ class RoundtripBase:
+     deprecated_units = set()
+ 

@@ -1,0 +1,63 @@
+diff --git a/tests/Main.idr b/tests/Main.idr
+index dec0be05d..07709affd 100644
+--- a/tests/Main.idr
++++ b/tests/Main.idr
+@@ -21,7 +21,7 @@ ttimpTests = MkTestPool "TTImp" [] Nothing
+      , "lazy001"
+      , "nest001", "nest002"
+      , "perf001", "perf002", "perf003"
+-     , "record001", "record002", "record003"
++     , "record001", "record002", "record003", "record004"
+      , "qtt001", "qtt003"
+      , "total001", "total002", "total003"
+      ]
+diff --git a/tests/ttimp/record004/Record.yaff b/tests/ttimp/record004/Record.yaff
+new file mode 100644
+index 000000000..979360262
+--- /dev/null
++++ b/tests/ttimp/record004/Record.yaff
+@@ -0,0 +1,15 @@
++data Nat : Type where
++  Z : Nat
++  S : Nat -> Nat
++
++namespace A
++  public export
++  record Dup where
++    constructor MkDup
++    label : Nat
++
++namespace B
++  public export
++  record Dup where
++    constructor MkDup
++    label : Nat
+diff --git a/tests/ttimp/record004/expected b/tests/ttimp/record004/expected
+new file mode 100644
+index 000000000..cc9e72523
+--- /dev/null
++++ b/tests/ttimp/record004/expected
+@@ -0,0 +1,6 @@
++Processing as TTImp
++Written TTC
++Yaffle> Bye for now!
++Processing as TTC
++Read TTC
++Yaffle> Bye for now!
+diff --git a/tests/ttimp/record004/input b/tests/ttimp/record004/input
+new file mode 100644
+index 000000000..d325550eb
+--- /dev/null
++++ b/tests/ttimp/record004/input
+@@ -0,0 +1 @@
++:q
+diff --git a/tests/ttimp/record004/run b/tests/ttimp/record004/run
+new file mode 100644
+index 000000000..2df237b7e
+--- /dev/null
++++ b/tests/ttimp/record004/run
+@@ -0,0 +1,4 @@
++rm -rf build
++
++$1 --yaffle Record.yaff          < input
++$1 --yaffle build/ttc/Record.ttc < input

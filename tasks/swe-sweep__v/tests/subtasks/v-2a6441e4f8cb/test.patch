@@ -1,0 +1,17 @@
+diff --git a/vlib/v/tests/string_interpolation_test.v b/vlib/v/tests/string_interpolation_test.v
+index aae29e4ba..d18cea346 100644
+--- a/vlib/v/tests/string_interpolation_test.v
++++ b/vlib/v/tests/string_interpolation_test.v
+@@ -201,3 +201,12 @@ fn test_call() {
+ 	s := '${f(4)}'
+ 	assert s == '4'
+ }
++
++// for issue: 20199
++// string contains the zero character: `\0`
++fn test_contains_zero_characters() {
++	mut str := 'abc'
++	str = '${str}\x00${str}'
++	assert str.len == 7
++	assert str == 'abc\0abc'
++}

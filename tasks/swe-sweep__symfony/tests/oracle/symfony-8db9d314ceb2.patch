@@ -1,0 +1,16 @@
+diff --git a/src/Symfony/Component/Validator/Constraints/AtLeastOneOfValidator.php b/src/Symfony/Component/Validator/Constraints/AtLeastOneOfValidator.php
+index 692b1176b6e..b3067e5bef6 100644
+--- a/src/Symfony/Component/Validator/Constraints/AtLeastOneOfValidator.php
++++ b/src/Symfony/Component/Validator/Constraints/AtLeastOneOfValidator.php
+@@ -42,9 +42,11 @@ class AtLeastOneOfValidator extends ConstraintValidator
+                 continue;
+             }
+ 
++            $context = $this->context;
+             $executionContext = clone $this->context;
+             $executionContext->setNode($value, $this->context->getObject(), $this->context->getMetadata(), $this->context->getPropertyPath());
+             $violations = $validator->inContext($executionContext)->validate($value, $item, $this->context->getGroup())->getViolations();
++            $this->context = $context;
+ 
+             if (\count($this->context->getViolations()) === \count($violations)) {
+                 return;

@@ -1,0 +1,152 @@
+diff --git a/pulsar-common/src/main/java/org/apache/pulsar/common/policies/data/stats/NonPersistentPartitionedTopicStatsImpl.java b/pulsar-common/src/main/java/org/apache/pulsar/common/policies/data/stats/NonPersistentPartitionedTopicStatsImpl.java
+index 5a4ee14edbe..194c12061bb 100644
+--- a/pulsar-common/src/main/java/org/apache/pulsar/common/policies/data/stats/NonPersistentPartitionedTopicStatsImpl.java
++++ b/pulsar-common/src/main/java/org/apache/pulsar/common/policies/data/stats/NonPersistentPartitionedTopicStatsImpl.java
+@@ -27,6 +27,7 @@ import org.apache.pulsar.common.policies.data.NonPersistentPartitionedTopicStats
+ 
+ /**
+  * Statistics for a non-persistent partitioned topic.
++ * This class is not thread-safe.
+  */
+ @SuppressFBWarnings("EQ_DOESNT_OVERRIDE_EQUALS")
+ public class NonPersistentPartitionedTopicStatsImpl extends NonPersistentTopicStatsImpl
+diff --git a/pulsar-common/src/main/java/org/apache/pulsar/common/policies/data/stats/NonPersistentTopicStatsImpl.java b/pulsar-common/src/main/java/org/apache/pulsar/common/policies/data/stats/NonPersistentTopicStatsImpl.java
+index 06e955ef3d6..fd643f0db7b 100644
+--- a/pulsar-common/src/main/java/org/apache/pulsar/common/policies/data/stats/NonPersistentTopicStatsImpl.java
++++ b/pulsar-common/src/main/java/org/apache/pulsar/common/policies/data/stats/NonPersistentTopicStatsImpl.java
+@@ -42,6 +42,7 @@ import org.apache.pulsar.common.policies.data.PublisherStats;
+ 
+ /**
+  * Statistics for a non-persistent topic.
++ * This class is not thread-safe.
+  */
+ @SuppressFBWarnings("EQ_DOESNT_OVERRIDE_EQUALS")
+ public class NonPersistentTopicStatsImpl extends TopicStatsImpl implements NonPersistentTopicStats {
+@@ -148,14 +149,14 @@ public class NonPersistentTopicStatsImpl extends TopicStatsImpl implements NonPe
+     }
+ 
+     // if the stats are added for the 1st time, we will need to make a copy of these stats and add it to the current
+-    // stats.
++    // stats. This stat addition is not thread-safe.
+     public NonPersistentTopicStatsImpl add(NonPersistentTopicStats ts) {
+         NonPersistentTopicStatsImpl stats = (NonPersistentTopicStatsImpl) ts;
+         Objects.requireNonNull(stats);
+         super.add(stats);
+         this.msgDropRate += stats.msgDropRate;
+-
+-        stats.getNonPersistentPublishers().forEach(s -> {
++        for (int index = 0; index < stats.getNonPersistentPublishers().size(); index++) {
++            NonPersistentPublisherStats s = stats.getNonPersistentPublishers().get(index);
+             if (s.isSupportsPartialProducer() && s.getProducerName() != null) {
+                 ((NonPersistentPublisherStatsImpl) this.nonPersistentPublishersMap
+                         .computeIfAbsent(s.getProducerName(), key -> {
+@@ -165,20 +166,20 @@ public class NonPersistentTopicStatsImpl extends TopicStatsImpl implements NonPe
+                             return newStats;
+                         })).add((NonPersistentPublisherStatsImpl) s);
+             } else {
+-                if (this.nonPersistentPublishers.size() != stats.getNonPersistentPublishers().size()) {
+-                    for (int i = 0; i < stats.getNonPersistentPublishers().size(); i++) {
+-                        NonPersistentPublisherStatsImpl newStats = new NonPersistentPublisherStatsImpl();
+-                        newStats.setSupportsPartialProducer(false);
+-                        this.nonPersistentPublishers.add(newStats.add((NonPersistentPublisherStatsImpl) s));
+-                    }
+-                } else {
+-                    for (int i = 0; i < stats.getNonPersistentPublishers().size(); i++) {
+-                        ((NonPersistentPublisherStatsImpl) this.nonPersistentPublishers.get(i))
+-                                .add((NonPersistentPublisherStatsImpl) s);
+-                    }
++                // Add a non-persistent publisher stat entry to this.nonPersistentPublishers
++                // if this.nonPersistentPublishers.size() is smaller than
++                // the input stats.nonPersistentPublishers.size().
++                // Here, index == this.nonPersistentPublishers.size() means
++                // this.nonPersistentPublishers.size() is smaller than the input stats.nonPersistentPublishers.size()
++                if (index == this.nonPersistentPublishers.size()) {
++                    NonPersistentPublisherStatsImpl newStats = new NonPersistentPublisherStatsImpl();
++                    newStats.setSupportsPartialProducer(false);
++                    this.nonPersistentPublishers.add(newStats);
+                 }
++                ((NonPersistentPublisherStatsImpl) this.nonPersistentPublishers.get(index))
++                        .add((NonPersistentPublisherStatsImpl) s);
+             }
+-        });
++        }
+ 
+         if (this.getNonPersistentSubscriptions().size() != stats.getNonPersistentSubscriptions().size()) {
+             for (String subscription : stats.getNonPersistentSubscriptions().keySet()) {
+diff --git a/pulsar-common/src/main/java/org/apache/pulsar/common/policies/data/stats/PartitionedTopicStatsImpl.java b/pulsar-common/src/main/java/org/apache/pulsar/common/policies/data/stats/PartitionedTopicStatsImpl.java
+index c31f98a7515..7b6df3f2c36 100644
+--- a/pulsar-common/src/main/java/org/apache/pulsar/common/policies/data/stats/PartitionedTopicStatsImpl.java
++++ b/pulsar-common/src/main/java/org/apache/pulsar/common/policies/data/stats/PartitionedTopicStatsImpl.java
+@@ -28,6 +28,7 @@ import org.apache.pulsar.common.policies.data.TopicStats;
+ 
+ /**
+  * Statistics for a partitioned topic.
++ * This class is not thread-safe.
+  */
+ @SuppressFBWarnings("EQ_DOESNT_OVERRIDE_EQUALS")
+ public class PartitionedTopicStatsImpl extends TopicStatsImpl implements PartitionedTopicStats {
+diff --git a/pulsar-common/src/main/java/org/apache/pulsar/common/policies/data/stats/TopicStatsImpl.java b/pulsar-common/src/main/java/org/apache/pulsar/common/policies/data/stats/TopicStatsImpl.java
+index 88f487f347a..c0e3216e16f 100644
+--- a/pulsar-common/src/main/java/org/apache/pulsar/common/policies/data/stats/TopicStatsImpl.java
++++ b/pulsar-common/src/main/java/org/apache/pulsar/common/policies/data/stats/TopicStatsImpl.java
+@@ -41,6 +41,7 @@ import org.apache.pulsar.common.policies.data.TopicStats;
+ 
+ /**
+  * Statistics for a Pulsar topic.
++ * This class is not thread-safe.
+  */
+ @Data
+ public class TopicStatsImpl implements TopicStats {
+@@ -216,8 +217,8 @@ public class TopicStatsImpl implements TopicStats {
+         this.msgThroughputOut += stats.msgThroughputOut;
+         this.bytesInCounter += stats.bytesInCounter;
+         this.msgInCounter += stats.msgInCounter;
+-        this.bytesOutCounter += stats.bytesOutCounter;
+-        this.msgOutCounter += stats.msgOutCounter;
++        this.bytesOutCounter += stats.bytesOutCounter;
++        this.msgOutCounter += stats.msgOutCounter;
+         this.waitingPublishers += stats.waitingPublishers;
+         double newAverageMsgSize = (this.averageMsgSize * (this.count - 1) + stats.averageMsgSize) / this.count;
+         this.averageMsgSize = newAverageMsgSize;
+@@ -230,7 +231,8 @@ public class TopicStatsImpl implements TopicStats {
+         this.nonContiguousDeletedMessagesRanges += stats.nonContiguousDeletedMessagesRanges;
+         this.nonContiguousDeletedMessagesRangesSerializedSize += stats.nonContiguousDeletedMessagesRangesSerializedSize;
+ 
+-        stats.getPublishers().forEach(s -> {
++        for (int index = 0; index < stats.getPublishers().size(); index++) {
++           PublisherStats s = stats.getPublishers().get(index);
+            if (s.isSupportsPartialProducer() && s.getProducerName() != null) {
+                this.publishersMap.computeIfAbsent(s.getProducerName(), key -> {
+                    final PublisherStatsImpl newStats = new PublisherStatsImpl();
+@@ -239,19 +241,20 @@ public class TopicStatsImpl implements TopicStats {
+                    return newStats;
+                }).add((PublisherStatsImpl) s);
+            } else {
+-               if (this.publishers.size() != stats.publishers.size()) {
+-                   for (int i = 0; i < stats.publishers.size(); i++) {
+-                       PublisherStatsImpl newStats = new PublisherStatsImpl();
+-                       newStats.setSupportsPartialProducer(false);
+-                       this.publishers.add(newStats.add(stats.publishers.get(i)));
+-                   }
+-               } else {
+-                   for (int i = 0; i < stats.publishers.size(); i++) {
+-                       this.publishers.get(i).add(stats.publishers.get(i));
+-                   }
++               // Add a publisher stat entry to this.publishers
++               // if this.publishers.size() is smaller than
++               // the input stats.publishers.size().
++               // Here, index == this.publishers.size() means
++               // this.publishers.size() is smaller than the input stats.publishers.size()
++               if (index == this.publishers.size()) {
++                   PublisherStatsImpl newStats = new PublisherStatsImpl();
++                   newStats.setSupportsPartialProducer(false);
++                   this.publishers.add(newStats);
+                }
++               this.publishers.get(index)
++                       .add((PublisherStatsImpl) s);
+            }
+-        });
++        }
+ 
+         if (this.subscriptions.size() != stats.subscriptions.size()) {
+             for (String subscription : stats.subscriptions.keySet()) {

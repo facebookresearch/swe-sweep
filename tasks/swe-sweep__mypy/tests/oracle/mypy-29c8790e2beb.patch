@@ -1,0 +1,52 @@
+diff --git a/mypy/message_registry.py b/mypy/message_registry.py
+index 3546a36bc..7d0f94ae5 100644
+--- a/mypy/message_registry.py
++++ b/mypy/message_registry.py
+@@ -345,6 +345,10 @@ TYPE_VAR_AWAIT_EXPRESSION_IN_BOUND: Final = ErrorMessage(
+     "Await expression cannot be used as a type variable bound", codes.SYNTAX
+ )
+ 
++TYPE_VAR_REDECLARED_IN_NESTED_CLASS: Final = ErrorMessage(
++    'Type variable "{}" is bound by an outer class', codes.VALID_TYPE
++)
++
+ TYPE_ALIAS_WITH_YIELD_EXPRESSION: Final = ErrorMessage(
+     "Yield expression cannot be used within a type alias", codes.SYNTAX
+ )
+diff --git a/mypy/semanal.py b/mypy/semanal.py
+index d70abe911..704aa91d1 100644
+--- a/mypy/semanal.py
++++ b/mypy/semanal.py
+@@ -2374,6 +2374,14 @@ class SemanticAnalyzer(
+             tvar_expr.default = tvar_expr.default.accept(
+                 TypeVarDefaultTranslator(self, tvar_expr.name, context)
+             )
++            # PEP-695 type variables that are redeclared in an inner scope are warned
++            # about elsewhere.
++            if not tvar_expr.is_new_style and not self.tvar_scope.allow_binding(
++                tvar_expr.fullname
++            ):
++                self.fail(
++                    message_registry.TYPE_VAR_REDECLARED_IN_NESTED_CLASS.format(name), context
++                )
+             tvar_def = self.tvar_scope.bind_new(name, tvar_expr)
+             if last_tvar_name_with_default is not None and not tvar_def.has_default():
+                 self.msg.tvar_without_default_type(
+diff --git a/mypy/typeanal.py b/mypy/typeanal.py
+index eeb5d3c52..b0d117593 100644
+--- a/mypy/typeanal.py
++++ b/mypy/typeanal.py
+@@ -1844,11 +1844,8 @@ class TypeAnalyser(SyntheticTypeVisitor[Type], TypeAnalyzerPluginInterface):
+         defs = []
+         for name, tvar in typevars:
+             if not self.tvar_scope.allow_binding(tvar.fullname):
+-                self.fail(
+-                    f'Type variable "{name}" is bound by an outer class',
+-                    defn,
+-                    code=codes.VALID_TYPE,
+-                )
++                err_msg = message_registry.TYPE_VAR_REDECLARED_IN_NESTED_CLASS.format(name)
++                self.fail(err_msg.value, defn, code=err_msg.code)
+             binding = self.tvar_scope.bind_new(name, tvar)
+             defs.append(binding)
+ 

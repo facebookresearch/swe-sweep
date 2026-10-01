@@ -1,0 +1,2366 @@
+{
+  "build_jobs": 4,
+  "container_repo": "/v",
+  "evaluation": {
+    "suite": {
+      "eval_roots": [
+        "vlib"
+      ],
+      "golden_dirs": [
+        {
+          "dir": "vlib/v/checker/tests",
+          "runner": "vlib/v/compiler_errors_test.v"
+        },
+        {
+          "dir": "vlib/v/parser/tests",
+          "runner": "vlib/v/compiler_errors_test.v"
+        },
+        {
+          "dir": "vlib/v/scanner/tests",
+          "runner": "vlib/v/compiler_errors_test.v"
+        },
+        {
+          "dir": "vlib/v/tests/skip_unused",
+          "runner": "vlib/v/compiler_errors_test.v"
+        },
+        {
+          "dir": "vlib/v/slow_tests/inout",
+          "runner": "vlib/v/slow_tests/inout/compiler_test.v"
+        },
+        {
+          "dir": "vlib/v/gen/c/testdata",
+          "runner": "vlib/v/gen/c/coutput_test.v"
+        },
+        {
+          "dir": "cmd/tools/vvet/tests",
+          "runner": "cmd/tools/vvet/vet_test.v"
+        },
+        {
+          "dir": "vlib/v/fmt/tests",
+          "filters": false,
+          "runner": [
+            "vlib/v/fmt/fmt_test.v",
+            "vlib/v/fmt/fmt_keep_test.v"
+          ]
+        },
+        {
+          "dir": "vlib/v/slow_tests/repl",
+          "filters": false,
+          "runner": "vlib/v/slow_tests/repl/repl_test.v"
+        },
+        {
+          "dir": "vlib/v/tests/known_errors/testdata",
+          "filters": false,
+          "runner": "vlib/v/tests/known_errors/known_errors_test.v"
+        },
+        {
+          "dir": "vlib/v/gen/native/tests",
+          "filters": false,
+          "runner": "vlib/v/gen/native/tests/native_test.v"
+        },
+        {
+          "dir": "vlib/v/gen/wasm/tests",
+          "filters": false,
+          "runner": "vlib/v/gen/wasm/tests/wasm_test.v"
+        }
+      ],
+      "type": "v"
+    },
+    "test_dirs": [
+      "slow_tests",
+      "testdata"
+    ],
+    "visible_timeout": 21600
+  },
+  "upstream_image": "pandora-maxbug-v:0.3.4",
+  "n_base_passing": 0,
+  "n_base_test_ignore": 1,
+  "oracle_digest": "04d8a8e210a9b9e291a4e3a63250e23bb13b7937d94dc1b45151a086f7c82272",
+  "oracle_pristine_paths": [
+    "v"
+  ],
+  "upstream_commit": "9f7399e15e6172900e0591deb5a57a45769d8205",
+  "reproduction": {
+    "build_cmd": "v-build",
+    "build_timeout": 1800,
+    "suite": {
+      "eval_roots": [
+        "vlib"
+      ],
+      "golden_dirs": [
+        {
+          "dir": "vlib/v/checker/tests",
+          "runner": "vlib/v/compiler_errors_test.v"
+        },
+        {
+          "dir": "vlib/v/parser/tests",
+          "runner": "vlib/v/compiler_errors_test.v"
+        },
+        {
+          "dir": "vlib/v/scanner/tests",
+          "runner": "vlib/v/compiler_errors_test.v"
+        },
+        {
+          "dir": "vlib/v/tests/skip_unused",
+          "runner": "vlib/v/compiler_errors_test.v"
+        },
+        {
+          "dir": "vlib/v/slow_tests/inout",
+          "runner": "vlib/v/slow_tests/inout/compiler_test.v"
+        },
+        {
+          "dir": "vlib/v/gen/c/testdata",
+          "runner": "vlib/v/gen/c/coutput_test.v"
+        },
+        {
+          "dir": "cmd/tools/vvet/tests",
+          "runner": "cmd/tools/vvet/vet_test.v"
+        },
+        {
+          "dir": "vlib/v/fmt/tests",
+          "filters": false,
+          "runner": [
+            "vlib/v/fmt/fmt_test.v",
+            "vlib/v/fmt/fmt_keep_test.v"
+          ]
+        },
+        {
+          "dir": "vlib/v/slow_tests/repl",
+          "filters": false,
+          "runner": "vlib/v/slow_tests/repl/repl_test.v"
+        },
+        {
+          "dir": "vlib/v/tests/known_errors/testdata",
+          "filters": false,
+          "runner": "vlib/v/tests/known_errors/known_errors_test.v"
+        },
+        {
+          "dir": "vlib/v/gen/native/tests",
+          "filters": false,
+          "runner": "vlib/v/gen/native/tests/native_test.v"
+        },
+        {
+          "dir": "vlib/v/gen/wasm/tests",
+          "filters": false,
+          "runner": "vlib/v/gen/wasm/tests/wasm_test.v"
+        }
+      ],
+      "type": "v"
+    },
+    "test_timeout": 1200
+  },
+  "schema": 2,
+  "subtasks": [
+    {
+      "f2p": [
+        "vlib/v/tests/cross_assign_aliased_array_test.v"
+      ],
+      "id": "v-0763839d8a27",
+      "target_files": [
+        "vlib/v/gen/c/assign.v"
+      ]
+    },
+    {
+      "f2p": [
+        "vlib/v/tests/option_multi_return_assign_test.v"
+      ],
+      "id": "v-078f72eb26ca",
+      "target_files": [
+        "vlib/v/gen/c/assign.v"
+      ]
+    },
+    {
+      "f2p": [
+        "vlib/math/complex/complex_test.v"
+      ],
+      "id": "v-0ac700a3c378",
+      "target_files": [
+        "vlib/math/complex/complex.v"
+      ]
+    },
+    {
+      "f2p": [
+        "vlib/v/tests/enum_max_test.v"
+      ],
+      "id": "v-0f57fc1b11fb",
+      "target_files": [
+        "vlib/v/checker/checker.v"
+      ]
+    },
+    {
+      "f2p": [
+        "vlib/v/tests/comptime_sumtype_cast_2_test.v",
+        "vlib/v/tests/comptime_sumtype_cast_3_test.v"
+      ],
+      "id": "v-0f5db83edf93",
+      "target_files": [
+        "vlib/v/checker/assign.v",
+        "vlib/v/gen/c/assign.v",
+        "vlib/v/gen/c/cgen.v"
+      ]
+    },
+    {
+      "f2p": [
+        "vlib/v/tests/aliases/alias_updated_expr_test.v"
+      ],
+      "id": "v-0f8fec0a92ad",
+      "target_files": [
+        "vlib/v/checker/struct.v"
+      ]
+    },
+    {
+      "f2p": [
+        "vlib/v/tests/anon_fn_test.v"
+      ],
+      "id": "v-10132e2a1ce5",
+      "target_files": [
+        "vlib/v/parser/fn.v"
+      ]
+    },
+    {
+      "f2p": [
+        "vlib/v/tests/concurrency/shared_array_indexing_test.v"
+      ],
+      "id": "v-105ba4a5c457",
+      "target_files": [
+        "vlib/v/gen/c/index.v"
+      ]
+    },
+    {
+      "f2p": [
+        "vlib/regex/regex_test.v"
+      ],
+      "id": "v-11dc1573856d",
+      "target_files": [
+        "vlib/regex/regex.v"
+      ]
+    },
+    {
+      "f2p": [
+        "vlib/v/compiler_errors_test.v::vlib/v/parser/tests/builtin_alias_type_name_err",
+        "vlib/v/compiler_errors_test.v::vlib/v/parser/tests/builtin_enum_type_name_err",
+        "vlib/v/compiler_errors_test.v::vlib/v/parser/tests/builtin_sum_type_type_name_err"
+      ],
+      "id": "v-120383769d0e",
+      "target_files": [
+        "vlib/v/parser/parser.v"
+      ]
+    },
+    {
+      "f2p": [
+        "vlib/v/tests/alias_map_clone_test.v"
+      ],
+      "id": "v-12bcab8ecb52",
+      "target_files": [
+        "vlib/v/gen/c/fn.v"
+      ]
+    },
+    {
+      "f2p": [
+        "vlib/v/compiler_errors_test.v::vlib/v/checker/tests/generic_eq_wrong_type.err"
+      ],
+      "id": "v-12f9ae33f42b",
+      "target_files": [
+        "vlib/v/checker/infix.v"
+      ]
+    },
+    {
+      "f2p": [
+        "vlib/rand/random_numbers_test.v"
+      ],
+      "id": "v-13f47e664ae5",
+      "target_files": [
+        "vlib/rand/rand.v"
+      ]
+    },
+    {
+      "f2p": [
+        "vlib/v/slow_tests/inout/compiler_test.v::vlib/v/slow_tests/inout/comptime_selector_of_interface"
+      ],
+      "id": "v-13fd3614d25b",
+      "target_files": [
+        "vlib/v/gen/c/comptime.v"
+      ]
+    },
+    {
+      "f2p": [
+        "vlib/v/tests/match_array_of_reference_sumtype_test.v"
+      ],
+      "id": "v-141ce330e710",
+      "target_files": [
+        "vlib/v/parser/if_match.v"
+      ]
+    },
+    {
+      "f2p": [
+        "vlib/v/compiler_errors_test.v::vlib/v/checker/tests/interface_option_cast_err"
+      ],
+      "id": "v-148ad0fd279d",
+      "target_files": [
+        "vlib/v/checker/checker.v"
+      ]
+    },
+    {
+      "f2p": [
+        "vlib/v/tests/generic_comptime_test.v"
+      ],
+      "id": "v-151ecc226184",
+      "target_files": [
+        "vlib/v/gen/c/fn.v"
+      ]
+    },
+    {
+      "f2p": [
+        "vlib/v/tests/generic_fn_with_nested_generic_fn_call_test.v"
+      ],
+      "id": "v-17ef63e32a58",
+      "target_files": [
+        "vlib/v/checker/fn.v"
+      ]
+    },
+    {
+      "f2p": [
+        "vlib/v/tests/chan_interface_test.v"
+      ],
+      "id": "v-1803853734da",
+      "target_files": [
+        "vlib/v/gen/c/fn.v"
+      ]
+    },
+    {
+      "f2p": [
+        "vlib/v/tests/string_interpolation_string_args_test.v"
+      ],
+      "id": "v-18c7c718e850",
+      "target_files": [
+        "vlib/v/scanner/scanner.v"
+      ]
+    },
+    {
+      "f2p": [
+        "vlib/v/fmt/fmt_keep_test.v"
+      ],
+      "id": "v-194a3e0d3142",
+      "target_files": [
+        "vlib/v/ast/ast.v",
+        "vlib/v/fmt/fmt.v"
+      ]
+    },
+    {
+      "f2p": [
+        "vlib/v/tests/option_result_interface_ret_test.v"
+      ],
+      "id": "v-1a9777d5a391",
+      "target_files": [
+        "vlib/v/gen/c/cgen.v"
+      ]
+    },
+    {
+      "f2p": [
+        "vlib/toml/tests/quoted_string_crlf_test.v"
+      ],
+      "id": "v-1b75959614d8",
+      "target_files": [
+        "vlib/toml/checker/checker.v"
+      ]
+    },
+    {
+      "f2p": [
+        "vlib/v/fmt/fmt_keep_test.v"
+      ],
+      "id": "v-1cb6d03901e7",
+      "target_files": [
+        "vlib/v/parser/parser.v"
+      ]
+    },
+    {
+      "f2p": [
+        "vlib/builtin/string_test.v"
+      ],
+      "id": "v-1cc808875f0d",
+      "target_files": [
+        "vlib/builtin/string.v"
+      ]
+    },
+    {
+      "f2p": [
+        "vlib/v/tests/reflection_test.v"
+      ],
+      "id": "v-1ccbfbbb3286",
+      "target_files": [
+        "vlib/v/reflection/reflection.v"
+      ]
+    },
+    {
+      "f2p": [
+        "vlib/v/tests/left_padding_test.v"
+      ],
+      "id": "v-1cf4611d3b87",
+      "target_files": [
+        "vlib/builtin/string_interpolation.v"
+      ]
+    },
+    {
+      "f2p": [
+        "vlib/v/slow_tests/inout/compiler_test.v::vlib/v/slow_tests/inout/printing_interpolating_float"
+      ],
+      "id": "v-1d1a66ec014b",
+      "target_files": [
+        "vlib/strconv/format_mem.c.v",
+        "vlib/strconv/format_mem.js.v"
+      ]
+    },
+    {
+      "f2p": [
+        "vlib/v/tests/spawn_array_mut_test.v"
+      ],
+      "id": "v-1ff1642d3242",
+      "target_files": [
+        "vlib/v/checker/fn.v"
+      ]
+    },
+    {
+      "f2p": [
+        "vlib/x/json2/decode_struct_test.v"
+      ],
+      "id": "v-20ce25e25159",
+      "target_files": [
+        "vlib/x/json2/json2.v"
+      ]
+    },
+    {
+      "f2p": [
+        "vlib/v/tests/multiple_embed_external_interface_test.v"
+      ],
+      "id": "v-25079c65f7a0",
+      "target_files": [
+        "vlib/v/parser/struct.v"
+      ]
+    },
+    {
+      "f2p": [
+        "vlib/v/tests/map_clear_test.v"
+      ],
+      "id": "v-2580ba95a642",
+      "target_files": [
+        "vlib/v/gen/c/fn.v"
+      ]
+    },
+    {
+      "f2p": [
+        "vlib/v/tests/if_assign_test.v"
+      ],
+      "id": "v-268f49076768",
+      "target_files": [
+        "vlib/v/gen/c/cgen.v"
+      ]
+    },
+    {
+      "f2p": [
+        "vlib/v/gen/c/coutput_test.v::vlib/v/gen/c/testdata/alias_of_array_method_call"
+      ],
+      "id": "v-2691726ef84d",
+      "target_files": [
+        "vlib/v/gen/c/fn.v"
+      ]
+    },
+    {
+      "f2p": [
+        "vlib/v/compiler_errors_test.v::vlib/v/checker/tests/index_sumtype_or_interface_params_err"
+      ],
+      "id": "v-27ff3ac972a2",
+      "target_files": [
+        "vlib/v/checker/checker.v"
+      ]
+    },
+    {
+      "f2p": [
+        "vlib/math/invhyp_test.v"
+      ],
+      "id": "v-28ef4701a95a",
+      "target_files": [
+        "vlib/math/invhyp.v"
+      ]
+    },
+    {
+      "f2p": [
+        "vlib/v/tests/string_interpolation_test.v"
+      ],
+      "id": "v-2a6441e4f8cb",
+      "target_files": [
+        "vlib/v/gen/c/str_intp.v"
+      ]
+    },
+    {
+      "f2p": [
+        "vlib/v/fmt/fmt_keep_test.v",
+        "vlib/v/fmt/fmt_test.v"
+      ],
+      "id": "v-2cca13ed1dd3",
+      "target_files": [
+        "vlib/v/fmt/fmt.v"
+      ]
+    },
+    {
+      "f2p": [
+        "vlib/v/tests/fns/method_call_on_rangeexpr_test.v"
+      ],
+      "id": "v-2cfa89533845",
+      "target_files": [
+        "vlib/v/gen/c/fn.v"
+      ]
+    },
+    {
+      "f2p": [
+        "vlib/v/tests/deref_mut_variable_in_if_expr_test.v"
+      ],
+      "id": "v-30173b1b16c2",
+      "target_files": [
+        "vlib/v/checker/if.v",
+        "vlib/v/gen/c/cgen.v"
+      ]
+    },
+    {
+      "f2p": [
+        "vlib/v/tests/match_with_comptime_if_expr_in_branch_test.v"
+      ],
+      "id": "v-32516767d085",
+      "target_files": [
+        "vlib/v/gen/c/if.v"
+      ]
+    },
+    {
+      "f2p": [
+        "vlib/v/tests/generic_interface_array_type_infer_test.v"
+      ],
+      "id": "v-3261ea44b663",
+      "target_files": [
+        "vlib/v/checker/interface.v"
+      ]
+    },
+    {
+      "f2p": [
+        "vlib/v/compiler_errors_test.v::vlib/v/checker/tests/shared_param_err"
+      ],
+      "id": "v-33ff756975c4",
+      "target_files": [
+        "vlib/v/checker/fn.v"
+      ]
+    },
+    {
+      "f2p": [
+        "vlib/math/big/big_test.v"
+      ],
+      "id": "v-348ee978613a",
+      "target_files": [
+        "vlib/math/big/division_array_ops.v"
+      ]
+    },
+    {
+      "f2p": [
+        "vlib/arrays/arrays_test.v"
+      ],
+      "id": "v-34d4d47615aa",
+      "target_files": [
+        "vlib/arrays/arrays.v"
+      ]
+    },
+    {
+      "f2p": [
+        "vlib/v/gen/c/coutput_test.v::vlib/v/gen/c/testdata/string_escapes_and_quoting_issue_25304_1",
+        "vlib/v/gen/c/coutput_test.v::vlib/v/gen/c/testdata/string_escapes_and_quoting_issue_25304_2"
+      ],
+      "id": "v-35e7f741ddc6",
+      "target_files": [
+        "vlib/v/util/quote.v"
+      ]
+    },
+    {
+      "f2p": [
+        "vlib/flag/flag_test.v"
+      ],
+      "id": "v-36ec84ed1563",
+      "target_files": [
+        "vlib/flag/flag.v"
+      ]
+    },
+    {
+      "f2p": [
+        "vlib/v/compiler_errors_test.v::vlib/v/checker/tests/sync_receiver_decl"
+      ],
+      "id": "v-3aa69d0846d3",
+      "target_files": [
+        "vlib/v/parser/fn.v"
+      ]
+    },
+    {
+      "f2p": [
+        "vlib/v/tests/option_map_fn_type_value_test.v"
+      ],
+      "id": "v-3b3a25d189a7",
+      "target_files": [
+        "vlib/v/gen/c/cgen.v"
+      ]
+    },
+    {
+      "f2p": [
+        "vlib/json/json_option_none_test.v"
+      ],
+      "id": "v-3b8a46d69ecb",
+      "target_files": [
+        "vlib/v/gen/c/json.v"
+      ]
+    },
+    {
+      "f2p": [
+        "vlib/net/html/parser_test.v"
+      ],
+      "id": "v-3b8ad0432a0f",
+      "target_files": [
+        "vlib/net/html/parser.v"
+      ]
+    },
+    {
+      "f2p": [
+        "vlib/v/slow_tests/inout/compiler_test.v::vlib/v/slow_tests/inout/printing_slice_of_fn_call_string"
+      ],
+      "id": "v-3c30ebd8c6c0",
+      "target_files": [
+        "vlib/builtin/array.v",
+        "vlib/builtin/string.v",
+        "vlib/v/gen/c/index.v"
+      ]
+    },
+    {
+      "f2p": [
+        "vlib/v/tests/generics_with_embed_generics_structs_test.v"
+      ],
+      "id": "v-3cec21f52742",
+      "target_files": [
+        "vlib/v/ast/table.v"
+      ]
+    },
+    {
+      "f2p": [
+        "vlib/v/fmt/fmt_keep_test.v"
+      ],
+      "id": "v-3d93257a8f8b",
+      "target_files": [
+        "vlib/v/fmt/fmt.v"
+      ]
+    },
+    {
+      "f2p": [
+        "vlib/v/compiler_errors_test.v::vlib/v/tests/skip_unused/aggregate_call"
+      ],
+      "id": "v-3e4b3b28a09e",
+      "target_files": [
+        "vlib/v/markused/walker.v"
+      ]
+    },
+    {
+      "f2p": [
+        "vlib/v/tests/generics_with_generics_fn_return_generics_map_type_test.v"
+      ],
+      "id": "v-3e5d9b3dac49",
+      "target_files": [
+        "vlib/v/checker/fn.v"
+      ]
+    },
+    {
+      "f2p": [
+        "vlib/v/compiler_errors_test.v::vlib/v/parser/tests/struct_embed_wrong_pos_in_pub_err"
+      ],
+      "id": "v-3e8a56669d36",
+      "target_files": [
+        "vlib/v/parser/struct.v"
+      ]
+    },
+    {
+      "f2p": [
+        "vlib/encoding/csv/csv_reader_eol_test.v"
+      ],
+      "id": "v-3f3572f6499b",
+      "target_files": [
+        "vlib/encoding/csv/reader.v"
+      ]
+    },
+    {
+      "f2p": [
+        "vlib/math/unsigned/uint128_test.v"
+      ],
+      "id": "v-3f909e3ec035",
+      "target_files": [
+        "vlib/math/unsigned/uint128.v"
+      ]
+    },
+    {
+      "f2p": [
+        "vlib/v/tests/modules/consts_with_or_blocks_in_different_files/consts_should_not_conflict_test.v"
+      ],
+      "id": "v-41a006310892",
+      "target_files": [
+        "vlib/v/gen/c/cgen.v"
+      ]
+    },
+    {
+      "f2p": [
+        "vlib/v/tests/interface_with_multi_nested_embed_3_test.v"
+      ],
+      "id": "v-435cfd4115be",
+      "target_files": [
+        "vlib/v/gen/c/cgen.v"
+      ]
+    },
+    {
+      "f2p": [
+        "vlib/v/tests/struct_init_update_with_generics_test.v"
+      ],
+      "id": "v-4508a659c1f5",
+      "target_files": [
+        "vlib/v/checker/struct.v"
+      ]
+    },
+    {
+      "f2p": [
+        "vlib/strconv/atoi_test.v"
+      ],
+      "id": "v-454fc8fff0ed",
+      "target_files": [
+        "vlib/strconv/atoi.v"
+      ]
+    },
+    {
+      "f2p": [
+        "vlib/v/fmt/fmt_keep_test.v"
+      ],
+      "id": "v-456cb338b3dc",
+      "target_files": [
+        "vlib/v/fmt/struct.v"
+      ]
+    },
+    {
+      "f2p": [
+        "vlib/v/tests/anon_fn_direct_call_with_option_test.v"
+      ],
+      "id": "v-464b20c4b97a",
+      "target_files": [
+        "vlib/v/gen/c/fn.v"
+      ]
+    },
+    {
+      "f2p": [
+        "vlib/v/compiler_errors_test.v::vlib/v/checker/tests/comptime_assign_missing_mut_err"
+      ],
+      "id": "v-47bf2e543160",
+      "target_files": [
+        "vlib/v/checker/checker.v"
+      ]
+    },
+    {
+      "f2p": [
+        "vlib/regex/regex_anchor_test.v"
+      ],
+      "id": "v-4a7026472b76",
+      "target_files": [
+        "vlib/regex/regex_util.v"
+      ]
+    },
+    {
+      "f2p": [
+        "vlib/v/tests/option_auto_heap_test.v"
+      ],
+      "id": "v-4b45c5d0d200",
+      "target_files": [
+        "vlib/v/ast/ast.v",
+        "vlib/v/gen/c/assign.v",
+        "vlib/v/gen/c/cgen.v"
+      ]
+    },
+    {
+      "f2p": [
+        "vlib/v/tests/match_on_return_test.v"
+      ],
+      "id": "v-4b54f4cabc43",
+      "target_files": [
+        "vlib/v/gen/c/match.v"
+      ]
+    },
+    {
+      "f2p": [
+        "vlib/v/tests/generic_struct_recursive_test.v"
+      ],
+      "id": "v-4b85b8805de6",
+      "target_files": [
+        "vlib/v/checker/struct.v",
+        "vlib/v/gen/c/struct.v"
+      ]
+    },
+    {
+      "f2p": [
+        "vlib/v/tests/fixed_array_of_option_test.v"
+      ],
+      "id": "v-4bc01a7df79a",
+      "target_files": [
+        "vlib/v/parser/containers.v"
+      ]
+    },
+    {
+      "f2p": [
+        "vlib/v/tests/match_const_range_test.v"
+      ],
+      "id": "v-4e2122cddc77",
+      "target_files": [
+        "vlib/v/checker/match.v"
+      ]
+    },
+    {
+      "f2p": [
+        "vlib/builtin/utf8_test.v"
+      ],
+      "id": "v-4f291360b910",
+      "target_files": [
+        "vlib/builtin/utf8.c.v"
+      ]
+    },
+    {
+      "f2p": [
+        "vlib/v/compiler_errors_test.v::vlib/v/checker/tests/for_mut_compare_rune_string_err"
+      ],
+      "id": "v-4fb07f17769e",
+      "target_files": [
+        "vlib/v/checker/infix.v"
+      ]
+    },
+    {
+      "f2p": [
+        "vlib/v/tests/selectorexpt_field_name_test.v"
+      ],
+      "id": "v-50544f816455",
+      "target_files": [
+        "vlib/v/parser/parser.v"
+      ]
+    },
+    {
+      "f2p": [
+        "vlib/v/tests/builtin_arrays/array_append_map_with_or_expr_test.v"
+      ],
+      "id": "v-51dfe4d88526",
+      "target_files": [
+        "vlib/v/gen/c/index.v"
+      ]
+    },
+    {
+      "f2p": [
+        "vlib/v/tests/shared_generic_test.v"
+      ],
+      "id": "v-52fe639967e0",
+      "target_files": [
+        "vlib/v/gen/c/assign.v"
+      ]
+    },
+    {
+      "f2p": [
+        "vlib/json/json_decode_with_generic_array_test.v"
+      ],
+      "id": "v-54a0fc0e08eb",
+      "target_files": [
+        "vlib/v/checker/fn.v"
+      ]
+    },
+    {
+      "f2p": [
+        "vlib/v/tests/generics_struct_with_inconsistent_generic_types_1_test.v"
+      ],
+      "id": "v-55af152e2658",
+      "target_files": [
+        "vlib/v/gen/c/fn.v"
+      ]
+    },
+    {
+      "f2p": [
+        "vlib/v/tests/builtin_arrays/array_sumtype_init_test.v"
+      ],
+      "id": "v-57da86f6c6f0",
+      "target_files": [
+        "vlib/v/gen/c/array.v"
+      ]
+    },
+    {
+      "f2p": [
+        "vlib/arrays/arrays_fold_test.v"
+      ],
+      "id": "v-5890c5e5b6d0",
+      "target_files": [
+        "vlib/arrays/arrays.v"
+      ]
+    },
+    {
+      "f2p": [
+        "vlib/flag/flag_parse_test.v"
+      ],
+      "id": "v-5893cb823517",
+      "target_files": [
+        "vlib/flag/flag.v"
+      ]
+    },
+    {
+      "f2p": [
+        "vlib/v/tests/match_smartcast_test.v"
+      ],
+      "id": "v-58fc4ead62fe",
+      "target_files": [
+        "vlib/v/gen/c/cgen.v"
+      ]
+    },
+    {
+      "f2p": [
+        "vlib/v/slow_tests/inout/compiler_test.v::vlib/v/slow_tests/inout/dump_array_of_ref"
+      ],
+      "id": "v-59c4dc4fe5d9",
+      "target_files": [
+        "vlib/v/gen/c/dumpexpr.v"
+      ]
+    },
+    {
+      "f2p": [
+        "vlib/v/tests/anon_struct_with_default_expr_test.v"
+      ],
+      "id": "v-5ca2a06f25b4",
+      "target_files": [
+        "vlib/v/checker/struct.v",
+        "vlib/v/gen/c/struct.v",
+        "vlib/v/parser/struct.v"
+      ]
+    },
+    {
+      "f2p": [
+        "vlib/v/compiler_errors_test.v::vlib/v/checker/tests/map_index_or_block_type_mismatch_err"
+      ],
+      "id": "v-5d208ec6ba95",
+      "target_files": [
+        "vlib/v/checker/checker.v"
+      ]
+    },
+    {
+      "f2p": [
+        "vlib/v/fmt/fmt_keep_test.v"
+      ],
+      "id": "v-5de1031d3bd4",
+      "target_files": [
+        "vlib/v/fmt/fmt.v"
+      ]
+    },
+    {
+      "f2p": [
+        "vlib/v/fmt/fmt_keep_test.v"
+      ],
+      "id": "v-5ee1a89f40fd",
+      "target_files": [
+        "vlib/v/parser/expr.v"
+      ]
+    },
+    {
+      "f2p": [
+        "vlib/v/tests/map_value_ref_interp_test.v"
+      ],
+      "id": "v-5f05b34c11c2",
+      "target_files": [
+        "vlib/v/gen/c/auto_str_methods.v"
+      ]
+    },
+    {
+      "f2p": [
+        "vlib/v/tests/for_select_test.v"
+      ],
+      "id": "v-5f3b47a0a005",
+      "target_files": [
+        "vlib/v/parser/if_match.v"
+      ]
+    },
+    {
+      "f2p": [
+        "vlib/v/tests/comptime_propagate_test.v"
+      ],
+      "id": "v-623d9ff0298d",
+      "target_files": [
+        "vlib/v/checker/postfix.v",
+        "vlib/v/gen/c/cgen.v",
+        "vlib/v/gen/c/fn.v",
+        "vlib/x/json2/encoder.v"
+      ]
+    },
+    {
+      "f2p": [
+        "vlib/toml/scanner/scanner_test.v"
+      ],
+      "id": "v-62bb5becd3d4",
+      "target_files": [
+        "vlib/toml/scanner/scanner.v"
+      ]
+    },
+    {
+      "f2p": [
+        "vlib/v/tests/defer_if_comptime_test.v"
+      ],
+      "id": "v-67d8b96fbcba",
+      "target_files": [
+        "vlib/v/checker/checker.v"
+      ]
+    },
+    {
+      "f2p": [
+        "vlib/v/fmt/fmt_keep_test.v"
+      ],
+      "id": "v-68d95cc360f3",
+      "target_files": [
+        "vlib/v/fmt/fmt.v"
+      ]
+    },
+    {
+      "f2p": [
+        "vlib/v/tests/generics_struct_method_params_is_generics_struct_and_not_called_test.v"
+      ],
+      "id": "v-695e45ef8a50",
+      "target_files": [
+        "vlib/v/checker/struct.v"
+      ]
+    },
+    {
+      "f2p": [
+        "vlib/v/tests/in_op_array_fixed_test.v"
+      ],
+      "id": "v-6b3ef54e78f1",
+      "target_files": [
+        "vlib/v/gen/c/infix.v"
+      ]
+    },
+    {
+      "f2p": [
+        "vlib/v/tests/sumtypes/sumtype_generic_checking_test.v"
+      ],
+      "id": "v-6b78640fe9c5",
+      "target_files": [
+        "vlib/v/checker/infix.v"
+      ]
+    },
+    {
+      "f2p": [
+        "vlib/v/fmt/fmt_test.v"
+      ],
+      "id": "v-6bd68b628347",
+      "target_files": [
+        "vlib/v/parser/parser.v",
+        "vlib/v/parser/struct.v"
+      ]
+    },
+    {
+      "f2p": [
+        "vlib/v/tests/for_in_iterator_of_generic_struct_3_test.v"
+      ],
+      "id": "v-6d2b974d81b3",
+      "target_files": [
+        "vlib/v/ast/table.v"
+      ]
+    },
+    {
+      "f2p": [
+        "vlib/v/tests/shift_test.v"
+      ],
+      "id": "v-6d4022f55fd5",
+      "target_files": [
+        "vlib/v/gen/c/infix.v"
+      ]
+    },
+    {
+      "f2p": [
+        "vlib/v/tests/const_from_multi_branchs_of_if_expr_test.v"
+      ],
+      "id": "v-6df63b41e913",
+      "target_files": [
+        "vlib/v/checker/checker.v"
+      ]
+    },
+    {
+      "f2p": [
+        "vlib/regex/regex_test.v"
+      ],
+      "id": "v-6f3933207a29",
+      "target_files": [
+        "vlib/regex/regex.v"
+      ]
+    },
+    {
+      "f2p": [
+        "vlib/math/unsigned/uint128_test.v"
+      ],
+      "id": "v-6f7d8bce0672",
+      "target_files": [
+        "vlib/math/unsigned/uint128.v"
+      ]
+    },
+    {
+      "f2p": [
+        "vlib/v/tests/interface_with_option_field_test.v"
+      ],
+      "id": "v-70bc1e71ceda",
+      "target_files": [
+        "vlib/v/gen/c/cgen.v"
+      ]
+    },
+    {
+      "f2p": [
+        "vlib/v/tests/indexexpr_or_test.v"
+      ],
+      "id": "v-714637c40ca9",
+      "target_files": [
+        "vlib/v/gen/c/index.v"
+      ]
+    },
+    {
+      "f2p": [
+        "vlib/v/tests/fn_voidptr_param_call_with_nonpointer_rvalue_test.v"
+      ],
+      "id": "v-71d754c36788",
+      "target_files": [
+        "vlib/v/gen/c/fn.v"
+      ]
+    },
+    {
+      "f2p": [
+        "vlib/v/fmt/fmt_keep_test.v",
+        "vlib/v/fmt/fmt_test.v"
+      ],
+      "id": "v-735e308ec1a7",
+      "target_files": [
+        "vlib/v/fmt/fmt.v"
+      ]
+    },
+    {
+      "f2p": [
+        "vlib/json/json_fixed_array_test.v"
+      ],
+      "id": "v-754a32487af3",
+      "target_files": [
+        "vlib/v/gen/c/json.v"
+      ]
+    },
+    {
+      "f2p": [
+        "vlib/v/tests/struct_field_option_type_with_default_value_init_test.v"
+      ],
+      "id": "v-759ba8f0380b",
+      "target_files": [
+        "vlib/v/gen/c/struct.v"
+      ]
+    },
+    {
+      "f2p": [
+        "vlib/v/tests/struct_field_default_fn_type_value_init_test.v"
+      ],
+      "id": "v-778fb0731695",
+      "target_files": [
+        "vlib/v/parser/parse_type.v"
+      ]
+    },
+    {
+      "f2p": [
+        "vlib/v/tests/comptime_deref_or_ref_test.v"
+      ],
+      "id": "v-78e60e35ac04",
+      "target_files": [
+        "vlib/v/gen/c/fn.v"
+      ]
+    },
+    {
+      "f2p": [
+        "vlib/json/json_decode_option_enum_test.v"
+      ],
+      "id": "v-792c79826540",
+      "target_files": [
+        "vlib/v/gen/c/json.v"
+      ]
+    },
+    {
+      "f2p": [
+        "vlib/v/tests/comptime_println_test.v"
+      ],
+      "id": "v-79460603f73c",
+      "target_files": [
+        "vlib/v/gen/c/str_intp.v"
+      ]
+    },
+    {
+      "f2p": [
+        "vlib/v/tests/interface_multi_return_test.v"
+      ],
+      "id": "v-795d0b34e4c7",
+      "target_files": [
+        "vlib/v/gen/c/cgen.v"
+      ]
+    },
+    {
+      "f2p": [
+        "vlib/v/tests/nested_map_of_fn_call_test.v"
+      ],
+      "id": "v-7b8e591a1a00",
+      "target_files": [
+        "vlib/v/gen/c/index.v"
+      ]
+    },
+    {
+      "f2p": [
+        "vlib/v/tests/nested_or_expr_call_test.v"
+      ],
+      "id": "v-7ca227095ee4",
+      "target_files": [
+        "vlib/v/gen/c/cgen.v"
+      ]
+    },
+    {
+      "f2p": [
+        "vlib/v/fmt/fmt_keep_test.v",
+        "vlib/v/fmt/fmt_test.v"
+      ],
+      "id": "v-7d16c9390deb",
+      "target_files": [
+        "cmd/tools/vast/vast.v",
+        "vlib/v/ast/ast.v",
+        "vlib/v/fmt/fmt.v",
+        "vlib/v/parser/parse_type.v",
+        "vlib/v/parser/parser.v"
+      ]
+    },
+    {
+      "f2p": [
+        "vlib/v/compiler_errors_test.v::vlib/v/checker/tests/fn_array_decompose_arg_mismatch_err_c"
+      ],
+      "id": "v-7ed459e82194",
+      "target_files": [
+        "vlib/v/checker/fn.v"
+      ]
+    },
+    {
+      "f2p": [
+        "vlib/v/fmt/fmt_keep_test.v"
+      ],
+      "id": "v-81c9a02ff05f",
+      "target_files": [
+        "vlib/v/ast/table.v"
+      ]
+    },
+    {
+      "f2p": [
+        "vlib/math/floor_test.v"
+      ],
+      "id": "v-8348001964cc",
+      "target_files": [
+        "vlib/math/floor.v"
+      ]
+    },
+    {
+      "f2p": [
+        "vlib/v/tests/if_elseif_else_test.v"
+      ],
+      "id": "v-854bd9f037aa",
+      "target_files": [
+        "vlib/v/parser/parser.v"
+      ]
+    },
+    {
+      "f2p": [
+        "vlib/v/slow_tests/inout/compiler_test.v::vlib/v/slow_tests/inout/printing_option_or_expr_with_map_val"
+      ],
+      "id": "v-896f274dbeb8",
+      "target_files": [
+        "vlib/v/parser/parser.v"
+      ]
+    },
+    {
+      "f2p": [
+        "vlib/v/tests/sumtype_as_cast_2_test.v"
+      ],
+      "id": "v-8a4f0861b941",
+      "target_files": [
+        "vlib/v/ast/ast.v",
+        "vlib/v/gen/c/cgen.v"
+      ]
+    },
+    {
+      "f2p": [
+        "vlib/v/tests/comptime_for_mod_name_test.v"
+      ],
+      "id": "v-8ad04ffe7c40",
+      "target_files": [
+        "vlib/v/parser/comptime.v",
+        "vlib/v/parser/parse_type.v"
+      ]
+    },
+    {
+      "f2p": [
+        "vlib/v/tests/thread_ptr_ret_test.v"
+      ],
+      "id": "v-8b702d37450c",
+      "target_files": [
+        "vlib/v/gen/c/spawn_and_go.v"
+      ]
+    },
+    {
+      "f2p": [
+        "vlib/v/fmt/fmt_keep_test.v",
+        "vlib/v/fmt/fmt_test.v"
+      ],
+      "id": "v-8ca73684e8b4",
+      "target_files": [
+        "vlib/v/parser/expr.v"
+      ]
+    },
+    {
+      "f2p": [
+        "vlib/v/fmt/fmt_keep_test.v"
+      ],
+      "id": "v-8ce0af6e03e6",
+      "target_files": [
+        "vlib/v/fmt/fmt.v",
+        "vlib/v/parser/struct.v"
+      ]
+    },
+    {
+      "f2p": [
+        "vlib/v/tests/generics/generic_fn_ref_level_test.v"
+      ],
+      "id": "v-8d5ef288cb00",
+      "target_files": [
+        "vlib/v/checker/check_types.v"
+      ]
+    },
+    {
+      "f2p": [
+        "vlib/v/tests/consts/const_propagate_result_test.v"
+      ],
+      "id": "v-91387748f34b",
+      "target_files": [
+        "vlib/v/checker/checker.v"
+      ]
+    },
+    {
+      "f2p": [
+        "vlib/v/tests/generic_fn_call_map_keys_values_test.v"
+      ],
+      "id": "v-916666f67429",
+      "target_files": [
+        "vlib/v/checker/fn.v"
+      ]
+    },
+    {
+      "f2p": [
+        "vlib/json/json_test.v"
+      ],
+      "id": "v-930374dea027",
+      "target_files": [
+        "vlib/v/checker/fn.v"
+      ]
+    },
+    {
+      "f2p": [
+        "vlib/v/tests/assign_with_in_module_sumtype_test.v"
+      ],
+      "id": "v-93daac52d9c5",
+      "target_files": [
+        "vlib/v/parser/containers.v"
+      ]
+    },
+    {
+      "f2p": [
+        "vlib/v/tests/concurrency/shared_lock_expr_assert_test.v"
+      ],
+      "id": "v-9419ffc5cda8",
+      "target_files": [
+        "vlib/v/gen/c/assert.v"
+      ]
+    },
+    {
+      "f2p": [
+        "vlib/math/unsigned/uint128_test.v"
+      ],
+      "id": "v-9484f3fcb2df",
+      "target_files": [
+        "vlib/math/unsigned/uint128.v"
+      ]
+    },
+    {
+      "f2p": [
+        "vlib/v/fmt/fmt_keep_test.v"
+      ],
+      "id": "v-948680e90715",
+      "target_files": [
+        "vlib/v/ast/types.v"
+      ]
+    },
+    {
+      "f2p": [
+        "vlib/v/tests/option_selector_cast_test.v"
+      ],
+      "id": "v-956fa383d97d",
+      "target_files": [
+        "vlib/v/gen/c/assign.v"
+      ]
+    },
+    {
+      "f2p": [
+        "vlib/orm/orm_fn_test.v"
+      ],
+      "id": "v-95eb5366989d",
+      "target_files": [
+        "vlib/orm/orm.v"
+      ]
+    },
+    {
+      "f2p": [
+        "vlib/v/tests/project_with_c_code_2/main2_test.v"
+      ],
+      "id": "v-9698fe3612bd",
+      "target_files": [
+        "vlib/v/gen/c/auto_str_methods.v"
+      ]
+    },
+    {
+      "f2p": [
+        "vlib/v/tests/builtin_arrays/array_map_to_fixed_array_test.v"
+      ],
+      "id": "v-96cceacd4ba9",
+      "target_files": [
+        "vlib/v/gen/c/array.v"
+      ]
+    },
+    {
+      "f2p": [
+        "vlib/v/compiler_errors_test.v::vlib/v/checker/tests/int_ptr_array_index_err"
+      ],
+      "id": "v-97178f0ff210",
+      "target_files": [
+        "vlib/v/checker/checker.v"
+      ]
+    },
+    {
+      "f2p": [
+        "vlib/v/tests/struct_field_named_as_c_keyword_test.v"
+      ],
+      "id": "v-9781df34e5d8",
+      "target_files": [
+        "vlib/v/gen/c/cgen.v"
+      ]
+    },
+    {
+      "f2p": [
+        "vlib/v/tests/interface_eq_methods_with_option_and_ref_test.v"
+      ],
+      "id": "v-98b2c68bbbc5",
+      "target_files": [
+        "vlib/v/gen/c/auto_eq_methods.v",
+        "vlib/v/gen/c/cgen.v"
+      ]
+    },
+    {
+      "f2p": [
+        "vlib/v/tests/swap_array_test.v"
+      ],
+      "id": "v-9a60aaeb4ce1",
+      "target_files": [
+        "vlib/v/checker/assign.v",
+        "vlib/v/gen/c/assign.v",
+        "vlib/v/parser/assign.v"
+      ]
+    },
+    {
+      "f2p": [
+        "vlib/v/tests/raw_string_ending_withs_backslash_test.v"
+      ],
+      "id": "v-9ab333c1692b",
+      "target_files": [
+        "vlib/v/scanner/scanner.v"
+      ]
+    },
+    {
+      "f2p": [
+        "vlib/v/tests/tmpl_dot_var_test.v"
+      ],
+      "id": "v-9b3fd7ff9308",
+      "target_files": [
+        "vlib/v/parser/tmpl.v"
+      ]
+    },
+    {
+      "f2p": [
+        "vlib/v/tests/generic_if_ret_test.v"
+      ],
+      "id": "v-9d5ecc710ea9",
+      "target_files": [
+        "vlib/v/checker/assign.v",
+        "vlib/v/checker/if.v"
+      ]
+    },
+    {
+      "f2p": [
+        "vlib/v/compiler_errors_test.v::vlib/v/checker/tests/struct_init_field_result_err"
+      ],
+      "id": "v-9da429b04225",
+      "target_files": [
+        "vlib/v/checker/struct.v"
+      ]
+    },
+    {
+      "f2p": [
+        "vlib/strings/textscanner/textscanner_test.v"
+      ],
+      "id": "v-9e0d6af155a6",
+      "target_files": [
+        "vlib/strings/textscanner/textscanner.v",
+        "vlib/strings/textscanner/textscanner_test.js.v"
+      ]
+    },
+    {
+      "f2p": [
+        "vlib/datatypes/set_test.v"
+      ],
+      "id": "v-9e0ef480986e",
+      "target_files": [
+        "vlib/datatypes/set.v"
+      ]
+    },
+    {
+      "f2p": [
+        "vlib/flag/flag_test.v"
+      ],
+      "id": "v-a08cdadb1575",
+      "target_files": [
+        "vlib/flag/flag.v"
+      ]
+    },
+    {
+      "f2p": [
+        "vlib/v/fmt/fmt_test.v"
+      ],
+      "id": "v-a157a303d949",
+      "target_files": [
+        "vlib/v/fmt/fmt.v"
+      ]
+    },
+    {
+      "f2p": [
+        "vlib/v/tests/generic_fn_infer_map_argument_test.v"
+      ],
+      "id": "v-a1ab4fd1e414",
+      "target_files": [
+        "vlib/v/checker/containers.v"
+      ]
+    },
+    {
+      "f2p": [
+        "vlib/v/tests/array_insert_variadic_arg_variable_test.v"
+      ],
+      "id": "v-a20c1cc9df19",
+      "target_files": [
+        "vlib/v/gen/c/array.v"
+      ]
+    },
+    {
+      "f2p": [
+        "vlib/v/tests/return_match_expr_with_nest_match_expr_test.v"
+      ],
+      "id": "v-a23cbb36e6c6",
+      "target_files": [
+        "vlib/v/gen/c/cgen.v"
+      ]
+    },
+    {
+      "f2p": [
+        "vlib/v/tests/alias_bool_not_op_test.v"
+      ],
+      "id": "v-a74c878d028c",
+      "target_files": [
+        "vlib/v/checker/checker.v"
+      ]
+    },
+    {
+      "f2p": [
+        "vlib/v/tests/generics_call_with_fixed_array_arg_test.v"
+      ],
+      "id": "v-a7ed3e99c49b",
+      "target_files": [
+        "vlib/v/parser/parser.v"
+      ]
+    },
+    {
+      "f2p": [
+        "vlib/v/tests/conditions/matches/match_with_mut_cond_var_test.v"
+      ],
+      "id": "v-a98e3012107e",
+      "target_files": [
+        "vlib/v/gen/c/match.v"
+      ]
+    },
+    {
+      "f2p": [
+        "vlib/v/tests/consts/const_map_init_order_test.v"
+      ],
+      "id": "v-a9931540bd8a",
+      "target_files": [
+        "vlib/v/ast/table.v"
+      ]
+    },
+    {
+      "f2p": [
+        "vlib/v/tests/comptime_eq_test.v"
+      ],
+      "id": "v-aa9988a9dcf1",
+      "target_files": [
+        "vlib/v/gen/c/infix.v"
+      ]
+    },
+    {
+      "f2p": [
+        "vlib/v/tests/generics_method_variable_test.v"
+      ],
+      "id": "v-abcf09c32345",
+      "target_files": [
+        "vlib/v/checker/checker.v",
+        "vlib/v/gen/c/cgen.v"
+      ]
+    },
+    {
+      "f2p": [
+        "vlib/v/compiler_errors_test.v::vlib/v/checker/tests/fn_mismatch_option_return_err"
+      ],
+      "id": "v-ac6e37ba0db9",
+      "target_files": [
+        "vlib/v/checker/return.v"
+      ]
+    },
+    {
+      "f2p": [
+        "vlib/v/tests/if_match_branches_with_call_expr_with_or_block_test.v"
+      ],
+      "id": "v-aecd59bd3ea6",
+      "target_files": [
+        "vlib/v/gen/c/if.v"
+      ]
+    },
+    {
+      "f2p": [
+        "vlib/time/time_test.v"
+      ],
+      "id": "v-aef405a872e7",
+      "target_files": [
+        "vlib/time/time.v"
+      ]
+    },
+    {
+      "f2p": [
+        "vlib/v/compiler_errors_test.v::vlib/v/checker/tests/auto_deref_assign_err"
+      ],
+      "id": "v-af09d10c476c",
+      "target_files": [
+        "vlib/v/ast/ast.v",
+        "vlib/v/checker/assign.v"
+      ]
+    },
+    {
+      "f2p": [
+        "vlib/v/tests/options/option_array_compare_test.v"
+      ],
+      "id": "v-afcb6eecb150",
+      "target_files": [
+        "vlib/v/gen/c/auto_eq_methods.v"
+      ]
+    },
+    {
+      "f2p": [
+        "vlib/v/tests/cast_to_interface_with_struct_field_default_test.v"
+      ],
+      "id": "v-b19ffcfe61a8",
+      "target_files": [
+        "vlib/v/gen/c/struct.v"
+      ]
+    },
+    {
+      "f2p": [
+        "vlib/v/tests/fn_ptr_call_test.v"
+      ],
+      "id": "v-b1af939d9e38",
+      "target_files": [
+        "vlib/v/gen/c/fn.v"
+      ]
+    },
+    {
+      "f2p": [
+        "vlib/v/tests/interface_embedding_call_test.v"
+      ],
+      "id": "v-b2a9b5cdedd3",
+      "target_files": [
+        "vlib/v/ast/ast.v",
+        "vlib/v/checker/fn.v",
+        "vlib/v/gen/c/fn.v"
+      ]
+    },
+    {
+      "f2p": [
+        "vlib/v/tests/const_order_with_str_interp_test.v"
+      ],
+      "id": "v-b46e071358c5",
+      "target_files": [
+        "vlib/v/ast/table.v"
+      ]
+    },
+    {
+      "f2p": [
+        "vlib/v/tests/chan_generic_test.v"
+      ],
+      "id": "v-b4da109782b4",
+      "target_files": [
+        "vlib/v/ast/table.v"
+      ]
+    },
+    {
+      "f2p": [
+        "vlib/term/ui/termios_nix_test.v"
+      ],
+      "id": "v-b5358f555d49",
+      "target_files": [
+        "vlib/term/ui/termios_nix.c.v"
+      ]
+    },
+    {
+      "f2p": [
+        "vlib/v/tests/array_of_sumtype_append_array_of_sumtype_test.v"
+      ],
+      "id": "v-b57d38be0e3f",
+      "target_files": [
+        "vlib/v/checker/containers.v"
+      ]
+    },
+    {
+      "f2p": [
+        "vlib/v/compiler_errors_test.v::vlib/v/checker/tests/assign_immutable_reference_var_with_parenthesis_err"
+      ],
+      "id": "v-b5a1cbf1fdf7",
+      "target_files": [
+        "vlib/v/checker/assign.v"
+      ]
+    },
+    {
+      "f2p": [
+        "vlib/v/tests/alias_string_match_test.v"
+      ],
+      "id": "v-b67dacc293d7",
+      "target_files": [
+        "vlib/v/gen/c/match.v"
+      ]
+    },
+    {
+      "f2p": [
+        "vlib/v/tests/fn_call_interface_args_test.v"
+      ],
+      "id": "v-b6a857af28c7",
+      "target_files": [
+        "vlib/v/gen/c/fn.v"
+      ]
+    },
+    {
+      "f2p": [
+        "vlib/v/compiler_errors_test.v::vlib/v/checker/tests/generics_undefined_operation_2"
+      ],
+      "id": "v-b6ac8abf1780",
+      "target_files": [
+        "vlib/v/checker/infix.v"
+      ]
+    },
+    {
+      "f2p": [
+        "vlib/json/json_decode_struct_ptr_test.v"
+      ],
+      "id": "v-b75328e53f7e",
+      "target_files": [
+        "vlib/v/gen/c/json.v"
+      ]
+    },
+    {
+      "f2p": [
+        "vlib/v/tests/multi_return_nil_voidptr_test.v"
+      ],
+      "id": "v-b7a2d7b16514",
+      "target_files": [
+        "vlib/v/checker/checker.v"
+      ]
+    },
+    {
+      "f2p": [
+        "vlib/v/tests/generics_array_append_test.v"
+      ],
+      "id": "v-b9c647bb3608",
+      "target_files": [
+        "vlib/v/checker/checker.v",
+        "vlib/v/checker/infix.v"
+      ]
+    },
+    {
+      "f2p": [
+        "vlib/json/json_option_alias_test.v"
+      ],
+      "id": "v-bafdb9cbefe8",
+      "target_files": [
+        "vlib/v/gen/c/json.v"
+      ]
+    },
+    {
+      "f2p": [
+        "vlib/v/tests/generic_struct_init_with_reference_struct_type_test.v"
+      ],
+      "id": "v-c0d2a46b353f",
+      "target_files": [
+        "vlib/v/ast/table.v",
+        "vlib/v/gen/c/if.v",
+        "vlib/v/parser/parse_type.v"
+      ]
+    },
+    {
+      "f2p": [
+        "vlib/v/tests/generics_union_dump_test.v"
+      ],
+      "id": "v-c1f27bb800f4",
+      "target_files": [
+        "vlib/v/gen/c/struct.v"
+      ]
+    },
+    {
+      "f2p": [
+        "vlib/v/tests/indexexpr_with_anon_fn_test.v"
+      ],
+      "id": "v-c3f78fc4fb04",
+      "target_files": [
+        "vlib/v/gen/c/assign.v"
+      ]
+    },
+    {
+      "f2p": [
+        "vlib/v/tests/string_interpolation_with_inner_quotes_test.v"
+      ],
+      "id": "v-c43bd0ed83bb",
+      "target_files": [
+        "vlib/v/scanner/scanner.v"
+      ]
+    },
+    {
+      "f2p": [
+        "vlib/v/tests/concat_option_test.v"
+      ],
+      "id": "v-c4d02cd0e599",
+      "target_files": [
+        "vlib/v/gen/c/cgen.v"
+      ]
+    },
+    {
+      "f2p": [
+        "vlib/math/math_test.v"
+      ],
+      "id": "v-c510fa588731",
+      "target_files": [
+        "vlib/math/invhyp.v"
+      ]
+    },
+    {
+      "f2p": [
+        "vlib/v/tests/method_call_none_check_test.v"
+      ],
+      "id": "v-c57ff7df387c",
+      "target_files": [
+        "vlib/v/gen/c/infix.v"
+      ]
+    },
+    {
+      "f2p": [
+        "vlib/v/tests/generic_call_mixing_args_test.v"
+      ],
+      "id": "v-c7a4d70f9ca7",
+      "target_files": [
+        "vlib/v/checker/check_types.v"
+      ]
+    },
+    {
+      "f2p": [
+        "vlib/v/fmt/fmt_keep_test.v"
+      ],
+      "id": "v-cb758e0953d5",
+      "target_files": [
+        "vlib/v/fmt/fmt.v"
+      ]
+    },
+    {
+      "f2p": [
+        "vlib/v/tests/arrays_closure_fixed_array_test.v"
+      ],
+      "id": "v-cbd4e17fb997",
+      "target_files": [
+        "vlib/v/gen/c/for.v"
+      ]
+    },
+    {
+      "f2p": [
+        "vlib/math/big/big_test.v"
+      ],
+      "id": "v-ccbcb8e4f6d2",
+      "target_files": [
+        "vlib/math/big/integer.v"
+      ]
+    },
+    {
+      "f2p": [
+        "vlib/builtin/string_test.v"
+      ],
+      "id": "v-ce470308448b",
+      "target_files": [
+        "vlib/builtin/string.v"
+      ]
+    },
+    {
+      "f2p": [
+        "vlib/v/compiler_errors_test.v::vlib/v/checker/tests/array_delete_imut_err"
+      ],
+      "id": "v-cfc67762deac",
+      "target_files": [
+        "vlib/v/checker/fn.v"
+      ]
+    },
+    {
+      "f2p": [
+        "vlib/v/compiler_errors_test.v::vlib/v/checker/tests/diff_type_map_value_err"
+      ],
+      "id": "v-cfdbaac8b137",
+      "target_files": [
+        "vlib/v/checker/containers.v"
+      ]
+    },
+    {
+      "f2p": [
+        "vlib/v/tests/raw_string_test.v"
+      ],
+      "id": "v-d04b43123f61",
+      "target_files": [
+        "vlib/v/checker/checker.v"
+      ]
+    },
+    {
+      "f2p": [
+        "vlib/v/tests/generics_method_with_multi_types_test.v"
+      ],
+      "id": "v-d04f8b7bc54e",
+      "target_files": [
+        "vlib/v/checker/fn.v"
+      ]
+    },
+    {
+      "f2p": [
+        "vlib/v/compiler_errors_test.v::vlib/v/checker/tests/fn_call_arg_array_mismatch_err"
+      ],
+      "id": "v-d080c1f75a97",
+      "target_files": [
+        "vlib/v/checker/check_types.v"
+      ]
+    },
+    {
+      "f2p": [
+        "vlib/v/compiler_errors_test.v::vlib/v/checker/tests/flag_enum_exhaustive_else_branch"
+      ],
+      "id": "v-d0e928e74ecb",
+      "target_files": [
+        "vlib/v/checker/match.v"
+      ]
+    },
+    {
+      "f2p": [
+        "vlib/v/tests/parse_type_of_ref_array_from_another_mod_test.v"
+      ],
+      "id": "v-d3108139f7d8",
+      "target_files": [
+        "vlib/v/parser/expr.v"
+      ]
+    },
+    {
+      "f2p": [
+        "vlib/v/tests/select_auto_sync_test.v"
+      ],
+      "id": "v-d48143dcb23e",
+      "target_files": [
+        "vlib/v/gen/c/cgen.v",
+        "vlib/v/parser/if_match.v"
+      ]
+    },
+    {
+      "f2p": [
+        "vlib/v/tests/consts/const_indexexpr_dep_test.v"
+      ],
+      "id": "v-d528efa95beb",
+      "target_files": [
+        "vlib/v/ast/table.v"
+      ]
+    },
+    {
+      "f2p": [
+        "vlib/v/tests/parse_thread_type_test.v"
+      ],
+      "id": "v-d686cc08b6b7",
+      "target_files": [
+        "vlib/v/parser/parse_type.v"
+      ]
+    },
+    {
+      "f2p": [
+        "vlib/v/tests/string_interpolation_match_expr_test.v"
+      ],
+      "id": "v-d69406e5e81f",
+      "target_files": [
+        "vlib/v/scanner/scanner.v"
+      ]
+    },
+    {
+      "f2p": [
+        "vlib/v/tests/alias_to_sum_with_enum_test.v"
+      ],
+      "id": "v-d735bae2ce23",
+      "target_files": [
+        "vlib/v/gen/c/cgen.v"
+      ]
+    },
+    {
+      "f2p": [
+        "vlib/v/tests/string_interpolation_struct_with_usize_field_test.v"
+      ],
+      "id": "v-d79d686aa3e4",
+      "target_files": [
+        "vlib/v/ast/types.v",
+        "vlib/v/gen/c/auto_str_methods.v",
+        "vlib/v/gen/js/auto_str_methods.v"
+      ]
+    },
+    {
+      "f2p": [
+        "vlib/v/tests/comptime_is_check_test.v"
+      ],
+      "id": "v-d96848cb478b",
+      "target_files": [
+        "vlib/v/checker/comptime.v",
+        "vlib/v/checker/if.v"
+      ]
+    },
+    {
+      "f2p": [
+        "vlib/json/json_option_raw_test.v"
+      ],
+      "id": "v-d96bffffc051",
+      "target_files": [
+        "vlib/v/gen/c/json.v"
+      ]
+    },
+    {
+      "f2p": [
+        "vlib/v/fmt/fmt_keep_test.v"
+      ],
+      "id": "v-da6a755582c6",
+      "target_files": [
+        "vlib/v/parser/struct.v"
+      ]
+    },
+    {
+      "f2p": [
+        "vlib/v/tests/infer_generic_array_type_in_nested_call_test.v"
+      ],
+      "id": "v-dc87336fe534",
+      "target_files": [
+        "vlib/v/checker/check_types.v"
+      ]
+    },
+    {
+      "f2p": [
+        "vlib/v/tests/array_of_interfaces_index_test.v"
+      ],
+      "id": "v-dca5fc1f955c",
+      "target_files": [
+        "vlib/v/checker/check_types.v",
+        "vlib/v/checker/fn.v",
+        "vlib/v/gen/c/array.v"
+      ]
+    },
+    {
+      "f2p": [
+        "vlib/v/tests/alias_assigned_in_increment_part_of_for_c_loop_test.v"
+      ],
+      "id": "v-dceee5da34ed",
+      "target_files": [
+        "vlib/v/gen/c/assign.v"
+      ]
+    },
+    {
+      "f2p": [
+        "vlib/v/tests/array_sort_with_fn_call_test.v"
+      ],
+      "id": "v-dd2030ca6867",
+      "target_files": [
+        "vlib/v/gen/c/array.v"
+      ]
+    },
+    {
+      "f2p": [
+        "vlib/v/tests/options/modules/mymod/mod_test.v"
+      ],
+      "id": "v-de3b16668a1d",
+      "target_files": [
+        "vlib/v/gen/c/cgen.v"
+      ]
+    },
+    {
+      "f2p": [
+        "vlib/v/slow_tests/inout/compiler_test.v::vlib/v/slow_tests/inout/dump_fixed_array_of_option"
+      ],
+      "id": "v-de4339fb0261",
+      "target_files": [
+        "vlib/v/gen/c/auto_str_methods.v"
+      ]
+    },
+    {
+      "f2p": [
+        "vlib/v/tests/generics_method_with_embedded_structs_test.v"
+      ],
+      "id": "v-dea62982279b",
+      "target_files": [
+        "vlib/v/ast/ast.v",
+        "vlib/v/checker/checker.v",
+        "vlib/v/gen/c/cgen.v"
+      ]
+    },
+    {
+      "f2p": [
+        "vlib/v/tests/option_ptr_init_test.v"
+      ],
+      "id": "v-ded11f817d9e",
+      "target_files": [
+        "vlib/v/gen/c/struct.v"
+      ]
+    },
+    {
+      "f2p": [
+        "vlib/v/tests/array_of_fns_index_call_with_direct_array_access_test.v"
+      ],
+      "id": "v-deec45bd36af",
+      "target_files": [
+        "vlib/v/gen/c/index.v"
+      ]
+    },
+    {
+      "f2p": [
+        "vlib/v/tests/fns/anon_with_prefix_test.v"
+      ],
+      "id": "v-e2a12d70aa60",
+      "target_files": [
+        "vlib/v/gen/c/fn.v"
+      ]
+    },
+    {
+      "f2p": [
+        "vlib/v/slow_tests/inout/compiler_test.v::vlib/v/slow_tests/inout/printing_struct_with_thread_field"
+      ],
+      "id": "v-e34f2089e265",
+      "target_files": [
+        "vlib/v/gen/c/auto_str_methods.v"
+      ]
+    },
+    {
+      "f2p": [
+        "vlib/v/tests/fns/call_option_param_test.v"
+      ],
+      "id": "v-e5c9788931e1",
+      "target_files": [
+        "vlib/v/gen/c/if.v"
+      ]
+    },
+    {
+      "f2p": [
+        "vlib/v/tests/closure_with_sumtype_var_test.v"
+      ],
+      "id": "v-e9d6fe3f6038",
+      "target_files": [
+        "vlib/v/checker/checker.v",
+        "vlib/v/gen/c/cgen.v"
+      ]
+    },
+    {
+      "f2p": [
+        "vlib/v/tests/option_alias_eq_test.v"
+      ],
+      "id": "v-ea443114bbe0",
+      "target_files": [
+        "vlib/v/gen/c/auto_eq_methods.v",
+        "vlib/v/gen/c/cgen.v"
+      ]
+    },
+    {
+      "f2p": [
+        "vlib/v/tests/array_method_using_it_in_defer_test.v"
+      ],
+      "id": "v-ecc795500456",
+      "target_files": [
+        "vlib/v/parser/expr.v",
+        "vlib/v/parser/parser.v"
+      ]
+    },
+    {
+      "f2p": [
+        "vlib/v/tests/generics_struct_init_with_generic_struct_items_test.v"
+      ],
+      "id": "v-edf226754e6f",
+      "target_files": [
+        "vlib/v/checker/check_types.v"
+      ]
+    },
+    {
+      "f2p": [
+        "cmd/tools/vvet/vet_test.v::cmd/tools/vvet/tests/documentation_for_generic_methods"
+      ],
+      "id": "v-f0265cef5abb",
+      "target_files": [
+        "cmd/tools/vvet/vvet.v"
+      ]
+    },
+    {
+      "f2p": [
+        "vlib/v/tests/cast_precedence_test.v"
+      ],
+      "id": "v-f15e70c9bc40",
+      "target_files": [
+        "vlib/v/parser/expr.v"
+      ]
+    },
+    {
+      "f2p": [
+        "vlib/v/tests/generics/generic_muls_test.v"
+      ],
+      "id": "v-f1610ddc3adf",
+      "target_files": [
+        "vlib/v/gen/c/str.v"
+      ]
+    },
+    {
+      "f2p": [
+        "vlib/v/tests/array_clear_test.v"
+      ],
+      "id": "v-f2a53f5a6b1e",
+      "target_files": [
+        "vlib/v/gen/c/fn.v"
+      ]
+    },
+    {
+      "f2p": [
+        "vlib/v/tests/method_call_chain_test.v"
+      ],
+      "id": "v-f2d15f64ec2b",
+      "target_files": [
+        "vlib/v/gen/c/fn.v"
+      ]
+    },
+    {
+      "f2p": [
+        "vlib/v/tests/sumtype_with_reference_test.v"
+      ],
+      "id": "v-f2ff001816c8",
+      "target_files": [
+        "vlib/v/gen/c/cgen.v",
+        "vlib/v/gen/c/infix.v"
+      ]
+    },
+    {
+      "f2p": [
+        "vlib/v/tests/const_from_comptime_if_expr_test.v"
+      ],
+      "id": "v-f5ae764bbd55",
+      "target_files": [
+        "vlib/v/checker/checker.v"
+      ]
+    },
+    {
+      "f2p": [
+        "vlib/v/compiler_errors_test.v::vlib/v/checker/tests/cast_expr_T_type_err",
+        "vlib/v/compiler_errors_test.v::vlib/v/checker/tests/globals/cast_expr_T_type_err"
+      ],
+      "id": "v-f6c151571ec4",
+      "target_files": [
+        "vlib/v/checker/checker.v"
+      ]
+    },
+    {
+      "f2p": [
+        "vlib/net/http/chunked/dechunk_test.v"
+      ],
+      "id": "v-f6d9a47c5961",
+      "target_files": [
+        "vlib/net/http/chunked/dechunk.v",
+        "vlib/net/http/response.v"
+      ]
+    },
+    {
+      "f2p": [
+        "vlib/v/tests/option_selector_assign_test.v"
+      ],
+      "id": "v-f707dc1e1183",
+      "target_files": [
+        "vlib/v/gen/c/cgen.v"
+      ]
+    },
+    {
+      "f2p": [
+        "vlib/v/tests/closure_in_if_guard_test.v"
+      ],
+      "id": "v-f880e3cc447f",
+      "target_files": [
+        "vlib/v/checker/fn.v"
+      ]
+    },
+    {
+      "f2p": [
+        "vlib/builtin/map_issue_22139_clear_test.v"
+      ],
+      "id": "v-fae0682a5ab3",
+      "target_files": [
+        "cmd/tools/bench/map_clear.v",
+        "vlib/builtin/map.v"
+      ]
+    },
+    {
+      "f2p": [
+        "vlib/v/tests/mixed_fixed_array_and_array_init_test.v"
+      ],
+      "id": "v-fd6450657630",
+      "target_files": [
+        "vlib/v/gen/c/array.v"
+      ]
+    },
+    {
+      "f2p": [
+        "vlib/v/tests/generics_array_of_threads_test.v"
+      ],
+      "id": "v-fdb71156c5b3",
+      "target_files": [
+        "vlib/v/gen/c/fn.v"
+      ]
+    },
+    {
+      "f2p": [
+        "vlib/v/tests/array_delete_last_test.v"
+      ],
+      "id": "v-ff4d6e0c673a",
+      "target_files": [
+        "vlib/v/gen/c/fn.v"
+      ]
+    }
+  ],
+  "task": "v",
+  "version": "0.3.4"
+}

@@ -1,0 +1,95 @@
+diff --git a/tests/misc/t12869.nim b/tests/misc/t12869.nim
+new file mode 100644
+index 000000000..731a4e95e
+--- /dev/null
++++ b/tests/misc/t12869.nim
+@@ -0,0 +1,14 @@
++discard """
++  errormsg: "type mismatch: got <bool> but expected 'int'"
++  line: 12
++"""
++
++import sugar
++from algorithm import sorted, SortOrder
++
++let a = 5
++
++proc sorted*[T](a: openArray[T], key: proc(v: T): int, order = SortOrder.Ascending): seq[T] =
++  sorted(a, (x, y) => key(x) < key(y), order)
++
++echo sorted(@[9, 1, 8, 2, 6, 4, 5, 0], (x) => (a - x).abs)
+diff --git a/tests/misc/t16244.nim b/tests/misc/t16244.nim
+new file mode 100644
+index 000000000..5e8128736
+--- /dev/null
++++ b/tests/misc/t16244.nim
+@@ -0,0 +1,9 @@
++discard """
++  errormsg: "type mismatch: got <int, float64>"
++  line: 9
++"""
++
++proc g(): auto = 1
++proc h(): auto = 1.0
++
++var a = g() + h()
+diff --git a/tests/proc/tillegalreturntype.nim b/tests/proc/tillegalreturntype.nim
+index 799cad53a..1076f7f75 100644
+--- a/tests/proc/tillegalreturntype.nim
++++ b/tests/proc/tillegalreturntype.nim
+@@ -1,5 +1,5 @@
+ discard """
+-  cmd: "nim check $file"
++  cmd: "nim check --hints:off $file"
+   errormsg: ""
+   nimout: '''
+ tillegalreturntype.nim(11, 11) Error: return type 'typed' is only valid for macros and templates
+diff --git a/tests/types/t15836.nim b/tests/types/t15836.nim
+new file mode 100644
+index 000000000..9c0c26dec
+--- /dev/null
++++ b/tests/types/t15836.nim
+@@ -0,0 +1,11 @@
++discard """
++  errormsg: "type mismatch: got <string> but expected 'int'"
++  line: 11
++""" 
++
++proc takesProc[T](x: T, f: proc(x: T): int) =
++    echo f(x) + 2
++
++takesProc(1, proc (a: int): int = 2) # ok, prints 4
++takesProc(1, proc (a: auto): auto = 2) # ok, prints 4
++takesProc(1, proc (a: auto): auto = "uh uh") # prints garbage
+diff --git a/tests/types/t15836_2.nim b/tests/types/t15836_2.nim
+new file mode 100644
+index 000000000..9afef416a
+--- /dev/null
++++ b/tests/types/t15836_2.nim
+@@ -0,0 +1,26 @@
++
++discard """
++  action: "compile"
++  disabled: true
++"""
++import std/sugar
++
++type Tensor[T] = object
++  x: T
++
++proc numerical_gradient*[T](input: T, f: (proc(x: T): T), h = T(1e-5)): T {.inline.} =
++  result = default(T)
++
++proc numerical_gradient*[T](input: Tensor[T], f: (proc(x: Tensor[T]): T), h = T(1e-5)): Tensor[T] {.noinit.} =
++  result = default(Tensor[T])
++
++proc conv2d*[T](input: Tensor[T]): Tensor[T] {.inline.} =
++  result = default(Tensor[T])
++
++proc sum*[T](arg: Tensor[T]): T = default(T)
++
++proc sum*[T](arg: Tensor[T], axis: int): Tensor[T] {.noinit.} = default(Tensor[T])
++
++let dinput = Tensor[int](x: 1)
++let target_grad_input = dinput.numerical_gradient(
++    x => conv2d(x).sum())

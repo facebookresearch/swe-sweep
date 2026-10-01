@@ -1,0 +1,42 @@
+diff --git a/scipy/sparse/csgraph/_shortest_path.pyx b/scipy/sparse/csgraph/_shortest_path.pyx
+index 3681a2a874..b105572969 100644
+--- a/scipy/sparse/csgraph/_shortest_path.pyx
++++ b/scipy/sparse/csgraph/_shortest_path.pyx
+@@ -1324,6 +1324,7 @@ cdef int _johnson_directed(
+             const int[:] csr_indices,
+             const int[:] csr_indptr,
+             double[:] dist_array):
++    # Note: The contents of dist_array must be initialized to zero on entry
+     cdef:
+         unsigned int N = dist_array.shape[0]
+         unsigned int j, k, j_source, count
+@@ -1331,10 +1332,6 @@ cdef int _johnson_directed(
+ 
+     # relax all edges (N+1) - 1 times
+     for count in range(N):
+-        for k in range(N):
+-            if dist_array[k] < 0:
+-                dist_array[k] = 0
+-
+         for j in range(N):
+             d1 = dist_array[j]
+             for k in range(csr_indptr[j], csr_indptr[j + 1]):
+@@ -1360,6 +1357,7 @@ cdef int _johnson_undirected(
+             const int[:] csr_indices,
+             const int[:] csr_indptr,
+             double[:] dist_array):
++    # Note: The contents of dist_array must be initialized to zero on entry
+     cdef:
+         unsigned int N = dist_array.shape[0]
+         unsigned int j, k, ind_k, j_source, count
+@@ -1367,10 +1365,6 @@ cdef int _johnson_undirected(
+ 
+     # relax all edges (N+1) - 1 times
+     for count in range(N):
+-        for k in range(N):
+-            if dist_array[k] < 0:
+-                dist_array[k] = 0
+-
+         for j in range(N):
+             d1 = dist_array[j]
+             for k in range(csr_indptr[j], csr_indptr[j + 1]):

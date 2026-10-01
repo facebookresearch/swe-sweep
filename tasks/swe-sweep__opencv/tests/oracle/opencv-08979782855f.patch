@@ -1,0 +1,131 @@
+diff --git a/modules/imgproc/include/opencv2/imgproc.hpp b/modules/imgproc/include/opencv2/imgproc.hpp
+index 2ea2ec969e..44a2e65d24 100644
+--- a/modules/imgproc/include/opencv2/imgproc.hpp
++++ b/modules/imgproc/include/opencv2/imgproc.hpp
+@@ -2004,23 +2004,24 @@ transform.
+ 
+ @param image 8-bit, single-channel binary source image. The image may be modified by the function.
+ @param lines Output vector of lines. Each line is represented by a 2 or 3 element vector
+-\f$(\rho, \theta)\f$ or \f$(\rho, \theta, \textrm{votes})\f$ . \f$\rho\f$ is the distance from the coordinate origin \f$(0,0)\f$ (top-left corner of
+-the image). \f$\theta\f$ is the line rotation angle in radians (
+-\f$0 \sim \textrm{vertical line}, \pi/2 \sim \textrm{horizontal line}\f$ ).
++\f$(\rho, \theta)\f$ or \f$(\rho, \theta, \textrm{votes})\f$, where \f$\rho\f$ is the distance from
++the coordinate origin \f$(0,0)\f$ (top-left corner of the image), \f$\theta\f$ is the line rotation
++angle in radians ( \f$0 \sim \textrm{vertical line}, \pi/2 \sim \textrm{horizontal line}\f$ ), and
+ \f$\textrm{votes}\f$ is the value of accumulator.
+ @param rho Distance resolution of the accumulator in pixels.
+ @param theta Angle resolution of the accumulator in radians.
+-@param threshold Accumulator threshold parameter. Only those lines are returned that get enough
++@param threshold %Accumulator threshold parameter. Only those lines are returned that get enough
+ votes ( \f$>\texttt{threshold}\f$ ).
+-@param srn For the multi-scale Hough transform, it is a divisor for the distance resolution rho .
++@param srn For the multi-scale Hough transform, it is a divisor for the distance resolution rho.
+ The coarse accumulator distance resolution is rho and the accurate accumulator resolution is
+-rho/srn . If both srn=0 and stn=0 , the classical Hough transform is used. Otherwise, both these
++rho/srn. If both srn=0 and stn=0, the classical Hough transform is used. Otherwise, both these
+ parameters should be positive.
+ @param stn For the multi-scale Hough transform, it is a divisor for the distance resolution theta.
+ @param min_theta For standard and multi-scale Hough transform, minimum angle to check for lines.
+ Must fall between 0 and max_theta.
+-@param max_theta For standard and multi-scale Hough transform, maximum angle to check for lines.
+-Must fall between min_theta and CV_PI.
++@param max_theta For standard and multi-scale Hough transform, an upper bound for the angle.
++Must fall between min_theta and CV_PI. The actual maximum angle in the accumulator may be slightly
++less than max_theta, depending on the parameters min_theta and theta.
+  */
+ CV_EXPORTS_W void HoughLines( InputArray image, OutputArray lines,
+                               double rho, double theta, int threshold,
+@@ -2048,7 +2049,7 @@ And this is the output of the above program in case of the probabilistic Hough t
+ line segment.
+ @param rho Distance resolution of the accumulator in pixels.
+ @param theta Angle resolution of the accumulator in radians.
+-@param threshold Accumulator threshold parameter. Only those lines are returned that get enough
++@param threshold %Accumulator threshold parameter. Only those lines are returned that get enough
+ votes ( \f$>\texttt{threshold}\f$ ).
+ @param minLineLength Minimum line length. Line segments shorter than that are rejected.
+ @param maxLineGap Maximum allowed gap between points on the same line to link them.
+@@ -2067,11 +2068,12 @@ The function finds lines in a set of points using a modification of the Hough tr
+ @param _lines Output vector of found lines. Each vector is encoded as a vector<Vec3d> \f$(votes, rho, theta)\f$.
+ The larger the value of 'votes', the higher the reliability of the Hough line.
+ @param lines_max Max count of hough lines.
+-@param threshold Accumulator threshold parameter. Only those lines are returned that get enough
++@param threshold %Accumulator threshold parameter. Only those lines are returned that get enough
+ votes ( \f$>\texttt{threshold}\f$ )
+ @param min_rho Minimum Distance value of the accumulator in pixels.
+ @param max_rho Maximum Distance value of the accumulator in pixels.
+ @param rho_step Distance resolution of the accumulator in pixels.
+ @param min_theta Minimum angle value of the accumulator in radians.
+-@param max_theta Maximum angle value of the accumulator in radians.
++@param max_theta Upper bound for the angle value of the accumulator in radians. The actual maximum
++angle may be slightly less than max_theta, depending on the parameters min_theta and theta_step.
+ @param theta_step Angle resolution of the accumulator in radians.
+  */
+ CV_EXPORTS_W void HoughLinesPointSet( InputArray _point, OutputArray _lines, int lines_max, int threshold,
+diff --git a/modules/imgproc/src/hough.cpp b/modules/imgproc/src/hough.cpp
+index 5fa24f4789..dda0307152 100644
+--- a/modules/imgproc/src/hough.cpp
++++ b/modules/imgproc/src/hough.cpp
+@@ -68,6 +68,18 @@ struct hough_cmp_gt
+     const int* aux;
+ };
+ 
++static inline int
++computeNumangle( double min_theta, double max_theta, double theta_step )
++{
++    int numangle = cvFloor((max_theta - min_theta) / theta_step) + 1;
++    // If the distance between the first angle and the last angle is
++    // approximately equal to pi, then the last angle will be removed
++    // in order to prevent a line to be detected twice.
++    if ( numangle > 1 && fabs(CV_PI - (numangle-1)*theta_step) < theta_step/2 )
++        --numangle;
++    return numangle;
++}
++
+ static void
+ createTrigTable( int numangle, double min_theta, double theta_step,
+                  float irho, float *tabSin, float *tabCos )
+@@ -130,7 +142,7 @@ HoughLinesStandard( InputArray src, OutputArray lines, int type,
+ 
+     CV_CheckGE(max_theta, min_theta, "max_theta must be greater than min_theta");
+ 
+-    int numangle = cvRound((max_theta - min_theta) / theta);
++    int numangle = computeNumangle(min_theta, max_theta, theta);
+     int numrho = cvRound(((max_rho - min_rho) + 1) / rho);
+ 
+ #if defined HAVE_IPP && IPP_VERSION_X100 >= 810 && !IPP_DISABLE_HOUGH
+@@ -475,7 +487,7 @@ HoughLinesProbabilistic( Mat& image,
+     int width = image.cols;
+     int height = image.rows;
+ 
+-    int numangle = cvRound(CV_PI / theta);
++    int numangle = computeNumangle(0.0, CV_PI, theta);
+     int numrho = cvRound(((width + height) * 2 + 1) / rho);
+ 
+ #if defined HAVE_IPP && IPP_VERSION_X100 >= 810 && !IPP_DISABLE_HOUGH
+@@ -792,7 +804,7 @@ static bool ocl_HoughLines(InputArray _src, OutputArray _lines, double rho, doub
+     }
+ 
+     UMat src = _src.getUMat();
+-    int numangle = cvRound((max_theta - min_theta) / theta);
++    int numangle = computeNumangle(min_theta, max_theta, theta);
+     int numrho = cvRound(((src.cols + src.rows) * 2 + 1) / rho);
+ 
+     UMat pointsList;
+@@ -846,7 +858,7 @@ static bool ocl_HoughLinesP(InputArray _src, OutputArray _lines, double rho, dou
+     }
+ 
+     UMat src = _src.getUMat();
+-    int numangle = cvRound(CV_PI / theta);
++    int numangle = computeNumangle(0.0, CV_PI, theta);
+     int numrho = cvRound(((src.cols + src.rows) * 2 + 1) / rho);
+ 
+     UMat pointsList;
+@@ -956,7 +968,7 @@ void HoughLinesPointSet( InputArray _point, OutputArray _lines, int lines_max, i
+     int i;
+     float irho = 1 / (float)rho_step;
+     float irho_min = ((float)min_rho * irho);
+-    int numangle = cvRound((max_theta - min_theta) / theta_step);
++    int numangle = computeNumangle(min_theta, max_theta, theta_step);
+     int numrho = cvRound((max_rho - min_rho + 1) / rho_step);
+ 
+     Mat _accum = Mat::zeros( (numangle+2), (numrho+2), CV_32SC1 );

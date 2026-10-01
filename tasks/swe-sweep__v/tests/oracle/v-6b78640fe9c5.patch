@@ -1,0 +1,14 @@
+diff --git a/vlib/v/checker/infix.v b/vlib/v/checker/infix.v
+index 47206adab..66e6d212a 100644
+--- a/vlib/v/checker/infix.v
++++ b/vlib/v/checker/infix.v
+@@ -600,7 +600,8 @@ fn (mut c Checker) infix_expr(mut node ast.InfixExpr) ast.Type {
+ 					c.error('`${op}` can only be used with interfaces and sum types',
+ 						node.pos)
+ 				} else if mut left_sym.info is ast.SumType {
+-					if typ !in left_sym.info.variants {
++					if typ !in left_sym.info.variants
++						&& c.unwrap_generic(typ) !in left_sym.info.variants {
+ 						c.error('`${left_sym.name}` has no variant `${right_sym.name}`',
+ 							right_pos)
+ 					}

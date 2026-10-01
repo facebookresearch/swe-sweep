@@ -1,0 +1,193 @@
+diff --git a/tests/prelude/double001/Types.idr b/tests/prelude/double001/Types.idr
+new file mode 100644
+index 000000000..f81360a53
+--- /dev/null
++++ b/tests/prelude/double001/Types.idr
+@@ -0,0 +1,90 @@
++nan, inf : Double
++nan = 0.0 / 0.0
++inf = 1.0 / 0.0
++
++powDoubleCases : List Double
++powDoubleCases = [
++    pow (-inf) (-inf),
++    pow (-inf) (-2),
++    pow (-inf) (-0.5),
++    pow (-inf) 0,
++    pow (-inf) 0.5,
++    pow (-inf) 2,
++    pow (-inf) inf,
++    pow (-inf) nan,
++
++    pow (-2) (-inf),
++    pow (-2) (-2),
++    pow (-2) (-0.5),
++    pow (-2) 0,
++    pow (-2) 0.5,
++    pow (-2) 2,
++    pow (-2) inf,
++    pow (-2) nan,
++
++    pow (-0.5) (-inf),
++    pow (-0.5) (-2),
++    pow (-0.5) (-0.5),
++    pow (-0.5) 0,
++    pow (-0.5) 0.5,
++    pow (-0.5) 2,
++    pow (-0.5) inf,
++    pow (-0.5) nan,
++
++    pow 0 (-inf),
++    pow 0 (-2),
++    pow 0 (-0.5),
++    pow 0 0,
++    pow 0 0.5,
++    pow 0 2,
++    pow 0 inf,
++    pow 0 nan,
++
++    pow 0.5 (-inf),
++    pow 0.5 (-2),
++    pow 0.5 (-0.5),
++    pow 0.5 0,
++    pow 0.5 0.5,
++    pow 0.5 2,
++    pow 0.5 inf,
++    pow 0.5 nan,
++
++    pow 1 (-inf),
++    pow 1 (-2),
++    pow 1 (-0.5),
++    pow 1 0,
++    pow 1 0.5,
++    pow 1 2,
++    pow 1 inf,
++    pow 1 nan,
++
++    pow 2 (-inf),
++    pow 2 (-2),
++    pow 2 (-0.5),
++    pow 2 0,
++    pow 2 0.5,
++    pow 2 2,
++    pow 2 inf,
++    pow 2 nan,
++
++    pow inf (-inf),
++    pow inf (-2),
++    pow inf (-0.5),
++    pow inf 0,
++    pow inf 0.5,
++    pow inf 2,
++    pow inf inf,
++    pow inf nan,
++
++    pow nan (-inf),
++    pow nan (-2),
++    pow nan (-0.5),
++    pow nan 0,
++    pow nan 0.5,
++    pow nan 2,
++    pow nan inf,
++    pow nan nan
++  ]
++
++main : IO ()
++main = traverse_ printLn powDoubleCases
+diff --git a/tests/prelude/double001/expected b/tests/prelude/double001/expected
+new file mode 100644
+index 000000000..ecb63744a
+--- /dev/null
++++ b/tests/prelude/double001/expected
+@@ -0,0 +1,74 @@
++1/1: Building Types (Types.idr)
++Main> 0.0
++0.0
++0.0
++1.0
+++inf.0
+++inf.0
+++inf.0
+++nan.0
++0.0
++0.25
+++nan.0
++1.0
+++nan.0
++4.0
+++inf.0
+++nan.0
+++inf.0
++4.0
+++nan.0
++1.0
+++nan.0
++0.25
++0.0
+++nan.0
+++inf.0
+++inf.0
+++inf.0
++1.0
++0.0
++0.0
++0.0
+++nan.0
+++inf.0
++4.0
++1.4142135623730951
++1.0
++0.7071067811865476
++0.25
++0.0
+++nan.0
++1.0
++1.0
++1.0
++1.0
++1.0
++1.0
++1.0
++1.0
++0.0
++0.25
++0.7071067811865476
++1.0
++1.4142135623730951
++4.0
+++inf.0
+++nan.0
++0.0
++0.0
++0.0
++1.0
+++inf.0
+++inf.0
+++inf.0
+++nan.0
+++nan.0
+++nan.0
+++nan.0
++1.0
+++nan.0
+++nan.0
+++nan.0
+++nan.0
++Main> Bye for now!
+diff --git a/tests/prelude/double001/input b/tests/prelude/double001/input
+new file mode 100644
+index 000000000..fc5992c29
+--- /dev/null
++++ b/tests/prelude/double001/input
+@@ -0,0 +1,2 @@
++:exec main
++:q
+diff --git a/tests/prelude/double001/run b/tests/prelude/double001/run
+new file mode 100755
+index 000000000..c5fd56e3c
+--- /dev/null
++++ b/tests/prelude/double001/run
+@@ -0,0 +1,3 @@
++rm -rf build
++
++$1 --no-banner --no-color --console-width 0 Types.idr < input

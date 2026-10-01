@@ -1,0 +1,15 @@
+diff --git a/dateutil/test/test_tz.py b/dateutil/test/test_tz.py
+index a8cb4c6..79c84b9 100644
+--- a/dateutil/test/test_tz.py
++++ b/dateutil/test/test_tz.py
+@@ -828,6 +828,10 @@ class TzLocalNixTest(unittest.TestCase, TzFoldMixin):
+         with TZEnvContext(self.TZ_EST):
+             self.assertIs(dt_time(13, 20, tzinfo=tz.tzlocal()).dst(),
+                           None)
++
++    def testTzLocalTimeTrimColon(self):
++        with TZEnvContext(':/etc/localtime'):
++            self.assertIsNot(tz.gettz(), None)
+ 
+ 
+ class GettzTest(unittest.TestCase, TzFoldMixin):

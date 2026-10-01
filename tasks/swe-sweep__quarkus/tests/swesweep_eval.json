@@ -1,0 +1,745 @@
+{
+  "build_jobs": 4,
+  "container_repo": "/quarkus",
+  "evaluation": {
+    "suite": "reproduction",
+    "visible_timeout": 14400
+  },
+  "upstream_image": "pandora-maxbug-quarkus:3.2.0",
+  "n_base_passing": 293,
+  "n_base_test_ignore": 691,
+  "oracle_digest": "53e4cf8cc206e40608516ab2246b4fc61b260a8ca0c3e3b8ac899632dbcb32f5",
+  "oracle_pristine_paths": [],
+  "upstream_commit": "9f7399e15e6172900e0591deb5a57a45769d8205",
+  "reproduction": {
+    "jobs_env": "SWESWEEP_BUILD_JOBS",
+    "needs_build": false,
+    "suite": {
+      "goal": "test",
+      "mvn_args": [
+        "-Dformat.skip=true",
+        "-Dformatter.skip=true",
+        "-Dimpsort.skip=true",
+        "-Dinvoker.skip=true",
+        "-Dcheckstyle.skip=true",
+        "-Dforbiddenapis.skip=true",
+        "-Dmaven.javadoc.skip=true",
+        "-Denforcer.skip=true",
+        "-Dmaven.source.skip=true"
+      ],
+      "type": "maven"
+    },
+    "test_timeout": 2400
+  },
+  "schema": 2,
+  "subtasks": [
+    {
+      "f2p": [
+        "io.quarkus.undertow.test.ServletWebXmlTestCase.test404Mapping"
+      ],
+      "id": "quarkus-08039ca63006",
+      "target_files": [
+        "extensions/undertow/deployment/src/main/java/io/quarkus/undertow/deployment/UndertowBuildStep.java",
+        "extensions/undertow/runtime/src/main/java/io/quarkus/undertow/runtime/UndertowDeploymentRecorder.java"
+      ]
+    },
+    {
+      "f2p": [
+        "io.quarkus.it.kubernetes.KubernetesWithSidecarAndJibTest.assertGeneratedResources"
+      ],
+      "id": "quarkus-087cf6daa06b",
+      "target_files": [
+        "extensions/kubernetes/vanilla/deployment/src/main/java/io/quarkus/kubernetes/deployment/AddSidecarDecorator.java",
+        "extensions/kubernetes/vanilla/deployment/src/main/java/io/quarkus/kubernetes/deployment/ContainerAdapter.java"
+      ]
+    },
+    {
+      "f2p": [
+        "org.jboss.resteasy.reactive.common.providers.serialisers.AbstractJsonMessageBodyReaderTest.isReadableCaseInsensitive"
+      ],
+      "id": "quarkus-092d9e9e492e",
+      "target_files": [
+        "independent-projects/resteasy-reactive/common/runtime/src/main/java/org/jboss/resteasy/reactive/common/providers/serialisers/AbstractJsonMessageBodyReader.java"
+      ]
+    },
+    {
+      "f2p": [
+        "io.quarkus.it.kubernetes.KubernetesWithRbacFullTest.assertGeneratedResources"
+      ],
+      "id": "quarkus-0e5912d0e8d0",
+      "target_files": [
+        "extensions/kubernetes/vanilla/deployment/src/main/java/io/quarkus/kubernetes/deployment/AddNamespaceDecorator.java"
+      ]
+    },
+    {
+      "f2p": [
+        "__process_level_failure__"
+      ],
+      "id": "quarkus-0e9ec339721d",
+      "target_files": [
+        "independent-projects/resteasy-reactive/server/runtime/src/main/java/org/jboss/resteasy/reactive/server/core/startup/RuntimeResourceDeployment.java"
+      ]
+    },
+    {
+      "f2p": [
+        "io.quarkus.jwt.test.EnabledProactiveAuthFailedExceptionMapperHttp2Test.testExMapperCustomizedResponse"
+      ],
+      "id": "quarkus-115d57652148",
+      "target_files": [
+        "extensions/security/runtime-spi/src/main/java/io/quarkus/security/spi/runtime/BlockingSecurityExecutor.java",
+        "extensions/security/runtime/src/main/java/io/quarkus/security/runtime/IdentityProviderManagerCreator.java",
+        "extensions/security/runtime/src/main/java/io/quarkus/security/runtime/QuarkusIdentityProviderManagerImpl.java",
+        "extensions/vertx-http/deployment/src/main/java/io/quarkus/vertx/http/deployment/HttpSecurityProcessor.java",
+        "extensions/vertx-http/runtime/src/main/java/io/quarkus/vertx/http/runtime/security/VertxBlockingSecurityExecutor.java"
+      ]
+    },
+    {
+      "f2p": [
+        "io.quarkus.hibernate.validator.test.config.ConfigMappingInvalidTest.invalid"
+      ],
+      "id": "quarkus-15f2fc22a385",
+      "target_files": [
+        "extensions/hibernate-validator/deployment/src/main/java/io/quarkus/hibernate/validator/deployment/HibernateValidatorProcessor.java"
+      ]
+    },
+    {
+      "f2p": [
+        "io.quarkus.paths.DirectoryPathTreeTest.isEmpty"
+      ],
+      "id": "quarkus-1b0c6fcebd89",
+      "target_files": [
+        "independent-projects/bootstrap/app-model/src/main/java/io/quarkus/bootstrap/workspace/ArtifactSources.java",
+        "independent-projects/bootstrap/app-model/src/main/java/io/quarkus/paths/DirectoryPathTree.java"
+      ]
+    },
+    {
+      "f2p": [
+        "io.quarkus.resteasy.reactive.server.test.customexceptions.ImplClassExceptionMapperTest.test"
+      ],
+      "id": "quarkus-2115286d274e",
+      "target_files": [
+        "independent-projects/resteasy-reactive/common/processor/src/main/java/org/jboss/resteasy/reactive/common/processor/scanning/ResteasyReactiveScanner.java"
+      ]
+    },
+    {
+      "f2p": [
+        "io.quarkus.resteasy.reactive.server.test.compress.CompressionTest.testStream"
+      ],
+      "id": "quarkus-2300b96dbbf7",
+      "target_files": [
+        "extensions/resteasy-reactive/rest/deployment/src/main/java/io/quarkus/resteasy/reactive/server/deployment/CompressionScanner.java"
+      ]
+    },
+    {
+      "f2p": [
+        "io.quarkus.resteasy.reactive.jsonb.deployment.test.sse.SseParserTest.testParser"
+      ],
+      "id": "quarkus-25ffac52e879",
+      "target_files": [
+        "independent-projects/resteasy-reactive/client/runtime/src/main/java/org/jboss/resteasy/reactive/client/impl/SseParser.java"
+      ]
+    },
+    {
+      "f2p": [
+        "__process_level_failure__"
+      ],
+      "id": "quarkus-292eaa159faa",
+      "target_files": [
+        "extensions/hibernate-orm/deployment/src/main/java/io/quarkus/hibernate/orm/deployment/HibernateOrmProcessor.java"
+      ]
+    },
+    {
+      "f2p": [
+        "org.jboss.resteasy.reactive.server.vertx.test.resource.basic.RequestFilterQueryParamsTest.test"
+      ],
+      "id": "quarkus-2fec76defe12",
+      "target_files": [
+        "independent-projects/resteasy-reactive/server/runtime/src/main/java/org/jboss/resteasy/reactive/server/core/ResteasyReactiveRequestContext.java"
+      ]
+    },
+    {
+      "f2p": [
+        "org.jboss.resteasy.reactive.server.vertx.test.matching.InvalidHeaderTest.test"
+      ],
+      "id": "quarkus-301fee3fae4b",
+      "target_files": [
+        "independent-projects/resteasy-reactive/server/runtime/src/main/java/org/jboss/resteasy/reactive/server/handlers/MediaTypeMapper.java"
+      ]
+    },
+    {
+      "f2p": [
+        "org.jboss.resteasy.reactive.client.impl.ClientBuilderTest.configurationCopiedOnBuild"
+      ],
+      "id": "quarkus-37b4a8769dae",
+      "target_files": [
+        "independent-projects/resteasy-reactive/client/runtime/src/main/java/org/jboss/resteasy/reactive/client/impl/ClientBuilderImpl.java"
+      ]
+    },
+    {
+      "f2p": [
+        "__process_level_failure__"
+      ],
+      "id": "quarkus-3805fb4bcdfb",
+      "target_files": [
+        "extensions/smallrye-fault-tolerance/deployment/src/main/java/io/quarkus/smallrye/faulttolerance/deployment/FaultToleranceScanner.java",
+        "extensions/smallrye-fault-tolerance/deployment/src/main/java/io/quarkus/smallrye/faulttolerance/deployment/SmallRyeFaultToleranceProcessor.java"
+      ]
+    },
+    {
+      "f2p": [
+        "io.quarkus.rest.client.reactive.multipart.MultipartFilenameTest.shouldCopyFileContentToBytes",
+        "io.quarkus.rest.client.reactive.multipart.MultipartFilenameTest.shouldCopyFileContentToInputStream",
+        "io.quarkus.rest.client.reactive.multipart.MultipartFilenameTest.shouldCopyFileContentToString",
+        "io.quarkus.rest.client.reactive.multipart.MultipartFilenameTest.shouldPassOriginalFileName",
+        "io.quarkus.rest.client.reactive.multipart.MultipartFilenameTest.shouldUseFileNameFromAnnotation",
+        "io.quarkus.rest.client.reactive.multipart.MultipartFilenameTest.shouldUseFileNameFromAnnotationUsingByteArray",
+        "io.quarkus.rest.client.reactive.multipart.MultipartFilenameTest.shouldUseFileNameFromAnnotationUsingInputStream",
+        "io.quarkus.rest.client.reactive.multipart.MultipartFilenameTest.shouldUseFileNameFromAnnotationUsingMultiByte",
+        "io.quarkus.rest.client.reactive.multipart.MultipartFilenameTest.shouldUseFileNameFromAnnotationUsingString"
+      ],
+      "id": "quarkus-3b311b3a12aa",
+      "target_files": [
+        "extensions/resteasy-reactive/rest-client-jaxrs/deployment/src/main/java/io/quarkus/jaxrs/client/reactive/deployment/JaxrsClientReactiveProcessor.java"
+      ]
+    },
+    {
+      "f2p": [
+        "io.quarkus.resteasy.reactive.server.test.compress.CompressionTest.noContent"
+      ],
+      "id": "quarkus-3b9b163f0945",
+      "target_files": [
+        "independent-projects/resteasy-reactive/server/runtime/src/main/java/org/jboss/resteasy/reactive/server/core/ServerSerialisers.java"
+      ]
+    },
+    {
+      "f2p": [
+        "io.quarkus.arc.test.producer.disposer.DisposerWithAndWithoutQualifiersTest.testDisposers",
+        "io.quarkus.arc.test.producer.disposer.DisposerWithQualifiersTest.testDisposers"
+      ],
+      "id": "quarkus-40c0b423b994",
+      "target_files": [
+        "independent-projects/arc/processor/src/main/java/io/quarkus/arc/processor/DisposerInfo.java"
+      ]
+    },
+    {
+      "f2p": [
+        "io.quarkus.arc.test.decorators.DecoratorDefaultMethodTest.testDecoration"
+      ],
+      "id": "quarkus-4396708e3c41",
+      "target_files": [
+        "independent-projects/arc/processor/src/main/java/io/quarkus/arc/processor/Methods.java",
+        "independent-projects/arc/processor/src/main/java/io/quarkus/arc/processor/SubclassGenerator.java"
+      ]
+    },
+    {
+      "f2p": [
+        "io.quarkus.vertx.http.deployment.HttpRootPathBuildItemTest.testResolvePathWithSlashApp"
+      ],
+      "id": "quarkus-497a14827528",
+      "target_files": [
+        "extensions/vertx-http/deployment/src/main/java/io/quarkus/vertx/http/deployment/HttpRootPathBuildItem.java"
+      ]
+    },
+    {
+      "f2p": [
+        "io.quarkus.arc.test.decorators.abstractimpl.AbstractDecoratorWithConstructorInjectionTest.testDecoration"
+      ],
+      "id": "quarkus-4ba3b38cd6c7",
+      "target_files": [
+        "independent-projects/arc/processor/src/main/java/io/quarkus/arc/processor/DecoratorGenerator.java"
+      ]
+    },
+    {
+      "f2p": [
+        "org.jboss.resteasy.reactive.server.vertx.test.response.CustomHeadersAndWriterInterceptorTest.testResponseHeaders"
+      ],
+      "id": "quarkus-4cd04e4bd616",
+      "target_files": [
+        "independent-projects/resteasy-reactive/common/processor/src/main/java/org/jboss/resteasy/reactive/common/processor/scanning/ResteasyReactiveInterceptorScanner.java",
+        "independent-projects/resteasy-reactive/common/runtime/src/main/java/org/jboss/resteasy/reactive/common/model/ResourceInterceptor.java",
+        "independent-projects/resteasy-reactive/server/runtime/src/main/java/org/jboss/resteasy/reactive/server/core/startup/RuntimeInterceptorDeployment.java"
+      ]
+    },
+    {
+      "f2p": [
+        "io.quarkus.resteasy.reactive.server.test.resource.basic.ResourceLocatorTest.testRoot"
+      ],
+      "id": "quarkus-4f4182596928",
+      "target_files": [
+        "independent-projects/resteasy-reactive/server/runtime/src/main/java/org/jboss/resteasy/reactive/server/core/ResteasyReactiveRequestContext.java",
+        "independent-projects/resteasy-reactive/server/runtime/src/main/java/org/jboss/resteasy/reactive/server/jaxrs/UriInfoImpl.java"
+      ]
+    },
+    {
+      "f2p": [
+        "io.quarkus.resteasy.reactive.jackson.deployment.test.CustomSerializerTest.shouldUseModulesInCustomSerializer"
+      ],
+      "id": "quarkus-51da9d3ca0c4",
+      "target_files": [
+        "independent-projects/resteasy-reactive/server/jackson/src/main/java/org/jboss/resteasy/reactive/server/jackson/JacksonMessageBodyWriterUtil.java"
+      ]
+    },
+    {
+      "f2p": [
+        "io.quarkus.spring.data.deployment.multiple_pu.MultiplePersistenceUnitConfigTest.cascading",
+        "io.quarkus.spring.data.deployment.multiple_pu.MultiplePersistenceUnitConfigTest.entityLifecycle",
+        "io.quarkus.spring.data.deployment.multiple_pu.MultiplePersistenceUnitConfigTest.pagedQueries"
+      ],
+      "id": "quarkus-5396d6040951",
+      "target_files": [
+        "extensions/panache/hibernate-orm-panache/runtime/src/main/java/io/quarkus/hibernate/orm/panache/runtime/AdditionalJpaOperations.java",
+        "extensions/spring-data-jpa/deployment/src/main/java/io/quarkus/spring/data/deployment/generate/StockMethodsAdder.java",
+        "extensions/spring-data-jpa/runtime/src/main/java/io/quarkus/spring/data/runtime/RepositorySupport.java"
+      ]
+    },
+    {
+      "f2p": [
+        "io.quarkus.it.vertx.FilterTestCase.testCorsRequest"
+      ],
+      "id": "quarkus-552421c214fd",
+      "target_files": [
+        "extensions/vertx-http/runtime/src/main/java/io/quarkus/vertx/http/runtime/options/HttpServerCommonHandlers.java"
+      ]
+    },
+    {
+      "f2p": [
+        "io.quarkus.qute.deployment.propertynotfound.RawCallOnMissingPropertyTest.testConsistency",
+        "io.quarkus.qute.deployment.propertynotfound.RawCallOnMissingPropertyTest.testMethodCallOnMissingProperty"
+      ],
+      "id": "quarkus-57ea47214d7c",
+      "target_files": [
+        "independent-projects/qute/core/src/main/java/io/quarkus/qute/ValueResolvers.java"
+      ]
+    },
+    {
+      "f2p": [
+        "io.quarkus.rest.client.reactive.redirect.RedirectTest.shouldRedirectWhenUsingCustomRedirectHandlerOnPostMethods"
+      ],
+      "id": "quarkus-59c2bf2f6998",
+      "target_files": [
+        "independent-projects/resteasy-reactive/client/runtime/src/main/java/org/jboss/resteasy/reactive/client/impl/WrapperVertxRedirectHandlerImpl.java"
+      ]
+    },
+    {
+      "f2p": [
+        "io.quarkus.paths.PathTreeBuilderTest.getExcludesReturnsExcludes",
+        "io.quarkus.paths.PathTreeBuilderTest.includesAndExcludesAreIndependent"
+      ],
+      "id": "quarkus-5b1877d28082",
+      "target_files": [
+        "independent-projects/bootstrap/app-model/src/main/java/io/quarkus/paths/PathTreeBuilder.java"
+      ]
+    },
+    {
+      "f2p": [
+        "io.quarkus.spring.security.deployment.SpringPreAuthorizeTest.testPrincipalNameFromObjectIsNot"
+      ],
+      "id": "quarkus-5b30114a153a",
+      "target_files": [
+        "extensions/spring-security/deployment/src/main/java/io/quarkus/spring/security/deployment/SpringSecurityProcessor.java",
+        "extensions/spring-security/runtime/src/main/java/io/quarkus/spring/security/runtime/interceptor/SpringSecurityRecorder.java",
+        "extensions/spring-security/runtime/src/main/java/io/quarkus/spring/security/runtime/interceptor/check/PrincipalNameFromParameterObjectSecurityCheck.java"
+      ]
+    },
+    {
+      "f2p": [
+        "org.jboss.resteasy.reactive.server.vertx.test.resource.basic.ParameterSubResTest.testSubResourceHead"
+      ],
+      "id": "quarkus-60648462f881",
+      "target_files": [
+        "independent-projects/resteasy-reactive/server/runtime/src/main/java/org/jboss/resteasy/reactive/server/handlers/ResourceLocatorHandler.java"
+      ]
+    },
+    {
+      "f2p": [
+        "io.quarkus.cache.test.runtime.CacheKeyGeneratorTest.testAllCacheKeyGeneratorKinds"
+      ],
+      "id": "quarkus-61e829ee398a",
+      "target_files": [
+        "extensions/cache/deployment/src/main/java/io/quarkus/cache/deployment/CacheProcessor.java",
+        "extensions/cache/runtime/src/main/java/io/quarkus/cache/CacheKeyGenerator.java",
+        "extensions/cache/runtime/src/main/java/io/quarkus/cache/runtime/CacheInterceptor.java"
+      ]
+    },
+    {
+      "f2p": [
+        "io.quarkus.vertx.http.proxy.TrustedForwarderProxyTest.testHeadersAreUsedWhenUsingCasedCharacters"
+      ],
+      "id": "quarkus-6321e3254c2d",
+      "target_files": [
+        "extensions/vertx-http/runtime/src/main/java/io/quarkus/vertx/http/runtime/ForwardedParser.java"
+      ]
+    },
+    {
+      "f2p": [
+        "org.jboss.resteasy.reactive.common.headers.MediaTypeHeaderDelegateTest.parsingBrokenMediaTypeShouldThrowIllegalArgumentException_actual"
+      ],
+      "id": "quarkus-67a98ed548ee",
+      "target_files": [
+        "independent-projects/resteasy-reactive/common/runtime/src/main/java/org/jboss/resteasy/reactive/common/headers/MediaTypeHeaderDelegate.java"
+      ]
+    },
+    {
+      "f2p": [
+        "io.quarkus.resteasy.reactive.jackson.deployment.test.streams.StreamTestCase.testRestMultiEmptyJson"
+      ],
+      "id": "quarkus-6f652cefd47f",
+      "target_files": [
+        "independent-projects/resteasy-reactive/server/runtime/src/main/java/org/jboss/resteasy/reactive/server/handlers/PublisherResponseHandler.java"
+      ]
+    },
+    {
+      "f2p": [
+        "__process_level_failure__"
+      ],
+      "id": "quarkus-7092d18b082a",
+      "target_files": [
+        "extensions/resteasy-reactive/rest-client-reactive/deployment/src/main/java/io/quarkus/rest/client/reactive/deployment/RestClientReactiveProcessor.java"
+      ]
+    },
+    {
+      "f2p": [
+        "org.jboss.resteasy.reactive.server.core.multipart.MultipartParserTest.testEmpty"
+      ],
+      "id": "quarkus-70e46cabaf5c",
+      "target_files": [
+        "independent-projects/resteasy-reactive/server/runtime/src/main/java/org/jboss/resteasy/reactive/server/core/multipart/MultipartParser.java"
+      ]
+    },
+    {
+      "f2p": [
+        "io.quarkus.undertow.test.sessioncontext.SessionContextTestCase.testContextEvents"
+      ],
+      "id": "quarkus-75b8dd0ec5e4",
+      "target_files": [
+        "extensions/undertow/runtime/src/main/java/io/quarkus/undertow/runtime/HttpSessionContext.java"
+      ]
+    },
+    {
+      "f2p": [
+        "io.quarkus.smallrye.context.deployment.test.cdi.ConfiguredAndSharedBeansTest.test"
+      ],
+      "id": "quarkus-78ca227e2df6",
+      "target_files": [
+        "extensions/grpc/deployment/src/main/java/io/quarkus/grpc/deployment/GrpcClientProcessor.java",
+        "extensions/smallrye-context-propagation/deployment/src/main/java/io/quarkus/smallrye/context/deployment/SmallRyeContextPropagationProcessor.java",
+        "independent-projects/arc/processor/src/main/java/io/quarkus/arc/processor/InjectionPointInfo.java",
+        "independent-projects/arc/processor/src/main/java/io/quarkus/arc/processor/InjectionPointModifier.java"
+      ]
+    },
+    {
+      "f2p": [
+        "io.quarkus.smallrye.graphql.deployment.GraphQLTest.testFailureUniBlocking"
+      ],
+      "id": "quarkus-79bd757f2180",
+      "target_files": [
+        "extensions/smallrye-graphql/runtime/src/main/java/io/quarkus/smallrye/graphql/runtime/spi/datafetcher/AbstractAsyncDataFetcher.java"
+      ]
+    },
+    {
+      "f2p": [
+        "io.quarkus.resteasy.reactive.server.test.SubResourcesAsBeansTest.testSubResource",
+        "io.quarkus.resteasy.reactive.server.test.devmode.SubResourceDevModeTest.test"
+      ],
+      "id": "quarkus-79e21d2890d8",
+      "target_files": [
+        "extensions/resteasy-reactive/quarkus-resteasy-reactive/deployment/src/main/java/io/quarkus/resteasy/reactive/server/deployment/ResteasyReactiveCDIProcessor.java"
+      ]
+    },
+    {
+      "f2p": [
+        "io.quarkus.vertx.http.router.ReqContextActivationTerminationTest.testRoute"
+      ],
+      "id": "quarkus-80f0c38b7362",
+      "target_files": [
+        "independent-projects/arc/runtime/src/main/java/io/quarkus/arc/impl/RequestContext.java"
+      ]
+    },
+    {
+      "f2p": [
+        "io.quarkus.registry.client.maven.MavenRegistryClientCompleteConfigTest.testCompletePlatformsConfig"
+      ],
+      "id": "quarkus-83ff5a398b97",
+      "target_files": [
+        "independent-projects/tools/registry-client/src/main/java/io/quarkus/registry/client/maven/MavenRegistryClientFactory.java"
+      ]
+    },
+    {
+      "f2p": [
+        "io.quarkus.spring.web.test.RequiredFalseTest.test"
+      ],
+      "id": "quarkus-85335fa334ea",
+      "target_files": [
+        "extensions/spring-web/resteasy-reactive/deployment/src/main/java/io/quarkus/spring/web/deployment/SpringWebResteasyReactiveProcessor.java"
+      ]
+    },
+    {
+      "f2p": [
+        "org.jboss.resteasy.reactive.common.util.EncodeTest.encodeEmoji"
+      ],
+      "id": "quarkus-88b465dc822d",
+      "target_files": [
+        "independent-projects/resteasy-reactive/common/runtime/src/main/java/org/jboss/resteasy/reactive/common/util/Encode.java"
+      ]
+    },
+    {
+      "f2p": [
+        "io.quarkus.oidc.runtime.TokenIntrospectionCacheTest.testExpiredIntrospection"
+      ],
+      "id": "quarkus-8c41f6a24530",
+      "target_files": [
+        "extensions/oidc/runtime/src/main/java/io/quarkus/oidc/runtime/DefaultTokenIntrospectionUserInfoCache.java",
+        "extensions/oidc/runtime/src/main/java/io/quarkus/oidc/runtime/MemoryCache.java"
+      ]
+    },
+    {
+      "f2p": [
+        "io.quarkus.it.kubernetes.KnativeWithAppConfigMapTest.assertGeneratedResources",
+        "io.quarkus.it.kubernetes.KnativeWithAppSecretTest.assertGeneratedResources"
+      ],
+      "id": "quarkus-8ec16f807b57",
+      "target_files": [
+        "extensions/kubernetes/vanilla/deployment/src/main/java/io/quarkus/kubernetes/deployment/KnativeProcessor.java"
+      ]
+    },
+    {
+      "f2p": [
+        "io.quarkus.security.test.cdi.CustomAuthorizationControllerTest.testAuthorizationDisabled"
+      ],
+      "id": "quarkus-93d6807c482c",
+      "target_files": [
+        "extensions/security/runtime/src/main/java/io/quarkus/security/runtime/interceptor/PermitAllInterceptor.java"
+      ]
+    },
+    {
+      "f2p": [
+        "io.quarkus.arc.test.decorators.interceptor.VoidMethodInterceptorAndDecoratorTest.testDecoration"
+      ],
+      "id": "quarkus-987296123d50",
+      "target_files": [
+        "independent-projects/arc/processor/src/main/java/io/quarkus/arc/processor/SubclassGenerator.java"
+      ]
+    },
+    {
+      "f2p": [
+        "__process_level_failure__"
+      ],
+      "id": "quarkus-9e7e756bc79f",
+      "target_files": [
+        "extensions/qute/deployment/src/main/java/io/quarkus/qute/deployment/TypeInfos.java"
+      ]
+    },
+    {
+      "f2p": [
+        "__process_level_failure__"
+      ],
+      "id": "quarkus-9ffb38fc249b",
+      "target_files": [
+        "extensions/qute/deployment/src/main/java/io/quarkus/qute/deployment/QuteProcessor.java"
+      ]
+    },
+    {
+      "f2p": [
+        "io.quarkus.amazon.lambda.deployment.testing.AbstractInputCollectionOutputCollectionLambdaImplTest.abstractRequestHandler_InputCollectionInputPerson_OutputCollectionOutputPerson",
+        "io.quarkus.amazon.lambda.deployment.testing.InputCollectionOutputCollectionLambdaTest.requestHandler_InputCollectionInputPerson_OutputCollectionOutputPerson"
+      ],
+      "id": "quarkus-a1de49080d1b",
+      "target_files": [
+        "extensions/amazon-lambda/runtime/src/main/java/io/quarkus/amazon/lambda/runtime/AmazonLambdaRecorder.java",
+        "extensions/amazon-lambda/runtime/src/main/java/io/quarkus/amazon/lambda/runtime/handlers/CollectionInputReader.java"
+      ]
+    },
+    {
+      "f2p": [
+        "org.jboss.resteasy.reactive.server.vertx.test.cache.CacheOnClassAndMethodsImplementationTest.testWith",
+        "org.jboss.resteasy.reactive.server.vertx.test.cache.CacheOnClassAndMethodsInterfaceTest.testWithout",
+        "org.jboss.resteasy.reactive.server.vertx.test.cache.CacheOnMethodsImplementationTest.testWith",
+        "org.jboss.resteasy.reactive.server.vertx.test.cache.ImplementationOverridingInterfaceTest.testOverridden",
+        "org.jboss.resteasy.reactive.server.vertx.test.cache.ImplementationOverridingInterfaceTest.testWith",
+        "org.jboss.resteasy.reactive.server.vertx.test.cache.ImplementationOverridingInterfaceTest.testWithout",
+        "org.jboss.resteasy.reactive.server.vertx.test.cache.NoCacheOnClassAndMethodsImplementationTest.testWith",
+        "org.jboss.resteasy.reactive.server.vertx.test.cache.NoCacheOnClassAndMethodsInterfaceTest.testWithout",
+        "org.jboss.resteasy.reactive.server.vertx.test.cache.NoCacheOnMethodsImplementationTest.testWithFields",
+        "org.jboss.resteasy.reactive.server.vertx.test.cache.NoCacheOnMethodsImplementationTest.testWithoutFields"
+      ],
+      "id": "quarkus-a2356c590cc0",
+      "target_files": [
+        "independent-projects/resteasy-reactive/server/processor/src/main/java/org/jboss/resteasy/reactive/server/processor/scanning/CacheControlScanner.java"
+      ]
+    },
+    {
+      "f2p": [
+        "org.jboss.resteasy.reactive.server.vertx.test.headers.RequestHeaderTest.testExtensionSubtag",
+        "org.jboss.resteasy.reactive.server.vertx.test.headers.RequestHeaderTest.testPrivateUseSubtag",
+        "org.jboss.resteasy.reactive.server.vertx.test.headers.RequestHeaderTest.testRegionSubtag3",
+        "org.jboss.resteasy.reactive.server.vertx.test.headers.RequestHeaderTest.testScriptSubtag",
+        "org.jboss.resteasy.reactive.server.vertx.test.headers.RequestHeaderTest.testVariantSubtag"
+      ],
+      "id": "quarkus-a24794e22bc6",
+      "target_files": [
+        "independent-projects/resteasy-reactive/common/runtime/src/main/java/org/jboss/resteasy/reactive/common/util/LocaleHelper.java"
+      ]
+    },
+    {
+      "f2p": [
+        "io.quarkus.arc.test.decorators.SimpleDecoratorTest.testDecoration"
+      ],
+      "id": "quarkus-a321aeb4e95e",
+      "target_files": [
+        "independent-projects/arc/processor/src/main/java/io/quarkus/arc/processor/BeanInfo.java",
+        "independent-projects/arc/processor/src/main/java/io/quarkus/arc/processor/DecoratorGenerator.java"
+      ]
+    },
+    {
+      "f2p": [
+        "io.quarkus.smallrye.openapi.test.jaxrs.DisabledEndpointTestCase.testDisabledEndpoint"
+      ],
+      "id": "quarkus-aa902501d2af",
+      "target_files": [
+        "extensions/smallrye-openapi/runtime/src/main/java/io/quarkus/smallrye/openapi/runtime/filter/DisabledRestEndpointsFilter.java"
+      ]
+    },
+    {
+      "f2p": [
+        "io.quarkus.spring.data.deployment.MethodNameParserTest.shouldParseRepositoryMethodOverEntityContainingACollection",
+        "io.quarkus.spring.data.deployment.MethodNameParserTest.testGenericsWithWildcard"
+      ],
+      "id": "quarkus-b176ca353a3d",
+      "target_files": [
+        "extensions/spring-data-jpa/deployment/src/main/java/io/quarkus/spring/data/deployment/MethodNameParser.java"
+      ]
+    },
+    {
+      "f2p": [
+        "org.jboss.resteasy.reactive.common.headers.HeaderUtilTest.getAcceptableLanguages"
+      ],
+      "id": "quarkus-b7c33f02f3a3",
+      "target_files": [
+        "independent-projects/resteasy-reactive/common/runtime/src/main/java/org/jboss/resteasy/reactive/common/headers/HeaderUtil.java"
+      ]
+    },
+    {
+      "f2p": [
+        "io.quarkus.rest.client.reactive.jackson.test.MultiSseTest.shouldReadBodyFromFailedResponse"
+      ],
+      "id": "quarkus-b9b92b169ae0",
+      "target_files": [
+        "independent-projects/resteasy-reactive/client/runtime/src/main/java/org/jboss/resteasy/reactive/client/handlers/ClientSendRequestHandler.java"
+      ]
+    },
+    {
+      "f2p": [
+        "__process_level_failure__"
+      ],
+      "id": "quarkus-bae869efe20d",
+      "target_files": [
+        "extensions/resteasy-reactive/quarkus-resteasy-reactive/deployment/src/main/java/io/quarkus/resteasy/reactive/server/deployment/ResteasyReactiveProcessor.java"
+      ]
+    },
+    {
+      "f2p": [
+        "io.quarkus.resteasy.reactive.jackson.deployment.test.FullyFeaturedStreamConstraintsExceptionTest.test",
+        "io.quarkus.resteasy.reactive.jackson.deployment.test.StreamConstraintsExceptionTest.test"
+      ],
+      "id": "quarkus-c1ede4648532",
+      "target_files": [
+        "extensions/resteasy-reactive/rest-jackson/runtime/src/main/java/io/quarkus/resteasy/reactive/jackson/runtime/serialisers/FullyFeaturedServerJacksonMessageBodyReader.java",
+        "extensions/resteasy-reactive/rest-jackson/runtime/src/main/java/io/quarkus/resteasy/reactive/jackson/runtime/serialisers/ServerJacksonMessageBodyReader.java"
+      ]
+    },
+    {
+      "f2p": [
+        "io.quarkus.it.rest.client.http2.ResourceTest.shouldReturnPongFromManuallyCreatedClient"
+      ],
+      "id": "quarkus-c5d9830865e7",
+      "target_files": [
+        "extensions/resteasy-reactive/rest-client-reactive/runtime/src/main/java/io/quarkus/rest/client/reactive/runtime/RestClientBuilderImpl.java"
+      ]
+    },
+    {
+      "f2p": [
+        "__process_level_failure__"
+      ],
+      "id": "quarkus-c77640114fc0",
+      "target_files": [
+        "core/deployment/src/main/java/io/quarkus/deployment/recording/BytecodeRecorderImpl.java"
+      ]
+    },
+    {
+      "f2p": [
+        "io.quarkus.spring.di.deployment.ListOfBeansTest.testInjection"
+      ],
+      "id": "quarkus-cd98c273055f",
+      "target_files": [
+        "extensions/spring-di/deployment/src/main/java/io/quarkus/spring/di/deployment/SpringDIProcessor.java"
+      ]
+    },
+    {
+      "f2p": [
+        "io.quarkus.rest.client.reactive.headers.UserAgentTest.testHeadersWithImplicitValue"
+      ],
+      "id": "quarkus-d88bfbcf7f30",
+      "target_files": [
+        "extensions/resteasy-reactive/rest-client-reactive/runtime/src/main/java/io/quarkus/rest/client/reactive/runtime/HeaderFillerUtil.java",
+        "independent-projects/resteasy-reactive/client/runtime/src/main/java/org/jboss/resteasy/reactive/client/impl/ClientBuilderImpl.java",
+        "independent-projects/resteasy-reactive/client/runtime/src/main/java/org/jboss/resteasy/reactive/client/impl/RestClientRequestContext.java"
+      ]
+    },
+    {
+      "f2p": [
+        "io.quarkus.qute.deployment.i18n.MessageBundleTest.testResolvers"
+      ],
+      "id": "quarkus-e6d7fece9ff4",
+      "target_files": [
+        "independent-projects/qute/core/src/main/java/io/quarkus/qute/EvaluatedParams.java"
+      ]
+    },
+    {
+      "f2p": [
+        "io.quarkus.security.runtime.QuarkusIdentityProviderManagerImplTest.testIdentityProviderPriority"
+      ],
+      "id": "quarkus-e7e3caad7809",
+      "target_files": [
+        "extensions/security/runtime/src/main/java/io/quarkus/security/runtime/QuarkusIdentityProviderManagerImpl.java"
+      ]
+    },
+    {
+      "f2p": [
+        "org.jboss.resteasy.reactive.server.vertx.test.matching.PathSegmentTest.testEncodedPath"
+      ],
+      "id": "quarkus-ebb397669cc7",
+      "target_files": [
+        "independent-projects/resteasy-reactive/server/runtime/src/main/java/org/jboss/resteasy/reactive/server/mapping/RequestMapper.java"
+      ]
+    },
+    {
+      "f2p": [
+        "io.quarkus.devtools.project.create.QuarkusPlatformArchivedStreamSelectionTest.testArchivedStreamSelection"
+      ],
+      "id": "quarkus-f16bd5f58db4",
+      "target_files": [
+        "independent-projects/tools/registry-client/src/main/java/io/quarkus/registry/ExtensionCatalogResolver.java"
+      ]
+    },
+    {
+      "f2p": [
+        "__process_level_failure__"
+      ],
+      "id": "quarkus-f2fd3298c11c",
+      "target_files": [
+        "independent-projects/arc/processor/src/main/java/io/quarkus/arc/processor/BeanConfiguratorBase.java"
+      ]
+    },
+    {
+      "f2p": [
+        "__process_level_failure__"
+      ],
+      "id": "quarkus-f31572c71d4f",
+      "target_files": [
+        "extensions/hibernate-orm/deployment/src/main/java/io/quarkus/hibernate/orm/deployment/HibernateOrmCdiProcessor.java"
+      ]
+    }
+  ],
+  "task": "quarkus",
+  "version": "3.2.0"
+}

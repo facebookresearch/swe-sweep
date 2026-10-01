@@ -1,0 +1,52 @@
+diff --git a/optuna/pruners/_hyperband.py b/optuna/pruners/_hyperband.py
+index 6e02a1d21..a4d987cac 100644
+--- a/optuna/pruners/_hyperband.py
++++ b/optuna/pruners/_hyperband.py
+@@ -280,6 +280,8 @@ class HyperbandPruner(BasePruner):
+                 "sampler",
+                 "trials",
+                 "_is_multi_objective",
++                "stop",
++                "_study",
+             )
+ 
+             def __init__(self, study: "optuna.study.Study", bracket_id: int) -> None:
+@@ -289,6 +291,7 @@ class HyperbandPruner(BasePruner):
+                     sampler=study.sampler,
+                     pruner=study.pruner,
+                 )
++                self._study = study
+                 self._bracket_id = bracket_id
+ 
+             def get_trials(
+@@ -301,6 +304,11 @@ class HyperbandPruner(BasePruner):
+                 assert isinstance(pruner, HyperbandPruner)
+                 return [t for t in trials if pruner._get_bracket_id(self, t) == self._bracket_id]
+ 
++            def stop(self) -> None:
++                # `stop` should stop the original study's optimization loop instead of
++                # `_BracketStudy`.
++                self._study.stop()
++
+             def __getattribute__(self, attr_name):  # type: ignore
+                 if attr_name not in _BracketStudy._VALID_ATTRS:
+                     raise AttributeError(
+diff --git a/optuna/samplers/_grid.py b/optuna/samplers/_grid.py
+index c46f1dc9f..3df9e8f18 100644
+--- a/optuna/samplers/_grid.py
++++ b/optuna/samplers/_grid.py
+@@ -211,7 +211,13 @@ class GridSampler(BaseSampler):
+ 
+         # List up unvisited grids based on already finished ones.
+         visited_grids = []
+-        for t in study.trials:
++
++        # We directly query the storage to get trials here instead of `study.get_trials`,
++        # since some pruners such as `HyperbandPruner` use the study transformed
++        # to filter trials. See https://github.com/optuna/optuna/issues/2327 for details.
++        trials = study._storage.get_all_trials(study._study_id, deepcopy=False)
++
++        for t in trials:
+             if (
+                 t.state.is_finished()
+                 and "grid_id" in t.system_attrs

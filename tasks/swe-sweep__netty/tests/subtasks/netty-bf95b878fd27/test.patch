@@ -1,0 +1,62 @@
+diff --git a/buffer/src/test/java/io/netty/buffer/AbstractReferenceCountedByteBufTest.java b/buffer/src/test/java/io/netty/buffer/AbstractReferenceCountedByteBufTest.java
+index 48fe415332..dcc25b20cb 100644
+--- a/buffer/src/test/java/io/netty/buffer/AbstractReferenceCountedByteBufTest.java
++++ b/buffer/src/test/java/io/netty/buffer/AbstractReferenceCountedByteBufTest.java
+@@ -29,6 +29,7 @@ import java.nio.channels.ScatteringByteChannel;
+ 
+ import static org.junit.Assert.assertEquals;
+ import static org.junit.Assert.assertTrue;
++import static org.junit.Assert.fail;
+ 
+ public class AbstractReferenceCountedByteBufTest {
+ 
+@@ -55,6 +56,18 @@ public class AbstractReferenceCountedByteBufTest {
+         referenceCounted.release(Integer.MAX_VALUE);
+     }
+ 
++    @Test
++    public void testReleaseErrorMessage() {
++        AbstractReferenceCountedByteBuf referenceCounted = newReferenceCounted();
++        assertTrue(referenceCounted.release());
++        try {
++            referenceCounted.release(1);
++            fail("IllegalReferenceCountException didn't occur");
++        } catch (IllegalReferenceCountException e) {
++            assertEquals("refCnt: 0, decrement: 1", e.getMessage());
++        }
++    }
++
+     @Test(expected = IllegalReferenceCountException.class)
+     public void testRetainResurrect() {
+         AbstractReferenceCountedByteBuf referenceCounted = newReferenceCounted();
+diff --git a/common/src/test/java/io/netty/util/AbstractReferenceCountedTest.java b/common/src/test/java/io/netty/util/AbstractReferenceCountedTest.java
+index e004e5df7b..5af113490f 100644
+--- a/common/src/test/java/io/netty/util/AbstractReferenceCountedTest.java
++++ b/common/src/test/java/io/netty/util/AbstractReferenceCountedTest.java
+@@ -19,6 +19,7 @@ import org.junit.Test;
+ 
+ import static org.junit.Assert.assertEquals;
+ import static org.junit.Assert.assertTrue;
++import static org.junit.Assert.fail;
+ 
+ public class AbstractReferenceCountedTest {
+ 
+@@ -45,6 +46,18 @@ public class AbstractReferenceCountedTest {
+         referenceCounted.release(Integer.MAX_VALUE);
+     }
+ 
++    @Test
++    public void testReleaseErrorMessage() {
++        AbstractReferenceCounted referenceCounted = newReferenceCounted();
++        assertTrue(referenceCounted.release());
++        try {
++            referenceCounted.release(1);
++            fail("IllegalReferenceCountException didn't occur");
++        } catch (IllegalReferenceCountException e) {
++            assertEquals("refCnt: 0, decrement: 1", e.getMessage());
++        }
++    }
++
+     @Test(expected = IllegalReferenceCountException.class)
+     public void testRetainResurrect() {
+         AbstractReferenceCounted referenceCounted = newReferenceCounted();

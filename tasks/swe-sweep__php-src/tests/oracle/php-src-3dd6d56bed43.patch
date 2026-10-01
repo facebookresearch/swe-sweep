@@ -1,0 +1,144 @@
+diff --git a/ext/soap/php_encoding.c b/ext/soap/php_encoding.c
+index c568339f298..c52677b6c65 100644
+--- a/ext/soap/php_encoding.c
++++ b/ext/soap/php_encoding.c
+@@ -449,11 +449,8 @@ static xmlNodePtr master_to_xml_int(encodePtr encode, zval *data, int style, xml
+ 			zend_string *type_name;
+ 
+ 			ZEND_HASH_MAP_FOREACH_STR_KEY_VAL(SOAP_GLOBAL(class_map), type_name, tmp) {
+-				ZVAL_DEREF(tmp);
+-				if (Z_TYPE_P(tmp) == IS_STRING &&
+-				    ZSTR_LEN(ce->name) == Z_STRLEN_P(tmp) &&
+-				    zend_binary_strncasecmp(ZSTR_VAL(ce->name), ZSTR_LEN(ce->name), Z_STRVAL_P(tmp), ZSTR_LEN(ce->name), ZSTR_LEN(ce->name)) == 0 &&
+-				    type_name) {
++				if (ZSTR_LEN(ce->name) == Z_STRLEN_P(tmp) &&
++				    zend_binary_strncasecmp(ZSTR_VAL(ce->name), ZSTR_LEN(ce->name), Z_STRVAL_P(tmp), ZSTR_LEN(ce->name), ZSTR_LEN(ce->name)) == 0) {
+ 
+ 					/* TODO: namespace isn't stored */
+ 					encodePtr enc = NULL;
+@@ -1382,7 +1379,6 @@ static zval *to_zval_object_ex(zval *ret, encodeTypePtr type, xmlNodePtr data, z
+ 		zend_class_entry  *tmp;
+ 
+ 		if ((classname = zend_hash_str_find_deref(SOAP_GLOBAL(class_map), type->type_str, strlen(type->type_str))) != NULL &&
+-		    Z_TYPE_P(classname) == IS_STRING &&
+ 		    (tmp = zend_fetch_class(Z_STR_P(classname), ZEND_FETCH_CLASS_AUTO)) != NULL) {
+ 			ce = tmp;
+ 		}
+@@ -3629,3 +3625,48 @@ void delete_encoder_persistent(zval *zv)
+ 	assert(t->details.map == NULL);
+ 	free(t);
+ }
++
++/* Normalize leading backslash similarly to how the engine strips it away. */
++static inline zend_string *drop_leading_backslash(zend_string *str) {
++	if (ZSTR_VAL(str)[0] == '\\') {
++		return zend_string_init(ZSTR_VAL(str) + 1, ZSTR_LEN(str) - 1, false);
++	} else {
++		return zend_string_copy(str);
++	}
++}
++
++static HashTable *create_normalized_classmap_copy(HashTable *class_map)
++{
++	HashTable *normalized = zend_new_array(zend_hash_num_elements(class_map));
++
++	zend_string *key;
++	zval *value;
++	ZEND_HASH_FOREACH_STR_KEY_VAL(class_map, key, value) {
++		ZVAL_DEREF(value);
++
++		if (key != NULL && Z_TYPE_P(value) == IS_STRING) {
++			zval zv;
++			ZVAL_STR(&zv, drop_leading_backslash(Z_STR_P(value)));
++			zend_hash_add_new(normalized, key, &zv);
++		}
++	} ZEND_HASH_FOREACH_END();
++
++	return normalized;
++}
++
++void create_normalized_classmap(zval *return_value, zval *class_map)
++{
++	/* Check if we need to make a copy. */
++	zend_string *key;
++	zval *value;
++	ZEND_HASH_FOREACH_STR_KEY_VAL(Z_ARR_P(class_map), key, value) {
++		if (key == NULL || Z_TYPE_P(value) != IS_STRING || ZSTR_VAL(Z_STR_P(value))[0] == '\\') {
++			/* TODO: should probably throw in some of these cases to indicate programmer error,
++			 * e.g. in the case where a non-string (after dereferencing) is provided. */
++			RETURN_ARR(create_normalized_classmap_copy(Z_ARR_P(class_map)));
++		}
++	} ZEND_HASH_FOREACH_END();
++
++	/* We didn't have to make an actual copy, just increment the refcount. */
++	RETURN_COPY(class_map);
++}
+diff --git a/ext/soap/php_encoding.h b/ext/soap/php_encoding.h
+index a4e16666e68..574ee4942a5 100644
+--- a/ext/soap/php_encoding.h
++++ b/ext/soap/php_encoding.h
+@@ -214,6 +214,8 @@ encodePtr get_conversion(int encode);
+ void delete_encoder(zval *zv);
+ void delete_encoder_persistent(zval *zv);
+ 
++void create_normalized_classmap(zval *return_value, zval *class_map);
++
+ extern const encode defaultEncoding[];
+ extern int numDefaultEncodings;
+ 
+diff --git a/ext/soap/php_soap.h b/ext/soap/php_soap.h
+index 33a071ed418..c30a5a45c3a 100644
+--- a/ext/soap/php_soap.h
++++ b/ext/soap/php_soap.h
+@@ -98,7 +98,7 @@ struct _soapService {
+ 	char      *actor;
+ 	char      *uri;
+ 	xmlCharEncodingHandlerPtr encoding;
+-	HashTable *class_map;
++	zval       class_map;
+ 	int        features;
+ 	struct _soapHeader **soap_headers_ptr;
+ 	int send_errors;
+diff --git a/ext/soap/soap.c b/ext/soap/soap.c
+index c7abcbbd08e..96f307a434b 100644
+--- a/ext/soap/soap.c
++++ b/ext/soap/soap.c
+@@ -816,7 +816,7 @@ PHP_METHOD(SoapServer, __construct)
+ 
+ 		if ((tmp = zend_hash_str_find(ht, "classmap", sizeof("classmap")-1)) != NULL &&
+ 			Z_TYPE_P(tmp) == IS_ARRAY) {
+-			service->class_map = zend_array_dup(Z_ARRVAL_P(tmp));
++			create_normalized_classmap(&service->class_map, tmp);
+ 		}
+ 
+ 		if ((tmp = zend_hash_str_find(ht, "typemap", sizeof("typemap")-1)) != NULL &&
+@@ -1282,7 +1282,7 @@ PHP_METHOD(SoapServer, handle)
+ 	old_encoding = SOAP_GLOBAL(encoding);
+ 	SOAP_GLOBAL(encoding) = service->encoding;
+ 	old_class_map = SOAP_GLOBAL(class_map);
+-	SOAP_GLOBAL(class_map) = service->class_map;
++	SOAP_GLOBAL(class_map) = Z_ARR(service->class_map);
+ 	old_typemap = SOAP_GLOBAL(typemap);
+ 	SOAP_GLOBAL(typemap) = service->typemap;
+ 	old_features = SOAP_GLOBAL(features);
+@@ -1982,7 +1982,7 @@ PHP_METHOD(SoapClient, __construct)
+ 		}
+ 		if ((tmp = zend_hash_str_find(ht, "classmap", sizeof("classmap")-1)) != NULL &&
+ 			Z_TYPE_P(tmp) == IS_ARRAY) {
+-			ZVAL_COPY(Z_CLIENT_CLASSMAP_P(this_ptr), tmp);
++			create_normalized_classmap(Z_CLIENT_CLASSMAP_P(this_ptr), tmp);
+ 		}
+ 
+ 		if ((tmp = zend_hash_str_find(ht, "typemap", sizeof("typemap")-1)) != NULL &&
+@@ -4384,10 +4384,7 @@ static void delete_service(void *data) /* {{{ */
+ 	if (service->encoding) {
+ 		xmlCharEncCloseFunc(service->encoding);
+ 	}
+-	if (service->class_map) {
+-		zend_hash_destroy(service->class_map);
+-		FREE_HASHTABLE(service->class_map);
+-	}
++	zval_ptr_dtor(&service->class_map);
+ 	zval_ptr_dtor(&service->soap_object);
+ 	efree(service);
+ }

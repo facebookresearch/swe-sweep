@@ -1,0 +1,23 @@
+diff --git a/lib/rules/no-invalid-position-at-import-rule/__tests__/index.mjs b/lib/rules/no-invalid-position-at-import-rule/__tests__/index.mjs
+index 6157de744..924c012c5 100644
+--- a/lib/rules/no-invalid-position-at-import-rule/__tests__/index.mjs
++++ b/lib/rules/no-invalid-position-at-import-rule/__tests__/index.mjs
+@@ -78,6 +78,18 @@ testRule({
+ 			endLine: 2,
+ 			endColumn: 23,
+ 		},
++		{
++			code: stripIndent`
++				@layer foo {}
++				@import url('foo.css');
++			`,
++			message: messages.rejected,
++			description: 'layer block before import',
++			line: 2,
++			column: 1,
++			endLine: 2,
++			endColumn: 23,
++		},
+ 		{
+ 			code: stripIndent`
+ 				@media print {}

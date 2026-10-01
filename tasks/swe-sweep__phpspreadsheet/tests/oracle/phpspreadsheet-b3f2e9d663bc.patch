@@ -1,0 +1,16 @@
+diff --git a/src/PhpSpreadsheet/Reader/Html.php b/src/PhpSpreadsheet/Reader/Html.php
+index e56920b72..e895318db 100644
+--- a/src/PhpSpreadsheet/Reader/Html.php
++++ b/src/PhpSpreadsheet/Reader/Html.php
+@@ -301,7 +301,10 @@ class Html extends BaseReader
+     {
+         foreach ($element->childNodes as $child) {
+             if ($child instanceof DOMText) {
+-                $domText = preg_replace('/\s+/u', ' ', trim($child->nodeValue));
++                $domText = (string) preg_replace('/\s+/', ' ', trim($child->nodeValue ?? ''));
++                if ($domText === "\u{a0}") {
++                    $domText = '';
++                }
+                 if (is_string($cellContent)) {
+                     //    simply append the text if the cell content is a plain text string
+                     $cellContent .= $domText;

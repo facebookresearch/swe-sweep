@@ -1,0 +1,16 @@
+diff --git a/test/unit/test_tensor_data.py b/test/unit/test_tensor_data.py
+index 0d69e6942..d8cd0a362 100644
+--- a/test/unit/test_tensor_data.py
++++ b/test/unit/test_tensor_data.py
+@@ -83,5 +83,10 @@ class TestTensorData(unittest.TestCase):
+     assert dat.shape == (2,2)
+     # NOTE: python can't deref float16
+ 
++  def test_tolist_empty_shapes(self):
++    for shape, expected in (((0,), []), ((2, 0), [[], []]), ((0, 2), []),
++                            ((2, 0, 3), [[], []]), ((2, 3, 0), [[[], [], []], [[], [], []]])):
++      self.assertEqual(Tensor.ones(*shape).tolist(), expected)
++
+ if __name__ == '__main__':
+   unittest.main()
+\ No newline at end of file

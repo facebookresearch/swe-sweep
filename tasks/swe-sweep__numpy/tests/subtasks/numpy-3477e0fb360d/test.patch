@@ -1,0 +1,30 @@
+diff --git a/numpy/core/tests/test_regression.py b/numpy/core/tests/test_regression.py
+--- a/numpy/core/tests/test_regression.py
++++ b/numpy/core/tests/test_regression.py
+@@ -2402,3 +2402,9 @@ class TestRegression:
+             v = str(data[['f1']])
+             if HAS_REFCOUNT:
+                 assert_(base <= sys.getrefcount(s))
++
++    def test_vectorize_fixed_width_string(self):
++        arr = np.array(["SOme wOrd Ǆ ß ᾛ ΣΣ ﬃ⁵Å Ç Ⅰ"]).astype(np.str_)
++        f = str.casefold
++        res = np.vectorize(f, otypes=[arr.dtype])(arr)
++        assert res.dtype == "U30"
+diff --git a/numpy/lib/tests/test_function_base.py b/numpy/lib/tests/test_function_base.py
+--- a/numpy/lib/tests/test_function_base.py
++++ b/numpy/lib/tests/test_function_base.py
+@@ -1436,6 +1436,13 @@ class TestVectorize(object):
+         f = np.vectorize(lambda x: [x], signature='()->(n)', otypes='i')
+         with assert_raises_regex(ValueError, 'new output dimensions'):
+             f(x)
++
++    def test_datetime_conversion(self):
++        otype = "datetime64[ns]"
++        arr = np.array(['2024-01-01', '2024-01-02', '2024-01-03'], 
++                       dtype='datetime64[ns]')
++        assert_array_equal(np.vectorize(lambda x: x, signature="(i)->(j)",
++                                        otypes=[otype])(arr), arr)
+ 
+ 
+ class TestDigitize(object):

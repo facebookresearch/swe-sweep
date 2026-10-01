@@ -1,0 +1,14 @@
+diff --git a/numpy/polynomial/_polybase.py b/numpy/polynomial/_polybase.py
+index 9c345553eed..65c3ff43dc3 100644
+--- a/numpy/polynomial/_polybase.py
++++ b/numpy/polynomial/_polybase.py
+@@ -1041,6 +1041,9 @@ class ABCPolyBase(abc.ABC):
+         """
+         if domain is None:
+             domain = pu.getdomain(x)
++            if domain[0] == domain[1]:
++                domain[0] -= 1
++                domain[1] += 1   
+         elif type(domain) is list and len(domain) == 0:
+             domain = cls.domain
+ 

@@ -1,0 +1,12 @@
+diff --git a/sqlglot/optimizer/annotate_types.py b/sqlglot/optimizer/annotate_types.py
+index c75d48a..b4e3fea 100644
+--- a/sqlglot/optimizer/annotate_types.py
++++ b/sqlglot/optimizer/annotate_types.py
+@@ -108,6 +108,7 @@ class _TypeAnnotator(type):
+         numeric_precedence = (
+             exp.DataType.Type.DOUBLE,
+             exp.DataType.Type.FLOAT,
++            exp.DataType.Type.BIGDECIMAL,
+             exp.DataType.Type.DECIMAL,
+             exp.DataType.Type.BIGINT,
+             exp.DataType.Type.INT,

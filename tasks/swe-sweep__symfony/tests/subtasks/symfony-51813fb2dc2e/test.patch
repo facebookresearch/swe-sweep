@@ -1,0 +1,17 @@
+diff --git a/src/Symfony/Component/Serializer/Tests/Encoder/XmlEncoderTest.php b/src/Symfony/Component/Serializer/Tests/Encoder/XmlEncoderTest.php
+index 97de86abf03..f0ff1c5b943 100644
+--- a/src/Symfony/Component/Serializer/Tests/Encoder/XmlEncoderTest.php
++++ b/src/Symfony/Component/Serializer/Tests/Encoder/XmlEncoderTest.php
+@@ -433,6 +433,12 @@ XML;
+         $this->assertEquals($expected, $serializer->serialize(new NormalizableTraversableDummy(), 'xml'));
+     }
+ 
++    public function testEncodeException()
++    {
++        $this->expectException(NotEncodableValueException::class);
++        $this->encoder->encode('Invalid character: '.\chr(7), 'xml');
++    }
++
+     public function testDecode()
+     {
+         $source = $this->getXmlSource();

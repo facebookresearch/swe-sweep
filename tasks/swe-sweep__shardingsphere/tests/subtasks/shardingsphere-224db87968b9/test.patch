@@ -1,0 +1,84 @@
+diff --git a/db-protocol/mysql/src/test/java/org/apache/shardingsphere/db/protocol/mysql/packet/binlog/row/column/value/string/MySQLJsonValueDecoderTest.java b/db-protocol/mysql/src/test/java/org/apache/shardingsphere/db/protocol/mysql/packet/binlog/row/column/value/string/MySQLJsonValueDecoderTest.java
+--- a/db-protocol/mysql/src/test/java/org/apache/shardingsphere/db/protocol/mysql/packet/binlog/row/column/value/string/MySQLJsonValueDecoderTest.java
++++ b/db-protocol/mysql/src/test/java/org/apache/shardingsphere/db/protocol/mysql/packet/binlog/row/column/value/string/MySQLJsonValueDecoderTest.java
+@@ -234,9 +234,80 @@ public final class MySQLJsonValueDecoderTest {
+         jsonEntries.add(new JsonEntry(JsonValueTypes.INT16, null, 0x00008000));
+         ByteBuf payload = mockJsonArrayByteBuf(jsonEntries, false);
+         String actual = (String) MySQLJsonValueDecoder.decode(payload);
+         assertThat(actual, is("[32767,-32768]"));
+     }
+     
++    @Test
++    public void assertDecodeTopLevelLiteralNull() {
++        String actual = (String) MySQLJsonValueDecoder.decode(mockTopLevelLiteralByteBuf(JsonValueTypes.LITERAL_NULL));
++        assertThat(actual, is("null"));
++    }
++    
++    @Test
++    public void assertDecodeTopLevelLiteralTrue() {
++        String actual = (String) MySQLJsonValueDecoder.decode(mockTopLevelLiteralByteBuf(JsonValueTypes.LITERAL_TRUE));
++        assertThat(actual, is("true"));
++    }
++    
++    @Test
++    public void assertDecodeTopLevelLiteralFalse() {
++        String actual = (String) MySQLJsonValueDecoder.decode(mockTopLevelLiteralByteBuf(JsonValueTypes.LITERAL_FALSE));
++        assertThat(actual, is("false"));
++    }
++    
++    @Test
++    public void assertDecodeTopLevelString() {
++        String actual = (String) MySQLJsonValueDecoder.decode(mockTopLevelStringByteBuf("hello"));
++        assertThat(actual, is("\"hello\""));
++    }
++    
++    @Test
++    public void assertDecodeTopLevelStringWithEscapedChars() {
++        String actual = (String) MySQLJsonValueDecoder.decode(mockTopLevelStringByteBuf("a\"\\b"));
++        assertThat(actual, is("\"a\\\"\\\\b\""));
++    }
++    
++    @Test
++    public void assertDecodeTopLevelInt32() {
++        String actual = (String) MySQLJsonValueDecoder.decode(mockTopLevelInt32ByteBuf(123));
++        assertThat(actual, is("123"));
++    }
++    
++    @Test
++    public void assertDecodeTopLevelDouble() {
++        String actual = (String) MySQLJsonValueDecoder.decode(mockTopLevelDoubleByteBuf(45.6D));
++        assertThat(actual, is("45.6"));
++    }
++    
++    private static ByteBuf mockTopLevelLiteralByteBuf(final byte value) {
++        ByteBuf result = Unpooled.buffer();
++        result.writeByte(JsonValueTypes.LITERAL);
++        result.writeByte(value);
++        return result;
++    }
++    
++    private static ByteBuf mockTopLevelInt32ByteBuf(final int value) {
++        ByteBuf result = Unpooled.buffer();
++        result.writeByte(JsonValueTypes.INT32);
++        result.writeIntLE(value);
++        return result;
++    }
++    
++    private static ByteBuf mockTopLevelDoubleByteBuf(final double value) {
++        ByteBuf result = Unpooled.buffer();
++        result.writeByte(JsonValueTypes.DOUBLE);
++        result.writeDoubleLE(value);
++        return result;
++    }
++    
++    private static ByteBuf mockTopLevelStringByteBuf(final String value) {
++        ByteBuf result = Unpooled.buffer();
++        result.writeByte(JsonValueTypes.STRING);
++        result.writeByte(value.length());
++        result.writeBytes(value.getBytes());
++        return result;
++    }
++    
+     private ByteBuf mockJsonObjectByteBuf(final List<JsonEntry> jsonEntries, final boolean isSmall) {
+         ByteBuf result = Unpooled.buffer();
+         result.writeByte(isSmall ? JsonValueTypes.SMALL_JSON_OBJECT : JsonValueTypes.LARGE_JSON_OBJECT);

@@ -1,0 +1,21 @@
+diff --git a/managed-ledger/src/main/java/org/apache/bookkeeper/mledger/impl/ManagedCursorImpl.java b/managed-ledger/src/main/java/org/apache/bookkeeper/mledger/impl/ManagedCursorImpl.java
+index 9615264cbe9..5e761a4fae2 100644
+--- a/managed-ledger/src/main/java/org/apache/bookkeeper/mledger/impl/ManagedCursorImpl.java
++++ b/managed-ledger/src/main/java/org/apache/bookkeeper/mledger/impl/ManagedCursorImpl.java
+@@ -3305,8 +3305,14 @@ public class ManagedCursorImpl implements ManagedCursor {
+ 
+     @Override
+     public void trimDeletedEntries(List<Entry> entries) {
+-        entries.removeIf(entry -> ((PositionImpl) entry.getPosition()).compareTo(markDeletePosition) <= 0
+-                || individualDeletedMessages.contains(entry.getLedgerId(), entry.getEntryId()));
++        entries.removeIf(entry -> {
++            boolean isDeleted = ((PositionImpl) entry.getPosition()).compareTo(markDeletePosition) <= 0
++                    || individualDeletedMessages.contains(entry.getLedgerId(), entry.getEntryId());
++            if (isDeleted) {
++                entry.release();
++            }
++            return isDeleted;
++        });
+     }
+ 
+     private ManagedCursorImpl cursorImpl() {

@@ -1,0 +1,45 @@
+diff --git a/autotest/gdrivers/data/png/uint16_interlaced.png b/autotest/gdrivers/data/png/uint16_interlaced.png
+new file mode 100644
+index 0000000000000000000000000000000000000000..9519f832fed00e70bc94dcebd3b65b3a13ad814d
+GIT binary patch
+literal 906
+zcmV;519kj~P)<h;3K|Lk000e1NJLTq000yK000ya00001k9DpD0009~Nkl<Zc-jF*
+z1G)SF000rFBTxWgAaclrZ~($U)9B@p00`6?d;n?mdz=8v6x_T3u#mZA!Z^ze)8GIR
+zuo{FTSS&0x000DP4L%kU9_A;y0JQqO&c>q8cGyY)Wr}WIcQSwmh}r-a8XoQ^!Z4OO
+zY5>Nn&wkia;U?+&09Z&|vSA!$hH3C_T5`m9E_;}O0ssiu4MGvD78V+S9_k}hC%!Bw
+zFp>bdXuZ<HJjSNW5YKwk<k(K!xZxrIY4~npa?E!&d!T>{gmj4BjYyHQ02+uM@*`X)
+z#w;)}nl%JDZavsSLI46a2A>NF4|5aU7)KnjAsZ!yDenMUeO~8dQD?hsC2)^)`FUe~
+z&4M=ovc<PAyP3cP#BIpe%|X$t))m@+01FKdcN5_lOB}T!A0>$?^DbR7#{gqhXTNMI
+zaFcZXd1rmmf;)z#iw^+1oxlggamd@vMbWR;8QO#1?c-Mf6Xh6B9JwJQC5<WfE@3ju
+zH#Iw-0BkLAmvsSoYkk#%KZdD`6OVn9=K#cY$luLL(X-Ya+K1lp<6Gy&>@NTuy&)$h
+zktzEwWirn<IXk034McYUEF>;jFpe_AH260yIbu7PJ<LD>LN-KeMxaR5OA1XtPjpeK
+zQ{Gk+0EBFYp@`Ot3ynaJb&;x*-<A}ZNt%9~v!3Xo9ivjEho`)$@vJ7UTL9d&-s#~U
+z<5T5`=e_Cj>?iJA@R9Py^!xWP`DOc>{m%dd0yzY32BQEp{5LT<W;>fb&_D%3Iz(?q
+zq)6FI4oyQ(cu}oW;#L<}Oj?0lwqEN1jYN-mk*<^DmKc~#nu46Sp6sC^qgJJhr@*Q8
+ztSYWwu#~dNwEnj<0OgG5!RhwwEAC+MmGa8;|MxWcY5Si2(*OtpJp^(FrwH5&5e-HU
+zdjLJuKnX%VL~}-{NZm^kO-E0BQL$6zRvTDQT7_J?UhiQfV_9X6XTt!N9GFp>hMc>e
+z@S!E6TBVPt#HsnLF0Ny+n6k~a0=GB0Y`dYo*1!t@?qu+p^3L@G_c-}&`=b5V01N^_
+z1a=0i2;d794N4Dx5wsKO79JQ=07k4x;Y$`xOHY7NwNvU=A6QgciCn&3^I<4sU1gGI
+g$7%d*F>YpXn+T(QTc9s~IRF3v07*qoM6N<$g5Zpd=>Px#
+
+literal 0
+HcmV?d00001
+
+diff --git a/autotest/gdrivers/png.py b/autotest/gdrivers/png.py
+index 66ebbf0181..66ebbf0181 100755
+--- a/autotest/gdrivers/png.py
++++ b/autotest/gdrivers/png.py
+@@ -353,3 +353,13 @@ def test_png_14():
+     nbits = out_ds.GetRasterBand(1).GetMetadataItem("NBITS", "IMAGE_STRUCTURE")
+     gdal.Unlink("/vsimem/tmp.png")
+     assert nbits is None
++
++
++###############################################################################
++# Read test of 16-bit interlaced
++
++
++def test_png_read_interlace_16_bit():
++
++    ds = gdal.Open("data/png/uint16_interlaced.png")
++    assert ds.GetRasterBand(1).Checksum() == 4672

@@ -1,0 +1,17 @@
+diff --git a/tests/period/test_behavior.py b/tests/period/test_behavior.py
+index 1d1c98b..307b78e 100644
+--- a/tests/period/test_behavior.py
++++ b/tests/period/test_behavior.py
+@@ -40,3 +40,12 @@ def test_comparison_to_timedelta():
+     period = dt2 - dt1
+ 
+     assert period < timedelta(days=4)
++
++
++def test_equality_to_timedelta():
++    dt1 = pendulum.datetime(2016, 11, 18)
++    dt2 = pendulum.datetime(2016, 11, 20)
++
++    period = dt2 - dt1
++
++    assert period == timedelta(days=2)

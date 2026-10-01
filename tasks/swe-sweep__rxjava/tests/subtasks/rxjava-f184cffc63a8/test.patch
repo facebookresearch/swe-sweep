@@ -1,0 +1,86 @@
+diff --git a/src/test/java/io/reactivex/internal/operators/flowable/FlowableFlatMapTest.java b/src/test/java/io/reactivex/internal/operators/flowable/FlowableFlatMapTest.java
+index 953a5f44d..d121eea54 100644
+--- a/src/test/java/io/reactivex/internal/operators/flowable/FlowableFlatMapTest.java
++++ b/src/test/java/io/reactivex/internal/operators/flowable/FlowableFlatMapTest.java
+@@ -1123,4 +1123,38 @@ public class FlowableFlatMapTest {
+         assertFalse(pp3.hasSubscribers());
+         assertFalse(pp4.hasSubscribers());
+     }
++
++    @Test
++    public void mainErrorsInnerCancelled() {
++        PublishProcessor<Integer> pp1 = PublishProcessor.create();
++        PublishProcessor<Integer> pp2 = PublishProcessor.create();
++
++        pp1
++        .flatMap(Functions.justFunction(pp2))
++        .test();
++
++        pp1.onNext(1);
++        assertTrue("No subscribers?", pp2.hasSubscribers());
++
++        pp1.onError(new TestException());
++
++        assertFalse("Has subscribers?", pp2.hasSubscribers());
++    }
++
++    @Test
++    public void innerErrorsMainCancelled() {
++        PublishProcessor<Integer> pp1 = PublishProcessor.create();
++        PublishProcessor<Integer> pp2 = PublishProcessor.create();
++
++        pp1
++        .flatMap(Functions.justFunction(pp2))
++        .test();
++
++        pp1.onNext(1);
++        assertTrue("No subscribers?", pp2.hasSubscribers());
++
++        pp2.onError(new TestException());
++
++        assertFalse("Has subscribers?", pp1.hasSubscribers());
++    }
+ }
+diff --git a/src/test/java/io/reactivex/internal/operators/observable/ObservableFlatMapTest.java b/src/test/java/io/reactivex/internal/operators/observable/ObservableFlatMapTest.java
+index b4da14e9a..5e0fa7cf8 100644
+--- a/src/test/java/io/reactivex/internal/operators/observable/ObservableFlatMapTest.java
++++ b/src/test/java/io/reactivex/internal/operators/observable/ObservableFlatMapTest.java
+@@ -1084,4 +1084,38 @@ public class ObservableFlatMapTest {
+         assertFalse(ps3.hasObservers());
+         assertFalse(ps4.hasObservers());
+     }
++
++    @Test
++    public void mainErrorsInnerCancelled() {
++        PublishSubject<Integer> ps1 = PublishSubject.create();
++        PublishSubject<Integer> ps2 = PublishSubject.create();
++
++        ps1
++        .flatMap(Functions.justFunction(ps2))
++        .test();
++
++        ps1.onNext(1);
++        assertTrue("No subscribers?", ps2.hasObservers());
++
++        ps1.onError(new TestException());
++
++        assertFalse("Has subscribers?", ps2.hasObservers());
++    }
++
++    @Test
++    public void innerErrorsMainCancelled() {
++        PublishSubject<Integer> ps1 = PublishSubject.create();
++        PublishSubject<Integer> ps2 = PublishSubject.create();
++
++        ps1
++        .flatMap(Functions.justFunction(ps2))
++        .test();
++
++        ps1.onNext(1);
++        assertTrue("No subscribers?", ps2.hasObservers());
++
++        ps2.onError(new TestException());
++
++        assertFalse("Has subscribers?", ps1.hasObservers());
++    }
+ }

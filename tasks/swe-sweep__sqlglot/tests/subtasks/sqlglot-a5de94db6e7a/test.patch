@@ -1,0 +1,22 @@
+diff --git a/tests/dialects/test_bigquery.py b/tests/dialects/test_bigquery.py
+index c4c15e403f..b9c5370436 100644
+--- a/tests/dialects/test_bigquery.py
++++ b/tests/dialects/test_bigquery.py
+@@ -14,6 +14,7 @@ from sqlglot import (
+ from sqlglot.helper import logger as helper_logger
+ from sqlglot.parser import logger as parser_logger
+ from tests.dialects.test_dialect import Validator
++from sqlglot.optimizer.qualify import qualify
+ 
+ 
+ class TestBigQuery(Validator):
+@@ -2317,3 +2318,9 @@ OPTIONS (
+                 "snowflake": "SELECT TO_CHAR(CAST(CAST('2050-12-25 15:30:55+00' AS TIMESTAMPTZ) AS TIMESTAMP), 'mon-DD-yyyy')",
+             },
+         )
++
++    def test_override_normalization_strategy(self):
++        sql = "SELECT * FROM p.d.t"
++        ast = self.parse_one(sql)
++        qualified = qualify(ast, dialect="bigquery,normalization_strategy=uppercase")
++        self.assertEqual(qualified.sql("bigquery"), "SELECT * FROM `P`.`D`.`T` AS `T`")

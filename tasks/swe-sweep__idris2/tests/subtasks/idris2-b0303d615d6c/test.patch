@@ -1,0 +1,50 @@
+diff --git a/tests/Main.idr b/tests/Main.idr
+index 1be4aee18..41ccc7374 100644
+--- a/tests/Main.idr
++++ b/tests/Main.idr
+@@ -142,7 +142,7 @@ idrisTestsData = MkTestPool "Data and record types" [] Nothing
+        "data001",
+        -- Records, access and dependent update
+        "record001", "record002", "record003", "record004", "record005",
+-       "record006", "record007", "record008", "record009"]
++       "record006", "record007", "record008", "record009", "record010"]
+ 
+ idrisTestsBuiltin : TestPool
+ idrisTestsBuiltin = MkTestPool "Builtin types and functions" [] Nothing
+diff --git a/tests/idris2/record010/expected b/tests/idris2/record010/expected
+new file mode 100644
+index 000000000..5ab6fe267
+--- /dev/null
++++ b/tests/idris2/record010/expected
+@@ -0,0 +1 @@
++1/1: Building record (record.idr)
+diff --git a/tests/idris2/record010/record.idr b/tests/idris2/record010/record.idr
+new file mode 100644
+index 000000000..8782a6cb2
+--- /dev/null
++++ b/tests/idris2/record010/record.idr
+@@ -0,0 +1,14 @@
++-- This test ensures that implicits bound on the RHS of a
++-- record update field are correctly bound by the compiler.
++
++
++record Rec where
++    n : Nat
++
++
++data T : Rec -> Type where
++    C : T ({ n := Z } r)
++
++
++data U : Rec -> Type where
++    D : U ({ n $= S } r)
+diff --git a/tests/idris2/record010/run b/tests/idris2/record010/run
+new file mode 100755
+index 000000000..79cd4ba44
+--- /dev/null
++++ b/tests/idris2/record010/run
+@@ -0,0 +1,4 @@
++rm -rf build
++
++$1 --no-color --console-width 0 --no-banner --check record.idr
++

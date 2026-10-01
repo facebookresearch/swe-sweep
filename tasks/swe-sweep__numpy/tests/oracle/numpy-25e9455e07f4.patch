@@ -1,0 +1,30 @@
+diff --git a/numpy/core/src/multiarray/convert_datatype.c b/numpy/core/src/multiarray/convert_datatype.c
+index 1f5845eb70..d9121707b2 100644
+--- a/numpy/core/src/multiarray/convert_datatype.c
++++ b/numpy/core/src/multiarray/convert_datatype.c
+@@ -343,25 +343,6 @@ PyArray_CanCastSafely(int fromtype, int totype)
+     if (fromtype == totype) {
+         return 1;
+     }
+-    /* Special-cases for some types */
+-    switch (fromtype) {
+-        case NPY_DATETIME:
+-        case NPY_TIMEDELTA:
+-        case NPY_OBJECT:
+-        case NPY_VOID:
+-            return 0;
+-        case NPY_BOOL:
+-            return 1;
+-    }
+-    switch (totype) {
+-        case NPY_BOOL:
+-        case NPY_DATETIME:
+-        case NPY_TIMEDELTA:
+-            return 0;
+-        case NPY_OBJECT:
+-        case NPY_VOID:
+-            return 1;
+-    }
+ 
+     from = PyArray_DescrFromType(fromtype);
+     /*

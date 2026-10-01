@@ -1,0 +1,12 @@
+diff --git a/activerecord/lib/active_record/relation.rb b/activerecord/lib/active_record/relation.rb
+index a12565a4942..6fa0ca6f488 100644
+--- a/activerecord/lib/active_record/relation.rb
++++ b/activerecord/lib/active_record/relation.rb
+@@ -713,6 +713,7 @@ module ActiveRecord
+       @to_sql = @arel = @loaded = @should_eager_load = nil
+       @offsets = @take = nil
+       @cache_keys = nil
++      @cache_versions = nil
+       @records = nil
+       self
+     end

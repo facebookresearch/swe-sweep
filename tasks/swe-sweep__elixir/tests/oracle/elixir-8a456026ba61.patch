@@ -1,0 +1,13 @@
+diff --git a/lib/elixir/lib/range.ex b/lib/elixir/lib/range.ex
+index 0261b754b..0bf346b5c 100644
+--- a/lib/elixir/lib/range.ex
++++ b/lib/elixir/lib/range.ex
+@@ -5224,7 +5224,7 @@ defimpl Enumerable, for: Range do
+   end
+ 
+   def slice(first.._//step = range) do
+-    {:ok, Range.size(range), &slice(first + &1 * step, step + &3 - 1, &2)}
++    {:ok, Range.size(range), &slice(first + &1 * step, step * &3, &2)}
+   end
+ 
+   # TODO: Remove me on v2.0

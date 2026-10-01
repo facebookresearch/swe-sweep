@@ -1,0 +1,14 @@
+diff --git a/src/net/http/httptest/recorder_test.go b/src/net/http/httptest/recorder_test.go
+index 8cb32dd740..4782eced43 100644
+--- a/src/net/http/httptest/recorder_test.go
++++ b/src/net/http/httptest/recorder_test.go
+@@ -220,8 +220,7 @@ func TestRecorder(t *testing.T) {
+ 			"Trailer headers are correctly recorded",
+ 			func(w http.ResponseWriter, r *http.Request) {
+ 				w.Header().Set("Non-Trailer", "correct")
+-				w.Header().Set("Trailer", "Trailer-A")
+-				w.Header().Add("Trailer", "Trailer-B")
++				w.Header().Set("Trailer", "Trailer-A, Trailer-B")
+ 				w.Header().Add("Trailer", "Trailer-C")
+ 				io.WriteString(w, "<html>")
+ 				w.Header().Set("Non-Trailer", "incorrect")

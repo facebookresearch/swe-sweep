@@ -1,0 +1,76 @@
+diff --git a/mypy/test/testmodulefinder.py b/mypy/test/testmodulefinder.py
+index 65d9a66c5..d4ee3af04 100644
+--- a/mypy/test/testmodulefinder.py
++++ b/mypy/test/testmodulefinder.py
+@@ -195,6 +195,9 @@ class ModuleFinderSitePackagesSuite(Suite):
+             ("pkg_typed.b", self.path("pkg_typed", "b", "__init__.py")),
+             ("pkg_typed.b.c", self.path("pkg_typed", "b", "c.py")),
+             ("pkg_typed.a.a_var", ModuleNotFoundReason.NOT_FOUND),
++            # Regular package with py.typed, bundled stubs, and external stubs-only package
++            ("pkg_typed_w_stubs", self.path("pkg_typed_w_stubs-stubs", "__init__.pyi")),
++            ("pkg_typed_w_stubs.spam", self.path("pkg_typed_w_stubs-stubs", "spam.pyi")),
+             # Regular package without py.typed
+             ("pkg_untyped", ModuleNotFoundReason.FOUND_WITHOUT_TYPE_HINTS),
+             ("pkg_untyped.a", ModuleNotFoundReason.FOUND_WITHOUT_TYPE_HINTS),
+@@ -250,6 +253,9 @@ class ModuleFinderSitePackagesSuite(Suite):
+             ("pkg_typed.b", self.path("pkg_typed", "b", "__init__.py")),
+             ("pkg_typed.b.c", self.path("pkg_typed", "b", "c.py")),
+             ("pkg_typed.a.a_var", ModuleNotFoundReason.NOT_FOUND),
++            # Regular package with py.typed, bundled stubs, and external stubs-only package
++            ("pkg_typed_w_stubs", self.path("pkg_typed_w_stubs-stubs", "__init__.pyi")),
++            ("pkg_typed_w_stubs.spam", self.path("pkg_typed_w_stubs-stubs", "spam.pyi")),
+             # Regular package without py.typed
+             ("pkg_untyped", ModuleNotFoundReason.FOUND_WITHOUT_TYPE_HINTS),
+             ("pkg_untyped.a", ModuleNotFoundReason.FOUND_WITHOUT_TYPE_HINTS),
+diff --git a/test-data/packages/modulefinder-site-packages/foo-stubs/qux.pyi b/test-data/packages/modulefinder-site-packages/foo-stubs/qux.pyi
+new file mode 100644
+index 000000000..5605b1454
+--- /dev/null
++++ b/test-data/packages/modulefinder-site-packages/foo-stubs/qux.pyi
+@@ -0,0 +1 @@
++qux_var: int
+diff --git a/test-data/packages/modulefinder-site-packages/pkg_typed_w_stubs-stubs/__init__.pyi b/test-data/packages/modulefinder-site-packages/pkg_typed_w_stubs-stubs/__init__.pyi
+new file mode 100644
+index 000000000..579a7556f
+--- /dev/null
++++ b/test-data/packages/modulefinder-site-packages/pkg_typed_w_stubs-stubs/__init__.pyi
+@@ -0,0 +1 @@
++pkg_typed_w_stubs_var: str = ...
+diff --git a/test-data/packages/modulefinder-site-packages/pkg_typed_w_stubs-stubs/spam.pyi b/test-data/packages/modulefinder-site-packages/pkg_typed_w_stubs-stubs/spam.pyi
+new file mode 100644
+index 000000000..e3ef9cce5
+--- /dev/null
++++ b/test-data/packages/modulefinder-site-packages/pkg_typed_w_stubs-stubs/spam.pyi
+@@ -0,0 +1 @@
++spam_var: str
+diff --git a/test-data/packages/modulefinder-site-packages/pkg_typed_w_stubs/__init__.py b/test-data/packages/modulefinder-site-packages/pkg_typed_w_stubs/__init__.py
+new file mode 100644
+index 000000000..11fa3635a
+--- /dev/null
++++ b/test-data/packages/modulefinder-site-packages/pkg_typed_w_stubs/__init__.py
+@@ -0,0 +1 @@
++pkg_typed_w_stubs_var = "pkg_typed_w_stubs"
+diff --git a/test-data/packages/modulefinder-site-packages/pkg_typed_w_stubs/__init__.pyi b/test-data/packages/modulefinder-site-packages/pkg_typed_w_stubs/__init__.pyi
+new file mode 100644
+index 000000000..3a03f395d
+--- /dev/null
++++ b/test-data/packages/modulefinder-site-packages/pkg_typed_w_stubs/__init__.pyi
+@@ -0,0 +1 @@
++pkg_typed_w_stubs_var: object
+diff --git a/test-data/packages/modulefinder-site-packages/pkg_typed_w_stubs/py.typed b/test-data/packages/modulefinder-site-packages/pkg_typed_w_stubs/py.typed
+new file mode 100644
+index 000000000..e69de29bb
+diff --git a/test-data/packages/modulefinder-site-packages/pkg_typed_w_stubs/spam.py b/test-data/packages/modulefinder-site-packages/pkg_typed_w_stubs/spam.py
+new file mode 100644
+index 000000000..0aff1579b
+--- /dev/null
++++ b/test-data/packages/modulefinder-site-packages/pkg_typed_w_stubs/spam.py
+@@ -0,0 +1 @@
++spam_var = "spam"
+diff --git a/test-data/packages/modulefinder-site-packages/pkg_typed_w_stubs/spam.pyi b/test-data/packages/modulefinder-site-packages/pkg_typed_w_stubs/spam.pyi
+new file mode 100644
+index 000000000..8eca196a7
+--- /dev/null
++++ b/test-data/packages/modulefinder-site-packages/pkg_typed_w_stubs/spam.pyi
+@@ -0,0 +1 @@
++spam_var: object

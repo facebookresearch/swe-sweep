@@ -1,0 +1,16 @@
+diff --git a/vlib/v/ast/table.v b/vlib/v/ast/table.v
+index a63595596..15ca770ad 100644
+--- a/vlib/v/ast/table.v
++++ b/vlib/v/ast/table.v
+@@ -2418,6 +2418,11 @@ pub fn (t &Table) dependent_names_in_expr(expr Expr) []string {
+ 		PrefixExpr {
+ 			names << t.dependent_names_in_expr(expr.right)
+ 		}
++		StringInterLiteral {
++			for inter_expr in expr.exprs {
++				names << t.dependent_names_in_expr(inter_expr)
++			}
++		}
+ 		SelectorExpr {
+ 			names << t.dependent_names_in_expr(expr.expr)
+ 		}

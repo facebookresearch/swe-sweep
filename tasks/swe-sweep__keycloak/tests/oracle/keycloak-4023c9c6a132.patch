@@ -1,0 +1,134 @@
+diff --git a/services/src/main/java/org/keycloak/jose/jws/DefaultTokenManager.java b/services/src/main/java/org/keycloak/jose/jws/DefaultTokenManager.java
+index d99927def2..b7845f238d 100644
+--- a/services/src/main/java/org/keycloak/jose/jws/DefaultTokenManager.java
++++ b/services/src/main/java/org/keycloak/jose/jws/DefaultTokenManager.java
+@@ -39,16 +39,22 @@ import org.keycloak.jose.jwk.JWK;
+ import org.keycloak.keys.loader.PublicKeyStorageManager;
+ import org.keycloak.models.AuthenticatedClientSessionModel;
+ import org.keycloak.models.ClientModel;
++import org.keycloak.models.ClientSessionContext;
+ import org.keycloak.models.Constants;
+ import org.keycloak.models.KeycloakSession;
++import org.keycloak.models.ProtocolMapperModel;
+ import org.keycloak.models.RealmModel;
+ import org.keycloak.models.TokenManager;
+ import org.keycloak.models.UserModel;
+ import org.keycloak.models.utils.KeycloakModelUtils;
++import org.keycloak.protocol.ProtocolMapperUtils;
+ import org.keycloak.protocol.oidc.OIDCAdvancedConfigWrapper;
+ import org.keycloak.protocol.oidc.OIDCConfigAttributes;
+ import org.keycloak.protocol.oidc.OIDCLoginProtocol;
++import org.keycloak.protocol.oidc.mappers.AbstractPairwiseSubMapper;
++import org.keycloak.protocol.oidc.mappers.LogoutTokenMapper;
+ import org.keycloak.representations.LogoutToken;
++import org.keycloak.services.util.DefaultClientSessionContext;
+ import org.keycloak.util.JsonSerialization;
+ import org.keycloak.util.TokenUtil;
+ 
+@@ -359,6 +365,16 @@ public class DefaultTokenManager implements TokenManager {
+         }
+         token.setSubject(user.getId());
+ 
++        // adjust the subject in the logout token in case we have an PairwiseSubMapper
++        ClientSessionContext clientSessionCtx = DefaultClientSessionContext.fromClientSessionScopeParameter(clientSession, session);
++        ProtocolMapperUtils
++            .getSortedProtocolMappers(session, clientSessionCtx)
++            .filter(mapperEntry -> mapperEntry.getValue() instanceof LogoutTokenMapper)
++            .forEach(mapperEntry -> {
++                LogoutTokenMapper mapper = (LogoutTokenMapper) mapperEntry.getValue();
++                mapper.transformLogoutToken(token, mapperEntry.getKey(), session, clientSession.getUserSession(), clientSessionCtx);
++            });
++
+         return token;
+     }
+ }
+diff --git a/services/src/main/java/org/keycloak/protocol/oidc/mappers/AbstractPairwiseSubMapper.java b/services/src/main/java/org/keycloak/protocol/oidc/mappers/AbstractPairwiseSubMapper.java
+index fd9389644b..662de7b07c 100644
+--- a/services/src/main/java/org/keycloak/protocol/oidc/mappers/AbstractPairwiseSubMapper.java
++++ b/services/src/main/java/org/keycloak/protocol/oidc/mappers/AbstractPairwiseSubMapper.java
+@@ -13,6 +13,7 @@ import org.keycloak.protocol.oidc.utils.PairwiseSubMapperValidator;
+ import org.keycloak.provider.ProviderConfigProperty;
+ import org.keycloak.representations.AccessToken;
+ import org.keycloak.representations.IDToken;
++import org.keycloak.representations.LogoutToken;
+ 
+ import java.util.ArrayList;
+ import java.util.LinkedList;
+@@ -23,7 +24,7 @@ import java.util.List;
+  *
+  * @author <a href="mailto:martin.hardselius@gmail.com">Martin Hardselius</a>
+  */
+-public abstract class AbstractPairwiseSubMapper extends AbstractOIDCProtocolMapper implements OIDCAccessTokenMapper, OIDCIDTokenMapper, UserInfoTokenMapper, TokenIntrospectionTokenMapper {
++public abstract class AbstractPairwiseSubMapper extends AbstractOIDCProtocolMapper implements OIDCAccessTokenMapper, OIDCIDTokenMapper, UserInfoTokenMapper, TokenIntrospectionTokenMapper, LogoutTokenMapper {
+     public static final String PROVIDER_ID_SUFFIX = "-pairwise-sub-mapper";
+ 
+     public abstract String getIdPrefix();
+@@ -82,6 +83,11 @@ public abstract class AbstractPairwiseSubMapper extends AbstractOIDCProtocolMapp
+         return token;
+     }
+ 
++    @Override
++    public LogoutToken transformLogoutToken(LogoutToken token, ProtocolMapperModel mappingModel, KeycloakSession session, UserSessionModel userSession, ClientSessionContext clientSessionCtx) {
++        setLogoutTokenSubject(token, generateSub(mappingModel, getSectorIdentifier(clientSessionCtx.getClientSession().getClient(), mappingModel), userSession.getUser().getId()));
++        return token;
++    }
+     @Override
+     public AccessToken transformUserInfoToken(AccessToken token, ProtocolMapperModel mappingModel, KeycloakSession session, UserSessionModel userSession, ClientSessionContext clientSessionCtx) {
+         setUserInfoTokenSubject(token, generateSub(mappingModel, getSectorIdentifier(clientSessionCtx.getClientSession().getClient(), mappingModel), userSession.getUser().getId()));
+@@ -96,6 +102,10 @@ public abstract class AbstractPairwiseSubMapper extends AbstractOIDCProtocolMapp
+         token.setSubject(pairwiseSub);
+     }
+ 
++    protected void setLogoutTokenSubject(LogoutToken token, String pairwiseSub) {
++        token.setSubject(pairwiseSub);
++    }
++
+     protected void setUserInfoTokenSubject(IDToken token, String pairwiseSub) {
+         token.getOtherClaims().put("sub", pairwiseSub);
+     }
+@@ -130,4 +140,4 @@ public abstract class AbstractPairwiseSubMapper extends AbstractOIDCProtocolMapp
+     public final String getId() {
+         return "oidc-" + getIdPrefix() + PROVIDER_ID_SUFFIX;
+     }
+-}
+\ No newline at end of file
++}
+diff --git a/services/src/main/java/org/keycloak/protocol/oidc/mappers/LogoutTokenMapper.java b/services/src/main/java/org/keycloak/protocol/oidc/mappers/LogoutTokenMapper.java
+new file mode 100644
+index 0000000000..f9838bc47f
+--- /dev/null
++++ b/services/src/main/java/org/keycloak/protocol/oidc/mappers/LogoutTokenMapper.java
+@@ -0,0 +1,33 @@
++/*
++ * Copyright 2016 Red Hat, Inc. and/or its affiliates
++ * and other contributors as indicated by the @author tags.
++ *
++ * Licensed under the Apache License, Version 2.0 (the "License");
++ * you may not use this file except in compliance with the License.
++ * You may obtain a copy of the License at
++ *
++ * http://www.apache.org/licenses/LICENSE-2.0
++ *
++ * Unless required by applicable law or agreed to in writing, software
++ * distributed under the License is distributed on an "AS IS" BASIS,
++ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++ * See the License for the specific language governing permissions and
++ * limitations under the License.
++ */
++
++package org.keycloak.protocol.oidc.mappers;
++
++import org.keycloak.models.ClientSessionContext;
++import org.keycloak.models.KeycloakSession;
++import org.keycloak.models.ProtocolMapperModel;
++import org.keycloak.models.UserSessionModel;
++import org.keycloak.representations.LogoutToken;
++
++/**
++ * @author <a href="mailto:steffen@ritters.email">Steffen Ritter</a>
++ */
++public interface LogoutTokenMapper {
++
++    LogoutToken transformLogoutToken(LogoutToken token, ProtocolMapperModel mappingModel, KeycloakSession session, UserSessionModel userSession, ClientSessionContext clientSessionCtx);
++
++}

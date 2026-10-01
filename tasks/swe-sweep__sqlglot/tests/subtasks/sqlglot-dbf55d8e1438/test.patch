@@ -1,0 +1,13 @@
+diff --git a/tests/dialects/test_postgres.py b/tests/dialects/test_postgres.py
+index ca88a8dd87..22056ef222 100644
+--- a/tests/dialects/test_postgres.py
++++ b/tests/dialects/test_postgres.py
+@@ -224,6 +224,8 @@ class TestPostgres(Validator):
+             "x !~* 'y'",
+             "NOT x ~* 'y'",
+         )
++        self.validate_identity("SELECT ~1")
++        self.validate_identity("SELECT ~col FROM t")
+ 
+         self.validate_identity(
+             "x ~~ 'y'",

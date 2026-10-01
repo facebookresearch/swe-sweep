@@ -1,0 +1,14 @@
+diff --git a/lib/rules/selector-type-no-unknown/__tests__/index.mjs b/lib/rules/selector-type-no-unknown/__tests__/index.mjs
+index b36b60a71..671debc07 100644
+--- a/lib/rules/selector-type-no-unknown/__tests__/index.mjs
++++ b/lib/rules/selector-type-no-unknown/__tests__/index.mjs
+@@ -73,6 +73,9 @@ testRule({
+ 		{
+ 			code: '::view-transition-group(qux) {}',
+ 		},
++		{
++			code: ':active-view-transition-type(foo) {}',
++		},
+ 		{
+ 			code: 'input:not(*) {}',
+ 		},

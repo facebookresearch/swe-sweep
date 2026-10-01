@@ -1,0 +1,42 @@
+diff --git a/lib/rules/declaration-block-no-redundant-longhand-properties/index.cjs b/lib/rules/declaration-block-no-redundant-longhand-properties/index.cjs
+index 64e94d337..e0b05a35f 100644
+--- a/lib/rules/declaration-block-no-redundant-longhand-properties/index.cjs
++++ b/lib/rules/declaration-block-no-redundant-longhand-properties/index.cjs
+@@ -307,6 +307,16 @@ const rule = (primary, secondaryOptions) => {
+ 					}
+ 
+ 					const declNodes = longhandDeclarationNodes.get(prefixedShorthandProperty) || [];
++
++					const importantDeclNodesCount = declNodes.reduce(
++						(count, declNode) => (declNode.important ? (count += 1) : count),
++						0,
++					);
++
++					if (importantDeclNodesCount && importantDeclNodesCount !== declNodes.length) {
++						continue;
++					}
++
+ 					const [firstDeclNode] = declNodes;
+ 					let resolvedShorthandValue = undefined;
+ 
+diff --git a/lib/rules/declaration-block-no-redundant-longhand-properties/index.mjs b/lib/rules/declaration-block-no-redundant-longhand-properties/index.mjs
+index 0b7389d3b..a46110b38 100644
+--- a/lib/rules/declaration-block-no-redundant-longhand-properties/index.mjs
++++ b/lib/rules/declaration-block-no-redundant-longhand-properties/index.mjs
+@@ -304,6 +304,16 @@ const rule = (primary, secondaryOptions) => {
+ 					}
+ 
+ 					const declNodes = longhandDeclarationNodes.get(prefixedShorthandProperty) || [];
++
++					const importantDeclNodesCount = declNodes.reduce(
++						(count, declNode) => (declNode.important ? (count += 1) : count),
++						0,
++					);
++
++					if (importantDeclNodesCount && importantDeclNodesCount !== declNodes.length) {
++						continue;
++					}
++
+ 					const [firstDeclNode] = declNodes;
+ 					let resolvedShorthandValue = undefined;
+ 

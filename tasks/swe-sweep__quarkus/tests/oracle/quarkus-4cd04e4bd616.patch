@@ -1,0 +1,99 @@
+diff --git a/independent-projects/resteasy-reactive/common/processor/src/main/java/org/jboss/resteasy/reactive/common/processor/scanning/ResteasyReactiveInterceptorScanner.java b/independent-projects/resteasy-reactive/common/processor/src/main/java/org/jboss/resteasy/reactive/common/processor/scanning/ResteasyReactiveInterceptorScanner.java
+index ccc0cbcca9e..a2fed642be0 100644
+--- a/independent-projects/resteasy-reactive/common/processor/src/main/java/org/jboss/resteasy/reactive/common/processor/scanning/ResteasyReactiveInterceptorScanner.java
++++ b/independent-projects/resteasy-reactive/common/processor/src/main/java/org/jboss/resteasy/reactive/common/processor/scanning/ResteasyReactiveInterceptorScanner.java
+@@ -11,6 +11,7 @@ import java.util.Map;
+ import java.util.Set;
+ import java.util.function.Function;
+ 
++import jakarta.ws.rs.RuntimeType;
+ import jakarta.ws.rs.container.ContainerRequestFilter;
+ import jakarta.ws.rs.container.ContainerResponseFilter;
+ 
+@@ -24,6 +25,7 @@ import org.jboss.resteasy.reactive.common.model.PreMatchInterceptorContainer;
+ import org.jboss.resteasy.reactive.common.model.ResourceInterceptor;
+ import org.jboss.resteasy.reactive.common.model.ResourceInterceptors;
+ import org.jboss.resteasy.reactive.common.processor.NameBindingUtil;
++import org.jboss.resteasy.reactive.common.processor.ResteasyReactiveDotNames;
+ import org.jboss.resteasy.reactive.spi.BeanFactory;
+ 
+ /**
+@@ -221,6 +223,18 @@ public class ResteasyReactiveInterceptorScanner {
+                     interceptorContainer.addNameRequestInterceptor(interceptor);
+                 }
+             }
++
++            RuntimeType runtimeType = null;
++            if (keepProviderResult == ApplicationScanningResult.KeepProviderResult.SERVER_ONLY) {
++                runtimeType = RuntimeType.SERVER;
++            }
++            AnnotationInstance constrainedToInstance = filterClass
++                    .declaredAnnotation(ResteasyReactiveDotNames.CONSTRAINED_TO);
++            if (constrainedToInstance != null) {
++                runtimeType = RuntimeType.valueOf(constrainedToInstance.value().asEnum());
++            }
++            interceptor.setRuntimeType(runtimeType);
++
+             return interceptor;
+         }
+ 
+diff --git a/independent-projects/resteasy-reactive/common/runtime/src/main/java/org/jboss/resteasy/reactive/common/model/ResourceInterceptor.java b/independent-projects/resteasy-reactive/common/runtime/src/main/java/org/jboss/resteasy/reactive/common/model/ResourceInterceptor.java
+index ab224307bcd..b4bdd4e8f09 100644
+--- a/independent-projects/resteasy-reactive/common/runtime/src/main/java/org/jboss/resteasy/reactive/common/model/ResourceInterceptor.java
++++ b/independent-projects/resteasy-reactive/common/runtime/src/main/java/org/jboss/resteasy/reactive/common/model/ResourceInterceptor.java
+@@ -5,6 +5,7 @@ import java.util.Map;
+ import java.util.Set;
+ 
+ import jakarta.ws.rs.Priorities;
++import jakarta.ws.rs.RuntimeType;
+ 
+ import org.jboss.resteasy.reactive.spi.BeanFactory;
+ 
+@@ -25,7 +26,9 @@ public class ResourceInterceptor<T>
+ 
+     private String className;
+ 
+-    public transient Map<String, Object> metadata; // by using 'public transient' we ensure that this field will not be populated at runtime
++    public transient Map<String, Object> metadata; // by using 'public transient' we ensure that this field will not be populated at runtime  \
++
++    private RuntimeType runtimeType;
+ 
+     public void setFactory(BeanFactory<T> factory) {
+         this.factory = factory;
+@@ -84,6 +87,14 @@ public class ResourceInterceptor<T>
+         this.withFormRead = withFormRead;
+     }
+ 
++    public RuntimeType getRuntimeType() {
++        return runtimeType;
++    }
++
++    public void setRuntimeType(RuntimeType runtimeType) {
++        this.runtimeType = runtimeType;
++    }
++
+     // spec says that writer interceptors are sorted in ascending order
+     @Override
+     public int compareTo(ResourceInterceptor<T> o) {
+diff --git a/independent-projects/resteasy-reactive/server/runtime/src/main/java/org/jboss/resteasy/reactive/server/core/startup/RuntimeInterceptorDeployment.java b/independent-projects/resteasy-reactive/server/runtime/src/main/java/org/jboss/resteasy/reactive/server/core/startup/RuntimeInterceptorDeployment.java
+index 4ff5dc74e2c..7679f9e2d0c 100644
+--- a/independent-projects/resteasy-reactive/server/runtime/src/main/java/org/jboss/resteasy/reactive/server/core/startup/RuntimeInterceptorDeployment.java
++++ b/independent-projects/resteasy-reactive/server/runtime/src/main/java/org/jboss/resteasy/reactive/server/core/startup/RuntimeInterceptorDeployment.java
+@@ -10,6 +10,7 @@ import java.util.Map;
+ import java.util.TreeMap;
+ import java.util.function.Consumer;
+ 
++import jakarta.ws.rs.RuntimeType;
+ import jakarta.ws.rs.container.ContainerRequestFilter;
+ import jakarta.ws.rs.container.ContainerResponseFilter;
+ import jakarta.ws.rs.container.DynamicFeature;
+@@ -152,6 +153,9 @@ public class RuntimeInterceptorDeployment {
+         List<BeanFactory.BeanInstance<T>> responseBeanInstances = new ArrayList<>(interceptors.size());
+         Collections.sort(interceptors);
+         for (ResourceInterceptor<T> interceptor : interceptors) {
++            if (RuntimeType.CLIENT.equals(interceptor.getRuntimeType())) {
++                continue;
++            }
+             BeanFactory.BeanInstance<T> beanInstance = interceptor.getFactory().createInstance();
+             responseBeanInstances.add(beanInstance);
+             T containerResponseFilter = beanInstance.getInstance();

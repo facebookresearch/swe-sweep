@@ -1,0 +1,77 @@
+diff --git a/mpmath/tests/test_fp.py b/mpmath/tests/test_fp.py
+index 6a211231..b37e32a3 100644
+--- a/mpmath/tests/test_fp.py
++++ b/mpmath/tests/test_fp.py
+@@ -109,6 +109,34 @@ def test_fp_cospi_sinpi():
+     assert ae(fp.sinpi(-0.7+2j), (-216.6116802292079471 - 157.37650009392034693j))
+     assert ae(fp.cospi(-0.7+2j), (-157.37759774921754565 + 216.61016943630197336j))
+ 
++def test_fp_tanh():
++    assert fp.tanh(fp.mpc(+fp.inf, +fp.inf)) == fp.mpc(+1, 0)
++    assert fp.tanh(fp.mpc(+fp.inf, -fp.inf)) == fp.mpc(+1, 0)
++    assert fp.tanh(fp.mpc(-fp.inf, +fp.inf)) == fp.mpc(-1, 0)
++    assert fp.tanh(fp.mpc(-fp.inf, -fp.inf)) == fp.mpc(-1, 0)
++    assert fp.tanh(fp.mpc(+fp.inf, 2)) == fp.mpc(+1, 0)
++    assert fp.tanh(fp.mpc(-fp.inf, 2)) == fp.mpc(-1, 0)
++    r = fp.tanh(fp.mpc(0, -fp.inf))
++    assert r.real == 0 and fp.isnan(r.imag)
++    r = fp.tanh(fp.mpc(2, -fp.inf))
++    assert fp.isnan(r.real) and fp.isnan(r.imag)
++    assert fp.tanh(fp.mpc(+fp.inf, fp.nan)) == fp.mpc(+1, 0)
++    assert fp.tanh(fp.mpc(-fp.inf, fp.nan)) == fp.mpc(-1, 0)
++
++def test_fp_tan():
++    assert fp.tan(fp.mpc(+fp.inf, +fp.inf)) == fp.mpc(0, +1)
++    assert fp.tan(fp.mpc(+fp.inf, -fp.inf)) == fp.mpc(0, -1)
++    assert fp.tan(fp.mpc(-fp.inf, +fp.inf)) == fp.mpc(0, +1)
++    assert fp.tan(fp.mpc(-fp.inf, -fp.inf)) == fp.mpc(0, -1)
++    assert fp.tan(fp.mpc(2, +fp.inf)) == fp.mpc(0, +1)
++    assert fp.tan(fp.mpc(2, -fp.inf)) == fp.mpc(0, -1)
++    r = fp.tan(fp.mpc(-fp.inf, 0))
++    assert fp.isnan(r.real) and r.imag == 0
++    r = fp.tan(fp.mpc(-fp.inf, 2))
++    assert fp.isnan(r.real) and fp.isnan(r.imag)
++    assert fp.tan(fp.mpc(fp.nan, +fp.inf)) == fp.mpc(0, +1)
++    assert fp.tan(fp.mpc(fp.nan, -fp.inf)) == fp.mpc(0, -1)
++
+ def test_fp_expj():
+     assert ae(fp.expj(0), (1.0 + 0.0j))
+     assert ae(fp.expj(1), (0.5403023058681397174 + 0.84147098480789650665j))
+diff --git a/mpmath/tests/test_functions.py b/mpmath/tests/test_functions.py
+index de4b7081..908461ff 100644
+--- a/mpmath/tests/test_functions.py
++++ b/mpmath/tests/test_functions.py
+@@ -823,6 +823,33 @@ def test_tanh():
+     assert isnan(tanh(nan))
+     assert tanh(mpc('inf', '0')) == 1
+ 
++    assert tanh(mpc(+inf, +inf)) == mpc(+1, 0)
++    assert tanh(mpc(+inf, -inf)) == mpc(+1, 0)
++    assert tanh(mpc(-inf, +inf)) == mpc(-1, 0)
++    assert tanh(mpc(-inf, -inf)) == mpc(-1, 0)
++    assert tanh(mpc(+inf, 2)) == mpc(+1, 0)
++    assert tanh(mpc(-inf, 2)) == mpc(-1, 0)
++    r = tanh(mpc(0, -inf))
++    assert r.real == 0 and isnan(r.imag)
++    r = tanh(mpc(2, -inf))
++    assert isnan(r.real) and isnan(r.imag)
++    assert tanh(mpc(+inf, nan)) == mpc(+1, 0)
++    assert tanh(mpc(-inf, nan)) == mpc(-1, 0)
++
++def test_tan():
++    assert tan(mpc(+inf, +inf)) == mpc(0, +1)
++    assert tan(mpc(+inf, -inf)) == mpc(0, -1)
++    assert tan(mpc(-inf, +inf)) == mpc(0, +1)
++    assert tan(mpc(-inf, -inf)) == mpc(0, -1)
++    assert tan(mpc(2, +inf)) == mpc(0, +1)
++    assert tan(mpc(2, -inf)) == mpc(0, -1)
++    r = tan(mpc(-inf, 0))
++    assert isnan(r.real) and r.imag == 0
++    r = tan(mpc(-inf, 2))
++    assert isnan(r.real) and isnan(r.imag)
++    assert tan(mpc(nan, +inf)) == mpc(0, +1)
++    assert tan(mpc(nan, -inf)) == mpc(0, -1)
++
+ def test_atanh():
+     mp.dps = 15
+     assert atanh(0) == 0

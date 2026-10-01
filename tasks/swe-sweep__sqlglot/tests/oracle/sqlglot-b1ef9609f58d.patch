@@ -1,0 +1,36 @@
+diff --git a/sqlglot/dialects/tsql.py b/sqlglot/dialects/tsql.py
+index 927d30d1d2..044c3c3332 100644
+--- a/sqlglot/dialects/tsql.py
++++ b/sqlglot/dialects/tsql.py
+@@ -862,6 +862,7 @@ class TSQL(Dialect):
+         COPY_PARAMS_EQ_REQUIRED = True
+         PARSE_JSON_NAME = None
+         EXCEPT_INTERSECT_SUPPORT_ALL_CLAUSE = False
++        ALTER_SET_TYPE = ""
+ 
+         EXPRESSIONS_WITHOUT_NESTED_CTES = {
+             exp.Create,
+diff --git a/sqlglot/generator.py b/sqlglot/generator.py
+index e46294ebc4..107a67137f 100644
+--- a/sqlglot/generator.py
++++ b/sqlglot/generator.py
+@@ -321,6 +321,9 @@ class Generator(metaclass=_Generator):
+     # The keyword to use when specifying the seed of a sample clause
+     TABLESAMPLE_SEED_KEYWORD = "SEED"
+ 
++    # The keyword(s) to use when altering a column's data type
++    ALTER_SET_TYPE = "SET DATA TYPE"
++
+     # Whether COLLATE is a function instead of a binary operator
+     COLLATE_IS_FUNC = False
+ 
+@@ -3244,7 +3247,8 @@ class Generator(metaclass=_Generator):
+             collate = f" COLLATE {collate}" if collate else ""
+             using = self.sql(expression, "using")
+             using = f" USING {using}" if using else ""
+-            return f"ALTER COLUMN {this} SET DATA TYPE {dtype}{collate}{using}"
++            alter_set_type = self.ALTER_SET_TYPE + " " if self.ALTER_SET_TYPE else ""
++            return f"ALTER COLUMN {this} {alter_set_type}{dtype}{collate}{using}"
+ 
+         default = self.sql(expression, "default")
+         if default:

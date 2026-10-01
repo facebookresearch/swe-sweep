@@ -1,0 +1,66 @@
+diff --git a/lib/document.js b/lib/document.js
+index 81d51a2ce..333ba1143 100644
+--- a/lib/document.js
++++ b/lib/document.js
+@@ -22,7 +22,6 @@ const clone = require('./helpers/clone');
+ const compile = require('./helpers/document/compile').compile;
+ const defineKey = require('./helpers/document/compile').defineKey;
+ const flatten = require('./helpers/common').flatten;
+-const flattenObjectWithDottedPaths = require('./helpers/path/flattenObjectWithDottedPaths');
+ const get = require('./helpers/get');
+ const getEmbeddedDiscriminatorPath = require('./helpers/document/getEmbeddedDiscriminatorPath');
+ const getKeysInSchemaOrder = require('./helpers/schema/getKeysInSchemaOrder');
+@@ -473,8 +472,6 @@ function $applyDefaultsToNested(val, path, doc) {
+     return;
+   }
+ 
+-  flattenObjectWithDottedPaths(val);
+-
+   const paths = Object.keys(doc.$__schema.paths);
+   const plen = paths.length;
+ 
+diff --git a/lib/helpers/path/flattenObjectWithDottedPaths.js b/lib/helpers/path/flattenObjectWithDottedPaths.js
+deleted file mode 100644
+index 2771796d0..000000000
+--- a/lib/helpers/path/flattenObjectWithDottedPaths.js
++++ /dev/null
+@@ -1,39 +0,0 @@
+-'use strict';
+-
+-const MongooseError = require('../../error/mongooseError');
+-const isMongooseObject = require('../isMongooseObject');
+-const setDottedPath = require('../path/setDottedPath');
+-const util = require('util');
+-
+-/**
+- * Given an object that may contain dotted paths, flatten the paths out.
+- * For example: `flattenObjectWithDottedPaths({ a: { 'b.c': 42 } })` => `{ a: { b: { c: 42 } } }`
+- */
+-
+-module.exports = function flattenObjectWithDottedPaths(obj) {
+-  if (obj == null || typeof obj !== 'object' || Array.isArray(obj)) {
+-    return;
+-  }
+-  // Avoid Mongoose docs, like docs and maps, because these may cause infinite recursion
+-  if (isMongooseObject(obj)) {
+-    return;
+-  }
+-  const keys = Object.keys(obj);
+-  for (const key of keys) {
+-    const val = obj[key];
+-    if (key.indexOf('.') !== -1) {
+-      try {
+-        delete obj[key];
+-        setDottedPath(obj, key, val);
+-      } catch (err) {
+-        if (!(err instanceof TypeError)) {
+-          throw err;
+-        }
+-        throw new MongooseError(`Conflicting dotted paths when setting document path, key: "${key}", value: ${util.inspect(val)}`);
+-      }
+-      continue;
+-    }
+-
+-    flattenObjectWithDottedPaths(obj[key]);
+-  }
+-};

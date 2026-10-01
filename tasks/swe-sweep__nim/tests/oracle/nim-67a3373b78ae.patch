@@ -1,0 +1,22 @@
+diff --git a/compiler/pragmas.nim b/compiler/pragmas.nim
+index 78b6728d5..c4be1223b 100644
+--- a/compiler/pragmas.nim
++++ b/compiler/pragmas.nim
+@@ -753,13 +753,14 @@ proc semCustomPragma(c: PContext, n: PNode): PNode =
+ proc semCustomPragma(c: PContext, n: PNode): PNode =
+   var callNode: PNode
+ 
+-  if n.kind in {nkIdent, nkSym}:
++  case n.kind
++  of nkIdentKinds:
+     # pragma -> pragma()
+     callNode = newTree(nkCall, n)
+-  elif n.kind == nkExprColonExpr:
++  of nkExprColonExpr:
+     # pragma: arg -> pragma(arg)
+     callNode = newTree(nkCall, n[0], n[1])
+-  elif n.kind in nkPragmaCallKinds:
++  of nkPragmaCallKinds - {nkExprColonExpr}:
+     callNode = n
+   else:
+     invalidPragma(c, n)

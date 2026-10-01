@@ -1,0 +1,101 @@
+diff --git a/lib/rules/lightness-notation/__tests__/index.mjs b/lib/rules/lightness-notation/__tests__/index.mjs
+index 62b1fb93f..7aeb1c455 100644
+--- a/lib/rules/lightness-notation/__tests__/index.mjs
++++ b/lib/rules/lightness-notation/__tests__/index.mjs
+@@ -50,6 +50,15 @@ testRule({
+ 		{
+ 			code: 'a { color: hsl(170deg 60% 0.5 / 15%) }',
+ 		},
++		{
++			code: 'a { color: lch(from red 50% c h) }',
++		},
++		{
++			code: 'a { color: lab(FROM red 50% a b) }',
++		},
++		{
++			code: 'a { color: oklch(from lch(50% 0 0) l c h) }',
++		},
+ 	],
+ 
+ 	reject: [
+@@ -136,6 +145,32 @@ testRule({
+ 			endLine: 1,
+ 			endColumn: 20,
+ 		},
++		{
++			code: 'a { color: lch(from red 52.9 c h) }',
++			fixed: 'a { color: lch(from red 52.9% c h) }',
++			fix: {
++				range: [27, 28],
++				text: '9%',
++			},
++			message: messages.expected('52.9', '52.9%'),
++			line: 1,
++			column: 25,
++			endLine: 1,
++			endColumn: 29,
++		},
++		{
++			code: 'a { color: lch(from lch(52.9 0 0) l c h) }',
++			fixed: 'a { color: lch(from lch(52.9% 0 0) l c h) }',
++			fix: {
++				range: [27, 28],
++				text: '9%',
++			},
++			message: messages.expected('52.9', '52.9%'),
++			line: 1,
++			column: 25,
++			endLine: 1,
++			endColumn: 29,
++		},
+ 		{
+ 			code: stripIndent`
+ 				a {
+@@ -213,6 +248,15 @@ testRule({
+ 				}
+ 			`,
+ 		},
++		{
++			code: 'a { color: lch(from red .5 c h) }',
++		},
++		{
++			code: 'a { color: lab(FROM red .5 a b) }',
++		},
++		{
++			code: 'a { color: oklch(from lch(.5 0 0) l c h) }',
++		},
+ 	],
+ 
+ 	reject: [
+@@ -338,5 +362,31 @@ testRule({
+ 				},
+ 			],
+ 		},
++		{
++			code: 'a { color: lch(from red 52.9% c h) }',
++			fixed: 'a { color: lch(from red 52.9 c h) }',
++			fix: {
++				range: [28, 29],
++				text: '',
++			},
++			message: messages.expected('52.9%', '52.9'),
++			line: 1,
++			column: 25,
++			endLine: 1,
++			endColumn: 30,
++		},
++		{
++			code: 'a { color: lch(from lch(52.9% 0 0) l c h) }',
++			fixed: 'a { color: lch(from lch(52.9 0 0) l c h) }',
++			fix: {
++				range: [28, 29],
++				text: '',
++			},
++			message: messages.expected('52.9%', '52.9'),
++			line: 1,
++			column: 25,
++			endLine: 1,
++			endColumn: 30,
++		},
+ 	],
+ });

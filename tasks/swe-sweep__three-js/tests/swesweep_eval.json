@@ -1,0 +1,121 @@
+{
+  "build_jobs": 4,
+  "container_repo": "/three.js",
+  "evaluation": {
+    "suite": {
+      "suite": {
+        "all_files": [
+          "test/unit/three.source.unit.js",
+          "test/unit/three.addons.unit.js"
+        ],
+        "type": "qunit"
+      },
+      "type": "repro-eval"
+    },
+    "test_timeout": 600,
+    "visible_timeout": 7200
+  },
+  "upstream_image": "pandora-maxbug-three-js:r176",
+  "n_base_passing": 1289,
+  "n_base_test_ignore": 1474,
+  "oracle_digest": "390573b0e64418ec38195e688931e15263e527d224168181ac6919772c0a9f80",
+  "oracle_pristine_paths": [],
+  "upstream_commit": "9f7399e15e6172900e0591deb5a57a45769d8205",
+  "reproduction": {
+    "jobs_env": "SWESWEEP_BUILD_JOBS",
+    "needs_build": false,
+    "suite": "qunit"
+  },
+  "schema": 2,
+  "subtasks": [
+    {
+      "f2p": [
+        "Maths Line3 closestPointToPoint/closestPointToPointParameter"
+      ],
+      "id": "three-js-11805d30513e",
+      "target_files": [
+        "src/math/Line3.js"
+      ]
+    },
+    {
+      "f2p": [
+        "Objects BatchedMesh setInstanceCount"
+      ],
+      "id": "three-js-1ca2b9479221",
+      "target_files": [
+        "src/objects/BatchedMesh.js"
+      ]
+    },
+    {
+      "f2p": [
+        "Core Raycaster intersectObject (Orthographic, WebGPU coordinate system)"
+      ],
+      "id": "three-js-25583e3bdaa9",
+      "target_files": [
+        "src/core/Raycaster.js"
+      ]
+    },
+    {
+      "f2p": [
+        "Renderers Shaders UniformsUtils cloneUniforms clones arrays of objects"
+      ],
+      "id": "three-js-3084f4592747",
+      "target_files": [
+        "src/renderers/shaders/UniformsUtils.js"
+      ]
+    },
+    {
+      "f2p": [
+        "Maths Ray intersectTriangle (watertight at shared edges)"
+      ],
+      "id": "three-js-3bb73a31fae7",
+      "target_files": [
+        "src/core/Raycaster.js",
+        "src/math/Ray.js"
+      ]
+    },
+    {
+      "f2p": [
+        "Animation AnimationAction LoopPingPong with timeScale reversal during first loop"
+      ],
+      "id": "three-js-4be9ee628934",
+      "target_files": [
+        "src/animation/AnimationAction.js"
+      ]
+    },
+    {
+      "f2p": [
+        "Core RenderTarget3D Extending"
+      ],
+      "id": "three-js-6cbff0da9ec3",
+      "target_files": [
+        "src/core/RenderTarget.js",
+        "src/core/RenderTarget3D.js",
+        "src/renderers/WebGL3DRenderTarget.js",
+        "src/renderers/WebGLArrayRenderTarget.js",
+        "src/renderers/WebGLCubeRenderTarget.js",
+        "src/textures/Texture.js"
+      ]
+    },
+    {
+      "f2p": [
+        "Extras Curves CatmullRomCurve3 two points"
+      ],
+      "id": "three-js-7eb34b748844",
+      "target_files": [
+        "src/extras/curves/CatmullRomCurve3.js"
+      ]
+    },
+    {
+      "f2p": [
+        "Maths Ray intersectSphere"
+      ],
+      "id": "three-js-cc33aa6bb482",
+      "target_files": [
+        "src/math/Ray.js"
+      ]
+    }
+  ],
+  "task": "three-js",
+  "version": "r176"
+}

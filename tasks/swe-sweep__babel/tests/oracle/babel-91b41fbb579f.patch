@@ -1,0 +1,63 @@
+diff --git a/packages/babel-parser/src/plugins/typescript.js b/packages/babel-parser/src/plugins/typescript.js
+index b7a296a6d1..49603c0cce 100644
+--- a/packages/babel-parser/src/plugins/typescript.js
++++ b/packages/babel-parser/src/plugins/typescript.js
+@@ -314,13 +314,19 @@ export default (superClass: Class<Parser>): Class<Parser> =>
+     }
+ 
+     tsParseBindingListForSignature(): $ReadOnlyArray<
+-      N.Identifier | N.RestElement,
++      N.Identifier | N.RestElement | N.ObjectPattern,
+     > {
+       return this.parseBindingList(tt.parenR).map(pattern => {
+-        if (pattern.type !== "Identifier" && pattern.type !== "RestElement") {
++        if (
++          pattern.type !== "Identifier" &&
++          pattern.type !== "RestElement" &&
++          pattern.type !== "ObjectPattern"
++        ) {
+           throw this.unexpected(
+             pattern.start,
+-            "Name in a signature must be an Identifier.",
++            `Name in a signature must be an Identifier or ObjectPattern, instead got ${
++              pattern.type
++            }`,
+           );
+         }
+         return pattern;
+@@ -747,6 +753,22 @@ export default (superClass: Class<Parser>): Class<Parser> =>
+         this.next();
+         return true;
+       }
++
++      if (this.match(tt.braceL)) {
++        let braceStackCounter = 1;
++        this.next();
++
++        while (braceStackCounter > 0) {
++          if (this.match(tt.braceL)) {
++            ++braceStackCounter;
++          } else if (this.match(tt.braceR)) {
++            --braceStackCounter;
++          }
++          this.next();
++        }
++        return true;
++      }
++
+       return false;
+     }
+ 
+diff --git a/packages/babel-parser/src/types.js b/packages/babel-parser/src/types.js
+index 476d043161..46a549ee29 100644
+--- a/packages/babel-parser/src/types.js
++++ b/packages/babel-parser/src/types.js
+@@ -1037,7 +1037,7 @@ export type TsSignatureDeclaration =
+ 
+ export type TsSignatureDeclarationOrIndexSignatureBase = NodeBase & {
+   // Not using TypeScript's "ParameterDeclaration" here, since it's inconsistent with regular functions.
+-  parameters: $ReadOnlyArray<Identifier | RestElement>,
++  parameters: $ReadOnlyArray<Identifier | RestElement | ObjectPattern>,
+   typeAnnotation: ?TsTypeAnnotation,
+ };
+ 

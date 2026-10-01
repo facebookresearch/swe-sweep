@@ -1,0 +1,36 @@
+diff --git a/tests/dialects/test_bigquery.py b/tests/dialects/test_bigquery.py
+index 076feb8944..4be697a098 100644
+--- a/tests/dialects/test_bigquery.py
++++ b/tests/dialects/test_bigquery.py
+@@ -2317,3 +2317,16 @@ OPTIONS (
+                 "snowflake": "SELECT TO_CHAR(CAST(CAST('2050-12-25 15:30:55+00' AS TIMESTAMPTZ) AS TIMESTAMP), 'mon-DD-yyyy')",
+             },
+         )
++
++    def test_week(self):
++        self.validate_identity("DATE_TRUNC(date, WEEK(MONDAY))")
++        self.validate_identity(
++            "LAST_DAY(DATETIME '2008-11-10 15:30:00', WEEK(SUNDAY))",
++            "LAST_DAY(CAST('2008-11-10 15:30:00' AS DATETIME), WEEK(SUNDAY))",
++        )
++        self.validate_identity("DATE_DIFF('2017-12-18', '2017-12-17', WEEK(SATURDAY))")
++        self.validate_identity("DATETIME_DIFF('2017-12-18', '2017-12-17', WEEK(MONDAY))")
++        self.validate_identity(
++            "EXTRACT(WEEK(THURSDAY) FROM DATE '2013-12-25')",
++            "EXTRACT(WEEK(THURSDAY) FROM CAST('2013-12-25' AS DATE))",
++        )
+diff --git a/tests/fixtures/optimizer/qualify_columns.sql b/tests/fixtures/optimizer/qualify_columns.sql
+index 07d1efbdc9..fb18c1cc6d 100644
+--- a/tests/fixtures/optimizer/qualify_columns.sql
++++ b/tests/fixtures/optimizer/qualify_columns.sql
+@@ -228,5 +228,10 @@ ORDER BY
+ WITH EMPLOYEES AS (SELECT T.TITLE AS TITLE, T.EMPLOYEE_ID AS EMPLOYEE_ID, T.MANAGER_ID AS MANAGER_ID FROM (VALUES ('President', 1, NULL), ('Vice President Engineering', 10, 1), ('Programmer', 100, 10), ('QA Engineer', 101, 10), ('Vice President HR', 20, 1), ('Health Insurance Analyst', 200, 20)) AS T(TITLE, EMPLOYEE_ID, MANAGER_ID)) SELECT EMPLOYEES.EMPLOYEE_ID AS EMPLOYEE_ID, EMPLOYEES.MANAGER_ID AS MANAGER_ID, EMPLOYEES.TITLE AS TITLE, EMPLOYEES.LEVEL AS LEVEL FROM EMPLOYEES AS EMPLOYEES START WITH EMPLOYEES.TITLE = 'President' CONNECT BY EMPLOYEES.MANAGER_ID = PRIOR EMPLOYEES.EMPLOYEE_ID ORDER BY EMPLOYEE_ID;
+ 
++# execute: false
++# dialect: bigquery
++SELECT DATE_TRUNC(col1, WEEK(MONDAY)), col2 FROM t;
++SELECT DATE_TRUNC(t.col1, WEEK(MONDAY)) AS _col_0, t.col2 AS col2 FROM t AS t;
++
+ --------------------------------------
+ -- Derived tables
+ --------------------------------------

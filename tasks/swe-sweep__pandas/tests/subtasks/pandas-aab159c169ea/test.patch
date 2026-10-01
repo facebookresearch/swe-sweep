@@ -1,0 +1,18 @@
+diff --git a/pandas/tests/indexing/test_loc.py b/pandas/tests/indexing/test_loc.py
+index 176a58e4a3..5175d6a637 100644
+--- a/pandas/tests/indexing/test_loc.py
++++ b/pandas/tests/indexing/test_loc.py
+@@ -147,6 +147,13 @@ class TestLoc(Base):
+ 
+ class TestLoc2:
+     # TODO: better name, just separating out things that rely on base class
++    def test_loc_npstr(self):
++        # GH#45580
++        df = DataFrame(index=date_range("2021", "2022"))
++        result = df.loc[np.array(["2021/6/1"])[0] :]
++        expected = df.iloc[151:]
++        tm.assert_frame_equal(result, expected)
++
+     @pytest.mark.parametrize(
+         "msg, key",
+         [

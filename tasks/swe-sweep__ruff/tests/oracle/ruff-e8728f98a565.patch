@@ -1,0 +1,13 @@
+diff --git a/crates/ruff_linter/src/rules/flake8_pyi/rules/string_or_bytes_too_long.rs b/crates/ruff_linter/src/rules/flake8_pyi/rules/string_or_bytes_too_long.rs
+index 610d7f5d1b..5ec88d60fa 100644
+--- a/crates/ruff_linter/src/rules/flake8_pyi/rules/string_or_bytes_too_long.rs
++++ b/crates/ruff_linter/src/rules/flake8_pyi/rules/string_or_bytes_too_long.rs
+@@ -59,7 +59,7 @@ pub(crate) fn string_or_bytes_too_long(checker: &mut Checker, string: StringLike
+         return;
+     }
+ 
+-    if semantic.in_annotation() {
++    if semantic.in_type_definition() | semantic.in_deferred_type_definition() {
+         return;
+     }
+ 

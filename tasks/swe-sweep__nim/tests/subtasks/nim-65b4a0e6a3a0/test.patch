@@ -1,0 +1,15 @@
+diff --git a/tests/exception/tsetexceptions.nim b/tests/exception/tsetexceptions.nim
+index 557fc1898..386a6ae4c 100644
+--- a/tests/exception/tsetexceptions.nim
++++ b/tests/exception/tsetexceptions.nim
+@@ -6,3 +6,10 @@ let ex = newException(CatchableError, "test")
+ setCurrentException(ex)
+ doAssert getCurrentException().msg == ex.msg
+ doAssert getCurrentExceptionMsg() == ex.msg
++setCurrentException(nil)
++
++try:
++  raise newException(CatchableError, "test2")
++except:
++  setCurrentException(nil)
++doAssert getCurrentException() == nil

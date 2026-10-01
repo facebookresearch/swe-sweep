@@ -1,0 +1,23 @@
+diff --git a/server-spi-private/src/main/java/org/keycloak/userprofile/DefaultAttributes.java b/server-spi-private/src/main/java/org/keycloak/userprofile/DefaultAttributes.java
+index 82609bceeb..d752bbe79e 100644
+--- a/server-spi-private/src/main/java/org/keycloak/userprofile/DefaultAttributes.java
++++ b/server-spi-private/src/main/java/org/keycloak/userprofile/DefaultAttributes.java
+@@ -94,14 +94,14 @@ public class DefaultAttributes extends HashMap<String, List<String>> implements
+ 
+     @Override
+     public boolean isReadOnly(String name) {
+-        if (!isManagedAttribute(name)) {
+-            return !isAllowEditUnmanagedAttribute();
+-        }
+-
+         if (isReadOnlyFromMetadata(name) || isReadOnlyInternalAttribute(name)) {
+             return true;
+         }
+ 
++        if (!isManagedAttribute(name)) {
++            return !isAllowEditUnmanagedAttribute();
++        }
++
+         return getMetadata(name) == null;
+     }
+ 

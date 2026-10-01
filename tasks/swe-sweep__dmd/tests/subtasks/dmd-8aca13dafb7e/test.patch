@@ -1,0 +1,36 @@
+diff --git a/compiler/test/compilable/fix19983.c b/compiler/test/compilable/fix19983.c
+new file mode 100644
+index 0000000000..52fe4cc1af
+--- /dev/null
++++ b/compiler/test/compilable/fix19983.c
+@@ -0,0 +1,30 @@
++// fix ImportC function redeclarations should be allowed in function scope
++
++void test()
++{
++
++    struct Foo;
++    struct Foo;
++    struct Foo;
++    enum bar;
++    enum bar;
++    enum bar;
++    union see;
++    union see;
++    union see;
++    int f();
++    extern int f();
++    int f();
++
++    extern int h;
++    extern int h;
++}
++
++void test1()
++{
++    extern int f();
++    int f();
++
++    extern int x;
++    extern int x;
++}

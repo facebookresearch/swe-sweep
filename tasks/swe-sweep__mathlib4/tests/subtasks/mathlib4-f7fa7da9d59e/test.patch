@@ -1,0 +1,54 @@
+diff --git a/MathlibTest/fun_prop2.lean b/MathlibTest/fun_prop2.lean
+index 11c91cf5a0..d5ec4e5e2b 100644
+--- a/MathlibTest/fun_prop2.lean
++++ b/MathlibTest/fun_prop2.lean
+@@ -3,6 +3,7 @@ import Mathlib.Analysis.SpecialFunctions.Log.Deriv
+ import Mathlib.MeasureTheory.MeasurableSpace.Basic
+ 
+ import Mathlib.MeasureTheory.Measure.Haar.OfBasis
++import Mathlib.MeasureTheory.Function.StronglyMeasurable.AEStronglyMeasurable
+ 
+ 
+ noncomputable
+@@ -81,3 +82,18 @@ private theorem t1 : (5: ℕ) + (1 : ℕ∞) ≤ (12 : WithTop ℕ∞) := by nor
+ example {f : ℝ → ℝ} (hf : ContDiff ℝ 12 f) :
+     Differentiable ℝ (iteratedDeriv 5 (fun x ↦ f (2 * (f (x + x))) + x)) := by
+   fun_prop (disch := (exact t1))
++
++-- This example used to panic due to loose bvars before #31001.
++-- TODO: this still fails because `fun_prop` cannot use `hl`.
++/--
++error: `fun_prop` was unable to prove `MeasureTheory.AEStronglyMeasurable l.prod μ`
++
++Issues:
++  No theorems found for `f` in order to prove `MeasureTheory.AEStronglyMeasurable (fun a => f a) μ`
++-/
++#guard_msgs in
++example {α : Type*} {m₀ : MeasurableSpace α} {μ : MeasureTheory.Measure α} {M : Type*}
++    [CommMonoid M] [TopologicalSpace M] [ContinuousMul M] (l : Multiset (α → M))
++    (hl : ∀ f ∈ l, MeasureTheory.AEStronglyMeasurable f μ) :
++    MeasureTheory.AEStronglyMeasurable l.prod μ := by
++  fun_prop (disch := assumption)
+diff --git a/MathlibTest/fun_prop_dev.lean b/MathlibTest/fun_prop_dev.lean
+index dcaec031ba..1ffac21225 100644
+--- a/MathlibTest/fun_prop_dev.lean
++++ b/MathlibTest/fun_prop_dev.lean
+@@ -629,3 +629,18 @@ def snd (x : α×β) := x.2
+ example (f : α → β → γ) (hf : Con ↿f) : Con (fun x : α×β => f (fst x) (snd x)) := by
+   fail_if_success fun_prop
+   apply silentSorry
++
++-- In the following example, `fun_prop` used to panic with a "loose bvar in expression" error.
++
++@[fun_prop]
++opaque AEMeas {α β : Type*} (f : α → β) (μ : Bool) : Prop
++
++opaque foo4 : Bool → Bool
++
++@[fun_prop]
++theorem aemeas_foo4 (μ : Bool) : AEMeas foo4 μ := silentSorry
++
++@[fun_prop]
++theorem con_foo4 : (∀ μ : Bool, AEMeas foo4 μ) → Con foo4 := silentSorry
++
++example : Con foo4 := by fun_prop

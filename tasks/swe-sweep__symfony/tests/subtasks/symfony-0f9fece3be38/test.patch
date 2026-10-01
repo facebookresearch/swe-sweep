@@ -1,0 +1,188 @@
+diff --git a/src/Symfony/Component/DependencyInjection/Tests/Compiler/IntegrationTest.php b/src/Symfony/Component/DependencyInjection/Tests/Compiler/IntegrationTest.php
+index f8717b3489f..190872ed7fd 100644
+--- a/src/Symfony/Component/DependencyInjection/Tests/Compiler/IntegrationTest.php
++++ b/src/Symfony/Component/DependencyInjection/Tests/Compiler/IntegrationTest.php
+@@ -38,6 +38,8 @@ use Symfony\Component\DependencyInjection\Tests\Fixtures\BarTagClass;
+ use Symfony\Component\DependencyInjection\Tests\Fixtures\FooBarTaggedClass;
+ use Symfony\Component\DependencyInjection\Tests\Fixtures\FooBarTaggedForDefaultPriorityClass;
+ use Symfony\Component\DependencyInjection\Tests\Fixtures\FooTagClass;
++use Symfony\Component\DependencyInjection\Tests\Fixtures\NestedAutowireLocatorConsumer;
++use Symfony\Component\DependencyInjection\Tests\Fixtures\ServiceSubscriberWithAutowireLocator;
+ use Symfony\Component\DependencyInjection\Tests\Fixtures\StaticMethodTag;
+ use Symfony\Component\DependencyInjection\Tests\Fixtures\TaggedConsumerWithExclude;
+ use Symfony\Component\DependencyInjection\Tests\Fixtures\TaggedIteratorConsumer;
+@@ -423,6 +425,71 @@ class IntegrationTest extends TestCase
+         self::assertSame('foo', $s->locator->get('subscribed1'));
+     }
+ 
++    public function testNestedLocatorConfiguredViaAttribute()
++    {
++        if (!property_exists(SubscribedService::class, 'attributes')) {
++            $this->markTestSkipped('Requires symfony/service-contracts >= 3.2');
++        }
++
++        $container = new ContainerBuilder();
++        $container->register(BarTagClass::class)
++            ->setPublic(true)
++            ->addTag('foo_bar', ['key' => 'bar'])
++        ;
++        $container->register(FooTagClass::class)
++            ->setPublic(true)
++            ->addTag('foo_bar', ['key' => 'foo'])
++        ;
++        $container->register(NestedAutowireLocatorConsumer::class)
++            ->setAutowired(true)
++            ->setPublic(true)
++        ;
++
++        $container->compile();
++
++        /** @var NestedAutowireLocatorConsumer $s */
++        $s = $container->get(NestedAutowireLocatorConsumer::class);
++
++        $nestedLocator = $s->locator->get('nested_locator');
++        self::assertSame(['bar', 'foo'], array_keys($nestedLocator->getProvidedServices()));
++        self::assertSame($container->get(BarTagClass::class), $nestedLocator->get('bar'));
++        self::assertSame($container->get(FooTagClass::class), $nestedLocator->get('foo'));
++
++        self::assertSame([$container->get(BarTagClass::class), $container->get(FooTagClass::class)], iterator_to_array($s->locator->get('nested_iterator')));
++    }
++
++    public function testSubscribedServiceWithAutowireLocatorAttribute()
++    {
++        if (!property_exists(SubscribedService::class, 'attributes')) {
++            $this->markTestSkipped('Requires symfony/service-contracts >= 3.2');
++        }
++
++        $container = new ContainerBuilder();
++        $container->register(BarTagClass::class)
++            ->setPublic(true)
++            ->addTag('foo_bar', ['key' => 'bar'])
++        ;
++        $container->register(FooTagClass::class)
++            ->setPublic(true)
++            ->addTag('foo_bar', ['key' => 'foo'])
++        ;
++        $container->register(ServiceSubscriberWithAutowireLocator::class)
++            ->setAutowired(true)
++            ->setPublic(true)
++            ->addTag('container.service_subscriber')
++        ;
++
++        $container->compile();
++
++        /** @var ServiceSubscriberWithAutowireLocator $s */
++        $s = $container->get(ServiceSubscriberWithAutowireLocator::class);
++
++        $nestedLocator = $s->container->get('nested_locator');
++        self::assertSame(['bar', 'foo'], array_keys($nestedLocator->getProvidedServices()));
++        self::assertSame($container->get(BarTagClass::class), $nestedLocator->get('bar'));
++        self::assertSame($container->get(FooTagClass::class), $nestedLocator->get('foo'));
++    }
++
+     public function testTaggedServiceWithIndexAttributeAndDefaultMethodConfiguredViaAttribute()
+     {
+         $container = new ContainerBuilder();
+diff --git a/src/Symfony/Component/DependencyInjection/Tests/Compiler/ServiceLocatorTagPassTest.php b/src/Symfony/Component/DependencyInjection/Tests/Compiler/ServiceLocatorTagPassTest.php
+index 0012bc499e9..b2ad821b714 100644
+--- a/src/Symfony/Component/DependencyInjection/Tests/Compiler/ServiceLocatorTagPassTest.php
++++ b/src/Symfony/Component/DependencyInjection/Tests/Compiler/ServiceLocatorTagPassTest.php
+@@ -171,6 +171,25 @@ class ServiceLocatorTagPassTest extends TestCase
+         $this->assertSame(TestDefinition2::class, $locator('baz')::class);
+     }
+ 
++    public function testNestedServiceLocatorArgument()
++    {
++        $container = new ContainerBuilder();
++
++        $container->register('bar', TestDefinition1::class)->addTag('test_tag');
++
++        $container->register('foo', ServiceLocator::class)
++            ->setArguments([['nested' => new ServiceLocatorArgument(new TaggedIteratorArgument('test_tag', null, null, true))]])
++            ->addTag('container.service_locator')
++        ;
++
++        (new ServiceLocatorTagPass())->process($container);
++
++        $nested = $container->get('foo')->get('nested');
++
++        $this->assertInstanceOf(ServiceLocator::class, $nested);
++        $this->assertSame(TestDefinition1::class, $nested->get('bar')::class);
++    }
++
+     public function testIndexedByServiceIdWithDecoration()
+     {
+         $container = new ContainerBuilder();
+diff --git a/src/Symfony/Component/DependencyInjection/Tests/Fixtures/NestedAutowireLocatorConsumer.php b/src/Symfony/Component/DependencyInjection/Tests/Fixtures/NestedAutowireLocatorConsumer.php
+new file mode 100644
+index 00000000000..7cd1ae9cae5
+--- /dev/null
++++ b/src/Symfony/Component/DependencyInjection/Tests/Fixtures/NestedAutowireLocatorConsumer.php
+@@ -0,0 +1,29 @@
++<?php
++
++/*
++ * This file is part of the Symfony package.
++ *
++ * (c) Fabien Potencier <fabien@symfony.com>
++ *
++ * For the full copyright and license information, please view the LICENSE
++ * file that was distributed with this source code.
++ */
++
++namespace Symfony\Component\DependencyInjection\Tests\Fixtures;
++
++use Psr\Container\ContainerInterface;
++use Symfony\Component\DependencyInjection\Attribute\AutowireIterator;
++use Symfony\Component\DependencyInjection\Attribute\AutowireLocator;
++use Symfony\Contracts\Service\Attribute\SubscribedService;
++
++final class NestedAutowireLocatorConsumer
++{
++    public function __construct(
++        #[AutowireLocator([
++            'nested_locator' => new SubscribedService(type: ContainerInterface::class, attributes: new AutowireLocator('foo_bar', indexAttribute: 'key')),
++            'nested_iterator' => new SubscribedService(type: 'iterable', attributes: new AutowireIterator('foo_bar')),
++        ])]
++        public readonly ContainerInterface $locator,
++    ) {
++    }
++}
+diff --git a/src/Symfony/Component/DependencyInjection/Tests/Fixtures/ServiceSubscriberWithAutowireLocator.php b/src/Symfony/Component/DependencyInjection/Tests/Fixtures/ServiceSubscriberWithAutowireLocator.php
+new file mode 100644
+index 00000000000..0424a2afe00
+--- /dev/null
++++ b/src/Symfony/Component/DependencyInjection/Tests/Fixtures/ServiceSubscriberWithAutowireLocator.php
+@@ -0,0 +1,32 @@
++<?php
++
++/*
++ * This file is part of the Symfony package.
++ *
++ * (c) Fabien Potencier <fabien@symfony.com>
++ *
++ * For the full copyright and license information, please view the LICENSE
++ * file that was distributed with this source code.
++ */
++
++namespace Symfony\Component\DependencyInjection\Tests\Fixtures;
++
++use Psr\Container\ContainerInterface;
++use Symfony\Component\DependencyInjection\Attribute\AutowireLocator;
++use Symfony\Contracts\Service\Attribute\SubscribedService;
++use Symfony\Contracts\Service\ServiceSubscriberInterface;
++
++final class ServiceSubscriberWithAutowireLocator implements ServiceSubscriberInterface
++{
++    public function __construct(
++        public readonly ContainerInterface $container,
++    ) {
++    }
++
++    public static function getSubscribedServices(): array
++    {
++        return [
++            new SubscribedService('nested_locator', ContainerInterface::class, attributes: new AutowireLocator('foo_bar', indexAttribute: 'key')),
++        ];
++    }
++}

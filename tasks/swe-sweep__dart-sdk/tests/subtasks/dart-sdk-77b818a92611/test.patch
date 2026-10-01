@@ -1,0 +1,20 @@
+diff --git a/pkg/analysis_server/test/src/services/correction/fix/convert_to_generic_function_syntax_test.dart b/pkg/analysis_server/test/src/services/correction/fix/convert_to_generic_function_syntax_test.dart
+index a5496996fe1..0809c3f5d1a 100644
+--- a/pkg/analysis_server/test/src/services/correction/fix/convert_to_generic_function_syntax_test.dart
++++ b/pkg/analysis_server/test/src/services/correction/fix/convert_to_generic_function_syntax_test.dart
+@@ -188,6 +188,15 @@ class C {
+ class D extends C {
+   D(String Function(int x) super.f);
+ }
++''');
++  }
++
++  Future<void> test_typeParameters() async {
++    await resolveTestCode('''
++void f(void a<E>()) {}
++''');
++    await assertHasFix('''
++void f(void Function<E>() a) {}
+ ''');
+   }
+ }

@@ -1,0 +1,98 @@
+diff --git a/src/CMakeLists.txt b/src/CMakeLists.txt
+index 85370b2299..0699177388 100644
+--- a/src/CMakeLists.txt
++++ b/src/CMakeLists.txt
+@@ -1,5 +1,6 @@
+ cmake_minimum_required(VERSION 3.10)
+ cmake_policy(SET CMP0054 NEW)
++cmake_policy(SET CMP0110 NEW)
+ if(NOT (${CMAKE_GENERATOR} MATCHES "Unix Makefiles"))
+   message(FATAL_ERROR "The only supported CMake generator at the moment is 'Unix Makefiles'")
+ endif()
+diff --git a/src/runtime/process.cpp b/src/runtime/process.cpp
+index b073e69592..f6192f936c 100644
+--- a/src/runtime/process.cpp
++++ b/src/runtime/process.cpp
+@@ -175,7 +175,12 @@ static obj_res spawn(string_ref const & proc_name, array_ref<string_ref> const &
+     object * parent_stdout = box(0); setup_stdio(&saAttr, &child_stdout, &parent_stdout, false, stdout_mode);
+     object * parent_stderr = box(0); setup_stdio(&saAttr, &child_stderr, &parent_stderr, false, stderr_mode);
+ 
+-    std::string command = proc_name.to_std_string();
++    std::string program = proc_name.to_std_string();
++
++    // Always escape program in cmdline, in case it contains spaces
++    std::string command = "\"";
++    command += program;
++    command += "\"";
+ 
+     // This needs some thought, on Windows we must pass a command string
+     // which is a valid command, that is a fully assembled command to be executed.
+@@ -247,6 +252,8 @@ static obj_res spawn(string_ref const & proc_name, array_ref<string_ref> const &
+ 
+     // Create the child process.
+     bool bSuccess = CreateProcess(
++        // Passing `program` here should be more robust, but would require adding a `.exe` extension
++        // and searching through `PATH` where necessary
+         NULL,
+         const_cast<char *>(command.c_str()), // command line
+         NULL,                                // process security attributes
+diff --git a/src/shell/CMakeLists.txt b/src/shell/CMakeLists.txt
+index a930b1224d..5ac7497073 100644
+--- a/src/shell/CMakeLists.txt
++++ b/src/shell/CMakeLists.txt
+@@ -115,18 +115,14 @@ ENDFOREACH(T)
+ 
+ # LEAN BENCHMARK TESTS
+ # do not test all .lean files in bench/
+-if(${CMAKE_SYSTEM_NAME} MATCHES "Windows")
+-  message(STATUS "Skipping compiler tests on Windows because of shared library limit on number of exported symbols")
+-else()
+-  file(GLOB LEANBENCHTESTS "${LEAN_SOURCE_DIR}/../tests/bench/*.lean.expected.out")
+-  FOREACH(T_OUT ${LEANBENCHTESTS})
+-    string(REPLACE ".expected.out" "" T ${T_OUT})
+-    GET_FILENAME_COMPONENT(T_NAME ${T} NAME)
+-    add_test(NAME "leanbenchtest_${T_NAME}"
+-             WORKING_DIRECTORY "${LEAN_SOURCE_DIR}/../tests/bench"
+-             COMMAND bash -c "${TEST_VARS} ./test_single.sh ${T_NAME}")
+-  ENDFOREACH(T_OUT)
+-endif()
++file(GLOB LEANBENCHTESTS "${LEAN_SOURCE_DIR}/../tests/bench/*.lean.expected.out")
++FOREACH(T_OUT ${LEANBENCHTESTS})
++  string(REPLACE ".expected.out" "" T ${T_OUT})
++  GET_FILENAME_COMPONENT(T_NAME ${T} NAME)
++  add_test(NAME "leanbenchtest_${T_NAME}"
++            WORKING_DIRECTORY "${LEAN_SOURCE_DIR}/../tests/bench"
++            COMMAND bash -c "${TEST_VARS} ./test_single.sh ${T_NAME}")
++ENDFOREACH(T_OUT)
+ 
+ file(GLOB LEANINTERPTESTS "${LEAN_SOURCE_DIR}/../tests/plugin/*.lean")
+ FOREACH(T ${LEANINTERPTESTS})
+@@ -146,19 +142,15 @@ FOREACH(T ${LEANT0TESTS})
+ ENDFOREACH(T)
+ 
+ # LEAN PACKAGE TESTS
+-if(${CMAKE_SYSTEM_NAME} MATCHES "Windows")
+-  message(STATUS "Skipping compiler tests on Windows because of shared library limit on number of exported symbols")
+-else()
+-  file(GLOB LEANPKGTESTS "${LEAN_SOURCE_DIR}/../tests/pkg/*")
+-  FOREACH(T ${LEANPKGTESTS})
+-    if(IS_DIRECTORY ${T})
+-      GET_FILENAME_COMPONENT(T_NAME ${T} NAME)
+-      add_test(NAME "leanpkgtest_${T_NAME}"
+-              WORKING_DIRECTORY "${T}"
+-              COMMAND bash -c "${TEST_VARS} ./test.sh")
+-    endif()
+-  ENDFOREACH(T)
+-endif()
++file(GLOB LEANPKGTESTS "${LEAN_SOURCE_DIR}/../tests/pkg/*")
++FOREACH(T ${LEANPKGTESTS})
++  if(IS_DIRECTORY ${T})
++    GET_FILENAME_COMPONENT(T_NAME ${T} NAME)
++    add_test(NAME "leanpkgtest_${T_NAME}"
++            WORKING_DIRECTORY "${T}"
++            COMMAND bash -c "${TEST_VARS} ./test.sh")
++  endif()
++ENDFOREACH(T)
+ 
+ # LEAN SERVER TESTS
+ file(GLOB LEANTESTS "${LEAN_SOURCE_DIR}/../tests/lean/server/*.lean")

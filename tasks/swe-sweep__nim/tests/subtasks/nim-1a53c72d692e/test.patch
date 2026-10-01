@@ -1,0 +1,13 @@
+diff --git a/tests/js/tcsymbol.nim b/tests/js/tcsymbol.nim
+new file mode 100644
+index 000000000..07e52b9b6
+--- /dev/null
++++ b/tests/js/tcsymbol.nim
+@@ -0,0 +1,6 @@
++discard """
++  matrix: "--cc:gcc; --cc:tcc"
++"""
++
++doAssert not defined(gcc)
++doAssert not defined(tcc)
+\ No newline at end of file

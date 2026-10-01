@@ -1,0 +1,144 @@
+diff --git a/packages/babel-preset-env/test/fixtures/preset-options/browserslist-default-via-config/browserslist b/packages/babel-preset-env/test/fixtures/preset-options/browserslist-default-via-config/browserslist
+new file mode 100644
+index 0000000000..e94f8140cc
+--- /dev/null
++++ b/packages/babel-preset-env/test/fixtures/preset-options/browserslist-default-via-config/browserslist
+@@ -0,0 +1 @@
++defaults
+diff --git a/packages/babel-preset-env/test/fixtures/preset-options/browserslist-default-via-config/input.mjs b/packages/babel-preset-env/test/fixtures/preset-options/browserslist-default-via-config/input.mjs
+new file mode 100644
+index 0000000000..bf68e2dbd8
+--- /dev/null
++++ b/packages/babel-preset-env/test/fixtures/preset-options/browserslist-default-via-config/input.mjs
+@@ -0,0 +1 @@
++const test = () => "";
+diff --git a/packages/babel-preset-env/test/fixtures/preset-options/browserslist-default-via-config/options.json b/packages/babel-preset-env/test/fixtures/preset-options/browserslist-default-via-config/options.json
+new file mode 100644
+index 0000000000..678d076175
+--- /dev/null
++++ b/packages/babel-preset-env/test/fixtures/preset-options/browserslist-default-via-config/options.json
+@@ -0,0 +1,11 @@
++{
++  "presets": [
++    [
++      "../../../../lib",
++      {
++        "configPath": "packages/babel-preset-env/test/fixtures/preset-options/browserslist-default-via-config",
++        "modules": false
++      }
++    ]
++  ]
++}
+diff --git a/packages/babel-preset-env/test/fixtures/preset-options/browserslist-default-via-config/output.mjs b/packages/babel-preset-env/test/fixtures/preset-options/browserslist-default-via-config/output.mjs
+new file mode 100644
+index 0000000000..0b90fe8593
+--- /dev/null
++++ b/packages/babel-preset-env/test/fixtures/preset-options/browserslist-default-via-config/output.mjs
+@@ -0,0 +1,3 @@
++var test = function test() {
++  return "";
++};
+diff --git a/packages/babel-preset-env/test/fixtures/preset-options/browserslist-defaults-2/input.mjs b/packages/babel-preset-env/test/fixtures/preset-options/browserslist-defaults-2/input.mjs
+new file mode 100644
+index 0000000000..e984854c83
+--- /dev/null
++++ b/packages/babel-preset-env/test/fixtures/preset-options/browserslist-defaults-2/input.mjs
+@@ -0,0 +1 @@
++const test = (a, [b], c) => "";
+diff --git a/packages/babel-preset-env/test/fixtures/preset-options/browserslist-defaults-2/options.json b/packages/babel-preset-env/test/fixtures/preset-options/browserslist-defaults-2/options.json
+new file mode 100644
+index 0000000000..7ee0ee1a8a
+--- /dev/null
++++ b/packages/babel-preset-env/test/fixtures/preset-options/browserslist-defaults-2/options.json
+@@ -0,0 +1,13 @@
++{
++  "presets": [
++    [
++      "../../../../lib",
++      {
++        "targets": {
++          "node": "current",
++          "browsers": ["defaults", "not ie <= 10"]
++        }
++      }
++    ]
++  ]
++}
+diff --git a/packages/babel-preset-env/test/fixtures/preset-options/browserslist-defaults-2/output.js b/packages/babel-preset-env/test/fixtures/preset-options/browserslist-defaults-2/output.js
+new file mode 100644
+index 0000000000..f894dda6a4
+--- /dev/null
++++ b/packages/babel-preset-env/test/fixtures/preset-options/browserslist-defaults-2/output.js
+@@ -0,0 +1,16 @@
++"use strict";
++
++function _slicedToArray(arr, i) { return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _nonIterableRest(); }
++
++function _nonIterableRest() { throw new TypeError("Invalid attempt to destructure non-iterable instance"); }
++
++function _iterableToArrayLimit(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"] != null) _i["return"](); } finally { if (_d) throw _e; } } return _arr; }
++
++function _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }
++
++var test = function test(a, _ref, c) {
++  var _ref2 = _slicedToArray(_ref, 1),
++      b = _ref2[0];
++
++  return "";
++};
+diff --git a/packages/babel-preset-env/test/fixtures/preset-options/browserslist-defaults/input.mjs b/packages/babel-preset-env/test/fixtures/preset-options/browserslist-defaults/input.mjs
+new file mode 100644
+index 0000000000..bf68e2dbd8
+--- /dev/null
++++ b/packages/babel-preset-env/test/fixtures/preset-options/browserslist-defaults/input.mjs
+@@ -0,0 +1 @@
++const test = () => "";
+diff --git a/packages/babel-preset-env/test/fixtures/preset-options/browserslist-defaults/options.json b/packages/babel-preset-env/test/fixtures/preset-options/browserslist-defaults/options.json
+new file mode 100644
+index 0000000000..fb7e8d2043
+--- /dev/null
++++ b/packages/babel-preset-env/test/fixtures/preset-options/browserslist-defaults/options.json
+@@ -0,0 +1,12 @@
++{
++  "presets": [
++    [
++      "../../../../lib",
++      {
++        "targets": {
++          "browsers": "defaults"
++        }
++      }
++    ]
++  ]
++}
+diff --git a/packages/babel-preset-env/test/fixtures/preset-options/browserslist-defaults/output.js b/packages/babel-preset-env/test/fixtures/preset-options/browserslist-defaults/output.js
+new file mode 100644
+index 0000000000..a5703ba6f5
+--- /dev/null
++++ b/packages/babel-preset-env/test/fixtures/preset-options/browserslist-defaults/output.js
+@@ -0,0 +1,5 @@
++"use strict";
++
++var test = function test() {
++  return "";
++};
+diff --git a/packages/babel-preset-env/test/targets-parser.spec.js b/packages/babel-preset-env/test/targets-parser.spec.js
+index 95e9a3ef41..7b9f669d2d 100644
+--- a/packages/babel-preset-env/test/targets-parser.spec.js
++++ b/packages/babel-preset-env/test/targets-parser.spec.js
+@@ -20,6 +20,15 @@ describe("getTargets", () => {
+     });
+   });
+ 
++  it("allows 'defaults' query", () => {
++    const browserslistDefaults = browserslist.defaults;
++
++    const expected = getTargets({ browsers: browserslistDefaults });
++    const actual = getTargets({ browsers: "defaults" });
++
++    expect(actual).toEqual(expected);
++  });
++
+   it("does not clobber browserslists defaults", () => {
+     const browserslistDefaults = browserslist.defaults;
+ 

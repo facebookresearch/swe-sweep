@@ -1,0 +1,12 @@
+diff --git a/activesupport/lib/active_support/hash_with_indifferent_access.rb b/activesupport/lib/active_support/hash_with_indifferent_access.rb
+index fadfbabaeaf..44cd531c69a 100644
+--- a/activesupport/lib/active_support/hash_with_indifferent_access.rb
++++ b/activesupport/lib/active_support/hash_with_indifferent_access.rb
+@@ -338,6 +338,7 @@ module ActiveSupport
+       return to_enum(:select) unless block_given?
+       dup.tap { |hash| hash.select!(*args, &block) }
+     end
++    alias_method :filter, :select
+ 
+     def reject(*args, &block)
+       return to_enum(:reject) unless block_given?

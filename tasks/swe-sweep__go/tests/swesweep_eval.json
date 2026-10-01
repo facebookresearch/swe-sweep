@@ -1,0 +1,949 @@
+{
+  "build_jobs": 4,
+  "container_repo": "/go",
+  "evaluation": {
+    "suite": "reproduction",
+    "test_dirs": [
+      "testdata"
+    ],
+    "visible_timeout": 14400
+  },
+  "upstream_image": "pandora-maxbug-go:go1.17.5",
+  "n_base_passing": 8255,
+  "n_base_test_ignore": 265,
+  "oracle_digest": "7be811ba0f12010d4b00eec920ef7cec26232c5c5c41bd6b819142874b4a8cdf",
+  "oracle_pristine_paths": [],
+  "upstream_commit": "9f7399e15e6172900e0591deb5a57a45769d8205",
+  "reproduction": {
+    "needs_build": false,
+    "suite": {
+      "eval_roots": [
+        "src"
+      ],
+      "type": "go"
+    },
+    "test_timeout": 1200
+  },
+  "schema": 2,
+  "subtasks": [
+    {
+      "f2p": [
+        "src/math/big::TestFloatGobDecodeShortBuffer"
+      ],
+      "id": "go-000e22887142",
+      "target_files": [
+        "src/math/big/floatmarsh.go",
+        "src/math/big/ratmarsh.go"
+      ]
+    },
+    {
+      "f2p": [
+        "src/encoding/gob::TestMarshalFloatMap"
+      ],
+      "id": "go-01e7c213a20c",
+      "target_files": [
+        "src/encoding/gob/encode.go"
+      ]
+    },
+    {
+      "f2p": [
+        "src/crypto/x509::TestCreateCertificateRequest"
+      ],
+      "id": "go-0306bd587bd1",
+      "target_files": [
+        "src/crypto/x509/x509.go"
+      ]
+    },
+    {
+      "f2p": [
+        "src/net/http/httptest::TestRecorder",
+        "src/net/http/httptest::TestRecorder/Trailer_headers_are_correctly_recorded"
+      ],
+      "id": "go-03bd00c1d2d7",
+      "target_files": [
+        "src/net/http/httptest/recorder.go"
+      ]
+    },
+    {
+      "f2p": [
+        "src/os::TestClosedStat"
+      ],
+      "id": "go-07b1a48b9241",
+      "target_files": [
+        "src/os/stat_unix.go"
+      ]
+    },
+    {
+      "f2p": [
+        "src/encoding/json::TestPrefilled"
+      ],
+      "id": "go-082ef8d9a5a0",
+      "target_files": [
+        "src/encoding/json/decode.go"
+      ]
+    },
+    {
+      "f2p": [
+        "src/cmd/internal/buildid::TestReadFile"
+      ],
+      "id": "go-0a0b978a8bd4",
+      "target_files": [
+        "src/cmd/internal/buildid/note.go"
+      ]
+    },
+    {
+      "f2p": [
+        "src/runtime/pprof::TestLabelSystemstack"
+      ],
+      "id": "go-0ba43519d902",
+      "target_files": [
+        "src/runtime/cpuprof.go",
+        "src/runtime/proc.go"
+      ]
+    },
+    {
+      "f2p": [
+        "src/text/template/parse::TestDelimsAlphaNumeric"
+      ],
+      "id": "go-12364d5a8db9",
+      "target_files": [
+        "src/text/template/parse/lex.go"
+      ]
+    },
+    {
+      "f2p": [
+        "src/encoding/xml::TestIssue68387"
+      ],
+      "id": "go-12cfba4b3b71",
+      "target_files": [
+        "src/encoding/xml/xml.go"
+      ]
+    },
+    {
+      "f2p": [
+        "__process_level_failure__"
+      ],
+      "id": "go-19d57ad15828",
+      "target_files": [
+        "src/net/http/transfer.go"
+      ]
+    },
+    {
+      "f2p": [
+        "__process_level_failure__"
+      ],
+      "id": "go-1ab6de104459",
+      "target_files": [
+        "src/runtime/panic.go"
+      ]
+    },
+    {
+      "f2p": [
+        "src/net/mail::TestAddressParsingError",
+        "src/net/mail::TestAddressParsingError/CustomWordDecoder"
+      ],
+      "id": "go-1bd62337393c",
+      "target_files": [
+        "src/net/mail/message.go"
+      ]
+    },
+    {
+      "f2p": [
+        "src/image/jpeg::TestIssue56724"
+      ],
+      "id": "go-25cfbb823d9b",
+      "target_files": [
+        "src/image/jpeg/huffman.go",
+        "src/image/jpeg/reader.go"
+      ]
+    },
+    {
+      "f2p": [
+        "src/net/http::TestCloneOrMakeHeader",
+        "src/net/http::TestCloneOrMakeHeader/nil_value",
+        "src/net/http::TestOmitHTTP2"
+      ],
+      "id": "go-2a8829527dd6",
+      "target_files": [
+        "src/net/http/header.go"
+      ]
+    },
+    {
+      "f2p": [
+        "src/debug/elf::TestLargeNumberOfSections"
+      ],
+      "id": "go-2de9c052cbbc",
+      "target_files": [
+        "src/cmd/internal/buildid/note.go",
+        "src/debug/elf/file.go"
+      ]
+    },
+    {
+      "f2p": [
+        "__process_level_failure__"
+      ],
+      "id": "go-2f6244f8bfdf",
+      "target_files": [
+        "src/runtime/pprof/pprof.go",
+        "src/runtime/pprof/proto.go",
+        "src/runtime/pprof/protomem.go"
+      ]
+    },
+    {
+      "f2p": [
+        "src/net/http::TestFileServerNotDirError",
+        "src/net/http::TestFileServerNotDirError/FS",
+        "src/net/http::TestFileServerNotDirError/FS/AbsolutePath",
+        "src/net/http::TestFileServerNotDirError/FS/RelativePath",
+        "src/net/http::TestOmitHTTP2"
+      ],
+      "id": "go-2fa943aaeb2f",
+      "target_files": [
+        "src/net/http/fs.go"
+      ]
+    },
+    {
+      "f2p": [
+        "src/debug/gosym::TestGenericNames"
+      ],
+      "id": "go-2fba4fc5a019",
+      "target_files": [
+        "src/debug/gosym/symtab.go"
+      ]
+    },
+    {
+      "f2p": [
+        "src/crypto/x509::TestParseUniqueID"
+      ],
+      "id": "go-2fd1641e5ebf",
+      "target_files": [
+        "src/crypto/x509/parser.go"
+      ]
+    },
+    {
+      "f2p": [
+        "src/mime/multipart::TestMultipartTruncated",
+        "src/mime/multipart::TestParse"
+      ],
+      "id": "go-3058949aa66d",
+      "target_files": [
+        "src/mime/multipart/multipart.go"
+      ]
+    },
+    {
+      "f2p": [
+        "src/net::TestUnixConnReadEOF",
+        "src/net::TestUnixConnReadEOF/ReadFrom",
+        "src/net::TestUnixConnReadEOF/ReadFromUnix",
+        "src/net::TestUnixConnReadEOF/ReadMsgUnix"
+      ],
+      "id": "go-365752ce067a",
+      "target_files": [
+        "src/net/unixsock.go"
+      ]
+    },
+    {
+      "f2p": [
+        "src/time::TestParseFractionalSecondsLongerThanNineDigits"
+      ],
+      "id": "go-391c5b62bf7e",
+      "target_files": [
+        "src/time/format.go"
+      ]
+    },
+    {
+      "f2p": [
+        "__process_level_failure__"
+      ],
+      "id": "go-3a92d911edeb",
+      "target_files": [
+        "src/text/scanner/scanner.go"
+      ]
+    },
+    {
+      "f2p": [
+        "src/net/http/httputil::TestDumpRequest"
+      ],
+      "id": "go-41b3ede7fe12",
+      "target_files": [
+        "src/net/http/httputil/dump.go"
+      ]
+    },
+    {
+      "f2p": [
+        "src/text/template/parse::TestParse",
+        "src/text/template/parse::TestParseCopy"
+      ],
+      "id": "go-4681acb6a229",
+      "target_files": [
+        "src/text/template/parse/node.go"
+      ]
+    },
+    {
+      "f2p": [
+        "src/math/big::TestBinomial"
+      ],
+      "id": "go-48cc4e9dd29c",
+      "target_files": [
+        "src/math/big/int.go"
+      ]
+    },
+    {
+      "f2p": [
+        "src/html/template::TestEscape"
+      ],
+      "id": "go-4976922f0ee5",
+      "target_files": [
+        "src/html/template/js.go"
+      ]
+    },
+    {
+      "f2p": [
+        "src/strings::TestSplit"
+      ],
+      "id": "go-51806b91e3e2",
+      "target_files": [
+        "src/strings/strings.go"
+      ]
+    },
+    {
+      "f2p": [
+        "src/net/http/internal::TestChunkInvalidInputs",
+        "src/net/http/internal::TestChunkInvalidInputs/bare_LF_in_chunk_extension",
+        "src/net/http/internal::TestChunkInvalidInputs/bare_LF_in_chunk_size",
+        "src/net/http/internal::TestChunkInvalidInputs/extra_LF_in_chunk_size",
+        "src/net/http::TestInvalidChunkedBodies",
+        "src/net/http::TestInvalidChunkedBodies/bare_LF_in_chunk_size"
+      ],
+      "id": "go-52e36bbf08cc",
+      "target_files": [
+        "src/net/http/internal/chunked.go"
+      ]
+    },
+    {
+      "f2p": [
+        "src/net::TestRootNS"
+      ],
+      "id": "go-538265f82691",
+      "target_files": [
+        "src/net/dnsclient.go",
+        "src/net/lookup.go"
+      ]
+    },
+    {
+      "f2p": [
+        "src/crypto/tls::TestRejectDuplicateExtensions"
+      ],
+      "id": "go-539e4edd64fc",
+      "target_files": [
+        "src/crypto/tls/handshake_messages.go"
+      ]
+    },
+    {
+      "f2p": [
+        "src/context::TestValues"
+      ],
+      "id": "go-55a5a6935fd4",
+      "target_files": [
+        "src/context/context.go"
+      ]
+    },
+    {
+      "f2p": [
+        "src/net/http::TestRequestBadUserAgent"
+      ],
+      "id": "go-560a26b7526f",
+      "target_files": [
+        "src/net/http/request.go"
+      ]
+    },
+    {
+      "f2p": [
+        "src/runtime/metrics::TestReadEmptySlice"
+      ],
+      "id": "go-5a13c83bacda",
+      "target_files": [
+        "src/runtime/metrics/sample.go"
+      ]
+    },
+    {
+      "f2p": [
+        "src/encoding/xml::TestIssue7113"
+      ],
+      "id": "go-5a8e6e918c44",
+      "target_files": [
+        "src/encoding/xml/marshal.go"
+      ]
+    },
+    {
+      "f2p": [
+        "src/net/http::TestOmitHTTP2",
+        "src/net/http::TestWriteResponse"
+      ],
+      "id": "go-5aea6102f6ae",
+      "target_files": [
+        "src/net/http/transfer.go"
+      ]
+    },
+    {
+      "f2p": [
+        "src/go/printer::TestChanType"
+      ],
+      "id": "go-5b47c411e0e5",
+      "target_files": [
+        "src/go/printer/nodes.go"
+      ]
+    },
+    {
+      "f2p": [
+        "src/net/http::TestFileTransport"
+      ],
+      "id": "go-627ccc9088c1",
+      "target_files": [
+        "src/net/http/filetransport.go"
+      ]
+    },
+    {
+      "f2p": [
+        "src/net/url::TestResolveReference"
+      ],
+      "id": "go-63af4e7c19fe",
+      "target_files": [
+        "src/net/url/url.go"
+      ]
+    },
+    {
+      "f2p": [
+        "src/image/png::TestDecodePalettedWithTransparency"
+      ],
+      "id": "go-649e84bdcf2b",
+      "target_files": [
+        "src/image/png/reader.go"
+      ]
+    },
+    {
+      "f2p": [
+        "src/runtime::TestSegv",
+        "src/runtime::TestSegv/Segv"
+      ],
+      "id": "go-64e80d713a4a",
+      "target_files": [
+        "src/runtime/traceback.go"
+      ]
+    },
+    {
+      "f2p": [
+        "src/runtime::TestAbortInCgo"
+      ],
+      "id": "go-6889cbf90c87",
+      "target_files": [
+        "src/runtime/signal_unix.go",
+        "src/runtime/signal_windows.go"
+      ]
+    },
+    {
+      "f2p": [
+        "src/net/http::TestHeaderWrite",
+        "src/net/http::TestOmitHTTP2"
+      ],
+      "id": "go-6b1a6dfcae56",
+      "target_files": [
+        "src/net/http/header.go"
+      ]
+    },
+    {
+      "f2p": [
+        "src/go/build::TestAllTags"
+      ],
+      "id": "go-6c4bae38f5e3",
+      "target_files": [
+        "src/go/build/build.go"
+      ]
+    },
+    {
+      "f2p": [
+        "src/net/smtp::TestHELOFailed"
+      ],
+      "id": "go-6e02047c5e40",
+      "target_files": [
+        "src/net/smtp/smtp.go"
+      ]
+    },
+    {
+      "f2p": [
+        "src/crypto/x509::TestOmitEmptyExtensions"
+      ],
+      "id": "go-6e7ff6b836f4",
+      "target_files": [
+        "src/crypto/x509/x509.go"
+      ]
+    },
+    {
+      "f2p": [
+        "src/runtime::TestTimeHistogramMetricsBuckets"
+      ],
+      "id": "go-737d9830d3bf",
+      "target_files": [
+        "src/runtime/histogram.go"
+      ]
+    },
+    {
+      "f2p": [
+        "src/cmd/go/internal/work::TestCheckLinkerFlags"
+      ],
+      "id": "go-78738e2bd21e",
+      "target_files": [
+        "src/cmd/go/internal/work/security.go"
+      ]
+    },
+    {
+      "f2p": [
+        "src/time::TestParseErrors"
+      ],
+      "id": "go-7b82634256f9",
+      "target_files": [
+        "src/time/format.go"
+      ]
+    },
+    {
+      "f2p": [
+        "src/go/constant::TestUnknown"
+      ],
+      "id": "go-801c2ee7a7f8",
+      "target_files": [
+        "src/go/constant/value.go"
+      ]
+    },
+    {
+      "f2p": [
+        "src/math::TestFMA"
+      ],
+      "id": "go-81dbcaa11f14",
+      "target_files": [
+        "src/math/fma.go"
+      ]
+    },
+    {
+      "f2p": [
+        "__process_level_failure__"
+      ],
+      "id": "go-83595fe26847",
+      "target_files": [
+        "src/testing/fstest/mapfs.go"
+      ]
+    },
+    {
+      "f2p": [
+        "src/encoding/asn1::TestGeneralizedTime"
+      ],
+      "id": "go-841a77a6a070",
+      "target_files": [
+        "src/encoding/asn1/asn1.go"
+      ]
+    },
+    {
+      "f2p": [
+        "src/net/http/internal::TestIncompleteChunk"
+      ],
+      "id": "go-8d2c6660f8a2",
+      "target_files": [
+        "src/net/http/internal/chunked.go"
+      ]
+    },
+    {
+      "f2p": [
+        "src/cmd/internal/objfile::TestMachoSymbolsDoNotCrossSectionBoundaries",
+        "src/cmd/internal/objfile::TestMachoSymbolsUseSectionEndForLastTextSymbol"
+      ],
+      "id": "go-9149724c587c",
+      "target_files": [
+        "src/cmd/internal/objfile/macho.go"
+      ]
+    },
+    {
+      "f2p": [
+        "src/encoding/base32::TestBufferedDecodingPadding"
+      ],
+      "id": "go-9f2319cecb77",
+      "target_files": [
+        "src/encoding/base32/base32.go"
+      ]
+    },
+    {
+      "f2p": [
+        "src/os::TestDirFSReadFileProc"
+      ],
+      "id": "go-a1205275ba74",
+      "target_files": [
+        "src/os/file.go"
+      ]
+    },
+    {
+      "f2p": [
+        "src/html/template::TestCSSValueFilter"
+      ],
+      "id": "go-a7f83fb09b86",
+      "target_files": [
+        "src/html/template/css.go"
+      ]
+    },
+    {
+      "f2p": [
+        "src/compress/gzip::TestDecompressor",
+        "src/compress/gzip::TestTruncatedStreams"
+      ],
+      "id": "go-a86e6f08e556",
+      "target_files": [
+        "src/compress/gzip/gunzip.go"
+      ]
+    },
+    {
+      "f2p": [
+        "src/time::TestParse"
+      ],
+      "id": "go-aa33dff9b85a",
+      "target_files": [
+        "src/time/format.go"
+      ]
+    },
+    {
+      "f2p": [
+        "src/encoding/gob::TestDecoderOverflow"
+      ],
+      "id": "go-aa9f97d27f05",
+      "target_files": [
+        "src/encoding/gob/decode.go"
+      ]
+    },
+    {
+      "f2p": [
+        "__process_level_failure__"
+      ],
+      "id": "go-af89e5ecbfb9",
+      "target_files": [
+        "src/compress/gzip/gunzip.go"
+      ]
+    },
+    {
+      "f2p": [
+        "src/text/template/parse::TestDelimsAndMarkers"
+      ],
+      "id": "go-b1085d231e02",
+      "target_files": [
+        "src/text/template/parse/lex.go"
+      ]
+    },
+    {
+      "f2p": [
+        "src/encoding/xml::TestIssue20685"
+      ],
+      "id": "go-b1603dbd9674",
+      "target_files": [
+        "src/encoding/xml/xml.go"
+      ]
+    },
+    {
+      "f2p": [
+        "src/net/http::TestServerCancelsReadHeaderTimeoutWhenIdle"
+      ],
+      "id": "go-b301eca6d89d",
+      "target_files": [
+        "src/net/http/server.go"
+      ]
+    },
+    {
+      "f2p": [
+        "src/net/http/cgi::TestCGIBasicGet"
+      ],
+      "id": "go-bab7cac1267d",
+      "target_files": [
+        "src/net/http/cgi/host.go"
+      ]
+    },
+    {
+      "f2p": [
+        "src/go/ast::TestIssue69183"
+      ],
+      "id": "go-bd4563d58f52",
+      "target_files": [
+        "src/go/ast/import.go"
+      ]
+    },
+    {
+      "f2p": [
+        "src/encoding/json::TestUnmarshal"
+      ],
+      "id": "go-be9da3e45a9d",
+      "target_files": [
+        "src/encoding/json/decode.go"
+      ]
+    },
+    {
+      "f2p": [
+        "src/net/http/cgi::TestIncludedServerProtocol"
+      ],
+      "id": "go-c140a16788cb",
+      "target_files": [
+        "src/net/http/cgi/child.go"
+      ]
+    },
+    {
+      "f2p": [
+        "src/net/http::TestClientRedirectNoLocation",
+        "src/net/http::TestClientRedirectNoLocation/301"
+      ],
+      "id": "go-c1b846cc4946",
+      "target_files": [
+        "src/net/http/client.go"
+      ]
+    },
+    {
+      "f2p": [
+        "src/go/printer::TestEmptyDecl"
+      ],
+      "id": "go-c26be66e159e",
+      "target_files": [
+        "src/go/printer/nodes.go"
+      ]
+    },
+    {
+      "f2p": [
+        "src/cmd/doc::TestDoc"
+      ],
+      "id": "go-c424a9352ad7",
+      "target_files": [
+        "src/cmd/go/internal/doc/pkg.go"
+      ]
+    },
+    {
+      "f2p": [
+        "src/encoding/base64::TestDecoderChunking"
+      ],
+      "id": "go-c4951d1a5519",
+      "target_files": [
+        "src/encoding/base64/base64.go"
+      ]
+    },
+    {
+      "f2p": [
+        "src/net/http::TestTimeoutHandlerContextCanceled"
+      ],
+      "id": "go-c4cef047d3ce",
+      "target_files": [
+        "src/net/http/server.go"
+      ]
+    },
+    {
+      "f2p": [
+        "src/io/fs::TestSub"
+      ],
+      "id": "go-cb7af1bc7985",
+      "target_files": [
+        "src/io/fs/sub.go"
+      ]
+    },
+    {
+      "f2p": [
+        "__process_level_failure__"
+      ],
+      "id": "go-cdb7f88d5b10",
+      "target_files": [
+        "src/debug/dwarf/buf.go",
+        "src/debug/dwarf/unit.go"
+      ]
+    },
+    {
+      "f2p": [
+        "src/net/http::TestCancelRequestWithBodyWithChannel"
+      ],
+      "id": "go-cdd20f8d0a33",
+      "target_files": [
+        "src/net/http/transport.go"
+      ]
+    },
+    {
+      "f2p": [
+        "__process_level_failure__"
+      ],
+      "id": "go-cdf2bb94ddb9",
+      "target_files": [
+        "src/net/http/server.go"
+      ]
+    },
+    {
+      "f2p": [
+        "src/debug/dwarf::TestIssue52045"
+      ],
+      "id": "go-cefef6113312",
+      "target_files": [
+        "src/debug/dwarf/entry.go"
+      ]
+    },
+    {
+      "f2p": [
+        "__process_level_failure__"
+      ],
+      "id": "go-d31108c35867",
+      "target_files": [
+        "src/sync/pool.go"
+      ]
+    },
+    {
+      "f2p": [
+        "src/crypto/x509::TestMarshalInvalidPublicKey"
+      ],
+      "id": "go-d867d4e37ab5",
+      "target_files": [
+        "src/crypto/x509/sec1.go",
+        "src/crypto/x509/x509.go"
+      ]
+    },
+    {
+      "f2p": [
+        "src/debug/dwarf::TestPathLineReaderMalformed"
+      ],
+      "id": "go-db2cc4488fb3",
+      "target_files": [
+        "src/debug/dwarf/line.go"
+      ]
+    },
+    {
+      "f2p": [
+        "src/cmd/gofmt::TestRewrite",
+        "src/cmd/gofmt::TestRewrite/tabs.input"
+      ],
+      "id": "go-dc40b36e540f",
+      "target_files": [
+        "src/go/printer/nodes.go"
+      ]
+    },
+    {
+      "f2p": [
+        "src/flag::TestUserDefinedBoolUsage"
+      ],
+      "id": "go-e0d3deeb9196",
+      "target_files": [
+        "src/flag/flag.go"
+      ]
+    },
+    {
+      "f2p": [
+        "src/compress/lzw::TestStartsWithClearCode"
+      ],
+      "id": "go-e26bf6ba1f92",
+      "target_files": [
+        "src/compress/lzw/writer.go"
+      ]
+    },
+    {
+      "f2p": [
+        "src/net/http::TestServerCloseAccepted"
+      ],
+      "id": "go-e3a55b979048",
+      "target_files": [
+        "src/net/http/server.go"
+      ]
+    },
+    {
+      "f2p": [
+        "src/cmd/doc::TestDoc"
+      ],
+      "id": "go-e6cf7382ec40",
+      "target_files": [
+        "src/cmd/doc/pkg.go"
+      ]
+    },
+    {
+      "f2p": [
+        "src/net/mail::TestParsing"
+      ],
+      "id": "go-e9bd7748d799",
+      "target_files": [
+        "src/net/mail/message.go"
+      ]
+    },
+    {
+      "f2p": [
+        "src/html/template::TestNextJsCtx"
+      ],
+      "id": "go-eac554c78f25",
+      "target_files": [
+        "src/html/template/js.go"
+      ]
+    },
+    {
+      "f2p": [
+        "src/net/http::TestMaxBytesReaderDifferentLimits"
+      ],
+      "id": "go-ecc6dd6c0ea6",
+      "target_files": [
+        "src/net/http/request.go"
+      ]
+    },
+    {
+      "f2p": [
+        "src/crypto/x509::TestLargeOID"
+      ],
+      "id": "go-efd6f2ee9872",
+      "target_files": [
+        "src/vendor/golang.org/x/crypto/cryptobyte/asn1.go"
+      ]
+    },
+    {
+      "f2p": [
+        "src/math::TestFMA"
+      ],
+      "id": "go-f341b7ed025a",
+      "target_files": [
+        "src/math/fma.go"
+      ]
+    },
+    {
+      "f2p": [
+        "src/io::TestSectionReader_Max"
+      ],
+      "id": "go-f529bd4809d8",
+      "target_files": [
+        "src/io/io.go"
+      ]
+    },
+    {
+      "f2p": [
+        "src/math/big::TestIntJSONEncodingNil"
+      ],
+      "id": "go-f64a674dabcb",
+      "target_files": [
+        "src/math/big/intmarsh.go"
+      ]
+    },
+    {
+      "f2p": [
+        "src/testing::TestTBHelper"
+      ],
+      "id": "go-f77c4ed199df",
+      "target_files": [
+        "src/testing/testing.go"
+      ]
+    },
+    {
+      "f2p": [
+        "__process_level_failure__"
+      ],
+      "id": "go-f82368407d11",
+      "target_files": [
+        "src/encoding/xml/read.go"
+      ]
+    },
+    {
+      "f2p": [
+        "src/net/http::TestRedirectEscapedPath"
+      ],
+      "id": "go-fd62ce681c44",
+      "target_files": [
+        "src/net/http/server.go"
+      ]
+    }
+  ],
+  "task": "go",
+  "version": "go1.17.5"
+}

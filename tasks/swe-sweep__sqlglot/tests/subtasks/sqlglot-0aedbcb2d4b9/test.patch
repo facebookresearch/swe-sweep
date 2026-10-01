@@ -1,0 +1,18 @@
+diff --git a/tests/dialects/test_duckdb.py b/tests/dialects/test_duckdb.py
+index 69a592d403..959a1b3fef 100644
+--- a/tests/dialects/test_duckdb.py
++++ b/tests/dialects/test_duckdb.py
+@@ -903,6 +903,13 @@ class TestDuckDB(Validator):
+             },
+         )
+ 
++        self.validate_all(
++            "SELECT REGEXP_MATCHES('ThOmAs', 'thomas', 'i')",
++            read={
++                "postgres": "SELECT 'ThOmAs' ~* 'thomas'",
++            },
++        )
++
+     def test_array_index(self):
+         with self.assertLogs(helper_logger) as cm:
+             self.validate_all(

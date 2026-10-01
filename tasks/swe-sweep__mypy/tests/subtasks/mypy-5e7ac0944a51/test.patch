@@ -1,0 +1,13 @@
+diff --git a/mypy/test/teststubgen.py b/mypy/test/teststubgen.py
+index 43974cf8e..605409f99 100644
+--- a/mypy/test/teststubgen.py
++++ b/mypy/test/teststubgen.py
+@@ -371,6 +371,8 @@ class StubgenUtilSuite(unittest.TestCase):
+             [FunctionSig(name="func", args=[ArgSig(name="x", type=None)], ret_type="Any")],
+         )
+ 
++        assert_equal(infer_sig_from_docstring("\nfunc(invalid::type)", "func"), [])
++
+         assert_equal(
+             infer_sig_from_docstring('\nfunc(x: str="")', "func"),
+             [

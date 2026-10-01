@@ -1,0 +1,13 @@
+diff --git a/railties/lib/rails/generators/named_base.rb b/railties/lib/rails/generators/named_base.rb
+index 0d171f76767..fe032f25524 100644
+--- a/railties/lib/rails/generators/named_base.rb
++++ b/railties/lib/rails/generators/named_base.rb
+@@ -127,7 +127,7 @@ module Rails
+         end
+ 
+         def route_url # :doc:
+-          @route_url ||= class_path.collect { |dname| "/" + dname }.join + "/" + plural_file_name
++          @route_url ||= controller_class_path.collect { |dname| "/" + dname }.join + "/" + plural_file_name
+         end
+ 
+         def url_helper_prefix # :doc:

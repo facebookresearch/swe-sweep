@@ -1,0 +1,15 @@
+diff --git a/common/src/test/java/org/keycloak/common/util/KeycloakUriBuilderTest.java b/common/src/test/java/org/keycloak/common/util/KeycloakUriBuilderTest.java
+index 950b3db7c0..e902fa7df7 100644
+--- a/common/src/test/java/org/keycloak/common/util/KeycloakUriBuilderTest.java
++++ b/common/src/test/java/org/keycloak/common/util/KeycloakUriBuilderTest.java
+@@ -92,4 +92,10 @@ public class KeycloakUriBuilderTest {
+         Assert.assertEquals("https://user-info%E2%82%AC@localhost:8443", KeycloakUriBuilder.fromUri(
+                 "https://user-info€@localhost:8443", false).buildAsString());
+     }
++
++    @Test
++    public void testEmptyHostname() {
++        Assert.assertEquals("app.immich:///oauth-callback", KeycloakUriBuilder.fromUri(
++                "app.immich:///oauth-callback").buildAsString());
++    }
+ }

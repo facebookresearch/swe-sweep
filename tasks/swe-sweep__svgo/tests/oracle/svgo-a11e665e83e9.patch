@@ -1,0 +1,174 @@
+diff --git a/lib/path.js b/lib/path.js
+index fb02d18..c8782ce 100644
+--- a/lib/path.js
++++ b/lib/path.js
+@@ -68,7 +68,7 @@ const isDigit = (c) => {
+  */
+ 
+ /**
+- * @type {(string: string, cursor: number) => [number, number | null]}
++ * @type {(string: string, cursor: number) => [number, ?number]}
+  */
+ const readNumber = (string, cursor) => {
+   let i = cursor;
+@@ -143,7 +143,7 @@ const parsePathData = (string) => {
+    */
+   const pathData = [];
+   /**
+-   * @type {null | PathDataCommand}
++   * @type {?PathDataCommand}
+    */
+   let command = null;
+   let args = /** @type {number[]} */ ([]);
+diff --git a/lib/stringifier.js b/lib/stringifier.js
+index 26cff6c..a33814b 100644
+--- a/lib/stringifier.js
++++ b/lib/stringifier.js
+@@ -17,7 +17,7 @@ const { textElems } = require('../plugins/_collections.js');
+ /**
+  * @typedef {{
+  *   indent: string,
+- *   textContext: null | XastElement,
++ *   textContext: ?XastElement,
+  *   indentLevel: number,
+  * }} State
+  */
+diff --git a/lib/xast.js b/lib/xast.js
+index 49edf69..595c907 100644
+--- a/lib/xast.js
++++ b/lib/xast.js
+@@ -24,7 +24,7 @@ const querySelectorAll = (node, selector) => {
+ exports.querySelectorAll = querySelectorAll;
+ 
+ /**
+- * @type {(node: XastNode, selector: string) => null | XastChild}
++ * @type {(node: XastNode, selector: string) => ?XastChild}
+  */
+ const querySelector = (node, selector) => {
+   return selectOne(selector, node, cssSelectOptions);
+diff --git a/plugins/_transforms.js b/plugins/_transforms.js
+index 159f1a3..efc141c 100644
+--- a/plugins/_transforms.js
++++ b/plugins/_transforms.js
+@@ -22,7 +22,7 @@ exports.transform2js = (transformString) => {
+   const transforms = [];
+   // current transform context
+   /**
+-   * @type {null | TransformItem}
++   * @type {?TransformItem}
+    */
+   let current = null;
+   // split value into ['', 'translate', '10 50', '', 'scale', '2', '', 'rotate', '-45', '']
+diff --git a/plugins/cleanupIds.js b/plugins/cleanupIds.js
+index 0137413..c113db2 100644
+--- a/plugins/cleanupIds.js
++++ b/plugins/cleanupIds.js
+@@ -87,7 +87,8 @@ const hasStringPrefix = (string, prefixes) => {
+ /**
+  * Generate unique minimal ID.
+  *
+- * @type {(currentId: null | Array<number>) => Array<number>}
++ * @param {?number[]} currentId
++ * @returns {number[]}
+  */
+ const generateId = (currentId) => {
+   if (currentId == null) {
+@@ -232,27 +233,28 @@ exports.fn = (_root, params) => {
+           return;
+         }
+         /**
+-         * @type {(id: string) => boolean}
+-         **/
++         * @param {string} id
++         * @returns {boolean}
++         */
+         const isIdPreserved = (id) =>
+           preserveIds.has(id) || hasStringPrefix(id, preserveIdPrefixes);
+-        /**
+-         * @type {null | Array<number>}
+-         */
++        /** @type {?number[]} */
+         let currentId = null;
+         for (const [id, refs] of referencesById) {
+           const node = nodeById.get(id);
+           if (node != null) {
+             // replace referenced IDs with the minified ones
+             if (minify && isIdPreserved(id) === false) {
+-              /**
+-               * @type {null | string}
+-               */
++              /** @type {?string} */
+               let currentIdString = null;
+               do {
+                 currentId = generateId(currentId);
+                 currentIdString = getIdString(currentId);
+-              } while (isIdPreserved(currentIdString));
++              } while (
++                isIdPreserved(currentIdString) ||
++                (referencesById.has(currentIdString) &&
++                  nodeById.get(currentIdString) == null)
++              );
+               node.attributes.id = currentIdString;
+               for (const { element, name, value } of refs) {
+                 if (value.includes('#')) {
+diff --git a/plugins/inlineStyles.js b/plugins/inlineStyles.js
+index b7a14e0..323286f 100644
+--- a/plugins/inlineStyles.js
++++ b/plugins/inlineStyles.js
+@@ -109,7 +109,7 @@ exports.fn = (root, params) => {
+           }
+         }
+         /**
+-         * @type {null | csstree.CssNode}
++         * @type {?csstree.CssNode}
+          */
+         let cssAst = null;
+         try {
+diff --git a/plugins/mergeStyles.js b/plugins/mergeStyles.js
+index 1cc3201..764d019 100644
+--- a/plugins/mergeStyles.js
++++ b/plugins/mergeStyles.js
+@@ -19,7 +19,7 @@ exports.description = 'merge multiple style elements into one';
+  */
+ exports.fn = () => {
+   /**
+-   * @type {null | XastElement}
++   * @type {?XastElement}
+    */
+   let firstStyleElement = null;
+   let collectedStyles = '';
+diff --git a/plugins/prefixIds.js b/plugins/prefixIds.js
+index a83d61f..1d6b0fb 100644
+--- a/plugins/prefixIds.js
++++ b/plugins/prefixIds.js
+@@ -53,7 +53,7 @@ const prefixId = (prefix, value) => {
+ 
+ /**
+  * prefix an #ID
+- * @type {(prefix: string, name: string) => string | null}
++ * @type {(prefix: string, name: string) => ?string}
+  */
+ const prefixReference = (prefix, value) => {
+   if (value.startsWith('#')) {
+@@ -109,7 +109,7 @@ exports.fn = (_root, params, info) => {
+             cssText = node.children[0].value;
+           }
+           /**
+-           * @type {null | csstree.CssNode}
++           * @type {?csstree.CssNode}
+            */
+           let cssAst = null;
+           try {
+diff --git a/plugins/removeOffCanvasPaths.js b/plugins/removeOffCanvasPaths.js
+index 7a3d131..8afd1e9 100644
+--- a/plugins/removeOffCanvasPaths.js
++++ b/plugins/removeOffCanvasPaths.js
+@@ -21,7 +21,7 @@ exports.description =
+  */
+ exports.fn = () => {
+   /**
+-   * @type {null | {
++   * @type {?{
+    *   top: number,
+    *   right: number,
+    *   bottom: number,

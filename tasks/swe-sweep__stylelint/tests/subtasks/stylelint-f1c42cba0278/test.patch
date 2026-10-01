@@ -1,0 +1,67 @@
+diff --git a/lib/rules/selector-max-attribute/__tests__/index.mjs b/lib/rules/selector-max-attribute/__tests__/index.mjs
+index c52bc22a2..672044e8a 100644
+--- a/lib/rules/selector-max-attribute/__tests__/index.mjs
++++ b/lib/rules/selector-max-attribute/__tests__/index.mjs
+@@ -1,3 +1,5 @@
++import { stripIndent } from 'common-tags';
++
+ import rule from '../index.mjs';
+ const { messages, ruleName } = rule;
+ 
+@@ -32,6 +34,16 @@ testRule({
+ 			code: 'html { --custom-property-set: {} }',
+ 			description: 'custom property set in selector',
+ 		},
++		{
++			code: stripIndent`
++				/* stylelint-disable-next-line selector-max-attribute */
++				[foo], /* stylelint-disable-next-line selector-max-attribute */
++				[bar],
++				/* stylelint-disable-next-line selector-max-attribute */
++				[foo]
++				{}
++			`,
++		},
+ 	],
+ 
+ 	reject: [
+@@ -84,6 +96,39 @@ testRule({
+ 			endLine: 1,
+ 			endColumn: 34,
+ 		},
++		{
++			code: stripIndent`
++				/* a comment */
++				[foo], /* a comment */
++				[bar],
++				/* a comment */
++				[foo]
++				{}
++			`,
++			warnings: [
++				{
++					message: messages.expected('[foo]', 0),
++					line: 2,
++					column: 1,
++					endLine: 2,
++					endColumn: 6,
++				},
++				{
++					message: messages.expected('[bar]', 0),
++					line: 3,
++					column: 1,
++					endLine: 3,
++					endColumn: 6,
++				},
++				{
++					message: messages.expected('[foo]', 0),
++					line: 5,
++					column: 1,
++					endLine: 5,
++					endColumn: 6,
++				},
++			],
++		},
+ 	],
+ });
+ 

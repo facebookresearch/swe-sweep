@@ -1,0 +1,19 @@
+diff --git a/src/ty.rs b/src/ty.rs
+index 3df340d5..6e9f1f43 100644
+--- a/src/ty.rs
++++ b/src/ty.rs
+@@ -919,6 +919,14 @@ pub mod parsing {
+                             break;
+                         }
+                         bounds.push_punct(input.parse()?);
++                        if !(input.peek(Ident::peek_any)
++                            || input.peek(Token![::])
++                            || input.peek(Token![?])
++                            || input.peek(Lifetime)
++                            || input.peek(token::Paren))
++                        {
++                            break;
++                        }
+                     }
+                     bounds
+                 },

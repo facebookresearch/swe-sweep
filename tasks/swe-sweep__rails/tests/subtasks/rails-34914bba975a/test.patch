@@ -1,0 +1,13 @@
+diff --git a/activerecord/test/cases/migration/foreign_key_test.rb b/activerecord/test/cases/migration/foreign_key_test.rb
+index d3b3ced09b5..40f73f2efc7 100644
+--- a/activerecord/test/cases/migration/foreign_key_test.rb
++++ b/activerecord/test/cases/migration/foreign_key_test.rb
+@@ -668,7 +668,7 @@ if ActiveRecord::Base.connection.supports_foreign_keys?
+           @connection.add_foreign_key :astronauts, :rockets
+           assert_equal 1, @connection.foreign_keys("astronauts").size
+ 
+-          @connection.remove_foreign_key :astronauts, :rockets
++          @connection.remove_foreign_key :astronauts, :rockets, if_exists: true
+           assert_equal [], @connection.foreign_keys("astronauts")
+ 
+           assert_nothing_raised do

@@ -1,0 +1,31 @@
+diff --git a/scipy/ndimage/tests/test_ndimage.py b/scipy/ndimage/tests/test_ndimage.py
+index 29094d430e..67ae1c59cd 100644
+--- a/scipy/ndimage/tests/test_ndimage.py
++++ b/scipy/ndimage/tests/test_ndimage.py
+@@ -4106,6 +4106,12 @@ class TestNdimageMorphology:
+                                           origin=(1, 1), border_value=1)
+             assert_array_almost_equal(out, expected)
+ 
++    def test_binary_dilation36(self):
++        # gh-21009
++        data = numpy.zeros([], bool)
++        out = ndimage.binary_dilation(data, iterations=-1)
++        assert_array_almost_equal(out, 0)
++
+     def test_binary_propagation01(self):
+         struct = [[0, 1, 0],
+                   [1, 1, 1],
+@@ -4164,6 +4170,13 @@ class TestNdimageMorphology:
+                                          mask=mask, border_value=1)
+         assert_array_almost_equal(out, expected)
+ 
++    def test_binary_propagation03(self):
++        # gh-21009
++        data = numpy.zeros([], bool)
++        expected = numpy.zeros([], bool)
++        out = ndimage.binary_propagation(data)
++        assert_array_almost_equal(out, expected)
++
+     def test_binary_opening01(self):
+         expected = [[0, 1, 0, 0, 0, 0, 0, 0],
+                     [1, 1, 1, 0, 0, 0, 0, 0],

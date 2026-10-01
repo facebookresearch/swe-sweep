@@ -1,0 +1,28 @@
+diff --git a/test/sql/types/struct/struct_unnest_recursion.test b/test/sql/types/struct/struct_unnest_recursion.test
+new file mode 100644
+index 0000000000..4078abc470
+--- /dev/null
++++ b/test/sql/types/struct/struct_unnest_recursion.test
+@@ -0,0 +1,22 @@
++# name: test/sql/types/struct/struct_unnest_recursion.test
++# description: Test struct unnest recursion
++# group: [struct]
++
++statement ok
++PRAGMA enable_verification
++
++statement error
++SELECT UNNEST ( ( '1,2,3,4,,6' , ( 1 ) ) ) , x x;
++----
++cannot be referenced before it is defined
++
++mode skip
++
++# FIXME this should work
++statement error
++SELECT UNNEST ( ( '1,2,3,4,,6' , ( random() ) ) ), 42 x, x;
++----
++1,2,3,4,,6	1	42	42
++
++mode unskip
++

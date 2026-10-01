@@ -1,0 +1,89 @@
+diff --git a/crates/ruff_linter/src/checkers/ast/mod.rs b/crates/ruff_linter/src/checkers/ast/mod.rs
+index 6d0c519dbf..73e875bf20 100644
+--- a/crates/ruff_linter/src/checkers/ast/mod.rs
++++ b/crates/ruff_linter/src/checkers/ast/mod.rs
+@@ -2067,8 +2067,12 @@ impl<'a> Visitor<'a> for Checker<'a> {
+ }
+ 
+ impl<'a> Checker<'a> {
+-    /// Visit a [`Module`]. Returns `true` if the module contains a module-level docstring.
++    /// Visit a [`Module`].
+     fn visit_module(&mut self, python_ast: &'a Suite) {
++        // Extract any global bindings from the module body.
++        if let Some(globals) = Globals::from_body(python_ast) {
++            self.semantic.set_globals(globals);
++        }
+         analyze::module(python_ast, self);
+     }
+ 
+diff --git a/crates/ruff_python_semantic/src/model.rs b/crates/ruff_python_semantic/src/model.rs
+index d24060b7c4..70c26cd615 100644
+--- a/crates/ruff_python_semantic/src/model.rs
++++ b/crates/ruff_python_semantic/src/model.rs
+@@ -1434,24 +1434,48 @@ impl<'a> SemanticModel<'a> {
+ 
+     /// Set the [`Globals`] for the current [`Scope`].
+     pub fn set_globals(&mut self, globals: Globals<'a>) {
+-        // If any global bindings don't already exist in the global scope, add them.
+-        for (name, range) in globals.iter() {
+-            if self
+-                .global_scope()
+-                .get(name)
+-                .map_or(true, |binding_id| self.bindings[binding_id].is_unbound())
+-            {
+-                let id = self.bindings.push(Binding {
+-                    kind: BindingKind::Assignment,
+-                    range: *range,
+-                    references: Vec::new(),
+-                    scope: self.scope_id,
+-                    source: self.node_id,
+-                    context: self.execution_context(),
+-                    exceptions: self.exceptions(),
+-                    flags: BindingFlags::empty(),
+-                });
+-                self.global_scope_mut().add(name, id);
++        // If any global bindings don't already exist in the global scope, add them, unless we are
++        // also in the global scope, where we don't want these to count as definitions for rules
++        // like `undefined-name` (F821). For example, adding bindings in the top-level scope causes
++        // a false negative in cases like this:
++        //
++        // ```python
++        // global x
++        //
++        // def f():
++        //     print(x)  # F821 false negative
++        // ```
++        //
++        // On the other hand, failing to add bindings in non-top-level scopes causes false
++        // positives:
++        //
++        // ```python
++        // def f():
++        //     global foo
++        //     import foo
++        //
++        // def g():
++        //     foo.is_used()  # F821 false positive
++        // ```
++        if !self.at_top_level() {
++            for (name, range) in globals.iter() {
++                if self
++                    .global_scope()
++                    .get(name)
++                    .map_or(true, |binding_id| self.bindings[binding_id].is_unbound())
++                {
++                    let id = self.bindings.push(Binding {
++                        kind: BindingKind::Assignment,
++                        range: *range,
++                        references: Vec::new(),
++                        scope: self.scope_id,
++                        source: self.node_id,
++                        context: self.execution_context(),
++                        exceptions: self.exceptions(),
++                        flags: BindingFlags::empty(),
++                    });
++                    self.global_scope_mut().add(name, id);
++                }
+             }
+         }
+ 

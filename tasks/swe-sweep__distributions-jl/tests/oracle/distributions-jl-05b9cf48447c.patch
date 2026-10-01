@@ -1,0 +1,82 @@
+diff --git a/src/matrixvariates.jl b/src/matrixvariates.jl
+index 5454dc43..c7ac4ed4 100644
+--- a/src/matrixvariates.jl
++++ b/src/matrixvariates.jl
+@@ -130,10 +130,14 @@ end
+ # multiple matrix-variates, must allocate array of arrays
+ rand(rng::AbstractRNG, s::Sampleable{Matrixvariate}, dims::Dims) =
+     rand!(rng, s, Array{Matrix{eltype(s)}}(undef, dims), true)
++rand(rng::AbstractRNG, s::Sampleable{Matrixvariate,Continuous}, dims::Dims) =
++    rand!(rng, s, Array{Matrix{float(eltype(s))}}(undef, dims), true)
+ 
+ # single matrix-variate, must allocate one matrix
+ rand(rng::AbstractRNG, s::Sampleable{Matrixvariate}) =
+     _rand!(rng, s, Matrix{eltype(s)}(undef, size(s)))
++rand(rng::AbstractRNG, s::Sampleable{Matrixvariate,Continuous}) =
++    _rand!(rng, s, Matrix{float(eltype(s))}(undef, size(s)))
+ 
+ # single matrix-variate with pre-allocated matrix
+ function rand!(rng::AbstractRNG, s::Sampleable{Matrixvariate},
+diff --git a/src/multivariate/mvnormal.jl b/src/multivariate/mvnormal.jl
+index 9117ea90..a3fa74c1 100644
+--- a/src/multivariate/mvnormal.jl
++++ b/src/multivariate/mvnormal.jl
+@@ -278,7 +278,7 @@ _rand!(rng::AbstractRNG, d::MvNormal, x::VecOrMat) =
+ # Workaround: randn! only works for Array, but not generally for AbstractArray
+ function _rand!(rng::AbstractRNG, d::MvNormal, x::AbstractVector)
+     for i in eachindex(x)
+-        @inbounds x[i] = randn(rng,eltype(d))
++        @inbounds x[i] = randn(rng, eltype(x))
+     end
+     add!(unwhiten!(d.Σ, x), d.μ)
+ end
+diff --git a/src/multivariates.jl b/src/multivariates.jl
+index 8e83ed71..0d2f214c 100644
+--- a/src/multivariates.jl
++++ b/src/multivariates.jl
+@@ -69,12 +69,18 @@ end
+ rand(s::Sampleable{Multivariate}, n::Int) = rand(GLOBAL_RNG, s, n)
+ rand(rng::AbstractRNG, s::Sampleable{Multivariate}, n::Int) =
+     _rand!(rng, s, Matrix{eltype(s)}(undef, length(s), n))
++rand(rng::AbstractRNG, s::Sampleable{Multivariate,Continuous}, n::Int) =
++    _rand!(rng, s, Matrix{float(eltype(s))}(undef, length(s), n))
+ rand(rng::AbstractRNG, s::Sampleable{Multivariate}, dims::Dims) =
+-    rand(rng, s, Array{Vector{eltype(s)}}(undef, dims), true)
++    rand!(rng, s, Array{Vector{eltype(s)}}(undef, dims), true)
++rand(rng::AbstractRNG, s::Sampleable{Multivariate,Continuous}, dims::Dims) =
++    rand!(rng, s, Array{Vector{float(eltype(s))}}(undef, dims), true)
+ 
+ # single multivariate, must allocate vector
+ rand(rng::AbstractRNG, s::Sampleable{Multivariate}) =
+     _rand!(rng, s, Vector{eltype(s)}(undef, length(s)))
++rand(rng::AbstractRNG, s::Sampleable{Multivariate,Continuous}) =
++    _rand!(rng, s, Vector{float(eltype(s))}(undef, length(s)))
+ 
+ ## domain
+ 
+diff --git a/src/univariate/continuous/normal.jl b/src/univariate/continuous/normal.jl
+index aa55f15f..0cc8a339 100644
+--- a/src/univariate/continuous/normal.jl
++++ b/src/univariate/continuous/normal.jl
+@@ -240,7 +240,7 @@ cf(d::Normal, t::Real) = exp(im * t * d.μ - d.σ^2 / 2 * t^2)
+ 
+ #### Sampling
+ 
+-rand(rng::AbstractRNG, d::Normal{T}) where {T} = d.μ + d.σ * randn(rng, T)
++rand(rng::AbstractRNG, d::Normal{T}) where {T} = d.μ + d.σ * randn(rng, float(T))
+ 
+ #### Fitting
+ 
+diff --git a/src/univariates.jl b/src/univariates.jl
+index 433d8956..47809fef 100644
+--- a/src/univariates.jl
++++ b/src/univariates.jl
+@@ -157,6 +157,8 @@ end
+ # multiple univariate, must allocate array
+ rand(rng::AbstractRNG, s::Sampleable{Univariate}, dims::Dims) =
+     rand!(rng, sampler(s), Array{eltype(s)}(undef, dims))
++rand(rng::AbstractRNG, s::Sampleable{Univariate,Continuous}, dims::Dims) =
++    rand!(rng, sampler(s), Array{float(eltype(s))}(undef, dims))
+ 
+ # multiple univariate with pre-allocated array
+ function rand!(rng::AbstractRNG, s::Sampleable{Univariate}, A::AbstractArray)

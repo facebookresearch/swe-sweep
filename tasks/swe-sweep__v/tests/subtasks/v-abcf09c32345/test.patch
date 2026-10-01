@@ -1,0 +1,27 @@
+diff --git a/vlib/v/tests/generics_method_variable_test.v b/vlib/v/tests/generics_method_variable_test.v
+new file mode 100644
+index 000000000..96fc846d3
+--- /dev/null
++++ b/vlib/v/tests/generics_method_variable_test.v
+@@ -0,0 +1,21 @@
++type Func = fn (string) string
++
++struct Struct[T] {
++	a T
++mut:
++	func Func
++}
++
++fn (st Struct[T]) foo[T](s string) string {
++	println('${st.a} - ${s}')
++	return '${st.a} - ${s}'
++}
++
++fn test_generic_method_variable() {
++	mut st := Struct[int]{
++		a: 22
++	}
++	st.func = st.foo
++	ret := st.func('hello')
++	assert ret == '22 - hello'
++}

@@ -1,0 +1,109 @@
+{
+  "build_jobs": 4,
+  "container_repo": "/repo",
+  "evaluation": {
+    "suite": "reproduction",
+    "visible_timeout": 14400
+  },
+  "upstream_image": "pandora-maxbug-oxc:crates_v0.93.0",
+  "n_base_passing": 0,
+  "n_base_test_ignore": 1,
+  "oracle_digest": "105b4ba2ed6d062d554d6aa3b11cb929c96052242bad9113f1235b647f5b6e73",
+  "oracle_pristine_paths": [],
+  "upstream_commit": "9f7399e15e6172900e0591deb5a57a45769d8205",
+  "reproduction": {
+    "needs_build": false,
+    "suite": {
+      "categories": [
+        "eslint",
+        "import",
+        "jest",
+        "jsdoc",
+        "jsx_a11y",
+        "nextjs",
+        "node",
+        "oxc",
+        "promise",
+        "react",
+        "react_perf",
+        "typescript",
+        "unicorn",
+        "vitest",
+        "vue"
+      ],
+      "crate": "oxc_linter",
+      "rules_prefix": "crates/oxc_linter/src/rules",
+      "snapshots_prefix": "crates/oxc_linter/src/snapshots",
+      "type": "cargo-flat-snapshot"
+    },
+    "test_timeout": 3600
+  },
+  "schema": 2,
+  "subtasks": [
+    {
+      "f2p": [
+        "rules::typescript::no_non_null_asserted_optional_chain::test"
+      ],
+      "id": "oxc-24f345acdc56",
+      "target_files": [
+        "crates/oxc_linter/src/rules/typescript/no_non_null_asserted_optional_chain.rs"
+      ]
+    },
+    {
+      "f2p": [
+        "rules::unicorn::filename_case::test"
+      ],
+      "id": "oxc-6c49c0f83679",
+      "target_files": [
+        "crates/oxc_linter/src/context/host.rs",
+        "crates/oxc_linter/src/rules/unicorn/filename_case.rs"
+      ]
+    },
+    {
+      "f2p": [
+        "replace_global_defines::dot_with_partial_overlap"
+      ],
+      "id": "oxc-747816505eaf",
+      "target_files": [
+        "crates/oxc_transformer_plugins/src/replace_global_defines.rs"
+      ]
+    },
+    {
+      "f2p": [
+        "symbols::test_function_var_redeclaration_in_module"
+      ],
+      "id": "oxc-900dd51b239f",
+      "target_files": [
+        "crates/oxc_semantic/src/checker/javascript.rs"
+      ]
+    },
+    {
+      "f2p": [
+        "rules::promise::prefer_await_to_then::test"
+      ],
+      "id": "oxc-e88c35cb9c33",
+      "target_files": [
+        "crates/oxc_linter/src/rules/promise/prefer_await_to_then.rs"
+      ]
+    },
+    {
+      "f2p": [
+        "replace_global_defines::assignment_target",
+        "replace_global_defines::dot",
+        "replace_global_defines::dot_define_with_destruct",
+        "replace_global_defines::dot_with_overlap",
+        "replace_global_defines::dot_with_postfix_mixed",
+        "replace_global_defines::dot_with_postfix_wildcard",
+        "replace_global_defines::replace_with_undefined",
+        "replace_global_defines::simple"
+      ],
+      "id": "oxc-fdc5c45fd19c",
+      "target_files": [
+        "crates/oxc/src/compiler.rs",
+        "crates/oxc_transformer_plugins/src/replace_global_defines.rs"
+      ]
+    }
+  ],
+  "task": "oxc",
+  "version": "crates_v0.93.0"
+}

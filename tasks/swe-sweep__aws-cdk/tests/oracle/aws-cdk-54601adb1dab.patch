@@ -1,0 +1,31 @@
+diff --git a/packages/@aws-cdk/aws-iam/lib/principals.ts b/packages/@aws-cdk/aws-iam/lib/principals.ts
+index 02bde4cfb4..80b4480209 100644
+--- a/packages/@aws-cdk/aws-iam/lib/principals.ts
++++ b/packages/@aws-cdk/aws-iam/lib/principals.ts
+@@ -193,6 +193,10 @@ export class PrincipalWithConditions implements IPrincipal {
+     return new PrincipalPolicyFragment(this.principal.policyFragment.principalJson, this.conditions);
+   }
+ 
++  public get principalAccount(): string | undefined {
++    return this.principal.principalAccount;
++  }
++
+   public addToPolicy(statement: PolicyStatement): boolean {
+     return this.addToPrincipalPolicy(statement).statementAdded;
+   }
+@@ -294,12 +298,15 @@ export class ArnPrincipal extends PrincipalBase {
+  * Specify AWS account ID as the principal entity in a policy to delegate authority to the account.
+  */
+ export class AccountPrincipal extends ArnPrincipal {
++  public readonly principalAccount: string | undefined;
++
+   /**
+    *
+    * @param accountId AWS account ID (i.e. 123456789012)
+    */
+   constructor(public readonly accountId: any) {
+     super(new StackDependentToken(stack => `arn:${stack.partition}:iam::${accountId}:root`).toString());
++    this.principalAccount = accountId;
+   }
+ 
+   public toString() {

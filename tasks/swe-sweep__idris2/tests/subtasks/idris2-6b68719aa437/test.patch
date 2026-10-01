@@ -1,0 +1,39 @@
+diff --git a/tests/Main.idr b/tests/Main.idr
+index 4718724b1..fecb107fb 100644
+--- a/tests/Main.idr
++++ b/tests/Main.idr
+@@ -300,6 +300,9 @@ contribLibraryTests = testsInDir "contrib" (const True) "Contrib library" [Chez,
+ codegenTests : IO TestPool
+ codegenTests = testsInDir "codegen" (const True) "Code generation" [] Nothing
+ 
++commandLineTests : IO TestPool
++commandLineTests = testsInDir "cli" (const True) "Command-line interface" [] Nothing
++
+ main : IO ()
+ main = runner $
+   [ testPaths "ttimp" ttimpTests
+@@ -333,6 +336,7 @@ main = runner $
+   , !vmcodeInterpTests
+   , !templateTests
+   , !codegenTests
++  , !commandLineTests
+   ]
+   ++ map (testPaths "allbackends" . idrisTestsAllBackends) [Chez, Node, Racket]
+ 
+diff --git a/tests/cli/optional001/expected b/tests/cli/optional001/expected
+new file mode 100644
+index 000000000..e69de29bb
+diff --git a/tests/cli/optional001/run b/tests/cli/optional001/run
+new file mode 100755
+index 000000000..2a0622485
+--- /dev/null
++++ b/tests/cli/optional001/run
+@@ -0,0 +1 @@
++$1 --clean --log 0
+diff --git a/tests/cli/optional001/test.ipkg b/tests/cli/optional001/test.ipkg
+new file mode 100644
+index 000000000..56e540407
+--- /dev/null
++++ b/tests/cli/optional001/test.ipkg
+@@ -0,0 +1 @@
++package test

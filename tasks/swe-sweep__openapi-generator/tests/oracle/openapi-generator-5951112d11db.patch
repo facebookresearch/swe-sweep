@@ -1,0 +1,52 @@
+diff --git a/modules/openapi-generator/src/main/java/org/openapitools/codegen/languages/AbstractPythonCodegen.java b/modules/openapi-generator/src/main/java/org/openapitools/codegen/languages/AbstractPythonCodegen.java
+index c3d95ec1e93..8288294ffbd 100644
+--- a/modules/openapi-generator/src/main/java/org/openapitools/codegen/languages/AbstractPythonCodegen.java
++++ b/modules/openapi-generator/src/main/java/org/openapitools/codegen/languages/AbstractPythonCodegen.java
+@@ -50,6 +50,7 @@ import org.openapitools.codegen.CodegenModel;
+ import org.openapitools.codegen.CodegenOperation;
+ import org.openapitools.codegen.CodegenParameter;
+ import org.openapitools.codegen.CodegenProperty;
++import org.openapitools.codegen.CodegenResponse;
+ import org.openapitools.codegen.DefaultCodegen;
+ import org.openapitools.codegen.GeneratorLanguage;
+ import org.openapitools.codegen.IJsonSchemaValidationProperties;
+@@ -1259,7 +1260,17 @@ public abstract class AbstractPythonCodegen extends DefaultCodegen implements Co
+                 getPydanticType(operation.returnProperty, typingImports,
+                         new TreeSet<>() /* skip pydantic import for return type */, datetimeImports, modelImports, exampleImports, postponedModelImports, postponedExampleImports, null);
+             }
+ 
++            // update typing import for operation responses type
++            // only python-fastapi needs this at the moment
++            if (this instanceof PythonFastAPIServerCodegen) {
++                for (CodegenResponse response : operation.responses) {
++                    // Not interested in the result, only in the update of the imports
++                    getPydanticType(response.returnProperty, typingImports,
++                            new TreeSet<>() /* skip pydantic import for return type */, datetimeImports, modelImports, exampleImports, postponedModelImports, postponedExampleImports, null);
++                }
++            }
++
+             // add import for code samples
+             // import models one by one
+             if (!exampleImports.isEmpty()) {
+diff --git a/modules/openapi-generator/src/main/java/org/openapitools/codegen/languages/PythonFastAPIServerCodegen.java b/modules/openapi-generator/src/main/java/org/openapitools/codegen/languages/PythonFastAPIServerCodegen.java
+index d219a8c48a6..ea1fb0ba315 100644
+--- a/modules/openapi-generator/src/main/java/org/openapitools/codegen/languages/PythonFastAPIServerCodegen.java
++++ b/modules/openapi-generator/src/main/java/org/openapitools/codegen/languages/PythonFastAPIServerCodegen.java
+@@ -223,6 +223,8 @@ public class PythonFastAPIServerCodegen extends AbstractPythonCodegen {
+ 
+     @Override
+     public OperationsMap postProcessOperationsWithModels(OperationsMap objs, List<ModelMap> allModels) {
++        super.postProcessOperationsWithModels(objs, allModels);
++
+         OperationMap operations = objs.getOperations();
+         // Set will make sure that no duplicated items are used.
+         Set<String> securityImports = new HashSet<>();
+diff --git a/modules/openapi-generator/src/main/resources/python-fastapi/param_type.mustache b/modules/openapi-generator/src/main/resources/python-fastapi/param_type.mustache
+index d97c018015f..0fd1f7fd9ca 100644
+--- a/modules/openapi-generator/src/main/resources/python-fastapi/param_type.mustache
++++ b/modules/openapi-generator/src/main/resources/python-fastapi/param_type.mustache
+@@ -1 +1 @@
+-{{#isString}}str{{/isString}}{{#isInteger}}int{{/isInteger}}{{#isLong}}int{{/isLong}}{{#isFloat}}float{{/isFloat}}{{#isDouble}}float{{/isDouble}}{{#isByteArray}}str{{/isByteArray}}{{#isBinary}}str{{/isBinary}}{{#isBoolean}}bool{{/isBoolean}}{{#isDate}}str{{/isDate}}{{#isDateTime}}str{{/isDateTime}}{{#isModel}}{{dataType}}{{/isModel}}{{#isContainer}}{{dataType}}{{/isContainer}}
+\ No newline at end of file
++{{{vendorExtensions.x-py-typing}}}
+\ No newline at end of file

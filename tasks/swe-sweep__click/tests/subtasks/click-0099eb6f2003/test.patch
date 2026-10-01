@@ -1,0 +1,77 @@
+diff --git a/tests/conftest.py b/tests/conftest.py
+index 9440804..d33df11 100644
+--- a/tests/conftest.py
++++ b/tests/conftest.py
+@@ -1,3 +1,7 @@
++import os
++import shutil
++import tempfile
++
+ import pytest
+ 
+ from click.testing import CliRunner
+@@ -6,3 +10,22 @@ from click.testing import CliRunner
+ @pytest.fixture(scope="function")
+ def runner(request):
+     return CliRunner()
++
++
++def check_symlink_impl():
++    """This function checks if using symlinks is allowed
++    on the host machine"""
++    tempdir = tempfile.mkdtemp(prefix="click-")
++    test_pth = os.path.join(tempdir, "check_sym_impl")
++    sym_pth = os.path.join(tempdir, "link")
++    open(test_pth, "w").close()
++    rv = True
++    try:
++        os.symlink(test_pth, sym_pth)
++    except (NotImplementedError, OSError):
++        # Creating symlinks on Windows require elevated access.
++        # OSError is thrown if the function is called without it.
++        rv = False
++    finally:
++        shutil.rmtree(tempdir, ignore_errors=True)
++    return rv
+diff --git a/tests/test_types.py b/tests/test_types.py
+index e7e531e..58d1b68 100644
+--- a/tests/test_types.py
++++ b/tests/test_types.py
+@@ -1,6 +1,8 @@
++import os.path
+ import pathlib
+ 
+ import pytest
++from conftest import check_symlink_impl
+ 
+ import click
+ 
+@@ -100,3 +102,28 @@ def test_path_type(runner, cls, expect):
+     result = runner.invoke(cli, ["a/b/c.txt"], standalone_mode=False)
+     assert result.exception is None
+     assert result.return_value == expect
++
++
++@pytest.mark.skipif(not check_symlink_impl(), reason="symlink not allowed on device")
++@pytest.mark.parametrize(
++    ("sym_file", "abs_fun"),
++    [
++        (("relative_symlink",), os.path.basename),
++        (("test", "absolute_symlink"), lambda x: x),
++    ],
++)
++def test_symlink_resolution(tmpdir, sym_file, abs_fun):
++    """This test ensures symlinks are properly resolved by click"""
++    tempdir = str(tmpdir)
++    real_path = os.path.join(tempdir, "test_file")
++    sym_path = os.path.join(tempdir, *sym_file)
++
++    # create dirs and files
++    os.makedirs(os.path.join(tempdir, "test"), exist_ok=True)
++    open(real_path, "w").close()
++    os.symlink(abs_fun(real_path), sym_path)
++
++    # test
++    ctx = click.Context(click.Command("do_stuff"))
++    rv = click.Path(resolve_path=True).convert(sym_path, None, ctx)
++    assert rv == real_path

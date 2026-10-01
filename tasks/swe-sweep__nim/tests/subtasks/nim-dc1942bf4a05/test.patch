@@ -1,0 +1,15 @@
+diff --git a/tests/vm/t17121.nim b/tests/vm/t17121.nim
+new file mode 100644
+index 000000000..bf2d6423f
+--- /dev/null
++++ b/tests/vm/t17121.nim
+@@ -0,0 +1,9 @@
++discard """
++  errormsg: "cannot 'importc' variable at compile time; c_printf"
++"""
++
++proc c_printf*(frmt: cstring): cint {.importc: "printf", header: "<stdio.h>", varargs, discardable.} =
++  ## foo bar
++  runnableExamples: discard
++static:
++  let a = c_printf("abc\n")

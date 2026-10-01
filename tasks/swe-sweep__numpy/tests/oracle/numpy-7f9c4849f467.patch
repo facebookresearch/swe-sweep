@@ -1,0 +1,16 @@
+diff --git a/numpy/core/src/multiarray/ctors.c b/numpy/core/src/multiarray/ctors.c
+index 63bf5377a6d..b2e329d45c7 100644
+--- a/numpy/core/src/multiarray/ctors.c
++++ b/numpy/core/src/multiarray/ctors.c
+@@ -2500,6 +2500,11 @@ PyArray_FromInterface(PyObject *origin)
+             &PyArray_Type, dtype,
+             n, dims, NULL, data,
+             dataflags, NULL, base);
++    /*
++     * Ref to dtype was stolen by PyArray_NewFromDescrAndBase
++     * Prevent DECREFing dtype in fail codepath by setting to NULL
++     */
++    dtype = NULL;
+     if (ret == NULL) {
+         goto fail;
+     }

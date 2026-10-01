@@ -1,0 +1,67 @@
+diff --git a/features/sharding/core/src/test/java/org/apache/shardingsphere/sharding/route/engine/condition/ShardingConditionsTest.java b/features/sharding/core/src/test/java/org/apache/shardingsphere/sharding/route/engine/condition/ShardingConditionsTest.java
+index 8bc99dc..234783a 100644
+--- a/features/sharding/core/src/test/java/org/apache/shardingsphere/sharding/route/engine/condition/ShardingConditionsTest.java
++++ b/features/sharding/core/src/test/java/org/apache/shardingsphere/sharding/route/engine/condition/ShardingConditionsTest.java
+@@ -21,19 +21,23 @@ import org.apache.shardingsphere.infra.binder.statement.SQLStatementContext;
+ import org.apache.shardingsphere.infra.binder.statement.dml.SelectStatementContext;
+ import org.apache.shardingsphere.sharding.route.engine.condition.value.ListShardingConditionValue;
+ import org.apache.shardingsphere.sharding.route.engine.condition.value.ShardingConditionValue;
++import org.apache.shardingsphere.sharding.rule.BindingTableRule;
+ import org.apache.shardingsphere.sharding.rule.ShardingRule;
++import org.apache.shardingsphere.sharding.rule.TableRule;
+ import org.junit.Test;
+ 
+ import java.util.Collections;
+ import java.util.LinkedList;
+ import java.util.List;
++import java.util.Optional;
+ 
+ import static org.hamcrest.CoreMatchers.is;
+-import static org.junit.Assert.assertFalse;
+ import static org.hamcrest.MatcherAssert.assertThat;
++import static org.junit.Assert.assertFalse;
+ import static org.junit.Assert.assertTrue;
+ import static org.mockito.Mockito.RETURNS_DEEP_STUBS;
+ import static org.mockito.Mockito.mock;
++import static org.mockito.Mockito.when;
+ 
+ public final class ShardingConditionsTest {
+     
+@@ -73,6 +77,18 @@ public final class ShardingConditionsTest {
+         assertThat(multipleShardingConditions.getConditions().size(), is(2));
+     }
+     
++    @Test
++    public void assertMergeWithBindingTables() {
++        ShardingRule shardingRule = mock(ShardingRule.class);
++        BindingTableRule bindingTableRule = new BindingTableRule();
++        bindingTableRule.getTableRules().put("t_order", mock(TableRule.class));
++        bindingTableRule.getTableRules().put("t_order_item", mock(TableRule.class));
++        when(shardingRule.findBindingTableRule("t_order")).thenReturn(Optional.of(bindingTableRule));
++        ShardingConditions multipleShardingConditions = createMultipleShardingConditions(shardingRule);
++        multipleShardingConditions.merge();
++        assertThat(multipleShardingConditions.getConditions().size(), is(2));
++    }
++    
+     private ShardingConditions createSingleShardingConditions() {
+         List<ShardingCondition> result = new LinkedList<>();
+         ShardingConditionValue shardingConditionValue = new ListShardingConditionValue<>("order_id", "t_order", Collections.singleton(1L));
+@@ -84,6 +100,10 @@ public final class ShardingConditionsTest {
+     }
+     
+     private ShardingConditions createMultipleShardingConditions() {
++        return createMultipleShardingConditions(mock(ShardingRule.class));
++    }
++    
++    private ShardingConditions createMultipleShardingConditions(final ShardingRule shardingRule) {
+         List<ShardingCondition> result = new LinkedList<>();
+         ShardingConditionValue shardingConditionValue1 = new ListShardingConditionValue<>("user_id", "t_order", Collections.singleton(1L));
+         ShardingConditionValue shardingConditionValue2 = new ListShardingConditionValue<>("order_id", "t_order", Collections.singleton(1L));
+@@ -94,6 +114,6 @@ public final class ShardingConditionsTest {
+         result.add(shardingCondition);
+         result.add(shardingCondition2);
+         SelectStatementContext sqlStatementContext = mock(SelectStatementContext.class, RETURNS_DEEP_STUBS);
+-        return new ShardingConditions(result, sqlStatementContext, mock(ShardingRule.class));
++        return new ShardingConditions(result, sqlStatementContext, shardingRule);
+     }
+ }

@@ -1,0 +1,13 @@
+diff --git a/mypy/constraints.py b/mypy/constraints.py
+index 8e7a30e05..b1f3a8b18 100644
+--- a/mypy/constraints.py
++++ b/mypy/constraints.py
+@@ -416,7 +416,7 @@ def _infer_constraints(
+                 infer_constraints_if_possible(t_item, actual, direction)
+                 for t_item in template.items
+             ],
+-            eager=False,
++            eager=isinstance(actual, AnyType),
+         )
+         if result:
+             return result

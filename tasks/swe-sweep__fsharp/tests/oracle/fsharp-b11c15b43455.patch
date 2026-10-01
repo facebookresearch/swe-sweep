@@ -1,0 +1,132 @@
+diff --git a/src/Compiler/Checking/Expressions/CheckExpressions.fs b/src/Compiler/Checking/Expressions/CheckExpressions.fs
+--- a/src/Compiler/Checking/Expressions/CheckExpressions.fs
++++ b/src/Compiler/Checking/Expressions/CheckExpressions.fs
+@@ -3993,10 +3993,45 @@
+ /// Indicates whether a syntactic type is allowed to include new type variables
+ /// not declared anywhere, e.g. `let f (x: 'T option) = x.Value`
+ type ImplicitlyBoundTyparsAllowed =
+     | NewTyparsOKButWarnIfNotRigid
+     | NewTyparsOK
+     | NoNewTypars
+ 
++/// Given the current 'inputTy' of a match clause, the elaborated pattern, and the optional 'when' clause,
++/// returns the (possibly narrowed) inputTy to use for subsequent clauses.
++/// E.g. `match x with | null -> ... | y -> ...` narrows `inputTy` of the y-clause to non-null.
++let EliminateNullnessFromInputType (g: TcGlobals) (inputTy: TType) (pat: Pattern) (whenExprOpt: Expr option) : TType =
++    let removeNull t =
++        // Strip type equations (including abbreviations) and set nullness to non-null.
++        // For type abbreviations like `type objnull = obj | null`, we need to expand
++        // the abbreviation and apply non-null to the underlying type.
++        let stripped = stripTyEqns g t
++        replaceNullnessOfTy KnownWithoutNull stripped
++    let rec isWild (p: Pattern) =
++        match p with
++        | TPat_wild _ -> true
++        | TPat_as (p,_,_) -> isWild p
++        | TPat_disjs(patterns,_) -> patterns |> List.exists isWild
++        | TPat_conjs(patterns,_) -> patterns |> List.forall isWild
++        | TPat_tuple (_,pats,_,_) -> pats |> List.forall isWild
++        | _ -> false
++
++    let rec eliminateNull (ty: TType) (p: Pattern) =
++        match p with
++        | TPat_null _ -> removeNull ty
++        | TPat_as (p,_,_) -> eliminateNull ty p
++        | TPat_disjs(patterns,_) -> (ty,patterns) ||> List.fold eliminateNull
++        | TPat_tuple (_,pats,_,_) ->
++            match stripTyparEqns ty with
++            // In a tuple, if 1 elem is matched for null and the rest are wild => subsequent clauses can strip nullness
++            | TType_tuple(ti,tys) when tys.Length = pats.Length && (pats |> List.count (isWild >> not)) = 1 ->
++                TType_tuple(ti, List.map2 eliminateNull tys pats)
++            | _ -> ty
++        | _ -> ty
++    match whenExprOpt with
++    | None -> eliminateNull inputTy pat
++    | _ -> inputTy
++
+ //-------------------------------------------------------------------------
+ // Checking types and type constraints
+ //-------------------------------------------------------------------------
+@@ -10587,33 +10622,6 @@
+     let target = TTarget(vspecs, resultExpr, None)
+ 
+-    let inputTypeForNextPatterns=
+-        let removeNull t =
+-            let stripped = stripTyEqns cenv.g t
+-            replaceNullnessOfTy KnownWithoutNull stripped
+-        let rec isWild (p:Pattern) =
+-            match p with
+-            | TPat_wild _ -> true
+-            | TPat_as (p,_,_) -> isWild p
+-            | TPat_disjs(patterns,_) -> patterns |> List.exists isWild
+-            | TPat_conjs(patterns,_) -> patterns |> List.forall isWild
+-            | TPat_tuple (_,pats,_,_) -> pats |> List.forall isWild
+-            | _ -> false
+-
+-        let rec eliminateNull (ty:TType) (p:Pattern)  =
+-            match p with
+-            | TPat_null _ -> removeNull ty
+-            | TPat_as (p,_,_) -> eliminateNull ty p
+-            | TPat_disjs(patterns,_) -> (ty,patterns) ||> List.fold eliminateNull
+-            | TPat_tuple (_,pats,_,_) ->
+-                match stripTyparEqns ty with
+-                // In a tuple of size N, if 1 elem is matched for null and N-1 are wild => subsequent clauses can strip nullness
+-                | TType_tuple(ti,tys) when tys.Length = pats.Length && (pats |> List.count (isWild >> not)) = 1 ->
+-                    TType_tuple(ti, List.map2 eliminateNull tys pats)
+-                | _ -> ty
+-            | _ -> ty
+-        match whenExprOpt with
+-        | None -> eliminateNull inputTy pat
+-        | _ -> inputTy
++    let inputTypeForNextPatterns = EliminateNullnessFromInputType cenv.g inputTy pat whenExprOpt
+ 
+     MatchClause(pat, whenExprOpt, target, patm), (tpenv,inputTypeForNextPatterns)
+ 
+diff --git a/src/Compiler/Checking/Expressions/CheckExpressions.fsi b/src/Compiler/Checking/Expressions/CheckExpressions.fsi
+--- a/src/Compiler/Checking/Expressions/CheckExpressions.fsi
++++ b/src/Compiler/Checking/Expressions/CheckExpressions.fsi
+@@ -693,12 +693,17 @@
+ val TcMatchPattern:
+     cenv: TcFileState ->
+     inputTy: TType ->
+     env: TcEnv ->
+     tpenv: UnscopedTyparEnv ->
+     synPat: SynPat ->
+     synWhenExprOpt: SynExpr option ->
+         Pattern * Expr option * Val list * TcEnv * UnscopedTyparEnv
+ 
++/// Given the current 'inputTy' of a match clause, the elaborated pattern, and the optional 'when' clause,
++/// returns the (possibly narrowed) inputTy to use for subsequent clauses.
++/// E.g. `match x with | null -> ... | y -> ...` narrows `inputTy` of the y-clause to non-null.
++val EliminateNullnessFromInputType: g: TcGlobals -> inputTy: TType -> pat: Pattern -> whenExprOpt: Expr option -> TType
++
+ [<return: Struct>]
+ val (|BinOpExpr|_|): SynExpr -> (Ident * SynExpr * SynExpr) voption
+ 
+diff --git a/src/Compiler/Checking/Expressions/CheckSequenceExpressions.fs b/src/Compiler/Checking/Expressions/CheckSequenceExpressions.fs
+--- a/src/Compiler/Checking/Expressions/CheckSequenceExpressions.fs
++++ b/src/Compiler/Checking/Expressions/CheckSequenceExpressions.fs
+@@ -272,9 +272,9 @@
+         | SynExpr.Match(spMatch, expr, clauses, _m, _trivia) ->
+             let inputExpr, inputTy, tpenv = TcExprOfUnknownType cenv env tpenv expr
+ 
+-            let tclauses, tpenv =
+-                (tpenv, clauses)
+-                ||> List.mapFold (fun tpenv (SynMatchClause(pat, cond, innerComp, _, sp, _)) ->
++            let tclauses, (tpenv, _finalInputTy) =
++                ((tpenv, inputTy), clauses)
++                ||> List.mapFold (fun (tpenv, inputTy) (SynMatchClause(pat, cond, innerComp, _, sp, _)) ->
+                     let patR, condR, vspecs, envinner, tpenv =
+                         TcMatchPattern cenv inputTy env tpenv pat cond
+ 
+@@ -283,7 +283,9 @@
+                         | DebugPointAtTarget.No -> envinner
+ 
+                     let innerExpr, tpenv = tcSequenceExprBody envinner genOuterTy tpenv innerComp
+-                    MatchClause(patR, condR, TTarget(vspecs, innerExpr, None), patR.Range), tpenv)
++
++                    let nextInputTy = EliminateNullnessFromInputType cenv.g inputTy patR condR
++                    MatchClause(patR, condR, TTarget(vspecs, innerExpr, None), patR.Range), (tpenv, nextInputTy))
+ 
+             let inputExprTy = tyOfExpr cenv.g inputExpr
+             let inputExprMark = inputExpr.Range

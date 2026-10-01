@@ -1,0 +1,34 @@
+diff --git a/src/Symfony/Component/Workflow/Tests/MarkingStore/MethodMarkingStoreTest.php b/src/Symfony/Component/Workflow/Tests/MarkingStore/MethodMarkingStoreTest.php
+index af0be682329..c9f97762d24 100644
+--- a/src/Symfony/Component/Workflow/Tests/MarkingStore/MethodMarkingStoreTest.php
++++ b/src/Symfony/Component/Workflow/Tests/MarkingStore/MethodMarkingStoreTest.php
+@@ -107,6 +107,16 @@ class MethodMarkingStoreTest extends TestCase
+         $markingStore->getMarking($subject);
+     }
+ 
++    public function testGetMarkingWithUninitializedPropertyInheritance()
++    {
++        $subject = new ChildInheritingProperty();
++
++        $markingStore = new MethodMarkingStore(true, 'place');
++        $marking = $markingStore->getMarking($subject);
++
++        $this->assertCount(0, $marking->getPlaces());
++    }
++
+     private function createValueObject(string $markingValue): object
+     {
+         return new class($markingValue) {
+@@ -124,3 +134,12 @@ class MethodMarkingStoreTest extends TestCase
+         };
+     }
+ }
++
++class ParentWithProperty
++{
++    public string $place;
++}
++
++class ChildInheritingProperty extends ParentWithProperty
++{
++}

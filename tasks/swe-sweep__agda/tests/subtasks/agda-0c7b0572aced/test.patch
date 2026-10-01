@@ -1,0 +1,23 @@
+diff --git a/test/Succeed/Issue5683.agda b/test/Succeed/Issue5683.agda
+new file mode 100644
+index 0000000000..4487e09b47
+--- /dev/null
++++ b/test/Succeed/Issue5683.agda
+@@ -0,0 +1,17 @@
++
++open import Agda.Builtin.Equality
++open import Agda.Builtin.Sigma
++
++postulate
++  X  : Set
++  ∀≡ : ∀ (x : X) → x ≡ x
++
++variable x : X
++
++data C : Σ X (λ x → x ≡ x) → Set where
++  mkC :
++    let
++      eq : x ≡ x  -- don't generalize over x at eq
++      eq = ∀≡ x
++    in
++    C (x , eq)

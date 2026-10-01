@@ -1,0 +1,34 @@
+diff --git a/scipy/spatial/distance.py b/scipy/spatial/distance.py
+index 88d45fad8d..d798ced433 100644
+--- a/scipy/spatial/distance.py
++++ b/scipy/spatial/distance.py
+@@ -1296,7 +1296,11 @@ def yule(u, v, w=None):
+     if w is not None:
+         w = _validate_weights(w)
+     (nff, nft, ntf, ntt) = _nbool_correspond_all(u, v, w=w)
+-    return float(2.0 * ntf * nft / np.array(ntt * nff + ntf * nft))
++    half_R = ntf * nft
++    if half_R == 0:
++        return 0.0
++    else:
++        return float(2.0 * half_R / (ntt * nff + half_R))
+ 
+ 
+ @np.deprecate(message="spatial.distance.matching is deprecated in scipy 1.0.0; "
+diff --git a/scipy/spatial/src/distance_impl.h b/scipy/spatial/src/distance_impl.h
+index 7927cfa903..d2c9a30776 100644
+--- a/scipy/spatial/src/distance_impl.h
++++ b/scipy/spatial/src/distance_impl.h
+@@ -222,7 +222,11 @@ yule_distance_char(const char *u, const char *v, const npy_intp n)
+         nft += (!x) & y;
+     }
+     nff = n - ntt - ntf - nft;
+-    return (2. * ntf * nft) / ((double)ntt * nff + (double)ntf * nft);
++    double half_R = (double)ntf * nft;
++    if (half_R == 0.0) {
++        return 0.0;
++    }
++    return (2. * half_R) / ((double)ntt * nff + half_R);
+ }
+ 
+ static NPY_INLINE double

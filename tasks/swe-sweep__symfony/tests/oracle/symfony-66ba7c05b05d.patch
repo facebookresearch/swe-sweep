@@ -1,0 +1,15 @@
+diff --git a/src/Symfony/Component/HttpKernel/HttpCache/HttpCache.php b/src/Symfony/Component/HttpKernel/HttpCache/HttpCache.php
+index 184666978cf..6ffe8890571 100644
+--- a/src/Symfony/Component/HttpKernel/HttpCache/HttpCache.php
++++ b/src/Symfony/Component/HttpKernel/HttpCache/HttpCache.php
+@@ -237,7 +237,9 @@ class HttpCache implements HttpKernelInterface, TerminableInterface
+ 
+         $response->prepare($request);
+ 
+-        $response->isNotModified($request);
++        if (HttpKernelInterface::MAIN_REQUEST === $type) {
++            $response->isNotModified($request);
++        }
+ 
+         return $response;
+     }

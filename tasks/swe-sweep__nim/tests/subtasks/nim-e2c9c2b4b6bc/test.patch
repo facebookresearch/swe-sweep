@@ -1,0 +1,20 @@
+diff --git a/tests/stdlib/tunicode.nim b/tests/stdlib/tunicode.nim
+index adc8d2078..b9e68b15b 100644
+--- a/tests/stdlib/tunicode.nim
++++ b/tests/stdlib/tunicode.nim
+@@ -57,6 +57,7 @@ doAssert isAlpha("r")
+ doAssert isAlpha("α")
+ doAssert isAlpha("ϙ")
+ doAssert isAlpha("ஶ")
++doAssert isAlpha("网")
+ doAssert(not isAlpha("$"))
+ doAssert(not isAlpha(""))
+ 
+@@ -66,6 +67,7 @@ doAssert isAlpha("𐌼𐌰𐌲𐌲𐌻𐌴𐍃𐍄𐌰𐌽")
+ doAssert isAlpha("ὕαλονϕαγεῖνδύναμαιτοῦτοοὔμεβλάπτει")
+ doAssert isAlpha("Јамогујестистаклоитоминештети")
+ doAssert isAlpha("Կրնամապակիուտեևինծիանհանգիստչըներ")
++doAssert isAlpha("编程语言")
+ doAssert(not isAlpha("$Foo✓"))
+ doAssert(not isAlpha("⠙⠕⠑⠎⠝⠞"))
+ 

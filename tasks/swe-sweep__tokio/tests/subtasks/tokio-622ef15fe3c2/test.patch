@@ -1,0 +1,28 @@
+diff --git a/tokio/tests/io_async_fd.rs b/tokio/tests/io_async_fd.rs
+index 7abd592d..943b023e 100644
+--- a/tokio/tests/io_async_fd.rs
++++ b/tokio/tests/io_async_fd.rs
+@@ -578,6 +578,23 @@ fn driver_shutdown_wakes_poll() {
+     assert_err!(futures::executor::block_on(poll_writable(&afd_a)));
+ }
+ 
++#[test]
++fn driver_shutdown_then_clear_readiness() {
++    let rt = rt();
++
++    let (a, _b) = socketpair();
++    let afd_a = {
++        let _enter = rt.enter();
++        AsyncFd::new(a).unwrap()
++    };
++
++    let mut write_ready = rt.block_on(afd_a.writable()).unwrap();
++
++    std::mem::drop(rt);
++
++    write_ready.clear_ready();
++}
++
+ #[test]
+ fn driver_shutdown_wakes_poll_race() {
+     // TODO: make this a loom test

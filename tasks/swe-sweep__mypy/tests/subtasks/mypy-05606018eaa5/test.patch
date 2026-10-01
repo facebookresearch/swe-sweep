@@ -1,0 +1,66 @@
+diff --git a/test-data/unit/stubgen.test b/test-data/unit/stubgen.test
+index 9cfe301a9..5d35f1bb7 100644
+--- a/test-data/unit/stubgen.test
++++ b/test-data/unit/stubgen.test
+@@ -1225,6 +1225,7 @@ from typing import Generic
+ from typing_extensions import TypeVarTuple, Unpack
+ Ts = TypeVarTuple('Ts')
+ class D(Generic[Unpack[Ts]]): ...
++def callback(func: Callable[[Unpack[Ts]], None], *args: Unpack[Ts]) -> None: ...
+ [out]
+ from typing import Generic
+ from typing_extensions import TypeVarTuple, Unpack
+@@ -1233,11 +1234,14 @@ Ts = TypeVarTuple('Ts')
+ 
+ class D(Generic[Unpack[Ts]]): ...
+ 
++def callback(func: Callable[[Unpack[Ts]], None], *args: Unpack[Ts]) -> None: ...
++
+ [case testGenericClassTypeVarTuple_semanal]
+ from typing import Generic
+ from typing_extensions import TypeVarTuple, Unpack
+ Ts = TypeVarTuple('Ts')
+ class D(Generic[Unpack[Ts]]): ...
++def callback(func: Callable[[Unpack[Ts]], None], *args: Unpack[Ts]) -> None: ...
+ [out]
+ from typing import Generic
+ from typing_extensions import TypeVarTuple, Unpack
+@@ -1246,11 +1250,14 @@ Ts = TypeVarTuple('Ts')
+ 
+ class D(Generic[Unpack[Ts]]): ...
+ 
++def callback(func: Callable[[Unpack[Ts]], None], *args: Unpack[Ts]) -> None: ...
++
+ [case testGenericClassTypeVarTuplePy311]
+ # flags: --python-version=3.11
+ from typing import Generic, TypeVarTuple
+ Ts = TypeVarTuple('Ts')
+ class D(Generic[*Ts]): ...
++def callback(func: Callable[[*Ts], None], *args: *Ts) -> None: ...
+ [out]
+ from typing import Generic, TypeVarTuple
+ 
+@@ -1258,11 +1265,14 @@ Ts = TypeVarTuple('Ts')
+ 
+ class D(Generic[*Ts]): ...
+ 
++def callback(func: Callable[[*Ts], None], *args: *Ts) -> None: ...
++
+ [case testGenericClassTypeVarTuplePy311_semanal]
+ # flags: --python-version=3.11
+ from typing import Generic, TypeVarTuple
+ Ts = TypeVarTuple('Ts')
+ class D(Generic[*Ts]): ...
++def callback(func: Callable[[*Ts], None], *args: *Ts) -> None: ...
+ [out]
+ from typing import Generic, TypeVarTuple
+ 
+@@ -1270,6 +1280,8 @@ Ts = TypeVarTuple('Ts')
+ 
+ class D(Generic[*Ts]): ...
+ 
++def callback(func: Callable[[*Ts], None], *args: *Ts) -> None: ...
++
+ [case testObjectBaseClass]
+ class A(object): ...
+ [out]

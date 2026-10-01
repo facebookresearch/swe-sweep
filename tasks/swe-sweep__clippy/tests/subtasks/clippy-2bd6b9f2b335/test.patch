@@ -1,0 +1,67 @@
+diff --git a/tests/ui/approx_const.rs b/tests/ui/approx_const.rs
+index 6461666be..fc493421a 100644
+--- a/tests/ui/approx_const.rs
++++ b/tests/ui/approx_const.rs
+@@ -106,4 +106,19 @@ fn main() {
+     //~^ approx_constant
+ 
+     let no_tau = 6.3;
++
++    // issue #15194
++    #[allow(clippy::excessive_precision)]
++    let x: f64 = 3.1415926535897932384626433832;
++    //~^ approx_constant
++
++    #[allow(clippy::excessive_precision)]
++    let _: f64 = 003.14159265358979311599796346854418516159057617187500;
++    //~^ approx_constant
++
++    let almost_frac_1_sqrt_2 = 00.70711;
++    //~^ approx_constant
++
++    let almost_frac_1_sqrt_2 = 00.707_11;
++    //~^ approx_constant
+ }
+diff --git a/tests/ui/approx_const.stderr b/tests/ui/approx_const.stderr
+index f7bda0468..32a3517ff 100644
+--- a/tests/ui/approx_const.stderr
++++ b/tests/ui/approx_const.stderr
+@@ -184,5 +184,37 @@ LL |     let almost_tau = 6.28;
+    |
+    = help: consider using the constant directly
+ 
+-error: aborting due to 23 previous errors
++error: approximate value of `f{32, 64}::consts::PI` found
++  --> tests/ui/approx_const.rs:112:18
++   |
++LL |     let x: f64 = 3.1415926535897932384626433832;
++   |                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
++   |
++   = help: consider using the constant directly
++
++error: approximate value of `f{32, 64}::consts::PI` found
++  --> tests/ui/approx_const.rs:116:18
++   |
++LL |     let _: f64 = 003.14159265358979311599796346854418516159057617187500;
++   |                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
++   |
++   = help: consider using the constant directly
++
++error: approximate value of `f{32, 64}::consts::FRAC_1_SQRT_2` found
++  --> tests/ui/approx_const.rs:119:32
++   |
++LL |     let almost_frac_1_sqrt_2 = 00.70711;
++   |                                ^^^^^^^^
++   |
++   = help: consider using the constant directly
++
++error: approximate value of `f{32, 64}::consts::FRAC_1_SQRT_2` found
++  --> tests/ui/approx_const.rs:122:32
++   |
++LL |     let almost_frac_1_sqrt_2 = 00.707_11;
++   |                                ^^^^^^^^^
++   |
++   = help: consider using the constant directly
++
++error: aborting due to 27 previous errors
+ 

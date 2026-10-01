@@ -1,0 +1,48 @@
+diff --git a/__tests__/__fixtures__/test-renameBranch.git/refs/heads/existing-branch b/__tests__/__fixtures__/test-renameBranch.git/refs/heads/existing-branch
+new file mode 100644
+index 00000000..4061934a
+--- /dev/null
++++ b/__tests__/__fixtures__/test-renameBranch.git/refs/heads/existing-branch
+@@ -0,0 +1 @@
++0674da21ba278014a243d1e5ae58df828c819181
+diff --git a/__tests__/test-renameBranch.js b/__tests__/test-renameBranch.js
+index 6325cc53..12d7dc2d 100644
+--- a/__tests__/test-renameBranch.js
++++ b/__tests__/test-renameBranch.js
+@@ -17,7 +17,7 @@ describe('renameBranch', () => {
+         dir,
+         gitdir,
+         oldref: 'test-branch',
+-        ref: 'master',
++        ref: 'existing-branch',
+       })
+     } catch (err) {
+       error = err
+@@ -126,4 +126,27 @@ describe('renameBranch', () => {
+     })
+     expect(await currentBranch({ fs, dir, gitdir })).toEqual('other-branch-2')
+   })
++
++  it('rename current branch', async () => {
++    // Setup
++    const { fs, dir, gitdir } = await makeFixture('test-renameBranch')
++    // Test
++    await renameBranch({
++      fs,
++      dir,
++      gitdir,
++      oldref: 'master',
++      ref: 'other-branch',
++    })
++    expect(await currentBranch({ fs, dir, gitdir })).toEqual('other-branch')
++
++    await renameBranch({
++      fs,
++      dir,
++      gitdir,
++      oldref: 'other-branch',
++      ref: 'master',
++    })
++    expect(await currentBranch({ fs, dir, gitdir })).toEqual('master')
++  })
+ })

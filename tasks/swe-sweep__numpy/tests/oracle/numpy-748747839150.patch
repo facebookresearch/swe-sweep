@@ -1,0 +1,13 @@
+diff --git a/numpy/ma/core.py b/numpy/ma/core.py
+index 90aff6ec8c5..cd0b4e0a619 100644
+--- a/numpy/ma/core.py
++++ b/numpy/ma/core.py
+@@ -5935,7 +5935,7 @@ class MaskedArray(ndarray):
+         returns bytes not strings.
+         """
+ 
+-        return self.tobytes(fill_value, order='C')
++        return self.tobytes(fill_value, order=order)
+ 
+     def tobytes(self, fill_value=None, order='C'):
+         """

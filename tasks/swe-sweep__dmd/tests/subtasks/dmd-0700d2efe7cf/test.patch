@@ -1,0 +1,17 @@
+diff --git a/compiler/test/compilable/test24017.d b/compiler/test/compilable/test24017.d
+new file mode 100644
+index 0000000000..0d03978120
+--- /dev/null
++++ b/compiler/test/compilable/test24017.d
+@@ -0,0 +1,11 @@
++// https://issues.dlang.org/show_bug.cgi?id=24017
++
++// REQUIRED_ARGS: -debug
++
++void writeln(string) {}
++
++void main() nothrow
++{
++    debug writeln("Hello");
++    debug "Hello".writeln;
++}

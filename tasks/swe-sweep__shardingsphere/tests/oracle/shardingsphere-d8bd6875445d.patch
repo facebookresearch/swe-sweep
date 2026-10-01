@@ -1,0 +1,59 @@
+diff --git a/features/encrypt/core/src/main/java/org/apache/shardingsphere/encrypt/rewrite/parameter/rewriter/EncryptInsertValueParameterRewriter.java b/features/encrypt/core/src/main/java/org/apache/shardingsphere/encrypt/rewrite/parameter/rewriter/EncryptInsertValueParameterRewriter.java
+index cf7417fe7b6..72144d9cc45 100644
+--- a/features/encrypt/core/src/main/java/org/apache/shardingsphere/encrypt/rewrite/parameter/rewriter/EncryptInsertValueParameterRewriter.java
++++ b/features/encrypt/core/src/main/java/org/apache/shardingsphere/encrypt/rewrite/parameter/rewriter/EncryptInsertValueParameterRewriter.java
+@@ -20,7 +20,6 @@ package org.apache.shardingsphere.encrypt.rewrite.parameter.rewriter;
+ import com.google.common.base.Preconditions;
+ import lombok.Setter;
+ import org.apache.shardingsphere.encrypt.context.EncryptContextBuilder;
+-import org.apache.shardingsphere.encrypt.exception.syntax.UnsupportedEncryptInsertValueException;
+ import org.apache.shardingsphere.encrypt.rewrite.aware.DatabaseNameAware;
+ import org.apache.shardingsphere.encrypt.rule.EncryptRule;
+ import org.apache.shardingsphere.encrypt.rule.aware.EncryptRuleAware;
+@@ -84,7 +83,7 @@ public final class EncryptInsertValueParameterRewriter implements ParameterRewri
+                 ExpressionSegment expressionSegment = insertStatementContext.getInsertValueContexts().get(count).getValueExpressions().get(columnIndex);
+                 if (expressionSegment instanceof ParameterMarkerExpressionSegment) {
+                     Object literalValue = insertStatementContext.getInsertValueContexts().get(count).getLiteralValue(columnIndex)
+-                            .orElseThrow(() -> new UnsupportedEncryptInsertValueException(columnIndex));
++                            .orElse(null);
+                     encryptInsertValue(encryptAlgorithm, assistEncryptAlgorithm, parameterIndex, literalValue, standardParameterBuilder, encryptContext);
+                 }
+             }
+diff --git a/features/encrypt/core/src/main/java/org/apache/shardingsphere/encrypt/rewrite/token/generator/EncryptInsertValuesTokenGenerator.java b/features/encrypt/core/src/main/java/org/apache/shardingsphere/encrypt/rewrite/token/generator/EncryptInsertValuesTokenGenerator.java
+index 420f20a7bfb..ab60dd8fafd 100644
+--- a/features/encrypt/core/src/main/java/org/apache/shardingsphere/encrypt/rewrite/token/generator/EncryptInsertValuesTokenGenerator.java
++++ b/features/encrypt/core/src/main/java/org/apache/shardingsphere/encrypt/rewrite/token/generator/EncryptInsertValuesTokenGenerator.java
+@@ -19,7 +19,6 @@ package org.apache.shardingsphere.encrypt.rewrite.token.generator;
+ 
+ import lombok.Setter;
+ import org.apache.shardingsphere.encrypt.context.EncryptContextBuilder;
+-import org.apache.shardingsphere.encrypt.exception.syntax.UnsupportedEncryptInsertValueException;
+ import org.apache.shardingsphere.encrypt.rewrite.aware.DatabaseNameAware;
+ import org.apache.shardingsphere.encrypt.rewrite.token.pojo.EncryptInsertValuesToken;
+ import org.apache.shardingsphere.encrypt.rule.EncryptRule;
+@@ -134,7 +133,7 @@ public final class EncryptInsertValuesTokenGenerator implements OptionalSQLToken
+             if (encryptor.isPresent()) {
+                 int columnIndex = useDefaultInsertColumnsToken.map(optional -> ((UseDefaultInsertColumnsToken) optional).getColumns().indexOf(columnName))
+                         .orElseGet(() -> insertStatementContext.getColumnNames().indexOf(columnName));
+-                Object originalValue = insertValueContext.getLiteralValue(columnIndex).orElseThrow(() -> new UnsupportedEncryptInsertValueException(columnIndex));
++                Object originalValue = insertValueContext.getLiteralValue(columnIndex).orElse(null);
+                 EncryptContext encryptContext = EncryptContextBuilder.build(databaseName, schemaName, tableName, columnName);
+                 addPlainColumn(insertValueToken, columnIndex, encryptContext, insertValueContext, originalValue);
+                 if (encryptRule.findAssistedQueryEncryptor(tableName, columnName).isPresent()) {
+diff --git a/infra/binder/src/main/java/org/apache/shardingsphere/infra/binder/segment/insert/values/InsertValueContext.java b/infra/binder/src/main/java/org/apache/shardingsphere/infra/binder/segment/insert/values/InsertValueContext.java
+index a28b05c7aa6..85fc76f79f6 100644
+--- a/infra/binder/src/main/java/org/apache/shardingsphere/infra/binder/segment/insert/values/InsertValueContext.java
++++ b/infra/binder/src/main/java/org/apache/shardingsphere/infra/binder/segment/insert/values/InsertValueContext.java
+@@ -77,10 +77,10 @@ public final class InsertValueContext {
+     public Optional<Object> getLiteralValue(final int index) {
+         ExpressionSegment valueExpression = valueExpressions.get(index);
+         if (valueExpression instanceof ParameterMarkerExpressionSegment) {
+-            return Optional.of(parameters.get(getParameterIndex((ParameterMarkerExpressionSegment) valueExpression)));
++            return Optional.ofNullable(parameters.get(getParameterIndex((ParameterMarkerExpressionSegment) valueExpression)));
+         }
+         if (valueExpression instanceof LiteralExpressionSegment) {
+-            return Optional.of(((LiteralExpressionSegment) valueExpression).getLiterals());
++            return Optional.ofNullable(((LiteralExpressionSegment) valueExpression).getLiterals());
+         }
+         return Optional.empty();
+     }

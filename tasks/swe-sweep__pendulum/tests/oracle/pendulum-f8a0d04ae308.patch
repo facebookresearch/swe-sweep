@@ -1,0 +1,49 @@
+diff --git a/pendulum/datetime.py b/pendulum/datetime.py
+index 5367d31..752a9ac 100644
+--- a/pendulum/datetime.py
++++ b/pendulum/datetime.py
+@@ -745,9 +745,7 @@ class DateTime(datetime.datetime, Date):
+                 microseconds=delta.microseconds,
+             )
+         elif isinstance(delta, pendulum.Duration):
+-            return self.add(
+-                years=delta.years, months=delta.months, seconds=delta.total_seconds()
+-            )
++            return self.add(**delta._signature)  # type: ignore[attr-defined]
+ 
+         return self.add(seconds=delta.total_seconds())
+ 
+diff --git a/pendulum/duration.py b/pendulum/duration.py
+index 962f923..a4875fc 100644
+--- a/pendulum/duration.py
++++ b/pendulum/duration.py
+@@ -88,6 +88,17 @@ class Duration(timedelta):
+         self._months = months
+         self._years = years
+ 
++        self._signature = {  # type: ignore[attr-defined]
++            "years": years,
++            "months": months,
++            "weeks": weeks,
++            "days": days,
++            "hours": hours,
++            "minutes": minutes,
++            "seconds": seconds,
++            "microseconds": microseconds + milliseconds * 1000,
++        }
++
+         return self
+ 
+     def total_minutes(self):
+@@ -394,7 +405,10 @@ class Duration(timedelta):
+ 
+     def __divmod__(self, other):
+         if isinstance(other, timedelta):
+-            q, r = divmod(self._to_microseconds(), other._to_microseconds())
++            q, r = divmod(
++                self._to_microseconds(),
++                other._to_microseconds(),  # type: ignore[attr-defined]
++            )
+ 
+             return q, self.__class__(0, 0, r)
+ 

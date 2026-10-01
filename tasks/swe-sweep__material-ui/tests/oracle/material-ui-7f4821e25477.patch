@@ -1,0 +1,17 @@
+diff --git a/packages/mui-material/src/Alert/Alert.js b/packages/mui-material/src/Alert/Alert.js
+index a68ee6e9f2..d8b6879451 100644
+--- a/packages/mui-material/src/Alert/Alert.js
++++ b/packages/mui-material/src/Alert/Alert.js
+@@ -160,7 +160,11 @@ const Alert = React.forwardRef(function Alert(inProps, ref) {
+       <AlertMessage ownerState={ownerState} className={classes.message}>
+         {children}
+       </AlertMessage>
+-      {action != null ? <AlertAction className={classes.action}>{action}</AlertAction> : null}
++      {action != null ? (
++        <AlertAction ownerState={ownerState} className={classes.action}>
++          {action}
++        </AlertAction>
++      ) : null}
+       {action == null && onClose ? (
+         <AlertAction ownerState={ownerState} className={classes.action}>
+           <IconButton

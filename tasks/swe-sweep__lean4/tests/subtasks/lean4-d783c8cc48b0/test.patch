@@ -1,0 +1,24 @@
+diff --git a/tests/lean/run/4381.lean b/tests/lean/run/4381.lean
+new file mode 100644
+index 0000000000..967e7360ab
+--- /dev/null
++++ b/tests/lean/run/4381.lean
+@@ -0,0 +1,18 @@
++/--
++info: case h
++d g : Nat
++H1 : d = g
++⊢ ?w = g
++
++case w
++d g : Nat
++H1 : d = g
++⊢ Nat
++-/
++#guard_msgs in
++example : ∀ d g, d = g → exists x : Nat, x = d := by
++  intros d g H1
++  constructor
++  rewrite [H1,←H1,H1,←H1,H1]
++  trace_state
++  assumption

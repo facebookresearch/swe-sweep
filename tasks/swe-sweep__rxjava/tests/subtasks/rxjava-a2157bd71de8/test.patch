@@ -1,0 +1,50 @@
+diff --git a/src/test/java/io/reactivex/internal/operators/single/SingleTimeoutTest.java b/src/test/java/io/reactivex/internal/operators/single/SingleTimeoutTest.java
+index dcc526c4f..e54fc1120 100644
+--- a/src/test/java/io/reactivex/internal/operators/single/SingleTimeoutTest.java
++++ b/src/test/java/io/reactivex/internal/operators/single/SingleTimeoutTest.java
+@@ -17,6 +17,7 @@ import static org.junit.Assert.*;
+ 
+ import java.util.List;
+ import java.util.concurrent.TimeUnit;
++import java.util.concurrent.CountDownLatch;
+ import java.util.concurrent.TimeoutException;
+ 
+ import org.junit.Test;
+@@ -24,9 +25,10 @@ import org.junit.Test;
+ import io.reactivex.*;
+ import io.reactivex.exceptions.TestException;
+ import io.reactivex.functions.Action;
++import io.reactivex.disposables.Disposable;
+ import io.reactivex.observers.TestObserver;
+ import io.reactivex.plugins.RxJavaPlugins;
+-import io.reactivex.schedulers.TestScheduler;
++import io.reactivex.schedulers.*;
+ import io.reactivex.subjects.*;
+ 
+ public class SingleTimeoutTest {
+@@ -220,5 +222,25 @@ public class SingleTimeoutTest {
+                 .test()
+                 .awaitDone(5, TimeUnit.SECONDS)
+                 .assertFailureAndMessage(TimeoutException.class, timeoutMessage(1, TimeUnit.NANOSECONDS));
+     }
++
++    @Test
++    public void timeoutWithZero() throws InterruptedException {
++        int n = 10_000;
++        Scheduler sch = Schedulers.single();
++        for (int i = 0; i < n; i++) {
++            final int y = i;
++            final CountDownLatch latch = new CountDownLatch(1);
++            Disposable d = Single.never()
++                    .timeout(0, TimeUnit.NANOSECONDS, sch)
++                    .subscribe(v -> {}, e -> {
++                        //System.out.println("timeout " + y);
++                        latch.countDown();
++                    });
++            if (!latch.await(2, TimeUnit.SECONDS)) {
++                System.out.println(d + " " + sch);
++                throw new IllegalStateException("Timeout did not work at y = " + y);
++            }
++        }
++    }
+ }

@@ -1,0 +1,18 @@
+diff --git a/test/issues/general/test_17310.test b/test/issues/general/test_17310.test
+new file mode 100644
+index 0000000000..400ce855b3
+--- /dev/null
++++ b/test/issues/general/test_17310.test
+@@ -0,0 +1,12 @@
++# name: test/issues/general/test_17310.test
++# description: Issue 17310 - Casting issue from float64 to decimal
++# group: [general]
++
++statement ok
++pragma enable_verification
++
++# should not error
++query I
++select try_cast('nan'::double as decimal(18,2));
++----
++NULL

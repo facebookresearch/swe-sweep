@@ -1,0 +1,89 @@
+diff --git a/activerecord/lib/active_record/reflection.rb b/activerecord/lib/active_record/reflection.rb
+index 99f02e1db63..dcdfc5b3334 100644
+--- a/activerecord/lib/active_record/reflection.rb
++++ b/activerecord/lib/active_record/reflection.rb
+@@ -485,6 +485,10 @@ module ActiveRecord
+         foreign_key
+       end
+ 
++      def join_primary_type
++        type
++      end
++
+       def join_foreign_key
+         active_record_primary_key
+       end
+@@ -588,6 +592,10 @@ module ActiveRecord
+         options[:polymorphic]
+       end
+ 
++      def polymorphic_name
++        active_record.polymorphic_name
++      end
++
+       def add_as_source(seed)
+         seed
+       end
+diff --git a/activerecord/lib/active_record/relation/predicate_builder/association_query_value.rb b/activerecord/lib/active_record/relation/predicate_builder/association_query_value.rb
+index c7019bee4f6..54553548c43 100644
+--- a/activerecord/lib/active_record/relation/predicate_builder/association_query_value.rb
++++ b/activerecord/lib/active_record/relation/predicate_builder/association_query_value.rb
+@@ -18,7 +18,10 @@ module ActiveRecord
+         def ids
+           case value
+           when Relation
+-            value.select_values.empty? ? value.select(primary_key) : value
++            relation = value
++            relation = relation.select(primary_key) if select_clause?
++            relation = relation.where(primary_type => polymorphic_name) if polymorphic_clause?
++            relation
+           when Array
+             value.map { |v| convert_to_id(v) }
+           else
+@@ -30,6 +33,22 @@ module ActiveRecord
+           associated_table.join_primary_key
+         end
+ 
++        def primary_type
++          associated_table.join_primary_type
++        end
++
++        def polymorphic_name
++          associated_table.polymorphic_name_association
++        end
++
++        def select_clause?
++          value.select_values.empty?
++        end
++
++        def polymorphic_clause?
++          primary_type && !value.where_values_hash.has_key?(primary_type)
++        end
++
+         def convert_to_id(value)
+           if value.respond_to?(primary_key)
+             value.public_send(primary_key)
+diff --git a/activerecord/lib/active_record/table_metadata.rb b/activerecord/lib/active_record/table_metadata.rb
+index d20f4fa66ae..07fcc64764e 100644
+--- a/activerecord/lib/active_record/table_metadata.rb
++++ b/activerecord/lib/active_record/table_metadata.rb
+@@ -2,7 +2,7 @@
+ 
+ module ActiveRecord
+   class TableMetadata # :nodoc:
+-    delegate :join_primary_key, :join_foreign_key, :join_foreign_type, to: :reflection
++    delegate :join_primary_key, :join_primary_type, :join_foreign_key, :join_foreign_type, to: :reflection
+ 
+     def initialize(klass, arel_table, reflection = nil)
+       @klass = klass
+@@ -54,6 +54,10 @@ module ActiveRecord
+       reflection&.polymorphic?
+     end
+ 
++    def polymorphic_name_association
++      reflection&.polymorphic_name
++    end
++
+     def through_association?
+       reflection&.through_reflection?
+     end

@@ -1,0 +1,29 @@
+diff --git a/modules/core/test/test_mat.cpp b/modules/core/test/test_mat.cpp
+index 846bff6d94..dfd17db8d1 100644
+--- a/modules/core/test/test_mat.cpp
++++ b/modules/core/test/test_mat.cpp
+@@ -1737,6 +1737,24 @@ TEST(Mat, regression_8680)
+    ASSERT_EQ(mat.channels(), 2);
+ }
+ 
++TEST(Mat, regression_cvReshapeMatND_continuous)
++{
++    int sizes[] = {2, 3, 4};
++    Mat mat(3, sizes, CV_32SC1);
++    CvMatND src = cvMatND(mat);
++    CvMatND reshaped;
++    int new_sizes[] = {4, 3, 2};
++    CvArr* result = 0;
++
++    ASSERT_NO_THROW(result = cvReshapeMatND(&src, sizeof(reshaped), &reshaped, 0, 3, new_sizes));
++    ASSERT_NE((CvArr*)0, result);
++    EXPECT_EQ(3, reshaped.dims);
++    EXPECT_EQ(new_sizes[0], reshaped.dim[0].size);
++    EXPECT_EQ(new_sizes[1], reshaped.dim[1].size);
++    EXPECT_EQ(new_sizes[2], reshaped.dim[2].size);
++    EXPECT_EQ(src.data.ptr, reshaped.data.ptr);
++}
++
+ TEST(Mat_, range_based_for)
+ {
+     Mat_<uchar> img = Mat_<uchar>::zeros(3, 3);

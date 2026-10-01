@@ -1,0 +1,33 @@
+diff --git a/vlib/v/ast/ast.v b/vlib/v/ast/ast.v
+index 946f8b9c8..832bf82bc 100644
+--- a/vlib/v/ast/ast.v
++++ b/vlib/v/ast/ast.v
+@@ -2079,6 +2079,15 @@ pub fn (e &Expr) is_lockable() bool {
+ 	}
+ }
+ 
++// returns if an expression has call expr`
++pub fn (e &Expr) has_fn_call() bool {
++	return match e {
++		CallExpr { true }
++		SelectorExpr { e.expr.has_fn_call() }
++		else { false }
++	}
++}
++
+ // CTempVar is used in cgen only, to hold nodes for temporary variables
+ pub struct CTempVar {
+ pub:
+diff --git a/vlib/v/gen/c/cgen.v b/vlib/v/gen/c/cgen.v
+index 13229b096..f3645d535 100644
+--- a/vlib/v/gen/c/cgen.v
++++ b/vlib/v/gen/c/cgen.v
+@@ -6564,7 +6564,7 @@ fn (mut g Gen) as_cast(node ast.AsCast) {
+ 	mut expr_type_sym := g.table.sym(g.unwrap_generic(node.expr_type))
+ 	if mut expr_type_sym.info is ast.SumType {
+ 		dot := if node.expr_type.is_ptr() { '->' } else { '.' }
+-		if node.expr is ast.CallExpr && !g.is_cc_msvc {
++		if node.expr.has_fn_call() && !g.is_cc_msvc {
+ 			tmp_var := g.new_tmp_var()
+ 			expr_styp := g.typ(node.expr_type)
+ 			g.write('({ ${expr_styp} ${tmp_var} = ')

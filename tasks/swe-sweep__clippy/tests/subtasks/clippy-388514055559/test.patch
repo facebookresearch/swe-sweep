@@ -1,0 +1,82 @@
+diff --git a/tests/ui/semicolon_inside_block.fixed b/tests/ui/semicolon_inside_block.fixed
+index 7eb53e733..7308e78aa 100644
+--- a/tests/ui/semicolon_inside_block.fixed
++++ b/tests/ui/semicolon_inside_block.fixed
+@@ -86,3 +86,8 @@ fn main() {
+ 
+     unit_fn_block()
+ }
++
++pub fn issue15388() {
++    #[rustfmt::skip]
++    {0; 0};
++}
+diff --git a/tests/ui/semicolon_inside_block.rs b/tests/ui/semicolon_inside_block.rs
+index 9fa5b1171..467bf4d77 100644
+--- a/tests/ui/semicolon_inside_block.rs
++++ b/tests/ui/semicolon_inside_block.rs
+@@ -86,3 +86,8 @@ fn main() {
+ 
+     unit_fn_block()
+ }
++
++pub fn issue15388() {
++    #[rustfmt::skip]
++    {0; 0};
++}
+diff --git a/tests/ui/semicolon_inside_block_stmt_expr_attrs.fixed b/tests/ui/semicolon_inside_block_stmt_expr_attrs.fixed
+new file mode 100644
+index 000000000..5b93a91da
+--- /dev/null
++++ b/tests/ui/semicolon_inside_block_stmt_expr_attrs.fixed
+@@ -0,0 +1,11 @@
++// Test when the feature `stmt_expr_attributes` is enabled
++
++#![feature(stmt_expr_attributes)]
++#![allow(clippy::no_effect)]
++#![warn(clippy::semicolon_inside_block)]
++
++pub fn issue15388() {
++    #[rustfmt::skip]
++    {0; 0;}
++    //~^ semicolon_inside_block
++}
+diff --git a/tests/ui/semicolon_inside_block_stmt_expr_attrs.rs b/tests/ui/semicolon_inside_block_stmt_expr_attrs.rs
+new file mode 100644
+index 000000000..aa2c0cb50
+--- /dev/null
++++ b/tests/ui/semicolon_inside_block_stmt_expr_attrs.rs
+@@ -0,0 +1,11 @@
++// Test when the feature `stmt_expr_attributes` is enabled
++
++#![feature(stmt_expr_attributes)]
++#![allow(clippy::no_effect)]
++#![warn(clippy::semicolon_inside_block)]
++
++pub fn issue15388() {
++    #[rustfmt::skip]
++    {0; 0};
++    //~^ semicolon_inside_block
++}
+diff --git a/tests/ui/semicolon_inside_block_stmt_expr_attrs.stderr b/tests/ui/semicolon_inside_block_stmt_expr_attrs.stderr
+new file mode 100644
+index 000000000..5bb91915a
+--- /dev/null
++++ b/tests/ui/semicolon_inside_block_stmt_expr_attrs.stderr
+@@ -0,0 +1,16 @@
++error: consider moving the `;` inside the block for consistent formatting
++  --> tests/ui/semicolon_inside_block_stmt_expr_attrs.rs:9:5
++   |
++LL |     {0; 0};
++   |     ^^^^^^^
++   |
++   = note: `-D clippy::semicolon-inside-block` implied by `-D warnings`
++   = help: to override `-D warnings` add `#[allow(clippy::semicolon_inside_block)]`
++help: put the `;` here
++   |
++LL -     {0; 0};
++LL +     {0; 0;}
++   |
++
++error: aborting due to 1 previous error
++

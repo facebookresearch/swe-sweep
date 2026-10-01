@@ -1,0 +1,66 @@
+diff --git a/xarray/tests/test_dataarray.py b/xarray/tests/test_dataarray.py
+index 1f4d259d..e8a4259e 100644
+--- a/xarray/tests/test_dataarray.py
++++ b/xarray/tests/test_dataarray.py
+@@ -765,6 +765,27 @@ class TestDataArray:
+         )
+         da[dict(x=ind)] = value  # should not raise
+ 
++    def test_setitem_vectorized(self) -> None:
++        # Regression test for GH:7030
++        # Positional indexing
++        v = xr.DataArray(np.r_[:120].reshape(2, 3, 4, 5), dims=["a", "b", "c", "d"])
++        b = xr.DataArray([[0, 0], [1, 0]], dims=["u", "v"])
++        c = xr.DataArray([[0, 1], [2, 3]], dims=["u", "v"])
++        w = xr.DataArray([-1, -2], dims=["u"])
++        index = dict(b=b, c=c)
++        v[index] = w
++        assert (v[index] == w).all()
++
++        # Indexing with coordinates
++        v = xr.DataArray(np.r_[:120].reshape(2, 3, 4, 5), dims=["a", "b", "c", "d"])
++        v.coords["b"] = [2, 4, 6]
++        b = xr.DataArray([[2, 2], [4, 2]], dims=["u", "v"])
++        c = xr.DataArray([[0, 1], [2, 3]], dims=["u", "v"])
++        w = xr.DataArray([-1, -2], dims=["u"])
++        index = dict(b=b, c=c)
++        v.loc[index] = w
++        assert (v.loc[index] == w).all()
++
+     def test_contains(self):
+         data_array = DataArray([1, 2])
+         assert 1 in data_array
+diff --git a/xarray/tests/test_dataset.py b/xarray/tests/test_dataset.py
+index 882285ac..89825ac0 100644
+--- a/xarray/tests/test_dataset.py
++++ b/xarray/tests/test_dataset.py
+@@ -3595,6 +3595,29 @@ class TestDataset:
+         )
+         assert_identical(ds, expected)
+ 
++    def test_setitem_vectorized(self) -> None:
++        # Regression test for GH:7030
++        # Positional indexing
++        da = xr.DataArray(np.r_[:120].reshape(2, 3, 4, 5), dims=["a", "b", "c", "d"])
++        ds = xr.Dataset({"da": da})
++        b = xr.DataArray([[0, 0], [1, 0]], dims=["u", "v"])
++        c = xr.DataArray([[0, 1], [2, 3]], dims=["u", "v"])
++        w = xr.DataArray([-1, -2], dims=["u"])
++        index = dict(b=b, c=c)
++        ds[index] = xr.Dataset({"da": w})
++        assert (ds[index]["da"] == w).all()
++
++        # Indexing with coordinates
++        da = xr.DataArray(np.r_[:120].reshape(2, 3, 4, 5), dims=["a", "b", "c", "d"])
++        ds = xr.Dataset({"da": da})
++        ds.coords["b"] = [2, 4, 6]
++        b = xr.DataArray([[2, 2], [4, 2]], dims=["u", "v"])
++        c = xr.DataArray([[0, 1], [2, 3]], dims=["u", "v"])
++        w = xr.DataArray([-1, -2], dims=["u"])
++        index = dict(b=b, c=c)
++        ds.loc[index] = xr.Dataset({"da": w}, coords={"b": ds.coords["b"]})
++        assert (ds.loc[index]["da"] == w).all()
++
+     @pytest.mark.parametrize("dtype", [str, bytes])
+     def test_setitem_str_dtype(self, dtype):
+ 

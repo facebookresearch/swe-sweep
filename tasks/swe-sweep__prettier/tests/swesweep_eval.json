@@ -1,0 +1,364 @@
+{
+  "build_jobs": 4,
+  "container_repo": "/prettier",
+  "evaluation": {
+    "suite": "reproduction",
+    "test_dirs": [
+      "tests"
+    ],
+    "visible_timeout": 7200
+  },
+  "upstream_image": "pandora-maxbug-prettier:3.3.3",
+  "n_base_passing": 17708,
+  "n_base_test_ignore": 20,
+  "oracle_digest": "938de41afe093090af1198522595439f361c776a620eee66a969c9d8cbfa4f33",
+  "oracle_pristine_paths": [],
+  "upstream_commit": "9f7399e15e6172900e0591deb5a57a45769d8205",
+  "reproduction": {
+    "needs_build": false,
+    "suite": "jest",
+    "test_timeout": 1200
+  },
+  "schema": 2,
+  "subtasks": [
+    {
+      "f2p": [
+        "quotes.css - {\"singleQuote\":true} format",
+        "quotes.css format"
+      ],
+      "id": "prettier-0645f8189bb6",
+      "target_files": [
+        "src/language-css/parse/parse-selector.js"
+      ]
+    },
+    {
+      "f2p": [
+        "for.html format"
+      ],
+      "id": "prettier-09a5ae0ff5f0",
+      "target_files": [
+        "src/language-js/print/angular.js"
+      ]
+    },
+    {
+      "f2p": [
+        "cjk.md - {\"proseWrap\":\"preserve\"} format"
+      ],
+      "id": "prettier-09d30150dbd5",
+      "target_files": [
+        "src/language-markdown/print/mdast.js"
+      ]
+    },
+    {
+      "f2p": [
+        "snippet: Preserve non-ASCII Unicode spaces / line terminators, and vertical tab - {\"proseWrap\":\"always\"} format"
+      ],
+      "id": "prettier-0f7baf201ee8",
+      "target_files": [
+        "src/language-markdown/print-preprocess.js"
+      ]
+    },
+    {
+      "f2p": [
+        "issue-16594.scss format"
+      ],
+      "id": "prettier-16d3268f5ef5",
+      "target_files": [
+        "src/language-css/print/parenthesized-value-group.js"
+      ]
+    },
+    {
+      "f2p": [
+        "export.js - {\"semi\":false} format",
+        "export.js format"
+      ],
+      "id": "prettier-2c9c512e2c12",
+      "target_files": [
+        "src/comments.js"
+      ]
+    },
+    {
+      "f2p": [
+        "superclass.js format"
+      ],
+      "id": "prettier-352382863464",
+      "target_files": [
+        "src/language-js/comments/printer-methods.js"
+      ]
+    },
+    {
+      "f2p": [
+        "snippet: Make sure non-BMP CJK characters are treated as CJK - {\"proseWrap\":\"never\"} format"
+      ],
+      "id": "prettier-4b25f0915adf",
+      "target_files": [
+        "src/language-markdown/constants.evaluate.js"
+      ]
+    },
+    {
+      "f2p": [
+        "17806.css [less] format",
+        "17806.css [scss] format",
+        "17806.css format"
+      ],
+      "id": "prettier-51389a5266fa",
+      "target_files": [
+        "src/language-css/utils/index.js"
+      ]
+    },
+    {
+      "f2p": [
+        "snippet: #3 [__babel_estree] format",
+        "snippet: #3 [acorn] format",
+        "snippet: #3 [espree] format",
+        "snippet: #3 [flow] format",
+        "snippet: #3 [meriyah] format",
+        "snippet: #3 [typescript] format"
+      ],
+      "id": "prettier-52f5e9a269c3",
+      "target_files": [
+        "src/language-js/needs-parens.js",
+        "src/language-js/print/literal.js"
+      ]
+    },
+    {
+      "f2p": [
+        "include.scss format"
+      ],
+      "id": "prettier-61a1e88df49e",
+      "target_files": [
+        "src/language-css/parser-postcss.js"
+      ]
+    },
+    {
+      "f2p": [
+        "5636.scss - {\"trailingComma\":\"es5\"} format",
+        "5636.scss - {\"trailingComma\":\"none\"} format"
+      ],
+      "id": "prettier-623298fdc0ef",
+      "target_files": [
+        "src/language-css/parser-postcss.js"
+      ]
+    },
+    {
+      "f2p": [
+        "variables.less format"
+      ],
+      "id": "prettier-6962b362c506",
+      "target_files": [
+        "src/language-css/parser-postcss.js"
+      ]
+    },
+    {
+      "f2p": [
+        "comment-value-align.yml - {\"tabWidth\":4} format",
+        "comment-value-align.yml format"
+      ],
+      "id": "prettier-73073f8f985d",
+      "target_files": [
+        "src/language-yaml/print/mapping-item.js"
+      ]
+    },
+    {
+      "f2p": [
+        "9812-unstable.js format",
+        "9812.js format"
+      ],
+      "id": "prettier-7bd8597d90f0",
+      "target_files": [
+        "src/language-js/comments/handle-comments.js"
+      ]
+    },
+    {
+      "f2p": [
+        "wrap.md - {\"proseWrap\":\"always\"} format"
+      ],
+      "id": "prettier-7e35e1d7440e",
+      "target_files": [
+        "src/language-markdown/printer-markdown.js"
+      ]
+    },
+    {
+      "f2p": [
+        "abstract-methods-2.ts [babel-ts] format",
+        "abstract-methods-2.ts format"
+      ],
+      "id": "prettier-83b9b5ace369",
+      "target_files": [
+        "src/language-js/comments/handle-comments.js"
+      ]
+    },
+    {
+      "f2p": [
+        "16398.js - {\"semi\":false} format",
+        "16398.js format"
+      ],
+      "id": "prettier-93e5ff282bbf",
+      "target_files": [
+        "src/language-js/comments/handle-comments.js"
+      ]
+    },
+    {
+      "f2p": [
+        "unicode.html format"
+      ],
+      "id": "prettier-95b9a7393608",
+      "target_files": [
+        "src/main/front-matter/parse.js"
+      ]
+    },
+    {
+      "f2p": [
+        "sensitive.css - {\"singleQuote\":true} format",
+        "sensitive.css format"
+      ],
+      "id": "prettier-98e7568de42e",
+      "target_files": [
+        "src/language-css/clean.js",
+        "src/language-css/print/misc.js"
+      ]
+    },
+    {
+      "f2p": [
+        "test.yml - {\"proseWrap\":\"always\"} format"
+      ],
+      "id": "prettier-9e1f68a11d6e",
+      "target_files": [
+        "src/language-yaml/print/mapping-item.js"
+      ]
+    },
+    {
+      "f2p": [
+        "non-null-tagged-template-literals.ts format",
+        "tagged-template-literals.js format"
+      ],
+      "id": "prettier-ada3179db3e0",
+      "target_files": [
+        "src/language-js/needs-parens.js"
+      ]
+    },
+    {
+      "f2p": [
+        "issue-16692.js format"
+      ],
+      "id": "prettier-b3675c5a2f40",
+      "target_files": [
+        "src/language-css/loc.js",
+        "src/language-css/print/comma-separated-value-group.js"
+      ]
+    },
+    {
+      "f2p": [
+        "modules.css format"
+      ],
+      "id": "prettier-ba608f469d1f",
+      "target_files": [
+        "src/language-css/printer-postcss.js",
+        "src/language-css/utils/index.js"
+      ]
+    },
+    {
+      "f2p": [
+        "object-prototype-properties.html format"
+      ],
+      "id": "prettier-bbebbf998162",
+      "target_files": [
+        "src/language-html/utils/index.js"
+      ]
+    },
+    {
+      "f2p": [
+        "notext-end.md - {\"proseWrap\":\"always\"} format",
+        "notext-end.md - {\"proseWrap\":\"never\"} format",
+        "notext-end.md - {\"proseWrap\":\"preserve\"} format"
+      ],
+      "id": "prettier-bd25eec18cc3",
+      "target_files": [
+        "src/language-markdown/print-preprocess.js"
+      ]
+    },
+    {
+      "f2p": [
+        "optional-chaining.jsx [__babel_estree] format",
+        "optional-chaining.jsx [acorn] format",
+        "optional-chaining.jsx [espree] format",
+        "optional-chaining.jsx [meriyah] format",
+        "optional-chaining.jsx [typescript] format"
+      ],
+      "id": "prettier-bfb7d5b99cb5",
+      "target_files": [
+        "src/language-js/print/jsx.js"
+      ]
+    },
+    {
+      "f2p": [
+        "type-assertion.ts - {\"semi\":false} format"
+      ],
+      "id": "prettier-d13ed8f81e42",
+      "target_files": [
+        "src/language-js/print/type-assertion.js",
+        "src/language-js/semicolon/semicolon.js"
+      ]
+    },
+    {
+      "f2p": [
+        "issue-11100.ts format"
+      ],
+      "id": "prettier-d8b4cf468cec",
+      "target_files": [
+        "src/language-js/comments/handle-comments.js"
+      ]
+    },
+    {
+      "f2p": [
+        "`printDocToString` should not manipulate docs"
+      ],
+      "id": "prettier-de52a4011d54",
+      "target_files": [
+        "src/document/printer.js"
+      ]
+    },
+    {
+      "f2p": [
+        "issue-16927.ts format"
+      ],
+      "id": "prettier-e3c6f391ae13",
+      "target_files": [
+        "src/language-js/print/object.js"
+      ]
+    },
+    {
+      "f2p": [
+        "16067.ts - {\"semi\":false} format",
+        "16067.ts format"
+      ],
+      "id": "prettier-eb811ed85597",
+      "target_files": [
+        "src/language-js/print/arrow-function.js"
+      ]
+    },
+    {
+      "f2p": [
+        "optional.js format"
+      ],
+      "id": "prettier-f48bf8d22cc2",
+      "target_files": [
+        "src/language-js/parentheses/needs-parentheses.js"
+      ]
+    },
+    {
+      "f2p": [
+        "number file/dir (status)",
+        "number file/dir (stderr)",
+        "number file/dir (stdout)"
+      ],
+      "id": "prettier-f70b91388988",
+      "target_files": [
+        "src/cli/options/create-minimist-options.js",
+        "src/cli/options/parse-cli-arguments.js"
+      ]
+    }
+  ],
+  "task": "prettier",
+  "version": "3.3.3"
+}

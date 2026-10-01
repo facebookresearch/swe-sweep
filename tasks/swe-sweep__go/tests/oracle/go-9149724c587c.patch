@@ -1,0 +1,15 @@
+diff --git a/src/cmd/internal/objfile/macho.go b/src/cmd/internal/objfile/macho.go
+index 6d65600c3b..8394639912 100644
+--- a/src/cmd/internal/objfile/macho.go
++++ b/src/cmd/internal/objfile/macho.go
+@@ -49,6 +49,10 @@ func (f *machoFile) symbols() ([]Sym, error) {
+ 			addrs = append(addrs, s.Value)
+ 		}
+ 	}
++	// Add section ends as markers. See issue 78811.
++	for _, sect := range f.macho.Sections {
++		addrs = append(addrs, sect.Addr+sect.Size)
++	}
+ 	sort.Sort(uint64s(addrs))
+ 
+ 	var syms []Sym

@@ -1,0 +1,18 @@
+diff --git a/src/Symfony/Component/BrowserKit/Tests/AbstractBrowserTest.php b/src/Symfony/Component/BrowserKit/Tests/AbstractBrowserTest.php
+index 504cc95878e..9c4bf050c74 100644
+--- a/src/Symfony/Component/BrowserKit/Tests/AbstractBrowserTest.php
++++ b/src/Symfony/Component/BrowserKit/Tests/AbstractBrowserTest.php
+@@ -889,4 +889,13 @@ class AbstractBrowserTest extends TestCase
+ 
+         $client->getInternalRequest();
+     }
++
++    public function testHistoryWithParametersAndNoSlash()
++    {
++        $client = $this->getBrowser();
++        $client->request('GET', 'https://www.example.com?the=value');
++        $client->request('GET', '/path/?parameter=value');
++
++        $this->assertSame('https://www.example.com/path/?parameter=value', $client->getRequest()->getUri(), '->request() history provides proper base.');
++    }
+ }

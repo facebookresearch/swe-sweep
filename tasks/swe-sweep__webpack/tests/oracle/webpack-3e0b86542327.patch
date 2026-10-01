@@ -1,0 +1,35 @@
+diff --git a/lib/dependencies/CommonJsImportsParserPlugin.js b/lib/dependencies/CommonJsImportsParserPlugin.js
+index d9744396d..47013f426 100644
+--- a/lib/dependencies/CommonJsImportsParserPlugin.js
++++ b/lib/dependencies/CommonJsImportsParserPlugin.js
+@@ -282,7 +282,7 @@ class CommonJsImportsParserPlugin {
+ 				dep.asiSafe = !parser.isAsiPosition(expr.range[0]);
+ 				dep.optional = !!parser.scope.inTry;
+ 				dep.loc = expr.loc;
+-				parser.state.module.addDependency(dep);
++				parser.state.current.addDependency(dep);
+ 				return true;
+ 			}
+ 		};
+@@ -299,7 +299,7 @@ class CommonJsImportsParserPlugin {
+ 				dep.asiSafe = !parser.isAsiPosition(expr.range[0]);
+ 				dep.optional = !!parser.scope.inTry;
+ 				dep.loc = expr.callee.loc;
+-				parser.state.module.addDependency(dep);
++				parser.state.current.addDependency(dep);
+ 				parser.walkExpressions(expr.arguments);
+ 				return true;
+ 			}
+diff --git a/lib/dependencies/URLPlugin.js b/lib/dependencies/URLPlugin.js
+index 94c1912e6..fc0b15c31 100644
+--- a/lib/dependencies/URLPlugin.js
++++ b/lib/dependencies/URLPlugin.js
+@@ -82,7 +82,7 @@ class URLPlugin {
+ 							relative
+ 						);
+ 						dep.loc = expr.loc;
+-						parser.state.module.addDependency(dep);
++						parser.state.current.addDependency(dep);
+ 						InnerGraph.onUsage(parser.state, e => (dep.usedByExports = e));
+ 						return true;
+ 					});

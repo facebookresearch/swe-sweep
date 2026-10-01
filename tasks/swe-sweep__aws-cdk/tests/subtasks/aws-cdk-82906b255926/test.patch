@@ -1,0 +1,13 @@
+diff --git a/packages/@aws-cdk/aws-cognito/test/user-pool.test.ts b/packages/@aws-cdk/aws-cognito/test/user-pool.test.ts
+index 7b132803da..5aa6c48ee9 100644
+--- a/packages/@aws-cdk/aws-cognito/test/user-pool.test.ts
++++ b/packages/@aws-cdk/aws-cognito/test/user-pool.test.ts
+@@ -403,7 +403,7 @@ describe('User Pool', () => {
+ 
+     // WHEN
+     userpool.addTrigger(UserPoolOperation.CREATE_AUTH_CHALLENGE, fn1);
+-    expect(() => userpool.addTrigger(UserPoolOperation.CREATE_AUTH_CHALLENGE, fn2)).toThrow(/already exists/);
++    expect(() => userpool.addTrigger(UserPoolOperation.CREATE_AUTH_CHALLENGE, fn2)).toThrow(/createAuthChallenge already exists/);
+   });
+ 
+   test('no username aliases specified', () => {

@@ -1,0 +1,26 @@
+diff --git a/pkg/analysis_server/lib/src/lsp/handlers/handler_implementation.dart b/pkg/analysis_server/lib/src/lsp/handlers/handler_implementation.dart
+index 4af92f55a3e..b2fad844ea5 100644
+--- a/pkg/analysis_server/lib/src/lsp/handlers/handler_implementation.dart
++++ b/pkg/analysis_server/lib/src/lsp/handlers/handler_implementation.dart
+@@ -76,7 +76,7 @@ class ImplementationHandler
+                 // Filter based on type, so when searching for members we don't
+                 // include any intermediate classes that don't have
+                 // implementations for the method.
+-                var member = helper.findMemberElement(e);
++                var member = helper.findMemberElement(e)?.nonSynthetic;
+                 if (member == null) return null;
+                 offset = member.nameOffset;
+                 length = member.nameLength;
+diff --git a/pkg/analysis_server/lib/src/lsp/mapping.dart b/pkg/analysis_server/lib/src/lsp/mapping.dart
+index 3f4f6918752..5edf791f82a 100644
+--- a/pkg/analysis_server/lib/src/lsp/mapping.dart
++++ b/pkg/analysis_server/lib/src/lsp/mapping.dart
+@@ -1170,6 +1170,8 @@ lsp.Position toPosition(server.CharacterLocation location) {
+ }
+ 
+ lsp.Range toRange(server.LineInfo lineInfo, int offset, int length) {
++  assert(offset >= 0);
++  assert(length >= 0);
+   final start = lineInfo.getLocation(offset);
+   final end = lineInfo.getLocation(offset + length);
+ 

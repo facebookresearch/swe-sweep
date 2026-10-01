@@ -1,0 +1,57 @@
+diff --git a/pkg/analysis_server/lib/src/services/correction/dart/add_call_super.dart b/pkg/analysis_server/lib/src/services/correction/dart/add_call_super.dart
+index 88b1aaa..1f3fb18 100644
+--- a/pkg/analysis_server/lib/src/services/correction/dart/add_call_super.dart
++++ b/pkg/analysis_server/lib/src/services/correction/dart/add_call_super.dart
+@@ -9,7 +9,6 @@ import 'package:analyzer/src/dart/element/inheritance_manager3.dart';
+ import 'package:analyzer_plugin/utilities/change_builder/change_builder_core.dart';
+ import 'package:analyzer_plugin/utilities/fixes/fixes.dart';
+ import 'package:analyzer_plugin/utilities/range_factory.dart';
+-import 'package:collection/collection.dart';
+ 
+ class AddCallSuper extends CorrectionProducer {
+   var _addition = '';
+@@ -41,23 +40,30 @@ class AddCallSuper extends CorrectionProducer {
+     var nameObj = Name(classElement.library.source.uri, name);
+     var overridden = InheritanceManager3().getInherited2(classElement, nameObj);
+     if (overridden == null) return;
+-    var overriddenParameters = overridden.parameters.map((p) => p.name);
++    var overriddenNamedParameters = overridden.parameters
++        .where((p) => p.isNamed)
++        .map((p) => p.name);
+ 
+     var body = methodDeclaration.body;
+     var parameters = methodDeclaration.parameters?.parameters;
+-    var argumentList = parameters
+-            ?.map((p) {
+-              var name = p.name?.lexeme;
+-              if (overriddenParameters.contains(name)) {
+-                return p.isNamed ? '$name: $name' : name;
+-              }
+-              return null;
+-            })
+-            .whereNotNull()
+-            .join(', ') ??
+-        '';
+-
+-    _addition = '$name($argumentList)';
++    var arguments = <String>[];
++    if (parameters != null) {
++      for (var i = 0; i < parameters.length; i++) {
++        var p = parameters[i];
++        var name = p.name?.lexeme;
++        if (name == null) continue;
++        if (p.isPositional) {
++          if (i < overridden.parameters.length &&
++              overridden.parameters[i].isPositional) {
++            arguments.add(name);
++          }
++        } else if (overriddenNamedParameters.contains(name)) {
++          arguments.add(p.isNamed ? '$name: $name' : name);
++        }
++      }
++    }
++
++    _addition = '$name(${arguments.join(', ')})';
+ 
+     if (body is BlockFunctionBody) {
+       await _block(builder, body);

@@ -1,0 +1,13 @@
+diff --git a/numpy/ma/core.py b/numpy/ma/core.py
+index 9efe50a600..c438af3adf 100644
+--- a/numpy/ma/core.py
++++ b/numpy/ma/core.py
+@@ -8053,7 +8053,7 @@ def _convolve_or_correlate(f, a, v, mode, propagate_mask):
+         data = f(getdata(a), getdata(v), mode=mode)
+     else:
+         # results which are not contributed to by any pair of valid elements
+-        mask = ~f(~getmaskarray(a), ~getmaskarray(v))
++        mask = ~f(~getmaskarray(a), ~getmaskarray(v), mode=mode)
+         data = f(filled(a, 0), filled(v, 0), mode=mode)
+ 
+     return masked_array(data, mask=mask)

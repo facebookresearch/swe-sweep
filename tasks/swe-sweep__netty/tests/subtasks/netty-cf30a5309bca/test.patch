@@ -1,0 +1,20 @@
+diff --git a/common/src/test/java/io/netty/util/AsciiStringCharacterTest.java b/common/src/test/java/io/netty/util/AsciiStringCharacterTest.java
+index deff4267d6..7534bb40de 100644
+--- a/common/src/test/java/io/netty/util/AsciiStringCharacterTest.java
++++ b/common/src/test/java/io/netty/util/AsciiStringCharacterTest.java
+@@ -37,6 +37,15 @@ import static org.junit.Assert.assertTrue;
+ public class AsciiStringCharacterTest {
+     private static final Random r = new Random();
+ 
++    @Test
++    public void testContentEqualsIgnoreCase() {
++        byte[] bytes = { 32, 'a' };
++        AsciiString asciiString = new AsciiString(bytes, 1, 1, false);
++        // https://github.com/netty/netty/issues/9475
++        assertFalse(asciiString.contentEqualsIgnoreCase("b"));
++        assertFalse(asciiString.contentEqualsIgnoreCase(AsciiString.of("b")));
++    }
++
+     @Test
+     public void testGetBytesStringBuilder() {
+         final StringBuilder b = new StringBuilder();

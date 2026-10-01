@@ -1,0 +1,15 @@
+diff --git a/lib/helpers/populate/assignVals.js b/lib/helpers/populate/assignVals.js
+index eeeb6c622..9aff29fd5 100644
+--- a/lib/helpers/populate/assignVals.js
++++ b/lib/helpers/populate/assignVals.js
+@@ -101,8 +101,8 @@ module.exports = function assignVals(o) {
+       valueToSet = numDocs(rawIds[i]);
+     } else if (Array.isArray(o.match)) {
+       valueToSet = Array.isArray(rawIds[i]) ?
+-        rawIds[i].filter(sift(o.match[i])) :
+-        [rawIds[i]].filter(sift(o.match[i]))[0];
++        rawIds[i].filter(v => v == null || sift(o.match[i])(v)) :
++        [rawIds[i]].filter(v => v == null || sift(o.match[i])(v))[0];
+     } else {
+       valueToSet = rawIds[i];
+     }

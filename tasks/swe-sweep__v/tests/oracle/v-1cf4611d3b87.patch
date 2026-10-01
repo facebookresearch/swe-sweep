@@ -1,0 +1,13 @@
+diff --git a/vlib/builtin/string_interpolation.v b/vlib/builtin/string_interpolation.v
+index ecae53e44..cdc28f756 100644
+--- a/vlib/builtin/string_interpolation.v
++++ b/vlib/builtin/string_interpolation.v
+@@ -195,7 +195,7 @@ fn (data &StrIntpData) process_str_intp_data(mut sb strings.Builder) {
+ 	}
+ 
+ 	// allign
+-	if fmt_pad_ch == 0 {
++	if fmt_pad_ch == 0 || pad_ch == `0` {
+ 		match allign {
+ 			0 { bf.allign = .left }
+ 			1 { bf.allign = .right }

@@ -1,0 +1,85 @@
+diff --git a/tests/ui/exhaustive_items.fixed b/tests/ui/exhaustive_items.fixed
+index 79c74aeef..3b2f33dbd 100644
+--- a/tests/ui/exhaustive_items.fixed
++++ b/tests/ui/exhaustive_items.fixed
+@@ -1,3 +1,4 @@
++#![feature(default_field_values)]
+ #![deny(clippy::exhaustive_enums, clippy::exhaustive_structs)]
+ #![allow(unused)]
+ 
+@@ -90,3 +91,9 @@ pub mod structs {
+         pub bar: String,
+     }
+ }
++
++pub mod issue14992 {
++    pub struct A {
++        pub a: isize = 42,
++    }
++}
+diff --git a/tests/ui/exhaustive_items.rs b/tests/ui/exhaustive_items.rs
+index 4e851f4c4..b0a6a7170 100644
+--- a/tests/ui/exhaustive_items.rs
++++ b/tests/ui/exhaustive_items.rs
+@@ -1,3 +1,4 @@
++#![feature(default_field_values)]
+ #![deny(clippy::exhaustive_enums, clippy::exhaustive_structs)]
+ #![allow(unused)]
+ 
+@@ -87,3 +88,9 @@ pub mod structs {
+         pub bar: String,
+     }
+ }
++
++pub mod issue14992 {
++    pub struct A {
++        pub a: isize = 42,
++    }
++}
+diff --git a/tests/ui/exhaustive_items.stderr b/tests/ui/exhaustive_items.stderr
+index c92c8a9ef..55928fa45 100644
+--- a/tests/ui/exhaustive_items.stderr
++++ b/tests/ui/exhaustive_items.stderr
+@@ -1,5 +1,5 @@
+ error: exported enums should not be exhaustive
+-  --> tests/ui/exhaustive_items.rs:9:5
++  --> tests/ui/exhaustive_items.rs:10:5
+    |
+ LL | /     pub enum Exhaustive {
+ LL | |
+@@ -11,7 +11,7 @@ LL | |     }
+    | |_____^
+    |
+ note: the lint level is defined here
+-  --> tests/ui/exhaustive_items.rs:1:9
++  --> tests/ui/exhaustive_items.rs:2:9
+    |
+ LL | #![deny(clippy::exhaustive_enums, clippy::exhaustive_structs)]
+    |         ^^^^^^^^^^^^^^^^^^^^^^^^
+@@ -22,7 +22,7 @@ LL ~     pub enum Exhaustive {
+    |
+ 
+ error: exported enums should not be exhaustive
+-  --> tests/ui/exhaustive_items.rs:19:5
++  --> tests/ui/exhaustive_items.rs:20:5
+    |
+ LL | /     pub enum ExhaustiveWithAttrs {
+ LL | |
+@@ -40,7 +40,7 @@ LL ~     pub enum ExhaustiveWithAttrs {
+    |
+ 
+ error: exported structs should not be exhaustive
+-  --> tests/ui/exhaustive_items.rs:55:5
++  --> tests/ui/exhaustive_items.rs:56:5
+    |
+ LL | /     pub struct Exhaustive {
+ LL | |
+@@ -50,7 +50,7 @@ LL | |     }
+    | |_____^
+    |
+ note: the lint level is defined here
+-  --> tests/ui/exhaustive_items.rs:1:35
++  --> tests/ui/exhaustive_items.rs:2:35
+    |
+ LL | #![deny(clippy::exhaustive_enums, clippy::exhaustive_structs)]
+    |                                   ^^^^^^^^^^^^^^^^^^^^^^^^^^

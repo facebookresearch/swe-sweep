@@ -1,0 +1,90 @@
+diff --git a/xarray/plot/plot.py b/xarray/plot/plot.py
+index af860b20..833d7eb8 100644
+--- a/xarray/plot/plot.py
++++ b/xarray/plot/plot.py
+@@ -280,7 +280,8 @@ def plot(
+     col_wrap : int, optional
+         Use together with ``col`` to wrap faceted plots.
+     ax : matplotlib axes object, optional
+-        If ``None``, use the current axes. Not applicable when using facets.
++        Axes on which to plot. By default, use the current axes.
++        Mutually exclusive with ``size``, ``figsize`` and facets.
+     rtol : float, optional
+         Relative tolerance used to determine if the indexes
+         are uniformly spaced. Usually a small positive number.
+diff --git a/xarray/plot/utils.py b/xarray/plot/utils.py
+index f09d1eb8..654c86e0 100644
+--- a/xarray/plot/utils.py
++++ b/xarray/plot/utils.py
+@@ -4,6 +4,7 @@ import warnings
+ from datetime import datetime
+ from inspect import getfullargspec
+ from typing import Any, Iterable, Mapping, Tuple, Union
++from matplotlib.axes import Axes
+ 
+ import numpy as np
+ import pandas as pd
+@@ -415,7 +416,13 @@ def _assert_valid_xy(darray, xy, name):
+         raise ValueError(f"{name} must be one of None, '{valid_xy_str}'")
+ 
+ 
+-def get_axis(figsize=None, size=None, aspect=None, ax=None, **kwargs):
++def get_axis(
++    figsize: Iterable[float] | None = None,
++    size: float | None = None,
++    aspect: float | None = None,
++    ax: Axes | None = None,
++    **subplot_kws: Any,
++) -> Axes:
+     try:
+         import matplotlib as mpl
+         import matplotlib.pyplot as plt
+@@ -427,28 +434,32 @@ def get_axis(figsize=None, size=None, aspect=None, ax=None, **kwargs):
+             raise ValueError("cannot provide both `figsize` and `ax` arguments")
+         if size is not None:
+             raise ValueError("cannot provide both `figsize` and `size` arguments")
+-        _, ax = plt.subplots(figsize=figsize)
+-    elif size is not None:
++        _, ax = plt.subplots(figsize=figsize, subplot_kw=subplot_kws)
++        return ax
++
++    if size is not None:
+         if ax is not None:
+             raise ValueError("cannot provide both `size` and `ax` arguments")
+         if aspect is None:
+             width, height = mpl.rcParams["figure.figsize"]
+             aspect = width / height
+         figsize = (size * aspect, size)
+-        _, ax = plt.subplots(figsize=figsize)
+-    elif aspect is not None:
++        _, ax = plt.subplots(figsize=figsize, subplot_kw=subplot_kws)
++        return ax
++
++    if aspect is not None:
+         raise ValueError("cannot provide `aspect` argument without `size`")
+ 
+-    if kwargs and ax is not None:
++    if subplot_kws and ax is not None:
+         raise ValueError("cannot use subplot_kws with existing ax")
+ 
+     if ax is None:
+-        ax = _maybe_gca(**kwargs)
++        ax = _maybe_gca(**subplot_kws)
+ 
+     return ax
+ 
+ 
+-def _maybe_gca(**kwargs):
++def _maybe_gca(**subplot_kws: Any) -> Axes:
+ 
+     import matplotlib.pyplot as plt
+ 
+@@ -460,7 +471,7 @@ def _maybe_gca(**kwargs):
+         # can not pass kwargs to active axes
+         return plt.gca()
+ 
+-    return plt.axes(**kwargs)
++    return plt.axes(**subplot_kws)
+ 
+ 
+ def _get_units_from_attrs(da):

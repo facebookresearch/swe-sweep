@@ -1,0 +1,24 @@
+diff --git a/tests/lean/split_mvars_target.lean b/tests/lean/split_mvars_target.lean
+new file mode 100644
+index 0000000000..dac8fcd13d
+--- /dev/null
++++ b/tests/lean/split_mvars_target.lean
+@@ -0,0 +1,15 @@
++/-!
++Tests that `split` works when there are metavariables in the target.
++-/
++theorem split_subgoals {x : Option Nat × Nat} :
++  match x.fst with
++  | some _ => True
++  | none => True
++  := by
++  have h {P : Prop} {x'} : (x' = 4 ∧ P) → P := by simp
++  apply h
++  split
++  rotate_right
++  · exact 4
++  · trivial
++  · trivial
+diff --git a/tests/lean/split_mvars_target.lean.expected.out b/tests/lean/split_mvars_target.lean.expected.out
+new file mode 100644
+index 0000000000..e69de29bb2

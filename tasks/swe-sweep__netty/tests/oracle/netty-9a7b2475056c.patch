@@ -1,0 +1,22 @@
+diff --git a/codec-http/src/main/java/io/netty/handler/codec/http/HttpContentEncoder.java b/codec-http/src/main/java/io/netty/handler/codec/http/HttpContentEncoder.java
+index e9c50260f3..49d263655d 100644
+--- a/codec-http/src/main/java/io/netty/handler/codec/http/HttpContentEncoder.java
++++ b/codec-http/src/main/java/io/netty/handler/codec/http/HttpContentEncoder.java
+@@ -142,7 +142,7 @@ public abstract class HttpContentEncoder extends MessageToMessageCodec<HttpReque
+                     if (isFull) {
+                         out.add(ReferenceCountUtil.retain(res));
+                     } else {
+-                        out.add(res);
++                        out.add(ReferenceCountUtil.retain(res));
+                         // Pass through all following contents.
+                         state = State.PASS_THROUGH;
+                     }
+@@ -165,7 +165,7 @@ public abstract class HttpContentEncoder extends MessageToMessageCodec<HttpReque
+                     if (isFull) {
+                         out.add(ReferenceCountUtil.retain(res));
+                     } else {
+-                        out.add(res);
++                        out.add(ReferenceCountUtil.retain(res));
+                         // Pass through all following contents.
+                         state = State.PASS_THROUGH;
+                     }

@@ -1,0 +1,45 @@
+diff --git a/tests/iter/titer_issues.nim b/tests/iter/titer_issues.nim
+index 9c7a5eab0..7dee9792d 100644
+--- a/tests/iter/titer_issues.nim
++++ b/tests/iter/titer_issues.nim
+@@ -29,6 +29,10 @@
+ 9018
+ @[1, 2]
+ @[1, 2, 3]
++In defer
++trying
++exception caught
++finally block
+ '''
+ """
+ 
+@@ -251,3 +255,29 @@ block:
+ 
+   for x in ff(@[1, 2], @[1, 2, 3]):
+     echo x
++
++# bug #18824
++iterator poc_iterator: int {.closure.}  =
++  block:
++    try:
++      break
++    finally:
++      echo "In defer"
++
++for _ in poc_iterator():
++  discard
++
++# bug #20624
++iterator tryFinally() {.closure.} =
++  block route:
++    try:
++      echo "trying"
++      raise
++    except:
++      echo "exception caught"
++      break route
++    finally:
++      echo "finally block"
++
++var x = tryFinally
++x()

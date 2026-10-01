@@ -1,0 +1,17 @@
+diff --git a/tests/test_locales.py b/tests/test_locales.py
+index 099f6f6..bef91d7 100644
+--- a/tests/test_locales.py
++++ b/tests/test_locales.py
+@@ -750,6 +750,12 @@ class TestHungarianLocale:
+         assert self.locale._format_timeframe("hours", 2) == "2 óra"
+         assert self.locale._format_timeframe("hour", 0) == "egy órával"
+         assert self.locale._format_timeframe("hours", -2) == "2 órával"
++
++        # Week(s)
++        assert self.locale._format_timeframe("week", -1) == "egy héttel"
++        assert self.locale._format_timeframe("week", 1) == "egy hét"
++        assert self.locale._format_timeframe("weeks", -2) == "2 héttel"
++        assert self.locale._format_timeframe("weeks", 2) == "2 hét"
+         assert self.locale._format_timeframe("now", 0) == "éppen most"
+ 
+ 

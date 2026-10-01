@@ -1,0 +1,23 @@
+diff --git a/src/Symfony/Component/Intl/Tests/Transliterator/EmojiTransliteratorTest.php b/src/Symfony/Component/Intl/Tests/Transliterator/EmojiTransliteratorTest.php
+index ccc379b09ac..a01bb0d2f9b 100644
+--- a/src/Symfony/Component/Intl/Tests/Transliterator/EmojiTransliteratorTest.php
++++ b/src/Symfony/Component/Intl/Tests/Transliterator/EmojiTransliteratorTest.php
+@@ -177,4 +177,18 @@ class EmojiTransliteratorTest extends TestCase
+         $this->expectException(\IntlException::class);
+         EmojiTransliterator::create('emoji-en', EmojiTransliterator::REVERSE);
+     }
++
++    public function testGetErrorCodeWithUninitializedTransliterator()
++    {
++        $transliterator = EmojiTransliterator::create('emoji-en');
++
++        $this->assertSame(0, $transliterator->getErrorCode());
++    }
++
++    public function testGetErrorMessageWithUninitializedTransliterator()
++    {
++        $transliterator = EmojiTransliterator::create('emoji-en');
++
++        $this->assertFalse($transliterator->getErrorMessage());
++    }
+ }

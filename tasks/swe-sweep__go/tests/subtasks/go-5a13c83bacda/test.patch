@@ -1,0 +1,15 @@
+diff --git a/src/runtime/metrics/description_test.go b/src/runtime/metrics/description_test.go
+--- a/src/runtime/metrics/description_test.go
++++ b/src/runtime/metrics/description_test.go
+@@ -112,4 +112,11 @@ func TestDescriptionDocs(t *testing.T) {
+ 			t.Errorf("stale documentation for non-existent metric: %s", name)
+ 		}
+ 	}
+ }
++
++func TestReadEmptySlice(t *testing.T) {
++	// Test that Read does not panic when given an empty slice.
++	// This should be a no-op.
++	metrics.Read(nil)
++	metrics.Read([]metrics.Sample{})
++}

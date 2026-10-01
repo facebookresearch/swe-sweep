@@ -1,0 +1,13 @@
+diff --git a/activestorage/lib/active_storage/service/mirror_service.rb b/activestorage/lib/active_storage/service/mirror_service.rb
+index 09c4e4d7f94..afd62c9db6f 100644
+--- a/activestorage/lib/active_storage/service/mirror_service.rb
++++ b/activestorage/lib/active_storage/service/mirror_service.rb
+@@ -66,7 +66,7 @@ module ActiveStorage
+     def mirror(key, checksum:)
+       instrument :mirror, key: key, checksum: checksum do
+         if (mirrors_in_need_of_mirroring = mirrors.select { |service| !service.exist?(key) }).any?
+-          primary.open(key, checksum: checksum) do |io|
++          primary.open(key, checksum: checksum, verify: checksum.present?) do |io|
+             mirrors_in_need_of_mirroring.each do |service|
+               io.rewind
+               service.upload key, io, checksum: checksum

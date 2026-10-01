@@ -1,0 +1,31 @@
+diff --git a/vlib/v/parser/parser.v b/vlib/v/parser/parser.v
+index 71384ffd7..cc907b451 100644
+--- a/vlib/v/parser/parser.v
++++ b/vlib/v/parser/parser.v
+@@ -4059,8 +4059,9 @@ fn (mut p Parser) enum_decl() ast.EnumDecl {
+ 		typ_pos = p.tok.pos()
+ 		enum_type = p.parse_type()
+ 	}
++	mut enum_decl_comments := p.eat_comments()
+ 	p.check(.lcbr)
+-	enum_decl_comments := p.eat_comments()
++	enum_decl_comments << p.eat_comments()
+ 	senum_type := p.table.get_type_name(enum_type)
+ 	mut vals := []string{}
+ 	// mut default_exprs := []ast.Expr{}
+diff --git a/vlib/v/parser/struct.v b/vlib/v/parser/struct.v
+index 999312c3f..9748de70f 100644
+--- a/vlib/v/parser/struct.v
++++ b/vlib/v/parser/struct.v
+@@ -533,9 +533,9 @@ fn (mut p Parser) interface_decl() ast.InterfaceDecl {
+ 		interface_name = p.prepend_mod(modless_name)
+ 	}
+ 	generic_types, _ := p.parse_generic_types()
+-	// println('interface decl $interface_name')
++	mut pre_comments := p.eat_comments()
+ 	p.check(.lcbr)
+-	pre_comments := p.eat_comments()
++	pre_comments << p.eat_comments()
+ 	if modless_name in p.imported_symbols {
+ 		p.error_with_pos('cannot register interface `${interface_name}`, this type was already imported',
+ 			name_pos)

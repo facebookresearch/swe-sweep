@@ -1,0 +1,25 @@
+diff --git a/tests/converter/m18986.nim b/tests/converter/m18986.nim
+new file mode 100644
+index 000000000..0ebf343ae
+--- /dev/null
++++ b/tests/converter/m18986.nim
+@@ -0,0 +1,3 @@
++import std/macros
++
++converter Lit*(x: uint): NimNode = newLit(x)
+diff --git a/tests/converter/t18986.nim b/tests/converter/t18986.nim
+new file mode 100644
+index 000000000..ef300fa49
+--- /dev/null
++++ b/tests/converter/t18986.nim
+@@ -0,0 +1,10 @@
++discard """
++  output: "Found a 0"
++"""
++
++import m18986 except Lit
++import std/macros
++
++# bug #18986
++var x = 0.uint
++echo "Found a ", x

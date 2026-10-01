@@ -1,0 +1,36 @@
+diff --git a/jerry-core/parser/js/js-scanner-util.c b/jerry-core/parser/js/js-scanner-util.c
+index 73a8ff81..58a0d5cc 100644
+--- a/jerry-core/parser/js/js-scanner-util.c
++++ b/jerry-core/parser/js/js-scanner-util.c
+@@ -546,17 +546,26 @@ scanner_pop_literal_pool (parser_context_t *context_p, /**< context */
+ 
+       no_declarations++;
+ 
+-      if (type & SCANNER_LITERAL_IS_FUNC)
+-      {
+-        no_declarations++;
+-      }
+-
+       if (no_reg || (no_var_reg && (type & (SCANNER_LITERAL_IS_VAR | SCANNER_LITERAL_IS_FUNC))))
+       {
+         type |= SCANNER_LITERAL_NO_REG;
+         literal_p->type = type;
+       }
+ 
++      if (type & SCANNER_LITERAL_IS_FUNC)
++      {
++        no_declarations++;
++
++#if !ENABLED (JERRY_ES2015)
++        if (type & SCANNER_LITERAL_IS_LOCAL)
++        {
++          /* Catch parameters cannot be functions. */
++          literal_p->type = (uint8_t) (type & ~SCANNER_LITERAL_IS_FUNC);
++          no_declarations--;
++        }
++#endif /* !ENABLED (JERRY_ES2015) */
++      }
++
+       intptr_t diff = (intptr_t) (literal_p->char_p - prev_source_p);
+ 
+       if (diff >= 1 && diff <= UINT8_MAX)

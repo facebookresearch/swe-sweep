@@ -1,0 +1,178 @@
+diff --git a/modules/openapi-generator/src/test/java/org/openapitools/codegen/java/JavaClientCodegenTest.java b/modules/openapi-generator/src/test/java/org/openapitools/codegen/java/JavaClientCodegenTest.java
+index 878e9358a02..49410305d19 100644
+--- a/modules/openapi-generator/src/test/java/org/openapitools/codegen/java/JavaClientCodegenTest.java
++++ b/modules/openapi-generator/src/test/java/org/openapitools/codegen/java/JavaClientCodegenTest.java
+@@ -17,6 +17,8 @@
+ package org.openapitools.codegen.java;
+ 
+ import static org.junit.Assert.assertNotNull;
++import static org.assertj.core.api.Assertions.assertThat;
++import static org.assertj.core.api.InstanceOfAssertFactories.FILE;
+ import static org.openapitools.codegen.TestUtils.assertFileContains;
+ import static org.openapitools.codegen.TestUtils.assertFileNotContains;
+ import static org.openapitools.codegen.TestUtils.validateJavaSourceFiles;
+@@ -2938,4 +2940,70 @@ public class JavaClientCodegenTest {
+         assertNotNull(apiFile);
+         JavaFileAssert.assertThat(apiFile).fileContains(expectedInnerEnumLines);
+     }
++
++    /**
++     * Regression test for <a href="https://github.com/OpenAPITools/openapi-generator/issues/6496">#6496</a>
++     */
++    @Test void doesNotGenerateJacksonToStringSerializerAnnotation_whenLibraryIsGson_andSerializeBigDecimalAsStringIsTrue() {
++        final CodegenConfigurator configurator = new CodegenConfigurator()
++            .setGeneratorName("java")
++            .setLibrary(JavaClientCodegen.OKHTTP_GSON)
++            .addAdditionalProperty(CodegenConstants.SERIALIZATION_LIBRARY, JavaClientCodegen.SERIALIZATION_LIBRARY_GSON)
++            .addAdditionalProperty(CodegenConstants.SERIALIZE_BIG_DECIMAL_AS_STRING, true)
++            .addGlobalProperty(CodegenConstants.MODELS, "FormatTest")
++            .addGlobalProperty(CodegenConstants.MODEL_DOCS, "false")
++            .addGlobalProperty(CodegenConstants.MODEL_TESTS, "false")
++            .setInputSpec("src/test/resources/2_0/java/issue-6496.yaml")
++            .setOutputDir(newTempFolder().toString().replace("\\", "/"));
++
++        List<File> files = new DefaultGenerator().opts(configurator.toClientOptInput()).generate();
++
++        assertThat(files).hasSize(1).first(FILE).content()
++            .doesNotContain(
++                "@JsonDeserialize(as = LinkedHashSet.class)",
++                "@JsonSerialize(using = ToStringSerializer.class)",
++                "com.fasterxml.jackson.databind.ser.std.ToStringSerializer",
++                "com.fasterxml.jackson.databind.annotation.JsonDeserialize",
++                "com.fasterxml.jackson.databind.annotation.JsonSerialize"
++            );
++    }
++
++    /**
++     * Test that fix for <a href="https://github.com/OpenAPITools/openapi-generator/issues/6496">#6496</a> has
++     * no unwanted side effects on the existing feature (Jackson + bigDecimalAsString)
++     */
++    @Test void generatesJacksonToStringSerializerAnnotation_whenLibraryIsJackson_andSerializeBigDecimalAsStringIsTrue() {
++        final CodegenConfigurator configurator = new CodegenConfigurator()
++            .setGeneratorName("java")
++            .setLibrary(JavaClientCodegen.NATIVE)
++            .addAdditionalProperty(CodegenConstants.SERIALIZATION_LIBRARY, JavaClientCodegen.SERIALIZATION_LIBRARY_JACKSON)
++            .addAdditionalProperty(CodegenConstants.SERIALIZE_BIG_DECIMAL_AS_STRING, true)
++            .addAdditionalProperty(AbstractJavaCodegen.OPENAPI_NULLABLE, false)
++            .addGlobalProperty(CodegenConstants.MODELS, "FormatTest")
++            .addGlobalProperty(CodegenConstants.MODEL_DOCS, "false")
++            .addGlobalProperty(CodegenConstants.MODEL_TESTS, "false")
++            .setInputSpec("src/test/resources/2_0/java/issue-6496.yaml")
++            .setOutputDir(newTempFolder().toString().replace("\\", "/"));
++
++        List<File> files = new DefaultGenerator().opts(configurator.toClientOptInput()).generate();
++
++        assertThat(files).hasSize(1).first(FILE).content()
++            .contains(
++                "@JsonDeserialize(as = LinkedHashSet.class)",
++                "@JsonSerialize(using = ToStringSerializer.class)",
++                "com.fasterxml.jackson.databind.ser.std.ToStringSerializer",
++                "com.fasterxml.jackson.databind.annotation.JsonDeserialize",
++                "com.fasterxml.jackson.databind.annotation.JsonSerialize"
++            );
++    }
++
++    static private Path newTempFolder() {
++        try {
++            var tempDir = Files.createTempDirectory("test");
++            tempDir.toFile().deleteOnExit();
++            return tempDir;
++        } catch (IOException e) {
++            throw new RuntimeException(e);
++        }
++    }
+ }
+diff --git a/modules/openapi-generator/src/test/resources/2_0/java/issue-6496.yaml b/modules/openapi-generator/src/test/resources/2_0/java/issue-6496.yaml
+new file mode 100644
+index 00000000000..17ddfae0456
+--- /dev/null
++++ b/modules/openapi-generator/src/test/resources/2_0/java/issue-6496.yaml
+@@ -0,0 +1,88 @@
++swagger: '2.0'
++info:
++  description: "This spec is mainly for testing Petstore server and contains fake endpoints, models. Please do not use this for any other purpose. Special characters: \" \\"
++  version: 1.0.0
++  title: OpenAPI Petstore
++  license:
++    name: Apache-2.0
++    url: 'https://www.apache.org/licenses/LICENSE-2.0.html'
++basePath: /v2
++schemes:
++  - http
++paths:
++  /:
++    get:
++      operationId: addPet
++      responses:
++        '200':
++          description: successful operation
++definitions:
++  FormatTest:
++    type: object
++    required:
++      - number
++      - byte
++      - date
++      - password
++    properties:
++      integer:
++        type: integer
++        maximum: 100
++        minimum: 10
++      int32:
++        type: integer
++        format: int32
++        maximum: 200
++        minimum: 20
++      int64:
++        type: integer
++        format: int64
++      number:
++        maximum: 543.2
++        minimum: 32.1
++        type: number
++      float:
++        type: number
++        format: float
++        maximum: 987.6
++        minimum: 54.3
++      double:
++        type: number
++        format: double
++        maximum: 123.4
++        minimum: 67.8
++      string:
++        type: string
++        pattern: /[a-z]/i
++      byte:
++        type: string
++        format: byte
++      binary:
++        type: string
++        format: binary
++      date:
++        type: string
++        format: date
++      dateTime:
++        type: string
++        format: date-time
++      uuid:
++        type: string
++        format: uuid
++        example: 72f98069-206d-4f12-9f12-3d1e525a8e84
++      password:
++        type: string
++        format: password
++        maxLength: 64
++        minLength: 10
++      BigDecimal:
++        type: string
++        format: number
++      enumContainer:
++        type: array
++        uniqueItems: true
++        items:
++          enum:
++            - placed
++            - approved
++            - delivered

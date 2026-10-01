@@ -1,0 +1,13 @@
+diff --git a/mpmath/matrices/linalg.py b/mpmath/matrices/linalg.py
+index ceb5f621..ff757803 100644
+--- a/mpmath/matrices/linalg.py
++++ b/mpmath/matrices/linalg.py
+@@ -530,7 +530,7 @@ class LinearAlgebraMethods:
+             for i in xrange(n):
+                 b[i] -= ctx.fsum(L[i,j] * b[j] for j in xrange(i))
+                 b[i] /= L[i,i]
+-            x = ctx.U_solve(L.T, b)
++            x = ctx.U_solve(L.H, b)
+             return x
+         finally:
+             ctx.prec = prec

@@ -1,0 +1,29 @@
+diff --git a/tokio/src/runtime/builder.rs b/tokio/src/runtime/builder.rs
+--- a/tokio/src/runtime/builder.rs
++++ b/tokio/src/runtime/builder.rs
+@@ -788,19 +788,25 @@ impl Builder {
+     /// picking up new events requires extra synchronization and syscall overhead,
+     /// so if tasks generally complete their polling quickly, a higher event interval
+     /// will minimize that overhead while still keeping the scheduler responsive to
+     /// events.
+     ///
++    /// # Panics
++    ///
++    /// This function will panic if 0 is passed as an argument.
++    ///
+     /// # Examples
+     ///
+     /// ```
+     /// # use tokio::runtime;
+     /// # pub fn main() {
+     /// let rt = runtime::Builder::new_multi_thread()
+     ///     .event_interval(31)
+     ///     .build();
+     /// # }
+     /// ```
++    #[track_caller]
+     pub fn event_interval(&mut self, val: u32) -> &mut Self {
++        assert!(val > 0, "event_interval must be greater than 0");
+         self.event_interval = val;
+         self
+     }

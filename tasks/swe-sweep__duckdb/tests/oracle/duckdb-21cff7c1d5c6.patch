@@ -1,0 +1,19 @@
+diff --git a/src/storage/buffer/block_manager.cpp b/src/storage/buffer/block_manager.cpp
+index 0000000000..0000000001 100644
+--- a/src/storage/buffer/block_manager.cpp
++++ b/src/storage/buffer/block_manager.cpp
+@@ -45,6 +45,14 @@ shared_ptr<BlockHandle> BlockManager::ConvertToPersistent(block_id_t block_id, s
+ 	D_ASSERT(new_block->readers == 0);
+ 
+ 	// move the data from the old block into data for the new block
++	D_ASSERT(old_block->tag == old_block->memory_charge.tag);
++	if (old_block->tag != new_block->tag) {
++		const auto memory_charge_size = old_block->memory_charge.size;
++		old_block->memory_charge.Resize(0);
++		old_block->memory_charge.tag = new_block->tag;
++		old_block->memory_charge.Resize(memory_charge_size);
++	}
++
+ 	new_block->state = BlockState::BLOCK_LOADED;
+ 	new_block->buffer = ConvertBlock(block_id, *old_block->buffer);
+ 	new_block->memory_usage = old_block->memory_usage;

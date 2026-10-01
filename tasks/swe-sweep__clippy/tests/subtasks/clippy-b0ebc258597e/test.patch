@@ -1,0 +1,196 @@
+diff --git a/tests/ui/print_literal.fixed b/tests/ui/print_literal.fixed
+index 24c45a4a6..ebfe19c70 100644
+--- a/tests/ui/print_literal.fixed
++++ b/tests/ui/print_literal.fixed
+@@ -94,3 +94,14 @@ fn issue_13959() {
+ "
+     );
+ }
++
++fn issue_14930() {
++    println!("Hello x is {0:2$.1$}", 0.01, 2, 3);
++    //~^ print_literal
++    println!("Hello x is {0:2$.1$}", 0.01, 2, 3);
++    //~^ print_literal
++    println!("Hello x is {0:2$.1$}", 0.01, 2, 3);
++    //~^ print_literal
++    println!("Hello x is {0:2$.1$}", 0.01, 2, 3);
++    //~^ print_literal
++}
+diff --git a/tests/ui/print_literal.rs b/tests/ui/print_literal.rs
+index 42ae589ca..8f3d9be06 100644
+--- a/tests/ui/print_literal.rs
++++ b/tests/ui/print_literal.rs
+@@ -95,3 +95,14 @@ fn issue_13959() {
+ "#
+     );
+ }
++
++fn issue_14930() {
++    println!("Hello {3} is {0:2$.1$}", 0.01, 2, 3, "x");
++    //~^ print_literal
++    println!("Hello {2} is {0:3$.1$}", 0.01, 2, "x", 3);
++    //~^ print_literal
++    println!("Hello {1} is {0:3$.2$}", 0.01, "x", 2, 3);
++    //~^ print_literal
++    println!("Hello {0} is {1:3$.2$}", "x", 0.01, 2, 3);
++    //~^ print_literal
++}
+diff --git a/tests/ui/print_literal.stderr b/tests/ui/print_literal.stderr
+index da6630006..1c378017d 100644
+--- a/tests/ui/print_literal.stderr
++++ b/tests/ui/print_literal.stderr
+@@ -229,5 +229,53 @@ LL +         bar
+ LL ~ "
+    |
+ 
+-error: aborting due to 18 previous errors
++error: literal with an empty format string
++  --> tests/ui/print_literal.rs:100:52
++   |
++LL |     println!("Hello {3} is {0:2$.1$}", 0.01, 2, 3, "x");
++   |                                                    ^^^
++   |
++help: try
++   |
++LL -     println!("Hello {3} is {0:2$.1$}", 0.01, 2, 3, "x");
++LL +     println!("Hello x is {0:2$.1$}", 0.01, 2, 3);
++   |
++
++error: literal with an empty format string
++  --> tests/ui/print_literal.rs:102:49
++   |
++LL |     println!("Hello {2} is {0:3$.1$}", 0.01, 2, "x", 3);
++   |                                                 ^^^
++   |
++help: try
++   |
++LL -     println!("Hello {2} is {0:3$.1$}", 0.01, 2, "x", 3);
++LL +     println!("Hello x is {0:2$.1$}", 0.01, 2, 3);
++   |
++
++error: literal with an empty format string
++  --> tests/ui/print_literal.rs:104:46
++   |
++LL |     println!("Hello {1} is {0:3$.2$}", 0.01, "x", 2, 3);
++   |                                              ^^^
++   |
++help: try
++   |
++LL -     println!("Hello {1} is {0:3$.2$}", 0.01, "x", 2, 3);
++LL +     println!("Hello x is {0:2$.1$}", 0.01, 2, 3);
++   |
++
++error: literal with an empty format string
++  --> tests/ui/print_literal.rs:106:40
++   |
++LL |     println!("Hello {0} is {1:3$.2$}", "x", 0.01, 2, 3);
++   |                                        ^^^
++   |
++help: try
++   |
++LL -     println!("Hello {0} is {1:3$.2$}", "x", 0.01, 2, 3);
++LL +     println!("Hello x is {0:2$.1$}", 0.01, 2, 3);
++   |
++
++error: aborting due to 22 previous errors
+ 
+diff --git a/tests/ui/write_literal.fixed b/tests/ui/write_literal.fixed
+index e84f768e3..29352fd46 100644
+--- a/tests/ui/write_literal.fixed
++++ b/tests/ui/write_literal.fixed
+@@ -87,3 +87,15 @@ fn issue_13959() {
+ "
+     );
+ }
++
++fn issue_14930() {
++    let mut v = Vec::new();
++    writeln!(v, "Hello x is {0:2$.1$}", 0.01, 2, 3);
++    //~^ write_literal
++    writeln!(v, "Hello x is {0:2$.1$}", 0.01, 2, 3);
++    //~^ write_literal
++    writeln!(v, "Hello x is {0:2$.1$}", 0.01, 2, 3);
++    //~^ write_literal
++    writeln!(v, "Hello x is {0:2$.1$}", 0.01, 2, 3);
++    //~^ write_literal
++}
+diff --git a/tests/ui/write_literal.rs b/tests/ui/write_literal.rs
+index fc29fcbed..928727527 100644
+--- a/tests/ui/write_literal.rs
++++ b/tests/ui/write_literal.rs
+@@ -88,3 +88,15 @@ fn issue_13959() {
+ "#
+     );
+ }
++
++fn issue_14930() {
++    let mut v = Vec::new();
++    writeln!(v, "Hello {3} is {0:2$.1$}", 0.01, 2, 3, "x");
++    //~^ write_literal
++    writeln!(v, "Hello {2} is {0:3$.1$}", 0.01, 2, "x", 3);
++    //~^ write_literal
++    writeln!(v, "Hello {1} is {0:3$.2$}", 0.01, "x", 2, 3);
++    //~^ write_literal
++    writeln!(v, "Hello {0} is {1:3$.2$}", "x", 0.01, 2, 3);
++    //~^ write_literal
++}
+diff --git a/tests/ui/write_literal.stderr b/tests/ui/write_literal.stderr
+index d53c2a7de..ca37406c8 100644
+--- a/tests/ui/write_literal.stderr
++++ b/tests/ui/write_literal.stderr
+@@ -181,5 +181,53 @@ LL +         bar
+ LL ~ "
+    |
+ 
+-error: aborting due to 14 previous errors
++error: literal with an empty format string
++  --> tests/ui/write_literal.rs:94:55
++   |
++LL |     writeln!(v, "Hello {3} is {0:2$.1$}", 0.01, 2, 3, "x");
++   |                                                       ^^^
++   |
++help: try
++   |
++LL -     writeln!(v, "Hello {3} is {0:2$.1$}", 0.01, 2, 3, "x");
++LL +     writeln!(v, "Hello x is {0:2$.1$}", 0.01, 2, 3);
++   |
++
++error: literal with an empty format string
++  --> tests/ui/write_literal.rs:96:52
++   |
++LL |     writeln!(v, "Hello {2} is {0:3$.1$}", 0.01, 2, "x", 3);
++   |                                                    ^^^
++   |
++help: try
++   |
++LL -     writeln!(v, "Hello {2} is {0:3$.1$}", 0.01, 2, "x", 3);
++LL +     writeln!(v, "Hello x is {0:2$.1$}", 0.01, 2, 3);
++   |
++
++error: literal with an empty format string
++  --> tests/ui/write_literal.rs:98:49
++   |
++LL |     writeln!(v, "Hello {1} is {0:3$.2$}", 0.01, "x", 2, 3);
++   |                                                 ^^^
++   |
++help: try
++   |
++LL -     writeln!(v, "Hello {1} is {0:3$.2$}", 0.01, "x", 2, 3);
++LL +     writeln!(v, "Hello x is {0:2$.1$}", 0.01, 2, 3);
++   |
++
++error: literal with an empty format string
++  --> tests/ui/write_literal.rs:100:43
++   |
++LL |     writeln!(v, "Hello {0} is {1:3$.2$}", "x", 0.01, 2, 3);
++   |                                           ^^^
++   |
++help: try
++   |
++LL -     writeln!(v, "Hello {0} is {1:3$.2$}", "x", 0.01, 2, 3);
++LL +     writeln!(v, "Hello x is {0:2$.1$}", 0.01, 2, 3);
++   |
++
++error: aborting due to 18 previous errors
+ 

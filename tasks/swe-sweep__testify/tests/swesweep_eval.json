@@ -1,0 +1,127 @@
+{
+  "build_jobs": 4,
+  "container_repo": "/testify",
+  "evaluation": {
+    "suite": {
+      "eval_roots": [
+        "."
+      ],
+      "type": "go"
+    },
+    "test_timeout": 600
+  },
+  "upstream_image": "pandora-maxbug-testify:v1.7.0",
+  "n_base_passing": 544,
+  "n_base_test_ignore": 59,
+  "oracle_digest": "8347e6798b2a3ab0490516e76d649116df12346bcc20ca74ecc7c1d9d0903e75",
+  "oracle_pristine_paths": [],
+  "upstream_commit": "9f7399e15e6172900e0591deb5a57a45769d8205",
+  "reproduction": {
+    "needs_build": false,
+    "suite": {
+      "eval_roots": [
+        "."
+      ],
+      "type": "go"
+    }
+  },
+  "schema": 2,
+  "subtasks": [
+    {
+      "f2p": [
+        "assert::TestInEpsilon"
+      ],
+      "id": "testify-010261c6a331",
+      "target_files": [
+        "assert/assertions.go"
+      ]
+    },
+    {
+      "f2p": [
+        "mock::Test_Mock_On_WithArgMatcherThatPanics"
+      ],
+      "id": "testify-288c5662dc73",
+      "target_files": [
+        "mock/mock.go"
+      ]
+    },
+    {
+      "f2p": [
+        "assert::TestHTTPError",
+        "assert::TestHTTPRedirect",
+        "assert::TestHTTPStatusCode",
+        "assert::TestHTTPSuccess",
+        "assert::TestHttpBody"
+      ],
+      "id": "testify-a273c896fcf1",
+      "target_files": [
+        "assert/assertions.go",
+        "assert/http_assertions.go"
+      ]
+    },
+    {
+      "f2p": [
+        "assert::TestDidPanic",
+        "assert::TestPanicsWithValue"
+      ],
+      "id": "testify-b1ee3f1598f2",
+      "target_files": [
+        "assert/assertions.go"
+      ]
+    },
+    {
+      "f2p": [
+        "assert::TestLen"
+      ],
+      "id": "testify-b72ad291e12e",
+      "target_files": [
+        "assert/assertions.go"
+      ]
+    },
+    {
+      "f2p": [
+        "assert::TestGreater",
+        "assert::TestGreaterOrEqual",
+        "assert::TestLess",
+        "assert::TestLessOrEqual",
+        "assert::TestNegative",
+        "assert::TestPositive"
+      ],
+      "id": "testify-b940e57ad3de",
+      "target_files": [
+        "assert/assertion_compare.go"
+      ]
+    },
+    {
+      "f2p": [
+        "assert::TestComparingMsgAndArgsForwarding",
+        "assert::TestOrderingMsgAndArgsForwarding"
+      ],
+      "id": "testify-bc90c08ffb2e",
+      "target_files": [
+        "assert/assertion_compare.go",
+        "assert/assertion_order.go"
+      ]
+    },
+    {
+      "f2p": [
+        "mock::TestArgumentMatcherToPrintMismatchWithReferenceType"
+      ],
+      "id": "testify-c2205cd50558",
+      "target_files": [
+        "mock/mock.go"
+      ]
+    },
+    {
+      "f2p": [
+        "assert::TestIsNil"
+      ],
+      "id": "testify-d7cab7495044",
+      "target_files": [
+        "assert/assertions.go"
+      ]
+    }
+  ],
+  "task": "testify",
+  "version": "v1.7.0"
+}

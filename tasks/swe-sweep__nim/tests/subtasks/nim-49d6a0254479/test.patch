@@ -1,0 +1,34 @@
+diff --git a/tests/parser/ttry.nim b/tests/parser/ttry.nim
+new file mode 100644
+index 000000000..190b0b8dc
+--- /dev/null
++++ b/tests/parser/ttry.nim
+@@ -0,0 +1,27 @@
++# bug #21144
++block:
++  try:
++    let c = try:
++        10
++      except ValueError as exc:
++        10
++  except ValueError as exc:
++    discard
++
++if true:
++  block:
++    let c = try:
++          10
++        except ValueError as exc:
++          10
++    except OSError:
++      99
++
++
++try:
++  let c = try:
++    10
++  except ValueError as exc:
++    10
++except ValueError as exc:
++  discard
+\ No newline at end of file

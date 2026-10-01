@@ -1,0 +1,9 @@
+diff --git a/services/src/main/java/org/keycloak/protocol/oidc/utils/RedirectUtils.java b/services/src/main/java/org/keycloak/protocol/oidc/utils/RedirectUtils.java
+--- a/services/src/main/java/org/keycloak/protocol/oidc/utils/RedirectUtils.java
++++ b/services/src/main/java/org/keycloak/protocol/oidc/utils/RedirectUtils.java
+@@ -181,3 +181,4 @@
+-        // wildcars are only allowed if no user-info and no unsafe pattern in path
++        // wildcars are only allowed if no user-info and no unparsed authority and no unsafe pattern in path
+         return redirectUri.getRawUserInfo() == null
++                && !(redirectUri.getRawAuthority() != null && redirectUri.getRawUserInfo() == null && redirectUri.getHost() == null && redirectUri.getPort() == -1)
+                 && (redirectUri.getRawPath() == null || !UNSAFE_PATH_PATTERN.matcher(redirectUri.getRawPath()).find());

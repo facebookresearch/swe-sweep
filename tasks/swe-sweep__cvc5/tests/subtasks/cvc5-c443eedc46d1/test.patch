@@ -1,0 +1,29 @@
+diff --git a/test/regress/cli/CMakeLists.txt b/test/regress/cli/CMakeLists.txt
+index 1c37ffa..00169f4 100644
+--- a/test/regress/cli/CMakeLists.txt
++++ b/test/regress/cli/CMakeLists.txt
+@@ -951,6 +951,7 @@ set(regress_0_tests
+   regress0/nl/proj-issue-451-ran-combination-1.smt2
+   regress0/nl/proj-issue-451-ran-combination-2.smt2
+   regress0/nl/proj-issue-465-asan-proofs.smt2
++  regress0/nl/proj-issue637-rr-type.smt2
+   regress0/nl/real-as-int.smt2
+   regress0/nl/real-div-ufnra.smt2
+   regress0/nl/sin-cos-346-b-chunk-0169.smt2
+diff --git a/test/regress/cli/regress0/nl/proj-issue637-rr-type.smt2 b/test/regress/cli/regress0/nl/proj-issue637-rr-type.smt2
+new file mode 100644
+index 0000000..cc380a1
+--- /dev/null
++++ b/test/regress/cli/regress0/nl/proj-issue637-rr-type.smt2
+@@ -0,0 +1,11 @@
++(set-logic NRA)
++(set-info :status sat)
++(declare-const x21 Bool)
++(set-option :check-models true)
++(declare-const _x Real)
++(declare-const x2 Real)
++(declare-const x Real)
++(assert (> (- (- 2 x2)) 1.0))
++(assert (ite (or (and (> 0 x) x21) (and (> x 0) (> 2 (/ _x _x _x x)))) false true))
++(assert (and (> 0.0 _x) (= 1.0 (* x (/ (+ (/ _x x2) (/ _x x2)) x 0.0)))))
++(check-sat)

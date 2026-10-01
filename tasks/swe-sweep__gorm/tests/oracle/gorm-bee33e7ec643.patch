@@ -1,0 +1,16 @@
+diff --git a/finisher_api.go b/finisher_api.go
+index da4ef8f..7a3f27b 100644
+--- a/finisher_api.go
++++ b/finisher_api.go
+@@ -351,9 +351,9 @@ func (db *DB) FirstOrCreate(dest interface{}, conds ...interface{}) (tx *DB) {
+ 			}
+ 
+ 			return tx.Model(dest).Updates(assigns)
+-		} else {
+-			tx.Error = result.Error
+ 		}
++	} else {
++		tx.Error = result.Error
+ 	}
+ 	return tx
+ }

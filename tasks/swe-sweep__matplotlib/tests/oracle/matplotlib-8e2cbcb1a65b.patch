@@ -1,0 +1,35 @@
+diff --git a/lib/matplotlib/rcsetup.py b/lib/matplotlib/rcsetup.py
+index fd89613e4a..050e8901f9 100644
+--- a/lib/matplotlib/rcsetup.py
++++ b/lib/matplotlib/rcsetup.py
+@@ -264,6 +264,8 @@ validate_int = _make_type_validator(int)
+ validate_int_or_None = _make_type_validator(int, allow_none=True)
+ validate_float = _make_type_validator(float)
+ validate_float_or_None = _make_type_validator(float, allow_none=True)
++validate_floatlist_or_None = _listify_validator(
++    validate_float_or_None, doc='return a list of floats or None')
+ validate_floatlist = _listify_validator(
+     validate_float, doc='return a list of floats')
+ 
+@@ -756,7 +758,7 @@ def validate_hatch(s):
+ 
+ 
+ validate_hatchlist = _listify_validator(validate_hatch)
+-validate_dashlist = _listify_validator(validate_floatlist)
++validate_dashlist = _listify_validator(validate_floatlist_or_None)
+ 
+ 
+ _prop_validators = {
+@@ -1015,9 +1017,9 @@ _validators = {
+     "lines.solid_joinstyle": JoinStyle,
+     "lines.dash_capstyle":   CapStyle,
+     "lines.solid_capstyle":  CapStyle,
+-    "lines.dashed_pattern":  validate_floatlist,
+-    "lines.dashdot_pattern": validate_floatlist,
+-    "lines.dotted_pattern":  validate_floatlist,
++    "lines.dashed_pattern":  validate_floatlist_or_None,
++    "lines.dashdot_pattern": validate_floatlist_or_None,
++    "lines.dotted_pattern":  validate_floatlist_or_None,
+     "lines.scale_dashes":    validate_bool,
+ 
+     # marker props

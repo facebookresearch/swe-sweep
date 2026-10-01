@@ -1,0 +1,30 @@
+diff --git a/pandas/core/base.py b/pandas/core/base.py
+index b019b7ae23..ba9ff504cb 100644
+--- a/pandas/core/base.py
++++ b/pandas/core/base.py
+@@ -525,12 +525,19 @@ class IndexOpsMixin(OpsMixin):
+         # Type[complex], Type[bool], Type[object], None]"; expected "Union[dtype[Any],
+         # None, type, _SupportsDType, str, Union[Tuple[Any, int], Tuple[Any, Union[int,
+         # Sequence[int]]], List[Any], _DTypeDict, Tuple[Any, Any]]]"
+-        result = np.asarray(self._values, dtype=dtype)  # type: ignore[arg-type]
+-        # TODO(GH-24345): Avoid potential double copy
+-        if copy or na_value is not lib.no_default:
+-            result = result.copy()
+-            if na_value is not lib.no_default:
+-                result[self.isna()] = na_value
++        if na_value is not lib.no_default:
++            values = self._values.copy()
++            values[np.asanyarray(self.isna())] = na_value
++        else:
++            values = self._values
++
++        result = np.asarray(values, dtype=dtype)  # type: ignore[arg-type]
++
++        if copy and na_value is lib.no_default:
++            if np.shares_memory(self._values[:2], result[:2]):
++                # Take slices to improve performance of check
++                result = result.copy()
++
+         return result
+ 
+     @property

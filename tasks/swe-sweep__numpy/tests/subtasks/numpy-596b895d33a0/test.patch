@@ -1,0 +1,33 @@
+diff --git a/numpy/f2py/tests/src/string/gh24662.f90 b/numpy/f2py/tests/src/string/gh24662.f90
+new file mode 100644
+index 00000000000..ca53413cc9b
+--- /dev/null
++++ b/numpy/f2py/tests/src/string/gh24662.f90
+@@ -0,0 +1,7 @@
++subroutine string_inout_optional(output)
++    implicit none
++    character*(32), optional, intent(inout) :: output
++    if (present(output)) then
++      output="output string"
++    endif
++end subroutine
+diff --git a/numpy/f2py/tests/test_string.py b/numpy/f2py/tests/test_string.py
+index 373262bf96a..c928e38741a 100644
+--- a/numpy/f2py/tests/test_string.py
++++ b/numpy/f2py/tests/test_string.py
+@@ -22,3 +22,15 @@ class TestString(util.F2PyTest):
+         expected = strings.copy()
+         expected[1, :] = 'AAA'
+         assert_array_equal(out, expected)
++
++class TestStringOptionalInOut(util.F2PyTest):
++    sources = [_path('src', 'string', 'gh24662.f90')]
++
++    def test_gh24662(self):
++        self.module.string_inout_optional()
++        a = np.array('hi', dtype='S32')
++        self.module.string_inout_optional(a)
++        assert "output string" in a.tobytes().decode()
++        with pytest.raises(Exception):
++            aa = "Hi"
++            self.module.string_inout_optional(aa)

@@ -1,0 +1,13 @@
+diff --git a/modules/openapi-generator/src/main/resources/Java/libraries/microprofile/pojo.mustache b/modules/openapi-generator/src/main/resources/Java/libraries/microprofile/pojo.mustache
+index 5b0f260635d..f9f13cac22f 100644
+--- a/modules/openapi-generator/src/main/resources/Java/libraries/microprofile/pojo.mustache
++++ b/modules/openapi-generator/src/main/resources/Java/libraries/microprofile/pojo.mustache
+@@ -62,7 +62,7 @@ public class {{classname}} {{#parent}}extends {{{.}}}{{/parent}}{{#vendorExtensi
+  {{#jsonb}}@JsonbCreator{{/jsonb}}{{#jackson}}@JsonCreator{{/jackson}}
+   public {{classname}}(
+   {{#readOnlyVars}}
+-    {{#jsonb}}@JsonbProperty(value = "{{baseName}}"{{^required}}, nillable = true{{/required}}){{/jsonb}}{{#jackson}}@JsonProperty(JSON_PROPERTY_{{nameInSnakeCase}}{{#required}}, required = true{{/required}}){{/jackson}} {{{datatypeWithEnum}}} {{name}}{{^-last}}, {{/-last}}
++    {{#jsonb}}@JsonbProperty(value = "{{baseName}}"{{^required}}, nillable = true{{/required}}){{/jsonb}}{{#jackson}}@JsonProperty(value = JSON_PROPERTY_{{nameInSnakeCase}}{{#required}}, required = true{{/required}}){{/jackson}} {{{datatypeWithEnum}}} {{name}}{{^-last}}, {{/-last}}
+   {{/readOnlyVars}}
+   ) {
+   {{#readOnlyVars}}

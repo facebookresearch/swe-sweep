@@ -1,0 +1,27 @@
+diff --git a/compiler/sem.nim b/compiler/sem.nim
+--- a/compiler/sem.nim
++++ b/compiler/sem.nim
+@@ -467,3 +467,9 @@
+         for param, value in genericParamsInMacroCall(s, call):
+-          idTablePut(paramTypes, param.typ, value.typ)
++          var givenType = value.typ
++          # the sym nodes used for the supplied generic arguments for
++          # templates and macros leave type nil so regular sem can handle it
++          # in this case, get the type directly from the sym
++          if givenType == nil and value.kind == nkSym and value.sym.typ != nil:
++            givenType = value.sym.typ
++          idTablePut(paramTypes, param.typ, givenType)
+ 
+diff --git a/compiler/semcall.nim b/compiler/semcall.nim
+--- a/compiler/semcall.nim
++++ b/compiler/semcall.nim
+@@ -564,3 +564,8 @@
+         of skType:
+-          x.call.add newSymNode(s, n.info)
++          var tn = newSymNode(s, n.info)
++          # this node will be used in template substitution,
++          # pretend this is an untyped node and let regular sem handle the type
++          # to prevent problems where a generic parameter is treated as a value
++          tn.typ = nil
++          x.call.add tn
+         else:

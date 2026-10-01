@@ -1,0 +1,41 @@
+diff --git a/src/common/vector_operations/vector_hash.cpp b/src/common/vector_operations/vector_hash.cpp
+index 46a9bcdaae..63a7c152ad 100644
+--- a/src/common/vector_operations/vector_hash.cpp
++++ b/src/common/vector_operations/vector_hash.cpp
+@@ -3,12 +3,11 @@
+ // Description: This file contains the vectorized hash implementations
+ //===--------------------------------------------------------------------===//
+ 
+-#include "duckdb/common/uhugeint.hpp"
+-#include "duckdb/common/vector_operations/vector_operations.hpp"
+-
+ #include "duckdb/common/types/hash.hpp"
+ #include "duckdb/common/types/null_value.hpp"
++#include "duckdb/common/uhugeint.hpp"
+ #include "duckdb/common/value_operations/value_operations.hpp"
++#include "duckdb/common/vector_operations/vector_operations.hpp"
+ 
+ namespace duckdb {
+ 
+@@ -91,6 +90,8 @@ static inline void StructLoopHash(Vector &input, Vector &hashes, const Selection
+ 
+ template <bool HAS_RSEL, bool FIRST_HASH>
+ static inline void ListLoopHash(Vector &input, Vector &hashes, const SelectionVector *rsel, idx_t count) {
++	// FIXME: if we want to be more efficient we shouldn't flatten, but the logic here currently requires it
++	hashes.Flatten(count);
+ 	auto hdata = FlatVector::GetData<hash_t>(hashes);
+ 
+ 	UnifiedVectorFormat idata;
+diff --git a/src/execution/join_hashtable.cpp b/src/execution/join_hashtable.cpp
+index 2b74b5bd7e..53adf3a85e 100644
+--- a/src/execution/join_hashtable.cpp
++++ b/src/execution/join_hashtable.cpp
+@@ -513,7 +513,7 @@ void ScanStructure::NextInnerJoin(DataChunk &keys, DataChunk &left, DataChunk &r
+ 				Store<bool>(true, ptrs[idx] + ht.tuple_size);
+ 			}
+ 		}
+-		// for right semi join, just mark the entry as found and move on. Propogation happens later
++		// for right semi join, just mark the entry as found and move on. Propagation happens later
+ 		if (ht.join_type != JoinType::RIGHT_SEMI && ht.join_type != JoinType::RIGHT_ANTI) {
+ 			// matches were found
+ 			// construct the result

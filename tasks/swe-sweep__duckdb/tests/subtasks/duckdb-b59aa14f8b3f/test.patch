@@ -1,0 +1,29 @@
+diff --git a/test/sql/cast/string_to_integer_exponent_cast.test b/test/sql/cast/string_to_integer_exponent_cast.test
+index 2619f0d109..f019436687 100644
+--- a/test/sql/cast/string_to_integer_exponent_cast.test
++++ b/test/sql/cast/string_to_integer_exponent_cast.test
+@@ -9,7 +9,6 @@ PRAGMA enable_verification
+ foreach type <integral>
+ 
+ # Positive Number - Positive Exponent
+-
+ query I
+ select '1e2'::${type};
+ ----
+@@ -108,6 +107,16 @@ select '-1.235e-2'::${type};
+ ----
+ 0
+ 
++query I
++select '5.5e-1'::bigint;
++----
++1
++
++query I
++select '9.5e-5'::${type};
++----
++0
++
+ statement error
+ select '-10e40'::${type};
+ ----

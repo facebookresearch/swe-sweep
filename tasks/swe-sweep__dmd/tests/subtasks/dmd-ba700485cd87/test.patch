@@ -1,0 +1,13 @@
+diff --git a/compiler/test/compilable/test23622.c b/compiler/test/compilable/test23622.c
+new file mode 100644
+index 0000000000..009da1484b
+--- /dev/null
++++ b/compiler/test/compilable/test23622.c
+@@ -0,0 +1,7 @@
++// https://issues.dlang.org/show_bug.cgi?id=23622
++
++int FP_NAN = 0;
++#define FP_NAN 0
++
++enum E { ENUM = 0 };
++#define ENUM 0

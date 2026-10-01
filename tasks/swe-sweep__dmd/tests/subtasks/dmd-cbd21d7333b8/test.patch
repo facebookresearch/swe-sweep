@@ -1,0 +1,31 @@
+diff --git a/compiler/test/fail_compilation/imports/issue23947a.d b/compiler/test/fail_compilation/imports/issue23947a.d
+new file mode 100644
+index 0000000000..270bf5fd53
+--- /dev/null
++++ b/compiler/test/fail_compilation/imports/issue23947a.d
+@@ -0,0 +1,8 @@
++module imports.issue23947a;
++
++struct X { }
++struct Y { }
++class Class {
++    private void handle(X x) { }
++    public void handle(Y y) { }
++}
+diff --git a/compiler/test/fail_compilation/issue23947.d b/compiler/test/fail_compilation/issue23947.d
+new file mode 100644
+index 0000000000..87b08aeb30
+--- /dev/null
++++ b/compiler/test/fail_compilation/issue23947.d
+@@ -0,0 +1,11 @@
++// https://issues.dlang.org/show_bug.cgi?id=23947
++// REQUIRED_ARGS: -de
++/*
++TEST_OUTPUT:
++---
++fail_compilation/issue23947.d(11): Deprecation: function `imports.issue23947a.Class.handle` of type `void(X x)` is not accessible from module `issue23947`
++---
++*/
++import imports.issue23947a;
++
++void main() { Class.init.handle(X.init); }

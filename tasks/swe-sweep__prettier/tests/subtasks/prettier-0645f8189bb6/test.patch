@@ -1,0 +1,64 @@
+diff --git a/tests/format/css/attribute/__snapshots__/format.test.js.snap b/tests/format/css/attribute/__snapshots__/format.test.js.snap
+index 1c3e891e6..530c199e3 100644
+--- a/tests/format/css/attribute/__snapshots__/format.test.js.snap
++++ b/tests/format/css/attribute/__snapshots__/format.test.js.snap
+@@ -209,6 +209,9 @@ a[id="test"] {}
+ a[id='test'] {}
+ a[id=func("foo")] {}
+ a[class="(╯°□°）╯︵ ┻━┻"]{}
++a[href^="//"] {}
++a[href$="/*"] {}
++a[href="http://example.com"] {}
+ input:not([type="radio"]):not([type="checkbox"]) {}
+ input:not([type="radio"], [type="checkbox"]) {}
+ section:has(:not([type="radio"], [type="checkbox"])) {}
+@@ -224,6 +227,12 @@ a[id=func('foo')] {
+ }
+ a[class='(╯°□°）╯︵ ┻━┻'] {
+ }
++a[href^='//'] {
++}
++a[href$='/*'] {
++}
++a[href='http://example.com'] {
++}
+ input:not([type='radio']):not([type='checkbox']) {
+ }
+ input:not([type='radio'], [type='checkbox']) {
+@@ -245,6 +254,9 @@ a[id="test"] {}
+ a[id='test'] {}
+ a[id=func("foo")] {}
+ a[class="(╯°□°）╯︵ ┻━┻"]{}
++a[href^="//"] {}
++a[href$="/*"] {}
++a[href="http://example.com"] {}
+ input:not([type="radio"]):not([type="checkbox"]) {}
+ input:not([type="radio"], [type="checkbox"]) {}
+ section:has(:not([type="radio"], [type="checkbox"])) {}
+@@ -260,6 +272,12 @@ a[id=func("foo")] {
+ }
+ a[class="(╯°□°）╯︵ ┻━┻"] {
+ }
++a[href^="//"] {
++}
++a[href$="/*"] {
++}
++a[href="http://example.com"] {
++}
+ input:not([type="radio"]):not([type="checkbox"]) {
+ }
+ input:not([type="radio"], [type="checkbox"]) {
+diff --git a/tests/format/css/attribute/quotes.css b/tests/format/css/attribute/quotes.css
+index 70dcc5072..34af31ce0 100644
+--- a/tests/format/css/attribute/quotes.css
++++ b/tests/format/css/attribute/quotes.css
+@@ -3,6 +3,9 @@ a[id="test"] {}
+ a[id='test'] {}
+ a[id=func("foo")] {}
+ a[class="(╯°□°）╯︵ ┻━┻"]{}
++a[href^="//"] {}
++a[href$="/*"] {}
++a[href="http://example.com"] {}
+ input:not([type="radio"]):not([type="checkbox"]) {}
+ input:not([type="radio"], [type="checkbox"]) {}
+ section:has(:not([type="radio"], [type="checkbox"])) {}

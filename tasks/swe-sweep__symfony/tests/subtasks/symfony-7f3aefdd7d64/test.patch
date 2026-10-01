@@ -1,0 +1,77 @@
+diff --git a/src/Symfony/Bundle/FrameworkBundle/Tests/Fixtures/Messenger/DummyTaskWithCustomReceiver.php b/src/Symfony/Bundle/FrameworkBundle/Tests/Fixtures/Messenger/DummyTaskWithCustomReceiver.php
+new file mode 100644
+index 00000000000..10c3f37cffd
+--- /dev/null
++++ b/src/Symfony/Bundle/FrameworkBundle/Tests/Fixtures/Messenger/DummyTaskWithCustomReceiver.php
+@@ -0,0 +1,22 @@
++<?php
++
++/*
++ * This file is part of the Symfony package.
++ *
++ * (c) Fabien Potencier <fabien@symfony.com>
++ *
++ * For the full copyright and license information, please view the LICENSE
++ * file that was distributed with this source code.
++ */
++
++namespace Symfony\Bundle\FrameworkBundle\Tests\Fixtures\Messenger;
++
++use Symfony\Component\Scheduler\Attribute\AsPeriodicTask;
++
++#[AsPeriodicTask(frequency: 5, schedule: 'custom_receiver')]
++class DummyTaskWithCustomReceiver
++{
++    public function __invoke()
++    {
++    }
++}
+diff --git a/src/Symfony/Bundle/FrameworkBundle/Tests/Functional/SchedulerTest.php b/src/Symfony/Bundle/FrameworkBundle/Tests/Functional/SchedulerTest.php
+index 7f737a4c4e7..99776e8223e 100644
+--- a/src/Symfony/Bundle/FrameworkBundle/Tests/Functional/SchedulerTest.php
++++ b/src/Symfony/Bundle/FrameworkBundle/Tests/Functional/SchedulerTest.php
+@@ -88,6 +88,15 @@ class SchedulerTest extends AbstractWebTestCase
+         $this->assertSame([['5', 6], ['7', 8]], $calls['attributesOnMethod']);
+     }
+ 
++    public function testSchedulerWithCustomTransport()
++    {
++        $container = self::getContainer();
++        $container->set('clock', new MockClock('2023-10-26T08:59:59Z'));
++
++        $this->assertTrue($container->get('receivers')->has('scheduler_custom_receiver'));
++        $this->assertSame($container->get('scheduler_custom_receiver'), $container->get('receivers')->get('scheduler_custom_receiver'));
++    }
++
+     protected static function createKernel(array $options = []): KernelInterface
+     {
+         return parent::createKernel(['test_case' => 'Scheduler'] + $options);
+diff --git a/src/Symfony/Bundle/FrameworkBundle/Tests/Functional/app/Scheduler/config.yml b/src/Symfony/Bundle/FrameworkBundle/Tests/Functional/app/Scheduler/config.yml
+index 90016381be1..bd1cb6516b2 100644
+--- a/src/Symfony/Bundle/FrameworkBundle/Tests/Functional/app/Scheduler/config.yml
++++ b/src/Symfony/Bundle/FrameworkBundle/Tests/Functional/app/Scheduler/config.yml
+@@ -13,9 +13,24 @@ services:
+     Symfony\Bundle\FrameworkBundle\Tests\Fixtures\Messenger\DummyTask:
+         autoconfigure: true
+ 
++    Symfony\Bundle\FrameworkBundle\Tests\Fixtures\Messenger\DummyTaskWithCustomReceiver:
++        autoconfigure: true
++
+     clock:
+         synthetic: true
+ 
+     receivers:
+         public: true
+         alias: 'messenger.receiver_locator'
++
++    scheduler_custom_receiver:
++        public: true
++        class: Symfony\Component\Messenger\Transport\TransportInterface
++        factory: [ '@messenger.transport_factory', 'createTransport' ]
++        arguments:
++            - 'schedule://custom_receiver'
++            - { transport_name: 'scheduler_custom_receiver' }
++            - !service
++                class: Symfony\Component\Messenger\Transport\Serialization\Serializer
++        tags:
++            - { name: 'messenger.receiver' }

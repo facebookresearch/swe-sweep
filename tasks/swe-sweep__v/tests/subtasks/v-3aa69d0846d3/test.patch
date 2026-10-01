@@ -1,0 +1,14 @@
+diff --git a/vlib/v/checker/tests/sync_receiver_decl.out b/vlib/v/checker/tests/sync_receiver_decl.out
+new file mode 100644
+index 000000000..e69de29bb
+diff --git a/vlib/v/checker/tests/sync_receiver_decl.vv b/vlib/v/checker/tests/sync_receiver_decl.vv
+new file mode 100644
+index 000000000..29f1575bf
+--- /dev/null
++++ b/vlib/v/checker/tests/sync_receiver_decl.vv
+@@ -0,0 +1,4 @@
++struct St {}
++fn (shared b St) g() {}
++
++println('ok')
+\ No newline at end of file

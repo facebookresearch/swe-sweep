@@ -1,0 +1,15 @@
+diff --git a/scipy/interpolate/fitpack2.py b/scipy/interpolate/fitpack2.py
+index 6c4e2dd649..dd231736bf 100644
+--- a/scipy/interpolate/fitpack2.py
++++ b/scipy/interpolate/fitpack2.py
+@@ -461,7 +461,9 @@ class UnivariateSpline(object):
+ 
+         """
+         tck = fitpack.splder(self._eval_args, n)
+-        return UnivariateSpline._from_tck(tck, self.ext)
++        # if self.ext is 'const', derivative.ext will be 'zeros'
++        ext = 1 if self.ext == 3 else self.ext
++        return UnivariateSpline._from_tck(tck, ext=ext)
+ 
+     def antiderivative(self, n=1):
+         """

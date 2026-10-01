@@ -1,0 +1,15 @@
+diff --git a/datafusion/functions-aggregate/src/median.rs b/datafusion/functions-aggregate/src/median.rs
+index 00c0ee3cd4..ab6d9e1832 100644
+--- a/datafusion/functions-aggregate/src/median.rs
++++ b/datafusion/functions-aggregate/src/median.rs
+@@ -314,8 +314,9 @@ impl<T: ArrowNumericType> Accumulator for MedianAccumulator<T> {
+                         break;
+                     }
+                 }
++            } else {
++                i += 1;
+             }
+-            i += 1;
+         }
+         Ok(())
+     }

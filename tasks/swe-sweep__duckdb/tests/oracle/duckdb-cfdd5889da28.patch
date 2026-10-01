@@ -1,0 +1,12 @@
+diff --git a/src/include/duckdb/core_functions/aggregate/algebraic/stddev.hpp b/src/include/duckdb/core_functions/aggregate/algebraic/stddev.hpp
+index 88063eea06..0000000000 100644
+--- a/src/include/duckdb/core_functions/aggregate/algebraic/stddev.hpp
++++ b/src/include/duckdb/core_functions/aggregate/algebraic/stddev.hpp
+@@ -61,6 +61,6 @@ struct STDDevBaseOperation {
+ 		} else if (source.count > 0) {
+ 			const auto count = target.count + source.count;
+-			const auto mean = (source.count * source.mean + target.count * target.mean) / count;
+ 			const auto delta = source.mean - target.mean;
++			const auto mean = std::fma(static_cast<double>(source.count) / static_cast<double>(count), delta, target.mean);
+ 			target.dsquared =
+ 			    source.dsquared + target.dsquared + delta * delta * source.count * target.count / count;

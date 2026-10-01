@@ -1,0 +1,14 @@
+diff --git a/vlib/v/gen/c/index.v b/vlib/v/gen/c/index.v
+index 28c6cdacf..7bf063901 100644
+--- a/vlib/v/gen/c/index.v
++++ b/vlib/v/gen/c/index.v
+@@ -372,6 +372,9 @@ fn (mut g Gen) index_of_fixed_array(node ast.IndexExpr, sym ast.TypeSymbol) {
+ 		} else {
+ 			g.expr(node.left)
+ 		}
++		if node.left_type.has_flag(.shared_f) {
++			g.write('.val')
++		}
+ 	}
+ 	g.write('[')
+ 	if g.is_direct_array_access || g.pref.translated || node.index is ast.IntegerLiteral {

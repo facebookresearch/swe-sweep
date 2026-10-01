@@ -1,0 +1,17 @@
+diff --git a/compiler/src/dmd/dsymbolsem.d b/compiler/src/dmd/dsymbolsem.d
+index 55d465e3af..e0264369bb 100644
+--- a/compiler/src/dmd/dsymbolsem.d
++++ b/compiler/src/dmd/dsymbolsem.d
+@@ -2454,8 +2454,11 @@ private extern(C++) final class DsymbolSemanticVisitor : Visitor
+             e = e.ctfeInterpret();
+             if (e.toInteger())
+             {
++                auto mt = em.ed.memtype;
++                if (!mt)
++                    mt = eprev.type;
+                 em.error("initialization with `%s.%s+1` causes overflow for type `%s`",
+-                    emprev.ed.toChars(), emprev.toChars(), em.ed.memtype.toChars());
++                    emprev.ed.toChars(), emprev.toChars(), mt.toChars());
+                 return errorReturn();
+             }
+ 

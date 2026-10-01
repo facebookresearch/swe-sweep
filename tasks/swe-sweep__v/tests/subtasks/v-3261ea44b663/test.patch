@@ -1,0 +1,30 @@
+diff --git a/vlib/v/tests/generic_interface_array_type_infer_test.v b/vlib/v/tests/generic_interface_array_type_infer_test.v
+new file mode 100644
+index 000000000..02f8e25f8
+--- /dev/null
++++ b/vlib/v/tests/generic_interface_array_type_infer_test.v
+@@ -0,0 +1,24 @@
++struct Metadata {}
++
++struct TagOrText {}
++
++pub interface Layout[R] {
++	render(content []R) string
++}
++
++struct DefaultLayout {
++}
++
++pub fn (self DefaultLayout) to_layout() Layout[TagOrText] {
++	return self
++}
++
++pub fn (self DefaultLayout) render(content []TagOrText) string {
++	return 'Hello world'
++}
++
++fn test_generic_interface_array_type_infer() {
++	ret := DefaultLayout{}.to_layout().render([])
++	println(ret)
++	assert ret == 'Hello world'
++}

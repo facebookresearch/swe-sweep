@@ -1,0 +1,23 @@
+diff --git a/vlib/v/tests/deref_mut_variable_in_if_expr_test.v b/vlib/v/tests/deref_mut_variable_in_if_expr_test.v
+new file mode 100644
+index 000000000..9db8e49de
+--- /dev/null
++++ b/vlib/v/tests/deref_mut_variable_in_if_expr_test.v
+@@ -0,0 +1,17 @@
++struct Foo {
++	str string
++}
++
++fn (mut f Foo) foo(f2 Foo) string {
++	return (if f.str != '' {
++		f
++	} else {
++		f2
++	}).str
++}
++
++fn test_deref_mut_var_in_if_expr() {
++	mut foo := Foo{}
++	dump(foo.foo(Foo{ str: 'a' }))
++	assert foo.foo(Foo{ str: 'a' }) == 'a'
++}

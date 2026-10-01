@@ -1,0 +1,114 @@
+{
+  "build_jobs": 4,
+  "container_repo": "/formulajs",
+  "evaluation": {
+    "suite": {
+      "suite": {
+        "all_files": [
+          "test/*.js",
+          "test/utils/*.js"
+        ],
+        "type": "mocha"
+      },
+      "type": "repro-eval"
+    },
+    "visible_timeout": 3600
+  },
+  "upstream_image": "pandora-maxbug-formulajs:4.1.0",
+  "n_base_passing": 494,
+  "n_base_test_ignore": 3,
+  "oracle_digest": "3daa64b209d3b881e15b02ae1089f078a488df40dece8c9b519ce7078017daaa",
+  "oracle_pristine_paths": [],
+  "upstream_commit": "9f7399e15e6172900e0591deb5a57a45769d8205",
+  "reproduction": {
+    "needs_build": false,
+    "suite": "mocha",
+    "test_timeout": 300
+  },
+  "schema": 2,
+  "subtasks": [
+    {
+      "f2p": [
+        "Lookup Reference VLOOKUP"
+      ],
+      "id": "formulajs-1df2ace5993c",
+      "target_files": [
+        "src/lookup-reference.js"
+      ]
+    },
+    {
+      "f2p": [
+        "Statistical if new_x is omitted, it is assumed to be the same as known_x should compute values along an exponential trend"
+      ],
+      "id": "formulajs-32f884896c04",
+      "target_files": [
+        "src/statistical.js"
+      ]
+    },
+    {
+      "f2p": [
+        "Date & Time EDATE"
+      ],
+      "id": "formulajs-4b338211da5e",
+      "target_files": [
+        "src/date-time.js"
+      ]
+    },
+    {
+      "f2p": [
+        "Financial IRR"
+      ],
+      "id": "formulajs-6a84eabb1c21",
+      "target_files": [
+        "src/financial.js"
+      ]
+    },
+    {
+      "f2p": [
+        "Engineering CONVERT"
+      ],
+      "id": "formulajs-7a7f7f481ab7",
+      "target_files": [
+        "src/engineering.js"
+      ]
+    },
+    {
+      "f2p": [
+        "Lookup Reference MATCH should match with string containing ignored regex symbols"
+      ],
+      "id": "formulajs-8deeaadd7faf",
+      "target_files": [
+        "src/lookup-reference.js"
+      ]
+    },
+    {
+      "f2p": [
+        "Lookup Reference MATCH should return the following values"
+      ],
+      "id": "formulajs-adb8f3a07799",
+      "target_files": [
+        "src/lookup-reference.js"
+      ]
+    },
+    {
+      "f2p": [
+        "Engineering IMSUM"
+      ],
+      "id": "formulajs-f70033c02890",
+      "target_files": [
+        "src/engineering.js"
+      ]
+    },
+    {
+      "f2p": [
+        "Financial RATE"
+      ],
+      "id": "formulajs-fab8549116d5",
+      "target_files": [
+        "src/financial.js"
+      ]
+    }
+  ],
+  "task": "formulajs",
+  "version": "4.1.0"
+}

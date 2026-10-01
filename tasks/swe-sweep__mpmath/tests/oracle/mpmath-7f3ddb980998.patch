@@ -1,0 +1,16 @@
+diff --git a/mpmath/matrices/linalg.py b/mpmath/matrices/linalg.py
+index 88703df7..2dad1fde 100644
+--- a/mpmath/matrices/linalg.py
++++ b/mpmath/matrices/linalg.py
+@@ -341,7 +341,10 @@ class LinearAlgebraMethods:
+             s = ctx.fsum(abs(A[i,j])**2 for i in xrange(j, m))
+             if not abs(s) > ctx.eps:
+                 raise ValueError('matrix is numerically singular')
+-            p.append(-ctx.sign(ctx.re(A[j,j])) * ctx.sqrt(s))
++            sign = ctx.sign(ctx.re(A[j,j]))
++            if sign == 0:
++                sign = ctx.one
++            p.append(-sign * ctx.sqrt(s))
+             kappa = ctx.one / (s - p[j] * A[j,j])
+             A[j,j] -= p[j]
+             for k in xrange(j+1, n):

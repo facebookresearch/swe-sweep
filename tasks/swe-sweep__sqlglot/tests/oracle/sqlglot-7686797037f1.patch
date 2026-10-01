@@ -1,0 +1,15 @@
+diff --git a/sqlglot/parser.py b/sqlglot/parser.py
+index 24bf1492f7..f5ed3a8923 100644
+--- a/sqlglot/parser.py
++++ b/sqlglot/parser.py
+@@ -1291,6 +1291,10 @@ class Parser(metaclass=_Parser):
+             "SIMPLE",
+         ),
+         "INITIALLY": ("DEFERRED", "IMMEDIATE"),
++        "USING": (
++            "BTREE",
++            "HASH",
++        ),
+         **dict.fromkeys(("DEFERRABLE", "NORELY"), tuple()),
+     }
+ 

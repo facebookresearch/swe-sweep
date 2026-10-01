@@ -1,0 +1,24 @@
+diff --git a/astropy/table/tests/test_table.py b/astropy/table/tests/test_table.py
+index f4e6f4c95c..1d0ac1b4ef 100644
+--- a/astropy/table/tests/test_table.py
++++ b/astropy/table/tests/test_table.py
+@@ -3179,6 +3179,19 @@ def test_rows_with_mixins():
+     t.group_by("obs")
+ 
+ 
++def test_group_by_empty_table():
++    # see https://github.com/astropy/astropy/issues/11884
++    t = Table(names=["a", "b"])
++    tg = t.group_by("a")
++
++    assert len(tg.groups.indices) == 0
++
++    keys = tg.groups.keys
++    assert isinstance(keys, Table)
++    assert keys.colnames == ["a"]
++    assert len(keys) == 0
++
++
+ def test_iterrows():
+     dat = [
+         (1, 2, 3),

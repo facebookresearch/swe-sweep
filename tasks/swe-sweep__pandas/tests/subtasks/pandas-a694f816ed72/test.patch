@@ -1,0 +1,24 @@
+diff --git a/pandas/tests/indexing/test_loc.py b/pandas/tests/indexing/test_loc.py
+index 4b751fa7d5..77e5da0f92 100644
+--- a/pandas/tests/indexing/test_loc.py
++++ b/pandas/tests/indexing/test_loc.py
+@@ -1489,6 +1489,19 @@ class TestLoc2:
+         df.one = np.int8(7)
+         assert df.dtypes.one == np.dtype(np.int8)
+ 
++    def test_loc_setitem_range_key(self, frame_or_series):
++        # GH#45479 don't treat range key as positional
++        obj = frame_or_series(range(5), index=[3, 4, 1, 0, 2])
++
++        values = [9, 10, 11]
++        if obj.ndim == 2:
++            values = [[9], [10], [11]]
++
++        obj.loc[range(3)] = values
++
++        expected = frame_or_series([0, 1, 10, 9, 11], index=obj.index)
++        tm.assert_equal(obj, expected)
++
+ 
+ class TestLocWithMultiIndex:
+     @pytest.mark.parametrize(

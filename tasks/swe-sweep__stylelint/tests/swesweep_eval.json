@@ -1,0 +1,596 @@
+{
+  "build_jobs": 4,
+  "container_repo": "/stylelint",
+  "evaluation": {
+    "suite": "reproduction",
+    "visible_timeout": 7200
+  },
+  "upstream_image": "pandora-maxbug-stylelint:16.9.0",
+  "n_base_passing": 9064,
+  "n_base_test_ignore": 9,
+  "oracle_digest": "3b55171b5d2ee630e81d5cf023d0c0c92fd7992d6354c2b857c8497f72a06575",
+  "oracle_pristine_paths": [],
+  "upstream_commit": "9f7399e15e6172900e0591deb5a57a45769d8205",
+  "reproduction": {
+    "needs_build": false,
+    "suite": "jest"
+  },
+  "schema": 2,
+  "subtasks": [
+    {
+      "f2p": [
+        "selector-type-no-unknown accept [ true ] ':active-view-transition-type(foo) {}' no description"
+      ],
+      "id": "stylelint-02e1a34d1d01",
+      "target_files": [
+        "lib/rules/selector-type-no-unknown/index.cjs",
+        "lib/rules/selector-type-no-unknown/index.mjs"
+      ]
+    },
+    {
+      "f2p": [
+        "media-feature-name-no-unknown accept [ true ] '@media ($feature < namespace.$var) { }' no description",
+        "media-feature-name-no-unknown accept [ true ] '@media (namespace.$min < width < namespace.$max) { }' no description"
+      ],
+      "id": "stylelint-0355a885a4dc",
+      "target_files": [
+        "lib/utils/findMediaFeatureNames.mjs"
+      ]
+    },
+    {
+      "f2p": [
+        "selector-no-vendor-prefix reject [ true ] '/* a comment */\\n' +\n  ':-ms-fullscreen, /* a comment */\\n' +\n  ':-ms-fullscreen,\\n' +\n  '/* a comment */\\n' +\n  ':-ms-fullscreen\\n' +\n  '{}' no description"
+      ],
+      "id": "stylelint-0430855d683a",
+      "target_files": [
+        "lib/rules/selector-no-vendor-prefix/index.cjs",
+        "lib/rules/selector-no-vendor-prefix/index.mjs"
+      ]
+    },
+    {
+      "f2p": [
+        "selector-pseudo-class-no-unknown reject [ true ] '/* a comment */\\n' +\n  ':unknown, /* a comment */\\n' +\n  ':unknown,\\n' +\n  '/* a comment */\\n' +\n  ':unknown\\n' +\n  '{}' no description",
+        "selector-pseudo-class-no-unknown reject [ true ] '/* a comment */\\n' +\n  '@page :unknown, /* a comment */\\n' +\n  '@page :unknown,\\n' +\n  '/* a comment */\\n' +\n  '@page :unknown\\n' +\n  '{}' no description"
+      ],
+      "id": "stylelint-05c605439d5c",
+      "target_files": [
+        "lib/rules/selector-pseudo-class-no-unknown/index.cjs",
+        "lib/rules/selector-pseudo-class-no-unknown/index.mjs"
+      ]
+    },
+    {
+      "f2p": [
+        "selector-combinator-disallowed-list reject [ '>', ' ' ] '/* a comment */\\na > b, /* a comment */\\na > b,\\n/* a comment */\\na > b\\n{}' no description"
+      ],
+      "id": "stylelint-0eb9a3fbe691",
+      "target_files": [
+        "lib/rules/selector-combinator-disallowed-list/index.cjs",
+        "lib/rules/selector-combinator-disallowed-list/index.mjs"
+      ]
+    },
+    {
+      "f2p": [
+        "custom-property-no-missing-var-function accept true '@property --qux {} a { container-name: --qux; }' no description"
+      ],
+      "id": "stylelint-11b20492f5e3",
+      "target_files": [
+        "lib/rules/custom-property-no-missing-var-function/index.cjs",
+        "lib/rules/custom-property-no-missing-var-function/index.mjs"
+      ]
+    },
+    {
+      "f2p": [
+        "selector-combinator-allowed-list reject [ '>', ' ' ] '/* a comment */\\na + b, /* a comment */\\na + b,\\n/* a comment */\\na + b\\n{}' no description"
+      ],
+      "id": "stylelint-1481edac07b2",
+      "target_files": [
+        "lib/rules/selector-combinator-allowed-list/index.cjs",
+        "lib/rules/selector-combinator-allowed-list/index.mjs"
+      ]
+    },
+    {
+      "f2p": [
+        "no-invalid-position-at-import-rule reject [ true ] \"@layer foo {}\\n@import url('foo.css');\" layer block before import"
+      ],
+      "id": "stylelint-1ab740247e41",
+      "target_files": [
+        "lib/rules/no-invalid-position-at-import-rule/index.mjs"
+      ]
+    },
+    {
+      "f2p": [
+        "__process_level_failure__"
+      ],
+      "id": "stylelint-1b76a3571a22",
+      "target_files": [
+        "lib/rules/lightness-notation/index.cjs",
+        "lib/rules/lightness-notation/index.mjs"
+      ]
+    },
+    {
+      "f2p": [
+        "selector-max-compound-selectors accept [ 2 ] '/* stylelint-disable-next-line selector-max-compound-selectors */\\n' +\n  'a b c, /* stylelint-disable-next-line selector-max-compound-selectors */\\n' +\n  'a b c,\\n' +\n  '/* stylelint-disable-next-line selector-max-compound-selectors */\\n' +\n  'a b c\\n' +\n  '{}' no description",
+        "selector-max-compound-selectors reject [ 2 ] '/* a comment */\\na b c, /* a comment */\\na b c,\\n/* a comment */\\na b c\\n{}' no description"
+      ],
+      "id": "stylelint-1cebb0d7c1c6",
+      "target_files": [
+        "lib/rules/selector-max-compound-selectors/index.cjs",
+        "lib/rules/selector-max-compound-selectors/index.mjs"
+      ]
+    },
+    {
+      "f2p": [
+        "selector-pseudo-element-no-unknown reject [ true ] '/* a comment */\\n' +\n  'a::pseudo, /* a comment */\\n' +\n  'a::pseudo,\\n' +\n  '/* a comment */\\n' +\n  'a::pseudo\\n' +\n  '{ }' no description"
+      ],
+      "id": "stylelint-220a51efed5f",
+      "target_files": [
+        "lib/rules/selector-pseudo-element-no-unknown/index.cjs",
+        "lib/rules/selector-pseudo-element-no-unknown/index.mjs"
+      ]
+    },
+    {
+      "f2p": [
+        "selector-max-specificity accept [ '0,1,0' ] '/* stylelint-disable-next-line selector-max-specificity */\\n' +\n  '.ab .ab, /* stylelint-disable-next-line selector-max-specificity */\\n' +\n  '.ab .ab,\\n' +\n  '/* stylelint-disable-next-line selector-max-specificity */\\n' +\n  '.ab .ab\\n' +\n  '{}' no description",
+        "selector-max-specificity reject [ '0,1,0' ] '/* a comment */\\n.ab .ab, /* a comment */\\n.ab .ab,\\n/* a comment */\\n.ab .ab\\n{}' no description"
+      ],
+      "id": "stylelint-2bc31da355ba",
+      "target_files": [
+        "lib/rules/selector-max-specificity/index.cjs",
+        "lib/rules/selector-max-specificity/index.mjs"
+      ]
+    },
+    {
+      "f2p": [
+        "hue-degree-notation accept [ 'angle' ] 'a { color: lch(from red 1 1 1deg) }' no description",
+        "hue-degree-notation accept [ 'angle' ] 'a { color: oklch(from red 1 1 1deg) }' no description",
+        "hue-degree-notation reject [ 'angle' ] 'a { color: hsl(FROM lch(0 0 10) 0 s l) }' no description",
+        "hue-degree-notation reject [ 'angle' ] 'a { color: hsl(from red 10 s l) }' no description",
+        "hue-degree-notation reject [ 'angle' ] 'a { color: oklch(from red l c 10) }' no description",
+        "hue-degree-notation reject [ 'number' ] 'a { color: hsl(from red 120deg s l) }' no description",
+        "hue-degree-notation reject [ 'number' ] 'a { color: oklch(from red l c 10deg) }' no description"
+      ],
+      "id": "stylelint-2c7569dfbe93",
+      "target_files": [
+        "lib/rules/hue-degree-notation/index.mjs"
+      ]
+    },
+    {
+      "f2p": [
+        "function-url-no-scheme-relative reject [ true ] \"@import url('//www.google.com/foo.css')\" no description",
+        "function-url-no-scheme-relative reject [ true ] '@import url(\"//www.google.com/foo.css\") screen and (min-width: 768px);' no description"
+      ],
+      "id": "stylelint-2fd59d370660",
+      "target_files": [
+        "lib/rules/function-url-no-scheme-relative/index.cjs",
+        "lib/rules/function-url-no-scheme-relative/index.mjs"
+      ]
+    },
+    {
+      "f2p": [
+        "selector-pseudo-class-no-unknown accept [ true ] ':checked, :unchecked, :indeterminate {}' no description"
+      ],
+      "id": "stylelint-31aec6155a4f",
+      "target_files": [
+        "lib/reference/selectors.cjs",
+        "lib/reference/selectors.mjs"
+      ]
+    },
+    {
+      "f2p": [
+        "standalone with quiet mode and report disable warning options"
+      ],
+      "id": "stylelint-3409569c359b",
+      "target_files": [
+        "lib/utils/reportCommentProblem.mjs"
+      ]
+    },
+    {
+      "f2p": [
+        "selector-pseudo-element-disallowed-list reject [ 'before', 'selection', /^my/i ] '/* a comment */\\n' +\n  'a::before, /* a comment */\\n' +\n  'a::before,\\n' +\n  '/* a comment */\\n' +\n  'a::before\\n' +\n  '{}' no description"
+      ],
+      "id": "stylelint-4427bb0fb9c2",
+      "target_files": [
+        "lib/rules/selector-pseudo-element-disallowed-list/index.cjs",
+        "lib/rules/selector-pseudo-element-disallowed-list/index.mjs"
+      ]
+    },
+    {
+      "f2p": [
+        "selector-pseudo-class-allowed-list reject [ 'hover', 'nth-child', 'root', 'placeholder', 'has' ] '/* a comment */\\n:focus, /* a comment */\\n:focus,\\n/* a comment */\\n:focus\\n{}' no description"
+      ],
+      "id": "stylelint-44e54779d0e6",
+      "target_files": [
+        "lib/rules/selector-pseudo-class-allowed-list/index.cjs",
+        "lib/rules/selector-pseudo-class-allowed-list/index.mjs"
+      ]
+    },
+    {
+      "f2p": [
+        "function-url-quotes accept [ 'never' ] \"a { background: url('foo(bar).png'); }\" URL with parentheses requires quotes (#8544)",
+        "function-url-quotes accept [ 'never' ] \"a { background: url('image file.png'); }\" URL with spaces requires quotes (#8544)",
+        "function-url-quotes accept [ 'never' ] 'a { background: url(\"data:image/svg+xml;utf8,<svg height=\\\\\"100\\\\\" width=\\\\\"100\\\\\"></svg>\"); }' data URI with embedded quotes requires quotes (#8544)",
+        "function-url-quotes accept [ 'never' ] 'a { background: url(\"foo(bar).png\"); }' URL with parentheses requires quotes (#8544)",
+        "function-url-quotes accept [ 'never' ] 'a { background: url(\"foo)bogus\"); }' URL with mismatched parentheses requires quotes (#8544)",
+        "function-url-quotes accept [ 'never' ] 'a { background: url(\"image file.png\"); }' URL with spaces requires quotes (#8544)",
+        "function-url-quotes accept [ 'never' ] `a { background-image: url('data:image/svg+xml;utf8,<svg height=\"100\" width=\"100\"><style>.cls-1{}</style></svg>'); }` data URI with embedded quotes requires quotes (#8544)",
+        "function-url-quotes accept [ 'never' ] `a { background: url(\"'foo'\"); }` URL with parentheses requires quotes (#8544)",
+        "function-url-quotes accept [ 'never' ] `a { background: url('data:image/svg+xml;utf8,<svg height=\"100\" width=\"100\"></svg>'); }` data URI with embedded quotes requires quotes (#8544)"
+      ],
+      "id": "stylelint-53338c300908",
+      "target_files": [
+        "lib/rules/function-url-quotes/index.cjs",
+        "lib/rules/function-url-quotes/index.mjs"
+      ]
+    },
+    {
+      "f2p": [
+        "selector-attribute-name-disallowed-list reject [ 'class', 'disabled', 'id', '/^data-/' ] '/* a comment */\\n' +\n  'div[class*=\"foo\"], /* a comment */\\n' +\n  'div[id*=\"foo\"],\\n' +\n  '/* a comment */\\n' +\n  'div[data-foo*=\"foo\"]\\n' +\n  '{ color: red; }' no description"
+      ],
+      "id": "stylelint-5b8069309fea",
+      "target_files": [
+        "lib/rules/selector-attribute-name-disallowed-list/index.cjs",
+        "lib/rules/selector-attribute-name-disallowed-list/index.mjs"
+      ]
+    },
+    {
+      "f2p": [
+        "custom-property-no-missing-var-function reject true 'a {\\n' +\n  '\\t--foo: red;\\n' +\n  '\\t--bar: blue;\\n' +\n  '\\t--baz: green;\\n' +\n  '\\n' +\n  '\\tcolor: var(--foo, var(--bar, --baz));\\n' +\n  '}' nested var() with second-level fallback missing var() syntax",
+        "custom-property-no-missing-var-function reject true 'a {\\n\\t--foo: red;\\n\\t--bar: blue;\\n\\n\\tcolor: var(--foo, --bar);\\n}' var() with missing var() syntax on fallback"
+      ],
+      "id": "stylelint-5eae20dc8883",
+      "target_files": [
+        "lib/rules/custom-property-no-missing-var-function/index.cjs",
+        "lib/rules/custom-property-no-missing-var-function/index.mjs"
+      ]
+    },
+    {
+      "f2p": [
+        "named-grid-areas-no-invalid accept [ true ] \"a { grid-template-areas: ({ $foo }) => ($foo === 'any string with different number of tokens than return values' ? 'a a a' : 'b b b'); }\" Skip non-standard values to fix false positive in named-grid-areas-no-invalid with styled-components"
+      ],
+      "id": "stylelint-654a3e85d803",
+      "target_files": [
+        "lib/rules/named-grid-areas-no-invalid/index.cjs",
+        "lib/rules/named-grid-areas-no-invalid/index.mjs"
+      ]
+    },
+    {
+      "f2p": [
+        "selector-class-pattern reject [ /^[A-Z]+$/ ] '/* a comment */\\na .foo, /* a comment */\\na .bar,\\n/* a comment */\\na .foo\\n{}' no description"
+      ],
+      "id": "stylelint-6a346e492141",
+      "target_files": [
+        "lib/rules/selector-class-pattern/index.cjs",
+        "lib/rules/selector-class-pattern/index.mjs"
+      ]
+    },
+    {
+      "f2p": [
+        "function-linear-gradient-no-nonstandard-direction accept [ true ] '.foo { background: linear-gradient(var(--gradient-stop-1), var(--gradient-stop-2)); }' no description",
+        "function-linear-gradient-no-nonstandard-direction accept [ true ] '.foo { background: linear-gradient(var(--stop)); }' no description",
+        "function-linear-gradient-no-nonstandard-direction accept [ true ] '.foo { background: linear-gradient(var(--stop-color)); }' no description",
+        "function-linear-gradient-no-nonstandard-direction accept [ true ] '.foo { background: linear-gradient(var(--tw-gradient-stops)); }' no description"
+      ],
+      "id": "stylelint-70146263ee4c",
+      "target_files": [
+        "lib/rules/function-linear-gradient-no-nonstandard-direction/index.cjs",
+        "lib/rules/function-linear-gradient-no-nonstandard-direction/index.mjs"
+      ]
+    },
+    {
+      "f2p": [
+        "selector-disallowed-list reject [\n  /^\\.(foo)[,\\s]?(?!\\w).*$/,\n  { ignore: [ 'inside-block' ], splitList: true }\n] '/* a comment */\\n.foo, /* a comment */\\n.foo,\\n/* a comment */\\n.foo\\n{}' no description"
+      ],
+      "id": "stylelint-72a992cf7e44",
+      "target_files": [
+        "lib/rules/selector-disallowed-list/index.cjs",
+        "lib/rules/selector-disallowed-list/index.mjs"
+      ]
+    },
+    {
+      "f2p": [
+        "selector-not-notation reject [ 'simple' ] '/* a comment */\\n' +\n  ':not(a, div), /* a comment */\\n' +\n  ':not(a, div),\\n' +\n  '/* a comment */\\n' +\n  ':not(a, div)\\n' +\n  '{}' no description"
+      ],
+      "id": "stylelint-784b5f849472",
+      "target_files": [
+        "lib/rules/selector-not-notation/index.cjs",
+        "lib/rules/selector-not-notation/index.mjs"
+      ]
+    },
+    {
+      "f2p": [
+        "declaration-block-no-duplicate-properties reject [ true, { ignore: [ 'consecutive-duplicates' ] } ] 'a { font-size: 16px; color: red; font-size: 1rem; color: blue; }' two interleaved properties, each with non-consecutive duplicates"
+      ],
+      "id": "stylelint-7ce013f8825f",
+      "target_files": [
+        "lib/rules/declaration-block-no-duplicate-properties/index.mjs"
+      ]
+    },
+    {
+      "f2p": [
+        "no-duplicate-selectors reject [ true ] '.u-m\\\\00002b {} .u-m\\\\+ {}' duplicate selectors with different escape formats (hex vs character)",
+        "no-duplicate-selectors reject [ true ] '.u-m\\\\2b {} .u-m\\\\00002b {}' duplicate selectors with short vs long hex escape"
+      ],
+      "id": "stylelint-8daa0ccb259a",
+      "target_files": [
+        "lib/utils/normalizeSelector.mjs"
+      ]
+    },
+    {
+      "f2p": [
+        "selector-attribute-operator-disallowed-list reject [ '*=', '~=' ] '/* a comment */\\n' +\n  'a[class*=\"foo\"], /* a comment */\\n' +\n  'a[id~=\"foo\"],\\n' +\n  '/* a comment */\\n' +\n  'a[data-foo*=\"foo\"]\\n' +\n  '{ }' no description"
+      ],
+      "id": "stylelint-8e3cceac8c2d",
+      "target_files": [
+        "lib/rules/selector-attribute-operator-disallowed-list/index.cjs",
+        "lib/rules/selector-attribute-operator-disallowed-list/index.mjs"
+      ]
+    },
+    {
+      "f2p": [
+        "selector-pseudo-class-no-unknown accept [ true ] '@page :nth(2n) {}' no description",
+        "selector-pseudo-class-no-unknown accept [ true ] '@page :recto {}' no description",
+        "selector-pseudo-class-no-unknown accept [ true ] '@page bar:verso {}' no description"
+      ],
+      "id": "stylelint-9a449519abf7",
+      "target_files": [
+        "lib/reference/selectors.cjs",
+        "lib/reference/selectors.mjs"
+      ]
+    },
+    {
+      "f2p": [
+        "file in node_modules is ignored when using codeFilename"
+      ],
+      "id": "stylelint-9e3a8c67bf46",
+      "target_files": [
+        "lib/standalone.mjs"
+      ]
+    },
+    {
+      "f2p": [
+        "named-grid-areas-no-invalid accept [ true ] '.test-grid {\\n\\tgrid-template:\\n\\t\\t\"a a a\"\\n\\t\\t\"b b\\tb\";\\n}' Issue #8134 - tabs should be treated as valid whitespace separators"
+      ],
+      "id": "stylelint-9f6adf9dd940",
+      "target_files": [
+        "lib/rules/named-grid-areas-no-invalid/index.mjs"
+      ]
+    },
+    {
+      "f2p": [
+        "preserves ruleMetadata when an earlier explicit file does not match any overrides"
+      ],
+      "id": "stylelint-a3f5a591d4b3",
+      "target_files": [
+        "lib/prepareReturnValue.mjs"
+      ]
+    },
+    {
+      "f2p": [
+        "beforeBlockString runs on at-rules",
+        "beforeBlockString runs on rules",
+        "block-no-empty reject [ true ] '@media print /*comment*/, screen {}' no description"
+      ],
+      "id": "stylelint-adb0fb016813",
+      "target_files": [
+        "lib/utils/beforeBlockString.mjs"
+      ]
+    },
+    {
+      "f2p": [
+        "selector-type-no-unknown reject [ true ] '/* a comment */\\nunknown, /* a comment */\\nunknown,\\n/* a comment */\\nunknown\\n{}' no description"
+      ],
+      "id": "stylelint-ae8e8cc93afe",
+      "target_files": [
+        "lib/rules/selector-type-no-unknown/index.cjs",
+        "lib/rules/selector-type-no-unknown/index.mjs"
+      ]
+    },
+    {
+      "f2p": [
+        "selector-pseudo-class-disallowed-list reject [\n  'focus',\n  'global',\n  'input-placeholder',\n  'not',\n  'nth-last-child',\n  'has'\n] '/* a comment */\\n:focus, /* a comment */\\n:focus,\\n/* a comment */\\n:focus\\n{}' no description"
+      ],
+      "id": "stylelint-afa11be41080",
+      "target_files": [
+        "lib/rules/selector-pseudo-class-disallowed-list/index.cjs",
+        "lib/rules/selector-pseudo-class-disallowed-list/index.mjs"
+      ]
+    },
+    {
+      "f2p": [
+        "selector-max-combinators accept [ 0 ] '/* stylelint-disable-next-line selector-max-combinators */\\n' +\n  'a + b, /* stylelint-disable-next-line selector-max-combinators */\\n' +\n  'a + b,\\n' +\n  '/* stylelint-disable-next-line selector-max-combinators */\\n' +\n  'a + b\\n' +\n  '{}' no description",
+        "selector-max-combinators reject [ 0 ] '/* a comment */\\na + b, /* a comment */\\na + b,\\n/* a comment */\\na + b\\n{}' no description"
+      ],
+      "id": "stylelint-b261bf13b371",
+      "target_files": [
+        "lib/rules/selector-max-combinators/index.cjs",
+        "lib/rules/selector-max-combinators/index.mjs"
+      ]
+    },
+    {
+      "f2p": [
+        "selector-id-pattern reject [ /^[A-Z]+$/ ] '/* a comment */\\na #foo, /* a comment */\\na #bar,\\n/* a comment */\\na #foo\\n{}' no description"
+      ],
+      "id": "stylelint-b69415ec68d6",
+      "target_files": [
+        "lib/rules/selector-id-pattern/index.cjs",
+        "lib/rules/selector-id-pattern/index.mjs"
+      ]
+    },
+    {
+      "f2p": [
+        "at-rule-no-unknown accept [ true ] '@position-try --foo {}' no description"
+      ],
+      "id": "stylelint-b88b0686a783",
+      "target_files": [
+        "lib/reference/atKeywords.cjs",
+        "lib/reference/atKeywords.mjs"
+      ]
+    },
+    {
+      "f2p": [
+        "selector-max-id accept [ 0 ] '/* stylelint-disable-next-line selector-max-id */\\n' +\n  '#foo, /* stylelint-disable-next-line selector-max-id */\\n' +\n  '#bar,\\n' +\n  '/* stylelint-disable-next-line selector-max-id */\\n' +\n  '#baz\\n' +\n  '{}' no description",
+        "selector-max-id reject [ 0 ] '/* a comment */\\n#foo, /* a comment */\\n#bar,\\n/* a comment */\\n#foo\\n{}' no description"
+      ],
+      "id": "stylelint-ba90b51fdd11",
+      "target_files": [
+        "lib/rules/selector-max-id/index.cjs",
+        "lib/rules/selector-max-id/index.mjs"
+      ]
+    },
+    {
+      "f2p": [
+        "declaration-block-no-redundant-longhand-properties accept [ true ] 'a { top: 0 !important; right: 0 !important; bottom: 0 !important; left: 0; }' number of important declarations is less than number of properties",
+        "declaration-block-no-redundant-longhand-properties accept [ true ] 'a { top: 0; right: 0; bottom: 0 !important; left: 0; }' contains important declaration"
+      ],
+      "id": "stylelint-bcd7cca04855",
+      "target_files": [
+        "lib/rules/declaration-block-no-redundant-longhand-properties/index.cjs",
+        "lib/rules/declaration-block-no-redundant-longhand-properties/index.mjs"
+      ]
+    },
+    {
+      "f2p": [
+        "selector-pseudo-class-no-unknown accept [ true ] '::-webkit-scrollbar { & { &:horizontal {} } }' webkit scrollbar pseudo class in deeply nested rule",
+        "selector-pseudo-class-no-unknown accept [ true ] '::-webkit-scrollbar { &:horizontal {} }' webkit scrollbar pseudo class in nested rule with explicit &",
+        "selector-pseudo-class-no-unknown accept [ true ] '::-webkit-scrollbar { @media all { &:horizontal {} } }' webkit scrollbar pseudo class nested through an at-rule",
+        "selector-pseudo-class-no-unknown accept [ true ] '::-webkit-scrollbar-button { &:horizontal { &:decrement {} } }' nested webkit scrollbar pseudo classes",
+        "selector-pseudo-class-no-unknown accept [ true ] '::-webkit-scrollbar-button { &:horizontal:decrement {} }' multiple webkit scrollbar pseudo classes in nested rule"
+      ],
+      "id": "stylelint-c50e6614c5ff",
+      "target_files": [
+        "lib/rules/selector-pseudo-class-no-unknown/index.mjs"
+      ]
+    },
+    {
+      "f2p": [
+        "lightness-notation reject [ 'number' ] 'a { color: lch(from red 52.9% c h) }' no description",
+        "lightness-notation reject [ 'percentage' ] 'a { color: lch(from red 52.9 c h) }' no description"
+      ],
+      "id": "stylelint-c720799e9133",
+      "target_files": [
+        "lib/rules/lightness-notation/index.mjs"
+      ]
+    },
+    {
+      "f2p": [
+        "selector-pseudo-element-colon-notation reject [ 'single' ] '/* a comment */\\n' +\n  'a::after, /* a comment */\\n' +\n  'a::after,\\n' +\n  '/* a comment */\\n' +\n  'a::after\\n' +\n  '{}' no description"
+      ],
+      "id": "stylelint-d7bae77457bc",
+      "target_files": [
+        "lib/rules/selector-pseudo-element-colon-notation/index.cjs",
+        "lib/rules/selector-pseudo-element-colon-notation/index.mjs"
+      ]
+    },
+    {
+      "f2p": [
+        "font-family-no-missing-generic-family-keyword accept [ true ] '@FONT-PALETTE-VALUES --foo { font-family: bar; }' no description",
+        "font-family-no-missing-generic-family-keyword accept [ true ] '@font-palette-values --foo { font-family: bar; }' no description"
+      ],
+      "id": "stylelint-dea3a7b6cb8a",
+      "target_files": [
+        "lib/rules/font-family-no-missing-generic-family-keyword/index.cjs",
+        "lib/rules/font-family-no-missing-generic-family-keyword/index.mjs"
+      ]
+    },
+    {
+      "f2p": [
+        "selector-max-class accept [ 0 ] '/* stylelint-disable-next-line selector-max-class */\\n' +\n  '.foo, /* stylelint-disable-next-line selector-max-class */\\n' +\n  '.bar,\\n' +\n  '/* stylelint-disable-next-line selector-max-class */\\n' +\n  '.foo\\n' +\n  '{}' no description",
+        "selector-max-class reject [ 0 ] '/* a comment */\\n.foo, /* a comment */\\n.bar,\\n/* a comment */\\n.foo\\n{}' no description"
+      ],
+      "id": "stylelint-e6d6a14b9167",
+      "target_files": [
+        "lib/rules/selector-max-class/index.cjs",
+        "lib/rules/selector-max-class/index.mjs"
+      ]
+    },
+    {
+      "f2p": [
+        "font-family-no-missing-generic-family-keyword accept [ true ] 'a { font-family: emoji; }' no description",
+        "font-family-no-missing-generic-family-keyword accept [ true ] 'a { font-family: fangsong; }' no description",
+        "font-family-no-missing-generic-family-keyword accept [ true ] 'a { font: italic small-caps bold 12px fangsong; }' no description",
+        "font-family-no-missing-generic-family-keyword accept [ true ] 'a { font: normal 1em oblique emoji; }' no description"
+      ],
+      "id": "stylelint-eb94e560934f",
+      "target_files": [
+        "lib/reference/keywords.cjs",
+        "lib/reference/keywords.mjs"
+      ]
+    },
+    {
+      "f2p": [
+        "no-descending-specificity reject [ true ] 'b a, b aa, b aaa { color: red; }\\n' +\n  '/* a comment */\\n' +\n  'a, /* a comment */\\n' +\n  'aa,\\n' +\n  '/* a comment */\\n' +\n  'aaa\\n' +\n  '{ color: red; }' no description"
+      ],
+      "id": "stylelint-ed1d51a2da8d",
+      "target_files": [
+        "lib/rules/no-descending-specificity/index.cjs",
+        "lib/rules/no-descending-specificity/index.mjs"
+      ]
+    },
+    {
+      "f2p": [
+        "selector-attribute-operator-allowed-list reject [ '=', '|=' ] '/* a comment */\\n' +\n  'a[class*=\"foo\"], /* a comment */\\n' +\n  'a[id*=\"foo\"],\\n' +\n  '/* a comment */\\n' +\n  'a[data-foo*=\"foo\"]\\n' +\n  '{ }' no description"
+      ],
+      "id": "stylelint-ee89407e8022",
+      "target_files": [
+        "lib/rules/selector-attribute-operator-allowed-list/index.cjs",
+        "lib/rules/selector-attribute-operator-allowed-list/index.mjs"
+      ]
+    },
+    {
+      "f2p": [
+        "selector-max-attribute accept [ 0 ] '/* stylelint-disable-next-line selector-max-attribute */\\n' +\n  '[foo], /* stylelint-disable-next-line selector-max-attribute */\\n' +\n  '[bar],\\n' +\n  '/* stylelint-disable-next-line selector-max-attribute */\\n' +\n  '[foo]\\n' +\n  '{}' no description",
+        "selector-max-attribute reject [ 0 ] '/* a comment */\\n[foo], /* a comment */\\n[bar],\\n/* a comment */\\n[foo]\\n{}' no description"
+      ],
+      "id": "stylelint-f1c42cba0278",
+      "target_files": [
+        "lib/rules/selector-max-attribute/index.cjs",
+        "lib/rules/selector-max-attribute/index.mjs"
+      ]
+    },
+    {
+      "f2p": [
+        "selector-pseudo-element-allowed-list reject [ 'before', 'selection', /^my/i ] '/* a comment */\\n' +\n  'a::after, /* a comment */\\n' +\n  'a::after,\\n' +\n  '/* a comment */\\n' +\n  'a::after\\n' +\n  '{}' no description"
+      ],
+      "id": "stylelint-f3e6e9d8c454",
+      "target_files": [
+        "lib/rules/selector-pseudo-element-allowed-list/index.cjs",
+        "lib/rules/selector-pseudo-element-allowed-list/index.mjs"
+      ]
+    },
+    {
+      "f2p": [
+        "function-calc-no-unspaced-operator reject [ true ] 'a { top: calc(1px + 2px*3px+4px); }' unspaced \"+\" after a multiplication that follows a spaced operator",
+        "function-calc-no-unspaced-operator reject [ true ] 'a { top: calc(1px*2px+3px); }' unspaced \"+\" after a multiplication",
+        "function-calc-no-unspaced-operator reject [ true ] 'a { top: calc(1px/2-3px); }' unspaced \"-\" after a division"
+      ],
+      "id": "stylelint-f4668ce42d3c",
+      "target_files": [
+        "lib/rules/function-calc-no-unspaced-operator/index.mjs"
+      ]
+    },
+    {
+      "f2p": [
+        "rule-empty-line-before accept [ 'always', { except: [ 'after-single-line-comment' ] } ] '/* comment */ a {}' comment on the same line as the rule",
+        "rule-empty-line-before accept [ 'always', { except: [ 'after-single-line-comment' ] } ] 'b {}\\n/* comment */ a {}' comment on its own line and on the same line as the rule"
+      ],
+      "id": "stylelint-f66399e0ffe6",
+      "target_files": [
+        "lib/utils/isAfterSingleLineComment.mjs",
+        "lib/utils/isSharedLineComment.mjs"
+      ]
+    },
+    {
+      "f2p": [
+        "selector-nested-pattern reject [ '^&:(?:hover|focus)$', { splitList: true } ] '.foo {\\n' +\n  '\\t/* a comment */\\n' +\n  '\\t.bar, /* a comment */\\n' +\n  '\\t.bar,\\n' +\n  '\\t/* a comment */\\n' +\n  '\\t.bar\\n' +\n  '\\t{}\\n' +\n  '}' no description",
+        "selector-nested-pattern reject [ /^[A-Z]+$/ ] 'a { b /* a comment */ b {} }' no description"
+      ],
+      "id": "stylelint-f8519163a7a4",
+      "target_files": [
+        "lib/rules/selector-nested-pattern/index.cjs",
+        "lib/rules/selector-nested-pattern/index.mjs"
+      ]
+    }
+  ],
+  "task": "stylelint",
+  "version": "16.9.0"
+}

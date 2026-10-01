@@ -1,0 +1,32 @@
+diff --git a/shapely/tests/geometry/test_multipolygon.py b/shapely/tests/geometry/test_multipolygon.py
+index 62a9216f..9c8d2894 100644
+--- a/shapely/tests/geometry/test_multipolygon.py
++++ b/shapely/tests/geometry/test_multipolygon.py
+@@ -9,6 +9,11 @@ from .test_multi import MultiGeometryTestCase
+ class TestMultiPolygon(MultiGeometryTestCase):
+     def test_multipolygon(self):
+ 
++        # Empty
++        geom = MultiPolygon([])
++        assert geom.is_empty
++        assert len(geom.geoms) == 0
++
+         # From coordinate tuples
+         coords = [
+             (
+@@ -49,6 +54,15 @@ class TestMultiPolygon(MultiGeometryTestCase):
+             ]
+         ]
+ 
++        # Or from a list of multiple polygons
++        geom_multiple_from_list = MultiPolygon([p, p])
++        assert len(geom_multiple_from_list.geoms) == 2
++        assert all(p == geom.geoms[0] for p in geom_multiple_from_list.geoms)
++
++        # Or from a np.array of polygons
++        geom_multiple_from_array = MultiPolygon(np.array([p, p]))
++        assert geom_multiple_from_array == geom_multiple_from_list
++
+         # Or from another multi-polygon
+         geom2 = MultiPolygon(geom)
+         assert len(geom2.geoms) == 1

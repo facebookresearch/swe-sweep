@@ -1,0 +1,35 @@
+diff --git a/vlib/v/tests/generics_fn_return_result_test.v b/vlib/v/tests/generics_fn_return_result_test.v
+index c4b08d4c9..f1cc93e74 100644
+--- a/vlib/v/tests/generics_fn_return_result_test.v
++++ b/vlib/v/tests/generics_fn_return_result_test.v
+@@ -1,6 +1,6 @@
+ fn make_2x3[T](mut res [][]T) ! {
+ 	mut a := []T{len: 6}
+-	res = reshape(a, [2, 3])!
++	res = reshape[T](a, [2, 3])!
+ }
+ 
+ fn reshape[T](y []T, dims []int) ![][]T {
+diff --git a/vlib/v/tests/infer_generic_array_type_in_nested_call_test.v b/vlib/v/tests/infer_generic_array_type_in_nested_call_test.v
+new file mode 100644
+index 000000000..a85f8799a
+--- /dev/null
++++ b/vlib/v/tests/infer_generic_array_type_in_nested_call_test.v
+@@ -0,0 +1,17 @@
++fn unmarshal_any[T]() T {
++	mut typ := T{}
++	$if T is $array {
++		unmarshal_array(mut typ)
++	}
++	return typ
++}
++
++fn unmarshal_array[T](mut typ []T) {
++	typ << 42
++}
++
++fn test_infer_generic_array_type_in_nested_call() {
++	ret := unmarshal_any[[]int]()
++	println(ret)
++	assert ret == [42]
++}

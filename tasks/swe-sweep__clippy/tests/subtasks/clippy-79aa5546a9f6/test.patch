@@ -1,0 +1,36 @@
+diff --git a/tests/ui/question_mark.fixed b/tests/ui/question_mark.fixed
+index 507bc2b29..60dc1c101 100644
+--- a/tests/ui/question_mark.fixed
++++ b/tests/ui/question_mark.fixed
+@@ -443,3 +443,13 @@ fn issue_14615(a: MutexGuard<Option<u32>>) -> Option<String> {
+     //~^^^ question_mark
+     Some(format!("{a}"))
+ }
++
++fn const_in_pattern(x: Option<(i32, i32)>) -> Option<()> {
++    const N: i32 = 0;
++
++    let Some((x, N)) = x else {
++        return None;
++    };
++
++    None
++}
+diff --git a/tests/ui/question_mark.rs b/tests/ui/question_mark.rs
+index 64b51b849..99d0122a9 100644
+--- a/tests/ui/question_mark.rs
++++ b/tests/ui/question_mark.rs
+@@ -539,3 +539,13 @@ fn issue_14615(a: MutexGuard<Option<u32>>) -> Option<String> {
+     //~^^^ question_mark
+     Some(format!("{a}"))
+ }
++
++fn const_in_pattern(x: Option<(i32, i32)>) -> Option<()> {
++    const N: i32 = 0;
++
++    let Some((x, N)) = x else {
++        return None;
++    };
++
++    None
++}

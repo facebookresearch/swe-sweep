@@ -1,0 +1,145 @@
+diff --git a/pulsar-broker-common/src/main/java/org/apache/pulsar/bookie/rackawareness/BookieRackAffinityMapping.java b/pulsar-broker-common/src/main/java/org/apache/pulsar/bookie/rackawareness/BookieRackAffinityMapping.java
+index ec4b7da..e01b5c8 100644
+--- a/pulsar-broker-common/src/main/java/org/apache/pulsar/bookie/rackawareness/BookieRackAffinityMapping.java
++++ b/pulsar-broker-common/src/main/java/org/apache/pulsar/bookie/rackawareness/BookieRackAffinityMapping.java
+@@ -79,7 +79,7 @@ public class BookieRackAffinityMapping extends AbstractDNSToSwitchMapping
+             store = (MetadataStore) storeProperty;
+         } else {
+             String url;
+-            String metadataServiceUri = (String) conf.getProperty("metadataServiceUri");
++            String metadataServiceUri = ConfigurationStringUtil.castToString(conf.getProperty("metadataServiceUri"));
+             if (StringUtils.isNotBlank(metadataServiceUri)) {
+                 try {
+                     url = metadataServiceUri.replaceFirst(METADATA_STORE_SCHEME + ":", "")
+@@ -88,7 +88,7 @@ public class BookieRackAffinityMapping extends AbstractDNSToSwitchMapping
+                     throw new MetadataException(Code.METADATA_SERVICE_ERROR, e);
+                 }
+             } else {
+-                String zkServers = (String) conf.getProperty("zkServers");
++                String zkServers = ConfigurationStringUtil.castToString(conf.getProperty("zkServers"));
+                 if (StringUtils.isBlank(zkServers)) {
+                     String errorMsg = String.format("Neither %s configuration set in the BK client configuration nor "
+                             + "metadataServiceUri/zkServers set in bk server configuration", METADATA_STORE_INSTANCE);
+diff --git a/pulsar-broker-common/src/main/java/org/apache/pulsar/bookie/rackawareness/ConfigurationStringUtil.java b/pulsar-broker-common/src/main/java/org/apache/pulsar/bookie/rackawareness/ConfigurationStringUtil.java
+new file mode 100644
+index 0000000..99736b4
+--- /dev/null
++++ b/pulsar-broker-common/src/main/java/org/apache/pulsar/bookie/rackawareness/ConfigurationStringUtil.java
+@@ -0,0 +1,48 @@
++/**
++ * Licensed to the Apache Software Foundation (ASF) under one
++ * or more contributor license agreements.  See the NOTICE file
++ * distributed with this work for additional information
++ * regarding copyright ownership.  The ASF licenses this file
++ * to you under the Apache License, Version 2.0 (the
++ * "License"); you may not use this file except in compliance
++ * with the License.  You may obtain a copy of the License at
++ *
++ *   http://www.apache.org/licenses/LICENSE-2.0
++ *
++ * Unless required by applicable law or agreed to in writing,
++ * software distributed under the License is distributed on an
++ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
++ * KIND, either express or implied.  See the License for the
++ * specific language governing permissions and limitations
++ * under the License.
++ */
++
++package org.apache.pulsar.bookie.rackawareness;
++
++import java.util.ArrayList;
++import java.util.List;
++
++public class ConfigurationStringUtil {
++
++    /**
++     * The Bookkeeper configuration class converts comma delimited strings to ArrayLists, by default. Use
++     * this method to ensure a configuration value is a {@link String}.
++     * @param obj - object to convert to a string
++     * @return The object's conversion to a string where Lists map to a comma delimited list.
++     */
++    static String castToString(Object obj) {
++        if (null == obj) {
++            return "";
++        }
++        if (obj instanceof List<?>) {
++            List<String> result = new ArrayList<>();
++            for (Object o : (List<?>) obj) {
++                result.add((String) o);
++            }
++            return String.join(",", result);
++        } else {
++            return obj.toString();
++        }
++    }
++
++}
+diff --git a/pulsar-broker-common/src/main/java/org/apache/pulsar/bookie/rackawareness/IsolatedBookieEnsemblePlacementPolicy.java b/pulsar-broker-common/src/main/java/org/apache/pulsar/bookie/rackawareness/IsolatedBookieEnsemblePlacementPolicy.java
+index c086e2c..51195af 100644
+--- a/pulsar-broker-common/src/main/java/org/apache/pulsar/bookie/rackawareness/IsolatedBookieEnsemblePlacementPolicy.java
++++ b/pulsar-broker-common/src/main/java/org/apache/pulsar/bookie/rackawareness/IsolatedBookieEnsemblePlacementPolicy.java
+@@ -20,7 +20,6 @@ package org.apache.pulsar.bookie.rackawareness;
+ 
+ import static org.apache.pulsar.bookie.rackawareness.BookieRackAffinityMapping.METADATA_STORE_INSTANCE;
+ import io.netty.util.HashedWheelTimer;
+-import java.util.ArrayList;
+ import java.util.Arrays;
+ import java.util.Collections;
+ import java.util.HashMap;
+@@ -79,7 +78,8 @@ public class IsolatedBookieEnsemblePlacementPolicy extends RackawareEnsemblePlac
+         Set<String> primaryIsolationGroups = new HashSet<>();
+         Set<String> secondaryIsolationGroups = new HashSet<>();
+         if (conf.getProperty(ISOLATION_BOOKIE_GROUPS) != null) {
+-            String isolationGroupsString = castToString(conf.getProperty(ISOLATION_BOOKIE_GROUPS));
++            String isolationGroupsString = ConfigurationStringUtil
++                    .castToString(conf.getProperty(ISOLATION_BOOKIE_GROUPS));
+             if (!isolationGroupsString.isEmpty()) {
+                 for (String isolationGroup : isolationGroupsString.split(",")) {
+                     primaryIsolationGroups.add(isolationGroup);
+@@ -91,7 +91,8 @@ public class IsolatedBookieEnsemblePlacementPolicy extends RackawareEnsemblePlac
+             }
+         }
+         if (conf.getProperty(SECONDARY_ISOLATION_BOOKIE_GROUPS) != null) {
+-            String secondaryIsolationGroupsString = castToString(conf.getProperty(SECONDARY_ISOLATION_BOOKIE_GROUPS));
++            String secondaryIsolationGroupsString = ConfigurationStringUtil
++                    .castToString(conf.getProperty(SECONDARY_ISOLATION_BOOKIE_GROUPS));
+             if (!secondaryIsolationGroupsString.isEmpty()) {
+                 for (String isolationGroup : secondaryIsolationGroupsString.split(",")) {
+                     secondaryIsolationGroups.add(isolationGroup);
+@@ -102,22 +103,7 @@ public class IsolatedBookieEnsemblePlacementPolicy extends RackawareEnsemblePlac
+         return super.initialize(conf, optionalDnsResolver, timer, featureProvider, statsLogger, bookieAddressResolver);
+     }
+ 
+-    private static String castToString(Object obj) {
+-        if (null == obj) {
+-            return "";
+-        }
+-        if (obj instanceof List<?>) {
+-            List<String> result = new ArrayList<>();
+-            for (Object o : (List<?>) obj) {
+-                result.add((String) o);
+-            }
+-            return String.join(",", result);
+-        } else {
+-            return obj.toString();
+-        }
+-    }
+-
+-    @Override
++    @Override
+     public PlacementResult<List<BookieId>> newEnsemble(int ensembleSize, int writeQuorumSize, int ackQuorumSize,
+             Map<String, byte[]> customMetadata, Set<BookieId> excludeBookies)
+             throws BKNotEnoughBookiesException {
+@@ -178,9 +164,10 @@ public class IsolatedBookieEnsemblePlacementPolicy extends RackawareEnsemblePlac
+         String className = IsolatedBookieEnsemblePlacementPolicy.class.getName();
+         if (ensemblePlacementPolicyConfig.getPolicyClass().getName().equals(className)) {
+             Map<String, Object> properties = ensemblePlacementPolicyConfig.getProperties();
+-            String primaryIsolationGroupString = castToString(properties.getOrDefault(ISOLATION_BOOKIE_GROUPS, ""));
++            String primaryIsolationGroupString = ConfigurationStringUtil
++                    .castToString(properties.getOrDefault(ISOLATION_BOOKIE_GROUPS, ""));
+             String secondaryIsolationGroupString =
+-                    castToString(properties.getOrDefault(SECONDARY_ISOLATION_BOOKIE_GROUPS, ""));
++                    ConfigurationStringUtil.castToString(properties.getOrDefault(SECONDARY_ISOLATION_BOOKIE_GROUPS, ""));
+             if (!primaryIsolationGroupString.isEmpty()) {
+                 pair.setLeft(new HashSet(Arrays.asList(primaryIsolationGroupString.split(","))));
+             }

@@ -1,0 +1,69 @@
+diff --git a/cpp/src/arrow/type.cc b/cpp/src/arrow/type.cc
+index 2e9d860a8d..cba4a0ecd3 100644
+--- a/cpp/src/arrow/type.cc
++++ b/cpp/src/arrow/type.cc
+@@ -2403,7 +2403,7 @@ std::shared_ptr<DataType> sparse_union(FieldVector child_fields,
+ std::shared_ptr<DataType> sparse_union(FieldVector child_fields,
+                                        std::vector<int8_t> type_codes) {
+   if (type_codes.empty()) {
+-    type_codes = internal::Iota(static_cast<int8_t>(child_fields.size()));
++    type_codes = internal::Iota<int8_t>(0, child_fields.size());
+   }
+   return std::make_shared<SparseUnionType>(std::move(child_fields),
+                                            std::move(type_codes));
+@@ -2411,7 +2411,7 @@ std::shared_ptr<DataType> dense_union(FieldVector child_fields,
+ std::shared_ptr<DataType> dense_union(FieldVector child_fields,
+                                       std::vector<int8_t> type_codes) {
+   if (type_codes.empty()) {
+-    type_codes = internal::Iota(static_cast<int8_t>(child_fields.size()));
++    type_codes = internal::Iota<int8_t>(0, child_fields.size());
+   }
+   return std::make_shared<DenseUnionType>(std::move(child_fields), std::move(type_codes));
+ }
+@@ -2439,7 +2439,7 @@ std::shared_ptr<DataType> sparse_union(const ArrayVector& children,
+                                        std::vector<std::string> field_names,
+                                        std::vector<int8_t> type_codes) {
+   if (type_codes.empty()) {
+-    type_codes = internal::Iota(static_cast<int8_t>(children.size()));
++    type_codes = internal::Iota<int8_t>(0, children.size());
+   }
+   auto fields = FieldsFromArraysAndNames(std::move(field_names), children);
+   return sparse_union(std::move(fields), std::move(type_codes));
+@@ -2449,7 +2449,7 @@ std::shared_ptr<DataType> dense_union(const ArrayVector& children,
+                                       std::vector<std::string> field_names,
+                                       std::vector<int8_t> type_codes) {
+   if (type_codes.empty()) {
+-    type_codes = internal::Iota(static_cast<int8_t>(children.size()));
++    type_codes = internal::Iota<int8_t>(0, children.size());
+   }
+   auto fields = FieldsFromArraysAndNames(std::move(field_names), children);
+   return dense_union(std::move(fields), std::move(type_codes));
+diff --git a/cpp/src/arrow/util/range.h b/cpp/src/arrow/util/range.h
+index 2055328798..55155b7e34 100644
+--- a/cpp/src/arrow/util/range.h
++++ b/cpp/src/arrow/util/range.h
+@@ -27,15 +27,21 @@
+ namespace arrow {
+ namespace internal {
+ 
++/// Create a vector containing the values from start with length elements
++template <typename T>
++std::vector<T> Iota(T start, size_t length) {
++  std::vector<T> result(length);
++  std::iota(result.begin(), result.end(), start);
++  return result;
++}
++
+ /// Create a vector containing the values from start up to stop
+ template <typename T>
+ std::vector<T> Iota(T start, T stop) {
+   if (start > stop) {
+     return {};
+   }
+-  std::vector<T> result(static_cast<size_t>(stop - start));
+-  std::iota(result.begin(), result.end(), start);
+-  return result;
++  return Iota<T>(start, static_cast<size_t>(stop - start));
+ }
+ 
+ /// Create a vector containing the values from 0 up to length

@@ -1,0 +1,26 @@
+diff --git a/frmts/vrt/vrtrasterband.cpp b/frmts/vrt/vrtrasterband.cpp
+index 6531e7bc86..e694a02dca 100644
+--- a/frmts/vrt/vrtrasterband.cpp
++++ b/frmts/vrt/vrtrasterband.cpp
+@@ -671,7 +671,7 @@ CPLXMLNode *VRTRasterBand::SerializeToXML(const char *pszVRTPath)
+     {
+         CPLSetXMLValue(
+             psTree, "NoDataValue",
+-            VRTSerializeNoData(m_dfNoDataValue, eDataType, 16).c_str());
++            VRTSerializeNoData(m_dfNoDataValue, eDataType, 18).c_str());
+     }
+     else if (m_bNoDataSetAsInt64)
+     {
+diff --git a/frmts/vrt/vrtsources.cpp b/frmts/vrt/vrtsources.cpp
+index 9a79cac3e5..1eaea75811 100644
+--- a/frmts/vrt/vrtsources.cpp
++++ b/frmts/vrt/vrtsources.cpp
+@@ -2083,7 +2083,7 @@ CPLXMLNode *VRTComplexSource::SerializeToXML(const char *pszVRTPath)
+             }
+             CPLSetXMLValue(
+                 psSrc, "NODATA",
+-                VRTSerializeNoData(dfNoDataValue, eBandDT, 16).c_str());
++                VRTSerializeNoData(dfNoDataValue, eBandDT, 18).c_str());
+         }
+     }
+ 

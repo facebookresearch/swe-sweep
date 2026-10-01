@@ -1,0 +1,46 @@
+diff --git a/tests/ui/as_underscore_unfixable.rs b/tests/ui/as_underscore_unfixable.rs
+new file mode 100644
+index 000000000..854feca71
+--- /dev/null
++++ b/tests/ui/as_underscore_unfixable.rs
+@@ -0,0 +1,14 @@
++//@no-rustfix
++
++#![warn(clippy::as_underscore)]
++
++fn main() {
++    // From issue #15282
++    let f = async || ();
++    let _: Box<dyn FnOnce() -> _> = Box::new(f) as _;
++    //~^ as_underscore
++
++    let barr = || (|| ());
++    let _: Box<dyn Fn() -> _> = Box::new(barr) as _;
++    //~^ as_underscore
++}
+diff --git a/tests/ui/as_underscore_unfixable.stderr b/tests/ui/as_underscore_unfixable.stderr
+new file mode 100644
+index 000000000..7385bea5c
+--- /dev/null
++++ b/tests/ui/as_underscore_unfixable.stderr
+@@ -0,0 +1,20 @@
++error: using `as _` conversion
++  --> tests/ui/as_underscore_unfixable.rs:8:37
++   |
++LL |     let _: Box<dyn FnOnce() -> _> = Box::new(f) as _;
++   |                                     ^^^^^^^^^^^^^^^^
++   |
++   = help: consider giving the type explicitly
++   = note: `-D clippy::as-underscore` implied by `-D warnings`
++   = help: to override `-D warnings` add `#[allow(clippy::as_underscore)]`
++
++error: using `as _` conversion
++  --> tests/ui/as_underscore_unfixable.rs:12:33
++   |
++LL |     let _: Box<dyn Fn() -> _> = Box::new(barr) as _;
++   |                                 ^^^^^^^^^^^^^^^^^^^
++   |
++   = help: consider giving the type explicitly
++
++error: aborting due to 2 previous errors
++

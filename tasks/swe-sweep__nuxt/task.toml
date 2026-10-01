@@ -1,0 +1,45 @@
+name = "swe-sweep__nuxt"
+# The agent's change set, captured by the [[verifier.collect]] hook below after the
+# agent phase and handed to the separate verifier at the same path.
+artifacts = ["/logs/artifacts/model.patch"]
+
+[metadata]
+benchmark = "swe-sweep"
+upstream_task = "nuxt"
+version = "4.3.0"
+base_ref = "v4.3.0"
+clone_url = "https://github.com/nuxt/nuxt.git"
+container_repo = "/nuxt"
+n_subtasks = 6
+upstream_commit = "9f7399e15e6172900e0591deb5a57a45769d8205"
+category = "software-engineering"
+tags = ["debugging", "repository-level", "swe-sweep"]
+
+[environment]
+# No prebuilt image: the sandbox is built from environment/Dockerfile.
+workdir = "/nuxt"
+cpus = 16
+memory_mb = 65536
+storage_mb = 102400
+build_timeout_sec = 14400
+# Public baseline so the harness can install its agent; the scored phases below are
+# offline (upstream runs the agent container with --network=none). A hosted model's
+# endpoint goes through the harness's run-level allowlist (harbor: --extra-allowed-hosts).
+network_mode = "public"
+
+[agent]
+timeout_sec = 43200
+network_mode = "no-network"
+
+[verifier]
+environment_mode = "separate"
+network_mode = "no-network"
+timeout_sec = 24000
+
+# Upstream `infer/base.py`'s patch extraction, run in the agent sandbox once the agent is
+# done: stage everything (new and deleted files included) and diff against the frozen
+# `baseline` tag; `--binary` keeps the patch appliable when the agent's test runs wrote
+# binary files into the tree.
+[[verifier.collect]]
+command = "mkdir -p /logs/artifacts && cd /nuxt && git add -A && git diff --cached --binary baseline > /logs/artifacts/model.patch"
+timeout_sec = 900

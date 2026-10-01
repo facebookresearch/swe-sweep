@@ -1,0 +1,61 @@
+diff --git a/src/runtime/export_test.go b/src/runtime/export_test.go
+index 0f21838721..83b7f86ef8 100644
+--- a/src/runtime/export_test.go
++++ b/src/runtime/export_test.go
+@@ -1199,6 +1199,8 @@ func (th *TimeHistogram) Record(duration int64) {
+ 	(*timeHistogram)(th).record(duration)
+ }
+ 
++var TimeHistogramMetricsBuckets = timeHistogramMetricsBuckets
++
+ func SetIntArgRegs(a int) int {
+ 	lock(&finlock)
+ 	old := intArgRegs
+diff --git a/src/runtime/histogram_test.go b/src/runtime/histogram_test.go
+index dbc64fa559..b12b65a41e 100644
+--- a/src/runtime/histogram_test.go
++++ b/src/runtime/histogram_test.go
+@@ -68,3 +68,43 @@ func TestTimeHistogram(t *testing.T) {
+ 
+ 	dummyTimeHistogram = TimeHistogram{}
+ }
++
++func TestTimeHistogramMetricsBuckets(t *testing.T) {
++	buckets := TimeHistogramMetricsBuckets()
++
++	nonInfBucketsLen := TimeHistNumSubBuckets * TimeHistNumSuperBuckets
++	expBucketsLen := nonInfBucketsLen + 2 // Count -Inf and +Inf.
++	if len(buckets) != expBucketsLen {
++		t.Fatalf("unexpected length of buckets: got %d, want %d", len(buckets), expBucketsLen)
++	}
++	// Check the first non-Inf 2*TimeHistNumSubBuckets buckets in order, skipping the
++	// first bucket which should be -Inf (checked later).
++	//
++	// Because of the way this scheme works, the bottom TimeHistNumSubBuckets
++	// buckets are fully populated, and then the next TimeHistNumSubBuckets
++	// have the TimeHistSubBucketBits'th bit set, while the bottom are once
++	// again fully populated.
++	for i := 1; i <= 2*TimeHistNumSubBuckets+1; i++ {
++		if got, want := buckets[i], float64(i-1)/1e9; got != want {
++			t.Errorf("expected bucket %d to have value %e, got %e", i, want, got)
++		}
++	}
++	// Check some values.
++	idxToBucket := map[int]float64{
++		0:                 math.Inf(-1),
++		33:                float64(0x10<<1) / 1e9,
++		34:                float64(0x11<<1) / 1e9,
++		49:                float64(0x10<<2) / 1e9,
++		58:                float64(0x19<<2) / 1e9,
++		65:                float64(0x10<<3) / 1e9,
++		513:               float64(0x10<<31) / 1e9,
++		519:               float64(0x16<<31) / 1e9,
++		expBucketsLen - 2: float64(0x1f<<43) / 1e9,
++		expBucketsLen - 1: math.Inf(1),
++	}
++	for idx, bucket := range idxToBucket {
++		if got, want := buckets[idx], bucket; got != want {
++			t.Errorf("expected bucket %d to have value %e, got %e", idx, want, got)
++		}
++	}
++}

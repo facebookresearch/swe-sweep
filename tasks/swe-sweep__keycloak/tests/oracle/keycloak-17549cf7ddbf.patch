@@ -1,0 +1,263 @@
+diff --git a/model/infinispan/src/main/java/org/keycloak/models/cache/infinispan/authorization/StoreFactoryCacheSession.java b/model/infinispan/src/main/java/org/keycloak/models/cache/infinispan/authorization/StoreFactoryCacheSession.java
+index 02d00da..8c124a5 100644
+--- a/model/infinispan/src/main/java/org/keycloak/models/cache/infinispan/authorization/StoreFactoryCacheSession.java
++++ b/model/infinispan/src/main/java/org/keycloak/models/cache/infinispan/authorization/StoreFactoryCacheSession.java
+@@ -532,6 +532,9 @@ public class StoreFactoryCacheSession implements CachedStoreFactoryProvider {
+             } else if (managedScopes.containsKey(id)) {
+                 return managedScopes.get(id);
+             }
++            if (resourceServer != null && !resourceServer.getId().equals(cached.getResourceServerId())) {
++                return null;
++            }
+             ScopeAdapter adapter = new ScopeAdapter(cached, StoreFactoryCacheSession.this);
+             managedScopes.put(id, adapter);
+             return adapter;
+@@ -625,6 +628,9 @@ public class StoreFactoryCacheSession implements CachedStoreFactoryProvider {
+             } else if (managedResources.containsKey(id)) {
+                 return managedResources.get(id);
+             }
++            if (resourceServer != null && ! resourceServer.getId().equals(cached.getResourceServerId())) {
++                return null;
++            }
+             ResourceAdapter adapter = new ResourceAdapter(cached, StoreFactoryCacheSession.this);
+             managedResources.put(id, adapter);
+             return adapter;
+@@ -896,6 +902,9 @@ public class StoreFactoryCacheSession implements CachedStoreFactoryProvider {
+             } else if (managedPolicies.containsKey(id)) {
+                 return managedPolicies.get(id);
+             }
++            if (resourceServer != null && !cached.getResourceServerId().equals(resourceServer.getId())) {
++                return null;
++            }
+             PolicyAdapter adapter = new PolicyAdapter(cached, StoreFactoryCacheSession.this);
+             managedPolicies.put(id, adapter);
+             return adapter;
+@@ -1143,6 +1152,9 @@ public class StoreFactoryCacheSession implements CachedStoreFactoryProvider {
+             } else if (managedPermissionTickets.containsKey(id)) {
+                 return managedPermissionTickets.get(id);
+             }
++            if (resourceServer != null && !cached.getResourceServerId().equals(resourceServer.getId())) {
++                return null;
++            }
+             PermissionTicketAdapter adapter = new PermissionTicketAdapter(cached, StoreFactoryCacheSession.this);
+             managedPermissionTickets.put(id, adapter);
+             return adapter;
+diff --git a/model/jpa/src/main/java/org/keycloak/authorization/jpa/store/JPAPermissionTicketStore.java b/model/jpa/src/main/java/org/keycloak/authorization/jpa/store/JPAPermissionTicketStore.java
+index f124174..c23ceb7 100644
+--- a/model/jpa/src/main/java/org/keycloak/authorization/jpa/store/JPAPermissionTicketStore.java
++++ b/model/jpa/src/main/java/org/keycloak/authorization/jpa/store/JPAPermissionTicketStore.java
+@@ -166,7 +166,10 @@ public class JPAPermissionTicketStore implements PermissionTicketStore {
+         }
+ 
+         PermissionTicketEntity entity = entityManager.find(PermissionTicketEntity.class, id);
+-        if (entity == null) return null;
++
++        if (entity == null || !resourceServer.getId().equals(entity.getResourceServer().getId())) {
++            return null;
++        }
+ 
+         return new PermissionTicketAdapter(entity, entityManager, provider.getStoreFactory());
+     }
+diff --git a/model/jpa/src/main/java/org/keycloak/authorization/jpa/store/JPAPolicyStore.java b/model/jpa/src/main/java/org/keycloak/authorization/jpa/store/JPAPolicyStore.java
+index dd4a10b..96499b4 100644
+--- a/model/jpa/src/main/java/org/keycloak/authorization/jpa/store/JPAPolicyStore.java
++++ b/model/jpa/src/main/java/org/keycloak/authorization/jpa/store/JPAPolicyStore.java
+@@ -98,7 +98,7 @@ public class JPAPolicyStore implements PolicyStore {
+ 
+         PolicyEntity policyEntity = entityManager.find(PolicyEntity.class, id);
+ 
+-        if (policyEntity == null) {
++        if (policyEntity == null || (resourceServer != null && !policyEntity.getResourceServer().getId().equals(resourceServer.getId()))) {
+             return null;
+         }
+ 
+diff --git a/model/jpa/src/main/java/org/keycloak/authorization/jpa/store/JPAResourceStore.java b/model/jpa/src/main/java/org/keycloak/authorization/jpa/store/JPAResourceStore.java
+index 375b929..fd7c1bf 100644
+--- a/model/jpa/src/main/java/org/keycloak/authorization/jpa/store/JPAResourceStore.java
++++ b/model/jpa/src/main/java/org/keycloak/authorization/jpa/store/JPAResourceStore.java
+@@ -94,7 +94,11 @@ public class JPAResourceStore implements ResourceStore {
+         }
+ 
+         ResourceEntity entity = entityManager.find(ResourceEntity.class, id);
+-        if (entity == null) return null;
++
++        if (entity == null || (resourceServer != null && !resourceServer.getId().equals(entity.getResourceServer()))) {
++            return null;
++        }
++
+         return new ResourceAdapter(entity, entityManager, provider.getStoreFactory());
+     }
+ 
+diff --git a/model/jpa/src/main/java/org/keycloak/authorization/jpa/store/JPAScopeStore.java b/model/jpa/src/main/java/org/keycloak/authorization/jpa/store/JPAScopeStore.java
+index a67064c..ea41c81 100644
+--- a/model/jpa/src/main/java/org/keycloak/authorization/jpa/store/JPAScopeStore.java
++++ b/model/jpa/src/main/java/org/keycloak/authorization/jpa/store/JPAScopeStore.java
+@@ -93,7 +93,10 @@ public class JPAScopeStore implements ScopeStore {
+         }
+ 
+         ScopeEntity entity = entityManager.find(ScopeEntity.class, id);
+-        if (entity == null) return null;
++
++        if (entity == null || !entity.getResourceServer().getId().equals(resourceServer.getId())) {
++            return null;
++        }
+ 
+         return new ScopeAdapter(entity, entityManager, provider.getStoreFactory());
+     }
+diff --git a/services/src/main/java/org/keycloak/authorization/admin/PolicyResourceService.java b/services/src/main/java/org/keycloak/authorization/admin/PolicyResourceService.java
+index d97309b..81fb1a8 100644
+--- a/services/src/main/java/org/keycloak/authorization/admin/PolicyResourceService.java
++++ b/services/src/main/java/org/keycloak/authorization/admin/PolicyResourceService.java
+@@ -23,6 +23,7 @@ import java.util.stream.Collectors;
+ import jakarta.ws.rs.Consumes;
+ import jakarta.ws.rs.DELETE;
+ import jakarta.ws.rs.GET;
++import jakarta.ws.rs.NotFoundException;
+ import jakarta.ws.rs.PUT;
+ import jakarta.ws.rs.Path;
+ import jakarta.ws.rs.Produces;
+@@ -61,6 +62,9 @@ public class PolicyResourceService {
+     private final AdminEventBuilder adminEvent;
+ 
+     public PolicyResourceService(Policy policy, ResourceServer resourceServer, AuthorizationProvider authorization, AdminPermissionEvaluator auth, AdminEventBuilder adminEvent) {
++        if (policy == null || !policy.getResourceServer().equals(resourceServer)) {
++            throw new NotFoundException();
++        }
+         this.policy = policy;
+         this.resourceServer = resourceServer;
+         this.authorization = authorization;
+diff --git a/services/src/main/java/org/keycloak/authorization/admin/ResourceSetService.java b/services/src/main/java/org/keycloak/authorization/admin/ResourceSetService.java
+index 15225bb..0a92d11 100644
+--- a/services/src/main/java/org/keycloak/authorization/admin/ResourceSetService.java
++++ b/services/src/main/java/org/keycloak/authorization/admin/ResourceSetService.java
+@@ -35,6 +35,7 @@ import java.util.stream.Collectors;
+ import jakarta.ws.rs.Consumes;
+ import jakarta.ws.rs.DELETE;
+ import jakarta.ws.rs.GET;
++import jakarta.ws.rs.NotFoundException;
+ import jakarta.ws.rs.POST;
+ import jakarta.ws.rs.PUT;
+ import jakarta.ws.rs.Path;
+@@ -147,6 +148,17 @@ public class ResourceSetService {
+         return toRepresentation(toModel(resource, this.resourceServer, authorization), resourceServer, authorization);
+     }
+ 
++    private Resource getResource(String id) {
++        ResourceStore resourceStore = authorization.getStoreFactory().getResourceStore();
++        Resource model = resourceStore.findById(resourceServer, id);
++
++        if (model == null || !model.getResourceServer().equals(resourceServer)) {
++            throw new NotFoundException();
++        }
++
++        return model;
++    }
++
+     @Path("{resource-id}")
+     @PUT
+     @Consumes(MediaType.APPLICATION_JSON)
+@@ -158,14 +170,7 @@ public class ResourceSetService {
+     public Response update(@PathParam("resource-id") String id, ResourceRepresentation resource) {
+         requireManage();
+         resource.setId(id);
+-        StoreFactory storeFactory = this.authorization.getStoreFactory();
+-        ResourceStore resourceStore = storeFactory.getResourceStore();
+-        Resource model = resourceStore.findById(resourceServer, resource.getId());
+-
+-        if (model == null) {
+-            return Response.status(Status.NOT_FOUND).build();
+-        }
+-
++        getResource(id);
+         toModel(resource, resourceServer, authorization);
+ 
+         audit(resource, OperationType.UPDATE);
+@@ -181,15 +186,10 @@ public class ResourceSetService {
+     })
+     public Response delete(@PathParam("resource-id") String id) {
+         requireManage();
+-        StoreFactory storeFactory = authorization.getStoreFactory();
+-        Resource resource = storeFactory.getResourceStore().findById(resourceServer, id);
+-
+-        if (resource == null) {
+-            return Response.status(Status.NOT_FOUND).build();
+-        }
+-
++        Resource resource = getResource(id);
+         //to be able to access all lazy loaded fields it's needed to create representation before it's deleted
+         ResourceRepresentation resourceRep = toRepresentation(resource, resourceServer, authorization);
++        StoreFactory storeFactory = authorization.getStoreFactory();
+ 
+         storeFactory.getResourceStore().delete(id);
+ 
+@@ -215,14 +215,7 @@ public class ResourceSetService {
+ 
+     public Response findById(String id, Function<Resource, ? extends ResourceRepresentation> toRepresentation) {
+         requireView();
+-        StoreFactory storeFactory = authorization.getStoreFactory();
+-        Resource model = storeFactory.getResourceStore().findById(resourceServer, id);
+-
+-        if (model == null) {
+-            return Response.status(Status.NOT_FOUND).build();
+-        }
+-
+-        return Response.ok(toRepresentation.apply(model)).build();
++        return Response.ok(toRepresentation.apply(getResource(id))).build();
+     }
+ 
+     @Path("{resource-id}/scopes")
+diff --git a/services/src/main/java/org/keycloak/authorization/protection/permission/PermissionTicketService.java b/services/src/main/java/org/keycloak/authorization/protection/permission/PermissionTicketService.java
+index 3c37549..ebac578 100644
+--- a/services/src/main/java/org/keycloak/authorization/protection/permission/PermissionTicketService.java
++++ b/services/src/main/java/org/keycloak/authorization/protection/permission/PermissionTicketService.java
+@@ -139,13 +139,8 @@ public class PermissionTicketService {
+             throw new ErrorResponseException(OAuthErrorException.INVALID_REQUEST, "invalid_ticket", Response.Status.BAD_REQUEST);
+         }
+ 
+-        PermissionTicketStore ticketStore = authorization.getStoreFactory().getPermissionTicketStore();
+-        PermissionTicket ticket = ticketStore.findById(resourceServer, representation.getId());
++        PermissionTicket ticket = getPermissionTicket(representation.getId());
+ 
+-        if (ticket == null) {
+-            throw new ErrorResponseException(OAuthErrorException.INVALID_REQUEST, "invalid_ticket", Response.Status.BAD_REQUEST);
+-        }
+-        
+         if (!ticket.getOwner().equals(this.identity.getId()) && !this.identity.isResourceServer())
+             throw new ErrorResponseException("not_authorised", "permissions for [" + representation.getResource() + "] can be updated only by the owner or by the resource server", Response.Status.FORBIDDEN);
+ 
+@@ -163,21 +158,29 @@ public class PermissionTicketService {
+             throw new ErrorResponseException(OAuthErrorException.INVALID_REQUEST, "invalid_ticket", Response.Status.BAD_REQUEST);
+         }
+ 
+-        PermissionTicketStore ticketStore = authorization.getStoreFactory().getPermissionTicketStore();
+-        PermissionTicket ticket = ticketStore.findById(resourceServer, id);
++        PermissionTicket ticket = getPermissionTicket(id);
+ 
+-        if (ticket == null) {
+-            throw new ErrorResponseException(OAuthErrorException.INVALID_REQUEST, "invalid_ticket", Response.Status.BAD_REQUEST);
+-        }
+-        
+         if (!ticket.getOwner().equals(this.identity.getId()) && !this.identity.isResourceServer() && !ticket.getRequester().equals(this.identity.getId()))
+             throw new ErrorResponseException("not_authorised", "permissions for [" + ticket.getResource() + "] can be deleted only by the owner, the requester, or the resource server", Response.Status.FORBIDDEN);
+ 
++        PermissionTicketStore ticketStore = authorization.getStoreFactory().getPermissionTicketStore();
++
+         ticketStore.delete(id);
+ 
+         return Response.noContent().build();
+     }
+ 
++    private PermissionTicket getPermissionTicket(String id) {
++        PermissionTicketStore ticketStore = authorization.getStoreFactory().getPermissionTicketStore();
++        PermissionTicket ticket = ticketStore.findById(resourceServer, id);
++
++        if (ticket == null || !ticket.getResourceServer().equals(resourceServer)) {
++            throw new ErrorResponseException(OAuthErrorException.INVALID_REQUEST, "invalid_ticket", Response.Status.BAD_REQUEST);
++        }
++
++        return ticket;
++    }
++
+     @GET
+     @Produces("application/json")
+     public Response find(@QueryParam("scopeId") String scopeId,

@@ -1,0 +1,17 @@
+diff --git a/tests/tz/test_timezone.py b/tests/tz/test_timezone.py
+index 7d407a8..31d8c3d 100644
+--- a/tests/tz/test_timezone.py
++++ b/tests/tz/test_timezone.py
+@@ -303,6 +303,12 @@ def test_utcoffset():
+     assert utcoffset == timedelta(0, -18000)
+ 
+ 
++def test_utcoffset_pre_transition():
++    tz = pendulum.timezone("America/Chicago")
++    utcoffset = tz.utcoffset(datetime(1883, 11, 18))
++    assert utcoffset == timedelta(days=-1, seconds=64800)
++
++
+ def test_dst():
+     tz = pendulum.timezone("Europe/Amsterdam")
+     dst = tz.dst(datetime(1940, 7, 1))

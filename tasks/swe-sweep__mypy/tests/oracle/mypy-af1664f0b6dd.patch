@@ -1,0 +1,12 @@
+diff --git a/mypy/mixedtraverser.py b/mypy/mixedtraverser.py
+index 39fba49cf..535391886 100644
+--- a/mypy/mixedtraverser.py
++++ b/mypy/mixedtraverser.py
+@@ -55,6 +55,7 @@ class MixedTraverserVisitor(TraverserVisitor, TypeTraverserVisitor):
+     def visit_type_var_expr(self, o: TypeVarExpr) -> None:
+         super().visit_type_var_expr(o)
+         o.upper_bound.accept(self)
++        o.default.accept(self)
+         for value in o.values:
+             value.accept(self)
+ 

@@ -1,0 +1,15 @@
+diff --git a/ogr/ogrsf_frmts/gml/gmlutils.cpp b/ogr/ogrsf_frmts/gml/gmlutils.cpp
+index e1129a143d..589635cf5d 100644
+--- a/ogr/ogrsf_frmts/gml/gmlutils.cpp
++++ b/ogr/ogrsf_frmts/gml/gmlutils.cpp
+@@ -306,6 +306,10 @@ OGRGeometry *GML_BuildOGRGeometryFromList(
+             poGeom->swapXY();
+         }
+     }
++    else if (eSwapCoordinates == GML_SWAP_YES)
++    {
++        poGeom->swapXY();
++    }
+ 
+     return poGeom;
+ }

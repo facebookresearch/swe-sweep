@@ -1,0 +1,210 @@
+diff --git a/test/cases/errors/import-module-cycle-multiple/1/a.json b/test/cases/errors/import-module-cycle-multiple/1/a.json
+new file mode 100644
+index 000000000..9a389c969
+--- /dev/null
++++ b/test/cases/errors/import-module-cycle-multiple/1/a.json
+@@ -0,0 +1 @@
++"./a.json"
+diff --git a/test/cases/errors/import-module-cycle-multiple/2/a.json b/test/cases/errors/import-module-cycle-multiple/2/a.json
+new file mode 100644
+index 000000000..75e02a30f
+--- /dev/null
++++ b/test/cases/errors/import-module-cycle-multiple/2/a.json
+@@ -0,0 +1 @@
++"./b.json"
+diff --git a/test/cases/errors/import-module-cycle-multiple/2/b.json b/test/cases/errors/import-module-cycle-multiple/2/b.json
+new file mode 100644
+index 000000000..9a389c969
+--- /dev/null
++++ b/test/cases/errors/import-module-cycle-multiple/2/b.json
+@@ -0,0 +1 @@
++"./a.json"
+diff --git a/test/cases/errors/import-module-cycle-multiple/3/a.json b/test/cases/errors/import-module-cycle-multiple/3/a.json
+new file mode 100644
+index 000000000..75e02a30f
+--- /dev/null
++++ b/test/cases/errors/import-module-cycle-multiple/3/a.json
+@@ -0,0 +1 @@
++"./b.json"
+diff --git a/test/cases/errors/import-module-cycle-multiple/3/b.json b/test/cases/errors/import-module-cycle-multiple/3/b.json
+new file mode 100644
+index 000000000..5a2d1989f
+--- /dev/null
++++ b/test/cases/errors/import-module-cycle-multiple/3/b.json
+@@ -0,0 +1 @@
++"./c.json"
+diff --git a/test/cases/errors/import-module-cycle-multiple/3/c.json b/test/cases/errors/import-module-cycle-multiple/3/c.json
+new file mode 100644
+index 000000000..9a389c969
+--- /dev/null
++++ b/test/cases/errors/import-module-cycle-multiple/3/c.json
+@@ -0,0 +1 @@
++"./a.json"
+diff --git a/test/cases/errors/import-module-cycle-multiple/4/a.json b/test/cases/errors/import-module-cycle-multiple/4/a.json
+new file mode 100644
+index 000000000..08a6371d3
+--- /dev/null
++++ b/test/cases/errors/import-module-cycle-multiple/4/a.json
+@@ -0,0 +1 @@
++["./b.json", "./b.json"]
+diff --git a/test/cases/errors/import-module-cycle-multiple/4/b.json b/test/cases/errors/import-module-cycle-multiple/4/b.json
+new file mode 100644
+index 000000000..5a2d1989f
+--- /dev/null
++++ b/test/cases/errors/import-module-cycle-multiple/4/b.json
+@@ -0,0 +1 @@
++"./c.json"
+diff --git a/test/cases/errors/import-module-cycle-multiple/4/c.json b/test/cases/errors/import-module-cycle-multiple/4/c.json
+new file mode 100644
+index 000000000..fe51488c7
+--- /dev/null
++++ b/test/cases/errors/import-module-cycle-multiple/4/c.json
+@@ -0,0 +1 @@
++[]
+diff --git a/test/cases/errors/import-module-cycle-multiple/index.js b/test/cases/errors/import-module-cycle-multiple/index.js
+new file mode 100644
+index 000000000..054ea2e1a
+--- /dev/null
++++ b/test/cases/errors/import-module-cycle-multiple/index.js
+@@ -0,0 +1,31 @@
++it("should error importModule when a cycle with 2 modules is requested", () => {
++	expect(require("./loader!./2/a")).toEqual([
++		["./b.json", [
++			["./a.json", "err: There is a circular build dependency, which makes it impossible to create this module"]
++		]]
++	]);
++});
++it("should error importModule when a cycle with 3 modules is requested", () => {
++	expect(require("./loader!./3/a")).toEqual([
++		["./b.json", [
++			["./c.json", [
++				["./a.json", "err: There is a circular build dependency, which makes it impossible to create this module"]
++			]]
++		]]
++	]);
++});
++it("should error importModule when requesting itself", () => {
++	expect(require("./loader!./1/a")).toEqual([
++		["./a.json", "err: There is a circular build dependency, which makes it impossible to create this module"]
++	]);
++});
++it("should not report a cycle when importModule is used twice", () => {
++	expect(require("./loader!./4/a")).toEqual([
++		["./b.json", [
++			["./c.json", []]
++		]],
++		["./b.json", [
++			["./c.json", []]
++		]]
++	]);
++});
+diff --git a/test/cases/errors/import-module-cycle-multiple/loader.js b/test/cases/errors/import-module-cycle-multiple/loader.js
+new file mode 100644
+index 000000000..3d13b9953
+--- /dev/null
++++ b/test/cases/errors/import-module-cycle-multiple/loader.js
+@@ -0,0 +1,23 @@
++/** @type {import("../../../../").LoaderDefinitionFunction} */
++exports.default = function (source) {
++	const content = JSON.parse(source);
++	// content is one reference or an array of references
++	const refs = Array.isArray(content) ? content : [content];
++	const callback = this.async();
++	const importReferencedModules = async () => {
++		const loadedRefs = []
++		for(const ref of refs) {
++			try {
++				const source = await this.importModule("../loader!" + ref);
++				loadedRefs.push([ref, source]);
++			} catch(err) {
++				loadedRefs.push([ref, `err: ${err && err.message}`]);
++			}
++		}
++		return loadedRefs;
++	}
++
++	importReferencedModules().then((loadResults) => {
++		callback(null, JSON.stringify(loadResults));
++	});
++};
+diff --git a/test/cases/errors/import-module-cycle/1/a.json b/test/cases/errors/import-module-cycle/1/a.json
+new file mode 100644
+index 000000000..9a389c969
+--- /dev/null
++++ b/test/cases/errors/import-module-cycle/1/a.json
+@@ -0,0 +1 @@
++"./a.json"
+diff --git a/test/cases/errors/import-module-cycle/2/a.json b/test/cases/errors/import-module-cycle/2/a.json
+new file mode 100644
+index 000000000..75e02a30f
+--- /dev/null
++++ b/test/cases/errors/import-module-cycle/2/a.json
+@@ -0,0 +1 @@
++"./b.json"
+diff --git a/test/cases/errors/import-module-cycle/2/b.json b/test/cases/errors/import-module-cycle/2/b.json
+new file mode 100644
+index 000000000..9a389c969
+--- /dev/null
++++ b/test/cases/errors/import-module-cycle/2/b.json
+@@ -0,0 +1 @@
++"./a.json"
+diff --git a/test/cases/errors/import-module-cycle/3/a.json b/test/cases/errors/import-module-cycle/3/a.json
+new file mode 100644
+index 000000000..75e02a30f
+--- /dev/null
++++ b/test/cases/errors/import-module-cycle/3/a.json
+@@ -0,0 +1 @@
++"./b.json"
+diff --git a/test/cases/errors/import-module-cycle/3/b.json b/test/cases/errors/import-module-cycle/3/b.json
+new file mode 100644
+index 000000000..5a2d1989f
+--- /dev/null
++++ b/test/cases/errors/import-module-cycle/3/b.json
+@@ -0,0 +1 @@
++"./c.json"
+diff --git a/test/cases/errors/import-module-cycle/3/c.json b/test/cases/errors/import-module-cycle/3/c.json
+new file mode 100644
+index 000000000..9a389c969
+--- /dev/null
++++ b/test/cases/errors/import-module-cycle/3/c.json
+@@ -0,0 +1 @@
++"./a.json"
+diff --git a/test/cases/errors/import-module-cycle/index.js b/test/cases/errors/import-module-cycle/index.js
+new file mode 100644
+index 000000000..3d5f92f00
+--- /dev/null
++++ b/test/cases/errors/import-module-cycle/index.js
+@@ -0,0 +1,15 @@
++it("should error importModule when a cycle with 2 modules is requested", () => {
++	expect(require("./loader!./2/a")).toMatch(
++		/^source: err: There is a circular build dependency/
++	);
++});
++it("should error importModule when a cycle with 3 modules is requested", () => {
++	expect(require("./loader!./3/a")).toMatch(
++		/^source: source: err: There is a circular build dependency/
++	);
++});
++it("should error importModule when requesting itself", () => {
++	expect(require("./loader!./1/a")).toMatch(
++		/^err: There is a circular build dependency/
++	);
++});
+diff --git a/test/cases/errors/import-module-cycle/loader.js b/test/cases/errors/import-module-cycle/loader.js
+new file mode 100644
+index 000000000..840227019
+--- /dev/null
++++ b/test/cases/errors/import-module-cycle/loader.js
+@@ -0,0 +1,12 @@
++/** @type {import("../../../../").LoaderDefinitionFunction} */
++exports.default = function (source) {
++	const ref = JSON.parse(source);
++	const callback = this.async();
++	this.importModule("../loader!" + ref, {}, (err, exports) => {
++		if (err) {
++			callback(null, JSON.stringify(`err: ${err && err.message}`));
++		} else {
++			callback(null, JSON.stringify(`source: ${exports}`));
++		}
++	});
++};

@@ -1,0 +1,13 @@
+diff --git a/scipy/optimize/nonlin.py b/scipy/optimize/nonlin.py
+index f446208e0b..3df2e4829b 100644
+--- a/scipy/optimize/nonlin.py
++++ b/scipy/optimize/nonlin.py
+@@ -272,7 +272,7 @@ def nonlin_solve(F, x0, jacobian='krylov', iter=None, verbose=False,
+     func = lambda z: _as_inexact(F(_array_like(z, x0))).flatten()
+     x = x0.flatten()
+ 
+-    dx = np.inf
++    dx = np.full_like(x, np.inf)
+     Fx = func(x)
+     Fx_norm = norm(Fx)
+ 

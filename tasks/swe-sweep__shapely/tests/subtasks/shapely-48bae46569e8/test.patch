@@ -1,0 +1,22 @@
+diff --git a/shapely/tests/geometry/test_multipolygon.py b/shapely/tests/geometry/test_multipolygon.py
+index 42e55a55..0494951f 100644
+--- a/shapely/tests/geometry/test_multipolygon.py
++++ b/shapely/tests/geometry/test_multipolygon.py
+@@ -126,6 +126,7 @@ class TestMultiPolygon(MultiGeometryTestCase):
+ 
+ def test_fail_list_of_multipolygons():
+     """A list of multipolygons is not a valid multipolygon ctor argument"""
++    poly = Polygon([(0.0, 0.0), (0.0, 1.0), (1.0, 1.0), (1.0, 0.0)])
+     multi = MultiPolygon(
+         [
+             (
+@@ -137,6 +138,9 @@ def test_fail_list_of_multipolygons():
+     with pytest.raises(ValueError):
+         MultiPolygon([multi])
+ 
++    with pytest.raises(ValueError):
++        MultiPolygon([poly, multi])
++
+ 
+ def test_numpy_object_array():
+     geom = MultiPolygon(

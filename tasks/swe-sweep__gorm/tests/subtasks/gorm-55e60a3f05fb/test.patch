@@ -1,0 +1,21 @@
+diff --git a/clause/expression_test.go b/clause/expression_test.go
+index 4826db3..aaede61 100644
+--- a/clause/expression_test.go
++++ b/clause/expression_test.go
+@@ -94,6 +94,16 @@ func TestNamedExpr(t *testing.T) {
+ 		Vars:         []interface{}{sql.Named("name", "jinzhu")},
+ 		Result:       "name1 = ? AND name2 = ?;",
+ 		ExpectedVars: []interface{}{"jinzhu", "jinzhu"},
++	}, {
++		SQL:          "name1 = @name1\r\n AND name2 = @name2",
++		Vars:         []interface{}{map[string]interface{}{"name1": "jinzhu", "name2": "jinzhu"}},
++		Result:       "name1 = ?\r\n AND name2 = ?",
++		ExpectedVars: []interface{}{"jinzhu", "jinzhu"},
++	}, {
++		SQL:          "name1 = @name1\r AND name2 = @name2",
++		Vars:         []interface{}{map[string]interface{}{"name1": "jinzhu", "name2": "jinzhu"}},
++		Result:       "name1 = ?\r AND name2 = ?",
++		ExpectedVars: []interface{}{"jinzhu", "jinzhu"},
+ 	}, {
+ 		SQL:    "?",
+ 		Vars:   []interface{}{clause.Column{Table: "table", Name: "col"}},

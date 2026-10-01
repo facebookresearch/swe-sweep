@@ -1,0 +1,46 @@
+diff --git a/src/projections/stere.cpp b/src/projections/stere.cpp
+index d95bb7fa1..abc4aa134 100644
+--- a/src/projections/stere.cpp
++++ b/src/projections/stere.cpp
+@@ -5,7 +5,7 @@
+ #include <math.h>
+ 
+ PROJ_HEAD(stere, "Stereographic") "\n\tAzi, Sph&Ell\n\tlat_ts=";
+-PROJ_HEAD(ups, "Universal Polar Stereographic") "\n\tAzi, Sph&Ell\n\tsouth";
++PROJ_HEAD(ups, "Universal Polar Stereographic") "\n\tAzi, Ell\n\tsouth";
+ 
+ 
+ namespace { // anonymous namespace
+@@ -320,8 +320,7 @@ PJ *PROJECTION(ups) {
+     /* International Ellipsoid */
+     P->phi0 = pj_param(P->ctx, P->params, "bsouth").i ? - M_HALFPI: M_HALFPI;
+     if (P->es == 0.0) {
+-        proj_errno_set(P, PJD_ERR_ELLIPSOID_USE_REQUIRED);
+-        return pj_default_destructor (P, ENOMEM);
++        return pj_default_destructor (P, PJD_ERR_ELLIPSOID_USE_REQUIRED);
+     }
+     P->k0 = .994;
+     P->x0 = 2000000.;
+diff --git a/src/projections/tmerc.cpp b/src/projections/tmerc.cpp
+index 4b2a96f07..eda1f23d1 100644
+--- a/src/projections/tmerc.cpp
++++ b/src/projections/tmerc.cpp
+@@ -22,7 +22,7 @@
+ 
+ PROJ_HEAD(tmerc, "Transverse Mercator") "\n\tCyl, Sph&Ell\n\tapprox";
+ PROJ_HEAD(etmerc, "Extended Transverse Mercator") "\n\tCyl, Sph";
+-PROJ_HEAD(utm, "Universal Transverse Mercator (UTM)") "\n\tCyl, Sph\n\tzone= south approx";
++PROJ_HEAD(utm, "Universal Transverse Mercator (UTM)") "\n\tCyl, Ell\n\tzone= south approx";
+ 
+ namespace { // anonymous namespace
+ struct pj_opaque_approx {
+@@ -541,8 +541,7 @@ PJ *PROJECTION(etmerc) {
+ PJ *PROJECTION(utm) {
+     long zone;
+     if (P->es == 0.0) {
+-        proj_errno_set(P, PJD_ERR_ELLIPSOID_USE_REQUIRED);
+-        return pj_default_destructor(P, ENOMEM);
++        return pj_default_destructor(P, PJD_ERR_ELLIPSOID_USE_REQUIRED);
+     }
+     if (P->lam0 < -1000.0 || P->lam0 > 1000.0) {
+         return pj_default_destructor(P, PJD_ERR_INVALID_UTM_ZONE);

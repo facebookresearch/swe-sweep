@@ -1,0 +1,38 @@
+diff --git a/modules/openapi-generator/src/main/java/org/openapitools/codegen/CodegenOperation.java b/modules/openapi-generator/src/main/java/org/openapitools/codegen/CodegenOperation.java
+index 76b98ac0d77..bce79d0b61f 100644
+--- a/modules/openapi-generator/src/main/java/org/openapitools/codegen/CodegenOperation.java
++++ b/modules/openapi-generator/src/main/java/org/openapitools/codegen/CodegenOperation.java
+@@ -347,7 +347,7 @@ public class CodegenOperation {
+         sb.append(", isVoid=").append(isVoid);
+         sb.append(", isResponseBinary=").append(isResponseBinary);
+         sb.append(", isResponseFile=").append(isResponseFile);
+-        sb.append(", isResponseFile=").append(isResponseOptional);
++        sb.append(", isResponseOptional=").append(isResponseOptional);
+         sb.append(", hasReference=").append(hasReference);
+         sb.append(", hasDefaultResponse=").append(hasDefaultResponse);
+         sb.append(", hasErrorResponseObject=").append(hasErrorResponseObject);
+diff --git a/modules/openapi-generator/src/main/java/org/openapitools/codegen/languages/ErlangClientCodegen.java b/modules/openapi-generator/src/main/java/org/openapitools/codegen/languages/ErlangClientCodegen.java
+index fc6806f1316..f5032301b73 100644
+--- a/modules/openapi-generator/src/main/java/org/openapitools/codegen/languages/ErlangClientCodegen.java
++++ b/modules/openapi-generator/src/main/java/org/openapitools/codegen/languages/ErlangClientCodegen.java
+@@ -419,6 +419,8 @@ public class ErlangClientCodegen extends DefaultCodegen implements CodegenConfig
+             this.isArray = o.isArray;
+             this.isMultipart = o.isMultipart;
+             this.isResponseBinary = o.isResponseBinary;
++            this.isResponseFile = o.isResponseFile;
++            this.isResponseOptional = o.isResponseOptional;
+             this.hasReference = o.hasReference;
+             this.isRestfulIndex = o.isRestfulIndex;
+             this.isRestfulShow = o.isRestfulShow;
+diff --git a/modules/openapi-generator/src/main/java/org/openapitools/codegen/languages/TypeScriptFetchClientCodegen.java b/modules/openapi-generator/src/main/java/org/openapitools/codegen/languages/TypeScriptFetchClientCodegen.java
+index a5e6be37b78..40f766cf524 100644
+--- a/modules/openapi-generator/src/main/java/org/openapitools/codegen/languages/TypeScriptFetchClientCodegen.java
++++ b/modules/openapi-generator/src/main/java/org/openapitools/codegen/languages/TypeScriptFetchClientCodegen.java
+@@ -1303,6 +1303,7 @@ public class TypeScriptFetchClientCodegen extends AbstractTypeScriptClientCodege
+             this.isMultipart = o.isMultipart;
+             this.isResponseBinary = o.isResponseBinary;
+             this.isResponseFile = o.isResponseFile;
++            this.isResponseOptional = o.isResponseOptional;
+             this.hasReference = o.hasReference;
+             this.isRestfulIndex = o.isRestfulIndex;
+             this.isRestfulShow = o.isRestfulShow;

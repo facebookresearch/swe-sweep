@@ -1,0 +1,70 @@
+diff --git a/src/full/Agda/Compiler/MAlonzo/Compiler.hs b/src/full/Agda/Compiler/MAlonzo/Compiler.hs
+index c4e0b880b1..d767869a05 100644
+--- a/src/full/Agda/Compiler/MAlonzo/Compiler.hs
++++ b/src/full/Agda/Compiler/MAlonzo/Compiler.hs
+@@ -477,7 +477,7 @@ definition Defn{defArgInfo = info, defName = q} | not $ usableModality info = do
+ definition def@Defn{defName = q, defType = ty, theDef = d} = do
+   reportSDoc "compile.ghc.definition" 10 $ vcat
+     [ ("Compiling" <+> prettyTCM q) <> ":"
+-    , nest 2 $ text (prettyShow d)
++    , nest 2 $ pretty d
+     ]
+   pragma <- liftTCM $ getHaskellPragma q
+   env <- askGHCEnv
+diff --git a/src/full/Agda/TypeChecking/Monad/Base.hs b/src/full/Agda/TypeChecking/Monad/Base.hs
+index 73d7915f5d..c7181769d4 100644
+--- a/src/full/Agda/TypeChecking/Monad/Base.hs
++++ b/src/full/Agda/TypeChecking/Monad/Base.hs
+@@ -2209,8 +2209,8 @@ instance Pretty Defn where
+     "Constructor {" <?> vcat
+       [ "conPars   =" <?> pshow conPars
+       , "conArity  =" <?> pshow conArity
+-      , "conSrcCon =" <?> pshow conSrcCon
+-      , "conData   =" <?> pshow conData
++      , "conSrcCon =" <?> pretty conSrcCon
++      , "conData   =" <?> pretty conData
+       , "conAbstr  =" <?> pshow conAbstr
+       , "conInd    =" <?> pshow conInd
+       , "conErased =" <?> pshow conErased ] <?> "}"
+diff --git a/src/full/Agda/TypeChecking/Reduce.hs b/src/full/Agda/TypeChecking/Reduce.hs
+index 41b144b23c..12ff681005 100644
+--- a/src/full/Agda/TypeChecking/Reduce.hs
++++ b/src/full/Agda/TypeChecking/Reduce.hs
+@@ -6,6 +6,7 @@ import Control.Monad.Reader
+ 
+ import Data.Maybe
+ import Data.Map (Map)
++import qualified Data.Map as Map
+ import qualified Data.IntMap as IntMap
+ import Data.Foldable
+ import Data.Traversable
+@@ -1237,7 +1238,6 @@ instance InstantiateFull t => InstantiateFull (Strict.Maybe t)
+ instance InstantiateFull t => InstantiateFull (Arg t)
+ instance InstantiateFull t => InstantiateFull (Elim' t)
+ instance InstantiateFull t => InstantiateFull (Named name t)
+-instance InstantiateFull t => InstantiateFull (Open t)
+ instance InstantiateFull t => InstantiateFull (WithArity t)
+ instance InstantiateFull t => InstantiateFull (IPBoundary' t)
+ 
+@@ -1363,6 +1363,21 @@ instance (Subst a, InstantiateFull a) => InstantiateFull (Abs a) where
+ instance (InstantiateFull t, InstantiateFull e) => InstantiateFull (Dom' t e) where
+     instantiateFull' (Dom i fin n tac x) = Dom i fin n <$> instantiateFull' tac <*> instantiateFull' x
+ 
++-- Andreas, 2021-09-13, issue #5544, need to traverse @checkpoints@ map
++instance InstantiateFull t => InstantiateFull (Open t) where
++  instantiateFull' (OpenThing checkpoint checkpoints modl t) =
++    OpenThing checkpoint
++    <$> (instantiateFull' =<< prune checkpoints)
++    <*> pure modl
++    <*> instantiateFull' t
++    where
++      -- Ulf, 2021-11-17, #5544
++      --  Remove checkpoints that are no longer in scope, since they can
++      --  mention functions that deadcode elimination will get rid of.
++      prune cps = do
++        inscope <- viewTC eCheckpoints
++        return $ cps `Map.intersection` inscope
++
+ instance InstantiateFull a => InstantiateFull (Closure a) where
+     instantiateFull' cl = do
+         x <- enterClosure cl instantiateFull'

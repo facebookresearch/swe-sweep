@@ -1,0 +1,52 @@
+diff --git a/plugin/trino-hive/src/test/java/io/trino/plugin/hive/TestHiveDynamicPartitionPruning.java b/plugin/trino-hive/src/test/java/io/trino/plugin/hive/TestHiveDynamicPartitionPruning.java
+index 0000000..1111111 100644
+--- a/plugin/trino-hive/src/test/java/io/trino/plugin/hive/TestHiveDynamicPartitionPruning.java
++++ b/plugin/trino-hive/src/test/java/io/trino/plugin/hive/TestHiveDynamicPartitionPruning.java
+@@ -32,6 +32,7 @@ import java.util.List;
+ import static com.google.common.collect.Iterables.getOnlyElement;
+ import static io.airlift.testing.Assertions.assertGreaterThan;
+ import static io.airlift.units.Duration.nanosSince;
++import static io.trino.SystemSessionProperties.ENABLE_DYNAMIC_FILTERING;
+ import static io.trino.SystemSessionProperties.ENABLE_LARGE_DYNAMIC_FILTERS;
+ import static io.trino.SystemSessionProperties.JOIN_DISTRIBUTION_TYPE;
+ import static io.trino.SystemSessionProperties.JOIN_REORDERING_STRATEGY;
+@@ -44,6 +45,7 @@ import static io.trino.sql.analyzer.FeaturesConfig.JoinDistributionType.PARTITIO
+ import static io.trino.sql.analyzer.FeaturesConfig.JoinReorderingStrategy.NONE;
+ import static io.trino.tpch.TpchTable.getTables;
+ import static io.trino.util.DynamicFiltersTestUtil.getSimplifiedDomainString;
++import static io.trino.testing.QueryAssertions.assertEqualsIgnoreOrder;
+ import static java.lang.String.format;
+ import static org.assertj.core.api.Assertions.assertThat;
+ import static org.testng.Assert.assertEquals;
+@@ -141,6 +143,31 @@ public class TestHiveDynamicPartitionPruning
+         assertEquals(domainStats.getSimplifiedDomain(), singleValue(BIGINT, 1L).toString(getSession().toConnectorSession()));
+     }
+ 
++    @Test(timeOut = 30_000)
++    public void testJoinWithComparingSameColumnUnderDifferentConditions()
++    {
++        @Language("SQL") String selectQuery = "SELECT * FROM partitioned_lineitem JOIN supplier ON partitioned_lineitem.suppkey >= supplier.suppkey " +
++                "AND partitioned_lineitem.suppkey <= supplier.suppkey " +
++                "AND supplier.name = 'Supplier#000000001'";
++        ResultWithQueryId<MaterializedResult> result = getDistributedQueryRunner().executeWithQueryId(
++                getSession(),
++                selectQuery);
++        Session withDynamicFilteringDisabled = Session.builder(getSession())
++                .setSystemProperty(ENABLE_DYNAMIC_FILTERING, "false")
++                .build();
++        MaterializedResult expected = computeActual(withDynamicFilteringDisabled, selectQuery);
++        assertEqualsIgnoreOrder(result.getResult().getMaterializedRows(), expected.getMaterializedRows());
++
++        DynamicFiltersStats dynamicFiltersStats = getDynamicFilteringStats(result.getQueryId());
++        assertEquals(dynamicFiltersStats.getTotalDynamicFilters(), 1L);
++        assertEquals(dynamicFiltersStats.getLazyDynamicFilters(), 1L);
++        assertEquals(dynamicFiltersStats.getReplicatedDynamicFilters(), 1L);
++        assertEquals(dynamicFiltersStats.getDynamicFiltersCompleted(), 1L);
++
++        DynamicFilterDomainStats domainStats = getOnlyElement(dynamicFiltersStats.getDynamicFilterDomainStats());
++        assertEquals(domainStats.getSimplifiedDomain(), singleValue(BIGINT, 1L).toString(getSession().toConnectorSession()));
++    }
++
+     @Test(timeOut = 30_000)
+     public void testJoinWithNonSelectiveBuildSide()
+     {

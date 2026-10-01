@@ -1,0 +1,18 @@
+diff --git a/numpy/core/tests/test_multiarray.py b/numpy/core/tests/test_multiarray.py
+index 2df92ee652b..048b1688f2a 100644
+--- a/numpy/core/tests/test_multiarray.py
++++ b/numpy/core/tests/test_multiarray.py
+@@ -4114,6 +4114,13 @@ class TestPutmask(object):
+         assert_array_equal(rec['y'], [11, 4])
+         assert_array_equal(rec['z'], [3, 3])
+ 
++    def test_writeable(self):
++        a = np.arange(5)
++        a.flags.writeable = False
++
++        with pytest.raises(ValueError):
++            np.putmask(a, a >= 2, 3)
++
+ 
+ class TestTake(object):
+     def tst_basic(self, x):

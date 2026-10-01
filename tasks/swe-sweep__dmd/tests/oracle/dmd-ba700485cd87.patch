@@ -1,0 +1,68 @@
+diff --git a/compiler/src/dmd/cparse.d b/compiler/src/dmd/cparse.d
+index 8a5f11c7d1..efb68ea398 100644
+--- a/compiler/src/dmd/cparse.d
++++ b/compiler/src/dmd/cparse.d
+@@ -5306,6 +5306,8 @@ final class CParser(AST) : Parser!AST
+ 
+         void addVar(AST.VarDeclaration v)
+         {
++            //printf("addVar() %s\n", v.toChars());
++            v.isCmacro(true);           // mark it as coming from a C #define
+             /* If it's already defined, replace the earlier
+              * definition
+              */
+diff --git a/compiler/src/dmd/declaration.d b/compiler/src/dmd/declaration.d
+index 51737cef2c..d13236b68d 100644
+--- a/compiler/src/dmd/declaration.d
++++ b/compiler/src/dmd/declaration.d
+@@ -1148,6 +1148,7 @@ extern (C++) class VarDeclaration : Declaration
+         bool doNotInferReturn;  /// do not infer 'return' for this variable
+ 
+         bool isArgDtorVar;      /// temporary created to handle scope destruction of a function argument
++        bool isCmacro;          /// it is a C macro turned into a C declaration
+     }
+ 
+     import dmd.common.bitfields : generateBitFields;
+diff --git a/compiler/src/dmd/declaration.h b/compiler/src/dmd/declaration.h
+index cf3487cff4..c4385d3163 100644
+--- a/compiler/src/dmd/declaration.h
++++ b/compiler/src/dmd/declaration.h
+@@ -270,6 +270,8 @@ public:
+     bool doNotInferReturn(bool v);
+     bool isArgDtorVar() const; // temporary created to handle scope destruction of a function argument
+     bool isArgDtorVar(bool v);
++    bool isCmacro() const; // if a C macro turned into a C variable
++    bool isCmacro(bool v);
+     static VarDeclaration *create(const Loc &loc, Type *t, Identifier *id, Initializer *init, StorageClass storage_class = STCundefined);
+     VarDeclaration *syntaxCopy(Dsymbol *) override;
+     void setFieldOffset(AggregateDeclaration *ad, FieldState& fieldState, bool isunion) override final;
+diff --git a/compiler/src/dmd/dsymbol.d b/compiler/src/dmd/dsymbol.d
+index 3611e09c28..acd5082219 100644
+--- a/compiler/src/dmd/dsymbol.d
++++ b/compiler/src/dmd/dsymbol.d
+@@ -2620,6 +2620,12 @@ Dsymbol handleSymbolRedeclarations(ref Scope sc, Dsymbol s, Dsymbol s2, ScopeDsy
+ 
+     auto vd = s.isVarDeclaration(); // new declaration
+     auto vd2 = s2.isVarDeclaration(); // existing declaration
++
++    if (vd && vd.isCmacro())
++        return vd2;
++
++    assert(!(vd2 && vd2.isCmacro()));
++
+     if (vd && vd2)
+     {
+         /* if one is `static` and the other isn't, the result is undefined
+diff --git a/compiler/src/dmd/frontend.h b/compiler/src/dmd/frontend.h
+index e6a91e513a..a5778a1784 100644
+--- a/compiler/src/dmd/frontend.h
++++ b/compiler/src/dmd/frontend.h
+@@ -5944,6 +5944,8 @@ public:
+     bool doNotInferReturn(bool v);
+     bool isArgDtorVar() const;
+     bool isArgDtorVar(bool v);
++    bool isCmacro() const;
++    bool isCmacro(bool v);
+ private:
+     uint16_t bitFields;
+ public:

@@ -1,0 +1,46 @@
+diff --git a/activerecord/test/cases/relation/delegation_test.rb b/activerecord/test/cases/relation/delegation_test.rb
+index f8b904dc2e9..073f6ce8b44 100644
+--- a/activerecord/test/cases/relation/delegation_test.rb
++++ b/activerecord/test/cases/relation/delegation_test.rb
+@@ -3,6 +3,8 @@
+ require "cases/helper"
+ require "models/post"
+ require "models/comment"
++require "models/project"
++require "models/developer"
+ 
+ module ActiveRecord
+   module DelegationTests
+@@ -72,4 +74,20 @@ module ActiveRecord
+       end
+     end
+   end
++
++  class DelegationCachingTest < ActiveRecord::TestCase
++    fixtures :projects, :developers
++
++    test "delegation doesn't override methods defined in other relation subclasses" do
++      # precondition, some methods are available on ActiveRecord::Relation subclasses
++      # but not ActiveRecord::Relation itself. Here `delete` is just an example.
++      assert_equal false, ActiveRecord::Relation.method_defined?(:delete)
++      assert_equal true, ActiveRecord::Associations::CollectionProxy.method_defined?(:delete)
++
++      project = projects(:active_record)
++      original_owner = project.developers_with_callbacks.method(:delete).owner
++      Developer.all.delete(12345)
++      assert_equal original_owner, project.developers_with_callbacks.method(:delete).owner
++    end
++  end
+ end
+diff --git a/activerecord/test/models/developer.rb b/activerecord/test/models/developer.rb
+index b9be99adebd..c33a05cd4c6 100644
+--- a/activerecord/test/models/developer.rb
++++ b/activerecord/test/models/developer.rb
+@@ -1,6 +1,7 @@
+ # frozen_string_literal: true
+ 
+ require "ostruct"
++require "models/computer"
+ 
+ class Developer < ActiveRecord::Base
+   module TimestampAliases
