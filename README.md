@@ -17,7 +17,7 @@ Agents are not given any hint about the type of bug or its location.
 ## Quickstart
 
 > [!note]
-> The code in this repo is only a thin wrapper around harbor, however see the warning below regarding harbor version
+> The code in this repo is only a thin wrapper around [Harbor](https://www.harborframework.com/), however see the warning below regarding harbor version
 
 > [!warning]
 > * **Harbor version**: Harbor 0.23 does not yet support the separate verifier environments and collect hooks
