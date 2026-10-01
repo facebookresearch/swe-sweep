@@ -1,0 +1,17 @@
+diff --git a/mypyc/test/test_namegen.py b/mypyc/test/test_namegen.py
+index 509018b4c..f88edbd00 100644
+--- a/mypyc/test/test_namegen.py
++++ b/mypyc/test/test_namegen.py
+@@ -35,6 +35,12 @@ class TestNameGen(unittest.TestCase):
+             "fu.bar": "fu.bar.",
+             "foo.baz": "baz.",
+         }
++        assert make_module_translation_map(["foo", "foo.foo", "bar.foo", "bar.foo.bar.foo"]) == {
++            "foo": "foo.",
++            "foo.foo": "foo.foo.",
++            "bar.foo": "bar.foo.",
++            "bar.foo.bar.foo": "foo.bar.foo.",
++        }
+ 
+     def test_name_generator(self) -> None:
+         g = NameGenerator([["foo", "foo.zar"]])

@@ -1,0 +1,15 @@
+diff --git a/lib/index.js b/lib/index.js
+index 8affae778..3e7bf3709 100644
+--- a/lib/index.js
++++ b/lib/index.js
+@@ -694,7 +694,9 @@ Mongoose.prototype._applyPlugins = function(schema, options) {
+ 
+   options = options || {};
+   options.applyPluginsToDiscriminators = _mongoose.options && _mongoose.options.applyPluginsToDiscriminators || false;
+-  options.applyPluginsToChildSchemas = typeof (_mongoose.options && _mongoose.options.applyPluginsToDiscriminators) === 'boolean' ? _mongoose.options.applyPluginsToDiscriminators : true;
++  options.applyPluginsToChildSchemas = typeof (_mongoose.options && _mongoose.options.applyPluginsToChildSchemas) === 'boolean' ?
++    _mongoose.options.applyPluginsToChildSchemas :
++    true;
+   applyPlugins(schema, _mongoose.plugins, options, '$globalPluginsApplied');
+ };
+ 

@@ -1,0 +1,94 @@
+diff --git a/tests/ui/match_single_binding.fixed b/tests/ui/match_single_binding.fixed
+index bdf39796e..e11dea352 100644
+--- a/tests/ui/match_single_binding.fixed
++++ b/tests/ui/match_single_binding.fixed
+@@ -188,3 +188,19 @@ fn issue14634() {
+     let id!(_a) = dbg!(b + 1);
+     //~^^^ match_single_binding
+ }
++
++mod issue14991 {
++    struct AnnoConstWOBlock {
++        inner: [(); {
++            let _n = 1;
++            42
++        }],
++    }
++
++    struct AnnoConstWBlock {
++        inner: [(); {
++            let _n = 1;
++            42
++        }],
++    }
++}
+diff --git a/tests/ui/match_single_binding.rs b/tests/ui/match_single_binding.rs
+index 419ff95d8..d498da30f 100644
+--- a/tests/ui/match_single_binding.rs
++++ b/tests/ui/match_single_binding.rs
+@@ -249,3 +249,21 @@ fn issue14634() {
+     };
+     //~^^^ match_single_binding
+ }
++
++mod issue14991 {
++    struct AnnoConstWOBlock {
++        inner: [(); match 1 {
++            //~^ match_single_binding
++            _n => 42,
++        }],
++    }
++
++    struct AnnoConstWBlock {
++        inner: [(); {
++            match 1 {
++                //~^ match_single_binding
++                _n => 42,
++            }
++        }],
++    }
++}
+diff --git a/tests/ui/match_single_binding.stderr b/tests/ui/match_single_binding.stderr
+index bdd0134a5..f274f80c8 100644
+--- a/tests/ui/match_single_binding.stderr
++++ b/tests/ui/match_single_binding.stderr
+@@ -378,5 +378,38 @@ LL ~     let id!(b) = dbg!(3);
+ LL +     let id!(_a) = dbg!(b + 1);
+    |
+ 
+-error: aborting due to 27 previous errors
++error: this match could be written as a `let` statement
++  --> tests/ui/match_single_binding.rs:255:21
++   |
++LL |           inner: [(); match 1 {
++   |  _____________________^
++LL | |
++LL | |             _n => 42,
++LL | |         }],
++   | |_________^
++   |
++help: consider using a `let` statement
++   |
++LL ~         inner: [(); {
++LL +             let _n = 1;
++LL +             42
++LL ~         }],
++   |
++
++error: this match could be written as a `let` statement
++  --> tests/ui/match_single_binding.rs:263:13
++   |
++LL | /             match 1 {
++LL | |
++LL | |                 _n => 42,
++LL | |             }
++   | |_____________^
++   |
++help: consider using a `let` statement
++   |
++LL ~             let _n = 1;
++LL +             42
++   |
++
++error: aborting due to 29 previous errors
+ 

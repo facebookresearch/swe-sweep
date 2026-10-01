@@ -1,0 +1,18 @@
+diff --git a/scipy/cluster/tests/test_vq.py b/scipy/cluster/tests/test_vq.py
+index 3c0f263f0c..6696ce5155 100644
+--- a/scipy/cluster/tests/test_vq.py
++++ b/scipy/cluster/tests/test_vq.py
+@@ -286,6 +286,13 @@ class TestKMean(object):
+     def test_kmeans_large_thres(self):
+         # Regression test for gh-1774
+         x = np.array([1, 2, 3, 4, 10], dtype=float)
+         res = kmeans(x, 1, thresh=1e16)
+         assert_allclose(res[0], np.array([4.]))
+         assert_allclose(res[1], 2.3999999999999999)
++
++    def test_kmeans_diff_convergence(self):
++        # Regression test for gh-8727
++        obs = np.array([-3, -1, 0, 1, 1, 8], float)
++        res = kmeans(obs, np.array([-3., 0.99]))
++        assert_allclose(res[0], np.array([-0.4,  8.]))
++        assert_allclose(res[1], 1.0666666666666667)

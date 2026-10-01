@@ -1,0 +1,55 @@
+diff --git a/crates/ruff_linter/resources/test/fixtures/pylint/len_as_condition.py b/crates/ruff_linter/resources/test/fixtures/pylint/len_as_condition.py
+index c310b4a573..973e14386c 100644
+--- a/crates/ruff_linter/resources/test/fixtures/pylint/len_as_condition.py
++++ b/crates/ruff_linter/resources/test/fixtures/pylint/len_as_condition.py
+@@ -232,3 +232,7 @@ def j():
+         x = [1, 2, 3]
+     if len(x): # [PLC1802] should be fine
+         print(x)
++
++# regression tests for https://github.com/astral-sh/ruff/issues/14690
++bool(len(ascii(1)))
++bool(len(sorted("")))
+diff --git a/crates/ruff_linter/src/rules/pylint/snapshots/ruff_linter__rules__pylint__tests__PLC1802_len_as_condition.py.snap b/crates/ruff_linter/src/rules/pylint/snapshots/ruff_linter__rules__pylint__tests__PLC1802_len_as_condition.py.snap
+index d765194e89..b39fedc66b 100644
+--- a/crates/ruff_linter/src/rules/pylint/snapshots/ruff_linter__rules__pylint__tests__PLC1802_len_as_condition.py.snap
++++ b/crates/ruff_linter/src/rules/pylint/snapshots/ruff_linter__rules__pylint__tests__PLC1802_len_as_condition.py.snap
+@@ -434,3 +434,38 @@ len_as_condition.py:233:8: PLC1802 [*] `len(x)` used as condition without compar
+ 233     |-    if len(x): # [PLC1802] should be fine
+     233 |+    if x: # [PLC1802] should be fine
+ 234 234 |         print(x)
++235 235 | 
++236 236 | # regression tests for https://github.com/astral-sh/ruff/issues/14690
++
++len_as_condition.py:237:6: PLC1802 [*] `len(ascii(1))` used as condition without comparison
++    |
++236 | # regression tests for https://github.com/astral-sh/ruff/issues/14690
++237 | bool(len(ascii(1)))
++    |      ^^^^^^^^^^^^^ PLC1802
++238 | bool(len(sorted("")))
++    |
++    = help: Remove `len`
++
++ℹ Safe fix
++234 234 |         print(x)
++235 235 | 
++236 236 | # regression tests for https://github.com/astral-sh/ruff/issues/14690
++237     |-bool(len(ascii(1)))
++    237 |+bool(ascii(1))
++238 238 | bool(len(sorted("")))
++
++len_as_condition.py:238:6: PLC1802 [*] `len(sorted(""))` used as condition without comparison
++    |
++236 | # regression tests for https://github.com/astral-sh/ruff/issues/14690
++237 | bool(len(ascii(1)))
++238 | bool(len(sorted("")))
++    |      ^^^^^^^^^^^^^^^ PLC1802
++    |
++    = help: Remove `len`
++
++ℹ Safe fix
++235 235 | 
++236 236 | # regression tests for https://github.com/astral-sh/ruff/issues/14690
++237 237 | bool(len(ascii(1)))
++238     |-bool(len(sorted("")))
++    238 |+bool(sorted(""))

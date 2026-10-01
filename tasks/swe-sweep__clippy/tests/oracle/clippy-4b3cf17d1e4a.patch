@@ -1,0 +1,12 @@
+diff --git a/clippy_lints/src/unused_unit.rs b/clippy_lints/src/unused_unit.rs
+index 2abcdf5d0..3811f0fe6 100644
+--- a/clippy_lints/src/unused_unit.rs
++++ b/clippy_lints/src/unused_unit.rs
+@@ -109,6 +109,7 @@ impl<'tcx> LateLintPass<'tcx> for UnusedUnit {
+             && let AssocItemConstraintKind::Equality { term: Term::Ty(hir_ty) } = constraints[0].kind
+             && args.span_ext.hi() != poly.span.hi()
+             && !hir_ty.span.from_expansion()
++            && args.span_ext.hi() != hir_ty.span.hi()
+             && is_unit_ty(hir_ty)
+         {
+             lint_unneeded_unit_return(cx, hir_ty.span, poly.span);

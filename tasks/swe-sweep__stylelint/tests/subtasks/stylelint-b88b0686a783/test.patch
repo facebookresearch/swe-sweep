@@ -1,0 +1,14 @@
+diff --git a/lib/rules/at-rule-no-unknown/__tests__/index.mjs b/lib/rules/at-rule-no-unknown/__tests__/index.mjs
+index a85ff7690..a7451a8fc 100644
+--- a/lib/rules/at-rule-no-unknown/__tests__/index.mjs
++++ b/lib/rules/at-rule-no-unknown/__tests__/index.mjs
+@@ -6,6 +6,9 @@ testRule({
+ 	config: [true],
+ 
+ 	accept: [
++		{
++			code: '@position-try --foo {}',
++		},
+ 		{
+ 			code: '@starting-style { opacity: 0; }',
+ 		},

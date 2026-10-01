@@ -1,0 +1,15 @@
+diff --git a/pandas/core/indexes/base.py b/pandas/core/indexes/base.py
+index 7d43498d42..5bffac5fa6 100644
+--- a/pandas/core/indexes/base.py
++++ b/pandas/core/indexes/base.py
+@@ -6269,7 +6269,9 @@ def ensure_index_from_sequences(sequences, names=None):
+     """
+     from pandas.core.indexes.multi import MultiIndex
+ 
+-    if len(sequences) == 1:
++    if len(sequences) == 0:
++        return default_index(0)
++    elif len(sequences) == 1:
+         if names is not None:
+             names = names[0]
+         return Index(sequences[0], name=names)

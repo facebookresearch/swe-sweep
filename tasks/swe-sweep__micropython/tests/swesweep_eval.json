@@ -1,0 +1,254 @@
+{
+  "build_jobs": 4,
+  "container_repo": "/micropython",
+  "evaluation": {
+    "suite": "reproduction",
+    "visible_timeout": 3600
+  },
+  "upstream_image": "pandora-maxbug-micropython:1.19.1",
+  "n_base_passing": 875,
+  "n_base_test_ignore": 8,
+  "oracle_digest": "c0277c716d4cc37cc3139d0f6ff526e59c730c2b3756f86b639bc5e0a542620b",
+  "oracle_pristine_paths": [],
+  "upstream_commit": "9f7399e15e6172900e0591deb5a57a45769d8205",
+  "reproduction": {
+    "build_cmd": "make -C /micropython/ports/unix VARIANT=coverage -j ${SWESWEEP_BUILD_JOBS:-4}",
+    "build_jobs_env": [
+      "SWESWEEP_BUILD_JOBS"
+    ],
+    "build_timeout": 1800,
+    "suite": {
+      "jobs_flag": "-j",
+      "runner": "run-tests.py",
+      "test_dirs": [
+        "basics",
+        "cmdline",
+        "extmod",
+        "float",
+        "import",
+        "io",
+        "micropython",
+        "misc",
+        "stress",
+        "unicode",
+        "unix"
+      ],
+      "type": "micropython-run-tests"
+    },
+    "test_timeout": 1800
+  },
+  "schema": 2,
+  "subtasks": [
+    {
+      "f2p": [
+        "basics/string_format_intbig.py"
+      ],
+      "id": "micropython-1010a6f1bf3f",
+      "target_files": [
+        "py/mpz.c"
+      ]
+    },
+    {
+      "f2p": [
+        "basics/int_big_error.py"
+      ],
+      "id": "micropython-105ab25a289b",
+      "target_files": [
+        "py/objint_mpz.c"
+      ]
+    },
+    {
+      "f2p": [
+        "basics/string_fstring.py",
+        "basics/string_fstring_debug.py"
+      ],
+      "id": "micropython-506e74919e0d",
+      "target_files": [
+        "py/lexer.c"
+      ]
+    },
+    {
+      "f2p": [
+        "basics/try_finally_return.py"
+      ],
+      "id": "micropython-56f308119e16",
+      "target_files": [
+        "py/compile.c"
+      ]
+    },
+    {
+      "f2p": [
+        "extmod/socket_fileno.py"
+      ],
+      "id": "micropython-5c51fb896d80",
+      "target_files": [
+        "ports/unix/modsocket.c"
+      ]
+    },
+    {
+      "f2p": [
+        "float/math_domain.py"
+      ],
+      "id": "micropython-639baaf0eaee",
+      "target_files": [
+        "py/modmath.c"
+      ]
+    },
+    {
+      "f2p": [
+        "basics/string_format_modulo.py"
+      ],
+      "id": "micropython-8074d176612b",
+      "target_files": [
+        "py/objstr.c"
+      ]
+    },
+    {
+      "f2p": [
+        "basics/fun_calldblstar.py"
+      ],
+      "id": "micropython-80ab54d7145c",
+      "target_files": [
+        "py/bc.c"
+      ]
+    },
+    {
+      "f2p": [
+        "basics/builtin_super.py"
+      ],
+      "id": "micropython-830236cc7dce",
+      "target_files": [
+        "py/objtype.c"
+      ]
+    },
+    {
+      "f2p": [
+        "basics/int_bytes.py",
+        "basics/int_bytes_int64.py",
+        "basics/int_bytes_intbig.py"
+      ],
+      "id": "micropython-85267a3c1ee8",
+      "target_files": [
+        "py/misc.h",
+        "py/mpz.c",
+        "py/mpz.h",
+        "py/objint.c",
+        "py/objint.h",
+        "py/objint_longlong.c",
+        "py/objint_mpz.c"
+      ]
+    },
+    {
+      "f2p": [
+        "basics/memoryview_slice_size.py"
+      ],
+      "id": "micropython-8625d05e0e82",
+      "target_files": [
+        "py/objarray.c",
+        "py/objarray.h"
+      ]
+    },
+    {
+      "f2p": [
+        "basics/class_descriptor.py"
+      ],
+      "id": "micropython-88f383264f04",
+      "target_files": [
+        "py/objtype.c"
+      ]
+    },
+    {
+      "f2p": [
+        "basics/subclass_classmethod.py"
+      ],
+      "id": "micropython-b12fef09f055",
+      "target_files": [
+        "py/runtime.c"
+      ]
+    },
+    {
+      "f2p": [
+        "basics/async_for.py"
+      ],
+      "id": "micropython-b3d62f80e40b",
+      "target_files": [
+        "py/compile.c"
+      ]
+    },
+    {
+      "f2p": [
+        "basics/builtin_pow3.py"
+      ],
+      "id": "micropython-b53492729a4a",
+      "target_files": [
+        "py/mpz.c"
+      ]
+    },
+    {
+      "f2p": [
+        "extmod/uctypes_error.py"
+      ],
+      "id": "micropython-bc4a5e14e72f",
+      "target_files": [
+        "extmod/moductypes.c"
+      ]
+    },
+    {
+      "f2p": [
+        "extmod/uctypes_sizeof.py"
+      ],
+      "id": "micropython-bdadb90505c7",
+      "target_files": [
+        "extmod/moductypes.c"
+      ]
+    },
+    {
+      "f2p": [
+        "basics/builtin_pow3.py"
+      ],
+      "id": "micropython-c14ecec3cf60",
+      "target_files": [
+        "py/modbuiltins.c"
+      ]
+    },
+    {
+      "f2p": [
+        "basics/builtin_pow3.py",
+        "basics/builtin_pow3_intbig.py"
+      ],
+      "id": "micropython-d4d265304c55",
+      "target_files": [
+        "py/mpz.c"
+      ]
+    },
+    {
+      "f2p": [
+        "basics/fun_callstardblstar.py"
+      ],
+      "id": "micropython-ec6689a8cc86",
+      "target_files": [
+        "py/runtime.c"
+      ]
+    },
+    {
+      "f2p": [
+        "basics/slice_indices.py"
+      ],
+      "id": "micropython-ef93b8337084",
+      "target_files": [
+        "py/objslice.c"
+      ]
+    },
+    {
+      "f2p": [
+        "cmdline/cmd_module_atexit_exc.py"
+      ],
+      "id": "micropython-f30ec885b80c",
+      "target_files": [
+        "ports/unix/main.c"
+      ]
+    }
+  ],
+  "task": "micropython",
+  "version": "1.19.1"
+}

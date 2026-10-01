@@ -1,0 +1,11 @@
+diff --git a/crates/ruff_linter/resources/test/fixtures/pylint/unspecified_encoding.py b/crates/ruff_linter/resources/test/fixtures/pylint/unspecified_encoding.py
+index fca823bcbc..db89cbf4e2 100644
+--- a/crates/ruff_linter/resources/test/fixtures/pylint/unspecified_encoding.py
++++ b/crates/ruff_linter/resources/test/fixtures/pylint/unspecified_encoding.py
+@@ -94,3 +94,6 @@ Path("foo.txt").write_text(text, **kwargs)
+ # Violation but not detectable
+ x = Path("foo.txt")
+ x.open()
++
++# https://github.com/astral-sh/ruff/issues/18107
++codecs.open("plw1514.py", "r", "utf-8").close() # this is fine

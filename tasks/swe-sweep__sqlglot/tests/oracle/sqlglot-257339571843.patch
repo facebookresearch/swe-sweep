@@ -1,0 +1,12 @@
+diff --git a/sqlglot/dialects/snowflake.py b/sqlglot/dialects/snowflake.py
+index d97aa6ac83..15b6c813e0 100644
+--- a/sqlglot/dialects/snowflake.py
++++ b/sqlglot/dialects/snowflake.py
+@@ -552,6 +552,7 @@ class Snowflake(Dialect):
+ 
+         ID_VAR_TOKENS = {
+             *parser.Parser.ID_VAR_TOKENS,
++            TokenType.EXCEPT,
+             TokenType.MATCH_CONDITION,
+         }
+ 

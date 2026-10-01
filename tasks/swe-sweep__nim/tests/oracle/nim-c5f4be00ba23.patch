@@ -1,0 +1,62 @@
+diff --git a/compiler/semtypes.nim b/compiler/semtypes.nim
+index d03fa88..03d32ab 100644
+--- a/compiler/semtypes.nim
++++ b/compiler/semtypes.nim
+@@ -729,37 +729,43 @@ proc semRecordNodeAux(c: PContext, n: PNode, check: var IntSet, pos: var int,
+   if n == nil: return
+   case n.kind
+   of nkRecWhen:
++    var a = copyTree(n)
+     var branch: PNode = nil   # the branch to take
+-    for i in 0..<n.len:
+-      var it = n[i]
++    var cannotResolve = false # no branch should be taken
++    for i in 0..<a.len:
++      var it = a[i]
+       if it == nil: illFormedAst(n, c.config)
+       var idx = 1
+       case it.kind
+       of nkElifBranch:
+         checkSonsLen(it, 2, c.config)
+-        if c.inGenericContext == 0:
+-          var e = semConstBoolExpr(c, it[0])
+-          if e.kind != nkIntLit: discard "don't report followup error"
+-          elif e.intVal != 0 and branch == nil: branch = it[1]
++        let e = semExprWithType(c, it[0], {efDetermineType})
++        if e.typ.kind == tyFromExpr:
++          it[0] = makeStaticExpr(c, e)
++          cannotResolve = true
+         else:
+-          it[0] = forceBool(c, semExprWithType(c, it[0]))
++          it[0] = forceBool(c, e)
++          let val = getConstExpr(c.module, it[0], c.idgen, c.graph)
++          if val == nil or val.kind != nkIntLit:
++            cannotResolve = true
++          elif not cannotResolve and val.intVal != 0 and branch == nil:
++            branch = it[1]
+       of nkElse:
+         checkSonsLen(it, 1, c.config)
+-        if branch == nil: branch = it[0]
++        if branch == nil and not cannotResolve: branch = it[0]
+         idx = 0
+       else: illFormedAst(n, c.config)
+-      if c.inGenericContext > 0:
++      if c.inGenericContext > 0 and cannotResolve:
+         # use a new check intset here for each branch:
+-        var newCheck: IntSet
+-        assign(newCheck, check)
++        var newCheck: IntSet = check
+         var newPos = pos
+         var newf = newNodeI(nkRecList, n.info)
+         semRecordNodeAux(c, it[idx], newCheck, newPos, newf, rectype, hasCaseFields)
+         it[idx] = if newf.len == 1: newf[0] else: newf
+-    if c.inGenericContext > 0:
+-      father.add n
+-    elif branch != nil:
++    if branch != nil:
+       semRecordNodeAux(c, branch, check, pos, father, rectype, hasCaseFields)
++    elif c.inGenericContext > 0:
++      father.add a
+     elif father.kind in {nkElse, nkOfBranch}:
+       father.add newNodeI(nkRecList, n.info)
+   of nkRecCase:

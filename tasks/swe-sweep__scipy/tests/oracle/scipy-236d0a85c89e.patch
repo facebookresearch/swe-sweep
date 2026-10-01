@@ -1,0 +1,13 @@
+diff --git a/scipy/ndimage/fourier.py b/scipy/ndimage/fourier.py
+index 551ad69732..d7f3bdd722 100644
+--- a/scipy/ndimage/fourier.py
++++ b/scipy/ndimage/fourier.py
+@@ -238,6 +238,8 @@ def fourier_ellipsoid(input, size, n=-1, axis=-1, output=None):
+     >>> plt.show()
+     """
+     input = numpy.asarray(input)
++    if input.ndim > 3:
++        raise NotImplementedError("Only 1d, 2d and 3d inputs are supported")
+     output = _get_output_fourier(output, input)
+     axis = _ni_support._check_axis(axis, input.ndim)
+     sizes = _ni_support._normalize_sequence(size, input.ndim)

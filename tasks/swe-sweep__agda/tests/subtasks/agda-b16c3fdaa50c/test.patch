@@ -1,0 +1,14 @@
+diff --git a/test/Succeed/Issue5765.agda b/test/Succeed/Issue5765.agda
+new file mode 100644
+index 0000000000..74ff270fb8
+--- /dev/null
++++ b/test/Succeed/Issue5765.agda
+@@ -0,0 +1,8 @@
++{-# OPTIONS --allow-unsolved-metas #-}
++
++open import Agda.Builtin.Equality
++
++postulate @0 A : Set
++
++@0 f : (X : Set) → A ≡ X → Set
++f X refl = {!!}

@@ -1,0 +1,25 @@
+diff --git a/packages/mui-base/src/AutocompleteUnstyled/useAutocomplete.test.js b/packages/mui-base/src/AutocompleteUnstyled/useAutocomplete.test.js
+index 8b1726dc09..84620e718e 100644
+--- a/packages/mui-base/src/AutocompleteUnstyled/useAutocomplete.test.js
++++ b/packages/mui-base/src/AutocompleteUnstyled/useAutocomplete.test.js
+@@ -304,5 +304,20 @@ describe('useAutocomplete', () => {
+ 
+       expect(input.value).to.equal('free');
+     });
+   });
++
++  describe('getInputProps', () => {
++    it('should disable input element', () => {
++      function Test(props) {
++        const { options } = props;
++        const { getInputProps } = useAutocomplete({ options, disabled: true });
++
++        return <input {...getInputProps()} />;
++      }
++      render(<Test options={['foo', 'bar']} />);
++      const input = screen.getByRole('combobox');
++
++      expect(input).to.have.attribute('disabled');
++    });
++  });
+ });

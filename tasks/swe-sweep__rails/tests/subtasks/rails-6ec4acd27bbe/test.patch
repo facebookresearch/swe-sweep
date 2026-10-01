@@ -1,0 +1,72 @@
+diff --git a/activesupport/test/deprecation_test.rb b/activesupport/test/deprecation_test.rb
+index 3adab7b..fb21cbe 100644
+--- a/activesupport/test/deprecation_test.rb
++++ b/activesupport/test/deprecation_test.rb
+@@ -624,6 +624,31 @@ def test_different_behaviors_for_allowed_and_disallowed_messages
+     end
+   end
+ 
++  def test_disallowed_warnings_with_the_default_warning_message
++    resetting_disallowed_deprecation_config do
++      @warnings_allowed, @warnings_disallowed = [], []
++
++      ActiveSupport::Deprecation.behavior = [
++        lambda { |msg, callstack, horizon, gem| @warnings_allowed << msg }
++      ]
++
++      ActiveSupport::Deprecation.disallowed_behavior = [
++        lambda { |msg, callstack, horizon, gem| @warnings_disallowed << msg }
++      ]
++
++      ActiveSupport::Deprecation.disallowed_warnings = :all
++      ActiveSupport::Deprecation.warn
++      assert_empty @warnings_allowed
++      assert_not_empty @warnings_disallowed
++
++      @warnings_allowed, @warnings_disallowed = [], []
++      ActiveSupport::Deprecation.disallowed_warnings = ["fubar"]
++      ActiveSupport::Deprecation.warn
++      assert_not_empty @warnings_allowed
++      assert_empty @warnings_disallowed
++    end
++  end
++
+   def test_allow
+     resetting_disallowed_deprecation_config do
+       @warnings_allowed, @warnings_disallowed = [], []
+@@ -654,6 +679,35 @@ def test_allow
+     end
+   end
+ 
++  def test_allow_with_the_default_warning_message
++    resetting_disallowed_deprecation_config do
++      @warnings_allowed, @warnings_disallowed = [], []
++
++      ActiveSupport::Deprecation.behavior = [
++        lambda { |msg, callstack, horizon, gem| @warnings_allowed << msg }
++      ]
++
++      ActiveSupport::Deprecation.disallowed_behavior = [
++        lambda { |msg, callstack, horizon, gem| @warnings_disallowed << msg }
++      ]
++
++      ActiveSupport::Deprecation.disallowed_warnings = :all
++
++      ActiveSupport::Deprecation.allow(:all) do
++        ActiveSupport::Deprecation.warn
++      end
++      assert_not_empty @warnings_allowed
++      assert_empty @warnings_disallowed
++
++      @warnings_allowed, @warnings_disallowed = [], []
++      ActiveSupport::Deprecation.allow(["fubar"]) do
++        ActiveSupport::Deprecation.warn
++      end
++      assert_empty @warnings_allowed
++      assert_not_empty @warnings_disallowed
++    end
++  end
++
+   def test_allow_only_matching_warnings
+     resetting_disallowed_deprecation_config do
+       @warnings_allowed, @warnings_disallowed = [], []

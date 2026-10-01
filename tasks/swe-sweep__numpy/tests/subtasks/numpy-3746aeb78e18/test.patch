@@ -1,0 +1,34 @@
+diff --git a/numpy/core/tests/test_umath.py b/numpy/core/tests/test_umath.py
+index 95107b538b..f983676888 100644
+--- a/numpy/core/tests/test_umath.py
++++ b/numpy/core/tests/test_umath.py
+@@ -1568,13 +1568,14 @@ class TestSpecialMethods(object):
+ 
+         class A(object):
+             def __array__(self):
+-                return np.zeros(1)
++                return np.zeros(2)
+ 
+             def __array_wrap__(self, arr, context):
+                 raise RuntimeError
+ 
+         a = A()
+         assert_raises(RuntimeError, ncu.maximum, a, a)
++        assert_raises(RuntimeError, ncu.maximum.reduce, a)
+ 
+     def test_failing_out_wrap(self):
+ 
+diff --git a/numpy/lib/tests/test_ufunclike.py b/numpy/lib/tests/test_ufunclike.py
+index 5604b3744a..361367b97c 100644
+--- a/numpy/lib/tests/test_ufunclike.py
++++ b/numpy/lib/tests/test_ufunclike.py
+@@ -52,7 +52,8 @@ class TestUfunclike(object):
+                 return res
+ 
+             def __array_wrap__(self, obj, context=None):
+-                obj.metadata = self.metadata
++                if isinstance(obj, MyArray):
++                    obj.metadata = self.metadata
+                 return obj
+ 
+             def __array_finalize__(self, obj):

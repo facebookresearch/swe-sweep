@@ -1,0 +1,48 @@
+diff --git a/sqlglot/dialects/databricks.py b/sqlglot/dialects/databricks.py
+index 181cfb6cbf..a6d04bfbb6 100644
+--- a/sqlglot/dialects/databricks.py
++++ b/sqlglot/dialects/databricks.py
+@@ -1,6 +1,5 @@
+ from __future__ import annotations
+ 
+-import typing as t
+ 
+ from sqlglot import exp, transforms, jsonpath
+ from sqlglot.dialects.dialect import (
+@@ -13,13 +12,6 @@ from sqlglot.dialects.spark import Spark
+ from sqlglot.tokens import TokenType
+ 
+ 
+-def _build_json_extract(args: t.List) -> exp.JSONExtract:
+-    # Transform GET_JSON_OBJECT(expr, '$.<path>') -> expr:<path>
+-    this = args[0]
+-    path = args[1].name.lstrip("$.")
+-    return exp.JSONExtract(this=this, expression=path)
+-
+-
+ def _jsonextract_sql(
+     self: Databricks.Generator, expression: exp.JSONExtract | exp.JSONExtractScalar
+ ) -> str:
+@@ -45,7 +37,6 @@ class Databricks(Spark):
+             "DATE_ADD": build_date_delta(exp.DateAdd),
+             "DATEDIFF": build_date_delta(exp.DateDiff),
+             "DATE_DIFF": build_date_delta(exp.DateDiff),
+-            "GET_JSON_OBJECT": _build_json_extract,
+         }
+ 
+         FACTOR = {
+diff --git a/sqlglot/dialects/hive.py b/sqlglot/dialects/hive.py
+index 6084d449e1..86c9e06e76 100644
+--- a/sqlglot/dialects/hive.py
++++ b/sqlglot/dialects/hive.py
+@@ -305,7 +305,9 @@ class Hive(Dialect):
+             "FIRST": _build_with_ignore_nulls(exp.First),
+             "FIRST_VALUE": _build_with_ignore_nulls(exp.FirstValue),
+             "FROM_UNIXTIME": build_formatted_time(exp.UnixToStr, "hive", True),
+-            "GET_JSON_OBJECT": exp.JSONExtractScalar.from_arg_list,
++            "GET_JSON_OBJECT": lambda args, dialect: exp.JSONExtractScalar(
++                this=seq_get(args, 0), expression=dialect.to_json_path(seq_get(args, 1))
++            ),
+             "LAST": _build_with_ignore_nulls(exp.Last),
+             "LAST_VALUE": _build_with_ignore_nulls(exp.LastValue),
+             "LOCATE": locate_to_strposition,

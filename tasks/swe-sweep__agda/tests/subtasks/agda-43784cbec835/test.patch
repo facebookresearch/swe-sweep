@@ -1,0 +1,14 @@
+diff --git a/test/Succeed/Issue5563.agda b/test/Succeed/Issue5563.agda
+new file mode 100644
+index 0000000000..d66baf8424
+--- /dev/null
++++ b/test/Succeed/Issue5563.agda
+@@ -0,0 +1,8 @@
++module Issue5563 where
++
++F : (@0 A : Set) → A → A
++F A x =
++  let
++    y : A
++    y = x
++  in y

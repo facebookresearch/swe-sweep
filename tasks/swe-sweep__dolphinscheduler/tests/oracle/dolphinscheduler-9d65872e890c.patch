@@ -1,0 +1,12 @@
+diff --git a/dolphinscheduler-task-plugin/dolphinscheduler-task-api/src/main/java/org/apache/dolphinscheduler/plugin/task/api/shell/BaseLinuxShellInterceptorBuilder.java b/dolphinscheduler-task-plugin/dolphinscheduler-task-api/src/main/java/org/apache/dolphinscheduler/plugin/task/api/shell/BaseLinuxShellInterceptorBuilder.java
+index fd8747d343..6f02737dd8 100644
+--- a/dolphinscheduler-task-plugin/dolphinscheduler-task-api/src/main/java/org/apache/dolphinscheduler/plugin/task/api/shell/BaseLinuxShellInterceptorBuilder.java
++++ b/dolphinscheduler-task-plugin/dolphinscheduler-task-api/src/main/java/org/apache/dolphinscheduler/plugin/task/api/shell/BaseLinuxShellInterceptorBuilder.java
+@@ -171,6 +171,7 @@ public abstract class BaseLinuxShellInterceptorBuilder<T extends BaseLinuxShellI
+         }
+ 
+         bootstrapCommand.add(String.format("--uid=%s", runUser));
++        bootstrapCommand.add(shellAbsolutePath().toString());
+         return bootstrapCommand;
+     }
+ }

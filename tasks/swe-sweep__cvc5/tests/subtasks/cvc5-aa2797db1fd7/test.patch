@@ -1,0 +1,29 @@
+diff --git a/test/regress/cli/CMakeLists.txt b/test/regress/cli/CMakeLists.txt
+index 5ba9dc43ad..473c65af43 100644
+--- a/test/regress/cli/CMakeLists.txt
++++ b/test/regress/cli/CMakeLists.txt
+@@ -1226,6 +1226,7 @@ set(regress_0_tests
+   regress0/quantifiers/partial-trigger.smt2
+   regress0/quantifiers/proj-issue152-2-non-std-nterm-ext-rew.smt2
+   regress0/quantifiers/proj-issue512-has-skolem.smt2
++  regress0/quantifiers/proj-issue608-mbqi-cegqi.smt2
+   regress0/quantifiers/pure_dt_cbqi.smt2
+   regress0/quantifiers/qarray-sel-over-store.smt2
+   regress0/quantifiers/qbv-inequality2.smt2
+diff --git a/test/regress/cli/regress0/quantifiers/proj-issue608-mbqi-cegqi.smt2 b/test/regress/cli/regress0/quantifiers/proj-issue608-mbqi-cegqi.smt2
+new file mode 100644
+index 0000000000..78e3a7a25b
+--- /dev/null
++++ b/test/regress/cli/regress0/quantifiers/proj-issue608-mbqi-cegqi.smt2
+@@ -0,0 +1,11 @@
++; EXPECT: unknown
++
++; Benchmark unknown due to cegqi-all taking ownership; solvable with finite-model-find.
++
++(set-logic ALL)
++(set-option :mbqi true)
++(set-option :cegqi-all true)
++(declare-sort u 0)
++(declare-const x u)
++(assert (forall ((_x u)) (= _x x)))
++(check-sat)

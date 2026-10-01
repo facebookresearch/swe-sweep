@@ -1,0 +1,52 @@
+diff --git a/tests/format/yaml/mapping/__snapshots__/format.test.js.snap b/tests/format/yaml/mapping/__snapshots__/format.test.js.snap
+index ffb14a8ab..aed27f30a 100644
+--- a/tests/format/yaml/mapping/__snapshots__/format.test.js.snap
++++ b/tests/format/yaml/mapping/__snapshots__/format.test.js.snap
+@@ -320,6 +320,39 @@ printWidth: 80
+ ================================================================================
+ `;
+ 
++exports[`comment-value-align.yml - {"tabWidth":4} format 1`] = `
++====================================options=====================================
++parsers: ["yaml"]
++printWidth: 80
++tabWidth: 4
++                                                                                | printWidth
++=====================================input======================================
++123: # hello
++  # comment
++
++=====================================output=====================================
++123: # hello
++    # comment
++
++================================================================================
++`;
++
++exports[`comment-value-align.yml format 1`] = `
++====================================options=====================================
++parsers: ["yaml"]
++printWidth: 80
++                                                                                | printWidth
++=====================================input======================================
++123: # hello
++  # comment
++
++=====================================output=====================================
++123: # hello
++  # comment
++
++================================================================================
++`;
++
+ exports[`common.yml - {"tabWidth":4} format 1`] = `
+ ====================================options=====================================
+ parsers: ["yaml"]
+diff --git a/tests/format/yaml/mapping/comment-value-align.yml b/tests/format/yaml/mapping/comment-value-align.yml
+new file mode 100644
+index 000000000..58cfb6489
+--- /dev/null
++++ b/tests/format/yaml/mapping/comment-value-align.yml
+@@ -0,0 +1,2 @@
++123: # hello
++  # comment

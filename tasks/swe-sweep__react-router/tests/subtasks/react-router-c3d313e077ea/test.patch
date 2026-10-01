@@ -1,0 +1,123 @@
+diff --git a/packages/react-router/__tests__/generatePath-test.tsx b/packages/react-router/__tests__/generatePath-test.tsx
+index c4fbf35b7..3bf3a1843 100644
+--- a/packages/react-router/__tests__/generatePath-test.tsx
++++ b/packages/react-router/__tests__/generatePath-test.tsx
+@@ -191,4 +191,25 @@ describe("generatePath", () => {
+ 
+     consoleWarn.mockRestore();
+   });
++
++  describe("with params followed by static text", () => {
++    it("interpolates params with file extensions", () => {
++      expect(generatePath("/books/:id.json", { id: "42" })).toBe(
++        "/books/42.json",
++      );
++      expect(generatePath("/api/:resource.xml", { resource: "users" })).toBe(
++        "/api/users.xml",
++      );
++      expect(generatePath("/:lang.html", { lang: "en" })).toBe("/en.html");
++    });
++
++    it("handles multiple extensions", () => {
++      expect(generatePath("/files/:name.tar.gz", { name: "archive" })).toBe(
++        "/files/archive.tar.gz",
++      );
++      expect(generatePath("/:file.min.js", { file: "app" })).toBe(
++        "/app.min.js",
++      );
++    });
++  });
+ });
+diff --git a/packages/react-router/__tests__/useParams-test.tsx b/packages/react-router/__tests__/useParams-test.tsx
+index 5413cee24..d4fcec093 100644
+--- a/packages/react-router/__tests__/useParams-test.tsx
++++ b/packages/react-router/__tests__/useParams-test.tsx
+@@ -1,6 +1,14 @@
+ import * as React from "react";
+ import * as TestRenderer from "react-test-renderer";
+-import { MemoryRouter, Outlet, Routes, Route, useParams } from "react-router";
++import {
++  MemoryRouter,
++  Outlet,
++  Routes,
++  Route,
++  useParams,
++  useLocation,
++  generatePath,
++} from "react-router";
+ 
+ function ShowParams() {
+   return <pre>{JSON.stringify(useParams())}</pre>;
+@@ -209,4 +217,72 @@ describe("useParams", () => {
+       `);
+     });
+   });
++
++  test("maintains compatibility with generatePath", () => {
++    let tests = [
++      {
++        path: "/books/42",
++        url: "/books/42",
++        params: {},
++      },
++      {
++        path: "/books/:id",
++        url: "/books/42",
++        params: { id: "42" },
++      },
++      {
++        path: "/books/:id.json",
++        url: "/books/42.json",
++        params: { id: "42" },
++      },
++      {
++        path: "/books/:id/comments",
++        url: "/books/42/comments",
++        params: { id: "42" },
++      },
++      {
++        path: "/books/:id.json/comments",
++        url: "/books/42.json/comments",
++        params: { id: "42" },
++      },
++    ];
++
++    function ShowParamsAndPath({ path }: { path: string }) {
++      return (
++        <>
++          <p>{JSON.stringify(useParams())}</p>
++          <p>{useLocation().pathname}</p>
++          <p>{generatePath(path, useParams())}</p>
++        </>
++      );
++    }
++
++    for (let { path, url, params } of tests) {
++      let renderer: TestRenderer.ReactTestRenderer;
++      TestRenderer.act(() => {
++        renderer = TestRenderer.create(
++          <MemoryRouter initialEntries={[url]}>
++            <Routes>
++              <Route path={path} element={<ShowParamsAndPath path={path} />} />
++            </Routes>
++          </MemoryRouter>,
++        );
++      });
++
++      // eslint-disable-next-line jest/no-interpolation-in-snapshots
++      expect(renderer.toJSON()).toMatchInlineSnapshot(`
++        [
++          <p>
++            ${JSON.stringify(params)}
++          </p>,
++          <p>
++            ${url}
++          </p>,
++          <p>
++            ${url}
++          </p>,
++        ]
++      `);
++    }
++  });
+ });

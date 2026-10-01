@@ -1,0 +1,13 @@
+diff --git a/src/Symfony/Component/Mailer/Bridge/Mailjet/Transport/MailjetApiTransport.php b/src/Symfony/Component/Mailer/Bridge/Mailjet/Transport/MailjetApiTransport.php
+index 6d8caf8725b..22364588d69 100644
+--- a/src/Symfony/Component/Mailer/Bridge/Mailjet/Transport/MailjetApiTransport.php
++++ b/src/Symfony/Component/Mailer/Bridge/Mailjet/Transport/MailjetApiTransport.php
+@@ -185,7 +185,7 @@ class MailjetApiTransport extends AbstractApiTransport
+                 'Base64Content' => $attachment->bodyToString(),
+             ];
+             if ('inline' === $headers->getHeaderBody('Content-Disposition')) {
+-                $formattedAttachment['ContentID'] = $headers->getHeaderParameter('Content-Disposition', 'name');
++                $formattedAttachment['ContentID'] = $attachment->hasContentId() ? $attachment->getContentId() : $filename;
+                 $inlines[] = $formattedAttachment;
+             } else {
+                 $attachments[] = $formattedAttachment;

@@ -1,0 +1,36 @@
+diff --git a/pandas/core/arrays/datetimelike.py b/pandas/core/arrays/datetimelike.py
+index 420a409529..d1b926bd25 100644
+--- a/pandas/core/arrays/datetimelike.py
++++ b/pandas/core/arrays/datetimelike.py
+@@ -718,8 +718,9 @@ class DatetimeLikeArrayMixin(OpsMixin, NDArrayBackedExtensionArray):
+                     msg = self._validation_error_message(value, True)
+                     raise TypeError(msg)
+ 
+-        # Do type inference if necessary up front
++        # Do type inference if necessary up front (after unpacking PandasArray)
+         # e.g. we passed PeriodIndex.values and got an ndarray of Periods
++        value = extract_array(value, extract_numpy=True)
+         value = pd_array(value)
+         value = extract_array(value, extract_numpy=True)
+ 
+diff --git a/pandas/core/construction.py b/pandas/core/construction.py
+index 8d3fd0c520..c6f131a9da 100644
+--- a/pandas/core/construction.py
++++ b/pandas/core/construction.py
+@@ -297,6 +297,7 @@ def array(
+     from pandas.core.arrays import (
+         BooleanArray,
+         DatetimeArray,
++        ExtensionArray,
+         FloatingArray,
+         IntegerArray,
+         IntervalArray,
+@@ -310,7 +311,7 @@ def array(
+         msg = f"Cannot pass scalar '{data}' to 'pandas.array'."
+         raise ValueError(msg)
+ 
+-    if dtype is None and isinstance(data, (ABCSeries, ABCIndex, ABCExtensionArray)):
++    if dtype is None and isinstance(data, (ABCSeries, ABCIndex, ExtensionArray)):
+         # Note: we exclude np.ndarray here, will do type inference on it
+         dtype = data.dtype
+ 

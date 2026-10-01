@@ -1,0 +1,19 @@
+diff --git a/activesupport/test/core_ext/range_ext_test.rb b/activesupport/test/core_ext/range_ext_test.rb
+index cd6ed6c4753..9ce98858dc7 100644
+--- a/activesupport/test/core_ext/range_ext_test.rb
++++ b/activesupport/test/core_ext/range_ext_test.rb
+@@ -65,6 +65,14 @@ class RangeTest < ActiveSupport::TestCase
+     assert_not (5..10).overlaps?(1...5)
+   end
+ 
++  def test_overlaps_with_beginless_range
++    assert((1..5).overlaps?(..10))
++  end
++
++  def test_overlaps_with_two_beginless_ranges
++    assert((..5).overlaps?(..10))
++  end
++
+   def test_should_include_identical_inclusive
+     assert((1..10).include?(1..10))
+   end

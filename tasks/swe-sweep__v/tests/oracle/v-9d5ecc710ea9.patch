@@ -1,0 +1,53 @@
+diff --git a/vlib/v/checker/assign.v b/vlib/v/checker/assign.v
+index a9547347e..b87b5e1d8 100644
+--- a/vlib/v/checker/assign.v
++++ b/vlib/v/checker/assign.v
+@@ -46,6 +46,14 @@ fn (mut c Checker) assign_stmt(mut node ast.AssignStmt) {
+ 				node.right_types = right_type_sym.mr_info().types
+ 				right_len = node.right_types.len
+ 			} else if right_type == ast.void_type {
+ 				right_len = 0
++				if mut right is ast.IfExpr {
++					last_branch := right.branches.last()
++					last_stmts := last_branch.stmts.filter(it is ast.ExprStmt)
++					if last_stmts.any((it as ast.ExprStmt).typ.has_flag(.generic)) {
++						right_len = last_branch.stmts.len
++						node.right_types = last_stmts.map((it as ast.ExprStmt).typ)
++					}
++				}
+ 			}
+ 		}
+ 		if mut right is ast.InfixExpr {
+diff --git a/vlib/v/checker/checker.v b/vlib/v/checker/checker.v
+index 0000000..0000000 100644
+--- a/vlib/v/checker/checker.v
++++ b/vlib/v/checker/checker.v
+@@ -3716,6 +3716,12 @@ pub fn (mut c Checker) is_comptime_var(node ast.Expr) bool {
+ 	return node is ast.Ident
+ 		&& (node as ast.Ident).info is ast.IdentVar && (node as ast.Ident).kind == .variable && ((node as ast.Ident).obj as ast.Var).ct_type_var != .no_comptime
+ }
+ 
++[inline]
++pub fn (mut c Checker) is_generic_param_var(node ast.Expr) bool {
++	return node is ast.Ident
++		&& (node as ast.Ident).info is ast.IdentVar && (node as ast.Ident).obj is ast.Var && ((node as ast.Ident).obj as ast.Var).ct_type_var == .generic_param
++}
++
+ fn (mut c Checker) mark_as_referenced(mut node ast.Expr, as_interface bool) {
+ 	match mut node {
+ 		ast.Ident {
+diff --git a/vlib/v/checker/if.v b/vlib/v/checker/if.v
+index ebeee0315..430eca291 100644
+--- a/vlib/v/checker/if.v
++++ b/vlib/v/checker/if.v
+@@ -383,6 +383,10 @@ fn (mut c Checker) if_expr(mut node ast.IfExpr) ast.Type {
+ 						c.error('mismatched types `${c.table.type_to_str(node.typ)}` and `${c.table.type_to_str(stmt.typ)}`',
+ 							node.pos)
+ 					} else {
++						if node.is_expr == false && c.is_generic_param_var(stmt.expr) {
++							// generic variable no yet type bounded
++							node.is_expr = true
++						}
+ 						if c.inside_assign && node.is_expr && !node.typ.has_flag(.shared_f)
+ 							&& stmt.typ.is_ptr() != node.typ.is_ptr()
+ 							&& stmt.typ != ast.voidptr_type {

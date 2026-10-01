@@ -1,0 +1,111 @@
+diff --git a/vlib/v/tests/comptime_sumtype_cast_2_test.v b/vlib/v/tests/comptime_sumtype_cast_2_test.v
+new file mode 100644
+index 000000000..db753135a
+--- /dev/null
++++ b/vlib/v/tests/comptime_sumtype_cast_2_test.v
+@@ -0,0 +1,38 @@
++pub type Any = bool | int | map[string]Any | string
++
++struct StructType[T] {
++mut:
++	val T
++}
++
++fn map_from[T](t T) Any {
++	mut value := Any{}
++	$if T is $struct {
++		$for field in T.fields {
++			println(t.$(field.name))
++			value = t.$(field.name)
++			value = Any(t.$(field.name))
++		}
++	}
++	return value
++}
++
++fn test_generic_struct_with_sumtype() {
++	struct_type := StructType[string]{
++		val: 'true'
++	}
++	struct_type2 := StructType[int]{
++		val: 1
++	}
++	array_of_struct := [struct_type, struct_type]
++
++	for variable in array_of_struct {
++		assert map_from(variable) == Any('true')
++	}
++
++	array_of_struct2 := [struct_type2, struct_type2]
++
++	for variable in array_of_struct2 {
++		assert map_from(variable) == Any(1)
++	}
++}
+diff --git a/vlib/v/tests/comptime_sumtype_cast_3_test.v b/vlib/v/tests/comptime_sumtype_cast_3_test.v
+new file mode 100644
+index 000000000..5e316db1c
+--- /dev/null
++++ b/vlib/v/tests/comptime_sumtype_cast_3_test.v
+@@ -0,0 +1,61 @@
++pub type Any = bool | int | map[string]Any | string
++
++struct StructType[T] {
++mut:
++	val T
++}
++
++fn map_from[T](t T) map[string]Any {
++	mut m := map[string]Any{}
++	$if T is $struct {
++		$for field in T.fields {
++			key := field.name
++			m[key] = t.$(field.name)
++		}
++	}
++	return m
++}
++
++fn test_struct_to_map_string() {
++	array_of_struct := [StructType[string]{
++		val: 'true'
++	}, StructType[string]{
++		val: 'false'
++	}]
++
++	mut array_of_map := []Any{}
++
++	for variable in array_of_struct {
++		array_of_map << map_from(variable)
++	}
++
++	println(array_of_map)
++	assert array_of_map[0] == Any({
++		'val': Any('true')
++	})
++	assert array_of_map[1] == Any({
++		'val': Any('false')
++	})
++}
++
++fn test_struct_to_map_bool() {
++	array_of_struct := [StructType[bool]{
++		val: true
++	}, StructType[bool]{
++		val: false
++	}]
++
++	mut array_of_map := []Any{}
++
++	for variable in array_of_struct {
++		array_of_map << map_from(variable)
++	}
++
++	println(array_of_map)
++	assert array_of_map[0] == Any({
++		'val': Any(true)
++	})
++	assert array_of_map[1] == Any({
++		'val': Any(false)
++	})
++}

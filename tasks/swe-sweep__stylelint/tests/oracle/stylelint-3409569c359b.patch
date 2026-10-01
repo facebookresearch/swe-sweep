@@ -1,0 +1,13 @@
+diff --git a/lib/utils/reportCommentProblem.mjs b/lib/utils/reportCommentProblem.mjs
+index 4beb45fbd..122fa6cbe 100644
+--- a/lib/utils/reportCommentProblem.mjs
++++ b/lib/utils/reportCommentProblem.mjs
+@@ -17,6 +17,8 @@ export default function reportCommentProblem({ rule, message, severity, node, po
+ 	// In practice we expect all comments to have locations, though.
+ 	if (!source?.start) return;
+ 
++	if (postcssResult.stylelint.quiet && severity === SEVERITY_WARNING) return;
++
+ 	postcssResult.warn(message, {
+ 		rule,
+ 		severity,

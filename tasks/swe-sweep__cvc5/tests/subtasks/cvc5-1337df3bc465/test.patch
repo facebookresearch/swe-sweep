@@ -1,0 +1,25 @@
+diff --git a/test/regress/cli/CMakeLists.txt b/test/regress/cli/CMakeLists.txt
+index 809d88cf30..fa6cc36677 100644
+--- a/test/regress/cli/CMakeLists.txt
++++ b/test/regress/cli/CMakeLists.txt
+@@ -592,6 +592,7 @@ set(regress_0_tests
+   regress0/datatypes/parametric-alt-list.cvc.smt2
+   regress0/datatypes/proj-issue172.smt2
+   regress0/datatypes/proj-issue474-app-cons-value.smt2
++  regress0/datatypes/proj-issue578-clash-pf.smt2
+   regress0/datatypes/rec1.cvc.smt2
+   regress0/datatypes/rec2.cvc.smt2
+   regress0/datatypes/rec4.cvc.smt2
+diff --git a/test/regress/cli/regress0/datatypes/proj-issue578-clash-pf.smt2 b/test/regress/cli/regress0/datatypes/proj-issue578-clash-pf.smt2
+new file mode 100644
+index 0000000000..db0c389d5c
+--- /dev/null
++++ b/test/regress/cli/regress0/datatypes/proj-issue578-clash-pf.smt2
+@@ -0,0 +1,7 @@
++; EXPECT: unsat
++(set-logic ALL)
++(set-option :check-proofs true)
++(declare-datatypes ((d 0)) (((c (s Bool)) (_c (_s Bool)))))
++(declare-const x d)
++(assert (= ((_ is _c) x) ((_ is c) ((_ update _s) x true))))
++(check-sat)

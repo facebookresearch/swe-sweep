@@ -1,0 +1,20 @@
+diff --git a/test/chi.jl b/test/chi.jl
+new file mode 100644
+--- /dev/null
++++ b/test/chi.jl
+@@ -0,0 +1,4 @@
++# see #1497
++for x in (-0.5, -1, -1.5f0), ν in (3, 3f0, 3.0)
++    @test @inferred(logpdf(Chi(ν), x)) == -Inf
++end
+diff --git a/test/runtests.jl b/test/runtests.jl
+--- a/test/runtests.jl
++++ b/test/runtests.jl
+@@ -53,6 +53,7 @@ const tests = [
+     "functionals",
+     "chernoff",
+     "univariate_bounds",
++    "chi",
+ ]
+ 
+ printstyled("Running tests:\n", color=:blue)

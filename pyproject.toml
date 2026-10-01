@@ -1,0 +1,49 @@
+[project]
+name = "swe-sweep"
+version = "1.0.0"
+description = "Evaluate SWE-sweep patches with Harbor"
+readme = "README.md"
+requires-python = ">=3.12"
+license = { file = "LICENSE" }
+keywords = ["swe", "agents", "code", "benchmark", "evaluation", "harbor"]
+authors = [
+    { name = "Kilian Lieret", email = "klieret@meta.com" },
+]
+maintainers = [
+    { name = "Kilian Lieret", email = "klieret@meta.com" },
+]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Developers",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3 :: Only",
+    "Programming Language :: Python :: 3.12",
+]
+dependencies = [
+    # Separate verifier environments and collect hooks are unreleased in Harbor 0.23.
+    "harbor @ git+https://github.com/harbor-framework/harbor.git@58789aad577f432a4590209a8fd901f8c894f382",
+]
+
+[project.urls]
+Homepage = "https://github.com/facebookresearch/swe-sweep"
+Repository = "https://github.com/facebookresearch/swe-sweep"
+Issues = "https://github.com/facebookresearch/swe-sweep/issues"
+
+[project.optional-dependencies]
+test = ["pytest>=8"]
+
+[project.scripts]
+sweep = "swesweep.cli:main"
+
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.ruff]
+line-length = 120
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

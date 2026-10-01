@@ -1,0 +1,53 @@
+diff --git a/utils/utils_test.go b/utils/utils_test.go
+index 71eef96..d048682 100644
+--- a/utils/utils_test.go
++++ b/utils/utils_test.go
+@@ -1,7 +1,10 @@
+ package utils
+ 
+ import (
++	"database/sql/driver"
++	"errors"
+ 	"strings"
+ 	"testing"
++	"time"
+ )
+ 
+@@ -12,3 +15,37 @@ func TestIsValidDBNameChar(t *testing.T) {
+ 		}
+ 	}
+ }
++
++type ModifyAt struct {
++	Time  time.Time
++	Valid bool
++}
++
++func (m ModifyAt) Value() (driver.Value, error) {
++	if !m.Valid {
++		return nil, nil
++	}
++	return m.Time, nil
++}
++
++func TestAssertEqual(t *testing.T) {
++	now := time.Now()
++	assertEqualTests := []struct {
++		name     string
++		src, dst interface{}
++		equal    bool
++	}{
++		{"error equal", errors.New("1"), errors.New("1"), true},
++		{"error not equal", errors.New("1"), errors.New("2"), false},
++		{"driver.Valuer equal", ModifyAt{Time: now, Valid: true}, ModifyAt{Time: now, Valid: true}, true},
++		{"driver.Valuer not equal", ModifyAt{Time: now, Valid: true}, ModifyAt{Time: now.Add(time.Second), Valid: true}, false},
++		{"driver.Valuer equal (ptr to nil ptr)", (*ModifyAt)(nil), &ModifyAt{}, false},
++	}
++	for _, test := range assertEqualTests {
++		t.Run(test.name, func(t *testing.T) {
++			if equal := AssertEqual(test.src, test.dst); equal != test.equal {
++				t.Errorf("AssertEqual(%v, %v) = %v, want %v", test.src, test.dst, equal, test.equal)
++			}
++		})
++	}
++}

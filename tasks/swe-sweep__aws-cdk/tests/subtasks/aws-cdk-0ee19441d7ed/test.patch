@@ -1,0 +1,30 @@
+diff --git a/packages/@aws-cdk/aws-stepfunctions-tasks/test/athena/start-query-execution.test.ts b/packages/@aws-cdk/aws-stepfunctions-tasks/test/athena/start-query-execution.test.ts
+index 5742872286..c2936afc2d 100644
+--- a/packages/@aws-cdk/aws-stepfunctions-tasks/test/athena/start-query-execution.test.ts
++++ b/packages/@aws-cdk/aws-stepfunctions-tasks/test/athena/start-query-execution.test.ts
+@@ -153,4 +153,25 @@ describe('Start Query Execution', () => {
+       },
+     });
+   });
++
++  test('omit QueryExecutionContext if no catalog or database name provided', () => {
++    // GIVEN
++    const stack = new cdk.Stack();
++
++    // WHEN
++    const task = new AthenaStartQueryExecution(stack, 'Query', {
++      queryString: 'CREATE DATABASE database',
++      clientRequestToken: 'unique-client-request-token',
++      resultConfiguration: {
++        outputLocation: {
++          bucketName: 'query-results-bucket',
++          objectKey: 'folder',
++        },
++      },
++    });
++
++
++    // THEN
++    expect(stack.resolve(task.toStateJson())).not.toHaveProperty('Parameters.QueryExecutionContext');
++  });
+ });

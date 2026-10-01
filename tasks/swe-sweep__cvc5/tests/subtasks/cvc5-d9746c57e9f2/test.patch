@@ -1,0 +1,103 @@
+diff --git a/test/regress/cli/CMakeLists.txt b/test/regress/cli/CMakeLists.txt
+index bf4a8acf97..5ba9dc43ad 100644
+--- a/test/regress/cli/CMakeLists.txt
++++ b/test/regress/cli/CMakeLists.txt
+@@ -1108,6 +1108,7 @@ set(regress_0_tests
+   regress0/proofs/proj-issue492-skolem-lemma-pf.smt2
+   regress0/proofs/proj-issue528-ufpfchecker.smt2
+   regress0/proofs/proj-issue529-open-pf.smt2
++  regress0/proofs/proj-issue589.smt2
+   regress0/proofs/proof-components.smt2
+   regress0/proofs/qgu-fuzz-1-bool-sat.smt2
+   regress0/proofs/qgu-fuzz-2-bool-chainres-checking.smt2
+@@ -1115,6 +1116,7 @@ set(regress_0_tests
+   regress0/proofs/qgu-fuzz-4-bool-chainres-postprocessing-singleton.smt2
+   regress0/proofs/qgu-fuzz-5-bool-open-sat.smt2
+   regress0/proofs/scope.smt2
++  regress0/proofs/t1-difficulty-filter.smt2
+   regress0/proofs/tricky-sat-assumption-incremental-bookeeping.smt2
+   regress0/proofs/trust-subs-eq-open.smt2
+   regress0/proofs/unused-def1.smt2
+@@ -2266,6 +2268,7 @@ set(regress_1_tests
+   regress1/proj-issue175.smt2
+   regress1/proj-issue406-diff-unsat-core.smt2
+   regress1/proj-issue476-theoryOf-no-uf.smt2
++  regress1/proj-issue542.smt2
+   regress1/proof00.smt2
+   regress1/proofs/add_two_base.smt2
+   regress1/proofs/base-lfsc-treesize.smt2
+diff --git a/test/regress/cli/regress0/proofs/proj-issue589.smt2 b/test/regress/cli/regress0/proofs/proj-issue589.smt2
+new file mode 100644
+index 0000000000..acb6bdd35c
+--- /dev/null
++++ b/test/regress/cli/regress0/proofs/proj-issue589.smt2
+@@ -0,0 +1,9 @@
++; EXPECT: sat
++; EXPECT: (
++; EXPECT: )
++(set-logic ALL)
++(declare-const __ (_ BitVec 1))
++(set-option :proof-prune-input true)
++(set-option :dump-difficulty true)
++(assert (distinct (_ bv0 98) ((_ sign_extend 77) (bvsdiv (_ bv0 21) (bvlshr (_ bv1 21) ((_ zero_extend 20) __))))))
++(check-sat)
+diff --git a/test/regress/cli/regress0/proofs/t1-difficulty-filter.smt2 b/test/regress/cli/regress0/proofs/t1-difficulty-filter.smt2
+new file mode 100644
+index 0000000000..44198c794a
+--- /dev/null
++++ b/test/regress/cli/regress0/proofs/t1-difficulty-filter.smt2
+@@ -0,0 +1,17 @@
++; COMMAND-LINE: --dump-difficulty --produce-proofs
++; SCRUBBER: sed 's/(.*//g;s/).*//g'
++; EXPECT: unsat
++(set-logic UFLIA)
++(declare-fun f (Int) Int) 
++(declare-fun g (Int) Int) 
++(declare-fun h (Int) Int)
++(declare-fun a () Int) 
++(declare-fun b () Int) 
++(declare-fun c () Int)
++(assert (forall ((x Int)) (> (f x) 5)))
++(assert (forall ((x Int)) (> (h x) 0)))
++(assert (forall ((x Int)) (> (g x) 0)))
++(assert (or (< (f a) 0) (> (h a) 0) (< (h b) 0) (< (g a) 0)))
++(assert (or (< (f c) 0) (< (h c) 0) (< (g b) 0)))
++(assert (or (< (f b) 0) (< (h c) 0) (< (g c) 0)))
++(check-sat)
+diff --git a/test/regress/cli/regress1/difficulty-polarity.smt2 b/test/regress/cli/regress1/difficulty-polarity.smt2
+index ce2388c545..09cdc8ce0f 100644
+--- a/test/regress/cli/regress1/difficulty-polarity.smt2
++++ b/test/regress/cli/regress1/difficulty-polarity.smt2
+@@ -1,10 +1,16 @@
+ ; COMMAND-LINE: --produce-difficulty
+-; SCRUBBER: sed 's/.*//g'
++; SCRUBBER: sed 's/).*/)/g'
++; EXPECT: sat
++; EXPECT: (
++; EXPECT: ((distinct a b c)
++; EXPECT: ((=> (R a)
++; EXPECT: )
++
+ ; EXIT: 0
+ 
+ (set-logic ALL)
+ (set-option :finite-model-find true)
+-(set-option :mbqi none)
++(set-option :fmf-mbqi none)
+ (set-option :produce-difficulty true)
+ 
+ (declare-sort U 0)
+diff --git a/test/regress/cli/regress1/proj-issue542.smt2 b/test/regress/cli/regress1/proj-issue542.smt2
+new file mode 100644
+index 0000000000..337ed10b2c
+--- /dev/null
++++ b/test/regress/cli/regress1/proj-issue542.smt2
+@@ -0,0 +1,8 @@
++; EXPECT: unsat
++; EXPECT: (
++; EXPECT: )
++(set-logic ALL)
++(set-option :difficulty-mode model-check)
++(set-option :dump-difficulty true)
++(assert (seq.nth (seq.unit (>= 0.0 (arccos 0.0))) 0))
++(check-sat)

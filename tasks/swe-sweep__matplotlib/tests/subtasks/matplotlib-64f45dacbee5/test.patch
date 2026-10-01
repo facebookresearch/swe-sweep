@@ -1,0 +1,26 @@
+diff --git a/lib/matplotlib/tests/test_triangulation.py b/lib/matplotlib/tests/test_triangulation.py
+index 6001891632..08ed058ddb 100644
+--- a/lib/matplotlib/tests/test_triangulation.py
++++ b/lib/matplotlib/tests/test_triangulation.py
+@@ -9,7 +9,7 @@ import matplotlib.cm as cm
+ import matplotlib.pyplot as plt
+ import matplotlib.tri as mtri
+ from matplotlib.path import Path
+-from matplotlib.testing.decorators import image_comparison
++from matplotlib.testing.decorators import image_comparison, check_figures_equal
+ 
+ 
+ def test_delaunay():
+@@ -1163,3 +1163,12 @@ def test_tricontour_non_finite_z():
+     with pytest.raises(ValueError, match='z must not contain masked points '
+                                          'within the triangulation'):
+         plt.tricontourf(triang, np.ma.array([0, 1, 2, 3], mask=[1, 0, 0, 0]))
++
++
++@check_figures_equal()
++def test_triplot_with_ls(fig_test, fig_ref):
++    x = [0, 2, 1]
++    y = [0, 0, 1]
++    data = [[0, 1, 2]]
++    fig_test.subplots().triplot(x, y, data, ls='--')
++    fig_ref.subplots().triplot(x, y, data, linestyle='--')

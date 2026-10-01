@@ -1,0 +1,158 @@
+diff --git a/modules/openapi-generator/src/test/java/org/openapitools/codegen/java/spring/SpringCodegenTest.java b/modules/openapi-generator/src/test/java/org/openapitools/codegen/java/spring/SpringCodegenTest.java
+index 9726e26881a..b2a40441c1a 100644
+--- a/modules/openapi-generator/src/test/java/org/openapitools/codegen/java/spring/SpringCodegenTest.java
++++ b/modules/openapi-generator/src/test/java/org/openapitools/codegen/java/spring/SpringCodegenTest.java
+@@ -2602,6 +2602,36 @@ public class SpringCodegenTest {
+             .containsWithName("marker.Common");
+     }
+ 
++    @Test
++    public void contractWithUriEnumContainsEnumConverterWithUriImport() throws IOException {
++        Map<String, File> output = generateFromContract("src/test/resources/3_0/enum_uri.yaml", SPRING_BOOT);
++
++        JavaFileAssert.assertThat(output.get("EnumConverterConfiguration.java"))
++                .hasImports("java.net.URI")
++                .fileContains("Converter<URI, ExampleUriEnum>")
++                .assertMethod("exampleUriEnumConverter");
++    }
++
++    @Test
++    public void contractWithUuidEnumContainsEnumConverterWithUuidImport() throws IOException {
++        Map<String, File> output = generateFromContract("src/test/resources/3_0/enum_uuid.yaml", SPRING_BOOT);
++
++        JavaFileAssert.assertThat(output.get("EnumConverterConfiguration.java"))
++                .hasImports("java.util.UUID")
++                .fileContains("Converter<UUID, ExampleUuidEnum>")
++                .assertMethod("exampleUuidEnumConverter");
++    }
++
++    @Test
++    public void contractWithNumberEnumContainsEnumConverterWithBigDecimalImport() throws IOException {
++        Map<String, File> output = generateFromContract("src/test/resources/3_0/enum_number.yaml", SPRING_BOOT);
++
++        JavaFileAssert.assertThat(output.get("EnumConverterConfiguration.java"))
++                .hasImports("java.math.BigDecimal")
++                .fileContains("Converter<BigDecimal, ExampleNumberEnum>")
++                .assertMethod("exampleNumberEnumConverter");
++    }
++
+     @Test
+     public void contractWithoutEnumDoesNotContainsEnumConverter() throws IOException {
+         Map<String, File> output = generateFromContract("src/test/resources/3_0/generic.yaml", SPRING_BOOT);
+diff --git a/modules/openapi-generator/src/test/resources/3_0/enum_number.yaml b/modules/openapi-generator/src/test/resources/3_0/enum_number.yaml
+new file mode 100644
+index 00000000000..8b2850cb347
+--- /dev/null
++++ b/modules/openapi-generator/src/test/resources/3_0/enum_number.yaml
+@@ -0,0 +1,33 @@
++openapi: 3.0.0
++info:
++  title: Sample API
++  description: API with number enum.
++  version: 1.0.0
++paths:
++  /resources:
++    get:
++      summary: Returns resources.
++      responses:
++        200:
++          description: OK
++          content:
++            application/json:
++              schema:
++                type: array
++                items:
++                  $ref: '#/components/schemas/Resource'
++components:
++  schemas:
++    Resource:
++      type: object
++      properties:
++        source:
++          $ref: '#/components/schemas/ExampleNumberEnum'
++    ExampleNumberEnum:
++      type: number
++      description: Example of an Enum with number values
++      enum:
++        - 1.1
++        - 2.2
++        - 3.3
++
+diff --git a/modules/openapi-generator/src/test/resources/3_0/enum_uri.yaml b/modules/openapi-generator/src/test/resources/3_0/enum_uri.yaml
+new file mode 100644
+index 00000000000..703756f5e93
+--- /dev/null
++++ b/modules/openapi-generator/src/test/resources/3_0/enum_uri.yaml
+@@ -0,0 +1,33 @@
++openapi: 3.0.0
++info:
++  title: Sample API
++  description: API with URI enum.
++  version: 1.0.0
++paths:
++  /resources:
++    get:
++      summary: Returns resources.
++      responses:
++        200:
++          description: OK
++          content:
++            application/json:
++              schema:
++                type: array
++                items:
++                  $ref: '#/components/schemas/Resource'
++components:
++  schemas:
++    Resource:
++      type: object
++      properties:
++        source:
++          $ref: '#/components/schemas/ExampleUriEnum'
++    ExampleUriEnum:
++      type: string
++      format: uri
++      description: Example of an Enum with URI values
++      enum:
++        - "https://another-example.com"
++        - "https://example.com"
++
+diff --git a/modules/openapi-generator/src/test/resources/3_0/enum_uuid.yaml b/modules/openapi-generator/src/test/resources/3_0/enum_uuid.yaml
+new file mode 100644
+index 00000000000..87f46bd3bd9
+--- /dev/null
++++ b/modules/openapi-generator/src/test/resources/3_0/enum_uuid.yaml
+@@ -0,0 +1,33 @@
++openapi: 3.0.0
++info:
++  title: Sample API
++  description: API with UUID enum.
++  version: 1.0.0
++paths:
++  /resources:
++    get:
++      summary: Returns resources.
++      responses:
++        200:
++          description: OK
++          content:
++            application/json:
++              schema:
++                type: array
++                items:
++                  $ref: '#/components/schemas/Resource'
++components:
++  schemas:
++    Resource:
++      type: object
++      properties:
++        source:
++          $ref: '#/components/schemas/ExampleUuidEnum'
++    ExampleUuidEnum:
++      type: string
++      format: uuid
++      description: Example of an Enum with UUID values
++      enum:
++        - "d6a8f2b0-1c34-4e56-a789-0abcdef12345"
++        - "e7b9c3d1-2d45-5f67-b890-1bcdef023456"
++

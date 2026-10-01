@@ -1,0 +1,12 @@
+diff --git a/compiler/src/dmd/dsymbolsem.d b/compiler/src/dmd/dsymbolsem.d
+index 61190109eb..c92ea9b3c7 100644
+--- a/compiler/src/dmd/dsymbolsem.d
++++ b/compiler/src/dmd/dsymbolsem.d
+@@ -1087,5 +1087,6 @@ private extern(C++) final class DsymbolSemanticVisitor : Visitor
+-                    const init_err = dsym._init.isExpInitializer();
++                    auto init_err = dsym._init.isExpInitializer();
+                     if (init_err && init_err.exp.op == EXP.showCtfeContext)
+                     {
++                        init_err.exp = ErrorExp.get();
+                          errorSupplemental(dsym.loc, "compile time context created here");
+                     }

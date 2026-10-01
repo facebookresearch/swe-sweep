@@ -1,0 +1,23 @@
+diff --git a/test/schema.test.js b/test/schema.test.js
+--- a/test/schema.test.js
++++ b/test/schema.test.js
+@@ -2861,10 +2861,19 @@
+     assert.equal(doc1.domain, doc2.domain);
+ 
+     const mongooseDomain = 'mongoose.com';
+     doc1.domain = mongooseDomain;
+     doc2.domain = mongooseDomain;
+ 
+     assert.equal(doc1.domain, mongooseDomain);
+     assert.equal(doc1.domain, doc2.domain);
+   });
++
++  it('retains text index when caching indexes', async function() {
++    const schema = new Schema({ content: { type: String, index: { text: true } } });
++    const firstCall = schema.indexes();
++    const secondCall = schema.indexes();
++
++    assert.deepStrictEqual(firstCall, [[{ content: 'text' }, { background: true }]]);
++    assert.deepStrictEqual(secondCall, [[{ content: 'text' }, { background: true }]]);
++  });
+ });

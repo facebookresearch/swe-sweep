@@ -1,0 +1,22 @@
+diff --git a/src/Symfony/Component/BrowserKit/HttpBrowser.php b/src/Symfony/Component/BrowserKit/HttpBrowser.php
+index 9d84bda751b..4eb30b5be9b 100644
+--- a/src/Symfony/Component/BrowserKit/HttpBrowser.php
++++ b/src/Symfony/Component/BrowserKit/HttpBrowser.php
+@@ -143,10 +143,15 @@ class HttpBrowser extends AbstractBrowser
+             }
+             if (!isset($file['tmp_name'])) {
+                 $uploadedFiles[$name] = $this->getUploadedFiles($file);
++                continue;
+             }
+-            if (isset($file['tmp_name'])) {
+-                $uploadedFiles[$name] = DataPart::fromPath($file['tmp_name'], $file['name']);
++
++            if ('' === $file['tmp_name']) {
++                $uploadedFiles[$name] = new DataPart('', '');
++                continue;
+             }
++
++            $uploadedFiles[$name] = DataPart::fromPath($file['tmp_name'], $file['name']);
+         }
+ 
+         return $uploadedFiles;

@@ -1,0 +1,15 @@
+diff --git a/vlib/toml/tests/quoted_string_crlf_test.v b/vlib/toml/tests/quoted_string_crlf_test.v
+new file mode 100644
+index 000000000..fffdbf073
+--- /dev/null
++++ b/vlib/toml/tests/quoted_string_crlf_test.v
+@@ -0,0 +1,9 @@
++import toml
++
++fn test_quoted_string_crlf() {
++	toml_txt := 'str1 = """tcc \\\r\nabc \\\r\n123"""'
++	toml_doc := toml.parse_text(toml_txt) or { panic(err) }
++
++	value := toml_doc.value('str1').string()
++	assert value == 'tcc abc 123'
++}

@@ -1,0 +1,23 @@
+diff --git a/pulsar-broker-common/src/test/java/org/apache/pulsar/bookie/rackawareness/BookieRackAffinityMappingTest.java b/pulsar-broker-common/src/test/java/org/apache/pulsar/bookie/rackawareness/BookieRackAffinityMappingTest.java
+index 4377916ace2..8cbd0ebe9ca 100644
+--- a/pulsar-broker-common/src/test/java/org/apache/pulsar/bookie/rackawareness/BookieRackAffinityMappingTest.java
++++ b/pulsar-broker-common/src/test/java/org/apache/pulsar/bookie/rackawareness/BookieRackAffinityMappingTest.java
+@@ -82,6 +82,18 @@ public class BookieRackAffinityMappingTest {
+         assertNull(racks.get(2));
+     }
+ 
++    @Test
++    public void testMultipleMetadataServiceUris() {
++        BookieRackAffinityMapping mapping1 = new BookieRackAffinityMapping();
++        ClientConfiguration bkClientConf1 = new ClientConfiguration();
++        bkClientConf1.setProperty("metadataServiceUri", "memory:local,memory:local");
++        bkClientConf1.setProperty("zkTimeout", "100000");
++
++        mapping1.setBookieAddressResolver(BookieSocketAddress.LEGACY_BOOKIEID_RESOLVER);
++        // This previously threw an exception when the metadataServiceUri was a comma delimited list.
++        mapping1.setConf(bkClientConf1);
++    }
++
+     @Test
+     public void testInvalidRackName() {
+         String data = "{\"group1\": {\"" + BOOKIE1

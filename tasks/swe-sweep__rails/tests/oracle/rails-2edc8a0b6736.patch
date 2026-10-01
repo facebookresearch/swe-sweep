@@ -1,0 +1,13 @@
+diff --git a/actionview/lib/action_view/ripper_ast_parser.rb b/actionview/lib/action_view/ripper_ast_parser.rb
+index eef5b56cb51..ae134433263 100644
+--- a/actionview/lib/action_view/ripper_ast_parser.rb
++++ b/actionview/lib/action_view/ripper_ast_parser.rb
+@@ -63,7 +63,7 @@ module ActionView
+         end
+ 
+         def call_method_name
+-          self.last.first
++          self[2].first
+         end
+ 
+         def to_string

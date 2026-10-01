@@ -1,0 +1,49 @@
+diff --git a/dolphinscheduler-api/src/main/java/org/apache/dolphinscheduler/api/service/impl/UsersServiceImpl.java b/dolphinscheduler-api/src/main/java/org/apache/dolphinscheduler/api/service/impl/UsersServiceImpl.java
+index 0c331a4c0c..7b9746921c 100644
+--- a/dolphinscheduler-api/src/main/java/org/apache/dolphinscheduler/api/service/impl/UsersServiceImpl.java
++++ b/dolphinscheduler-api/src/main/java/org/apache/dolphinscheduler/api/service/impl/UsersServiceImpl.java
+@@ -556,6 +556,12 @@ public class UsersServiceImpl extends BaseServiceImpl implements UsersService {
+             putMsg(result, Status.FUNCTION_DISABLED);
+             return result;
+         }
++
++        if (!isAdmin(loginUser)) {
++            putMsg(result, Status.NO_CURRENT_OPERATING_PERMISSION);
++            return result;
++        }
++
+         // check exist
+         User tempUser = userMapper.selectById(userId);
+         if (tempUser == null) {
+@@ -603,6 +609,7 @@ public class UsersServiceImpl extends BaseServiceImpl implements UsersService {
+             putMsg(result, Status.FUNCTION_DISABLED);
+             return result;
+         }
++
+         // check exist
+         User tempUser = userMapper.selectById(userId);
+         if (tempUser == null) {
+@@ -611,6 +618,11 @@ public class UsersServiceImpl extends BaseServiceImpl implements UsersService {
+             return result;
+         }
+ 
++        if (!isAdmin(loginUser)) {
++            putMsg(result, Status.NO_CURRENT_OPERATING_PERMISSION);
++            return result;
++        }
++
+         if (check(result, StringUtils.isEmpty(projectIds), Status.SUCCESS)) {
+             log.warn("Parameter projectIds is empty.");
+             return result;
+@@ -763,6 +775,11 @@ public class UsersServiceImpl extends BaseServiceImpl implements UsersService {
+             return result;
+         }
+ 
++        if (!isAdmin(loginUser)) {
++            putMsg(result, Status.NO_CURRENT_OPERATING_PERMISSION);
++            return result;
++        }
++
+         udfUserMapper.deleteByUserId(userId);
+ 
+         if (check(result, StringUtils.isEmpty(udfIds), Status.SUCCESS)) {

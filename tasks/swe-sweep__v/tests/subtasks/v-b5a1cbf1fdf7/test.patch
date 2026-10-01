@@ -1,0 +1,31 @@
+diff --git a/vlib/v/checker/tests/assign_immutable_reference_var_with_parenthesis_err.out b/vlib/v/checker/tests/assign_immutable_reference_var_with_parenthesis_err.out
+new file mode 100644
+index 000000000..be8c568c1
+--- /dev/null
++++ b/vlib/v/checker/tests/assign_immutable_reference_var_with_parenthesis_err.out
+@@ -0,0 +1,7 @@
++vlib/v/checker/tests/assign_immutable_reference_var_with_parenthesis_err.vv:10:11: error: `a_char` is immutable, cannot have a mutable reference to it
++    8 | 
++    9 | fn foo() {
++   10 |     mut c := &(a_char)
++      |              ^
++   11 |     println(c)
++   12 | }
+diff --git a/vlib/v/checker/tests/assign_immutable_reference_var_with_parenthesis_err.vv b/vlib/v/checker/tests/assign_immutable_reference_var_with_parenthesis_err.vv
+new file mode 100644
+index 000000000..f92707982
+--- /dev/null
++++ b/vlib/v/checker/tests/assign_immutable_reference_var_with_parenthesis_err.vv
+@@ -0,0 +1,12 @@
++struct MyChar {
++	c string
++}
++
++const a_char = MyChar{
++	c: 'a'
++}
++
++fn foo() {
++	mut c := &(a_char)
++	println(c)
++}

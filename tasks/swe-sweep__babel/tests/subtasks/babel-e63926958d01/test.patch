@@ -1,0 +1,32 @@
+diff --git a/packages/babel-parser/test/fixtures/jsx/errors/member-in-namespace-1/input.js b/packages/babel-parser/test/fixtures/jsx/errors/member-in-namespace-1/input.js
+new file mode 100644
+index 0000000000..abb989b65a
+--- /dev/null
++++ b/packages/babel-parser/test/fixtures/jsx/errors/member-in-namespace-1/input.js
+@@ -0,0 +1 @@
++<a.b:c />
+diff --git a/packages/babel-parser/test/fixtures/jsx/errors/member-in-namespace-1/options.json b/packages/babel-parser/test/fixtures/jsx/errors/member-in-namespace-1/options.json
+new file mode 100644
+index 0000000000..27a7b64d71
+--- /dev/null
++++ b/packages/babel-parser/test/fixtures/jsx/errors/member-in-namespace-1/options.json
+@@ -0,0 +1,3 @@
++{
++  "throws": "Unexpected token (1:4)"
++}
+diff --git a/packages/babel-parser/test/fixtures/jsx/errors/member-in-namespace-2/input.js b/packages/babel-parser/test/fixtures/jsx/errors/member-in-namespace-2/input.js
+new file mode 100644
+index 0000000000..fc13a07cc7
+--- /dev/null
++++ b/packages/babel-parser/test/fixtures/jsx/errors/member-in-namespace-2/input.js
+@@ -0,0 +1 @@
++<a:b.c />
+diff --git a/packages/babel-parser/test/fixtures/jsx/errors/member-in-namespace-2/options.json b/packages/babel-parser/test/fixtures/jsx/errors/member-in-namespace-2/options.json
+new file mode 100644
+index 0000000000..27a7b64d71
+--- /dev/null
++++ b/packages/babel-parser/test/fixtures/jsx/errors/member-in-namespace-2/options.json
+@@ -0,0 +1,3 @@
++{
++  "throws": "Unexpected token (1:4)"
++}

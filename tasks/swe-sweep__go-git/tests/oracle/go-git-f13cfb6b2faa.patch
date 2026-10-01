@@ -1,0 +1,16 @@
+diff --git a/options.go b/options.go
+index 02248ad5..d7776dad 100644
+--- a/options.go
++++ b/options.go
+@@ -427,6 +427,11 @@ func (o *ResetOptions) Validate(r *Repository) error {
+ 		}
+ 
+ 		o.Commit = ref.Hash()
++	} else {
++		_, err := r.CommitObject(o.Commit)
++		if err != nil {
++			return fmt.Errorf("invalid reset option: %w", err)
++		}
+ 	}
+ 
+ 	return nil

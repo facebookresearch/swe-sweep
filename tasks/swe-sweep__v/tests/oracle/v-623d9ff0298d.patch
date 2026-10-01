@@ -1,0 +1,99 @@
+diff --git a/vlib/v/checker/postfix.v b/vlib/v/checker/postfix.v
+index 6eab0ec23..8491f20d5 100644
+--- a/vlib/v/checker/postfix.v
++++ b/vlib/v/checker/postfix.v
+@@ -25,7 +25,11 @@ fn (mut c Checker) postfix_expr(mut node ast.PostfixExpr) ast.Type {
+ 	if !(typ_sym.is_number() || ((c.inside_unsafe || c.pref.translated) && is_non_void_pointer)) {
+ 		if c.inside_comptime_for_field {
+ 			if c.is_comptime_var(node.expr) || node.expr is ast.ComptimeSelector {
+-				return c.unwrap_generic(c.get_comptime_var_type(node.expr))
++				node.typ = c.unwrap_generic(c.get_comptime_var_type(node.expr))
++				if node.op == .question {
++					node.typ = node.typ.clear_flag(.option)
++				}
++				return node.typ
+ 			}
+ 		}
+ 
+diff --git a/vlib/v/gen/c/cgen.v b/vlib/v/gen/c/cgen.v
+index 1f1b49323..277599124 100644
+--- a/vlib/v/gen/c/cgen.v
++++ b/vlib/v/gen/c/cgen.v
+@@ -3219,11 +3219,30 @@ fn (mut g Gen) expr(node_ ast.Expr) {
+ 				g.write('(*')
+ 				g.expr(node.expr)
+ 				g.write(')')
++			} else if node.op == .question {
++				cur_line := g.go_before_stmt(0).trim_space()
++				mut expr_str := ''
++				if mut node.expr is ast.ComptimeSelector
++					&& (node.expr as ast.ComptimeSelector).left is ast.Ident {
++					// val.$(field.name)?					
++					expr_str = '${node.expr.left.str()}.${g.comptime_for_field_value.name}'
++				} else if mut node.expr is ast.Ident && g.is_comptime_var(node.expr) {
++					// val?
++					expr_str = node.expr.name
++				}
++				g.writeln('if (${expr_str}.state != 0) {')
++				g.writeln('\tpanic_option_not_set(_SLIT("none"));')
++				g.writeln('}')
++				g.write(cur_line)
++				typ := g.resolve_comptime_type(node.expr, node.typ)
++				g.write('*(${g.base_type(typ)}*)&')
++				g.expr(node.expr)
++				g.write('.data')
+ 			} else {
+ 				g.expr(node.expr)
+ 			}
+ 			g.inside_map_postfix = false
+-			if !node.is_c2v_prefix {
++			if !node.is_c2v_prefix && node.op != .question {
+ 				g.write(node.op.str())
+ 			}
+ 			if node.auto_locked != '' {
+diff --git a/vlib/v/gen/c/fn.v b/vlib/v/gen/c/fn.v
+index 5875e0796..7f310f63a 100644
+--- a/vlib/v/gen/c/fn.v
++++ b/vlib/v/gen/c/fn.v
+@@ -924,7 +924,7 @@ fn (mut g Gen) gen_to_str_method_call(node ast.CallExpr) bool {
+ 	if rec_type.has_flag(.shared_f) {
+ 		rec_type = rec_type.clear_flag(.shared_f).set_nr_muls(0)
+ 	}
+-	left_node := if node.left is ast.PostfixExpr { node.left.expr } else { node.left }
++	left_node := node.left
+ 	if left_node is ast.ComptimeSelector {
+ 		key_str := g.get_comptime_selector_key_type(left_node)
+ 		if key_str != '' {
+@@ -932,6 +932,13 @@ fn (mut g Gen) gen_to_str_method_call(node ast.CallExpr) bool {
+ 			g.gen_expr_to_string(left_node, rec_type)
+ 			return true
+ 		}
++	} else if left_node is ast.PostfixExpr {
++		rec_type = g.resolve_comptime_type(left_node.expr, rec_type)
++		if left_node.op == .question {
++			rec_type = rec_type.clear_flag(.option)
++		}
++		g.gen_expr_to_string(left_node, rec_type)
++		return true
+ 	} else if left_node is ast.ComptimeCall {
+ 		if left_node.method_name == 'method' {
+ 			sym := g.table.sym(g.unwrap_generic(left_node.left_type))
+diff --git a/vlib/x/json2/encoder.v b/vlib/x/json2/encoder.v
+index 286f9014a..94ba403c6 100644
+--- a/vlib/x/json2/encoder.v
++++ b/vlib/x/json2/encoder.v
+@@ -210,12 +210,12 @@ fn (e &Encoder) encode_struct[U](val U, level int, mut wr io.Writer) ! {
+ 				}
+ 
+ 				$if field.typ is ?string {
+-					e.encode_string(val.$(field.name) ?.str()#[8..-2], mut wr)!
++					e.encode_string(val.$(field.name) ?.str(), mut wr)!
+ 				} $else $if field.typ is ?bool || field.typ is ?f32 || field.typ is ?f64
+ 					|| field.typ is ?i8 || field.typ is ?i16 || field.typ is ?int
+ 					|| field.typ is ?i64 || field.typ is ?u8 || field.typ is ?u16
+ 					|| field.typ is ?u32 || field.typ is ?u64 {
+-					wr.write(val.$(field.name) ?.str()#[7..-1].bytes())!
++					wr.write(val.$(field.name) ?.str().bytes())!
+ 				} $else $if field.typ is ?time.Time {
+ 					option_value := val.$(field.name) as ?time.Time
+ 					parsed_time := option_value as time.Time

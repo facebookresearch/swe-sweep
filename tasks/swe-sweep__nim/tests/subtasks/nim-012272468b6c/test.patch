@@ -1,0 +1,19 @@
+diff --git a/tests/pragmas/t22713.nim b/tests/pragmas/t22713.nim
+new file mode 100644
+index 000000000..3d3384632
+--- /dev/null
++++ b/tests/pragmas/t22713.nim
+@@ -0,0 +1,12 @@
++import std/macros
++
++
++template myPragma(x: int) {.pragma.}
++
++type
++  A = object
++    x: int64
++
++  B {.myPragma(sizeof(A)).} = object
++
++doAssert B.getCustomPragmaVal(myPragma) == 8
+\ No newline at end of file

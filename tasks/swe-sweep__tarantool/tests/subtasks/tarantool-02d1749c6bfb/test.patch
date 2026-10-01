@@ -1,0 +1,56 @@
+diff --git a/test/unit/prbuf.c b/test/unit/prbuf.c
+index 0c4869afeb..31ff241707 100644
+--- a/test/unit/prbuf.c
++++ b/test/unit/prbuf.c
+@@ -239,6 +239,11 @@ test_buffer_empty(void)
+ 	prbuf_iterator_create(&buf, &iter);
+ 	int rc = prbuf_iterator_next(&iter, &entry);
+ 	is(rc, -1, "Buffer is empty");
++	rc = prbuf_open(&buf, mem);
++	is(rc, 0, "Opened empty buffer");
++	prbuf_iterator_create(&buf, &iter);
++	rc = prbuf_iterator_next(&iter, &entry);
++	is(rc, -1, "Buffer is empty");
+ 	footer();
+ }
+ 
+@@ -331,7 +336,7 @@ test_buffer_prepared_large(void)
+ int
+ main(void)
+ {
+-	plan(37);
++	plan(39);
+ 	payload_large_init();
+ 	test_buffer_foreach_size();
+ 	test_buffer_bad_version();
+diff --git a/test/unit/prbuf.result b/test/unit/prbuf.result
+index 2293f09276..8c0be7f9d6 100644
+--- a/test/unit/prbuf.result
++++ b/test/unit/prbuf.result
+@@ -1,4 +1,4 @@
+-1..37
++1..39
+ 	*** test_buffer_foreach_copy_number ***
+ ok 1 - prbuf(size=128, payload=4, iterations=16) has been validated
+ ok 2 - prbuf(size=128, payload=4, iterations=32) has been validated
+@@ -58,13 +58,15 @@ ok 31 - Failed to allocate too large entry
+ 	*** test_buffer_too_large_entry: done ***
+ 	*** test_buffer_empty ***
+ ok 32 - Buffer is empty
++ok 33 - Opened empty buffer
++ok 34 - Buffer is empty
+ 	*** test_buffer_empty: done ***
+ 	*** test_buffer_prepared ***
+-ok 33 - Prepare has not failed
+-ok 34 - Entry count has decreased
++ok 35 - Prepare has not failed
++ok 36 - Entry count has decreased
+ 	*** test_buffer_prepared: done ***
+ 	*** test_buffer_prepared_large ***
+-ok 35 - Prepare has not failed
+-ok 36 - Buffer is empty
+-ok 37 - Buffer is in correct state
++ok 37 - Prepare has not failed
++ok 38 - Buffer is empty
++ok 39 - Buffer is in correct state
+ 	*** test_buffer_prepared_large: done ***

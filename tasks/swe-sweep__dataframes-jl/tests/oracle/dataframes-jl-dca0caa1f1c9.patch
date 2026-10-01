@@ -1,0 +1,21 @@
+diff --git a/src/other/utils.jl b/src/other/utils.jl
+--- a/src/other/utils.jl
++++ b/src/other/utils.jl
+@@ -71,10 +71,15 @@ function gennames(n::Integer)
+     return res
+ end
+ 
+ function funname(f)
+-    n = nameof(f)
+-    String(n)[1] == '#' ? :function : n
++    if applicable(nameof, f)
++        n = nameof(f)
++        return String(n)[1] == '#' ? :function : n
++    else
++        # handle the case of functors that do not support nameof
++        return :function
++    end
+ end
+ 
+ if isdefined(Base, :ComposedFunction) # Julia >= 1.6.0-DEV.85
+     using Base: ComposedFunction

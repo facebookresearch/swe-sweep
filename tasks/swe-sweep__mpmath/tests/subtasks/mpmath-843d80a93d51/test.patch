@@ -1,0 +1,19 @@
+diff --git a/mpmath/tests/test_functions2.py b/mpmath/tests/test_functions2.py
+index 9a480c93..d69c57f8 100644
+--- a/mpmath/tests/test_functions2.py
++++ b/mpmath/tests/test_functions2.py
+@@ -2382,3 +2382,14 @@ def test_bessel_zeros_extra():
+             assert besselyzero(v,m).ae(yn_small_zeros[v][m-1])
+             assert besselyzero(v,m,1).ae(ynp_small_zeros[v][m-1])
+             assert besselyzero(v,m,1).ae(ynp_small_zeros[v][m-1])
++
++def test_issue_545():
++    x = 100+j
++    assert erfc(x).ae(mpc('8.634691205220881e-4346',
++                          '1.5120569745187501e-4345'))
++    assert erfc(-x).ae(mpc(2, '-1.5120569745187501e-4345'),
++                       rel_eps=mpf('1e-4346'))
++    assert erf(x).ae(mpc(1, '-1.5120569745187501e-4345'),
++                     rel_eps=mpf('1e-4346'))
++    assert erf(-x).ae(mpc(-1, '1.5120569745187501e-4345'),
++                      rel_eps=mpf('1e-4346'))

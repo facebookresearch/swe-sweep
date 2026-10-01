@@ -1,0 +1,13 @@
+diff --git a/db-protocol/mysql/src/main/java/org/apache/shardingsphere/db/protocol/mysql/packet/binlog/row/column/value/string/MySQLJsonValueDecoder.java b/db-protocol/mysql/src/main/java/org/apache/shardingsphere/db/protocol/mysql/packet/binlog/row/column/value/string/MySQLJsonValueDecoder.java
+--- a/db-protocol/mysql/src/main/java/org/apache/shardingsphere/db/protocol/mysql/packet/binlog/row/column/value/string/MySQLJsonValueDecoder.java
++++ b/db-protocol/mysql/src/main/java/org/apache/shardingsphere/db/protocol/mysql/packet/binlog/row/column/value/string/MySQLJsonValueDecoder.java
+@@ -89,6 +89,9 @@ public final class MySQLJsonValueDecoder {
+                 case JsonValueTypes.STRING:
+                     outputString(decodeString(byteBuf.slice()), result);
+                     break;
++                case JsonValueTypes.LITERAL:
++                    outputLiteral(byteBuf.readUnsignedByte(), result);
++                    break;
+                 default:
+                     throw new UnsupportedSQLOperationException(String.valueOf(type));
+             }

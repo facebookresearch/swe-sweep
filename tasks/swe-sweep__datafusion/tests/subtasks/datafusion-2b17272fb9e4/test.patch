@@ -1,0 +1,17 @@
+diff --git a/datafusion/sqllogictest/test_files/select.slt b/datafusion/sqllogictest/test_files/select.slt
+index 490df4b72d..d49ccb9fe9 100644
+--- a/datafusion/sqllogictest/test_files/select.slt
++++ b/datafusion/sqllogictest/test_files/select.slt
+@@ -1926,3 +1926,12 @@ select "current_time" is not null from t_with_current_time;
+ true
+ false
+ true
++
++# https://github.com/apache/datafusion/issues/20215
++statement count 0
++CREATE TABLE t0;
++
++query I
++SELECT COUNT(*) FROM t0 AS tt0 WHERE (4==(3/0));
++----
++0

@@ -1,0 +1,24 @@
+diff --git a/test/issues/general/test_16783.test b/test/issues/general/test_16783.test
+new file mode 100644
+index 0000000000..0ee2ce6e81
+--- /dev/null
++++ b/test/issues/general/test_16783.test
+@@ -0,0 +1,18 @@
++# name: test/issues/general/test_16783.test
++# description: Issue 16783 - Anti-join meets INTERNAL Error: Attempted to dereference unique_ptr that is NULL
++# group: [general]
++
++statement ok
++pragma enable_verification;
++
++statement ok
++CREATE TABLE t0(c0 FLOAT);
++
++statement ok
++CREATE TABLE t1(c0 FLOAT);
++
++statement ok
++select * from t0
++where not exists(
++    select 1 from t1 where (((((t0.c0) AND ((t1.c0 BETWEEN t0.c0 AND t0.c0)))) OR (((t0.c0) AND ((t1.c0 BETWEEN t0.c0 AND t0.c0))))))
++);

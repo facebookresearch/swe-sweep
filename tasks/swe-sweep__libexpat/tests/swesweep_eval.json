@@ -1,0 +1,126 @@
+{
+  "build_jobs": 4,
+  "container_repo": "/libexpat",
+  "evaluation": {
+    "suite": "reproduction",
+    "visible_timeout": 3600
+  },
+  "upstream_image": "pandora-maxbug-libexpat:2.4.3",
+  "n_base_passing": 2,
+  "n_base_test_ignore": 0,
+  "oracle_digest": "240adc392bed3a8e784114472b61ff6c346838485cc9d189a9302d8cc7e0a193",
+  "oracle_pristine_paths": [],
+  "upstream_commit": "9f7399e15e6172900e0591deb5a57a45769d8205",
+  "reproduction": {
+    "needs_build": false,
+    "suite": {
+      "all_target": "all",
+      "build_dir": "/build",
+      "names": [
+        "runtests"
+      ],
+      "source_subdir": "expat",
+      "test_dirs": [
+        "expat/tests"
+      ],
+      "type": "ctest-monolithic"
+    },
+    "test_timeout": 1800
+  },
+  "schema": 2,
+  "subtasks": [
+    {
+      "f2p": [
+        "runtests",
+        "runtestspp"
+      ],
+      "id": "libexpat-0c5dbd0bb0a5",
+      "target_files": [
+        "expat/lib/xmlparse.c"
+      ]
+    },
+    {
+      "f2p": [
+        "runtests",
+        "runtestspp"
+      ],
+      "id": "libexpat-30d93b149d3d",
+      "target_files": [
+        "expat/lib/xmlparse.c"
+      ]
+    },
+    {
+      "f2p": [
+        "runtests",
+        "runtestspp"
+      ],
+      "id": "libexpat-44558a21f1b7",
+      "target_files": [
+        "expat/lib/xmltok.c",
+        "expat/lib/xmltok_impl.c"
+      ]
+    },
+    {
+      "f2p": [
+        "runtests",
+        "runtestspp"
+      ],
+      "id": "libexpat-4e25524fb119",
+      "target_files": [
+        "expat/lib/xmlparse.c"
+      ]
+    },
+    {
+      "f2p": [
+        "runtests",
+        "runtestspp"
+      ],
+      "id": "libexpat-69f40cffb664",
+      "target_files": [
+        "expat/lib/xmlparse.c"
+      ]
+    },
+    {
+      "f2p": [
+        "runtests",
+        "runtestspp"
+      ],
+      "id": "libexpat-8e5c789e8d3b",
+      "target_files": [
+        "expat/lib/xmlparse.c"
+      ]
+    },
+    {
+      "f2p": [
+        "runtests",
+        "runtestspp"
+      ],
+      "id": "libexpat-cf1142438f11",
+      "target_files": [
+        "expat/lib/xmlparse.c"
+      ]
+    },
+    {
+      "f2p": [
+        "runtests",
+        "runtestspp"
+      ],
+      "id": "libexpat-e567e550f1be",
+      "target_files": [
+        "expat/lib/xmltok.c"
+      ]
+    },
+    {
+      "f2p": [
+        "runtests",
+        "runtestspp"
+      ],
+      "id": "libexpat-f67d952cb3de",
+      "target_files": [
+        "expat/lib/xmlparse.c"
+      ]
+    }
+  ],
+  "task": "libexpat",
+  "version": "2.4.3"
+}

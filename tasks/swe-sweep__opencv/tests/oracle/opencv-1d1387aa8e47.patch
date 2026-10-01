@@ -1,0 +1,45 @@
+diff --git a/modules/imgproc/src/imgwarp.cpp b/modules/imgproc/src/imgwarp.cpp
+index be39419ed1..268555bada 100644
+--- a/modules/imgproc/src/imgwarp.cpp
++++ b/modules/imgproc/src/imgwarp.cpp
+@@ -757,13 +757,6 @@ static void remapBilinear( const Mat& _src, Mat& _dst, const Mat& _xy,
+             }
+             else
+             {
+-                if( borderType == BORDER_TRANSPARENT && cn != 3 )
+-                {
+-                    D += (X1 - dx)*cn;
+-                    dx = X1;
+-                    continue;
+-                }
+-
+                 if( cn == 1 )
+                     for( ; dx < X1; dx++, D++ )
+                     {
+@@ -774,6 +767,12 @@ static void remapBilinear( const Mat& _src, Mat& _dst, const Mat& _xy,
+                         {
+                             D[0] = cval[0];
+                         }
++                        else if (borderType == BORDER_TRANSPARENT)
++                        {
++                            if (sx < ssize.width && sx >= 0 &&
++                                sy < ssize.height && sy >= 0)
++                                D[0] = S0[sy*sstep + sx];
++                        }
+                         else
+                         {
+                             int sx0, sx1, sy0, sy1;
+@@ -815,6 +814,13 @@ static void remapBilinear( const Mat& _src, Mat& _dst, const Mat& _xy,
+                             for(int k = 0; k < cn; k++ )
+                                 D[k] = cval[k];
+                         }
++                        else if (borderType == BORDER_TRANSPARENT)
++                        {
++                            if (sx < ssize.width && sx >= 0 &&
++                                sy < ssize.height && sy >= 0)
++                                for(int k = 0; k < cn; k++ )
++                                    D[k] = S0[sy*sstep + sx*cn + k];
++                        }
+                         else
+                         {
+                             int sx0, sx1, sy0, sy1;

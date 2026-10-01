@@ -1,0 +1,17 @@
+diff --git a/pandas/core/reshape/pivot.py b/pandas/core/reshape/pivot.py
+index 8b49d68137..37e78c7dbf 100644
+--- a/pandas/core/reshape/pivot.py
++++ b/pandas/core/reshape/pivot.py
+@@ -411,7 +411,11 @@ def _generate_marginal_results(
+                 table_pieces.append(transformed_piece)
+                 margin_keys.append(all_key)
+ 
+-        result = concat(table_pieces, axis=cat_axis)
++        if not table_pieces:
++            # GH 49240
++            return table
++        else:
++            result = concat(table_pieces, axis=cat_axis)
+ 
+         if len(rows) == 0:
+             return result

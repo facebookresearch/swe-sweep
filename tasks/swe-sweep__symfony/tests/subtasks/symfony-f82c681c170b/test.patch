@@ -1,0 +1,57 @@
+diff --git a/src/Symfony/Component/DependencyInjection/Tests/Fixtures/config/instanceof_import_child.php b/src/Symfony/Component/DependencyInjection/Tests/Fixtures/config/instanceof_import_child.php
+new file mode 100644
+index 00000000000..a7cc4312d85
+--- /dev/null
++++ b/src/Symfony/Component/DependencyInjection/Tests/Fixtures/config/instanceof_import_child.php
+@@ -0,0 +1,5 @@
++<?php
++
++use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
++
++return function (ContainerConfigurator $container) {};
+diff --git a/src/Symfony/Component/DependencyInjection/Tests/Fixtures/config/instanceof_import_parent.php b/src/Symfony/Component/DependencyInjection/Tests/Fixtures/config/instanceof_import_parent.php
+new file mode 100644
+index 00000000000..b5b8f4ec69d
+--- /dev/null
++++ b/src/Symfony/Component/DependencyInjection/Tests/Fixtures/config/instanceof_import_parent.php
+@@ -0,0 +1,17 @@
++<?php
++
++namespace Symfony\Component\DependencyInjection\Loader\Configurator;
++
++use Symfony\Component\DependencyInjection\Loader\PhpFileLoader;
++
++return function (ContainerConfigurator $container, PhpFileLoader $loader) {
++    $services = $container->services();
++
++    $services->instanceof(\stdClass::class)->tag('foo_tag');
++
++    $services->set('service_before', \stdClass::class);
++
++    $loader->import('instanceof_import_child.php');
++
++    $services->set('service_after', \stdClass::class);
++};
+diff --git a/src/Symfony/Component/DependencyInjection/Tests/Loader/PhpFileLoaderTest.php b/src/Symfony/Component/DependencyInjection/Tests/Loader/PhpFileLoaderTest.php
+index ec193bce005..2bd88c8ee33 100644
+--- a/src/Symfony/Component/DependencyInjection/Tests/Loader/PhpFileLoaderTest.php
++++ b/src/Symfony/Component/DependencyInjection/Tests/Loader/PhpFileLoaderTest.php
+@@ -236,4 +236,18 @@ class PhpFileLoaderTest extends TestCase
+         $values = ['foo' => new Definition(\stdClass::class), 'bar' => new Definition(\stdClass::class)];
+         $this->assertEquals([new ServiceLocatorArgument($values)], $container->getDefinition('locator_dependent_inline_service')->getArguments());
+     }
++
++    public function testInstanceofStateIsRestoredAfterImport()
++    {
++        $container = new ContainerBuilder();
++
++        $loader = new PhpFileLoader($container, new FileLocator(\dirname(__DIR__).'/Fixtures/config'));
++        $loader->load('instanceof_import_parent.php');
++
++        $conditionalsBefore = $container->getDefinition('service_before')->getInstanceofConditionals();
++        $this->assertArrayHasKey(\stdClass::class, $conditionalsBefore, 'Pre-import definition missing instanceof rule.');
++
++        $conditionalsAfter = $container->getDefinition('service_after')->getInstanceofConditionals();
++        $this->assertArrayHasKey(\stdClass::class, $conditionalsAfter, 'Post-import definition missing instanceof rule (State corruption detected).');
++    }
+ }

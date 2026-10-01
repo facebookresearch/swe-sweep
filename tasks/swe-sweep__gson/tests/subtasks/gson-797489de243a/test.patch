@@ -1,0 +1,42 @@
+diff --git a/gson/src/test/java/com/google/gson/internal/bind/JsonElementReaderTest.java b/gson/src/test/java/com/google/gson/internal/bind/JsonElementReaderTest.java
+index f6a5bf33..1166381b 100644
+--- a/gson/src/test/java/com/google/gson/internal/bind/JsonElementReaderTest.java
++++ b/gson/src/test/java/com/google/gson/internal/bind/JsonElementReaderTest.java
+@@ -17,6 +17,7 @@
+ package com.google.gson.internal.bind;
+ 
+ import com.google.gson.JsonElement;
++import com.google.gson.JsonObject;
+ import com.google.gson.JsonParser;
+ import com.google.gson.stream.JsonToken;
+ import java.io.IOException;
+@@ -309,4 +310,11 @@ public final class JsonElementReaderTest extends TestCase {
+     } catch (IllegalStateException expected) {
+     }
+   }
++
++  public void testHasNext_endOfDocument() throws IOException {
++    JsonTreeReader reader = new JsonTreeReader(new JsonObject());
++    reader.beginObject();
++    reader.endObject();
++    assertFalse(reader.hasNext());
++  }
+ }
+diff --git a/gson/src/test/java/com/google/gson/stream/JsonReaderTest.java b/gson/src/test/java/com/google/gson/stream/JsonReaderTest.java
+index 65cbd075..07e77aa8 100644
+--- a/gson/src/test/java/com/google/gson/stream/JsonReaderTest.java
++++ b/gson/src/test/java/com/google/gson/stream/JsonReaderTest.java
+@@ -72,6 +72,13 @@ public final class JsonReaderTest extends TestCase {
+     assertEquals(JsonToken.END_DOCUMENT, reader.peek());
+   }
+ 
++  public void testHasNextEndOfDocument() throws IOException {
++    JsonReader reader = new JsonReader(reader("{}"));
++    reader.beginObject();
++    reader.endObject();
++    assertFalse(reader.hasNext());
++  }
++
+   public void testSkipArray() throws IOException {
+     JsonReader reader = new JsonReader(reader(
+         "{\"a\": [\"one\", \"two\", \"three\"], \"b\": 123}"));

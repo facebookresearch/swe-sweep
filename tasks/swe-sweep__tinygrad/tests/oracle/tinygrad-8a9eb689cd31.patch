@@ -1,0 +1,28 @@
+diff --git a/tinygrad/mixin/math.py b/tinygrad/mixin/math.py
+index 0000000..1111111 100644
+--- a/tinygrad/mixin/math.py
++++ b/tinygrad/mixin/math.py
+@@ -1,7 +1,7 @@
+ import math
+ from typing import Self
+ from tinygrad.uop import Ops
+-from tinygrad.dtype import dtypes, ConstType
++from tinygrad.dtype import dtypes, ConstType, least_upper_dtype
+ 
+ 
+ class MathMixin:
+@@ -246,11 +246,9 @@ class MathMixin:
+     return -(-self).maximum(-x)
+ 
+   def where(self, x: Self | ConstType, y: Self | ConstType):
+-    if isinstance(x, type(self)):
+-      return self.alu(Ops.WHERE, x, x.ufix(y))
+-    if isinstance(y, type(self)):
+-      return self.alu(Ops.WHERE, y.ufix(x), y)
+-    raise RuntimeError("where needs at least one UOp arg")
++    ref: Self = x if isinstance(x, type(self)) else y if isinstance(y, type(self)) else \
++      self.cast(least_upper_dtype(dtypes.from_py(x), dtypes.from_py(y)))
++    return self.alu(Ops.WHERE, ref.ufix(x), ref.ufix(y))
+ 
+   def threefry(self, seed: Self):
+     return self.alu(Ops.THREEFRY, seed)

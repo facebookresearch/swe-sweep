@@ -1,0 +1,26 @@
+diff --git a/buffer/src/main/java/io/netty/buffer/AbstractReferenceCountedByteBuf.java b/buffer/src/main/java/io/netty/buffer/AbstractReferenceCountedByteBuf.java
+index d3058c0fb6..d624d855f4 100644
+--- a/buffer/src/main/java/io/netty/buffer/AbstractReferenceCountedByteBuf.java
++++ b/buffer/src/main/java/io/netty/buffer/AbstractReferenceCountedByteBuf.java
+@@ -97,7 +97,7 @@ public abstract class AbstractReferenceCountedByteBuf extends AbstractByteBuf {
+         } else if (oldRef < decrement || oldRef - decrement > oldRef) {
+             // Ensure we don't over-release, and avoid underflow.
+             refCntUpdater.getAndAdd(this, decrement);
+-            throw new IllegalReferenceCountException(oldRef, decrement);
++            throw new IllegalReferenceCountException(oldRef, -decrement);
+         }
+         return false;
+     }
+diff --git a/common/src/main/java/io/netty/util/AbstractReferenceCounted.java b/common/src/main/java/io/netty/util/AbstractReferenceCounted.java
+index 5fae9dca11..fe20f92a2e 100644
+--- a/common/src/main/java/io/netty/util/AbstractReferenceCounted.java
++++ b/common/src/main/java/io/netty/util/AbstractReferenceCounted.java
+@@ -84,7 +84,7 @@ public abstract class AbstractReferenceCounted implements ReferenceCounted {
+         } else if (oldRef < decrement || oldRef - decrement > oldRef) {
+             // Ensure we don't over-release, and avoid underflow.
+             refCntUpdater.getAndAdd(this, decrement);
+-            throw new IllegalReferenceCountException(oldRef, decrement);
++            throw new IllegalReferenceCountException(oldRef, -decrement);
+         }
+         return false;
+     }

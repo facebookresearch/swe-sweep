@@ -1,0 +1,173 @@
+diff --git a/test/links.c b/test/links.c
+index 77a2c49..05a124f 100644
+--- a/test/links.c
++++ b/test/links.c
+@@ -152,6 +152,9 @@ const char *FILENAME[] = {"links0",
+ #define TIMESTAMP_GROUP_1 "timestamp1"
+ #define TIMESTAMP_GROUP_2 "timestamp2"
+ 
++/* Used by test_deprec() */
++#define NON_NULL_BUF "NON_NULL_BUF"
++
+ /* Link iteration struct */
+ typedef struct {
+     H5_iter_order_t order;     /* Direction of iteration */
+@@ -1903,9 +1906,12 @@ test_deprec(hid_t fapl, hbool_t new_format)
+     hid_t      group2_id = -1;
+     H5G_stat_t sb_hard1, sb_hard2, sb_soft1, sb_soft2;
+     H5G_obj_t  obj_type; /* Object type */
+-    hsize_t    num_objs; /* Number of objects in a group */
++    hsize_t    num_objs;         /* Number of objects in a group */
+     char       filename[1024];
+     char       tmpstr[1024];
++    char       non_null_buf[80]; /* Buffer to test non-null buffer calls */
++    char *     buf_ptr;          /* To pass mid-string */
++    ssize_t    name_len;         /* Length of name */
+ 
+     if (new_format)
+         TESTING("backwards compatibility (w/new group format)")
+@@ -1954,6 +1960,17 @@ test_deprec(hid_t fapl, hbool_t new_format)
+     }
+     H5E_END_TRY;
+ 
++    /* Verify that passing a non-null buffer with size 0 still returns the correct name
++       size and the buffer is not modified */
++    HDstrcpy(non_null_buf, NON_NULL_BUF);
++    buf_ptr = &non_null_buf[4];
++    if ((name_len = H5Gget_objname_by_idx(group1_id, (hsize_t)0, buf_ptr, 0)) < 0)
++        FAIL_STACK_ERROR
++    if ((size_t)name_len != HDstrlen(tmpstr))
++        TEST_ERROR
++    if ((HDstrcmp(non_null_buf, NON_NULL_BUF) != 0))
++        TEST_ERROR
++
+     /* Test getting the type for objects */
+     if ((obj_type = H5Gget_objtype_by_idx(group1_id, (hsize_t)0)) < 0)
+         FAIL_STACK_ERROR
+diff --git a/test/tattr.c b/test/tattr.c
+index a2eed24..9ebeb46 100644
+--- a/test/tattr.c
++++ b/test/tattr.c
+@@ -138,6 +138,9 @@ float attr_data5 = -5.123F; /* Test data for 5th attribute */
+ #define BUG3_DT_NAME   "dt"
+ #define BUG3_ATTR_NAME "attr"
+ 
++/* Used by test_attr_mult_read() */
++#define NON_NULL_BUF "NON_NULL_BUF"
++
+ /* Used by test_attr_delete_last_dense() */
+ #define GRPNAME  "grp"
+ #define ATTRNAME "attr"
+@@ -1207,6 +1210,8 @@ test_attr_mult_read(hid_t fapl)
+     int         read_data2[ATTR2_DIM1][ATTR2_DIM2]         = {{0}};   /* Buffer for reading 2nd attribute */
+     double  read_data3[ATTR3_DIM1][ATTR3_DIM2][ATTR3_DIM3] = {{{0}}}; /* Buffer for reading 3rd attribute */
+     ssize_t name_len;                                                 /* Length of attribute name */
++    char    non_null_buf[80]; /* Buffer to test non-null buffer calls */
++    char *  buf_ptr;          /* To pass mid-string */
+     H5O_info_t oinfo;                                                 /* Object info */
+     int        i, j, k;                                               /* Local index values */
+     herr_t     ret;                                                   /* Generic return value */
+@@ -1278,6 +1283,21 @@ test_attr_mult_read(hid_t fapl)
+     if (HDstrcmp(attr_name, temp_name) != 0)
+         TestErrPrintf("attribute name different: attr_name=%s, should be %s\n", attr_name, temp_name);
+ 
++    /* Verify that passing a non-null buffer with size 0 still returns the correct name
++       size and the buffer is not modified */
++    HDstrcpy(non_null_buf, NON_NULL_BUF);
++    buf_ptr  = &non_null_buf[4];
++    name_len = H5Aget_name(attr, (size_t)0, buf_ptr);
++    CHECK(name_len, FAIL, "H5Aget_name");
++    VERIFY(name_len, HDstrlen(ATTR1_NAME), "H5Aget_name");
++    VERIFY(HDstrcmp(non_null_buf, NON_NULL_BUF), 0, "H5Aget_name");
++
++    name_len = H5Aget_name_by_idx(dataset, ".", H5_INDEX_CRT_ORDER, H5_ITER_INC, (hsize_t)0, buf_ptr, 0,
++                                  H5P_DEFAULT);
++    CHECK(name_len, FAIL, "H5Aget_name_by_idx");
++    VERIFY(name_len, HDstrlen(ATTR1_NAME), "H5Aget_name_by_idx");
++    VERIFY(HDstrcmp(non_null_buf, NON_NULL_BUF), 0, "H5Aget_name_by_idx");
++
+     /* Close attribute */
+     ret = H5Aclose(attr);
+     CHECK(ret, FAIL, "H5Aclose");
+diff --git a/test/tfile.c b/test/tfile.c
+index 6620fed..b6e3c6b 100644
+--- a/test/tfile.c
++++ b/test/tfile.c
+@@ -137,6 +137,9 @@
+ /* Declaration for test_incr_filesize() */
+ #define FILE8 "tfile8.h5" /* Test file */
+ 
++/* Used by test_file_getname() */
++#define NON_NULL_BUF "NON_NULL_BUF"
++
+ /* Files created under 1.6 branch and 1.8 branch--used in test_filespace_compatible() */
+ const char *OLD_FILENAME[] = {
+     "filespace_1_6.h5", /* 1.6 HDF5 file */
+@@ -1934,7 +1937,9 @@ test_file_getname(void)
+     hsize_t dims[TESTA_RANK] = {TESTA_NX, TESTA_NY};
+     char    name[TESTA_NAME_BUF_SIZE];
+     ssize_t name_len;
+-    herr_t  ret; /* Generic return value */
++    char    non_null_buf[80]; /* Buffer to test non-null buffer calls */
++    char *  buf_ptr;          /* To pass mid-string */
++    herr_t  ret;              /* Generic return value */
+ 
+     /* Output message about test being performed */
+     MESSAGE(5, ("Testing H5Fget_name() functionality\n"));
+@@ -1948,6 +1953,15 @@ test_file_getname(void)
+     CHECK(name_len, FAIL, "H5Fget_name");
+     VERIFY_STR(name, FILE1, "H5Fget_name");
+ 
++    /* Verify that passing a non-null buffer with size 0 still returns the correct name
++       size and the buffer is not modified */
++    HDstrcpy(non_null_buf, NON_NULL_BUF);
++    buf_ptr  = &non_null_buf[4];
++    name_len = H5Fget_name(file_id, buf_ptr, 0);
++    CHECK(name_len, FAIL, "H5Fget_name");
++    VERIFY(name_len, HDstrlen(FILE1), "H5Fget_name");
++    VERIFY(HDstrcmp(non_null_buf, NON_NULL_BUF), 0, "H5Fget_name");
++
+     /* Create a group in the root group */
+     group_id = H5Gcreate2(file_id, TESTA_GROUPNAME, H5P_DEFAULT, H5P_DEFAULT, H5P_DEFAULT);
+     CHECK(group_id, FAIL, "H5Gcreate2");
+diff --git a/test/titerate.c b/test/titerate.c
+index d6edcbc..761c68e 100644
+--- a/test/titerate.c
++++ b/test/titerate.c
+@@ -40,6 +40,9 @@
+ #define SPACE1_RANK 1
+ #define SPACE1_DIM1 4
+ 
++/* Used by test_grp_memb_funcs() */
++#define NON_NULL_BUF "NON_NULL_BUF"
++
+ typedef enum { RET_ZERO, RET_TWO, RET_CHANGE, RET_CHANGE2 } iter_enum;
+ 
+ /* Custom group iteration callback data */
+@@ -822,7 +825,9 @@ test_grp_memb_funcs(hid_t fapl)
+     VERIFY(ginfo.nlinks, (NDATASETS + 2), "H5Gget_info");
+ 
+     for (i = 0; i < (int)ginfo.nlinks; i++) {
+-        H5O_info_t oinfo; /* Object info */
++        H5O_info_t oinfo;            /* Object info */
++        char       non_null_buf[80]; /* Buffer to test non-null buffer calls */
++        char *     buf_ptr;          /* To pass mid-string */
+ 
+         /* Test with NULL for name, to query length */
+         name_len = H5Lget_name_by_idx(root_group, ".", H5_INDEX_NAME, H5_ITER_INC, (hsize_t)i, NULL,
+@@ -836,6 +841,15 @@ test_grp_memb_funcs(hid_t fapl)
+         /* Double-check that the length is the same */
+         VERIFY(ret, name_len, "H5Lget_name_by_idx");
+ 
++        /* Test with non-null buffer for name and 0 for size */
++        HDstrcpy(non_null_buf, NON_NULL_BUF);
++        buf_ptr = &non_null_buf[4];
++        ret = (herr_t)H5Lget_name_by_idx(root_group, ".", H5_INDEX_NAME, H5_ITER_INC, (hsize_t)i, buf_ptr, 0,
++                                         H5P_DEFAULT);
++        CHECK(ret, FAIL, "H5Lget_name_by_idx");
++        VERIFY(ret, name_len, "H5Lget_name_by_idx");
++        VERIFY(HDstrcmp(non_null_buf, NON_NULL_BUF), 0, "H5Lget_name_by_idx");
++
+         /* Keep a copy of the dataset names around for later */
+         obj_names[i] = HDstrdup(dataset_name);
+         CHECK_PTR(obj_names[i], "strdup");

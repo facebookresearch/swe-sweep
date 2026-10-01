@@ -1,0 +1,33 @@
+diff --git a/tests/test_defaults.py b/tests/test_defaults.py
+index 5ab05ed..5c5e168 100644
+--- a/tests/test_defaults.py
++++ b/tests/test_defaults.py
+@@ -38,3 +38,28 @@ def test_nargs_plus_multiple(runner):
+     result = runner.invoke(cli, [])
+     assert not result.exception
+     assert result.output.splitlines() == ["<1|2>", "<3|4>"]
++
++
++def test_flag_default_map(runner):
++    """test flag with default map"""
++
++    @click.group()
++    def cli():
++        pass
++
++    @cli.command()
++    @click.option("--name/--no-name", is_flag=True, show_default=True, help="name flag")
++    def foo(name):
++        click.echo(name)
++
++    result = runner.invoke(cli, ["foo"])
++    assert "False" in result.output
++
++    result = runner.invoke(cli, ["foo", "--help"])
++    assert "default: no-name" in result.output
++
++    result = runner.invoke(cli, ["foo"], default_map={"foo": {"name": True}})
++    assert "True" in result.output
++
++    result = runner.invoke(cli, ["foo", "--help"], default_map={"foo": {"name": True}})
++    assert "default: name" in result.output

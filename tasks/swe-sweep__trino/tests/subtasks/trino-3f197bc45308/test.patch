@@ -1,0 +1,59 @@
+diff --git a/lib/trino-rcfile/src/test/java/io/trino/rcfile/TestRcFileDecoderUtils.java b/lib/trino-rcfile/src/test/java/io/trino/rcfile/TestRcFileDecoderUtils.java
+index 0000000..1111111 100644
+--- a/lib/trino-rcfile/src/test/java/io/trino/rcfile/TestRcFileDecoderUtils.java
++++ b/lib/trino-rcfile/src/test/java/io/trino/rcfile/TestRcFileDecoderUtils.java
+@@ -19,12 +19,54 @@ import org.apache.hadoop.io.WritableUtils;
+ import org.testng.annotations.Test;
+ 
+ import java.io.IOException;
++import java.util.Arrays;
+ 
++import static io.trino.rcfile.RcFileDecoderUtils.calculateTruncationLength;
++import static io.trino.spi.type.VarcharType.createVarcharType;
++import static java.lang.Math.min;
++import static java.nio.charset.StandardCharsets.UTF_8;
+ import static org.testng.Assert.assertEquals;
++import static org.testng.Assert.assertTrue;
+ 
+ public class TestRcFileDecoderUtils
+ {
++    @Test
++    public void testCalculateTruncationLength()
++    {
++        testCalculateTruncationLength('a');
++        testCalculateTruncationLength(30528);
++        testCalculateTruncationLength(128165);
++    }
++
++    private static void testCalculateTruncationLength(int codePoint)
++    {
++        testCalculateTruncationLength(codePoint, 50, 50, 20);
++        testCalculateTruncationLength(codePoint, 20, 20, 50);
++        testCalculateTruncationLength(codePoint, 100, 50, 20);
++        testCalculateTruncationLength(codePoint, 100, 20, 50);
++    }
++
++    private static void testCalculateTruncationLength(int codePoint, int inputSize, int fieldSize, int truncatedSize)
++    {
++        assertTrue(inputSize >= fieldSize);
++
++        int[] inputCodePoints = new int[inputSize];
++        Arrays.fill(inputCodePoints, codePoint);
++
++        byte[] inputBytes = new String(inputCodePoints, 0, inputSize).getBytes(UTF_8);
++        assertEquals(new String(inputBytes, UTF_8).codePoints().count(), inputSize);
++
++        byte[] fieldBytes = new String(inputCodePoints, 0, fieldSize).getBytes(UTF_8);
++        assertEquals(new String(fieldBytes, UTF_8).codePoints().count(), fieldSize);
++
++        byte[] expectedBytes = new String(inputCodePoints, 0, min(truncatedSize, fieldSize)).getBytes(UTF_8);
++        assertEquals(new String(expectedBytes, UTF_8).codePoints().count(), min(truncatedSize, fieldSize));
++
++        Slice slice = Slices.wrappedBuffer(inputBytes);
++        assertEquals(calculateTruncationLength(createVarcharType(truncatedSize), slice, 0, fieldBytes.length), expectedBytes.length);
++    }
++
+     @Test
+     public void testVInt()
+             throws Exception
+     {

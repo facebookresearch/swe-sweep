@@ -1,0 +1,112 @@
+{
+  "build_jobs": 4,
+  "container_repo": "/phpspreadsheet",
+  "evaluation": {
+    "suite": "reproduction",
+    "visible_timeout": 14400
+  },
+  "upstream_image": "pandora-maxbug-phpspreadsheet:1.13.0",
+  "n_base_passing": 0,
+  "n_base_test_ignore": 1,
+  "oracle_digest": "aac9e63d4e05475fb3728e94b80910fb98ef54cf2e347a0eefab5547e5f55074",
+  "oracle_pristine_paths": [],
+  "upstream_commit": "9f7399e15e6172900e0591deb5a57a45769d8205",
+  "reproduction": {
+    "needs_build": false,
+    "suite": {
+      "binary": "vendor/bin/phpunit",
+      "config": "phpunit.xml.dist",
+      "type": "phpunit"
+    },
+    "test_timeout": 1800
+  },
+  "schema": 2,
+  "subtasks": [
+    {
+      "f2p": [
+        "testStartWithHashReadRaw"
+      ],
+      "id": "phpspreadsheet-12985e01ab77",
+      "target_files": [
+        "src/PhpSpreadsheet/Writer/Xlsx/Worksheet.php"
+      ]
+    },
+    {
+      "f2p": [
+        "testChartTitles"
+      ],
+      "id": "phpspreadsheet-563f0747bd24",
+      "target_files": [
+        "src/PhpSpreadsheet/Reader/Xlsx/Chart.php"
+      ]
+    },
+    {
+      "f2p": [
+        "testDefinedNames"
+      ],
+      "id": "phpspreadsheet-887bd1619654",
+      "target_files": [
+        "src/PhpSpreadsheet/Reader/Ods.php"
+      ]
+    },
+    {
+      "f2p": [
+        "testLoadSaveXlsxWithUnparsedDataClone"
+      ],
+      "id": "phpspreadsheet-98883912725a",
+      "target_files": [
+        "src/PhpSpreadsheet/Writer/Xlsx.php"
+      ]
+    },
+    {
+      "f2p": [
+        "testRound"
+      ],
+      "id": "phpspreadsheet-a8b66d663165",
+      "target_files": [
+        "src/PhpSpreadsheet/Style/NumberFormat/NumberFormatter.php"
+      ]
+    },
+    {
+      "f2p": [
+        "testIssue1284"
+      ],
+      "id": "phpspreadsheet-b3f2e9d663bc",
+      "target_files": [
+        "src/PhpSpreadsheet/Reader/Html.php"
+      ]
+    },
+    {
+      "f2p": [
+        "testSuperSubScript"
+      ],
+      "id": "phpspreadsheet-d3933060b5fa",
+      "target_files": [
+        "src/PhpSpreadsheet/Style/Font.php"
+      ]
+    },
+    {
+      "f2p": [
+        "testNoChangeToActiveSheet"
+      ],
+      "id": "phpspreadsheet-f1489a7c44d3",
+      "target_files": [
+        "src/PhpSpreadsheet/Cell/Cell.php"
+      ]
+    },
+    {
+      "f2p": [
+        "testRemoveColumn",
+        "testRemoveRow"
+      ],
+      "id": "phpspreadsheet-ff78e4a89bfd",
+      "target_files": [
+        "src/PhpSpreadsheet/Worksheet/ColumnDimension.php",
+        "src/PhpSpreadsheet/Worksheet/Dimension.php",
+        "src/PhpSpreadsheet/Worksheet/Worksheet.php"
+      ]
+    }
+  ],
+  "task": "phpspreadsheet",
+  "version": "1.13.0"
+}

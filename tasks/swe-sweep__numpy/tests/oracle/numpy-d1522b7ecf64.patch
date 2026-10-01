@@ -1,0 +1,13 @@
+diff --git a/numpy/core/numeric.py b/numpy/core/numeric.py
+index 1f3f1c20dbd1..61518d5ab56f 100644
+--- a/numpy/core/numeric.py
++++ b/numpy/core/numeric.py
+@@ -1386,7 +1386,7 @@ def roll(a, shift, axis=None):
+                 "'shift' and 'axis' should be scalars or 1D sequences")
+         shifts = {ax: 0 for ax in range(a.ndim)}
+         for sh, ax in broadcasted:
+-            shifts[ax] += sh
++            shifts[ax] += int(sh)
+ 
+         rolls = [((slice(None), slice(None)),)] * a.ndim
+         for ax, offset in shifts.items():

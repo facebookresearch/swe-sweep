@@ -1,0 +1,39 @@
+diff --git a/ogr/ogrsf_frmts/mitab/mitab_spatialref.cpp b/ogr/ogrsf_frmts/mitab/mitab_spatialref.cpp
+index babf56c4a8..2109ebd737 100644
+--- a/ogr/ogrsf_frmts/mitab/mitab_spatialref.cpp
++++ b/ogr/ogrsf_frmts/mitab/mitab_spatialref.cpp
+@@ -1149,16 +1149,6 @@ TABFile::GetSpatialRefFromTABProj(const TABProjInfo &sTABProj)
+             break;
+     }
+ 
+-    /*-----------------------------------------------------------------
+-     * Collect units definition.
+-     *----------------------------------------------------------------*/
+-    if (sTABProj.nProjId != 0 && sTABProj.nProjId != 1 &&
+-        CPLAtof(pszUnitsConv) != 1)
+-    {
+-        poSpatialRef->SetTargetLinearUnits(nullptr, pszUnitsName,
+-                                           CPLAtof(pszUnitsConv));
+-    }
+-
+     /*-----------------------------------------------------------------
+      * Local (nonearth) coordinate systems have no Geographic relationship
+      * so we just return from here.
+@@ -1404,6 +1394,17 @@ TABFile::GetSpatialRefFromTABProj(const TABProjInfo &sTABProj)
+         }
+     }
+ 
++    /*-----------------------------------------------------------------
++     * Apply linear units. Do that only after all above manipulations of
++     * projection parameters.
++     *----------------------------------------------------------------*/
++    if (sTABProj.nProjId != 0 && sTABProj.nProjId != 1 &&
++        CPLAtof(pszUnitsConv) != 1)
++    {
++        poSpatialRef->SetTargetLinearUnits(nullptr, pszUnitsName,
++                                           CPLAtof(pszUnitsConv));
++    }
++
+     /*-----------------------------------------------------------------
+      * Special case for Philippine Reference System 1992, to override
+      * the MapInfo ellipsoid=8 "Clarke 1866 (modified for Michigan)"

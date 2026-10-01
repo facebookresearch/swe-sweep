@@ -1,0 +1,27 @@
+diff --git a/vlib/v/tests/interface_eq_methods_with_option_and_ref_test.v b/vlib/v/tests/interface_eq_methods_with_option_and_ref_test.v
+new file mode 100644
+index 000000000..6f9bc1590
+--- /dev/null
++++ b/vlib/v/tests/interface_eq_methods_with_option_and_ref_test.v
+@@ -0,0 +1,21 @@
++// for issue 19441
++pub interface Iface {}
++
++pub struct Derived {}
++
++pub struct Struct {
++	field ?&Iface
++}
++
++pub struct Mixin {
++	Derived
++	Struct
++}
++
++fn test_main() {
++	mut arr := []&Iface{}
++	arr << &Derived{}
++	arr << &Derived{}
++
++	assert arr[0] == arr[1]
++}

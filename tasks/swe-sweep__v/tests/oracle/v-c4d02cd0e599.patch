@@ -1,0 +1,15 @@
+diff --git a/vlib/v/gen/c/cgen.v b/vlib/v/gen/c/cgen.v
+index e21bbd8ab..671900f6e 100644
+--- a/vlib/v/gen/c/cgen.v
++++ b/vlib/v/gen/c/cgen.v
+@@ -4699,7 +4699,10 @@ fn (mut g Gen) concat_expr(node ast.ConcatExpr) {
+ 		g.write('(${styp}){')
+ 		for i, expr in node.vals {
+ 			g.write('.arg${i}=')
++			old_left_is_opt := g.left_is_opt
++			g.left_is_opt = true
+ 			g.expr(expr)
++			g.left_is_opt = old_left_is_opt
+ 			if i < node.vals.len - 1 {
+ 				g.write(',')
+ 			}

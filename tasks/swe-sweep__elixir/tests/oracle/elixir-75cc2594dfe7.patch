@@ -1,0 +1,19 @@
+diff --git a/lib/elixir/lib/option_parser.ex b/lib/elixir/lib/option_parser.ex
+index 5d62eb2bc..de355ea4b 100644
+--- a/lib/elixir/lib/option_parser.ex
++++ b/lib/elixir/lib/option_parser.ex
+@@ -865,7 +865,13 @@ defmodule OptionParser do
+ 
+   defp format_error({option, nil}, opts, types) do
+     if type = get_type(option, opts, types) do
+-      "#{option} : Missing argument of type #{type}"
++      if String.contains?(option, "_") do
++        msg = "#{option} : Unknown option"
++
++        msg <> ". Did you mean #{String.replace(option, "_", "-")}?"
++      else
++        "#{option} : Missing argument of type #{type}"
++      end
+     else
+       msg = "#{option} : Unknown option"
+ 

@@ -1,0 +1,109 @@
+diff --git a/tests/ui/int_plus_one.fixed b/tests/ui/int_plus_one.fixed
+index a1aba6bf7..cdd19515e 100644
+--- a/tests/ui/int_plus_one.fixed
++++ b/tests/ui/int_plus_one.fixed
+@@ -4,15 +4,15 @@ fn main() {
+     let x = 1i32;
+     let y = 0i32;
+ 
+-    let _ = x > y;
+-    //~^ int_plus_one
+-    let _ = y < x;
+-    //~^ int_plus_one
++    let _ = x > y; //~ int_plus_one
++    let _ = x > y; //~ int_plus_one
++    let _ = y < x; //~ int_plus_one
++    let _ = y < x; //~ int_plus_one
+ 
+-    let _ = x > y;
+-    //~^ int_plus_one
+-    let _ = y < x;
+-    //~^ int_plus_one
++    let _ = x > y; //~ int_plus_one
++    let _ = x > y; //~ int_plus_one
++    let _ = y < x; //~ int_plus_one
++    let _ = y < x; //~ int_plus_one
+ 
+     let _ = x > y; // should be ok
+     let _ = y < x; // should be ok
+diff --git a/tests/ui/int_plus_one.rs b/tests/ui/int_plus_one.rs
+index f804fc904..8d7d2e898 100644
+--- a/tests/ui/int_plus_one.rs
++++ b/tests/ui/int_plus_one.rs
+@@ -4,15 +4,15 @@ fn main() {
+     let x = 1i32;
+     let y = 0i32;
+ 
+-    let _ = x >= y + 1;
+-    //~^ int_plus_one
+-    let _ = y + 1 <= x;
+-    //~^ int_plus_one
++    let _ = x >= y + 1; //~ int_plus_one
++    let _ = x >= 1 + y; //~ int_plus_one
++    let _ = y + 1 <= x; //~ int_plus_one
++    let _ = 1 + y <= x; //~ int_plus_one
+ 
+-    let _ = x - 1 >= y;
+-    //~^ int_plus_one
+-    let _ = y <= x - 1;
+-    //~^ int_plus_one
++    let _ = x - 1 >= y; //~ int_plus_one
++    let _ = -1 + x >= y; //~ int_plus_one
++    let _ = y <= x - 1; //~ int_plus_one
++    let _ = y <= -1 + x; //~ int_plus_one
+ 
+     let _ = x > y; // should be ok
+     let _ = y < x; // should be ok
+diff --git a/tests/ui/int_plus_one.stderr b/tests/ui/int_plus_one.stderr
+index 052706028..8bdff5680 100644
+--- a/tests/ui/int_plus_one.stderr
++++ b/tests/ui/int_plus_one.stderr
+@@ -7,23 +7,47 @@ LL |     let _ = x >= y + 1;
+    = note: `-D clippy::int-plus-one` implied by `-D warnings`
+    = help: to override `-D warnings` add `#[allow(clippy::int_plus_one)]`
+ 
++error: unnecessary `>= y + 1` or `x - 1 >=`
++  --> tests/ui/int_plus_one.rs:8:13
++   |
++LL |     let _ = x >= 1 + y;
++   |             ^^^^^^^^^^ help: change it to: `x > y`
++
+ error: unnecessary `>= y + 1` or `x - 1 >=`
+   --> tests/ui/int_plus_one.rs:9:13
+    |
+ LL |     let _ = y + 1 <= x;
+    |             ^^^^^^^^^^ help: change it to: `y < x`
+ 
++error: unnecessary `>= y + 1` or `x - 1 >=`
++  --> tests/ui/int_plus_one.rs:10:13
++   |
++LL |     let _ = 1 + y <= x;
++   |             ^^^^^^^^^^ help: change it to: `y < x`
++
+ error: unnecessary `>= y + 1` or `x - 1 >=`
+   --> tests/ui/int_plus_one.rs:12:13
+    |
+ LL |     let _ = x - 1 >= y;
+    |             ^^^^^^^^^^ help: change it to: `x > y`
+ 
++error: unnecessary `>= y + 1` or `x - 1 >=`
++  --> tests/ui/int_plus_one.rs:13:13
++   |
++LL |     let _ = -1 + x >= y;
++   |             ^^^^^^^^^^^ help: change it to: `x > y`
++
+ error: unnecessary `>= y + 1` or `x - 1 >=`
+   --> tests/ui/int_plus_one.rs:14:13
+    |
+ LL |     let _ = y <= x - 1;
+    |             ^^^^^^^^^^ help: change it to: `y < x`
+ 
+-error: aborting due to 4 previous errors
++error: unnecessary `>= y + 1` or `x - 1 >=`
++  --> tests/ui/int_plus_one.rs:15:13
++   |
++LL |     let _ = y <= -1 + x;
++   |             ^^^^^^^^^^^ help: change it to: `y < x`
++
++error: aborting due to 8 previous errors
+ 

@@ -1,0 +1,32 @@
+diff --git a/tests/basics/builtin_pow3.py b/tests/basics/builtin_pow3.py
+index 33b8b198d..3a183a804 100644
+--- a/tests/basics/builtin_pow3.py
++++ b/tests/basics/builtin_pow3.py
+@@ -13,6 +13,13 @@ print(pow(0, 1, 1))
+ print(pow(1, 0, 1))
+ print(pow(1, 0, 2))
+ 
++# a negative modulus gives a result with the sign of the modulus
++print(pow(1, 0, -1))
++print(pow(1, 0, -2))
++print(pow(3, 0, -5))
++print(pow(-3, 0, -5))
++print(pow(3, 4, -5))
++
+ # 3 arg pow is defined to only work on integers
+ try:
+     print(pow("x", 5, 6))
+diff --git a/tests/basics/builtin_pow3_intbig.py b/tests/basics/builtin_pow3_intbig.py
+index 41d2acbc0..c91b4d173 100644
+--- a/tests/basics/builtin_pow3_intbig.py
++++ b/tests/basics/builtin_pow3_intbig.py
+@@ -9,6 +9,9 @@ except NotImplementedError:
+ 
+ print(pow(555557, 1000002, 1000003))
+ 
++# a zero exponent with a large negative modulus
++print(pow(3, 0, -(2**70)))
++
+ # Tests for 3 arg pow with large values
+ 
+ # This value happens to be prime

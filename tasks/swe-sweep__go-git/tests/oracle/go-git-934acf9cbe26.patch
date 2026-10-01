@@ -1,0 +1,13 @@
+diff --git a/config/branch.go b/config/branch.go
+index 749eb873..0d53bf02 100644
+--- a/config/branch.go
++++ b/config/branch.go
+@@ -43,7 +43,7 @@ func (b *Branch) Validate() error {
+ 		return errBranchEmptyName
+ 	}
+ 
+-	if b.Merge != "" && !b.Merge.IsBranch() {
++	if b.Merge != "" && !strings.HasPrefix(string(b.Merge), "refs/") {
+ 		return errBranchInvalidMerge
+ 	}
+ 

@@ -1,0 +1,13 @@
+diff --git a/shapely/tests/geometry/test_point.py b/shapely/tests/geometry/test_point.py
+index b8af1407..9995c89a 100644
+--- a/shapely/tests/geometry/test_point.py
++++ b/shapely/tests/geometry/test_point.py
+@@ -151,6 +151,8 @@ class TestPoint:
+         assert p_null.coords[:] == []
+         assert p_null.area == 0.0
+ 
++        assert p_null.__geo_interface__ == {"type": "Point", "coordinates": ()}
++
+     def test_coords(self):
+         # From Array.txt
+         p = Point(0.0, 0.0, 1.0)

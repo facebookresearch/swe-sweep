@@ -1,0 +1,14 @@
+diff --git a/tests/dialects/test_bigquery.py b/tests/dialects/test_bigquery.py
+index 1b8a365afc..af43a0bce8 100644
+--- a/tests/dialects/test_bigquery.py
++++ b/tests/dialects/test_bigquery.py
+@@ -2229,6 +2229,9 @@ WHERE
+                     "presto": "a[1]",
+                 },
+             )
++            self.validate_identity(
++                "WITH foo AS (SELECT [1, 2, 3] AS array_col) SELECT array_col[offset] FROM foo CROSS JOIN UNNEST(array_col) WITH OFFSET AS offset",
++            )
+ 
+         with self.assertLogs(parser_logger) as cm:
+             for_in_stmts = parse(

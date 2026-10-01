@@ -1,0 +1,54 @@
+diff --git a/src/Symfony/Component/DependencyInjection/Tests/Compiler/AutowirePassTest.php b/src/Symfony/Component/DependencyInjection/Tests/Compiler/AutowirePassTest.php
+index 59b39370e98..4b7c870af1b 100644
+--- a/src/Symfony/Component/DependencyInjection/Tests/Compiler/AutowirePassTest.php
++++ b/src/Symfony/Component/DependencyInjection/Tests/Compiler/AutowirePassTest.php
+@@ -1427,6 +1427,28 @@ class AutowirePassTest extends TestCase
+         $this->assertSame(['foo'], $definition->getArguments());
+     }
+ 
++    public function testAutowireAttributeKeepsPercentEscaping()
++    {
++        $container = new ContainerBuilder();
++
++        $container->register('foo', AutowireAttributeNullFallback::class)
++            ->setAutowired(true)
++            ->setPublic(true)
++        ;
++
++        $container->setParameter('required.parameter', 'my friend %%s has %%d dogs');
++        $container->setParameter('optional.parameter', '50%%%% off');
++
++        $container->compile();
++
++        $this->assertSame('my friend %%s has %%d dogs', $container->getDefinition('foo')->getArgument(0));
++
++        $service = $container->get('foo');
++
++        $this->assertSame('my friend %s has %d dogs', $service->required);
++        $this->assertSame('50%% off', $service->optional);
++    }
++
+     public function testAsDecoratorAttribute()
+     {
+         $container = new ContainerBuilder();
+diff --git a/src/Symfony/Component/DependencyInjection/Tests/ParameterBag/ParameterBagTest.php b/src/Symfony/Component/DependencyInjection/Tests/ParameterBag/ParameterBagTest.php
+index 18f234e9c23..cdd2993a60e 100644
+--- a/src/Symfony/Component/DependencyInjection/Tests/ParameterBag/ParameterBagTest.php
++++ b/src/Symfony/Component/DependencyInjection/Tests/ParameterBag/ParameterBagTest.php
+@@ -332,6 +332,16 @@ class ParameterBagTest extends TestCase
+         $this->assertEquals(['bar' => ['ding' => 'I\'m a bar %foo %bar']], $bag->get('foo'), '->resolveValue() supports % escaping by doubling it');
+     }
+ 
++    public function testResolveValueKeepsEscapingOnAResolvedBag()
++    {
++        $bag = new ParameterBag(['foo' => 'I\'m a %%bar%%']);
++        $bag->resolve();
++
++        $this->assertSame('I\'m a %%bar%%', $bag->resolveValue('%foo%'), '->resolveValue() returns escaped values once the bag is resolved');
++        $this->assertSame('ding I\'m a %%bar%% dong', $bag->resolveValue('ding %foo% dong'), '->resolveValue() returns escaped values once the bag is resolved');
++        $this->assertSame('I\'m a %bar%', $bag->unescapeValue($bag->resolveValue('%foo%')));
++    }
++
+     public function testEscapeValue()
+     {
+         $bag = new ParameterBag();

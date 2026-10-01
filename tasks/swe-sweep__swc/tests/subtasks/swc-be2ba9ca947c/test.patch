@@ -1,0 +1,25 @@
+diff --git a/crates/swc_css_minifier/tests/fixture/compress-keyframe-selector/input.css b/crates/swc_css_minifier/tests/fixture/compress-keyframe-selector/input.css
+index 54553ece3f..15616faf2b 100644
+--- a/crates/swc_css_minifier/tests/fixture/compress-keyframe-selector/input.css
++++ b/crates/swc_css_minifier/tests/fixture/compress-keyframe-selector/input.css
+@@ -88,3 +88,12 @@
+         margin-left: 200px;
+     }
+ }
++
++@keyframes "None" {
++    0% {
++        margin-left: 0px;
++    }
++    100% {
++        margin-left: 200px;
++    }
++}
+\ No newline at end of file
+diff --git a/crates/swc_css_minifier/tests/fixture/compress-keyframe-selector/output.min.css b/crates/swc_css_minifier/tests/fixture/compress-keyframe-selector/output.min.css
+index 20b4e82713..66b6e8eff3 100644
+--- a/crates/swc_css_minifier/tests/fixture/compress-keyframe-selector/output.min.css
++++ b/crates/swc_css_minifier/tests/fixture/compress-keyframe-selector/output.min.css
+@@ -1 +1 @@
+-@keyframes slide-right{0%{margin-left:0}50%{margin-left:110px;opacity:1}50%{opacity:.9}to{margin-left:200px}}@keyframes slide-right-upper-case{0%{margin-left:0}50%{margin-left:110px;opacity:1}50%{opacity:.9}TO{margin-left:200px}}@keyframes slide-right-one{0%{margin-left:0}50%{margin-left:110px;opacity:1}50%{opacity:.9}to{margin-left:200px}}@keyframes slide-right-two{0%{margin-left:0}50%{margin-left:110px;opacity:1}50%{opacity:.9}to{margin-left:200px}}@keyframes slide-right-three{0%,50%{margin-left:0}60%,to{margin-left:200px}}@keyframes foo{0%{margin-left:0}to{margin-left:200px}}@keyframes"initial"{0%{margin-left:0}to{margin-left:200px}}
++@keyframes slide-right{0%{margin-left:0}50%{margin-left:110px;opacity:1}50%{opacity:.9}to{margin-left:200px}}@keyframes slide-right-upper-case{0%{margin-left:0}50%{margin-left:110px;opacity:1}50%{opacity:.9}TO{margin-left:200px}}@keyframes slide-right-one{0%{margin-left:0}50%{margin-left:110px;opacity:1}50%{opacity:.9}to{margin-left:200px}}@keyframes slide-right-two{0%{margin-left:0}50%{margin-left:110px;opacity:1}50%{opacity:.9}to{margin-left:200px}}@keyframes slide-right-three{0%,50%{margin-left:0}60%,to{margin-left:200px}}@keyframes foo{0%{margin-left:0}to{margin-left:200px}}@keyframes"initial"{0%{margin-left:0}to{margin-left:200px}}@keyframes"None"{0%{margin-left:0}to{margin-left:200px}}

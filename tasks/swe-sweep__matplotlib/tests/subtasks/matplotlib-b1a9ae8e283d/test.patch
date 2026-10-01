@@ -1,0 +1,16 @@
+diff --git a/lib/matplotlib/tests/test_axes.py b/lib/matplotlib/tests/test_axes.py
+index 2227af37c1..e96f9d5605 100644
+--- a/lib/matplotlib/tests/test_axes.py
++++ b/lib/matplotlib/tests/test_axes.py
+@@ -7086,3 +7086,11 @@ def test_warn_ignored_scatter_kwargs():
+         c = plt.scatter(
+             [0], [0], marker="+", s=500, facecolor="r", edgecolor="b"
+         )
++
++
++def test_clim():
++    ax = plt.figure().add_subplot()
++    for plot_method in [ax.imshow, ax.pcolor, ax.pcolormesh, ax.pcolorfast]:
++        clim = (7, 8)
++        norm = plot_method([[0, 1], [2, 3]], clim=clim).norm
++        assert (norm.vmin, norm.vmax) == clim

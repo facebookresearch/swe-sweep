@@ -1,0 +1,37 @@
+diff --git a/autotest/ogr/ogr_geojson.py b/autotest/ogr/ogr_geojson.py
+index cb6e66c928..04333712af 100755
+--- a/autotest/ogr/ogr_geojson.py
++++ b/autotest/ogr/ogr_geojson.py
+@@ -1906,7 +1906,7 @@ def test_ogr_geojson_50():
+ 
+ 
+ ###############################################################################
+-# Test writing empty geometries
++# Test writing and reading empty geometries
+ 
+ 
+ def test_ogr_geojson_51():
+@@ -1949,8 +1949,6 @@ def test_ogr_geojson_51():
+     data = gdal.VSIFReadL(1, 10000, fp).decode("ascii")
+     gdal.VSIFCloseL(fp)
+ 
+-    gdal.Unlink("/vsimem/ogr_geojson_51.json")
+-
+     assert '{ "id": 1 }, "geometry": null' in data
+ 
+     assert (
+@@ -1982,6 +1980,14 @@ def test_ogr_geojson_51():
+         in data
+     )
+ 
++    ds = ogr.Open("/vsimem/ogr_geojson_51.json")
++    lyr = ds.GetLayer(0)
++    for f in lyr:
++        if f.GetFID() >= 2:
++            assert f.GetGeometryRef().IsEmpty()
++
++    gdal.Unlink("/vsimem/ogr_geojson_51.json")
++
+ 
+ ###############################################################################
+ # Test NULL type detection

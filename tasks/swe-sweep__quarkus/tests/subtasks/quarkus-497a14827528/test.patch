@@ -1,0 +1,20 @@
+diff --git a/extensions/vertx-http/deployment/src/test/java/io/quarkus/vertx/http/deployment/HttpRootPathBuildItemTest.java b/extensions/vertx-http/deployment/src/test/java/io/quarkus/vertx/http/deployment/HttpRootPathBuildItemTest.java
+index 1e98718b35c..9a7f4120556 100644
+--- a/extensions/vertx-http/deployment/src/test/java/io/quarkus/vertx/http/deployment/HttpRootPathBuildItemTest.java
++++ b/extensions/vertx-http/deployment/src/test/java/io/quarkus/vertx/http/deployment/HttpRootPathBuildItemTest.java
+@@ -9,6 +9,7 @@ public class HttpRootPathBuildItemTest {
+         HttpRootPathBuildItem buildItem = new HttpRootPathBuildItem("/");
+ 
+         Assertions.assertEquals("/", buildItem.resolvePath(""));
++        Assertions.assertEquals("/", buildItem.resolvePath("/"));
+         Assertions.assertEquals("/foo", buildItem.resolvePath("foo"));
+         Assertions.assertEquals("/foo", buildItem.resolvePath("/foo"));
+         Assertions.assertThrows(IllegalArgumentException.class, () -> buildItem.resolvePath("../foo"));
+@@ -19,6 +20,7 @@ public class HttpRootPathBuildItemTest {
+         HttpRootPathBuildItem buildItem = new HttpRootPathBuildItem("/app");
+ 
+         Assertions.assertEquals("/app", buildItem.resolvePath(""));
++        Assertions.assertEquals("/", buildItem.resolvePath("/"));
+         Assertions.assertEquals("/app/foo", buildItem.resolvePath("foo"));
+         Assertions.assertEquals("/foo", buildItem.resolvePath("/foo"));
+     }

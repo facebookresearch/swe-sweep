@@ -1,0 +1,50 @@
+diff --git a/pandas/tests/scalar/timestamp/test_comparisons.py b/pandas/tests/scalar/timestamp/test_comparisons.py
+index 555067f2ab..ee36223eb2 100644
+--- a/pandas/tests/scalar/timestamp/test_comparisons.py
++++ b/pandas/tests/scalar/timestamp/test_comparisons.py
+@@ -266,6 +266,19 @@ class TestTimestampComparison:
+         assert Timestamp.max < other + us
+         # Note: numpy gets the reversed comparison wrong
+ 
++        # GH-42794
++        other = datetime(9999, 9, 9)
++        assert Timestamp.min < other
++        assert other > Timestamp.min
++        assert Timestamp.max < other
++        assert other > Timestamp.max
++
++        other = datetime(1, 1, 1)
++        assert Timestamp.max > other
++        assert other < Timestamp.max
++        assert Timestamp.min > other
++        assert other < Timestamp.min
++
+     def test_compare_zerodim_array(self):
+         # GH#26916
+         ts = Timestamp.now()
+diff --git a/pandas/tests/series/methods/test_clip.py b/pandas/tests/series/methods/test_clip.py
+index e4803a9cd3..620f529b52 100644
+--- a/pandas/tests/series/methods/test_clip.py
++++ b/pandas/tests/series/methods/test_clip.py
+@@ -1,3 +1,5 @@
++from datetime import datetime
++
+ import numpy as np
+ import pytest
+ 
+@@ -128,6 +130,15 @@ class TestSeriesClip:
+         )
+         tm.assert_series_equal(result, expected)
+ 
++    def test_clip_with_timestamps_and_oob_datetimes(self):
++        # GH-42794
++        ser = Series([datetime(1, 1, 1), datetime(9999, 9, 9)])
++
++        result = ser.clip(lower=Timestamp.min, upper=Timestamp.max)
++        expected = Series([Timestamp.min, Timestamp.max], dtype="object")
++
++        tm.assert_series_equal(result, expected)
++
+     def test_clip_pos_args_deprecation(self):
+         # https://github.com/pandas-dev/pandas/issues/41485
+         ser = Series([1, 2, 3])

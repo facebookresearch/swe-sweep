@@ -1,0 +1,30 @@
+diff --git a/tests/core/string/test_string.h b/tests/core/string/test_string.h
+index f773650752..e2d4d41f86 100644
+--- a/tests/core/string/test_string.h
++++ b/tests/core/string/test_string.h
+@@ -681,6 +681,25 @@ TEST_CASE("[String] Splitting") {
+ 	for (int i = 0; i < f_arr.size(); i++) {
+ 		CHECK(ABS(f_arr[i] - slices_d[i]) <= 0.00001);
+ 	}
++
++	s = " -2.0        5";
++	const double slices_d2[10] = { 0, -2, 0, 0, 0, 0, 0, 0, 0, 5 };
++
++	d_arr = s.split_floats(" ");
++	CHECK(d_arr.size() == 10);
++	for (int i = 0; i < d_arr.size(); i++) {
++		CHECK(ABS(d_arr[i] - slices_d2[i]) <= 0.00001);
++	}
++
++	Vector<String> keys2;
++	keys2.push_back(";");
++	keys2.push_back(" ");
++
++	f_arr = s.split_floats_mk(keys2);
++	CHECK(f_arr.size() == 10);
++	for (int i = 0; i < f_arr.size(); i++) {
++		CHECK(ABS(f_arr[i] - slices_d2[i]) <= 0.00001);
++	}
+ 
+ 	s = "1;2 4";
+ 	const int slices_i[3] = { 1, 2, 4 };

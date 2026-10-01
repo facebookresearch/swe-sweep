@@ -1,0 +1,75 @@
+diff --git a/modules/openapi-generator/src/test/java/org/openapitools/codegen/java/spring/SpringCodegenTest.java b/modules/openapi-generator/src/test/java/org/openapitools/codegen/java/spring/SpringCodegenTest.java
+index 8afd914fa83..d2249db3983 100644
+--- a/modules/openapi-generator/src/test/java/org/openapitools/codegen/java/spring/SpringCodegenTest.java
++++ b/modules/openapi-generator/src/test/java/org/openapitools/codegen/java/spring/SpringCodegenTest.java
+@@ -4387,5 +4387,30 @@ public class SpringCodegenTest {
+ 
+         assertFileContains(Paths.get(outputPath + "/src/main/java/org/openapitools/api/PetApi.java"),
+                 "@Valid @RequestParam(value = \"additionalMetadata\", required = false) String additionalMetadata");
+     }
++
++    @Test
++    public void shouldGenerateOptionalParameterTypesWhenUsingOptionalAndDelegate_issue17768() throws IOException {
++        Map<String, Object> additionalProperties = new HashMap<>();
++        additionalProperties.put(SpringCodegen.USE_TAGS, "true");
++        additionalProperties.put(SpringCodegen.SKIP_DEFAULT_INTERFACE, "true");
++        additionalProperties.put(SpringCodegen.PERFORM_BEANVALIDATION, "true");
++        additionalProperties.put(SpringCodegen.SPRING_CONTROLLER, "true");
++        additionalProperties.put(CodegenConstants.SERIALIZATION_LIBRARY, "jackson");
++        additionalProperties.put(SpringCodegen.USE_OPTIONAL, "true");
++        additionalProperties.put(DELEGATE_PATTERN, "true");
++        Map<String, File> files = generateFromContract("src/test/resources/bugs/issue_17768.yaml", SPRING_BOOT, additionalProperties);
++        JavaFileAssert.assertThat(files.get("TestApiDelegate.java"))
++                .assertMethod("updatePost")
++                .hasParameter("updateRequest")
++                .withType("Optional<UpdateRequest>")
++                .toMethod()
++                .toFileAssert();
++        JavaFileAssert.assertThat(files.get("TestApi.java"))
++                .assertMethod("updatePost")
++                .hasParameter("updateRequest")
++                .withType("Optional<UpdateRequest>")
++                .toMethod()
++                .toFileAssert();
++    }
+ }
+diff --git a/modules/openapi-generator/src/test/resources/bugs/issue_17768.yaml b/modules/openapi-generator/src/test/resources/bugs/issue_17768.yaml
+new file mode 100644
+index 00000000000..46d35831e70
+--- /dev/null
++++ b/modules/openapi-generator/src/test/resources/bugs/issue_17768.yaml
+@@ -0,0 +1,33 @@
++openapi: 3.1.0
++info:
++  version: 1.0.0
++  description: Specification to reproduce incorrect return for useOptional in Spring Delegate
++  title: OptionalRequestBodyDelegateTest Api
++paths:
++  /update:
++    post:
++      tags:
++        - test
++      requestBody:
++        content:
++          application/json:
++            schema:
++              $ref: "#/components/schemas/updateRequest"
++      responses:
++        '200':
++          description: OK
++          content:
++            application/json:
++              schema:
++                type: boolean
++components:
++  schemas:
++    updateRequest:
++      type: object
++      title: Update Request
++      properties:
++        id:
++          type: string
++        time:
++          type: integer
++          format: int64
+\ No newline at end of file

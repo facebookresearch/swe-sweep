@@ -1,0 +1,178 @@
+diff --git a/src/test/lp/lp.cpp b/src/test/lp/lp.cpp
+index ee1989c20..7a2b27155 100644
+--- a/src/test/lp/lp.cpp
++++ b/src/test/lp/lp.cpp
+@@ -1971,28 +1971,28 @@ void test_lp_local(int argn, char **argv) {
+ 
+     if (args_parser.option_is_used("-nla_blfmz_mf")) {
+ #ifdef Z3DEBUG
+-        nla::test_basic_lemma_for_mon_zero_from_monomial_to_factors();
++      //  nla::test_basic_lemma_for_mon_zero_from_monomial_to_factors();
+ #endif
+         return finalize(0);
+     }
+ 
+     if (args_parser.option_is_used("-nla_blfmz_fm")) {
+ #ifdef Z3DEBUG
+-        nla::test_basic_lemma_for_mon_zero_from_factors_to_monomial();
++        //nla::test_basic_lemma_for_mon_zero_from_factors_to_monomial();
+ #endif
+         return finalize(0);
+     }
+ 
+     if (args_parser.option_is_used("-nla_blnt_mf")) {
+ #ifdef Z3DEBUG
+-        nla::test_basic_lemma_for_mon_neutral_from_monomial_to_factors();
++       // nla::test_basic_lemma_for_mon_neutral_from_monomial_to_factors();
+ #endif
+         return finalize(0);
+     }
+ 
+     if (args_parser.option_is_used("-nla_blnt_fm")) {
+ #ifdef Z3DEBUG
+-        nla::test_basic_lemma_for_mon_neutral_from_factors_to_monomial();
++      //  nla::test_basic_lemma_for_mon_neutral_from_factors_to_monomial();
+ #endif
+         return finalize(0);
+     }
+diff --git a/src/test/lp/nla_solver_test.cpp b/src/test/lp/nla_solver_test.cpp
+index 1ec8fe8fa..d2e2e2f19 100644
+--- a/src/test/lp/nla_solver_test.cpp
++++ b/src/test/lp/nla_solver_test.cpp
+@@ -150,7 +150,7 @@ void create_abcde(solver & nla,
+     nla.add_monic(lp_be, vec.size(), vec.begin());
+ }
+ 
+-
++#if 0
+ void test_basic_lemma_for_mon_neutral_from_factors_to_monomial_0() {
+     std::cout << "test_basic_lemma_for_mon_neutral_from_factors_to_monomial_0\n";
+     enable_trace("nla_solver");
+@@ -222,6 +222,7 @@ void test_basic_lemma_for_mon_neutral_from_factors_to_monomial_0() {
+ 
+     
+ }
++#endif
+ 
+ void s_set_column_value_test(lp::lar_solver&s, lpvar j, const rational & v) {
+     s.set_column_value_test(j, lp::impq(v));
+@@ -231,6 +232,7 @@ void s_set_column_value_test(lp::lar_solver&s, lpvar j, const lp::impq & v) {
+     s.set_column_value_test(j, v);
+ }
+ 
++#if 0
+ void test_basic_lemma_for_mon_neutral_from_factors_to_monomial_1() {
+     std::cout << "test_basic_lemma_for_mon_neutral_from_factors_to_monomial_1\n";
+     TRACE(nla_solver,);
+@@ -367,6 +369,7 @@ void test_basic_lemma_for_mon_zero_from_factors_to_monomial() {
+     VERIFY(found0 && found1);
+ }
+ 
++
+ void test_basic_lemma_for_mon_zero_from_monomial_to_factors() {
+     std::cout << "test_basic_lemma_for_mon_zero_from_monomial_to_factors\n";
+     enable_trace("nla_solver");
+@@ -420,6 +423,7 @@ void test_basic_lemma_for_mon_zero_from_monomial_to_factors() {
+     
+ }
+ 
++
+ void test_basic_lemma_for_mon_neutral_from_monomial_to_factors() {
+     std::cout << "test_basic_lemma_for_mon_neutral_from_monomial_to_factors\n";
+     enable_trace("nla_solver");
+@@ -489,6 +493,7 @@ void test_basic_lemma_for_mon_neutral_from_monomial_to_factors() {
+ 
+     VERIFY(found0 && found1);
+ }
++#endif
+ 
+ void test_horner() {
+     enable_trace("nla_solver");
+diff --git a/src/test/nla_intervals.cpp b/src/test/nla_intervals.cpp
+index 5cea168ee..1207c746c 100644
+--- a/src/test/nla_intervals.cpp
++++ b/src/test/nla_intervals.cpp
+@@ -207,13 +207,82 @@ void test_nla_intervals_fractional() {
+     VERIFY(true); // Placeholder
+ }
+ 
++void test_fetch_normalized_term_column() {
++    std::cout << "test_fetch_normalized_term_column\n";
++
++    lp::lar_solver s;
++
++    // Create some variables
++    lpvar x = s.add_var(0, true);  // j0
++    lpvar y = s.add_var(1, true);  // j1
++    lpvar z = s.add_var(2, true);  // j2
++
++    // Add a term t = 2*x + 3*y and register it
++    lp::lar_term t;
++    t.add_monomial(rational(2), x);
++    t.add_monomial(rational(3), y);
++    s.add_term(t.coeffs_as_vector(), UINT_MAX);
++    s.register_existing_terms();
++
++    // Now build the same term independently and look it up
++    lp::lar_term query;
++    query.add_monomial(rational(2), x);
++    query.add_monomial(rational(3), y);
++    lp::mpq a;
++    lp::lar_term norm_query = query.get_normalized_by_min_var(a);
++
++    std::pair<lp::mpq, lpvar> result;
++    bool found = s.fetch_normalized_term_column(norm_query, result);
++    VERIFY(found);
++    std::cout << "  round-trip lookup: " << (found ? "PASS" : "FAIL") << "\n";
++
++    // Build query with variables added in reverse order
++    lp::lar_term query_rev;
++    query_rev.add_monomial(rational(3), y);
++    query_rev.add_monomial(rational(2), x);
++    lp::lar_term norm_rev = query_rev.get_normalized_by_min_var(a);
++
++    bool found_rev = s.fetch_normalized_term_column(norm_rev, result);
++    VERIFY(found_rev);
++    std::cout << "  reverse-order lookup: " << (found_rev ? "PASS" : "FAIL") << "\n";
++
++    // Test a 3-variable term: x - y + 5*z
++    lp::lar_term t2;
++    t2.add_monomial(rational(1), x);
++    t2.add_monomial(rational(-1), y);
++    t2.add_monomial(rational(5), z);
++    s.add_term(t2.coeffs_as_vector(), UINT_MAX);
++    s.register_existing_terms();
++
++    lp::lar_term query2;
++    query2.add_monomial(rational(1), x);
++    query2.add_monomial(rational(-1), y);
++    query2.add_monomial(rational(5), z);
++    lp::lar_term norm2 = query2.get_normalized_by_min_var(a);
++
++    found = s.fetch_normalized_term_column(norm2, result);
++    VERIFY(found);
++    std::cout << "  3-variable term lookup: " << (found ? "PASS" : "FAIL") << "\n";
++
++    // Test that a non-registered term is NOT found
++    lp::lar_term query3;
++    query3.add_monomial(rational(7), x);
++    query3.add_monomial(rational(11), y);
++    lp::lar_term norm3 = query3.get_normalized_by_min_var(a);
++
++    bool found_missing = s.fetch_normalized_term_column(norm3, result);
++    VERIFY(!found_missing);
++    std::cout << "  non-existent term not found: " << (!found_missing ? "PASS" : "FAIL") << "\n";
++}
++
+ void test_nla_intervals() {
+     test_nla_intervals_basic();
+-    test_nla_intervals_negative(); 
++    test_nla_intervals_negative();
+     test_nla_intervals_zero_crossing();
+     test_nla_intervals_power();
+     test_nla_intervals_mixed_signs();
+     test_nla_intervals_fractional();
++    test_fetch_normalized_term_column();
+ }
+ 
+ } // namespace nla

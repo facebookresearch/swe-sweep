@@ -1,0 +1,21 @@
+diff --git a/src/Symfony/Component/Security/Http/LoginLink/LoginLinkHandler.php b/src/Symfony/Component/Security/Http/LoginLink/LoginLinkHandler.php
+index 176d3166075..02ca2511064 100644
+--- a/src/Symfony/Component/Security/Http/LoginLink/LoginLinkHandler.php
++++ b/src/Symfony/Component/Security/Http/LoginLink/LoginLinkHandler.php
+@@ -86,9 +86,16 @@ final class LoginLinkHandler implements LoginLinkHandlerInterface
+         if (!$hash = $request->get('hash')) {
+             throw new InvalidLoginLinkException('Missing "hash" parameter.');
+         }
++        if (!is_string($hash)) {
++            throw new InvalidLoginLinkException('Invalid "hash" parameter.');
++        }
++
+         if (!$expires = $request->get('expires')) {
+             throw new InvalidLoginLinkException('Missing "expires" parameter.');
+         }
++        if (preg_match('/^\d+$/', $expires) !== 1) {
++            throw new InvalidLoginLinkException('Invalid "expires" parameter.');
++        }
+ 
+         try {
+             $this->signatureHasher->acceptSignatureHash($userIdentifier, $expires, $hash);

@@ -1,0 +1,13 @@
+diff --git a/src/other/index.jl b/src/other/index.jl
+index 8a4c2403..3110a8af 100644
+--- a/src/other/index.jl
++++ b/src/other/index.jl
+@@ -132,7 +132,7 @@ function Base.merge!(x::Index, y::AbstractIndex; makeunique::Bool=false)
+     return x
+ end
+ 
+-Base.merge(x::Index, y::AbstractIndex; makeunique::Bool=false) =
++Base.merge(x::AbstractIndex, y::AbstractIndex; makeunique::Bool=false) =
+     merge!(copy(x), y, makeunique=makeunique)
+ 
+ function Base.delete!(x::Index, idx::Integer)

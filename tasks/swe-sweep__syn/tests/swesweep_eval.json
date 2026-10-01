@@ -1,0 +1,150 @@
+{
+  "build_jobs": 4,
+  "container_repo": "/syn",
+  "evaluation": {
+    "suite": "reproduction",
+    "test_dirs": [
+      "tests"
+    ],
+    "visible_timeout": 3600
+  },
+  "upstream_image": "pandora-maxbug-syn:1.0.36",
+  "n_base_passing": 0,
+  "n_base_test_ignore": 1,
+  "oracle_digest": "e2ebc20615c5f0cf1e49101a64f1a961853e87812658371aa2e6d00b1a94ce25",
+  "oracle_pristine_paths": [],
+  "upstream_commit": "9f7399e15e6172900e0591deb5a57a45769d8205",
+  "reproduction": {
+    "needs_build": false,
+    "suite": {
+      "cargo_args": [
+        "--all-features"
+      ],
+      "type": "cargo"
+    },
+    "test_timeout": 900
+  },
+  "schema": 2,
+  "subtasks": [
+    {
+      "f2p": [
+        "test_ty::test_trait_object"
+      ],
+      "id": "syn-0a8094935f16",
+      "target_files": [
+        "src/ty.rs"
+      ]
+    },
+    {
+      "f2p": [
+        "test_lit::floats"
+      ],
+      "id": "syn-45ff4d411dd2",
+      "target_files": [
+        "src/lit.rs"
+      ]
+    },
+    {
+      "f2p": [
+        "test_item::test_supertraits"
+      ],
+      "id": "syn-4b41f6875e55",
+      "target_files": [
+        "src/item.rs"
+      ]
+    },
+    {
+      "f2p": [
+        "test_stmt::test_let_dot_dot"
+      ],
+      "id": "syn-571fcd720ae7",
+      "target_files": [
+        "src/pat.rs"
+      ]
+    },
+    {
+      "f2p": [
+        "test_pat::test_group"
+      ],
+      "id": "syn-5c8207c9e9c7",
+      "target_files": [
+        "src/pat.rs"
+      ]
+    },
+    {
+      "f2p": [
+        "test_item::test_impl_trait_trailing_plus"
+      ],
+      "id": "syn-7564fb2d37ce",
+      "target_files": [
+        "src/ty.rs"
+      ]
+    },
+    {
+      "f2p": [
+        "test_path::print_incomplete_qpath"
+      ],
+      "id": "syn-75980568c357",
+      "target_files": [
+        "src/path.rs"
+      ]
+    },
+    {
+      "f2p": [
+        "test_meta::test_parse_path"
+      ],
+      "id": "syn-9051e16af091",
+      "target_files": [
+        "src/attr.rs"
+      ]
+    },
+    {
+      "f2p": [
+        "test_lit::strings"
+      ],
+      "id": "syn-93d11e5221ea",
+      "target_files": [
+        "src/lit.rs"
+      ]
+    },
+    {
+      "f2p": [
+        "test_expr::test_closure_vs_rangefull"
+      ],
+      "id": "syn-9b54962d9302",
+      "target_files": [
+        "src/expr.rs"
+      ]
+    },
+    {
+      "f2p": [
+        "test_ty::test_mut_self"
+      ],
+      "id": "syn-ab66d8244162",
+      "target_files": [
+        "src/ty.rs"
+      ]
+    },
+    {
+      "f2p": [
+        "test_stmt::test_none_group"
+      ],
+      "id": "syn-b5fd39eac536",
+      "target_files": [
+        "src/parse.rs"
+      ]
+    },
+    {
+      "f2p": [
+        "test_ty::test_group_colons"
+      ],
+      "id": "syn-f84d1d69e609",
+      "target_files": [
+        "src/path.rs",
+        "src/ty.rs"
+      ]
+    }
+  ],
+  "task": "syn",
+  "version": "1.0.36"
+}

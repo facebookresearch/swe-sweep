@@ -1,0 +1,28 @@
+diff --git a/lib/javascript/JavascriptParser.js b/lib/javascript/JavascriptParser.js
+index 5f98c8b32..ef15be597 100644
+--- a/lib/javascript/JavascriptParser.js
++++ b/lib/javascript/JavascriptParser.js
+@@ -1189,14 +1189,15 @@ class JavascriptParser extends Parser {
+ 				const node = /** @type {TaggedTemplateExpressionNode} */ (_node);
+ 				const tag = this.evaluateExpression(node.tag);
+ 
+-				if (tag.isIdentifier() && tag.identifier !== "String.raw") return;
+-				const { quasis, parts } = getSimplifiedTemplateResult(
+-					"raw",
+-					node.quasi
+-				);
+-				return new BasicEvaluatedExpression()
+-					.setTemplateString(quasis, parts, "raw")
+-					.setRange(node.range);
++				if (tag.isIdentifier() && tag.identifier === "String.raw") {
++					const { quasis, parts } = getSimplifiedTemplateResult(
++						"raw",
++						node.quasi
++					);
++					return new BasicEvaluatedExpression()
++						.setTemplateString(quasis, parts, "raw")
++						.setRange(node.range);
++				}
+ 			});
+ 
+ 		this.hooks.evaluateCallExpressionMember

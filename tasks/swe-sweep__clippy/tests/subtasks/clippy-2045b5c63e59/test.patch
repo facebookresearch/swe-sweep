@@ -1,0 +1,103 @@
+diff --git a/tests/ui/implicit_hasher.fixed b/tests/ui/implicit_hasher.fixed
+index bea5b9afc..882a54596 100644
+--- a/tests/ui/implicit_hasher.fixed
++++ b/tests/ui/implicit_hasher.fixed
+@@ -109,3 +109,27 @@ pub async fn election_vote<S: ::std::hash::BuildHasher>(_data: HashMap<i32, i32,
+ //~^ implicit_hasher
+ 
+ fn main() {}
++
++mod issue16128 {
++    use super::*;
++
++    macro_rules! times_ten {
++        ($num:expr) => {
++            $num * 10
++        };
++    }
++
++    impl<K: Hash + Eq, V, S: ::std::hash::BuildHasher + Default> Foo<u64> for HashMap<K, V, S> {
++        //~^ implicit_hasher
++        fn make() -> (Self, Self) {
++            (HashMap::default(), HashMap::with_capacity_and_hasher(times_ten!(5), Default::default()))
++        }
++    }
++
++    impl<V: Hash + Eq, S: ::std::hash::BuildHasher + Default> Foo<u64> for HashSet<V, S> {
++        //~^ implicit_hasher
++        fn make() -> (Self, Self) {
++            (HashSet::default(), HashSet::with_capacity_and_hasher(times_ten!(5), Default::default()))
++        }
++    }
++}
+diff --git a/tests/ui/implicit_hasher.rs b/tests/ui/implicit_hasher.rs
+index afdf4da61..186f9e997 100644
+--- a/tests/ui/implicit_hasher.rs
++++ b/tests/ui/implicit_hasher.rs
+@@ -109,3 +109,27 @@ pub async fn election_vote(_data: HashMap<i32, i32>) {}
+ //~^ implicit_hasher
+ 
+ fn main() {}
++
++mod issue16128 {
++    use super::*;
++
++    macro_rules! times_ten {
++        ($num:expr) => {
++            $num * 10
++        };
++    }
++
++    impl<K: Hash + Eq, V> Foo<u64> for HashMap<K, V> {
++        //~^ implicit_hasher
++        fn make() -> (Self, Self) {
++            (HashMap::new(), HashMap::with_capacity(times_ten!(5)))
++        }
++    }
++
++    impl<V: Hash + Eq> Foo<u64> for HashSet<V> {
++        //~^ implicit_hasher
++        fn make() -> (Self, Self) {
++            (HashSet::new(), HashSet::with_capacity(times_ten!(5)))
++        }
++    }
++}
+diff --git a/tests/ui/implicit_hasher.stderr b/tests/ui/implicit_hasher.stderr
+index 6735998ed..326115c8e 100644
+--- a/tests/ui/implicit_hasher.stderr
++++ b/tests/ui/implicit_hasher.stderr
+@@ -122,5 +122,33 @@ help: add a type parameter for `BuildHasher`
+ LL | pub async fn election_vote<S: ::std::hash::BuildHasher>(_data: HashMap<i32, i32, S>) {}
+    |                           +++++++++++++++++++++++++++++                        +++
+ 
+-error: aborting due to 9 previous errors
++error: impl for `HashMap` should be generalized over different hashers
++  --> tests/ui/implicit_hasher.rs:122:40
++   |
++LL |     impl<K: Hash + Eq, V> Foo<u64> for HashMap<K, V> {
++   |                                        ^^^^^^^^^^^^^
++   |
++help: add a type parameter for `BuildHasher`
++   |
++LL ~     impl<K: Hash + Eq, V, S: ::std::hash::BuildHasher + Default> Foo<u64> for HashMap<K, V, S> {
++LL |
++LL |         fn make() -> (Self, Self) {
++LL ~             (HashMap::default(), HashMap::with_capacity_and_hasher(times_ten!(5), Default::default()))
++   |
++
++error: impl for `HashSet` should be generalized over different hashers
++  --> tests/ui/implicit_hasher.rs:129:37
++   |
++LL |     impl<V: Hash + Eq> Foo<u64> for HashSet<V> {
++   |                                     ^^^^^^^^^^
++   |
++help: add a type parameter for `BuildHasher`
++   |
++LL ~     impl<V: Hash + Eq, S: ::std::hash::BuildHasher + Default> Foo<u64> for HashSet<V, S> {
++LL |
++LL |         fn make() -> (Self, Self) {
++LL ~             (HashSet::default(), HashSet::with_capacity_and_hasher(times_ten!(5), Default::default()))
++   |
++
++error: aborting due to 11 previous errors
+ 

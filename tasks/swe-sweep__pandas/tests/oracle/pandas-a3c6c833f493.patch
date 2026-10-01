@@ -1,0 +1,36 @@
+diff --git a/pandas/core/computation/pytables.py b/pandas/core/computation/pytables.py
+index 138b05b33e..91a8505fad 100644
+--- a/pandas/core/computation/pytables.py
++++ b/pandas/core/computation/pytables.py
+@@ -563,7 +563,7 @@ class PyTablesExpr(expr.Expr):
+         self._visitor = None
+ 
+         # capture the environment if needed
+-        local_dict: DeepChainMap[Any, Any] = DeepChainMap()
++        local_dict: DeepChainMap[Any, Any] | None = None
+ 
+         if isinstance(where, PyTablesExpr):
+             local_dict = where.env.scope
+diff --git a/pandas/core/computation/scope.py b/pandas/core/computation/scope.py
+index c661e225c2..52169b0346 100644
+--- a/pandas/core/computation/scope.py
++++ b/pandas/core/computation/scope.py
+@@ -136,14 +136,14 @@ class Scope:
+ 
+             # error: Incompatible types in assignment (expression has type
+             # "ChainMap[str, Any]", variable has type "DeepChainMap[str, Any]")
+-            self.scope = self.scope.new_child(  # type: ignore[assignment]
+-                (global_dict or frame.f_globals).copy()
++            self.scope = self.scope.new_child(
++                (global_dict if global_dict is not None else frame.f_globals).copy()
+             )
+             if not isinstance(local_dict, Scope):
+                 # error: Incompatible types in assignment (expression has type
+                 # "ChainMap[str, Any]", variable has type "DeepChainMap[str, Any]")
+-                self.scope = self.scope.new_child(  # type: ignore[assignment]
+-                    (local_dict or frame.f_locals).copy()
++                self.scope = self.scope.new_child(
++                    (local_dict if local_dict is not None else frame.f_locals).copy()
+                 )
+         finally:
+             del frame

@@ -1,0 +1,90 @@
+diff --git a/test/optimizer/joins/join_on_doubles.test b/test/optimizer/joins/join_on_doubles.test
+new file mode 100644
+index 0000000000..4c99ae2df6
+--- /dev/null
++++ b/test/optimizer/joins/join_on_doubles.test
+@@ -0,0 +1,39 @@
++# name: test/optimizer/joins/join_on_doubles.test
++# description: tests for #16901 / #16965
++# group: [joins]
++
++statement ok
++create table x (a double);
++
++statement ok
++create table y (b double);
++
++statement ok
++insert into x values ('0.0'), ('NaN');
++
++statement ok
++insert into y values ('-0.0'), ('-NaN');
++
++query TT
++select a::text, b::text from x inner join y on a = b;
++----
++0.0	-0.0
++nan	-nan
++
++query TT
++select a::text, b::text from y inner join x on a = b;
++----
++0.0	-0.0
++nan	-nan
++
++query TT
++select a::text, b::text from x right join y on a = b;
++----
++0.0	-0.0
++nan	-nan
++
++query TT
++select a::text, b::text from x left join y on a = b;
++----
++0.0	-0.0
++nan	-nan
+diff --git a/test/optimizer/joins/join_on_floats.test b/test/optimizer/joins/join_on_floats.test
+new file mode 100644
+index 0000000000..1d68c39bb0
+--- /dev/null
++++ b/test/optimizer/joins/join_on_floats.test
+@@ -0,0 +1,39 @@
++# name: test/optimizer/joins/join_on_floats.test
++# description: tests for #16901 / #16965
++# group: [joins]
++
++statement ok
++create table x (a float);
++
++statement ok
++create table y (b float);
++
++statement ok
++insert into x values ('0.0'), ('NaN');
++
++statement ok
++insert into y values ('-0.0'), ('-NaN');
++
++query TT
++select a::text, b::text from x inner join y on a = b;
++----
++0.0	-0.0
++nan	-nan
++
++query TT
++select a::text, b::text from y inner join x on a = b;
++----
++0.0	-0.0
++nan	-nan
++
++query TT
++select a::text, b::text from x right join y on a = b;
++----
++0.0	-0.0
++nan	-nan
++
++query TT
++select a::text, b::text from x left join y on a = b;
++----
++0.0	-0.0
++nan	-nan

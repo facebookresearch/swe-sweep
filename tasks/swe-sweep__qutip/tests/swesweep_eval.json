@@ -1,0 +1,114 @@
+{
+  "build_jobs": 4,
+  "container_repo": "/qutip",
+  "evaluation": {
+    "paths": "qutip/tests",
+    "test_timeout": 900,
+    "visible_timeout": 7200
+  },
+  "upstream_image": "pandora-maxbug-qutip:4.6.0",
+  "n_base_passing": 1917,
+  "n_base_test_ignore": 24,
+  "oracle_digest": "a8244e2d3fb3a6468fb27622b8f3156de13f14fd01036e9768bbeeda74a20d26",
+  "oracle_pristine_paths": [],
+  "upstream_commit": "9f7399e15e6172900e0591deb5a57a45769d8205",
+  "reproduction": {
+    "test_timeout": 900
+  },
+  "schema": 2,
+  "subtasks": [
+    {
+      "f2p": [
+        "test_qobj::test_QobjPowerScalar"
+      ],
+      "id": "qutip-2330675f7d1c",
+      "target_files": [
+        "qutip/qobj.py"
+      ]
+    },
+    {
+      "f2p": [
+        "test_qubitcircuit.TestQubitCircuit::test_latex_code_non_reversed"
+      ],
+      "id": "qutip-3ee3d542cd3a",
+      "target_files": [
+        "qutip/qip/circuit.py"
+      ]
+    },
+    {
+      "f2p": [
+        "test_qobj::test_QobjAddition"
+      ],
+      "id": "qutip-626dbfed3eb4",
+      "target_files": [
+        "qutip/qobj.py"
+      ]
+    },
+    {
+      "f2p": [
+        "test_spmath::test_issue_1998"
+      ],
+      "id": "qutip-663893063001",
+      "target_files": [
+        "qutip/cy/spmath.pyx"
+      ]
+    },
+    {
+      "f2p": [
+        "test_qubitcircuit.TestQubitCircuit::test_N_level_system"
+      ],
+      "id": "qutip-8f7913b400f8",
+      "target_files": [
+        "qutip/qip/circuit.py"
+      ]
+    },
+    {
+      "f2p": [
+        "test_qobj::test_tidyup_default[1]"
+      ],
+      "id": "qutip-c024fab336eb",
+      "target_files": [
+        "qutip/qobj.py"
+      ]
+    },
+    {
+      "f2p": [
+        "test_processor.TestCircuitProcessor::testDrift"
+      ],
+      "id": "qutip-c83beda7c10e",
+      "target_files": [
+        "qutip/qip/device/processor.py"
+      ]
+    },
+    {
+      "f2p": [
+        "test_correlation.TestTimeDependence::test_correlation_c_ops_td[mc]",
+        "test_correlation.TestTimeDependence::test_correlation_c_ops_td[me]"
+      ],
+      "id": "qutip-efe582e89081",
+      "target_files": [
+        "qutip/correlation.py"
+      ]
+    },
+    {
+      "f2p": [
+        "test_spmath::test_zcsr_isherm_structure_detection"
+      ],
+      "id": "qutip-f8203159401b",
+      "target_files": [
+        "qutip/core/data/properties.pyx"
+      ]
+    },
+    {
+      "f2p": [
+        "test_transfertensor::test_ttmsolve_jc_model"
+      ],
+      "id": "qutip-faa81dd725a6",
+      "target_files": [
+        "qutip/nonmarkov/transfertensor.py"
+      ]
+    }
+  ],
+  "task": "qutip",
+  "version": "4.6.0"
+}

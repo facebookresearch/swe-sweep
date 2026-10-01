@@ -1,0 +1,51 @@
+diff --git a/actionpack/test/dispatch/routing/route_set_test.rb b/actionpack/test/dispatch/routing/route_set_test.rb
+index cb8b7015a99..f33b24a03c2 100644
+--- a/actionpack/test/dispatch/routing/route_set_test.rb
++++ b/actionpack/test/dispatch/routing/route_set_test.rb
+@@ -27,6 +27,25 @@ module ActionDispatch
+         assert_not empty?
+       end
+ 
++      class FooController < ActionController::Base
++      end
++
++      test "recognize_path does not recognize routes removed by a redraw" do
++        controller = "action_dispatch/routing/route_set_test/foo"
++
++        draw do
++          get "foo", to: "action_dispatch/routing/route_set_test/foo#index"
++        end
++
++        assert_equal({ controller: controller, action: "index" }, @set.recognize_path("/foo"))
++
++        draw { }
++
++        assert_raises ActionController::RoutingError do
++          @set.recognize_path("/foo")
++        end
++      end
++
+       test "URL helpers are added when route is added" do
+         draw do
+           get "foo", to: SimpleApp.new("foo#index")
+diff --git a/actionpack/test/journey/routes_test.rb b/actionpack/test/journey/routes_test.rb
+index 1b23d72849b..f1a84cc2a95 100644
+--- a/actionpack/test/journey/routes_test.rb
++++ b/actionpack/test/journey/routes_test.rb
+@@ -25,6 +25,16 @@ module ActionDispatch
+         assert_equal 0, routes.length
+       end
+ 
++      def test_clear_clears_the_cached_ast_and_simulator
++        mapper.get "/foo(/:id)", to: "foo#bar", as: "aaron"
++        simulator = routes.simulator
++
++        routes.clear
++
++        assert_empty routes.ast.children
++        assert_not_same simulator, routes.simulator
++      end
++
+       def test_ast
+         mapper.get "/foo(/:id)", to: "foo#bar", as: "aaron"
+         ast = routes.ast

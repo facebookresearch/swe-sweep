@@ -1,0 +1,15 @@
+diff --git a/dask/tests/test_delayed.py b/dask/tests/test_delayed.py
+index 83830283e..6ed843f77 100644
+--- a/dask/tests/test_delayed.py
++++ b/dask/tests/test_delayed.py
+@@ -100,7 +100,9 @@ def test_delayed_with_dataclass():
+     dataclasses = pytest.importorskip("dataclasses")
+ 
+     # Avoid @dataclass decorator as Python < 3.7 fail to interpret the type hints
+-    ADataClass = dataclasses.make_dataclass("ADataClass", [("a", int)])
++    ADataClass = dataclasses.make_dataclass(
++        "ADataClass", [("a", int), ("b", int, dataclasses.field(init=False))]
++    )
+ 
+     literal = dask.delayed(3)
+     with_class = dask.delayed({"a": ADataClass(a=literal)})

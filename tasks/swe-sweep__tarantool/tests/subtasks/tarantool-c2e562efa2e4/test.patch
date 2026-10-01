@@ -1,0 +1,47 @@
+diff --git a/test/unit/fiber.cc b/test/unit/fiber.cc
+index eb0637f858..09ef30cf1e 100644
+--- a/test/unit/fiber.cc
++++ b/test/unit/fiber.cc
+@@ -253,6 +253,21 @@ fiber_wakeup_self_test()
+ 	footer();
+ }
+ 
++static void
++fiber_wakeup_dead_test()
++{
++	header();
++
++	struct fiber *fiber = fiber_new_xc("wakeup_dead", noop_f);
++	fiber_set_joinable(fiber, true);
++	fiber_start(fiber);
++	fiber_wakeup(fiber);
++	fiber_wakeup(fiber);
++	fiber_join(fiber);
++
++	footer();
++}
++
+ static void
+ fiber_dead_while_in_cache_test(void)
+ {
+@@ -299,6 +314,7 @@ main_f(va_list ap)
+ 	fiber_join_test();
+ 	fiber_stack_test();
+ 	fiber_wakeup_self_test();
++	fiber_wakeup_dead_test();
+ 	fiber_dead_while_in_cache_test();
+ 	fiber_flags_respect_test();
+ 	ev_break(loop(), EVBREAK_ALL);
+diff --git a/test/unit/fiber.result b/test/unit/fiber.result
+index a1bf438182..61f5f05dfb 100644
+--- a/test/unit/fiber.result
++++ b/test/unit/fiber.result
+@@ -19,6 +19,8 @@
+ 	*** fiber_stack_test: done ***
+ 	*** fiber_wakeup_self_test ***
+ 	*** fiber_wakeup_self_test: done ***
++	*** fiber_wakeup_dead_test ***
++	*** fiber_wakeup_dead_test: done ***
+ 	*** fiber_dead_while_in_cache_test ***
+ 	*** fiber_dead_while_in_cache_test: done ***
+ 	*** fiber_flags_respect_test ***

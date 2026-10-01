@@ -1,0 +1,17 @@
+diff --git a/pulsar-functions/utils/src/main/java/org/apache/pulsar/functions/utils/FunctionConfigUtils.java b/pulsar-functions/utils/src/main/java/org/apache/pulsar/functions/utils/FunctionConfigUtils.java
+index 769621da402..e4609672a3d 100644
+--- a/pulsar-functions/utils/src/main/java/org/apache/pulsar/functions/utils/FunctionConfigUtils.java
++++ b/pulsar-functions/utils/src/main/java/org/apache/pulsar/functions/utils/FunctionConfigUtils.java
+@@ -280,6 +280,12 @@ public class FunctionConfigUtils {
+             }
+             sinkSpecBuilder.setProducerSpec(pbldr.build());
+         }
++        if (functionConfig.getBatchBuilder() != null) {
++            Function.ProducerSpec.Builder builder = sinkSpecBuilder.getProducerSpec() != null
++                    ? sinkSpecBuilder.getProducerSpec().toBuilder()
++                    : Function.ProducerSpec.newBuilder();
++            sinkSpecBuilder.setProducerSpec(builder.setBatchBuilder(functionConfig.getBatchBuilder()).build());
++        }
+         functionDetailsBuilder.setSink(sinkSpecBuilder);
+ 
+         if (functionConfig.getTenant() != null) {

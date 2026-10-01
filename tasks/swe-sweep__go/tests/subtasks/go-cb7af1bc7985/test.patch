@@ -1,0 +1,22 @@
+diff --git a/src/io/fs/sub_test.go b/src/io/fs/sub_test.go
+index 451b0efb02..c0bb2fd5b8 100644
+--- a/src/io/fs/sub_test.go
++++ b/src/io/fs/sub_test.go
+@@ -5,6 +5,7 @@
+ package fs_test
+ 
+ import (
++	"errors"
+ 	. "io/fs"
+ 	"testing"
+ )
+@@ -54,4 +55,9 @@ func TestSub(t *testing.T) {
+ 	if pe.Path != "nonexist" {
+ 		t.Fatalf("Open(nonexist): err.Path = %q, want %q", pe.Path, "nonexist")
+ 	}
++
++	_, err = sub.Open("./")
++	if !errors.Is(err, ErrInvalid) {
++		t.Fatalf("Open(./): error is %v, want %v", err, ErrInvalid)
++	}
+ }

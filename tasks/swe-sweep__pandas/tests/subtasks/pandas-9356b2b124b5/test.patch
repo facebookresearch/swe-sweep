@@ -1,0 +1,66 @@
+diff --git a/pandas/tests/apply/test_frame_apply.py b/pandas/tests/apply/test_frame_apply.py
+index 14266a2c29..995f404dc4 100644
+--- a/pandas/tests/apply/test_frame_apply.py
++++ b/pandas/tests/apply/test_frame_apply.py
+@@ -53,6 +53,17 @@ def test_apply_axis1_with_ea():
+     tm.assert_frame_equal(result, expected)
+ 
+ 
++@pytest.mark.parametrize(
++    "data, dtype",
++    [(1, None), (1, CategoricalDtype([1])), (Timestamp("2013-01-01", tz="UTC"), None)],
++)
++def test_agg_axis1_duplicate_index(data, dtype):
++    # GH 42380
++    expected = DataFrame([[data], [data]], index=["a", "a"], dtype=dtype)
++    result = expected.agg(lambda x: x, axis=1)
++    tm.assert_frame_equal(result, expected)
++
++
+ def test_apply_mixed_datetimelike():
+     # mixed datetimelike
+     # GH 7778
+diff --git a/pandas/tests/base/test_transpose.py b/pandas/tests/base/test_transpose.py
+index 5ba2783688..246f33d274 100644
+--- a/pandas/tests/base/test_transpose.py
++++ b/pandas/tests/base/test_transpose.py
+@@ -1,6 +1,10 @@
+ import numpy as np
+ import pytest
+ 
++from pandas import (
++    CategoricalDtype,
++    DataFrame,
++)
+ import pandas._testing as tm
+ 
+ 
+@@ -25,3 +29,28 @@ def test_numpy_transpose(index_or_series_obj):
+ 
+     with pytest.raises(ValueError, match=msg):
+         np.transpose(obj, axes=1)
++
++
++@pytest.mark.parametrize(
++    "data, transposed_data, index, columns, dtype",
++    [
++        ([[1], [2]], [[1, 2]], ["a", "a"], ["b"], int),
++        ([[1], [2]], [[1, 2]], ["a", "a"], ["b"], CategoricalDtype([1, 2])),
++        ([[1, 2]], [[1], [2]], ["b"], ["a", "a"], int),
++        ([[1, 2]], [[1], [2]], ["b"], ["a", "a"], CategoricalDtype([1, 2])),
++        ([[1, 2], [3, 4]], [[1, 3], [2, 4]], ["a", "a"], ["b", "b"], int),
++        (
++            [[1, 2], [3, 4]],
++            [[1, 3], [2, 4]],
++            ["a", "a"],
++            ["b", "b"],
++            CategoricalDtype([1, 2, 3, 4]),
++        ),
++    ],
++)
++def test_duplicate_labels(data, transposed_data, index, columns, dtype):
++    # GH 42380
++    df = DataFrame(data, index=index, columns=columns, dtype=dtype)
++    result = df.T
++    expected = DataFrame(transposed_data, index=columns, columns=index, dtype=dtype)
++    tm.assert_frame_equal(result, expected)

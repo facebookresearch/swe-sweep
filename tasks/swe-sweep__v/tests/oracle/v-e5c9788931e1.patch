@@ -1,0 +1,12 @@
+diff --git a/vlib/v/gen/c/if.v b/vlib/v/gen/c/if.v
+index 4305bdcc7..706037ab1 100644
+--- a/vlib/v/gen/c/if.v
++++ b/vlib/v/gen/c/if.v
+@@ -76,6 +76,7 @@ fn (mut g Gen) need_tmp_var_in_expr(expr ast.Expr) bool {
+ 					return true
+ 				}
+ 			}
++			return expr.expected_arg_types.any(it.has_flag(.option))
+ 		}
+ 		ast.CastExpr {
+ 			return g.need_tmp_var_in_expr(expr.expr)

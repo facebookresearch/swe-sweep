@@ -1,0 +1,13 @@
+diff --git a/modules/imgproc/src/color_yuv.cpp b/modules/imgproc/src/color_yuv.cpp
+index 6cb508f980..18b2096680 100644
+--- a/modules/imgproc/src/color_yuv.cpp
++++ b/modules/imgproc/src/color_yuv.cpp
+@@ -2696,6 +2696,8 @@ void cvtColorTwoPlaneYUV2BGRpair( InputArray _ysrc, InputArray _uvsrc, OutputArr
+ 
+     Mat ysrc = _ysrc.getMat(), uvsrc = _uvsrc.getMat();
+ 
++    CV_CheckEQ(ysrc.step, uvsrc.step, "");
++
+     _dst.create( ysz, CV_MAKETYPE(depth, dcn));
+     Mat dst = _dst.getMat();
+ 

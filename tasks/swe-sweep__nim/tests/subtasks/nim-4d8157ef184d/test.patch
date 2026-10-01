@@ -1,0 +1,8 @@
+diff --git a/tests/types/tisopr.nim b/tests/types/tisopr.nim
+--- a/tests/types/tisopr.nim
++++ b/tests/types/tisopr.nim
+@@ -137,0 +138,4 @@
++
++block: # issue #22850
++  doAssert not (type is int)
++  doAssert not (typedesc is int)

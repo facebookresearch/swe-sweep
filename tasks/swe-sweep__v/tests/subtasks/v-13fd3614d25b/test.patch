@@ -1,0 +1,30 @@
+diff --git a/vlib/v/slow_tests/inout/comptime_selector_of_interface.out b/vlib/v/slow_tests/inout/comptime_selector_of_interface.out
+new file mode 100644
+index 000000000..68b136819
+--- /dev/null
++++ b/vlib/v/slow_tests/inout/comptime_selector_of_interface.out
+@@ -0,0 +1,2 @@
++[vlib/v/slow_tests/inout/comptime_selector_of_interface.vv:12] p.count: 42
++[vlib/v/slow_tests/inout/comptime_selector_of_interface.vv:14] p.$(f.name): 42
+diff --git a/vlib/v/slow_tests/inout/comptime_selector_of_interface.vv b/vlib/v/slow_tests/inout/comptime_selector_of_interface.vv
+new file mode 100644
+index 000000000..21a46d352
+--- /dev/null
++++ b/vlib/v/slow_tests/inout/comptime_selector_of_interface.vv
+@@ -0,0 +1,16 @@
++struct People {
++	count int
++}
++
++interface IPeople {
++	count int
++}
++
++fn main() {
++	p := IPeople(People{42})
++
++	dump(p.count)
++	$for f in IPeople.fields {
++		dump(p.$(f.name))
++	}
++}

@@ -1,0 +1,23 @@
+diff --git a/vlib/v/tests/generics_struct_method_params_is_generics_struct_and_not_called_test.v b/vlib/v/tests/generics_struct_method_params_is_generics_struct_and_not_called_test.v
+new file mode 100644
+index 000000000..e87d1132b
+--- /dev/null
++++ b/vlib/v/tests/generics_struct_method_params_is_generics_struct_and_not_called_test.v
+@@ -0,0 +1,17 @@
++struct Param[T] {
++}
++
++struct Struct[T] {
++}
++
++pub fn (s Struct[T]) method[T](p Param[T]) {
++}
++
++fn test_main() {
++	_ = Struct[int]{}
++	assert true
++	// NOTE:
++	// Do not test call Struct.method() here,
++	// to test unwrap of generic struct parameters when the method is not called.
++	// test results only need to can compile.
++}

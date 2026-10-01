@@ -1,0 +1,72 @@
+diff --git a/src/full/Agda/TypeChecking/Serialise.hs b/src/full/Agda/TypeChecking/Serialise.hs
+index 3a68b95..7b4d469 100644
+--- a/src/full/Agda/TypeChecking/Serialise.hs
++++ b/src/full/Agda/TypeChecking/Serialise.hs
+@@ -72,7 +72,7 @@ import Agda.Utils.IORef
+ -- 32-bit machines). Word64 does not have these problems.
+ 
+ currentInterfaceVersion :: Word64
+-currentInterfaceVersion = 20210514 * 10 + 1
++currentInterfaceVersion = 20240102 * 10 + 0
+ 
+ -- | The result of 'encode' and 'encodeInterface'.
+ 
+diff --git a/src/full/Agda/TypeChecking/Serialise/Instances/Internal.hs b/src/full/Agda/TypeChecking/Serialise/Instances/Internal.hs
+index 91c00b4..bad6efe 100644
+--- a/src/full/Agda/TypeChecking/Serialise/Instances/Internal.hs
++++ b/src/full/Agda/TypeChecking/Serialise/Instances/Internal.hs
+@@ -16,6 +16,7 @@ import Agda.TypeChecking.CompiledClause
+ import Agda.TypeChecking.Positivity.Occurrence
+ import Agda.TypeChecking.Coverage.SplitTree
+ 
++import Agda.Utils.Functor
+ import Agda.Utils.Permutation
+ 
+ import Agda.Utils.Impossible
+@@ -210,8 +211,17 @@ instance EmbPrj CompKit where
+   value = valueN CompKit
+ 
+ instance EmbPrj Definition where
+-  icod_ (Defn a b c d e f g h i j k l m n o p q r s) = icodeN' Defn a b (P.killRange c) d e f g h i j k l m n o p q r s
+-
++  icod_ (Defn a b c d e f g h i j k l m n o p blocked r s) =
++    icodeN' Defn a b (P.killRange c) d e f g h i j k l m n o p (ossify blocked) r s
++    where
++      -- Andreas, 2024-01-02, issue #7044:
++      -- After serialization, a definition can never be unblocked,
++      -- since all metas are ossified.
++      -- Thus, we turn any blocker into 'neverUnblock'.
++      ossify :: Blocked_ -> Blocked_
++      ossify = \case
++        b@NotBlocked{} -> b
++        Blocked b () -> Blocked neverUnblock ()
+   value = valueN Defn
+ 
+ instance EmbPrj NotBlocked where
+@@ -229,11 +239,22 @@ instance EmbPrj NotBlocked where
+     valu [3]    = valuN MissingClauses
+     valu _      = malformed
+ 
+-instance EmbPrj Blocked_ where
+-  icod_ (NotBlocked a b) = icodeN' NotBlocked a b
+-  icod_ Blocked{} = __IMPOSSIBLE__
++-- Andreas, 2024-01-02, issue #7044.
++-- We only serialize 'neverUnblock';
++-- other than that, there should not be any blockers left at serialization time.
++blockedToMaybe :: Blocked_ -> Maybe NotBlocked
++blockedToMaybe = \case
++  NotBlocked a ()       -> Just a
++  Blocked a ()
++    | a == neverUnblock -> Nothing
++    | otherwise         -> __IMPOSSIBLE__
+ 
+-  value = valueN NotBlocked
++blockedFromMaybe :: Maybe NotBlocked -> Blocked_
++blockedFromMaybe = maybe (Blocked neverUnblock ()) (`NotBlocked` ())
++
++instance EmbPrj Blocked_ where
++  icod_ = icod_ . blockedToMaybe
++  value = blockedFromMaybe <.> value
+ 
+ instance EmbPrj NLPat where
+   icod_ (PVar a b)      = icodeN 0 PVar a b

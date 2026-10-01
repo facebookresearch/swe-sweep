@@ -1,0 +1,14 @@
+diff --git a/pkg/analyzer/lib/src/generated/error_verifier.dart b/pkg/analyzer/lib/src/generated/error_verifier.dart
+index f7bccc3..bd39778 100644
+--- a/pkg/analyzer/lib/src/generated/error_verifier.dart
++++ b/pkg/analyzer/lib/src/generated/error_verifier.dart
+@@ -4365,7 +4365,8 @@ class ErrorVerifier extends RecursiveAstVisitor<void>
+     if (_enclosingExecutable.inStaticMethod || _isInStaticVariableDeclaration) {
+       var element = identifier.staticElement;
+       if (element is TypeParameterElement &&
+-          element.enclosingElement is InterfaceElement) {
++          (element.enclosingElement is InterfaceElement ||
++              element.enclosingElement is ExtensionElement)) {
+         // The class's type parameters are not in scope for static methods.
+         // However all other type parameters are legal (e.g. the static method's
+         // type parameters, or a local function's type parameters).

@@ -1,0 +1,23 @@
+diff --git a/tests/lookups/tundeclaredmixin.nim b/tests/lookups/tundeclaredmixin.nim
+new file mode 100644
+index 000000000..74d16cdde
+--- /dev/null
++++ b/tests/lookups/tundeclaredmixin.nim
+@@ -0,0 +1,17 @@
++discard """
++  nimout: '''
++  mixin nothing, add
++'''
++"""
++
++# issue #22012
++
++import macros
++
++expandMacros:
++  proc foo[T](): int =
++    # `nothing` is undeclared, `add` is declared
++    mixin nothing, add
++    123
++
++  doAssert foo[int]() == 123

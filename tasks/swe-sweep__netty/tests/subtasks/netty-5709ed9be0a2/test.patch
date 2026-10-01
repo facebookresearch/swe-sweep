@@ -1,0 +1,18 @@
+diff --git a/codec-http/src/test/java/io/netty/handler/codec/http/cookie/ClientCookieDecoderTest.java b/codec-http/src/test/java/io/netty/handler/codec/http/cookie/ClientCookieDecoderTest.java
+index 60b85899c6..2cd69f98dc 100644
+--- a/codec-http/src/test/java/io/netty/handler/codec/http/cookie/ClientCookieDecoderTest.java
++++ b/codec-http/src/test/java/io/netty/handler/codec/http/cookie/ClientCookieDecoderTest.java
+@@ -203,6 +203,13 @@ public class ClientCookieDecoderTest {
+         assertNull(cookie);
+     }
+ 
++    @Test
++    public void testDecodingInvalidValuesWithCommaAtStart() {
++        assertNull(ClientCookieDecoder.STRICT.decode(","));
++        assertNull(ClientCookieDecoder.STRICT.decode(",a"));
++        assertNull(ClientCookieDecoder.STRICT.decode(",a=a"));
++    }
++
+     @Test
+     public void testDecodingLongValue() {
+         String longValue =

@@ -1,0 +1,13 @@
+diff --git a/pint/util.py b/pint/util.py
+index 3d00175..97db5d9 100644
+--- a/pint/util.py
++++ b/pint/util.py
+@@ -765,7 +765,7 @@ _subs_re_list = [
+         r"\b([0-9]+\.?[0-9]*)(?=[e|E][a-zA-Z]|[a-df-zA-DF-Z])",
+         r"\1*",
+     ),  # Handle numberLetter for multiplication
+-    (r"([\w\.\-])\s+(?=\w)", r"\1*"),  # Handle space for multiplication
++    (r"([\w\.\)])\s+(?=[\w\(])", r"\1*"),  # Handle space for multiplication
+ ]
+ 
+ #: Compiles the regex and replace {} by a regex that matches an identifier.

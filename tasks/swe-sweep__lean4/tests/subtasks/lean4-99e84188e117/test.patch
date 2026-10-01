@@ -1,0 +1,14 @@
+diff --git a/tests/lean/run/indUsingLet.lean b/tests/lean/run/indUsingLet.lean
+index 97056e9ba1..19a031c604 100644
+--- a/tests/lean/run/indUsingLet.lean
++++ b/tests/lean/run/indUsingLet.lean
+@@ -12,3 +12,9 @@ example (n : Nat) : n = n := by
+   case zero => rfl
+   case succ n _h _m _IH =>
+     rfl
++
++example (n : Nat) : n = n := by
++  induction n using some_induction with
++  | zero => rfl
++  | succ n _h _m _IH =>
++    rfl

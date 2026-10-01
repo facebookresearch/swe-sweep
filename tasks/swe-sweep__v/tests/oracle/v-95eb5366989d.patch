@@ -1,0 +1,17 @@
+diff --git a/vlib/orm/orm.v b/vlib/orm/orm.v
+index 6e3dc10ae..791d701f2 100644
+--- a/vlib/orm/orm.v
++++ b/vlib/orm/orm.v
+@@ -321,7 +321,11 @@ pub fn orm_stmt_gen(sql_dialect SQLDialect, table string, q string, kind StmtKin
+ 				str += ')'
+ 			}
+ 			if i < where.fields.len - 1 {
+-				str += ' AND '
++				if where.is_and[i] {
++					str += ' AND '
++				} else {
++					str += ' OR '
++				}
+ 			}
+ 		}
+ 	}

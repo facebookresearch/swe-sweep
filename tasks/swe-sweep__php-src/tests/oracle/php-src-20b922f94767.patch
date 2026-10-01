@@ -1,0 +1,21 @@
+diff --git a/ext/standard/versioning.c b/ext/standard/versioning.c
+index 6995569fbf8..0ec061d0d86 100644
+--- a/ext/standard/versioning.c
++++ b/ext/standard/versioning.c
+@@ -68,7 +68,15 @@ php_canonicalize_version(const char *version)
+ 		}
+ 		lp = *p++;
+ 	}
+-	*q++ = '\0';
++
++	/* Check if the last component is empty (i.e. the last character is a dot)
++	 * and remove it if it is. */
++	if (*(q - 1) == '.') {
++		*(q - 1) = '\0';
++	} else {
++		*q = '\0';
++	}
++
+ 	return buf;
+ }
+ 

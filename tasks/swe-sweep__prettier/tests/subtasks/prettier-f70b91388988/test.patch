@@ -1,0 +1,42 @@
+diff --git a/tests/integration/__tests__/__snapshots__/arg-parsing.js.snap b/tests/integration/__tests__/__snapshots__/arg-parsing.js.snap
+index 068855c..1eee696 100644
+--- a/tests/integration/__tests__/__snapshots__/arg-parsing.js.snap
++++ b/tests/integration/__tests__/__snapshots__/arg-parsing.js.snap
+@@ -31,10 +31,15 @@ exports[`number file/dir (stdout) 3`] = `"3"`;
+ exports[`number file/dir (stdout) 4`] = `"4.44"`;
+ 
+ exports[`number file/dir (stdout) 5`] = `
++"1e3"
++`;
++
++exports[`number file/dir (stdout) 6`] = `
+ "1/file-in-dir-named-1.js
+ 2.2/file-in-dir-named-2.2.js
+ 3
+-4.44"
++4.44
++1e3"
+ `;
+ 
+ exports[`options with \`cliName\` should not allow to pass directly (stderr) 1`] = `
+diff --git a/tests/integration/__tests__/arg-parsing.js b/tests/integration/__tests__/arg-parsing.js
+index fa5a0c7..e561024 100644
+--- a/tests/integration/__tests__/arg-parsing.js
++++ b/tests/integration/__tests__/arg-parsing.js
+@@ -61,7 +61,7 @@ describe("allow overriding flags", () => {
+ });
+ 
+ describe("number file/dir", () => {
+-  const patterns = ["1", "2.2", "3", "4.44"];
++  const patterns = ["1", "2.2", "3", "4.44", "1e3"];
+   for (const pattern of patterns) {
+     runCli("cli/arg-parsing/number", [
+       "--parser=babel",
+diff --git a/tests/integration/cli/arg-parsing/number/1e3 b/tests/integration/cli/arg-parsing/number/1e3
+new file mode 100644
+index 0000000..dba3dc0
+--- /dev/null
++++ b/tests/integration/cli/arg-parsing/number/1e3
+@@ -0,0 +1,2 @@
++hello(
++     'prettier')

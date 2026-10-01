@@ -1,0 +1,27 @@
+diff --git a/src/language-js/comments/handle-comments.js b/src/language-js/comments/handle-comments.js
+index 0000000..0000000 100644
+--- a/src/language-js/comments/handle-comments.js
++++ b/src/language-js/comments/handle-comments.js
+@@ -84,6 +84,7 @@ function handleEndOfLineComment(context) {
+     handleClassComments,
+     handleLabeledStatementComments,
+     handleCallExpressionComments,
++    handleExportNamedDeclarationComments,
+     handlePropertyComments,
+     handleOnlyComments,
+     handleVariableDeclaratorComments,
+@@ -750,6 +751,14 @@ function handleUnionTypeComments({
+   return false;
+ }
+ 
++function handleExportNamedDeclarationComments({ comment, enclosingNode }) {
++  if (enclosingNode?.type === "ExportNamedDeclaration") {
++    addLeadingComment(enclosingNode, comment);
++    return true;
++  }
++  return false;
++}
++
+ function handlePropertyComments({ comment, enclosingNode }) {
+   if (isObjectProperty(enclosingNode)) {
+     addLeadingComment(enclosingNode, comment);

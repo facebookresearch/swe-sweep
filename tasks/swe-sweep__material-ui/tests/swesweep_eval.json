@@ -1,0 +1,413 @@
+{
+  "build_jobs": 4,
+  "container_repo": "/material-ui",
+  "evaluation": {
+    "suite": {
+      "suite": {
+        "all_files": [
+          "packages/**/*.test.{js,ts,tsx}",
+          "docs/**/*.test.{js,ts,tsx}",
+          "scripts/**/*.test.{js,ts,tsx}",
+          "test/utils/**/*.test.{js,ts,tsx}"
+        ],
+        "type": "mocha"
+      },
+      "type": "repro-eval"
+    },
+    "visible_timeout": 14400
+  },
+  "upstream_image": "pandora-maxbug-material-ui:v5.6.1",
+  "n_base_passing": 4942,
+  "n_base_test_ignore": 611,
+  "oracle_digest": "38821d72f0a06b87ba7cbe0e6e3b6ebc867e4bb8b286d29ad5cdb716d2a6029e",
+  "oracle_pristine_paths": [],
+  "upstream_commit": "9f7399e15e6172900e0591deb5a57a45769d8205",
+  "reproduction": {
+    "needs_build": false,
+    "suite": "mocha",
+    "test_timeout": 1200
+  },
+  "schema": 2,
+  "subtasks": [
+    {
+      "f2p": [
+        "<OutlinedInput /> should have ownerState in the theme style overrides"
+      ],
+      "id": "material-ui-00716988a319",
+      "target_files": [
+        "packages/mui-material/src/OutlinedInput/OutlinedInput.js"
+      ]
+    },
+    {
+      "f2p": [
+        "useAutocomplete should allow tuples or arrays as value when multiple=false"
+      ],
+      "id": "material-ui-009400b9a8ca",
+      "target_files": [
+        "packages/mui-base/src/AutocompleteUnstyled/useAutocomplete.js"
+      ]
+    },
+    {
+      "f2p": [
+        "<Popover /> should not throw if ownerState is used in slot's styleOverrides"
+      ],
+      "id": "material-ui-03916d4e624e",
+      "target_files": [
+        "packages/mui-material/src/Popover/Popover.js"
+      ]
+    },
+    {
+      "f2p": [
+        "<Autocomplete /> prop: getOptionDisabled should skip disabled options at the end of the list when navigating via keyboard",
+        "<Autocomplete /> prop: getOptionDisabled should skip the first and last disabled options in the list when navigating via keyboard"
+      ],
+      "id": "material-ui-05a5195a832c",
+      "target_files": [
+        "packages/mui-base/src/useAutocomplete/useAutocomplete.js"
+      ]
+    },
+    {
+      "f2p": [
+        "<Dialog /> prop: maxWidth should apply the correct max-width styles when maxWidth={false}"
+      ],
+      "id": "material-ui-0a32a1f9a44a",
+      "target_files": [
+        "packages/mui-material/src/Dialog/Dialog.js"
+      ]
+    },
+    {
+      "f2p": [
+        "<Rating /> should handle mouse hover correctly for icons with spacing"
+      ],
+      "id": "material-ui-11d22f3c7a69",
+      "target_files": [
+        "packages/mui-material/src/Rating/Rating.js"
+      ]
+    },
+    {
+      "f2p": [
+        "<Fab /> should pass disabled class to ButtonBase"
+      ],
+      "id": "material-ui-188acbdc0959",
+      "target_files": [
+        "packages/mui-material/src/Fab/Fab.js"
+      ]
+    },
+    {
+      "f2p": [
+        "<ToggleButtonGroup /> can pass fullWidth to Button"
+      ],
+      "id": "material-ui-33adddfe59ca",
+      "target_files": [
+        "packages/mui-material/src/ToggleButton/toggleButtonClasses.ts",
+        "packages/mui-material/src/ToggleButtonGroup/toggleButtonGroupClasses.ts"
+      ]
+    },
+    {
+      "f2p": [
+        "utils/colorManipulator getLuminance returns a valid luminance for hsla black",
+        "utils/colorManipulator getLuminance returns a valid luminance for hsla white",
+        "utils/colorManipulator getLuminance returns a valid luminance from an hsla color"
+      ],
+      "id": "material-ui-3679d58f3adc",
+      "target_files": [
+        "packages/mui-system/src/colorManipulator.js"
+      ]
+    },
+    {
+      "f2p": [
+        "<Avatar /> should not throw error when ownerState is used in styleOverrides"
+      ],
+      "id": "material-ui-369e6d47be94",
+      "target_files": [
+        "packages/mui-material/src/Avatar/Avatar.js"
+      ]
+    },
+    {
+      "f2p": [
+        "MenuUnstyled after initialization highlights the first item when the menu is opened"
+      ],
+      "id": "material-ui-3b09c75b709f",
+      "target_files": [
+        "packages/mui-base/src/ListboxUnstyled/useListbox.ts"
+      ]
+    },
+    {
+      "f2p": [
+        "<Badge /> applies customized classes"
+      ],
+      "id": "material-ui-3bd886160cb2",
+      "target_files": [
+        "packages/mui-base/src/BadgeUnstyled/BadgeUnstyled.js",
+        "packages/mui-base/src/BadgeUnstyled/badgeUnstyledClasses.ts",
+        "packages/mui-base/src/BadgeUnstyled/index.js",
+        "packages/mui-material/src/Badge/Badge.js"
+      ]
+    },
+    {
+      "f2p": [
+        "<Tabs /> scroll button behavior should horizontally scroll by width of partially visible item"
+      ],
+      "id": "material-ui-46eb7178329d",
+      "target_files": [
+        "packages/mui-material/src/Tabs/Tabs.js"
+      ]
+    },
+    {
+      "f2p": [
+        "<Switch /> should not show warnings when custom `type` is provided"
+      ],
+      "id": "material-ui-471d8b173850",
+      "target_files": [
+        "packages/mui-material/src/internal/SwitchBase.js"
+      ]
+    },
+    {
+      "f2p": [
+        "<TableCell /> should not set scope attribute when TableCell is rendered as <td> within table head"
+      ],
+      "id": "material-ui-559982b7ec36",
+      "target_files": [
+        "packages/mui-material/src/TableCell/TableCell.js"
+      ]
+    },
+    {
+      "f2p": [
+        "<TouchRipple /> mobile should handle empty event.touches"
+      ],
+      "id": "material-ui-562c3c0020f6",
+      "target_files": [
+        "packages/mui-material/src/ButtonBase/TouchRipple.js"
+      ]
+    },
+    {
+      "f2p": [
+        "<Button /> should render a contained error button",
+        "<Button /> should render a contained info button",
+        "<Button /> should render a contained success button",
+        "<Button /> should render a contained warning button",
+        "<Button /> should render a error outlined button",
+        "<Button /> should render a info outlined button",
+        "<Button /> should render a success outlined button",
+        "<Button /> should render a text error button",
+        "<Button /> should render a text info button",
+        "<Button /> should render a text success button",
+        "<Button /> should render a text warning button",
+        "<Button /> should render a warning outlined button"
+      ],
+      "id": "material-ui-683b46c057b0",
+      "target_files": [
+        "packages/mui-material/src/Button/buttonClasses.ts"
+      ]
+    },
+    {
+      "f2p": [
+        "<FormControl /> input should be filled when a value is set through inputProps"
+      ],
+      "id": "material-ui-713decae1155",
+      "target_files": [
+        "packages/mui-material/src/FormControl/FormControl.js"
+      ]
+    },
+    {
+      "f2p": [
+        "<SliderUnstyled /> ARIA should have the correct aria attributes"
+      ],
+      "id": "material-ui-71d262e8826a",
+      "target_files": [
+        "packages/mui-base/src/SliderUnstyled/SliderUnstyled.js"
+      ]
+    },
+    {
+      "f2p": [
+        "<Slider /> range custom marks with restricted float values should support keyboard"
+      ],
+      "id": "material-ui-7984cb33803c",
+      "target_files": [
+        "packages/mui-base/src/useSlider/useSlider.ts",
+        "packages/mui-base/src/useSlider/useSlider.types.ts"
+      ]
+    },
+    {
+      "f2p": [
+        "<InputUnstyled /> should render textarea without any console errors when multiline=true"
+      ],
+      "id": "material-ui-7abc9eff47bf",
+      "target_files": [
+        "packages/mui-base/src/InputUnstyled/InputUnstyled.tsx"
+      ]
+    },
+    {
+      "f2p": [
+        "<Alert /> prop: action using ownerState in styleOverrides should not throw"
+      ],
+      "id": "material-ui-7f4821e25477",
+      "target_files": [
+        "packages/mui-material/src/Alert/Alert.js"
+      ]
+    },
+    {
+      "f2p": [
+        "<Stack /> prop: spacing should generate correct responsive styles if custom responsive spacing values are provided",
+        "<Stack /> prop: spacing should generate correct styles if custom breakpoints are provided in theme",
+        "breakpoints function: resolveBreakpointValues custom breakpoints given custom base, resolve breakpoint values for prop of string type"
+      ],
+      "id": "material-ui-8cd7e4eb29c9",
+      "target_files": [
+        "packages/mui-material/src/Stack/Stack.js",
+        "packages/mui-system/src/breakpoints.js"
+      ]
+    },
+    {
+      "f2p": [
+        "<SwipeableDrawer /> swipe to open should be able to attach paper ref passed through PaperProps"
+      ],
+      "id": "material-ui-9635ac8be381",
+      "target_files": [
+        "packages/mui-material/src/SwipeableDrawer/SwipeableDrawer.js"
+      ]
+    },
+    {
+      "f2p": [
+        "deepmerge should merge objects across realms"
+      ],
+      "id": "material-ui-99e52068ad14",
+      "target_files": [
+        "packages/mui-utils/src/deepmerge.ts"
+      ]
+    },
+    {
+      "f2p": [
+        "<TablePagination /> should not have \"variant\" attribute on TablePaginationSelect"
+      ],
+      "id": "material-ui-9d9b98eb2918",
+      "target_files": [
+        "packages/mui-material/src/Select/Select.js",
+        "packages/mui-material/src/TablePagination/TablePagination.js"
+      ]
+    },
+    {
+      "f2p": [
+        "<Slider /> should correctly display mark labels when ranges slider have the same start and end"
+      ],
+      "id": "material-ui-aa557c32b8ac",
+      "target_files": [
+        "packages/mui-base/src/SliderUnstyled/SliderUnstyled.js"
+      ]
+    },
+    {
+      "f2p": [
+        "<Select /> prop: autoWidth should take the trigger parent element width into account by default"
+      ],
+      "id": "material-ui-acba0156cd07",
+      "target_files": [
+        "packages/mui-material/src/Select/SelectInput.js"
+      ]
+    },
+    {
+      "f2p": [
+        "<Rating /> should use `name` as prefix of input element ids"
+      ],
+      "id": "material-ui-aef7b4fc4a68",
+      "target_files": [
+        "packages/mui-material/src/Rating/Rating.d.ts",
+        "packages/mui-material/src/Rating/Rating.js"
+      ]
+    },
+    {
+      "f2p": [
+        "useAutocomplete getInputProps should disable input element"
+      ],
+      "id": "material-ui-b0524c5aabe2",
+      "target_files": [
+        "packages/mui-base/src/AutocompleteUnstyled/useAutocomplete.js"
+      ]
+    },
+    {
+      "f2p": [
+        "responsiveFontSizes should handle variants that have been reset to undefined"
+      ],
+      "id": "material-ui-b459ca99032c",
+      "target_files": [
+        "packages/mui-material/src/styles/responsiveFontSizes.js"
+      ]
+    },
+    {
+      "f2p": [
+        "<Menu /> prop: PopoverClasses should be able to change the Popover root element style when Menu classes prop is also provided"
+      ],
+      "id": "material-ui-c1d8e398548a",
+      "target_files": [
+        "packages/mui-material/src/Menu/Menu.js"
+      ]
+    },
+    {
+      "f2p": [
+        "<Autocomplete /> prop: disabled should not crash when autoSelect & freeSolo are set, text is focused & disabled gets truthy"
+      ],
+      "id": "material-ui-c6ee3a93b790",
+      "target_files": [
+        "packages/mui-base/src/AutocompleteUnstyled/useAutocomplete.js"
+      ]
+    },
+    {
+      "f2p": [
+        "<Select /> prop: multiple should have aria-multiselectable=true when multiple is true"
+      ],
+      "id": "material-ui-cc238908637c",
+      "target_files": [
+        "packages/mui-material/src/Select/SelectInput.js"
+      ]
+    },
+    {
+      "f2p": [
+        "<Stack /> prop: spacing should list responsive styles in correct order"
+      ],
+      "id": "material-ui-d1b108544b05",
+      "target_files": [
+        "packages/mui-material/src/Stack/Stack.js"
+      ]
+    },
+    {
+      "f2p": [
+        "<DialogTitle /> prop: id should apply the id attribute explicitly provided to the DialogTitle and not take from Dialog",
+        "<DialogTitle /> prop: id should apply the id attribute provided to the Dialog title"
+      ],
+      "id": "material-ui-d36810a91010",
+      "target_files": [
+        "packages/mui-material/src/DialogTitle/DialogTitle.js"
+      ]
+    },
+    {
+      "f2p": [
+        "<MobileStepper /> should set value correctly when steps is set to 1",
+        "<MobileStepper /> should set value correctly when steps is updated between 1 & 2"
+      ],
+      "id": "material-ui-de73d59282ff",
+      "target_files": [
+        "packages/mui-material/src/MobileStepper/MobileStepper.js"
+      ]
+    },
+    {
+      "f2p": [
+        "__process_level_failure__"
+      ],
+      "id": "material-ui-e0fc13308662",
+      "target_files": [
+        "packages/mui-material/src/Rating/Rating.d.ts",
+        "packages/mui-material/src/Rating/Rating.js"
+      ]
+    },
+    {
+      "f2p": [
+        "useButton state: active event handlers handles onFocusVisible and does not include it in the root props"
+      ],
+      "id": "material-ui-e76773a54a71",
+      "target_files": [
+        "packages/mui-base/src/useButton/useButton.ts"
+      ]
+    }
+  ],
+  "task": "material-ui",
+  "version": "v5.6.1"
+}

@@ -1,0 +1,13 @@
+diff --git a/codec-http/src/main/java/io/netty/handler/codec/http/HttpObjectDecoder.java b/codec-http/src/main/java/io/netty/handler/codec/http/HttpObjectDecoder.java
+index 583ff63271..a825a8e345 100644
+--- a/codec-http/src/main/java/io/netty/handler/codec/http/HttpObjectDecoder.java
++++ b/codec-http/src/main/java/io/netty/handler/codec/http/HttpObjectDecoder.java
+@@ -735,7 +735,7 @@ public abstract class HttpObjectDecoder extends ByteToMessageDecoder {
+         int valueStart;
+         int valueEnd;
+ 
+-        nameStart = findNonWhitespace(sb, 0);
++        nameStart = 0;
+         for (nameEnd = nameStart; nameEnd < length; nameEnd ++) {
+             char ch = sb.charAt(nameEnd);
+             if (ch == ':' || Character.isWhitespace(ch)) {

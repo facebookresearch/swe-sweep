@@ -1,0 +1,46 @@
+diff --git a/src/Compilers/CSharp/Portable/Binder/Binder_Expressions.cs b/src/Compilers/CSharp/Portable/Binder/Binder_Expressions.cs
+index 73a2af420d5..7634bda3b55 100644
+--- a/src/Compilers/CSharp/Portable/Binder/Binder_Expressions.cs
++++ b/src/Compilers/CSharp/Portable/Binder/Binder_Expressions.cs
+@@ -7634,6 +7634,12 @@ namespace Microsoft.CodeAnalysis.CSharp
+                 }
+             }
+ 
++            if (!hasErrors && typeArgumentsSyntax.Any(SyntaxKind.OmittedTypeArgument))
++            {
++                Error(diagnostics, ErrorCode.ERR_OmittedTypeArgument, node);
++                hasErrors = true;
++            }
++
+             return new BoundDynamicMemberAccess(
+                 syntax: node,
+                 receiver: boundLeft,
+diff --git a/src/Compilers/CSharp/Portable/Binder/Binder_Symbols.cs b/src/Compilers/CSharp/Portable/Binder/Binder_Symbols.cs
+index b206fa02db2..f001564545c 100644
+--- a/src/Compilers/CSharp/Portable/Binder/Binder_Symbols.cs
++++ b/src/Compilers/CSharp/Portable/Binder/Binder_Symbols.cs
+@@ -8,6 +8,7 @@ using System.Collections.Immutable;
+ using System.Diagnostics;
+ using System.Linq;
+ using System.Runtime.CompilerServices;
++using System.Xml.Linq;
+ using Microsoft.CodeAnalysis.CSharp.Symbols;
+ using Microsoft.CodeAnalysis.CSharp.Syntax;
+ using Microsoft.CodeAnalysis.PooledObjects;
+@@ -1342,6 +1343,16 @@ namespace Microsoft.CodeAnalysis.CSharp
+             return null;
+         }
+ 
++        /// <summary>
++        /// Binds the <see cref="TypeSyntax"/> nodes in <paramref name="typeArguments"/> from some <see
++        /// cref="GenericNameSyntax.TypeArgumentList"/> and returns the actual types referenced.  In the case of a <see
++        /// cref="OmittedTypeArgumentSyntax"/> a <see cref="UnboundArgumentErrorTypeSymbol.Instance"/> will be returned
++        /// as the type.  No diagnostics are issued in that case.  Callers must check for omitted type arguments and
++        /// issue a diagnostic if in a context where they are not allowed.  For example, an omitted type argument is
++        /// allowed in <c><![CDATA[typeof(List<>)]]></c> or <c><![CDATA[nameof(List<>)]]></c> (the latter in C# 14 and
++        /// above).  However they are not allowed in a regular type reference, or invocation (like
++        /// <c><![CDATA[x.M<>()]]></c>)
++        /// </summary>
+         private ImmutableArray<TypeWithAnnotations> BindTypeArguments(SeparatedSyntaxList<TypeSyntax> typeArguments, BindingDiagnosticBag diagnostics, ConsList<TypeSymbol> basesBeingResolved = null)
+         {
+             Debug.Assert(typeArguments.Count > 0);

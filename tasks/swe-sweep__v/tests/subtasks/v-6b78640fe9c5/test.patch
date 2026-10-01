@@ -1,0 +1,26 @@
+diff --git a/vlib/v/tests/sumtypes/sumtype_generic_checking_test.v b/vlib/v/tests/sumtypes/sumtype_generic_checking_test.v
+new file mode 100644
+index 000000000..66e1f6734
+--- /dev/null
++++ b/vlib/v/tests/sumtypes/sumtype_generic_checking_test.v
+@@ -0,0 +1,20 @@
++type Sumtype = string | int
++
++fn generic_fn[T]() ?T {
++	a := Sumtype('123')
++	if a is T {
++		return a
++	}
++
++	b := Sumtype(123)
++	if b is T {
++		return b
++	}
++
++	return none
++}
++
++fn test_main() {
++	assert generic_fn[string]().str() == "Option('123')"
++	assert generic_fn[int]().str() == 'Option(123)'
++}

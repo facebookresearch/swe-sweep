@@ -1,0 +1,12 @@
+diff --git a/sqlglot/dialects/clickhouse.py b/sqlglot/dialects/clickhouse.py
+index b52f69c9ae..3e9b0c382e 100644
+--- a/sqlglot/dialects/clickhouse.py
++++ b/sqlglot/dialects/clickhouse.py
+@@ -471,6 +471,7 @@ class ClickHouse(Dialect):
+             "quantiles",
+             "quantileExact",
+             "quantilesExact",
++            "quantilesExactExclusive",
+             "quantileExactLow",
+             "quantilesExactLow",
+             "quantileExactHigh",

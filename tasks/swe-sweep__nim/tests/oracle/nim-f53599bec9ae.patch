@@ -1,0 +1,17 @@
+diff --git a/compiler/sigmatch.nim b/compiler/sigmatch.nim
+index 6bc6eef..aacaa12 100644
+--- a/compiler/sigmatch.nim
++++ b/compiler/sigmatch.nim
+@@ -1875,6 +1875,12 @@ proc implicitConv(kind: TNodeKind, f: PType, arg: PNode, m: TCandidate,
+       result.typ = errorType(c)
+   else:
+     result.typ = f.skipTypes({tySink})
++  # keep varness
++  if arg.typ != nil and arg.typ.kind == tyVar:
++    result.typ = toVar(result.typ, tyVar, c.idgen)
++  else:
++    result.typ = result.typ.skipTypes({tyVar})
++
+   if result.typ == nil: internalError(c.graph.config, arg.info, "implicitConv")
+   result.add c.graph.emptyNode
+   result.add arg

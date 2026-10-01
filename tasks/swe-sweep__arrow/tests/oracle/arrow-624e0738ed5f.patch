@@ -1,0 +1,14 @@
+diff --git a/cpp/src/arrow/compute/exec/expression.cc b/cpp/src/arrow/compute/exec/expression.cc
+index 3c2ec10040..2563674a59 100644
+--- a/cpp/src/arrow/compute/exec/expression.cc
++++ b/cpp/src/arrow/compute/exec/expression.cc
+@@ -509,7 +509,8 @@ Result<ExecBatch> MakeExecBatch(const Schema& full_schema, const Datum& partial,
+   }
+ 
+   // wasteful but useful for testing:
+-  if (partial.type()->id() == Type::STRUCT) {
++  const auto& partial_type = partial.type();
++  if (partial_type && partial_type->id() == Type::STRUCT) {
+     if (partial.is_array()) {
+       ARROW_ASSIGN_OR_RAISE(auto partial_batch,
+                             RecordBatch::FromStructArray(partial.make_array()));

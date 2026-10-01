@@ -1,0 +1,47 @@
+diff --git a/activesupport/test/core_ext/module_test.rb b/activesupport/test/core_ext/module_test.rb
+index c5ee7eac25a..93bfa34dccd 100644
+--- a/activesupport/test/core_ext/module_test.rb
++++ b/activesupport/test/core_ext/module_test.rb
+@@ -92,12 +92,20 @@ end
+ DecoratedTester = Struct.new(:client) do
+   include ExtraMissing
+ 
++  def call_name
++    name
++  end
++
+   delegate_missing_to :client
+ end
+ 
+ class DecoratedMissingAllowNil
+   delegate_missing_to :case, allow_nil: true
+ 
++  def call_name
++    name
++  end
++
+   attr_reader :case
+ 
+   def initialize(kase)
+@@ -413,6 +421,10 @@ class ModuleTest < ActiveSupport::TestCase
+     assert_equal "David", DecoratedTester.new(@david).name
+   end
+ 
++  def test_delegate_missing_to_calling_on_self
++    assert_equal "David", DecoratedTester.new(@david).call_name
++  end
++
+   def test_delegate_missing_to_with_reserved_methods
+     assert_equal "David", DecoratedReserved.new(@david).name
+   end
+@@ -449,6 +461,10 @@ class ModuleTest < ActiveSupport::TestCase
+     assert_nil DecoratedMissingAllowNil.new(nil).name
+   end
+ 
++  def test_delegate_missing_with_allow_nil_when_called_on_self
++    assert_nil DecoratedMissingAllowNil.new(nil).call_name
++  end
++
+   def test_delegate_missing_to_affects_respond_to
+     assert_respond_to DecoratedTester.new(@david), :name
+     assert_not_respond_to DecoratedTester.new(@david), :private_name

@@ -1,0 +1,200 @@
+diff --git a/Zend/tests/gh14009_001.phpt b/Zend/tests/gh14009_001.phpt
+new file mode 100644
+index 00000000000..81325e814c2
+--- /dev/null
++++ b/Zend/tests/gh14009_001.phpt
+@@ -0,0 +1,41 @@
++--TEST--
++GH-14009: Traits inherit prototype
++--FILE--
++<?php
++
++class P {
++    protected function common() {
++        throw new Exception('Unreachable');
++    }
++}
++
++class A extends P {
++    public function test(P $sibling) {
++        $sibling->common();
++    }
++}
++
++class B extends P {
++    protected function common() {
++        echo __METHOD__, "\n";
++    }
++}
++
++trait T {
++    protected function common() {
++        echo __METHOD__, "\n";
++    }
++}
++
++class C extends P {
++    use T;
++}
++
++$a = new A();
++$a->test(new B());
++$a->test(new C());
++
++?>
++--EXPECT--
++B::common
++T::common
+diff --git a/Zend/tests/gh14009_002.phpt b/Zend/tests/gh14009_002.phpt
+new file mode 100644
+index 00000000000..86047e02020
+--- /dev/null
++++ b/Zend/tests/gh14009_002.phpt
+@@ -0,0 +1,22 @@
++--TEST--
++GH-14009: Traits inherit prototype
++--FILE--
++<?php
++
++class P {
++    protected function common() {}
++}
++
++class A extends P {}
++
++trait T {
++    private abstract function common(int $param);
++}
++
++class B extends P {
++    use T;
++}
++
++?>
++--EXPECTF--
++Fatal error: Declaration of P::common() must be compatible with T::common(int $param) in %s on line %d
+diff --git a/Zend/tests/gh14009_003.phpt b/Zend/tests/gh14009_003.phpt
+new file mode 100644
+index 00000000000..71ee5baa360
+--- /dev/null
++++ b/Zend/tests/gh14009_003.phpt
+@@ -0,0 +1,19 @@
++--TEST--
++GH-14009: Traits inherit prototype
++--FILE--
++<?php
++
++class A {
++    private function test() {}
++}
++
++trait T {
++    private function test() {}
++}
++
++class B extends A {
++    use T;
++}
++
++?>
++--EXPECT--
+diff --git a/Zend/tests/gh14009_004.phpt b/Zend/tests/gh14009_004.phpt
+new file mode 100644
+index 00000000000..01bad46fedc
+--- /dev/null
++++ b/Zend/tests/gh14009_004.phpt
+@@ -0,0 +1,37 @@
++--TEST--
++GH-14009: Traits inherit prototype
++--FILE--
++<?php
++
++class A {
++    protected function test() {
++        throw new Exception('Unreachable');
++    }
++}
++
++class B extends A {
++    // Prototype is A::test().
++    protected function test() {
++        echo __METHOD__, "\n";
++    }
++}
++
++trait T {
++    protected abstract function test();
++}
++
++class C extends B {
++    use T;
++}
++
++class D extends A {
++    public static function callTest($sibling) {
++        $sibling->test();
++    }
++}
++
++D::callTest(new C());
++
++?>
++--EXPECT--
++B::test
+diff --git a/Zend/tests/interface_constructor_prototype_001.phpt b/Zend/tests/interface_constructor_prototype_001.phpt
+new file mode 100644
+index 00000000000..67341367ac5
+--- /dev/null
++++ b/Zend/tests/interface_constructor_prototype_001.phpt
+@@ -0,0 +1,19 @@
++--TEST--
++Interfaces don't set prototypes to their parent method
++--FILE--
++<?php
++
++interface A {
++    public function __construct(int $param);
++}
++interface B extends A {
++    public function __construct(int|float $param);
++}
++class Test implements B {
++    public function __construct(int $param) {}
++}
++new Test(42);
++
++?>
++--EXPECTF--
++Fatal error: Declaration of Test::__construct(int $param) must be compatible with B::__construct(int|float $param) in %s on line %d
+diff --git a/Zend/tests/interface_constructor_prototype_002.phpt b/Zend/tests/interface_constructor_prototype_002.phpt
+new file mode 100644
+index 00000000000..76398d2d215
+--- /dev/null
++++ b/Zend/tests/interface_constructor_prototype_002.phpt
+@@ -0,0 +1,26 @@
++--TEST--
++Interfaces don't set prototypes to their parent method
++--XFAIL--
++X::__constructor()'s prototype is set to B::__construct(). Y::__construct() then
++uses prototype to verify LSP, but misses A::__construct() which has a stricter
++signature.
++--FILE--
++<?php
++
++interface A {
++    public function __construct(int|float $param);
++}
++interface B {
++    public function __construct(int $param);
++}
++class X implements A, B {
++    public function __construct(int|float $param) {}
++}
++class Y extends X {
++    public function __construct(int $param) {}
++}
++new Y(42);
++
++?>
++--EXPECTF--
++Fatal error: Declaration of Y::__construct(int $param) must be compatible with A::__construct(int|float $param) in %s on line %d

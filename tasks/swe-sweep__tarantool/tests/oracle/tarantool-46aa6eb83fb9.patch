@@ -1,0 +1,493 @@
+diff --git a/src/box/sql/alter.c b/src/box/sql/alter.c
+index 54a8d5b80f..83aff45d4d 100644
+--- a/src/box/sql/alter.c
++++ b/src/box/sql/alter.c
+@@ -129,8 +129,10 @@ sql_alter_ck_constraint_enable(struct Parse *parse)
+ 		      tuple_reg + field_count - 1);
+ 	sqlVdbeAddOp3(v, OP_MakeRecord, tuple_reg, field_count,
+ 		      tuple_reg + field_count);
+-	sqlVdbeAddOp4(v, OP_IdxReplace, tuple_reg + field_count, 0, 0,
+-		      (char *)ck_space, P4_SPACEPTR);
++
++	int reg = ++parse->nMem;
++	sqlVdbeAddOp2(v, OP_OpenSpace, reg, BOX_CK_CONSTRAINT_ID);
++	sqlVdbeAddOp2(v, OP_IdxReplace, tuple_reg + field_count, reg);
+ exit_alter_ck_constraint:
+ 	sqlDbFree(db, constraint_name);
+ 	sqlSrcListDelete(db, src_tab);
+diff --git a/src/box/sql/build.c b/src/box/sql/build.c
+index 4b0f9b15c6..11aad6417d 100644
+--- a/src/box/sql/build.c
++++ b/src/box/sql/build.c
+@@ -461,8 +461,9 @@ sql_create_column_end(struct Parse *parse)
+ 		      SQL_SUBTYPE_MSGPACK, raw, P4_DYNAMIC);
+ 	sqlVdbeAddOp3(v, OP_MakeRecord, tuple_reg, box_space_field_MAX,
+ 		      tuple_reg + box_space_field_MAX);
+-	sqlVdbeAddOp4(v, OP_IdxReplace, tuple_reg + box_space_field_MAX, 0, 0,
+-		      (char *) s_space, P4_SPACEPTR);
++	int reg = ++parse->nMem;
++	sqlVdbeAddOp2(v, OP_OpenSpace, reg, BOX_SPACE_ID);
++	sqlVdbeAddOp2(v, OP_IdxReplace, tuple_reg + box_space_field_MAX, reg);
+ 	sqlVdbeCountChanges(v);
+ 	sqlVdbeChangeP5(v, OPFLAG_NCHANGE);
+ 	sqlReleaseTempRange(parse, tuple_reg, box_space_field_MAX + 1);
+@@ -879,8 +880,10 @@ vdbe_emit_open_cursor(struct Parse *parse_context, int cursor, int index_id,
+ 		parse_context->is_aborted = true;
+ 		return -1;
+ 	}
+-	return sqlVdbeAddOp4(parse_context->pVdbe, OP_IteratorOpen, cursor,
+-				 index_id, 0, (void *) space, P4_SPACEPTR);
++	struct Vdbe *vdbe = parse_context->pVdbe;
++	int reg = ++parse_context->nMem;
++	sqlVdbeAddOp2(vdbe, OP_OpenSpace, reg, space->def->id);
++	return sqlVdbeAddOp3(vdbe, OP_IteratorOpen, cursor, index_id, reg);
+ }
+ 
+ /*
+@@ -2934,9 +2937,9 @@ sql_create_index(struct Parse *parse) {
+ 			goto exit_create_index;
+ 
+ 		sql_set_multi_write(parse, true);
+-		sqlVdbeAddOp4(vdbe, OP_IteratorOpen, cursor, 0, 0,
+-				  (void *)space_by_id(BOX_INDEX_ID),
+-				  P4_SPACEPTR);
++		int reg = ++parse->nMem;
++		sqlVdbeAddOp2(vdbe, OP_OpenSpace, reg, BOX_INDEX_ID);
++		sqlVdbeAddOp3(vdbe, OP_IteratorOpen, cursor, 0, reg);
+ 		sqlVdbeChangeP5(vdbe, OPFLAG_SEEKEQ);
+ 		int index_id;
+ 		/*
+diff --git a/src/box/sql/delete.c b/src/box/sql/delete.c
+index 6c190c161b..2b28cea1a7 100644
+--- a/src/box/sql/delete.c
++++ b/src/box/sql/delete.c
+@@ -358,8 +358,9 @@ sql_table_delete_from(struct Parse *parse, struct SrcList *tab_list,
+ 				iAddrOnce = sqlVdbeAddOp0(v, OP_Once);
+ 				VdbeCoverage(v);
+ 			}
+-			sqlVdbeAddOp4(v, OP_IteratorOpen, tab_cursor, 0, 0,
+-					  (void *) space, P4_SPACEPTR);
++			int reg = ++parse->nMem;
++			sqlVdbeAddOp2(v, OP_OpenSpace, reg, space->def->id);
++			sqlVdbeAddOp3(v, OP_IteratorOpen, tab_cursor, 0, reg);
+ 			VdbeComment((v, "%s", space->index[0]->def->name));
+ 
+ 			if (one_pass == ONEPASS_MULTI)
+diff --git a/src/box/sql/insert.c b/src/box/sql/insert.c
+index 2bbe7b5df0..643f7901e2 100644
+--- a/src/box/sql/insert.c
++++ b/src/box/sql/insert.c
+@@ -102,14 +102,14 @@ sql_space_autoinc_fieldno(struct space *space)
+  * SELECT. Otherwise, it may fall into infinite loop.
+  *
+  * @param parser Parse context.
+- * @param space_def Space definition.
++ * @param space_id Space ID.
+  * @retval  true if the space (given by space_id) in database or
+  *          any of its indices have been opened at any point in
+  *          the VDBE program.
+  * @retval  false else.
+  */
+ static bool
+-vdbe_has_space_read(struct Parse *parser, const struct space_def *space_def)
++vdbe_has_space_open(struct Parse *parser, uint32_t space_id)
+ {
+ 	struct Vdbe *v = sqlGetVdbe(parser);
+ 	int last_instr = sqlVdbeCurrentAddr(v);
+@@ -120,13 +120,8 @@ vdbe_has_space_read(struct Parse *parser, const struct space_def *space_def)
+ 		 * Currently, there is no difference between Read
+ 		 * and Write cursors.
+ 		 */
+-		if (op->opcode == OP_IteratorOpen) {
+-			struct space *space = NULL;
+-			if (op->p4type == P4_SPACEPTR)
+-				space = op->p4.space;
+-			else
+-				continue;
+-			if (space->def->id == space_def->id)
++		if (op->opcode == OP_OpenSpace) {
++			if (op->p2 == (int)space_id)
+ 				return true;
+ 		}
+ 	}
+@@ -400,6 +395,9 @@ sqlInsert(Parse * pParse,	/* Parser context */
+ 		}
+ 	}
+ 
++	int reg = ++pParse->nMem;
++	sqlVdbeAddOp2(v, OP_OpenSpace, reg, space->def->id);
++
+ 	int reg_eph;
+ 	/* Figure out how many columns of data are supplied.  If the data
+ 	 * is coming from a SELECT statement, then generate a co-routine that
+@@ -477,7 +475,7 @@ sqlInsert(Parse * pParse,	/* Parser context */
+ 	 *      M: ...
+ 	 */
+ 	if (pSelect && (trigger != NULL ||
+-			vdbe_has_space_read(pParse, space_def))) {
++			vdbe_has_space_open(pParse, space_def->id))) {
+ 		/*
+ 		 * Set useTempTable to TRUE if the result of the
+ 		 * SELECT statement should be written into a
+@@ -760,7 +758,7 @@ sqlInsert(Parse * pParse,	/* Parser context */
+ 		vdbe_emit_constraint_checks(pParse, space, regIns + 1,
+ 					    on_error, endOfLoop, 0);
+ 		fk_constraint_emit_check(pParse, space, 0, regIns, 0);
+-		vdbe_emit_insertion_completion(v, space, regIns + 1,
++		vdbe_emit_insertion_completion(v, reg, regIns + 1,
+ 					       space->def->field_count,
+ 					       on_error, autoinc_reg);
+ 	}
+@@ -971,7 +969,7 @@ process_index:  ;
+ }
+ 
+ void
+-vdbe_emit_insertion_completion(struct Vdbe *v, struct space *space,
++vdbe_emit_insertion_completion(struct Vdbe *v, int space_reg,
+ 			       int raw_data_reg, uint32_t tuple_len,
+ 			       enum on_conflict_action on_conflict,
+ 			       int autoinc_reg)
+@@ -981,9 +979,8 @@ vdbe_emit_insertion_completion(struct Vdbe *v, struct space *space,
+ 	SET_CONFLICT_FLAG(pik_flags, on_conflict);
+ 	sqlVdbeAddOp3(v, OP_MakeRecord, raw_data_reg, tuple_len,
+ 			  raw_data_reg + tuple_len);
+-	sqlVdbeAddOp3(v, OP_IdxInsert, raw_data_reg + tuple_len, 0,
++	sqlVdbeAddOp3(v, OP_IdxInsert, raw_data_reg + tuple_len, space_reg,
+ 		      autoinc_reg);
+-	sqlVdbeChangeP4(v, -1, (char *)space, P4_SPACEPTR);
+ 	sqlVdbeChangeP5(v, pik_flags);
+ }
+ 
+@@ -1217,16 +1214,17 @@ xferOptimization(Parse * pParse,	/* Parser context */
+ 
+ 	vdbe_emit_open_cursor(pParse, iSrc, 0, src);
+ 	VdbeComment((v, "%s", src->def->name));
+-	addr1 = sqlVdbeAddOp2(v, OP_Rewind, iSrc, 0);
++	int addr_rewind = sqlVdbeAddOp2(v, OP_Rewind, iSrc, 0);
+ 	VdbeCoverage(v);
+-	sqlVdbeAddOp2(v, OP_RowData, iSrc, regData);
++	int reg = ++pParse->nMem;
++	sqlVdbeAddOp2(v, OP_OpenSpace, reg, dest->def->id);
++	addr1 = sqlVdbeAddOp2(v, OP_RowData, iSrc, regData);
+ 
+ #ifdef SQL_TEST
+ 	sqlVdbeChangeP5(v, OPFLAG_XFER_OPT);
+ #endif
+ 
+-	sqlVdbeAddOp4(v, OP_IdxInsert, regData, 0, 0,
+-			  (char *)dest, P4_SPACEPTR);
++	sqlVdbeAddOp2(v, OP_IdxInsert, regData, reg);
+ 	switch (onError) {
+ 	case ON_CONFLICT_ACTION_IGNORE:
+ 		sqlVdbeChangeP5(v, OPFLAG_OE_IGNORE | OPFLAG_NCHANGE);
+@@ -1238,8 +1237,8 @@ xferOptimization(Parse * pParse,	/* Parser context */
+ 		sqlVdbeChangeP5(v, OPFLAG_NCHANGE);
+ 		break;
+ 	}
+-	sqlVdbeAddOp2(v, OP_Next, iSrc, addr1 + 1);
++	sqlVdbeAddOp2(v, OP_Next, iSrc, addr1);
+ 	VdbeCoverage(v);
+-	sqlVdbeJumpHere(v, addr1);
++	sqlVdbeJumpHere(v, addr_rewind);
+ 	sqlVdbeAddOp2(v, OP_Close, iSrc, 0);
+ 	sqlVdbeAddOp2(v, OP_Close, iDest, 0);
+ 
+diff --git a/src/box/sql/sqlInt.h b/src/box/sql/sqlInt.h
+index 2aec7abf3d..b92cc55f2d 100644
+--- a/src/box/sql/sqlInt.h
++++ b/src/box/sql/sqlInt.h
+@@ -3197,16 +3197,15 @@ void
+ vdbe_emit_ck_constraint(struct Parse *parser, struct Expr *expr,
+ 			const char *name, const char *expr_str,
+ 			int vdbe_field_ref_reg);
++
+ /**
+- * This routine generates code to finish the INSERT or UPDATE
+- * operation that was started by a prior call to
+- * vdbe_emit_constraint_checks. It encodes raw data which is held
+- * in a range of registers starting from @raw_data_reg and length
+- * of @tuple_len and inserts this record to space using given
+- * @cursor_id.
++ * This routine generates code to finish the INSERT or UPDATE operation that was
++ * started by a prior call to vdbe_emit_constraint_checks(). It encodes raw data
++ * which is held in a range of registers starting from raw_data_reg and length
++ * of tuple_len and inserts this record to space defined by space_id.
+  *
+  * @param v Virtual database engine.
+- * @param space Pointer to space object.
++ * @param space_reg A register containing a pointer of the space.
+  * @param raw_data_reg Register with raw data to insert.
+  * @param tuple_len Number of registers to hold the tuple.
+  * @param on_conflict On conflict action.
+@@ -3215,7 +3214,7 @@ vdbe_emit_ck_constraint(struct Parse *parser, struct Expr *expr,
+  *                    into the field with AUTOINCREMENT.
+  */
+ void
+-vdbe_emit_insertion_completion(struct Vdbe *v, struct space *space,
++vdbe_emit_insertion_completion(struct Vdbe *v, int space_reg,
+ 			       int raw_data_reg, uint32_t tuple_len,
+ 			       enum on_conflict_action on_conflict,
+ 			       int autoinc_reg);
+diff --git a/src/box/sql/trigger.c b/src/box/sql/trigger.c
+index 8af71b3a5d..ea8424c6e2 100644
+--- a/src/box/sql/trigger.c
++++ b/src/box/sql/trigger.c
+@@ -193,9 +193,6 @@ sql_trigger_finish(struct Parse *parse, struct TriggerStep *step_list,
+ 		if (db->mallocFailed)
+ 			goto cleanup;
+ 
+-		struct space *_trigger = space_by_id(BOX_TRIGGER_ID);
+-		assert(_trigger != NULL);
+-
+ 		int first_col = parse->nMem + 1;
+ 		parse->nMem += 3;
+ 		int record = ++parse->nMem;
+@@ -227,9 +224,9 @@ sql_trigger_finish(struct Parse *parse, struct TriggerStep *step_list,
+ 		sqlVdbeAddOp4(v, OP_Blob, opts_buff_sz, first_col + 2,
+ 				  SQL_SUBTYPE_MSGPACK, opts_buff, P4_DYNAMIC);
+ 		sqlVdbeAddOp3(v, OP_MakeRecord, first_col, 3, record);
+-		sqlVdbeAddOp4(v, OP_IdxInsert, record, 0, 0,
+-				  (char *)_trigger, P4_SPACEPTR);
+-
++		int reg = ++parse->nMem;
++		sqlVdbeAddOp2(v, OP_OpenSpace, reg, BOX_TRIGGER_ID);
++		sqlVdbeAddOp2(v, OP_IdxInsert, record, reg);
+ 		sqlVdbeChangeP5(v, OPFLAG_NCHANGE);
+ 
+ 		sql_set_multi_write(parse, false);
+diff --git a/src/box/sql/update.c b/src/box/sql/update.c
+index 581457f02f..6d563b7072 100644
+--- a/src/box/sql/update.c
++++ b/src/box/sql/update.c
+@@ -274,6 +274,8 @@ sqlUpdate(Parse * pParse,		/* The parser context */
+ 	 */
+ 	sqlWhereEnd(pWInfo);
+ 
++	int64_t reg = ++pParse->nMem;
++	sqlVdbeAddOp2(v, OP_OpenSpace, (int)reg, space->def->id);
+ 	labelBreak = sqlVdbeMakeLabel(v);
+ 	/* Top of the update loop */
+ 	if (okOnePass) {
+@@ -419,9 +421,9 @@ sqlUpdate(Parse * pParse,		/* The parser context */
+ 			fk_constraint_emit_check(pParse, space, 0, regNewPk, aXRef);
+ 		}
+ 		if (on_error == ON_CONFLICT_ACTION_REPLACE) {
+-			 vdbe_emit_insertion_completion(v, space, regNew,
+-							space->def->field_count,
+-							on_error, 0);
++			vdbe_emit_insertion_completion(v, reg, regNew,
++						       space->def->field_count,
++						       on_error, 0);
+ 
+ 		} else {
+ 			int key_reg;
+@@ -451,8 +453,7 @@ sqlUpdate(Parse * pParse,		/* The parser context */
+ 			u16 pik_flags = OPFLAG_NCHANGE;
+ 			SET_CONFLICT_FLAG(pik_flags, on_error);
+ 			sqlVdbeAddOp4(v, OP_Update, regNew, key_reg,
+-					  upd_cols_reg, (char *)space,
+-					  P4_SPACEPTR);
++				      upd_cols_reg, (char *)reg, P4_INT32);
+ 			sqlVdbeChangeP5(v, pik_flags);
+ 		}
+ 		/*
+diff --git a/src/box/sql/vdbe.c b/src/box/sql/vdbe.c
+index fe8ad12ebd..01623a7e24 100644
+--- a/src/box/sql/vdbe.c
++++ b/src/box/sql/vdbe.c
+@@ -2270,37 +2270,16 @@ case OP_TTransaction: {
+ 	break;
+ }
+ 
+-/* Opcode: IteratorReopen P1 P2 P3 P4 P5
+- * Synopsis: index id = P2, space ptr = P4
++/* Opcode: IteratorOpen P1 P2 P3 * P5
++ * Synopsis: index id = P2, space ptr = reg[P3]
+  *
+- * The IteratorReopen opcode works exactly like IteratorOpen except
+- * that it first checks to see if the cursor on P1 is already open
+- * with the same index and if it is this opcode becomes a no-op.
+- * In other words, if the cursor is already open, do not reopen
+- * it.
+- *
+- * The IteratorReopen opcode may only be used with P5 == 0.
++ * Open a cursor for a space specified by pointer in  the register P3 and index
++ * id in P2. Give the new cursor an identifier of P1. The P1 values need not be
++ * contiguous but all P1 values should be small integers. It is an error for P1
++ * to be negative.
+  */
+-/* Opcode: IteratorOpen P1 P2 P3 P4 P5
+- * Synopsis: index id = P2, space ptr = P4 or reg[P3]
+- *
+- * Open a cursor for a space specified by pointer in P4 and index
+- * id in P2. Give the new cursor an identifier of P1. The P1
+- * values need not be contiguous but all P1 values should be
+- * small integers. It is an error for P1 to be negative.
+- * If P4 was not set, then P3 supposed to be the register
+- * containing space pointer.
+- */
+-case OP_IteratorReopen: {
+-	assert(pOp->p5 == 0);
++case OP_IteratorOpen: {
+ 	struct VdbeCursor *cur = p->apCsr[pOp->p1];
+-	if (cur != NULL && cur->uc.pCursor->space == pOp->p4.space &&
+-	    cur->uc.pCursor->index->def->iid == (uint32_t)pOp->p2)
+-		goto open_cursor_set_hints;
+-	/* If the cursor is not currently open or is open on a different
+-	 * index, then fall through into OP_OpenCursor to force a reopen
+-	 */
+-case OP_IteratorOpen:
+ 	if (box_schema_version() != p->schema_ver &&
+ 	    (pOp->p5 & OPFLAG_SYSTEMSP) == 0) {
+ 		p->expired = 1;
+@@ -2308,11 +2287,7 @@ case OP_IteratorOpen:
+ 			 "changed: need to re-compile SQL statement");
+ 		goto abort_due_to_error;
+ 	}
+-	struct space *space;
+-	if (pOp->p4type == P4_SPACEPTR)
+-		space = pOp->p4.space;
+-	else
+-		space = aMem[pOp->p3].u.p;
++	struct space *space = aMem[pOp->p3].u.p;
+ 	assert(space != NULL);
+ 	if (access_check_space(space, PRIV_R) != 0)
+ 		goto abort_due_to_error;
+@@ -2336,11 +2311,25 @@ case OP_IteratorOpen:
+ 	/* Key info still contains sorter order and collation. */
+ 	cur->key_def = index->def->key_def;
+ 	cur->nullRow = 1;
+-open_cursor_set_hints:
+ 	cur->uc.pCursor->hints = pOp->p5 & OPFLAG_SEEKEQ;
+ 	break;
+ }
+ 
++/**
++ * Opcode: OP_OpenSpace P1 P2 * * *
++ * Synopsis: reg[P1] = space_by_id(P2)
++ *
++ * Open the space using its ID stored in register P2 and write a pointer to the
++ * space to register P1.
++ */
++case OP_OpenSpace: {
++	assert(pOp->p1 >= 0 && pOp->p1 > 0);
++	struct space *space = space_by_id(pOp->p2);
++	assert(space != NULL);
++	mem_set_ptr(&aMem[pOp->p1], space);
++	break;
++}
++
+ /**
+  * Opcode: OpenTEphemeral P1 * * P4 *
+  * Synopsis:
+@@ -3369,25 +3358,23 @@ case OP_SorterInsert: {      /* in2 */
+ 	break;
+ }
+ 
+-/* Opcode: IdxInsert P1 P2 P3 P4 P5
++/* Opcode: IdxInsert P1 P2 P3 * P5
+  * Synopsis: key=r[P1]
+  *
+  * @param P1 Index of a register with MessagePack data to insert.
+- * @param P2 If P4 is not set, then P2 is register containing pointer
+- *           to space to insert into.
++ * @param P2 Register containing pointer to space to insert into.
+  * @param P3 If not 0, than it is an index of a register that
+  *           contains value that will be inserted into field with
+  *           AUTOINCREMENT. If the value is NULL, than the newly
+  *           generated autoincrement value will be saved to VDBE
+  *           context.
+- * @param P4 Pointer to the struct space to insert to.
+  * @param P5 Flags. If P5 contains OPFLAG_NCHANGE, then VDBE
+  *        accounts the change in a case of successful insertion in
+  *        nChange counter. If P5 contains OPFLAG_OE_IGNORE, then
+  *        we are processing INSERT OR INGORE statement. Thus, in
+  *        case of conflict we don't raise an error.
+  */
+-/* Opcode: IdxReplace2 P1 * * P4 P5
++/* Opcode: IdxReplace P1 P2 P3 * P5
+  * Synopsis: key=r[P1]
+  *
+  * This opcode works exactly as IdxInsert does, but in Tarantool
+@@ -3397,11 +3384,7 @@ case OP_IdxReplace:
+ case OP_IdxInsert: {
+ 	pIn2 = &aMem[pOp->p1];
+ 	assert(mem_is_bin(pIn2));
+-	struct space *space;
+-	if (pOp->p4type == P4_SPACEPTR)
+-		space = pOp->p4.space;
+-	else
+-		space = aMem[pOp->p2].u.p;
++	struct space *space = aMem[pOp->p2].u.p;
+ 	assert(space != NULL);
+ 	if (space->def->id != 0) {
+ 		/* Make sure that memory has been allocated on region. */
+@@ -3468,7 +3451,7 @@ case OP_IdxInsert: {
+  *           It's items are numbers of fields to be replaced with
+  *           new values from P1. They must be sorted in ascending
+  *           order.
+- * @param P4 Pointer to the struct space to be updated.
++ * @param P4 Register containing pointer to space to update.
+  * @param P5 Flags. If P5 contains OPFLAG_NCHANGE, then VDBE
+  *           accounts the change in a case of successful
+  *           insertion in nChange counter. If P5 contains
+@@ -3481,8 +3464,8 @@ case OP_Update: {
+ 	if (pOp->p5 & OPFLAG_NCHANGE)
+ 		p->nChange++;
+ 
+-	struct space *space = pOp->p4.space;
+-	assert(pOp->p4type == P4_SPACEPTR);
++	struct space *space = aMem[pOp->p4.i].u.p;
++	assert(pOp->p4type == P4_INT32);
+ 
+ 	struct Mem *key_mem = &aMem[pOp->p2];
+ 	assert(mem_is_bin(key_mem));
+diff --git a/src/box/sql/vdbe.h b/src/box/sql/vdbe.h
+index 7a574f7eda..cceafb2065 100644
+--- a/src/box/sql/vdbe.h
++++ b/src/box/sql/vdbe.h
+@@ -86,8 +86,6 @@ struct VdbeOp {
+ 		int (*xAdvance) (BtCursor *, int *);
+ 		/** Used when p4type is P4_KEYINFO. */
+ 		struct sql_key_info *key_info;
+-		/** Used when p4type is P4_SPACEPTR. */
+-		struct space *space;
+ 		/**
+ 		 * Used to apply types when making a record, or
+ 		 * doing a cast.
+@@ -142,7 +140,6 @@ struct SubProgram {
+ #define P4_BOOL     (-17)	/* P4 is a bool value */
+ #define P4_PTR      (-18)	/* P4 is a generic pointer */
+ #define P4_KEYINFO  (-19)       /* P4 is a pointer to sql_key_info structure. */
+-#define P4_SPACEPTR (-20)       /* P4 is a space pointer */
+ 
+ /* Error message codes for OP_Halt */
+ #define P5_ConstraintNotNull 1
+diff --git a/src/box/sql/vdbeaux.c b/src/box/sql/vdbeaux.c
+index b613c0b3f7..a46d8c7536 100644
+--- a/src/box/sql/vdbeaux.c
++++ b/src/box/sql/vdbeaux.c
+@@ -1093,10 +1093,6 @@ displayP4(Op * pOp, char *zTemp, int nTemp)
+ 			zTemp[0] = 0;
+ 			break;
+ 		}
+-	case P4_SPACEPTR: {
+-		sqlXPrintf(&x, "space<name=%s>", space_name(pOp->p4.space));
+-		break;
+-	}
+ 	default:{
+ 			zP4 = pOp->p4.z;
+ 			if (zP4 == 0) {
+diff --git a/src/box/sql/where.c b/src/box/sql/where.c
+index 6d8d2660f3..3ff12ccc4b 100644
+--- a/src/box/sql/where.c
++++ b/src/box/sql/where.c
+@@ -4625,7 +4625,7 @@ sqlWhereBegin(Parse * pParse,	/* The parser context */
+ 			} else if (iAuxArg
+ 				   && (wctrlFlags & WHERE_OR_SUBCLAUSE) != 0) {
+ 				iIndexCur = iAuxArg;
+-				op = OP_IteratorReopen;
++				assert(op == OP_IteratorOpen);
+ 			} else {
+ 				iIndexCur = pParse->nTab++;
+ 			}

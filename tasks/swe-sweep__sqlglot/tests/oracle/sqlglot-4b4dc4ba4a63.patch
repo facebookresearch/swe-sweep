@@ -1,0 +1,27 @@
+diff --git a/sqlglot/generator.py b/sqlglot/generator.py
+index 59fe7dd088..f3e32f687b 100644
+--- a/sqlglot/generator.py
++++ b/sqlglot/generator.py
+@@ -1481,7 +1481,7 @@ class Generator(metaclass=_Generator):
+     def delete_sql(self, expression: exp.Delete) -> str:
+         this = self.sql(expression, "this")
+         this = f" FROM {this}" if this else ""
+-        using = self.sql(expression, "using")
++        using = self.expressions(expression, key="using")
+         using = f" USING {using}" if using else ""
+         cluster = self.sql(expression, "cluster")
+         cluster = f" {cluster}" if cluster else ""
+diff --git a/sqlglot/parser.py b/sqlglot/parser.py
+index 91b926fbc4..c082d5fc20 100644
+--- a/sqlglot/parser.py
++++ b/sqlglot/parser.py
+@@ -3111,7 +3111,8 @@ class Parser(metaclass=_Parser):
+             exp.Delete,
+             tables=tables,
+             this=self._match(TokenType.FROM) and self._parse_table(joins=True),
+-            using=self._match(TokenType.USING) and self._parse_table(joins=True),
++            using=self._match(TokenType.USING)
++            and self._parse_csv(lambda: self._parse_table(joins=True)),
+             cluster=self._match(TokenType.ON) and self._parse_on_property(),
+             where=self._parse_where(),
+             returning=returning or self._parse_returning(),

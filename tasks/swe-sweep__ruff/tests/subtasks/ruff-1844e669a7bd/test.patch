@@ -1,0 +1,70 @@
+diff --git a/crates/ruff_linter/resources/test/fixtures/flake8_comprehensions/C420_3.py b/crates/ruff_linter/resources/test/fixtures/flake8_comprehensions/C420_3.py
+new file mode 100644
+index 0000000000..3d831180ad
+--- /dev/null
++++ b/crates/ruff_linter/resources/test/fixtures/flake8_comprehensions/C420_3.py
+@@ -0,0 +1,43 @@
++class C: a = None
++{C.a: None for C.a in "abc"}
++print(C.a)
++
++x = [None]
++{x[0]: None for x[0] in "abc"}
++print(x)
++
++class C(list):
++    def __getitem__(self, index, /):
++        item = super().__getitem__(index)
++        if isinstance(index, slice): item = tuple(item)
++        return item
++x = C()
++{x[:0]: None for x[:0] in "abc"}
++print(x)
++
++
++class C:
++    a = None
++
++def func():
++    {(C.a,): None for (C.a,) in "abc"}  # OK
++
++
++def func():
++    obj = type('obj', (), {'attr': 1})()
++    {(obj.attr,): None for (obj.attr,) in "abc"}  # OK
++
++
++def func():
++    lst = [1, 2, 3]
++    {(lst[0],): None for (lst[0],) in "abc"}  # OK
++
++
++def func():
++    lst = [1, 2, 3, 4, 5]
++    {(lst[1:3],): None for (lst[1:3],) in "abc"}  # OK
++
++
++# C420: side-effecting assignment targets
++# These should NOT trigger C420 because they have side-effecting assignment targets
++# See https://github.com/astral-sh/ruff/issues/19511
+diff --git a/crates/ruff_linter/src/rules/flake8_comprehensions/mod.rs b/crates/ruff_linter/src/rules/flake8_comprehensions/mod.rs
+index dbc7be8d93..4385f63066 100644
+--- a/crates/ruff_linter/src/rules/flake8_comprehensions/mod.rs
++++ b/crates/ruff_linter/src/rules/flake8_comprehensions/mod.rs
+@@ -23,5 +23,6 @@ mod tests {
+     #[test_case(Rule::UnnecessaryComprehensionInCall, Path::new("C419_2.py"))]
+     #[test_case(Rule::UnnecessaryDictComprehensionForIterable, Path::new("C420.py"))]
++    #[test_case(Rule::UnnecessaryDictComprehensionForIterable, Path::new("C420_3.py"))]
+     #[test_case(Rule::UnnecessaryDoubleCastOrProcess, Path::new("C414.py"))]
+     #[test_case(Rule::UnnecessaryGeneratorDict, Path::new("C402.py"))]
+     #[test_case(Rule::UnnecessaryGeneratorList, Path::new("C400.py"))]
+diff --git a/crates/ruff_linter/src/rules/flake8_comprehensions/snapshots/ruff_linter__rules__flake8_comprehensions__tests__C420_C420_3.py.snap b/crates/ruff_linter/src/rules/flake8_comprehensions/snapshots/ruff_linter__rules__flake8_comprehensions__tests__C420_C420_3.py.snap
+new file mode 100644
+index 0000000000..d9845b4ae9
+--- /dev/null
++++ b/crates/ruff_linter/src/rules/flake8_comprehensions/snapshots/ruff_linter__rules__flake8_comprehensions__tests__C420_C420_3.py.snap
+@@ -0,0 +1,4 @@
++---
++source: crates/ruff_linter/src/rules/flake8_comprehensions/mod.rs
++---
++

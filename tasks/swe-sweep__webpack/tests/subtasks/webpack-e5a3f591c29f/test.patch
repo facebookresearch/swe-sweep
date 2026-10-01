@@ -1,0 +1,104 @@
+diff --git a/test/hotCases/lazy-compilation/simple/index.js b/test/hotCases/lazy-compilation/simple/index.js
+index 1c17e8509..187b2bb41 100644
+--- a/test/hotCases/lazy-compilation/simple/index.js
++++ b/test/hotCases/lazy-compilation/simple/index.js
+@@ -20,9 +20,21 @@ it("should compile to lazy imported module", done => {
+ 							expect(generation).toBe(1);
+ 							import("./module").then(result => {
+ 								expect(result).toHaveProperty("default", 43);
+-								setTimeout(() => {
+-									done();
+-								}, 1000);
++								expect(generation).toBe(1);
++								module.hot.accept("./module", () => {
++									generation += 10;
++								});
++								NEXT(
++									require("../../update")(done, true, () => {
++										import("./module").then(result => {
++											expect(result).toHaveProperty("default", 44);
++											expect(generation).toBe(11);
++											setTimeout(() => {
++												done();
++											}, 1000);
++										}, done);
++									})
++								);
+ 							}, done);
+ 						})
+ 					);
+diff --git a/test/hotCases/lazy-compilation/simple/module.js b/test/hotCases/lazy-compilation/simple/module.js
+index 48e484926..84c81da29 100644
+--- a/test/hotCases/lazy-compilation/simple/module.js
++++ b/test/hotCases/lazy-compilation/simple/module.js
+@@ -3,3 +3,5 @@ export default 42;
+ export default 42;
+ ---
+ export default 43;
++---
++export default 44;
+diff --git a/test/hotCases/lazy-compilation/unrelated/index.js b/test/hotCases/lazy-compilation/unrelated/index.js
+new file mode 100644
+index 000000000..948104725
+--- /dev/null
++++ b/test/hotCases/lazy-compilation/unrelated/index.js
+@@ -0,0 +1,25 @@
++import value from "./module";
++
++const neverCalled = () => import("./lazy");
++
++it("should compile to lazy imported module", done => {
++	let generation = 0;
++	module.hot.accept("./module", () => {
++		generation++;
++	});
++	expect(value).toBe(42);
++	expect(generation).toBe(0);
++	NEXT(
++		require("../../update")(done, true, () => {
++			expect(value).toBe(43);
++			expect(generation).toBe(1);
++			NEXT(
++				require("../../update")(done, true, () => {
++					expect(value).toBe(44);
++					expect(generation).toBe(2);
++					done();
++				})
++			);
++		})
++	);
++});
+diff --git a/test/hotCases/lazy-compilation/unrelated/lazy.js b/test/hotCases/lazy-compilation/unrelated/lazy.js
+new file mode 100644
+index 000000000..05e087120
+--- /dev/null
++++ b/test/hotCases/lazy-compilation/unrelated/lazy.js
+@@ -0,0 +1 @@
++export default 123;
+diff --git a/test/hotCases/lazy-compilation/unrelated/module.js b/test/hotCases/lazy-compilation/unrelated/module.js
+new file mode 100644
+index 000000000..d099aaa34
+--- /dev/null
++++ b/test/hotCases/lazy-compilation/unrelated/module.js
+@@ -0,0 +1,5 @@
++export default 42;
++---
++export default 43;
++---
++export default 44;
+diff --git a/test/hotCases/lazy-compilation/unrelated/webpack.config.js b/test/hotCases/lazy-compilation/unrelated/webpack.config.js
+new file mode 100644
+index 000000000..aef58ef1a
+--- /dev/null
++++ b/test/hotCases/lazy-compilation/unrelated/webpack.config.js
+@@ -0,0 +1,10 @@
++"use strict";
++
++/** @type {import("../../../../").Configuration} */
++module.exports = {
++	experiments: {
++		lazyCompilation: {
++			entries: false
++		}
++	}
++};

@@ -1,0 +1,17 @@
+diff --git a/pandas/core/common.py b/pandas/core/common.py
+index cd3e76ec00..94fb09ddc7 100644
+--- a/pandas/core/common.py
++++ b/pandas/core/common.py
+@@ -545,8 +545,10 @@ def temp_setattr(obj, attr: str, value) -> Iterator[None]:
+     """
+     old_value = getattr(obj, attr)
+     setattr(obj, attr, value)
+-    yield obj
+-    setattr(obj, attr, old_value)
++    try:
++        yield obj
++    finally:
++        setattr(obj, attr, old_value)
+ 
+ 
+ def require_length_match(data, index: Index):

@@ -1,0 +1,13 @@
+diff --git a/compiler/src/dmd/s2ir.d b/compiler/src/dmd/s2ir.d
+index 7c1dc50032..d108e5fd6b 100644
+--- a/compiler/src/dmd/s2ir.d
++++ b/compiler/src/dmd/s2ir.d
+@@ -1613,6 +1613,8 @@ void insertFinallyBlockCalls(block *startblock)
+                 // Rewrite into a BCgoto => BCretexp
+                 elem *e = b.Belem;
+                 tym_t ty = tybasic(e.Ety);
++                if (ty == TYvoid)
++                    goto case BCret;
+                 if (!bcretexp)
+                 {
+                     bcretexp = dmd.backend.global.block_calloc();

@@ -1,0 +1,12 @@
+diff --git a/crates/ruff_linter/src/rules/flake8_bandit/rules/unsafe_yaml_load.rs b/crates/ruff_linter/src/rules/flake8_bandit/rules/unsafe_yaml_load.rs
+index 593f5e01da..bc5e846f99 100644
+--- a/crates/ruff_linter/src/rules/flake8_bandit/rules/unsafe_yaml_load.rs
++++ b/crates/ruff_linter/src/rules/flake8_bandit/rules/unsafe_yaml_load.rs
+@@ -75,6 +75,7 @@ pub(crate) fn unsafe_yaml_load(checker: &Checker, call: &ast::ExprCall) {
+                         qualified_name.segments(),
+                         ["yaml", "SafeLoader" | "CSafeLoader"]
+                             | ["yaml", "loader", "SafeLoader" | "CSafeLoader"]
++                            | ["yaml", "cyaml", "CSafeLoader"]
+                     )
+                 })
+             {

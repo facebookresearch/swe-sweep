@@ -1,0 +1,100 @@
+diff --git a/compiler/test/compilable/test22709.d b/compiler/test/compilable/test22709.d
+new file mode 100644
+index 0000000000..eaf718ef89
+--- /dev/null
++++ b/compiler/test/compilable/test22709.d
+@@ -0,0 +1,15 @@
++// https://github.com/dlang/dmd/issues/22709
++// extern(C++) destructor in base class should not be flagged as hidden
++
++extern(C++):
++class A
++{
++    ~this();
++}
++class B : A
++{
++}
++class C : B
++{
++    ~this();
++}
+diff --git a/compiler/test/runnable_cxx/cpp_dtor.d b/compiler/test/runnable_cxx/cpp_dtor.d
+new file mode 100644
+index 0000000000..182b319ee9
+--- /dev/null
++++ b/compiler/test/runnable_cxx/cpp_dtor.d
+@@ -0,0 +1,34 @@
++// https://github.com/dlang/dmd/issues/22709
++// Virtual dtor dispatch through an intermediate class with no explicit dtor.
++// Before the fix, C's vtbl had a stale entry for A's dtor at slot 0, causing
++// virtual dtor dispatch through A* to call A's dtor instead of C's.
++// EXTRA_CPP_SOURCES: cpp_dtor.cpp
++
++extern(C) __gshared int aDestroyed;
++extern(C) __gshared int cDestroyed;
++
++extern(C++) void runCPPTests();
++
++extern(C++):
++
++class A
++{
++    ~this() { aDestroyed = 1; }
++}
++
++class B : A
++{
++}
++
++class C : B
++{
++    ~this() { cDestroyed = 1; }
++}
++
++// D-side factory: C++ calls this to get a C object typed as A*
++A makeC() { return new C; }
++
++extern(D) void main()
++{
++    runCPPTests();
++}
+diff --git a/compiler/test/runnable_cxx/extra-files/cpp_dtor.cpp b/compiler/test/runnable_cxx/extra-files/cpp_dtor.cpp
+new file mode 100644
+index 0000000000..42e80f0269
+--- /dev/null
++++ b/compiler/test/runnable_cxx/extra-files/cpp_dtor.cpp
+@@ -0,0 +1,33 @@
++// https://github.com/dlang/dmd/issues/22709
++// C++ side: verify virtual dtor dispatch calls C's dtor (not A's) when
++// destroying a C object through an A*.
++#include <assert.h>
++
++extern "C" int aDestroyed;
++extern "C" int cDestroyed;
++
++// Forward declaration matching D's extern(C++) class A
++class A {
++public:
++    virtual ~A();
++};
++
++// D-side factory
++extern "C++" A* makeC();
++
++void runCPPTests()
++{
++    A* obj = makeC();
++
++    // Invoke the virtual destructor without freeing memory.
++    // obj->~A() dispatches virtually (calls C's dtor) on all ABIs,
++    // and does NOT call operator delete, so D-allocated memory is safe.
++    aDestroyed = 0;
++    cDestroyed = 0;
++    obj->~A();
++
++    // C's destructor must be dispatched, not A's
++    assert(cDestroyed);
++    // A's destructor must be chained from C's aggregate dtor
++    assert(aDestroyed);
++}

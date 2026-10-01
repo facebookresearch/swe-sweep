@@ -1,0 +1,31 @@
+diff --git a/worktree_status.go b/worktree_status.go
+index e216a535..0ad4b2f4 100644
+--- a/worktree_status.go
++++ b/worktree_status.go
+@@ -3,6 +3,7 @@ package git
+ import (
+ 	"bytes"
+ 	"errors"
++	"fmt"
+ 	"io"
+ 	"os"
+ 	"path"
+@@ -349,6 +350,18 @@ func (w *Worktree) doAdd(path string, ignorePattern []gitignore.Pattern) (plumbi
+ 	var h plumbing.Hash
+ 	var added bool
+ 
++	if filepath.IsAbs(path) {
++		root := w.Filesystem.Root()
++		relPath, err := filepath.Rel(root, path)
++		if err != nil {
++			return plumbing.ZeroHash, fmt.Errorf("path %q is not inside the worktree root %q: %w", path, root, err)
++		}
++		if relPath == ".." || strings.HasPrefix(relPath, ".."+string(filepath.Separator)) {
++			return plumbing.ZeroHash, fmt.Errorf("path %q is outside the worktree root %q", path, root)
++		}
++		path = relPath
++	}
++
+ 	fi, err := w.Filesystem.Lstat(path)
+ 	if err != nil || !fi.IsDir() {
+ 		added, h, err = w.doAddFile(idx, s, path, ignorePattern)

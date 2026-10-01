@@ -1,0 +1,44 @@
+diff --git a/cmd/tools/bench/map_clear.v b/cmd/tools/bench/map_clear.v
+new file mode 100644
+index 000000000..922fc3d13
+--- /dev/null
++++ b/cmd/tools/bench/map_clear.v
+@@ -0,0 +1,19 @@
++import benchmark
++
++fn main() {
++	max_iterations := arguments()[1] or { '1_000_000' }.int()
++	assert max_iterations > 0
++	mut m := {
++		123: 456
++		789: 321
++	}
++	mut volatile sum := u64(0)
++	mut b := benchmark.start()
++	for i in 0 .. max_iterations {
++		m.clear()
++		m[i] = i * 2
++		sum += u64(m.len)
++	}
++	assert m.len == 1
++	b.measure('m.clear(), iterations: ${max_iterations}, sum: ${sum}')
++}
+diff --git a/vlib/builtin/map.v b/vlib/builtin/map.v
+index a5a8a0682..2ed6e4de8 100644
+--- a/vlib/builtin/map.v
++++ b/vlib/builtin/map.v
+@@ -300,6 +300,14 @@ pub fn (mut m map) clear() {
+ 	m.len = 0
+ 	m.even_index = 0
+ 	m.key_values.len = 0
++	m.key_values.deletes = 0
++	unsafe {
++		if m.key_values.all_deleted != 0 {
++			free(m.key_values.all_deleted)
++		}
++		vmemset(m.key_values.keys, 0, m.key_values.key_bytes * m.key_values.cap)
++		vmemset(m.metas, 0, sizeof(u32) * (m.even_index + 2 + m.extra_metas))
++	}
+ }
+ 
+ [inline]

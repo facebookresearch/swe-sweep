@@ -1,0 +1,13 @@
+diff --git a/compiler/semfold.nim b/compiler/semfold.nim
+index d2bbc63be..72c8abaa9 100644
+--- a/compiler/semfold.nim
++++ b/compiler/semfold.nim
+@@ -409,7 +409,7 @@ proc foldConv(n, a: PNode; idgen: IdGenerator; g: ModuleGraph; check = false): P
+       rangeCheck(n, getInt(result), g)
+   of tyFloat..tyFloat64:
+     case srcTyp.kind
+-    of tyInt..tyInt64, tyEnum, tyBool, tyChar:
++    of tyInt..tyInt64, tyUInt..tyUInt64, tyEnum, tyBool, tyChar:
+       result = newFloatNodeT(toFloat64(getOrdValue(a)), n, g)
+     else:
+       result = a

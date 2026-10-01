@@ -1,0 +1,28 @@
+diff --git a/pkg/analysis_server/test/src/services/correction/fix/sort_unnamed_constructor_first_test.dart b/pkg/analysis_server/test/src/services/correction/fix/sort_unnamed_constructor_first_test.dart
+index 9eddd90b77d..27dfa91e262 100644
+--- a/pkg/analysis_server/test/src/services/correction/fix/sort_unnamed_constructor_first_test.dart
++++ b/pkg/analysis_server/test/src/services/correction/fix/sort_unnamed_constructor_first_test.dart
+@@ -70,6 +70,23 @@ class A {
+ ''');
+   }
+ 
++  Future<void> test_unnamedHasDocumentation() async {
++    await resolveTestCode('''
++class A {
++  A.a();
++  /// foo
++  A();
++}
++''');
++    await assertHasFix('''
++class A {
++  /// foo
++  A();
++  A.a();
++}
++''');
++  }
++
+   Future<void> test_with_non_constructors() async {
+     await resolveTestCode('''
+ class A {

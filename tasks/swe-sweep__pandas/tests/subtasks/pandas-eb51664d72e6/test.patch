@@ -1,0 +1,12 @@
+diff --git a/pandas/tests/tslibs/test_to_offset.py b/pandas/tests/tslibs/test_to_offset.py
+index 9e32a33650..67521c7e2a 100644
+--- a/pandas/tests/tslibs/test_to_offset.py
++++ b/pandas/tests/tslibs/test_to_offset.py
+@@ -30,6 +30,7 @@ from pandas import Timedelta
+         ("2SM-16", offsets.SemiMonthEnd(2, day_of_month=16)),
+         ("2SMS-14", offsets.SemiMonthBegin(2, day_of_month=14)),
+         ("2SMS-15", offsets.SemiMonthBegin(2)),
++        ("LWOM-MON", offsets.LastWeekOfMonth()),
+     ],
+ )
+ def test_to_offset(freq_input, expected):

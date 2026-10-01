@@ -1,0 +1,212 @@
+diff --git a/core/trino-main/src/main/java/io/trino/sql/planner/PlanOptimizers.java b/core/trino-main/src/main/java/io/trino/sql/planner/PlanOptimizers.java
+index ac6e4146163..00ac0f6fb77 100644
+--- a/core/trino-main/src/main/java/io/trino/sql/planner/PlanOptimizers.java
++++ b/core/trino-main/src/main/java/io/trino/sql/planner/PlanOptimizers.java
+@@ -897,7 +897,7 @@ public class PlanOptimizers
+                 costCalculator,
+                 ImmutableSet.<Rule<?>>builder()
+                         .addAll(simplifyOptimizerRules) // Should be always run after PredicatePushDown
+-                        .add(new RemoveRedundantTableScanPredicate(metadata, typeOperators))
++                        .add(new RemoveRedundantTableScanPredicate(metadata, typeOperators, typeAnalyzer))
+                         .build()));
+         builder.add(pushProjectionIntoTableScanOptimizer);
+         // Projection pushdown rules may push reducing projections (e.g. dereferences) below filters for potential
+diff --git a/core/trino-main/src/main/java/io/trino/sql/planner/iterative/rule/PushPredicateIntoTableScan.java b/core/trino-main/src/main/java/io/trino/sql/planner/iterative/rule/PushPredicateIntoTableScan.java
+index 5c0ba7d780a..d65c793212a 100644
+--- a/core/trino-main/src/main/java/io/trino/sql/planner/iterative/rule/PushPredicateIntoTableScan.java
++++ b/core/trino-main/src/main/java/io/trino/sql/planner/iterative/rule/PushPredicateIntoTableScan.java
+@@ -34,8 +34,10 @@ import io.trino.spi.predicate.TupleDomain;
+ import io.trino.spi.type.TypeOperators;
+ import io.trino.sql.planner.DomainTranslator;
+ import io.trino.sql.planner.ExpressionInterpreter;
++import io.trino.sql.planner.LiteralEncoder;
+ import io.trino.sql.planner.LookupSymbolResolver;
+ import io.trino.sql.planner.Symbol;
++import io.trino.sql.planner.SymbolAllocator;
+ import io.trino.sql.planner.SymbolsExtractor;
+ import io.trino.sql.planner.TypeAnalyzer;
+ import io.trino.sql.planner.TypeProvider;
+@@ -115,7 +117,7 @@ public class PushPredicateIntoTableScan
+                 tableScan,
+                 false,
+                 context.getSession(),
+-                context.getSymbolAllocator().getTypes(),
++                context.getSymbolAllocator(),
+                 metadata,
+                 typeOperators,
+                 typeAnalyzer,
+@@ -155,7 +157,7 @@ public class PushPredicateIntoTableScan
+             TableScanNode node,
+             boolean pruneWithPredicateExpression,
+             Session session,
+-            TypeProvider types,
++            SymbolAllocator symbolAllocator,
+             Metadata metadata,
+             TypeOperators typeOperators,
+             TypeAnalyzer typeAnalyzer,
+@@ -177,7 +179,7 @@ public class PushPredicateIntoTableScan
+                 typeOperators,
+                 session,
+                 deterministicPredicate,
+-                types);
++                symbolAllocator.getTypes());
+ 
+         TupleDomain<ColumnHandle> newDomain = decomposedPredicate.getTupleDomain()
+                 .transformKeys(node.getAssignments()::get)
+@@ -192,7 +194,7 @@ public class PushPredicateIntoTableScan
+                     metadata,
+                     typeAnalyzer,
+                     session,
+-                    types,
++                    symbolAllocator.getTypes(),
+                     node.getAssignments(),
+                     combineConjuncts(
+                             metadata,
+@@ -217,6 +219,9 @@ public class PushPredicateIntoTableScan
+             if (constraint.predicate().isEmpty() && newDomain.contains(node.getEnforcedConstraint())) {
+                 Expression resultingPredicate = createResultingPredicate(
+                         metadata,
++                        session,
++                        symbolAllocator,
++                        typeAnalyzer,
+                         TRUE_LITERAL,
+                         nonDeterministicPredicate,
+                         decomposedPredicate.getRemainingExpression());
+@@ -286,6 +291,9 @@ public class PushPredicateIntoTableScan
+ 
+         Expression resultingPredicate = createResultingPredicate(
+                 metadata,
++                session,
++                symbolAllocator,
++                typeAnalyzer,
+                 domainTranslator.toPredicate(remainingFilter.transformKeys(assignments::get)),
+                 nonDeterministicPredicate,
+                 decomposedPredicate.getRemainingExpression());
+@@ -317,6 +325,9 @@ public class PushPredicateIntoTableScan
+ 
+     static Expression createResultingPredicate(
+             Metadata metadata,
++            Session session,
++            SymbolAllocator symbolAllocator,
++            TypeAnalyzer typeAnalyzer,
+             Expression unenforcedConstraints,
+             Expression nonDeterministicPredicate,
+             Expression remainingDecomposedPredicate)
+@@ -329,7 +340,13 @@ public class PushPredicateIntoTableScan
+         // * Short of implementing the previous bullet point, the current order of non-deterministic expressions
+         //   and non-TupleDomain-expressible expressions should be retained. Changing the order can lead
+         //   to failures of previously successful queries.
+-        return combineConjuncts(metadata, unenforcedConstraints, nonDeterministicPredicate, remainingDecomposedPredicate);
++        Expression expression = combineConjuncts(metadata, unenforcedConstraints, nonDeterministicPredicate, remainingDecomposedPredicate);
++
++        // Make sure we produce an expression whose terms are consistent with the canonical form used in other optimizations
++        // Otherwise, we'll end up ping-ponging among rules
++        expression = SimplifyExpressions.rewrite(expression, session, symbolAllocator, metadata, new LiteralEncoder(metadata), typeAnalyzer);
++
++        return expression;
+     }
+ 
+     private static class LayoutConstraintEvaluator
+diff --git a/core/trino-main/src/main/java/io/trino/sql/planner/iterative/rule/RemoveRedundantTableScanPredicate.java b/core/trino-main/src/main/java/io/trino/sql/planner/iterative/rule/RemoveRedundantTableScanPredicate.java
+index 2b97724c1fa..2093f64df0f 100644
+--- a/core/trino-main/src/main/java/io/trino/sql/planner/iterative/rule/RemoveRedundantTableScanPredicate.java
++++ b/core/trino-main/src/main/java/io/trino/sql/planner/iterative/rule/RemoveRedundantTableScanPredicate.java
+@@ -28,7 +28,8 @@ import io.trino.spi.type.TypeOperators;
+ import io.trino.sql.planner.DomainTranslator;
+ import io.trino.sql.planner.PlanNodeIdAllocator;
+ import io.trino.sql.planner.Symbol;
+-import io.trino.sql.planner.TypeProvider;
++import io.trino.sql.planner.SymbolAllocator;
++import io.trino.sql.planner.TypeAnalyzer;
+ import io.trino.sql.planner.iterative.Rule;
+ import io.trino.sql.planner.plan.FilterNode;
+ import io.trino.sql.planner.plan.PlanNode;
+@@ -61,13 +62,15 @@ public class RemoveRedundantTableScanPredicate
+ 
+     private final Metadata metadata;
+     private final DomainTranslator domainTranslator;
++    private final TypeAnalyzer typeAnalyzer;
+     private final TypeOperators typeOperators;
+ 
+-    public RemoveRedundantTableScanPredicate(Metadata metadata, TypeOperators typeOperators)
++    public RemoveRedundantTableScanPredicate(Metadata metadata, TypeOperators typeOperators, TypeAnalyzer typeAnalyzer)
+     {
+         this.metadata = requireNonNull(metadata, "metadata is null");
+         this.typeOperators = requireNonNull(typeOperators, "typeOperators is null");
+         this.domainTranslator = new DomainTranslator(metadata);
++        this.typeAnalyzer = requireNonNull(typeAnalyzer, "typeAnalyzer is null");
+     }
+ 
+     @Override
+@@ -85,7 +88,7 @@ public class RemoveRedundantTableScanPredicate
+                 tableScan,
+                 filterNode.getPredicate(),
+                 context.getSession(),
+-                context.getSymbolAllocator().getTypes(),
++                context.getSymbolAllocator(),
+                 context.getIdAllocator(),
+                 typeOperators);
+ 
+@@ -101,7 +104,7 @@ public class RemoveRedundantTableScanPredicate
+             TableScanNode node,
+             Expression predicate,
+             Session session,
+-            TypeProvider types,
++            SymbolAllocator symbolAllocator,
+             PlanNodeIdAllocator idAllocator,
+             TypeOperators typeOperators)
+     {
+@@ -113,7 +116,7 @@ public class RemoveRedundantTableScanPredicate
+                 typeOperators,
+                 session,
+                 deterministicPredicate,
+-                types);
++                symbolAllocator.getTypes());
+ 
+         TupleDomain<ColumnHandle> predicateDomain = decomposedPredicate.getTupleDomain()
+                 .transformKeys(node.getAssignments()::get);
+@@ -145,6 +148,9 @@ public class RemoveRedundantTableScanPredicate
+         Map<ColumnHandle, Symbol> assignments = ImmutableBiMap.copyOf(node.getAssignments()).inverse();
+         Expression resultingPredicate = createResultingPredicate(
+                 metadata,
++                session,
++                symbolAllocator,
++                typeAnalyzer,
+                 domainTranslator.toPredicate(unenforcedDomain.transformKeys(assignments::get)),
+                 nonDeterministicPredicate,
+                 decomposedPredicate.getRemainingExpression());
+diff --git a/core/trino-main/src/main/java/io/trino/sql/planner/iterative/rule/SimplifyExpressions.java b/core/trino-main/src/main/java/io/trino/sql/planner/iterative/rule/SimplifyExpressions.java
+index 63483512a4d..63acefaae8b 100644
+--- a/core/trino-main/src/main/java/io/trino/sql/planner/iterative/rule/SimplifyExpressions.java
++++ b/core/trino-main/src/main/java/io/trino/sql/planner/iterative/rule/SimplifyExpressions.java
+@@ -13,7 +13,6 @@
+  */
+ package io.trino.sql.planner.iterative.rule;
+ 
+-import com.google.common.annotations.VisibleForTesting;
+ import com.google.common.collect.ImmutableSet;
+ import io.trino.Session;
+ import io.trino.metadata.Metadata;
+@@ -38,8 +37,7 @@ import static java.util.Objects.requireNonNull;
+ public class SimplifyExpressions
+         extends ExpressionRewriteRuleSet
+ {
+-    @VisibleForTesting
+-    static Expression rewrite(Expression expression, Session session, SymbolAllocator symbolAllocator, Metadata metadata, LiteralEncoder literalEncoder, TypeAnalyzer typeAnalyzer)
++    public static Expression rewrite(Expression expression, Session session, SymbolAllocator symbolAllocator, Metadata metadata, LiteralEncoder literalEncoder, TypeAnalyzer typeAnalyzer)
+     {
+         requireNonNull(metadata, "metadata is null");
+         requireNonNull(typeAnalyzer, "typeAnalyzer is null");
+diff --git a/core/trino-main/src/main/java/io/trino/sql/planner/optimizations/AddExchanges.java b/core/trino-main/src/main/java/io/trino/sql/planner/optimizations/AddExchanges.java
+index 67a83ec5c4f..1f8e4b3da38 100644
+--- a/core/trino-main/src/main/java/io/trino/sql/planner/optimizations/AddExchanges.java
++++ b/core/trino-main/src/main/java/io/trino/sql/planner/optimizations/AddExchanges.java
+@@ -565,7 +565,7 @@ public class AddExchanges
+                         (TableScanNode) node.getSource(),
+                         true,
+                         session,
+-                        types,
++                        symbolAllocator,
+                         metadata,
+                         typeOperators,
+                         typeAnalyzer,

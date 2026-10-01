@@ -1,0 +1,29 @@
+diff --git a/numpy/tests/test_ctypeslib.py b/numpy/tests/test_ctypeslib.py
+index 53b75db0785c..d389b37a8760 100644
+--- a/numpy/tests/test_ctypeslib.py
++++ b/numpy/tests/test_ctypeslib.py
+@@ -1,6 +1,7 @@
+ from __future__ import division, absolute_import, print_function
+ 
+ import sys
+ import pytest
++import weakref
+ 
+ import numpy as np
+@@ -169,4 +170,16 @@ class TestAsArray(object):
+         check(as_array(c_array))
+         check(as_array(pointer(c_array), shape=()))
+         check(as_array(pointer(c_array[0]), shape=(2,)))
+         check(as_array(pointer(c_array[0][0]), shape=(2, 3)))
++
++    def test_segmentation_fault(self):
++        arr = np.zeros((224, 224, 3))
++        c_arr = np.ctypeslib.as_ctypes(arr)
++        arr_ref = weakref.ref(arr)
++        del arr
++
++        # check the reference wasn't cleaned up
++        assert_(arr_ref() is not None)
++
++        # check we avoid the segfault
++        c_arr[0][0][0]

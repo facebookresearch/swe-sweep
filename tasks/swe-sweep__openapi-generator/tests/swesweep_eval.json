@@ -1,0 +1,333 @@
+{
+  "build_jobs": 4,
+  "container_repo": "/openapi-generator",
+  "evaluation": {
+    "suite": "reproduction",
+    "visible_timeout": 14400
+  },
+  "upstream_image": "pandora-maxbug-openapi-generator:7.2.0",
+  "n_base_passing": 2067,
+  "n_base_test_ignore": 830,
+  "oracle_digest": "90829de2bf734577b8158c382a34cf29d251eeabc24661ce33ef722cac86a4f5",
+  "oracle_pristine_paths": [],
+  "upstream_commit": "9f7399e15e6172900e0591deb5a57a45769d8205",
+  "reproduction": {
+    "jobs_env": "SWESWEEP_BUILD_JOBS",
+    "needs_build": false,
+    "suite": {
+      "goal": "test",
+      "mvn_args": [
+        "-Dmaven.javadoc.skip=true",
+        "-Dmaven.source.skip=true",
+        "-Denforcer.skip=true",
+        "-Dlicense.skip=true"
+      ],
+      "type": "maven"
+    },
+    "test_timeout": 1800
+  },
+  "schema": 2,
+  "subtasks": [
+    {
+      "f2p": [
+        "org.openapitools.codegen.OpenAPINormalizerTest.testComposedSchemaDoesNotThrow"
+      ],
+      "id": "openapi-generator-00083a2a6c06",
+      "target_files": [
+        "modules/openapi-generator/src/main/java/org/openapitools/codegen/OpenAPINormalizer.java"
+      ]
+    },
+    {
+      "f2p": [
+        "org.openapitools.codegen.java.jaxrs.JavaJAXRSSpecServerCodegenTest.testEnumUnknownDefaultCaseDeserializationTrue_issue13444"
+      ],
+      "id": "openapi-generator-06896adbc9df",
+      "target_files": [
+        "modules/openapi-generator/src/main/resources/JavaJaxRS/spec/enumClass.mustache",
+        "modules/openapi-generator/src/main/resources/JavaJaxRS/spec/enumOuterClass.mustache"
+      ]
+    },
+    {
+      "f2p": [
+        "org.openapitools.codegen.yaml.YamlGeneratorTest.testIssue19929"
+      ],
+      "id": "openapi-generator-0d4d59b73be2",
+      "target_files": [
+        "modules/openapi-generator/src/main/java/org/openapitools/codegen/serializer/ByteArraySerializer.java",
+        "modules/openapi-generator/src/main/java/org/openapitools/codegen/serializer/SerializerUtils.java"
+      ]
+    },
+    {
+      "f2p": [
+        "org.openapitools.codegen.java.spring.SpringCodegenTest.testEnumUnknownDefaultCaseDeserializationTrue_issue13241"
+      ],
+      "id": "openapi-generator-13c344f70fd6",
+      "target_files": [
+        "modules/openapi-generator/src/main/resources/JavaSpring/enumClass.mustache",
+        "modules/openapi-generator/src/main/resources/JavaSpring/enumOuterClass.mustache"
+      ]
+    },
+    {
+      "f2p": [
+        "org.openapitools.codegen.kotlin.AbstractKotlinCodegenTest.toEnumValue"
+      ],
+      "id": "openapi-generator-18692f81fd09",
+      "target_files": [
+        "modules/openapi-generator/src/main/java/org/openapitools/codegen/languages/AbstractKotlinCodegen.java"
+      ]
+    },
+    {
+      "f2p": [
+        "org.openapitools.codegen.ExampleGeneratorTest.generateFromResponseSchemaWithDateFormat"
+      ],
+      "id": "openapi-generator-23d3b270a1f0",
+      "target_files": [
+        "modules/openapi-generator/src/main/java/org/openapitools/codegen/examples/ExampleGenerator.java"
+      ]
+    },
+    {
+      "f2p": [
+        "org.openapitools.codegen.kotlin.spring.KotlinSpringServerCodegenTest.givenMultipartForm_whenGenerateReactiveServer_thenParameterAreCreatedAsRequestPart"
+      ],
+      "id": "openapi-generator-27ca6e972ed9",
+      "target_files": [
+        "modules/openapi-generator/src/main/resources/kotlin-spring/formParams.mustache"
+      ]
+    },
+    {
+      "f2p": [
+        "org.openapitools.codegen.java.spring.SpringCodegenTest.contractWithResolvedInnerEnumContainsEnumConverter"
+      ],
+      "id": "openapi-generator-3b725c11745c",
+      "target_files": [
+        "modules/openapi-generator/src/main/java/org/openapitools/codegen/languages/SpringCodegen.java"
+      ]
+    },
+    {
+      "f2p": [
+        "org.openapitools.codegen.java.spring.SpringCodegenTest.testHasRestControllerDoesNotHaveController_issue21156"
+      ],
+      "id": "openapi-generator-3f9c908ded57",
+      "target_files": [
+        "modules/openapi-generator/src/main/resources/JavaSpring/apiDelegate.mustache"
+      ]
+    },
+    {
+      "f2p": [
+        "org.openapitools.codegen.DefaultGeneratorTest.testHandlesRelativeUrlsWithSpecialChars"
+      ],
+      "id": "openapi-generator-45ea7af9f17a",
+      "target_files": [
+        "modules/openapi-generator/src/main/java/org/openapitools/codegen/utils/URLPathUtils.java"
+      ]
+    },
+    {
+      "f2p": [
+        "org.openapitools.codegen.java.spring.SpringCodegenTest.reactiveArrayShouldBeWrappedInFluxWithoutMono"
+      ],
+      "id": "openapi-generator-5755341ef74f",
+      "target_files": [
+        "modules/openapi-generator/src/main/java/org/openapitools/codegen/languages/SpringCodegen.java",
+        "modules/openapi-generator/src/main/resources/JavaSpring/libraries/spring-http-interface/api.mustache",
+        "modules/openapi-generator/src/main/resources/JavaSpring/methodBody.mustache",
+        "modules/openapi-generator/src/main/resources/JavaSpring/responseType.mustache",
+        "modules/openapi-generator/src/main/resources/JavaSpring/returnTypes.mustache"
+      ]
+    },
+    {
+      "f2p": [
+        "org.openapitools.codegen.python.PythonFastAPIServerCodegenTest.testContainerType"
+      ],
+      "id": "openapi-generator-5951112d11db",
+      "target_files": [
+        "modules/openapi-generator/src/main/java/org/openapitools/codegen/languages/AbstractPythonCodegen.java",
+        "modules/openapi-generator/src/main/java/org/openapitools/codegen/languages/PythonFastAPIServerCodegen.java",
+        "modules/openapi-generator/src/main/resources/python-fastapi/param_type.mustache"
+      ]
+    },
+    {
+      "f2p": [
+        "org.openapitools.codegen.kotlin.spring.KotlinSpringServerCodegenTest.arrayItemsCanBeNullable"
+      ],
+      "id": "openapi-generator-5a0ae38b1198",
+      "target_files": [
+        "modules/openapi-generator/src/main/java/org/openapitools/codegen/languages/AbstractKotlinCodegen.java"
+      ]
+    },
+    {
+      "f2p": [
+        "org.openapitools.codegen.go.AbstractGoCodegenTest.testOsImportForArrayOfBinaryParametersInOperations",
+        "org.openapitools.codegen.go.AbstractGoCodegenTest.testTimeImportForArrayOfDateTimeParametersInOperations"
+      ],
+      "id": "openapi-generator-5f110ccad041",
+      "target_files": [
+        "modules/openapi-generator/src/main/java/org/openapitools/codegen/languages/AbstractGoCodegen.java"
+      ]
+    },
+    {
+      "f2p": [
+        "org.openapitools.codegen.java.spring.SpringCodegenTest.shouldGenerateOptionalParameterTypesWhenUsingOptionalAndDelegate_issue17768"
+      ],
+      "id": "openapi-generator-7ac8c0e18335",
+      "target_files": [
+        "modules/openapi-generator/src/main/resources/JavaSpring/api.mustache",
+        "modules/openapi-generator/src/main/resources/JavaSpring/apiDelegate.mustache"
+      ]
+    },
+    {
+      "f2p": [
+        "org.openapitools.codegen.java.AbstractJavaCodegenTest.arrayParameterDefaultValueDoesNotNeedBraces"
+      ],
+      "id": "openapi-generator-85c5c974f499",
+      "target_files": [
+        "modules/openapi-generator/src/main/java/org/openapitools/codegen/languages/AbstractJavaCodegen.java"
+      ]
+    },
+    {
+      "f2p": [
+        "org.openapitools.codegen.java.JavaClientCodegenTest.testRestTemplateWithPerformBeanValidationEnabled",
+        "org.openapitools.codegen.java.JavaClientCodegenTest.testRestTemplateWithUseBeanValidationEnabled"
+      ],
+      "id": "openapi-generator-9da81b200263",
+      "target_files": [
+        "modules/openapi-generator/src/main/resources/Java/libraries/resttemplate/pom.mustache"
+      ]
+    },
+    {
+      "f2p": [
+        "org.openapitools.codegen.java.spring.SpringCodegenTest.givenMultipartForm_whenGenerateUsingOptional_thenParameterAreCreatedAsOptional"
+      ],
+      "id": "openapi-generator-9dfc4ead1dd0",
+      "target_files": [
+        "modules/openapi-generator/src/main/resources/JavaSpring/formParams.mustache"
+      ]
+    },
+    {
+      "f2p": [
+        "org.openapitools.codegen.java.JavaClientCodegenTest.doesNotGenerateJacksonToStringSerializerAnnotation_whenLibraryIsGson_andSerializeBigDecimalAsStringIsTrue"
+      ],
+      "id": "openapi-generator-ac94d23782c5",
+      "target_files": [
+        "modules/openapi-generator/src/main/java/org/openapitools/codegen/languages/AbstractJavaCodegen.java"
+      ]
+    },
+    {
+      "f2p": [
+        "org.openapitools.codegen.dart.dio.DartDioClientCodegenTest.verifyWebhookImports"
+      ],
+      "id": "openapi-generator-acf04401042b",
+      "target_files": [
+        "modules/openapi-generator/src/main/java/org/openapitools/codegen/languages/DartDioClientCodegen.java"
+      ]
+    },
+    {
+      "f2p": [
+        "org.openapitools.codegen.typescript.typescriptnestjs.TypeScriptNestjsClientCodegenTest.testPathPropertyName"
+      ],
+      "id": "openapi-generator-afdff14723a5",
+      "target_files": [
+        "modules/openapi-generator/src/main/java/org/openapitools/codegen/languages/TypeScriptNestjsClientCodegen.java"
+      ]
+    },
+    {
+      "f2p": [
+        "org.openapitools.codegen.java.spring.SpringCodegenTest.contractWithNumberEnumContainsEnumConverterWithBigDecimalImport",
+        "org.openapitools.codegen.java.spring.SpringCodegenTest.contractWithUriEnumContainsEnumConverterWithUriImport",
+        "org.openapitools.codegen.java.spring.SpringCodegenTest.contractWithUuidEnumContainsEnumConverterWithUuidImport"
+      ],
+      "id": "openapi-generator-b18cf0ca5598",
+      "target_files": [
+        "modules/openapi-generator/src/main/resources/JavaSpring/converter.mustache"
+      ]
+    },
+    {
+      "f2p": [
+        "org.openapitools.codegen.typescript.fetch.TypeScriptFetchClientCodegenTest.testModelsWithoutPaths"
+      ],
+      "id": "openapi-generator-b264b424a75d",
+      "target_files": [
+        "modules/openapi-generator/src/main/java/org/openapitools/codegen/languages/TypeScriptFetchClientCodegen.java"
+      ]
+    },
+    {
+      "f2p": [
+        "org.openapitools.codegen.java.JavaClientCodegenTest.testVertXAuthInfoWithHyphenSeparatedSecurityScheme"
+      ],
+      "id": "openapi-generator-b30a5fbff6ff",
+      "target_files": [
+        "modules/openapi-generator/src/main/resources/Java/libraries/vertx/ApiClient.mustache"
+      ]
+    },
+    {
+      "f2p": [
+        "org.openapitools.codegen.go.GoClientCodegenTest.testEscapingInExamples"
+      ],
+      "id": "openapi-generator-bea1fc692e06",
+      "target_files": [
+        "modules/openapi-generator/src/main/java/org/openapitools/codegen/languages/GoClientCodegen.java"
+      ]
+    },
+    {
+      "f2p": [
+        "org.openapitools.codegen.java.JavaClientCodegenTest.testMicroprofileGenerateCorrectJacksonGenerator_issue18336"
+      ],
+      "id": "openapi-generator-d59f53af27ab",
+      "target_files": [
+        "modules/openapi-generator/src/main/resources/Java/libraries/microprofile/pojo.mustache"
+      ]
+    },
+    {
+      "f2p": [
+        "org.openapitools.codegen.python.PythonClientCodegenTest.testModelNameMappingDoesNotRenameParameters",
+        "org.openapitools.codegen.python.PythonPydanticV1ClientCodegenTest.testModelNameMappingDoesNotRenameParameters"
+      ],
+      "id": "openapi-generator-db2905ed8f3d",
+      "target_files": [
+        "modules/openapi-generator/src/main/java/org/openapitools/codegen/languages/AbstractPythonCodegen.java",
+        "modules/openapi-generator/src/main/java/org/openapitools/codegen/languages/AbstractPythonPydanticV1Codegen.java"
+      ]
+    },
+    {
+      "f2p": [
+        "org.openapitools.codegen.typescript.typescriptangular.TypeScriptAngularClientCodegenTest.testOpenIdCredentialsAreSet"
+      ],
+      "id": "openapi-generator-dbfc68ce4611",
+      "target_files": [
+        "modules/openapi-generator/src/main/resources/typescript-angular/api.service.mustache"
+      ]
+    },
+    {
+      "f2p": [
+        "org.openapitools.codegen.utils.ModelUtilsTest.testObjectAndComplexComposedSchema"
+      ],
+      "id": "openapi-generator-dcaea4720ca7",
+      "target_files": [
+        "modules/openapi-generator/src/main/java/org/openapitools/codegen/utils/ModelUtils.java"
+      ]
+    },
+    {
+      "f2p": [
+        "org.openapitools.codegen.utils.ModelUtilsTest.testIsMapSchema"
+      ],
+      "id": "openapi-generator-e4d912d40c1f",
+      "target_files": [
+        "modules/openapi-generator/src/main/java/org/openapitools/codegen/IJsonSchemaValidationProperties.java",
+        "modules/openapi-generator/src/main/java/org/openapitools/codegen/utils/ModelUtils.java",
+        "modules/openapi-generator/src/main/resources/rust/model.mustache"
+      ]
+    },
+    {
+      "f2p": [
+        "org.openapitools.codegen.typescript.fetch.TypeScriptFetchClientCodegenTest.testOptionalResponseImports"
+      ],
+      "id": "openapi-generator-e6d7797dfb6f",
+      "target_files": [
+        "modules/openapi-generator/src/main/java/org/openapitools/codegen/CodegenOperation.java",
+        "modules/openapi-generator/src/main/java/org/openapitools/codegen/languages/ErlangClientCodegen.java",
+        "modules/openapi-generator/src/main/java/org/openapitools/codegen/languages/TypeScriptFetchClientCodegen.java"
+      ]
+    }
+  ],
+  "task": "openapi-generator",
+  "version": "7.2.0"
+}

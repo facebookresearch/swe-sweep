@@ -1,0 +1,20 @@
+diff --git a/MathlibTest/Recall.lean b/MathlibTest/Recall.lean
+index a6075ce258..b956e8d87b 100644
+--- a/MathlibTest/Recall.lean
++++ b/MathlibTest/Recall.lean
+@@ -93,3 +93,15 @@ axiom bar : Nat
+ #guard_msgs in recall bar := bar
+ 
+ recall List.cons_append (a : α) (as bs : List α) : (a :: as) ++ bs = a :: (as ++ bs) := rfl
++
++-- Test that `recall` works with different universe variable names (issue #37144).
++universe u v
++class RecallUnivTest (R : Type u) : Prop where
++  test : True
++
++set_option linter.unusedVariables false in
++recall RecallUnivTest (R : Type v) : Prop
++
++-- Test that `recall` works with `Type*`.
++set_option linter.unusedVariables false in
++recall RecallUnivTest (R : Type*) : Prop

@@ -1,0 +1,121 @@
+{
+  "build_jobs": 4,
+  "container_repo": "/modelingtoolkit",
+  "evaluation": {
+    "suite": "julia-safetestset-eval",
+    "visible_timeout": 10800
+  },
+  "upstream_image": "pandora-maxbug-modelingtoolkit-jl:9.33.0",
+  "n_base_passing": 94,
+  "n_base_test_ignore": 38,
+  "oracle_digest": "c29721e674e7a427bd78bd30e52572aee6b10d7cf434a37132f4d94ed65693b1",
+  "oracle_pristine_paths": [],
+  "upstream_commit": "9f7399e15e6172900e0591deb5a57a45769d8205",
+  "reproduction": {
+    "needs_build": false,
+    "suite": "julia-safetestset",
+    "test_timeout": 4800
+  },
+  "schema": 2,
+  "subtasks": [
+    {
+      "f2p": [
+        "test/initializationsystem.jl/Derivatives in Initialization Equations"
+      ],
+      "id": "modelingtoolkit-jl-123634ca0616",
+      "target_files": [
+        "src/structural_transformation/symbolics_tearing.jl",
+        "src/systems/nonlinear/initializesystem.jl"
+      ]
+    },
+    {
+      "f2p": [
+        "test/parameter_dependencies.jl/parameter dependencies across model hierarchy"
+      ],
+      "id": "modelingtoolkit-jl-2903a2b70fbd",
+      "target_files": [
+        "src/systems/abstractsystem.jl"
+      ]
+    },
+    {
+      "f2p": [
+        "test/model_parsing.jl/Variables are not callable symbolics"
+      ],
+      "id": "modelingtoolkit-jl-2bbf12f7fe1f",
+      "target_files": [
+        "src/systems/model_parsing.jl"
+      ]
+    },
+    {
+      "f2p": [
+        "test/downstream/linearize.jl/Issue #2941"
+      ],
+      "id": "modelingtoolkit-jl-2d41abdcfbad",
+      "target_files": [
+        "src/systems/abstractsystem.jl"
+      ]
+    },
+    {
+      "f2p": [
+        "test/variable_scope.jl"
+      ],
+      "id": "modelingtoolkit-jl-534bd9f6b1ff",
+      "target_files": [
+        "src/utils.jl"
+      ]
+    },
+    {
+      "f2p": [
+        "__process_level_failure__"
+      ],
+      "id": "modelingtoolkit-jl-62eeee3cecc6",
+      "target_files": [
+        "src/systems/model_parsing.jl"
+      ]
+    },
+    {
+      "f2p": [
+        "test/initializationsystem.jl/Override defaults when setting initial conditions with unknowns(sys) or similar"
+      ],
+      "id": "modelingtoolkit-jl-754c448cc0df",
+      "target_files": [
+        "src/systems/nonlinear/initializesystem.jl"
+      ]
+    },
+    {
+      "f2p": [
+        "test/dq_units.jl"
+      ],
+      "id": "modelingtoolkit-jl-ad1ca24ec27e",
+      "target_files": [
+        "src/structural_transformation/StructuralTransformations.jl",
+        "src/structural_transformation/pantelides.jl",
+        "src/structural_transformation/symbolics_tearing.jl",
+        "src/structural_transformation/utils.jl",
+        "src/systems/diffeqs/abstractodesystem.jl",
+        "src/systems/diffeqs/first_order_transform.jl",
+        "src/utils.jl"
+      ]
+    },
+    {
+      "f2p": [
+        "test/modelingtoolkitize.jl/`modelingtoolkitize(::SDEProblem)` sets defaults"
+      ],
+      "id": "modelingtoolkit-jl-f064eb6904f3",
+      "target_files": [
+        "src/systems/diffeqs/modelingtoolkitize.jl"
+      ]
+    },
+    {
+      "f2p": [
+        "test/variable_utils.jl/vars searching through array of symbolics"
+      ],
+      "id": "modelingtoolkit-jl-f88c5f1ce398",
+      "target_files": [
+        "src/utils.jl"
+      ]
+    }
+  ],
+  "task": "modelingtoolkit-jl",
+  "version": "9.33.0"
+}

@@ -1,0 +1,22 @@
+diff --git a/tests/dialects/test_databricks.py b/tests/dialects/test_databricks.py
+index 3d4a6bb547..bfe98186cf 100644
+--- a/tests/dialects/test_databricks.py
++++ b/tests/dialects/test_databricks.py
+@@ -14,6 +14,17 @@ class TestDatabricks(Validator):
+         self.validate_identity("DESCRIBE history.tbl")
+         self.validate_identity("CREATE TABLE t (a STRUCT<c: MAP<STRING, STRING>>)")
+         self.validate_identity("CREATE TABLE t (c STRUCT<interval: DOUBLE COMMENT 'aaa'>)")
++        self.validate_identity("CREATE TABLE t (c STRING COMMENT 'Hello World')")
++        self.validate_all(
++            "CREATE TABLE t (c STRING COMMENT 'Hello ''World!')",
++            write={
++                "databricks": "CREATE TABLE t (c STRING COMMENT 'Hello \\'World!')",
++            },
++        )
++        self.validate_all(
++            "SELECT 'Hello ''World!'",
++            write={"databricks": "SELECT 'Hello \\'World!'"},
++        )
+         self.validate_identity("CREATE TABLE my_table TBLPROPERTIES (a.b=15)")
+         self.validate_identity("CREATE TABLE my_table TBLPROPERTIES ('a.b'=15)")
+         self.validate_identity("SELECT CAST('11 23:4:0' AS INTERVAL DAY TO HOUR)")

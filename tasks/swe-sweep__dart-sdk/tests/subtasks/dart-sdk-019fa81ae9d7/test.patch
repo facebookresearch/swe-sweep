@@ -1,0 +1,23 @@
+diff --git a/pkg/analysis_server/test/lsp/completion_yaml_test.dart b/pkg/analysis_server/test/lsp/completion_yaml_test.dart
+index 9d8ff8a0675..675c45d1eef 100644
+--- a/pkg/analysis_server/test/lsp/completion_yaml_test.dart
++++ b/pkg/analysis_server/test/lsp/completion_yaml_test.dart
+@@ -277,6 +277,18 @@ environment:
+     );
+   }
+ 
++  Future<void> test_nested_afterString() async {
++    final content = '''
++name: foo
++  ^''';
++
++    await verifyCompletions(
++      pubspecFileUri,
++      content,
++      expectCompletions: [],
++    );
++  }
++
+   Future<void> test_nested_prefix() async {
+     final content = '''
+ name: foo

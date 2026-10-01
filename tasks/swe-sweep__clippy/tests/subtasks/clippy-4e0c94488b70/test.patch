@@ -1,0 +1,277 @@
+diff --git a/tests/ui/while_let_on_iterator.fixed b/tests/ui/while_let_on_iterator.fixed
+index f9ccefab5..0d3b446af 100644
+--- a/tests/ui/while_let_on_iterator.fixed
++++ b/tests/ui/while_let_on_iterator.fixed
+@@ -492,6 +492,110 @@ fn issue13123() {
+     }
+ }
+ 
++fn issue16089() {
++    trait CertainTrait: Iterator<Item = u8> {
++        fn iter_over_self(&mut self) {
++            let mut a = 0;
++            for r in &mut *self {
++                //~^ while_let_on_iterator
++                a = r;
++            }
++            self.use_after_iter()
++        }
++
++        fn use_after_iter(&mut self) {}
++    }
++}
++
++fn issue16089_sized_trait_not_reborrowed() {
++    trait CertainTrait: Iterator<Item = u8> + Sized {
++        fn iter_over_self(&mut self) {
++            let mut a = 0;
++            // Check that the suggestion is just "self", since the trait is sized.
++            for r in self.by_ref() {
++                //~^ while_let_on_iterator
++                a = r;
++            }
++            self.use_after_iter()
++        }
++
++        fn use_after_iter(&mut self) {}
++    }
++}
++
++fn issue16089_nested_derefs() {
++    struct S<T>(T);
++    impl<T> core::ops::Deref for S<T> {
++        type Target = T;
++        fn deref(&self) -> &Self::Target {
++            &self.0
++        }
++    }
++    impl<T> core::ops::DerefMut for S<T> {
++        fn deref_mut(&mut self) -> &mut Self::Target {
++            &mut self.0
++        }
++    }
++
++    fn f(mut x: S<S<&mut dyn Iterator<Item = u32>>>) {
++        for _ in &mut ***x {}
++        //~^ while_let_on_iterator
++    }
++}
++
++fn issue16089_nested_derefs_last_not_sized() {
++    struct WithSize<T>(T);
++    impl<T> core::ops::Deref for WithSize<T> {
++        type Target = T;
++        fn deref(&self) -> &Self::Target {
++            &self.0
++        }
++    }
++    impl<T> core::ops::DerefMut for WithSize<T> {
++        fn deref_mut(&mut self) -> &mut Self::Target {
++            &mut self.0
++        }
++    }
++    // The suggestion must use `&mut **x`. Using `x.by_ref()` doesn't work in this
++    // case, since the last type adjustment for `x` in the expression `x.next()` is
++    // to dereference a `?Sized` trait.
++    fn f(mut x: WithSize<&mut dyn Iterator<Item = u32>>) {
++        for _ in &mut **x {}
++        //~^ while_let_on_iterator
++    }
++}
++
++fn issue16089_nested_derefs_last_sized() {
++    struct NoSize<T: ?Sized>(T);
++    impl<T: ?Sized> core::ops::Deref for NoSize<T> {
++        type Target = T;
++        fn deref(&self) -> &Self::Target {
++            &self.0
++        }
++    }
++    impl<T: ?Sized> core::ops::DerefMut for NoSize<T> {
++        fn deref_mut(&mut self) -> &mut Self::Target {
++            &mut self.0
++        }
++    }
++
++    struct SizedIter {}
++
++    impl Iterator for SizedIter {
++        type Item = u32;
++        fn next(&mut self) -> Option<u32> {
++            Some(0)
++        }
++    }
++
++    // We want the suggestion to be `x.by_ref()`. It works in this case since the last type
++    // adjustment for `x` in the expression `x.next()` is to dereference a Sized type.
++    fn f(mut x: NoSize<NoSize<SizedIter>>) {
++        for _ in x.by_ref() {}
++        //~^ while_let_on_iterator
++    }
++}
++
+ fn main() {
+     let mut it = 0..20;
+     for _ in it {
+diff --git a/tests/ui/while_let_on_iterator.rs b/tests/ui/while_let_on_iterator.rs
+index f957f2e5a..e1d9e9081 100644
+--- a/tests/ui/while_let_on_iterator.rs
++++ b/tests/ui/while_let_on_iterator.rs
+@@ -492,6 +492,110 @@ fn issue13123() {
+     }
+ }
+ 
++fn issue16089() {
++    trait CertainTrait: Iterator<Item = u8> {
++        fn iter_over_self(&mut self) {
++            let mut a = 0;
++            while let Some(r) = self.next() {
++                //~^ while_let_on_iterator
++                a = r;
++            }
++            self.use_after_iter()
++        }
++
++        fn use_after_iter(&mut self) {}
++    }
++}
++
++fn issue16089_sized_trait_not_reborrowed() {
++    trait CertainTrait: Iterator<Item = u8> + Sized {
++        fn iter_over_self(&mut self) {
++            let mut a = 0;
++            // Check that the suggestion is just "self", since the trait is sized.
++            while let Some(r) = self.next() {
++                //~^ while_let_on_iterator
++                a = r;
++            }
++            self.use_after_iter()
++        }
++
++        fn use_after_iter(&mut self) {}
++    }
++}
++
++fn issue16089_nested_derefs() {
++    struct S<T>(T);
++    impl<T> core::ops::Deref for S<T> {
++        type Target = T;
++        fn deref(&self) -> &Self::Target {
++            &self.0
++        }
++    }
++    impl<T> core::ops::DerefMut for S<T> {
++        fn deref_mut(&mut self) -> &mut Self::Target {
++            &mut self.0
++        }
++    }
++
++    fn f(mut x: S<S<&mut dyn Iterator<Item = u32>>>) {
++        while let Some(_) = x.next() {}
++        //~^ while_let_on_iterator
++    }
++}
++
++fn issue16089_nested_derefs_last_not_sized() {
++    struct WithSize<T>(T);
++    impl<T> core::ops::Deref for WithSize<T> {
++        type Target = T;
++        fn deref(&self) -> &Self::Target {
++            &self.0
++        }
++    }
++    impl<T> core::ops::DerefMut for WithSize<T> {
++        fn deref_mut(&mut self) -> &mut Self::Target {
++            &mut self.0
++        }
++    }
++    // The suggestion must use `&mut **x`. Using `x.by_ref()` doesn't work in this
++    // case, since the last type adjustment for `x` in the expression `x.next()` is
++    // to dereference a `?Sized` trait.
++    fn f(mut x: WithSize<&mut dyn Iterator<Item = u32>>) {
++        while let Some(_) = x.next() {}
++        //~^ while_let_on_iterator
++    }
++}
++
++fn issue16089_nested_derefs_last_sized() {
++    struct NoSize<T: ?Sized>(T);
++    impl<T: ?Sized> core::ops::Deref for NoSize<T> {
++        type Target = T;
++        fn deref(&self) -> &Self::Target {
++            &self.0
++        }
++    }
++    impl<T: ?Sized> core::ops::DerefMut for NoSize<T> {
++        fn deref_mut(&mut self) -> &mut Self::Target {
++            &mut self.0
++        }
++    }
++
++    struct SizedIter {}
++
++    impl Iterator for SizedIter {
++        type Item = u32;
++        fn next(&mut self) -> Option<u32> {
++            Some(0)
++        }
++    }
++
++    // We want the suggestion to be `x.by_ref()`. It works in this case since the last type
++    // adjustment for `x` in the expression `x.next()` is to dereference a Sized type.
++    fn f(mut x: NoSize<NoSize<SizedIter>>) {
++        while let Some(_) = x.next() {}
++        //~^ while_let_on_iterator
++    }
++}
++
+ fn main() {
+     let mut it = 0..20;
+     while let Some(..) = it.next() {
+diff --git a/tests/ui/while_let_on_iterator.stderr b/tests/ui/while_let_on_iterator.stderr
+index 50f20227b..cd43d3c17 100644
+--- a/tests/ui/while_let_on_iterator.stderr
++++ b/tests/ui/while_let_on_iterator.stderr
+@@ -164,10 +164,40 @@ LL |     'label: while let Some(n) = it.next() {
+    |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ help: try: `'label: for n in it`
+ 
+ error: this loop could be written as a `for` loop
+-  --> tests/ui/while_let_on_iterator.rs:497:5
++  --> tests/ui/while_let_on_iterator.rs:499:13
++   |
++LL |             while let Some(r) = self.next() {
++   |             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ help: try: `for r in &mut *self`
++
++error: this loop could be written as a `for` loop
++  --> tests/ui/while_let_on_iterator.rs:515:13
++   |
++LL |             while let Some(r) = self.next() {
++   |             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ help: try: `for r in self.by_ref()`
++
++error: this loop could be written as a `for` loop
++  --> tests/ui/while_let_on_iterator.rs:541:9
++   |
++LL |         while let Some(_) = x.next() {}
++   |         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^ help: try: `for _ in &mut ***x`
++
++error: this loop could be written as a `for` loop
++  --> tests/ui/while_let_on_iterator.rs:563:9
++   |
++LL |         while let Some(_) = x.next() {}
++   |         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^ help: try: `for _ in &mut **x`
++
++error: this loop could be written as a `for` loop
++  --> tests/ui/while_let_on_iterator.rs:594:9
++   |
++LL |         while let Some(_) = x.next() {}
++   |         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^ help: try: `for _ in x.by_ref()`
++
++error: this loop could be written as a `for` loop
++  --> tests/ui/while_let_on_iterator.rs:601:5
+    |
+ LL |     while let Some(..) = it.next() {
+    |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ help: try: `for _ in it`
+ 
+-error: aborting due to 28 previous errors
++error: aborting due to 33 previous errors
+ 

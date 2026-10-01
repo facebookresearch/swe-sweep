@@ -1,0 +1,101 @@
+diff --git a/extensions/resteasy-reactive/quarkus-resteasy-reactive/deployment/src/test/java/io/quarkus/resteasy/reactive/server/test/resource/basic/ResourceLocatorTest.java b/extensions/resteasy-reactive/quarkus-resteasy-reactive/deployment/src/test/java/io/quarkus/resteasy/reactive/server/test/resource/basic/ResourceLocatorTest.java
+index 0ea317fca1a..2f610a82cce 100644
+--- a/extensions/resteasy-reactive/quarkus-resteasy-reactive/deployment/src/test/java/io/quarkus/resteasy/reactive/server/test/resource/basic/ResourceLocatorTest.java
++++ b/extensions/resteasy-reactive/quarkus-resteasy-reactive/deployment/src/test/java/io/quarkus/resteasy/reactive/server/test/resource/basic/ResourceLocatorTest.java
+@@ -61,6 +61,7 @@ public class ResourceLocatorTest {
+ 
+     @RegisterExtension
+     static QuarkusUnitTest testExtension = new QuarkusUnitTest()
++            .overrideConfigKey("quarkus.http.root-path", "/app")
+             .setArchiveProducer(new Supplier<>() {
+                 @Override
+                 public JavaArchive get() {
+@@ -155,4 +156,9 @@ public class ResourceLocatorTest {
+                 .then()
+                 .body(is("first and second"));
+     }
++
++    @Test
++    public void testRoot() throws Exception {
++        given().get().then().body(is("[app, ]"));
++    }
+ }
+diff --git a/extensions/resteasy-reactive/quarkus-resteasy-reactive/deployment/src/test/java/io/quarkus/resteasy/reactive/server/test/resource/basic/resource/ResourceLocatorBaseResource.java b/extensions/resteasy-reactive/quarkus-resteasy-reactive/deployment/src/test/java/io/quarkus/resteasy/reactive/server/test/resource/basic/resource/ResourceLocatorBaseResource.java
+index 31983321490..308a4a738be 100644
+--- a/extensions/resteasy-reactive/quarkus-resteasy-reactive/deployment/src/test/java/io/quarkus/resteasy/reactive/server/test/resource/basic/resource/ResourceLocatorBaseResource.java
++++ b/extensions/resteasy-reactive/quarkus-resteasy-reactive/deployment/src/test/java/io/quarkus/resteasy/reactive/server/test/resource/basic/resource/ResourceLocatorBaseResource.java
+@@ -5,8 +5,10 @@ import java.lang.reflect.Method;
+ import java.lang.reflect.Proxy;
+ import java.util.List;
+ 
++import jakarta.ws.rs.GET;
+ import jakarta.ws.rs.Path;
+ import jakarta.ws.rs.PathParam;
++import jakarta.ws.rs.Produces;
+ import jakarta.ws.rs.core.Context;
+ import jakarta.ws.rs.core.UriInfo;
+ 
+@@ -18,13 +20,21 @@ public class ResourceLocatorBaseResource {
+ 
+     private static final Logger LOG = Logger.getLogger(ResourceLocatorBaseResource.class);
+ 
++    @GET
++    @Produces("*/*")
++    public String getDefault(@Context UriInfo uri) {
++        LOG.debug("Here in BaseResource");
++        List<String> matchedURIs = uri.getMatchedURIs();
++        return matchedURIs.toString();
++    }
++
+     @Path("base/{param}/resources")
+     public Object getSubresource(@PathParam("param") String param, @Context UriInfo uri) {
+         LOG.debug("Here in BaseResource");
+         Assertions.assertEquals("1", param);
+         List<String> matchedURIs = uri.getMatchedURIs();
+         Assertions.assertEquals(2, matchedURIs.size());
+-        Assertions.assertEquals("base/1/resources", matchedURIs.get(0));
++        Assertions.assertEquals("app/base/1/resources", matchedURIs.get(0));
+         Assertions.assertEquals("", matchedURIs.get(1));
+         for (String ancestor : matchedURIs)
+             LOG.debug("   " + ancestor);
+diff --git a/extensions/resteasy-reactive/quarkus-resteasy-reactive/deployment/src/test/java/io/quarkus/resteasy/reactive/server/test/resource/basic/resource/ResourceLocatorSubresource.java b/extensions/resteasy-reactive/quarkus-resteasy-reactive/deployment/src/test/java/io/quarkus/resteasy/reactive/server/test/resource/basic/resource/ResourceLocatorSubresource.java
+index febacd2ff7e..dfb0d717642 100644
+--- a/extensions/resteasy-reactive/quarkus-resteasy-reactive/deployment/src/test/java/io/quarkus/resteasy/reactive/server/test/resource/basic/resource/ResourceLocatorSubresource.java
++++ b/extensions/resteasy-reactive/quarkus-resteasy-reactive/deployment/src/test/java/io/quarkus/resteasy/reactive/server/test/resource/basic/resource/ResourceLocatorSubresource.java
+@@ -22,7 +22,7 @@ public class ResourceLocatorSubresource {
+         LOG.info("Uri Ancestors for Subresource.doGet():");
+         List<String> matchedURIs = uri.getMatchedURIs();
+         Assertions.assertEquals(2, matchedURIs.size());
+-        Assertions.assertEquals("base/1/resources", matchedURIs.get(0));
++        Assertions.assertEquals("app/base/1/resources", matchedURIs.get(0));
+         Assertions.assertEquals("", matchedURIs.get(1));
+         for (String ancestor : matchedURIs)
+             LOG.debug("   " + ancestor);
+@@ -41,8 +41,8 @@ public class ResourceLocatorSubresource {
+         LOG.info("Uri Ancestors for Subresource.getSubresource2():");
+         List<String> matchedURIs = uri.getMatchedURIs();
+         Assertions.assertEquals(3, matchedURIs.size());
+-        Assertions.assertEquals("base/1/resources/subresource2", matchedURIs.get(0));
+-        Assertions.assertEquals("base/1/resources", matchedURIs.get(1));
++        Assertions.assertEquals("app/base/1/resources/subresource2", matchedURIs.get(0));
++        Assertions.assertEquals("app/base/1/resources", matchedURIs.get(1));
+         Assertions.assertEquals("", matchedURIs.get(2));
+         for (String ancestor : matchedURIs)
+             LOG.debug("   " + ancestor);
+diff --git a/extensions/resteasy-reactive/quarkus-resteasy-reactive/deployment/src/test/java/io/quarkus/resteasy/reactive/server/test/resource/basic/resource/ResourceLocatorSubresource2.java b/extensions/resteasy-reactive/quarkus-resteasy-reactive/deployment/src/test/java/io/quarkus/resteasy/reactive/server/test/resource/basic/resource/ResourceLocatorSubresource2.java
+index 637ca33eb0a..da745c63579 100644
+--- a/extensions/resteasy-reactive/quarkus-resteasy-reactive/deployment/src/test/java/io/quarkus/resteasy/reactive/server/test/resource/basic/resource/ResourceLocatorSubresource2.java
++++ b/extensions/resteasy-reactive/quarkus-resteasy-reactive/deployment/src/test/java/io/quarkus/resteasy/reactive/server/test/resource/basic/resource/ResourceLocatorSubresource2.java
+@@ -18,9 +18,9 @@ public class ResourceLocatorSubresource2 {
+     public String doGet(@PathParam("param") String param, @Context UriInfo uri) {
+         LOG.debug("Uri Ancestors for Subresource2.doGet():");
+         Assertions.assertEquals(4, uri.getMatchedURIs().size());
+-        Assertions.assertEquals("base/1/resources/subresource2/stuff/2/bar", uri.getMatchedURIs().get(0));
+-        Assertions.assertEquals("base/1/resources/subresource2", uri.getMatchedURIs().get(1));
+-        Assertions.assertEquals("base/1/resources", uri.getMatchedURIs().get(2));
++        Assertions.assertEquals("app/base/1/resources/subresource2/stuff/2/bar", uri.getMatchedURIs().get(0));
++        Assertions.assertEquals("app/base/1/resources/subresource2", uri.getMatchedURIs().get(1));
++        Assertions.assertEquals("app/base/1/resources", uri.getMatchedURIs().get(2));
+         Assertions.assertEquals("", uri.getMatchedURIs().get(3));
+         for (String ancestor : uri.getMatchedURIs())
+             LOG.debugv("   {0}", ancestor);

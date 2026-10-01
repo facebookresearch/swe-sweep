@@ -1,0 +1,33 @@
+diff --git a/gson/src/test/java/com/google/gson/JsonPrimitiveTest.java b/gson/src/test/java/com/google/gson/JsonPrimitiveTest.java
+index 36a5da44..c816ff36 100644
+--- a/gson/src/test/java/com/google/gson/JsonPrimitiveTest.java
++++ b/gson/src/test/java/com/google/gson/JsonPrimitiveTest.java
+@@ -243,5 +243,28 @@ public class JsonPrimitiveTest extends TestCase {
+   public void testDeepCopy() {
+     JsonPrimitive a = new JsonPrimitive("a");
+     assertSame(a, a.deepCopy()); // Primitives are immutable!
+   }
++
++  public void testBigDecimalEquals() {
++    JsonPrimitive small = new JsonPrimitive(1.0);
++    JsonPrimitive large = new JsonPrimitive(2.0);
++    assertFalse(small.equals(large));
++
++    BigDecimal doubleMax = BigDecimal.valueOf(Double.MAX_VALUE);
++    JsonPrimitive smallBD = new JsonPrimitive(doubleMax.add(new BigDecimal("100.0")));
++    JsonPrimitive largeBD = new JsonPrimitive(doubleMax.add(new BigDecimal("200.0")));
++    assertFalse(smallBD.equals(largeBD));
++  }
++
++  public void testBigDecimalEqualsZero() {
++    assertTrue(
++        new JsonPrimitive(new BigDecimal("0.0")).equals(new JsonPrimitive(new BigDecimal("0.00"))));
++
++    assertTrue(
++        new JsonPrimitive(new BigDecimal("0.00")).equals(new JsonPrimitive(Double.valueOf("0.00"))));
++  }
++
++  public void testEqualsDoubleNaNAndBigDecimal() {
++    assertFalse(new JsonPrimitive(Double.NaN).equals(new JsonPrimitive(new BigDecimal("1.0"))));
++  }
+ }

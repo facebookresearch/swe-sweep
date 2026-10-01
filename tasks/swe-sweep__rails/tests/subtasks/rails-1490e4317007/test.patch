@@ -1,0 +1,17 @@
+diff --git a/activesupport/test/core_ext/duration_test.rb b/activesupport/test/core_ext/duration_test.rb
+index bcf72a24876..84a637d667c 100644
+--- a/activesupport/test/core_ext/duration_test.rb
++++ b/activesupport/test/core_ext/duration_test.rb
+@@ -81,6 +81,12 @@ class DurationTest < ActiveSupport::TestCase
+     assert_in_delta 1.0, 365.days.in_years
+   end
+ 
++  def test_in_units_preserve_sub_second_precision
++    assert_in_delta 1.5083333, 90.5.seconds.in_minutes, 0.0000001
++    assert_in_delta 1.0170833, 3661.5.seconds.in_hours, 0.0000001
++    assert_in_delta 0.0000058, 0.5.seconds.in_days, 0.0000001
++  end
++
+   def test_eql
+     rubinius_skip "Rubinius' #eql? definition relies on #instance_of? " \
+                   "which behaves oddly for the sake of backward-compatibility."

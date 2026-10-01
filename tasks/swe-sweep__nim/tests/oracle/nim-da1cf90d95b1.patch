@@ -1,0 +1,30 @@
+diff --git a/compiler/semgnrc.nim b/compiler/semgnrc.nim
+index e249d88..c72b8ad 100644
+--- a/compiler/semgnrc.nim
++++ b/compiler/semgnrc.nim
+@@ -493,7 +493,24 @@ proc semGenericStmt(c: PContext, n: PNode,
+     else: body = n[bodyPos]
+     n[bodyPos] = semGenericStmtScope(c, body, flags, ctx)
+     closeScope(c)
+-  of nkPragma, nkPragmaExpr: discard
++  of nkPragmaExpr:
++    result[1] = semGenericStmt(c, n[1], flags, ctx)
++  of nkPragma:
++    for i in 0 ..< n.len:
++      let x = n[i]
++      let prag = whichPragma(x)
++      if x.kind in nkPragmaCallKinds:
++        # process each child individually to prevent untyped macros/templates
++        # from instantiating
++        # if pragma is language-level pragma, skip name node:
++        let start = ord(prag != wInvalid)
++        for j in start ..< x.len:
++          # treat as mixin context for user pragmas & macro args
++          x[j] = semGenericStmt(c, x[j], flags+{withinMixin}, ctx)
++      elif prag == wInvalid:
++        # only sem if not a language-level pragma 
++        # treat as mixin context for user pragmas & macro args
++        result[i] = semGenericStmt(c, x, flags+{withinMixin}, ctx)
+   of nkExprColonExpr, nkExprEqExpr:
+     checkMinSonsLen(n, 2, c.config)
+     result[1] = semGenericStmt(c, n[1], flags, ctx)

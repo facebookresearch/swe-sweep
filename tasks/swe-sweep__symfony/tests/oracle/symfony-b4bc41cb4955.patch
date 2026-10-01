@@ -1,0 +1,13 @@
+diff --git a/src/Symfony/Component/Process/Pipes/UnixPipes.php b/src/Symfony/Component/Process/Pipes/UnixPipes.php
+index 7bd0db0e94b..a0e48dd3634 100644
+--- a/src/Symfony/Component/Process/Pipes/UnixPipes.php
++++ b/src/Symfony/Component/Process/Pipes/UnixPipes.php
+@@ -74,7 +74,7 @@ class UnixPipes extends AbstractPipes
+             return [
+                 ['pty'],
+                 ['pty'],
+-                ['pty'],
++                ['pipe', 'w'], // stderr needs to be in a pipe to correctly split error and output, since PHP will use the same stream for both
+             ];
+         }
+ 

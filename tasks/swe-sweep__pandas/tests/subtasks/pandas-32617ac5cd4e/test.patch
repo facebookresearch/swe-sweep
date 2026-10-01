@@ -1,0 +1,89 @@
+diff --git a/pandas/tests/tseries/offsets/test_offsets.py b/pandas/tests/tseries/offsets/test_offsets.py
+index 6cec35939d..5dcfd0019e 100644
+--- a/pandas/tests/tseries/offsets/test_offsets.py
++++ b/pandas/tests/tseries/offsets/test_offsets.py
+@@ -675,14 +675,6 @@ class TestOffsetAliases:
+                 assert alias == (_get_offset(alias) * 5).rule_code
+ 
+ 
+-def test_dateoffset_misc():
+-    oset = offsets.DateOffset(months=2, days=4)
+-    # it works
+-    oset.freqstr
+-
+-    assert not offsets.DateOffset(months=2) == 2
+-
+-
+ def test_freq_offsets():
+     off = BDay(1, offset=timedelta(0, 1800))
+     assert off.freqstr == "B+30Min"
+@@ -798,6 +790,54 @@ def test_tick_normalize_raises(tick_classes):
+         cls(n=3, normalize=True)
+ 
+ 
++@pytest.mark.parametrize(
++    "offset_kwargs, expected_arg",
++    [
++        ({"nanoseconds": 1}, "1970-01-01 00:00:00.000000001"),
++        ({"nanoseconds": 5}, "1970-01-01 00:00:00.000000005"),
++        ({"nanoseconds": -1}, "1969-12-31 23:59:59.999999999"),
++        ({"microseconds": 1}, "1970-01-01 00:00:00.000001"),
++        ({"microseconds": -1}, "1969-12-31 23:59:59.999999"),
++        ({"seconds": 1}, "1970-01-01 00:00:01"),
++        ({"seconds": -1}, "1969-12-31 23:59:59"),
++        ({"minutes": 1}, "1970-01-01 00:01:00"),
++        ({"minutes": -1}, "1969-12-31 23:59:00"),
++        ({"hours": 1}, "1970-01-01 01:00:00"),
++        ({"hours": -1}, "1969-12-31 23:00:00"),
++        ({"days": 1}, "1970-01-02 00:00:00"),
++        ({"days": -1}, "1969-12-31 00:00:00"),
++        ({"weeks": 1}, "1970-01-08 00:00:00"),
++        ({"weeks": -1}, "1969-12-25 00:00:00"),
++        ({"months": 1}, "1970-02-01 00:00:00"),
++        ({"months": -1}, "1969-12-01 00:00:00"),
++        ({"years": 1}, "1971-01-01 00:00:00"),
++        ({"years": -1}, "1969-01-01 00:00:00"),
++    ],
++)
++def test_dateoffset_add_sub(offset_kwargs, expected_arg):
++    offset = DateOffset(**offset_kwargs)
++    ts = Timestamp(0)
++    result = ts + offset
++    expected = Timestamp(expected_arg)
++    assert result == expected
++    result -= offset
++    assert result == ts
++    result = offset + ts
++    assert result == expected
++
++
++def test_dataoffset_add_sub_timestamp_with_nano():
++    offset = DateOffset(minutes=2, nanoseconds=9)
++    ts = Timestamp(4)
++    result = ts + offset
++    expected = Timestamp("1970-01-01 00:02:00.000000013")
++    assert result == expected
++    result -= offset
++    assert result == ts
++    result = offset + ts
++    assert result == expected
++
++
+ def test_weeks_onoffset():
+     # GH#18510 Week with weekday = None, normalize = False should always
+     # be is_on_offset
+@@ -872,6 +912,14 @@ def test_dateoffset_immutable(attribute):
+         setattr(offset, attribute, 5)
+ 
+ 
++def test_dateoffset_misc():
++    oset = offsets.DateOffset(months=2, days=4)
++    # it works
++    oset.freqstr
++
++    assert not offsets.DateOffset(months=2) == 2
++
++
+ @pytest.mark.parametrize(
+     "weekmask, expected_time, mult",
+     [

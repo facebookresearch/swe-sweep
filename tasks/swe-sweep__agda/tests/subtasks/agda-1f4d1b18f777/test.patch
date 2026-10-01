@@ -1,0 +1,48 @@
+diff --git a/test/Fail/Issue5920a.agda b/test/Fail/Issue5920a.agda
+new file mode 100644
+index 0000000000..4c3c1aa24f
+--- /dev/null
++++ b/test/Fail/Issue5920a.agda
+@@ -0,0 +1,10 @@
++{-# OPTIONS --without-K #-}
++
++data D : Set where
++  @0 c : D
++
++data P (x : D) : Set where
++
++record R : Set where
++  field
++    f : P c
+diff --git a/test/Fail/Issue5920a.err b/test/Fail/Issue5920a.err
+new file mode 100644
+index 0000000000..a26ef531ed
+--- /dev/null
++++ b/test/Fail/Issue5920a.err
+@@ -0,0 +1,3 @@
++Issue5920a.agda:8,8-9
++(f : P c) → R is not usable at the required modality
++when checking the definition of R
+diff --git a/test/Fail/Issue5920b.agda b/test/Fail/Issue5920b.agda
+new file mode 100644
+index 0000000000..b2fc507b2a
+--- /dev/null
++++ b/test/Fail/Issue5920b.agda
+@@ -0,0 +1,7 @@
++{-# OPTIONS --without-K #-}
++
++data D : Set where
++  @0 c : D
++
++data P : D → Set where
++  d : P c
+diff --git a/test/Fail/Issue5920b.err b/test/Fail/Issue5920b.err
+new file mode 100644
+index 0000000000..c327a93514
+--- /dev/null
++++ b/test/Fail/Issue5920b.err
+@@ -0,0 +1,4 @@
++Issue5920b.agda:7,3-4
++P c is not usable at the required modality
++when checking that the type P c of the constructor d fits in the
++sort Set of the datatype.

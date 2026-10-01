@@ -1,0 +1,13 @@
+diff --git a/modules/core/src/array.cpp b/modules/core/src/array.cpp
+index 252ac13ca0..db8f8c1bb4 100644
+--- a/modules/core/src/array.cpp
++++ b/modules/core/src/array.cpp
+@@ -2658,7 +2658,7 @@ cvReshapeMatND( const CvArr* arr,
+                 mat = &stub;
+             }
+ 
+-            if( CV_IS_MAT_CONT( mat->type ))
++            if( !CV_IS_MAT_CONT( mat->type ))
+                 CV_Error( CV_StsBadArg, "Non-continuous nD arrays are not supported" );
+ 
+             size1 = mat->dim[0].size;

@@ -1,0 +1,58 @@
+diff --git a/model/jpa/src/main/java/org/keycloak/models/jpa/JpaRealmProvider.java b/model/jpa/src/main/java/org/keycloak/models/jpa/JpaRealmProvider.java
+index 95450bfe4b..f5d60cb09f 100644
+--- a/model/jpa/src/main/java/org/keycloak/models/jpa/JpaRealmProvider.java
++++ b/model/jpa/src/main/java/org/keycloak/models/jpa/JpaRealmProvider.java
+@@ -62,6 +62,7 @@ import org.keycloak.models.GroupProvider;
+ import org.keycloak.models.KeycloakSession;
+ import org.keycloak.models.ModelDuplicateException;
+ import org.keycloak.models.ModelException;
++import org.keycloak.models.ModelValidationException;
+ import org.keycloak.models.RealmModel;
+ import org.keycloak.models.RealmProvider;
+ import org.keycloak.models.RoleContainerModel;
+@@ -786,6 +787,8 @@ public class JpaRealmProvider implements RealmProvider, ClientProvider, ClientSc
+ 
+         if (id == null) {
+             id = KeycloakModelUtils.generateId();
++        } else if (id.length() > ClientEntity.ID_MAX_LENGTH){
++            throw new ModelValidationException("Client ID must not exceed 36 characters");
+         }
+ 
+         if (clientId == null) {
+diff --git a/model/jpa/src/main/java/org/keycloak/models/jpa/entities/ClientEntity.java b/model/jpa/src/main/java/org/keycloak/models/jpa/entities/ClientEntity.java
+index 6535e26e87..eb4e77bb4b 100755
+--- a/model/jpa/src/main/java/org/keycloak/models/jpa/entities/ClientEntity.java
++++ b/model/jpa/src/main/java/org/keycloak/models/jpa/entities/ClientEntity.java
+@@ -60,8 +60,10 @@ import java.util.Set;
+ })
+ public class ClientEntity {
+ 
++    public static final int ID_MAX_LENGTH = 36;
++
+     @Id
+-    @Column(name="ID", length = 36)
++    @Column(name="ID", length = ID_MAX_LENGTH)
+     @Access(AccessType.PROPERTY) // we do this because relationships often fetch id, but not entity.  This avoids an extra SQL
+     private String id;
+     @Nationalized
+diff --git a/services/src/main/java/org/keycloak/services/resources/admin/ClientsResource.java b/services/src/main/java/org/keycloak/services/resources/admin/ClientsResource.java
+index b7f5bf0ef1..16197cd3d1 100755
+--- a/services/src/main/java/org/keycloak/services/resources/admin/ClientsResource.java
++++ b/services/src/main/java/org/keycloak/services/resources/admin/ClientsResource.java
+@@ -32,6 +32,7 @@ import org.keycloak.events.admin.ResourceType;
+ import org.keycloak.models.ClientModel;
+ import org.keycloak.models.KeycloakSession;
+ import org.keycloak.models.ModelDuplicateException;
++import org.keycloak.models.ModelValidationException;
+ import org.keycloak.models.RealmModel;
+ import org.keycloak.models.UserModel;
+ import org.keycloak.models.utils.ModelToRepresentation;
+@@ -223,6 +224,8 @@ public class ClientsResource {
+             throw ErrorResponse.exists("Client " + rep.getClientId() + " already exists");
+         } catch (ClientPolicyException cpe) {
+             throw new ErrorResponseException(cpe.getError(), cpe.getErrorDetail(), Response.Status.BAD_REQUEST);
++        } catch (ModelValidationException e) {
++            throw new ErrorResponseException("validation error", e.getMessage(), Response.Status.BAD_REQUEST);
+         }
+         catch (ClientTypeException cte) {
+             throw ErrorResponse.error(cte.getMessage(), cte.getParameters(), Response.Status.BAD_REQUEST);

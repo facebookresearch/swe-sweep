@@ -1,0 +1,103 @@
+diff --git a/lib/rules/selector-nested-pattern/__tests__/index.mjs b/lib/rules/selector-nested-pattern/__tests__/index.mjs
+index 4c655f397..cd12a6e6a 100644
+--- a/lib/rules/selector-nested-pattern/__tests__/index.mjs
++++ b/lib/rules/selector-nested-pattern/__tests__/index.mjs
+@@ -36,6 +36,18 @@ const basicAZTests = {
+ 			code: 'html { --custom-property-set: {} }',
+ 			description: 'custom property set in selector',
+ 		},
++		{
++			code: stripIndent`
++				a {
++					/* stylelint-disable-next-line selector-nested-pattern */
++					b /* stylelint-disable-next-line selector-nested-pattern */
++					b
++					/* stylelint-disable-next-line selector-nested-pattern */
++					b
++					{}
++				}
++			`,
++		},
+ 	],
+ };
+ 
+@@ -75,6 +87,18 @@ testRule({
+ 			endLine: 1,
+ 			endColumn: 21,
+ 		},
++		{
++			code: 'a { b /* a comment */ b {} }',
++			warnings: [
++				{
++					message: messages.expected('b /* a comment */ b', /^[A-Z]+$/),
++					line: 1,
++					column: 5,
++					endLine: 1,
++					endColumn: 24,
++				},
++			],
++		},
+ 	],
+ });
+ 
+@@ -172,6 +196,18 @@ testRule({
+ 		{
+ 			code: '.foo { &:hover, &:focus {} }',
+ 		},
++		{
++			code: stripIndent`
++				.foo {
++					/* stylelint-disable-next-line selector-nested-pattern */
++					.bar, /* stylelint-disable-next-line selector-nested-pattern */
++					.bar,
++					/* stylelint-disable-next-line selector-nested-pattern */
++					.bar
++					{}
++				}
++			`,
++		},
+ 	],
+ 
+ 	reject: [
+@@ -191,6 +227,41 @@ testRule({
+ 			endLine: 1,
+ 			endColumn: 18,
+ 		},
++		{
++			code: stripIndent`
++				.foo {
++					/* a comment */
++					.bar, /* a comment */
++					.bar,
++					/* a comment */
++					.bar
++					{}
++				}
++			`,
++			warnings: [
++				{
++					message: messages.expected('.bar', '^&:(?:hover|focus)$'),
++					line: 3,
++					column: 2,
++					endLine: 3,
++					endColumn: 6,
++				},
++				{
++					message: messages.expected('.bar', '^&:(?:hover|focus)$'),
++					line: 4,
++					column: 2,
++					endLine: 4,
++					endColumn: 6,
++				},
++				{
++					message: messages.expected('.bar', '^&:(?:hover|focus)$'),
++					line: 6,
++					column: 2,
++					endLine: 6,
++					endColumn: 6,
++				},
++			],
++		},
+ 	],
+ });
+ 

@@ -1,0 +1,25 @@
+diff --git a/lib/schema.js b/lib/schema.js
+index 35e3de56b..0c60ff16c 100644
+--- a/lib/schema.js
++++ b/lib/schema.js
+@@ -1220,10 +1220,18 @@ function _getPath(schema, path, cleanPath) {
+     return schema.paths[path];
+   }
+   if (schema.subpaths.hasOwnProperty(cleanPath)) {
+-    return schema.subpaths[cleanPath];
++    const subpath = schema.subpaths[cleanPath];
++    if (subpath === 'nested') {
++      return undefined;
++    }
++    return subpath;
+   }
+   if (schema.singleNestedPaths.hasOwnProperty(cleanPath) && typeof schema.singleNestedPaths[cleanPath] === 'object') {
+-    return schema.singleNestedPaths[cleanPath];
++    const singleNestedPath = schema.singleNestedPaths[cleanPath];
++    if (singleNestedPath === 'nested') {
++      return undefined;
++    }
++    return singleNestedPath;
+   }
+ 
+   return null;

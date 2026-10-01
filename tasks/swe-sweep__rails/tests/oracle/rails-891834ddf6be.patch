@@ -1,0 +1,13 @@
+diff --git a/actionview/lib/action_view/helpers/form_helper.rb b/actionview/lib/action_view/helpers/form_helper.rb
+index 4414f62034c..9836427d32b 100644
+--- a/actionview/lib/action_view/helpers/form_helper.rb
++++ b/actionview/lib/action_view/helpers/form_helper.rb
+@@ -438,7 +438,7 @@ module ActionView
+           model       = nil
+           object_name = record
+         else
+-          model       = record
++          model       = convert_to_model(record)
+           object      = _object_for_form_builder(record)
+           raise ArgumentError, "First argument in form cannot contain nil or be empty" unless object
+           object_name = options[:as] || model_name_from_record_or_class(object).param_key

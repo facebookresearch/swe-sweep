@@ -1,0 +1,77 @@
+diff --git a/src/include/duckdb/parser/tableref/joinref.hpp b/src/include/duckdb/parser/tableref/joinref.hpp
+index 1f53f5c..e93790c 100644
+--- a/src/include/duckdb/parser/tableref/joinref.hpp
++++ b/src/include/duckdb/parser/tableref/joinref.hpp
+@@ -39,6 +39,8 @@ public:
+ 	JoinRefType ref_type;
+ 	//! The set of USING columns (if any)
+ 	vector<string> using_columns;
++	//! Whether or not this is an implicit cross join
++	bool is_implicit = false;
+ 
+ public:
+ 	string ToString() const override;
+diff --git a/src/parser/tableref/joinref.cpp b/src/parser/tableref/joinref.cpp
+index 8ad69fa..22047c7 100644
+--- a/src/parser/tableref/joinref.cpp
++++ b/src/parser/tableref/joinref.cpp
+@@ -22,7 +22,7 @@ string JoinRef::ToString() const {
+ 		result += EnumUtil::ToString(type) + " JOIN ";
+ 		break;
+ 	case JoinRefType::CROSS:
+-		result += ", ";
++		result += is_implicit ? ", " : "CROSS JOIN ";
+ 		break;
+ 	case JoinRefType::POSITIONAL:
+ 		result += "POSITIONAL JOIN ";
+@@ -78,6 +78,7 @@ unique_ptr<TableRef> JoinRef::Copy() {
+ 	copy->ref_type = ref_type;
+ 	copy->alias = alias;
+ 	copy->using_columns = using_columns;
++	copy->is_implicit = is_implicit;
+ 	return std::move(copy);
+ }
+ 
+diff --git a/src/parser/transform/tableref/transform_from.cpp b/src/parser/transform/tableref/transform_from.cpp
+index 84ec8ea..db515e7 100644
+--- a/src/parser/transform/tableref/transform_from.cpp
++++ b/src/parser/transform/tableref/transform_from.cpp
+@@ -10,8 +10,9 @@ unique_ptr<TableRef> Transformer::TransformFrom(optional_ptr<duckdb_libpgquery::
+ 	}
+ 
+ 	if (root->length > 1) {
+-		// Cross Product
++		// Implicit Cross Product
+ 		auto result = make_uniq<JoinRef>(JoinRefType::CROSS);
++		result->is_implicit = true;
+ 		JoinRef *cur_root = result.get();
+ 		idx_t list_size = 0;
+ 		for (auto node = root->head; node != nullptr; node = node->next) {
+@@ -24,6 +25,7 @@ unique_ptr<TableRef> Transformer::TransformFrom(optional_ptr<duckdb_libpgquery::
+ 			} else {
+ 				auto old_res = std::move(result);
+ 				result = make_uniq<JoinRef>(JoinRefType::CROSS);
++				result->is_implicit = true;
+ 				result->left = std::move(old_res);
+ 				result->right = std::move(next);
+ 				cur_root = result.get();
+diff --git a/src/storage/serialization/serialize_tableref.cpp b/src/storage/serialization/serialize_tableref.cpp
+index e97e823..2b3390b 100644
+--- a/src/storage/serialization/serialize_tableref.cpp
++++ b/src/storage/serialization/serialize_tableref.cpp
+@@ -105,6 +105,7 @@ void JoinRef::Serialize(Serializer &serializer) const {
+ 	serializer.WriteProperty<JoinType>(203, "join_type", type);
+ 	serializer.WriteProperty<JoinRefType>(204, "ref_type", ref_type);
+ 	serializer.WritePropertyWithDefault<vector<string>>(205, "using_columns", using_columns);
++	serializer.WritePropertyWithDefault<bool>(206, "is_implicit", is_implicit, true);
+ }
+ 
+ unique_ptr<TableRef> JoinRef::Deserialize(Deserializer &deserializer) {
+@@ -115,6 +116,7 @@ unique_ptr<TableRef> JoinRef::Deserialize(Deserializer &deserializer) {
+ 	deserializer.ReadProperty<JoinType>(203, "join_type", result->type);
+ 	deserializer.ReadProperty<JoinRefType>(204, "ref_type", result->ref_type);
+ 	deserializer.ReadPropertyWithDefault<vector<string>>(205, "using_columns", result->using_columns);
++	deserializer.ReadPropertyWithDefault<bool>(206, "is_implicit", result->is_implicit, true);
+ 	return std::move(result);
+ }
+ 

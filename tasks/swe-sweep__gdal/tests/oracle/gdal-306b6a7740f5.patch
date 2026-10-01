@@ -1,0 +1,27 @@
+diff --git a/ogr/ogrsf_frmts/generic/ogr_gensql.cpp b/ogr/ogrsf_frmts/generic/ogr_gensql.cpp
+index cb0ed0aa2d..dc618451b3 100644
+--- a/ogr/ogrsf_frmts/generic/ogr_gensql.cpp
++++ b/ogr/ogrsf_frmts/generic/ogr_gensql.cpp
+@@ -877,7 +877,7 @@
+ 
+     /* -------------------------------------------------------------------- */
+     /*      We treat COUNT(*) as a special case, and fill with              */
+-    /*      GetFeatureCount().                                            */
++    /*      GetFeatureCount().                                              */
+     /* -------------------------------------------------------------------- */
+ 
+     if (psSelectInfo->result_columns == 1 &&
+diff --git a/ogr/swq_select.cpp b/ogr/swq_select.cpp
+index 9d63d199b0..becd1221d1 100644
+--- a/ogr/swq_select.cpp
++++ b/ogr/swq_select.cpp
+@@ -1059,7 +1059,8 @@
+             // Record field type.
+             def->field_type = this_type;
+ 
+-            if (def->field_index == -1 && def->col_func != SWQCF_COUNT)
++            if (def->field_index == -1 && !(def->col_func == SWQCF_COUNT &&
++                                            strcmp(def->field_name, "*") == 0))
+             {
+                 CPLError(
+                     CE_Failure, CPLE_AppDefined, "Unrecognized field name %s.",

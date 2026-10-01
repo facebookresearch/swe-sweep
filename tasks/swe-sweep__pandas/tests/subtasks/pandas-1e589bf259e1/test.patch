@@ -1,0 +1,19 @@
+diff --git a/pandas/tests/io/test_stata.py b/pandas/tests/io/test_stata.py
+index e73de78847..b155c0cca4 100644
+--- a/pandas/tests/io/test_stata.py
++++ b/pandas/tests/io/test_stata.py
+@@ -2047,3 +2047,14 @@ def test_stata_compression(compression_only, read_infer, to_infer):
+         df.to_stata(path, compression=to_compression)
+         result = read_stata(path, compression=read_compression, index_col="index")
+         tm.assert_frame_equal(result, df)
++
++
++@pytest.mark.parametrize("version", [117, 118, 119, None])
++def test_ascii_error(version):
++    # GH #61583
++    # Check that 2 byte long unicode characters doesn't cause export error
++    df = DataFrame({"doubleByteCol": ["§" * 1500]})
++    with tm.ensure_clean() as path:
++        df.to_stata(path, write_index=0, version=version)
++        df_input = read_stata(path)
++        tm.assert_frame_equal(df, df_input)

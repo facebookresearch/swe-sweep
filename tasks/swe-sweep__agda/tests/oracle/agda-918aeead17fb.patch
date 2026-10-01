@@ -1,0 +1,34 @@
+diff --git a/src/full/Agda/Syntax/Abstract.hs b/src/full/Agda/Syntax/Abstract.hs
+index ce594ca..f8e3575 100644
+--- a/src/full/Agda/Syntax/Abstract.hs
++++ b/src/full/Agda/Syntax/Abstract.hs
+@@ -987,12 +987,10 @@ patternToExpr = \case
+ type PatternSynDefn = ([Arg Name], Pattern' Void)
+ type PatternSynDefns = Map QName PatternSynDefn
+ 
+-lambdaLiftExpr :: [Name] -> Expr -> Expr
+-lambdaLiftExpr ns e
+-  = foldr
+-      (\ n -> Lam exprNoRange (mkDomainFree $ defaultNamedArg $ mkBinder_ n))
+-      e
+-      ns
++lambdaLiftExpr :: [Arg Name] -> Expr -> Expr
++lambdaLiftExpr ns e = foldr f e ns
++  where
++  f arg = Lam exprNoRange $ setHiding (getHiding arg) $ mkDomainFree $ defaultNamedArg $ mkBinder_ $ unArg arg
+ 
+ -- NOTE: This is only used on expressions that come from right-hand sides of pattern synonyms, and
+ -- thus does not have to handle all forms of expressions.
+diff --git a/src/full/Agda/TypeChecking/Rules/Application.hs b/src/full/Agda/TypeChecking/Rules/Application.hs
+index 373a33e..9232ba5 100644
+--- a/src/full/Agda/TypeChecking/Rules/Application.hs
++++ b/src/full/Agda/TypeChecking/Rules/Application.hs
+@@ -147,7 +147,7 @@ checkApplication cmp hd args e t =
+         Nothing      -> typeError $ BadArgumentsToPatternSynonym n
+         Just (s, ns) -> do
+           let p' = A.patternToExpr p
+-              e' = A.lambdaLiftExpr (map unArg ns) (A.substExpr s p')
++              e' = A.lambdaLiftExpr ns (A.substExpr s p')
+           checkExpr' cmp e' t
+ 
+     -- Subcase: macro

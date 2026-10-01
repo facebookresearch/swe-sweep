@@ -1,0 +1,15 @@
+diff --git a/xarray/tests/test_dataset.py b/xarray/tests/test_dataset.py
+index 630bfea4..e677430d 100644
+--- a/xarray/tests/test_dataset.py
++++ b/xarray/tests/test_dataset.py
+@@ -3081,6 +3081,10 @@ class TestDataset:
+         expected = ds.unstack("index").fillna({"var": -1, "other_var": 1}).astype(int)
+         assert_equal(actual, expected)
+ 
++        actual4 = ds.unstack("index", fill_value={"var": -1})
++        expected4 = ds.unstack("index").fillna({"var": -1, "other_var": np.nan})
++        assert_equal(actual4, expected4)
++
+     @requires_sparse
+     def test_unstack_sparse(self):
+         ds = xr.Dataset(

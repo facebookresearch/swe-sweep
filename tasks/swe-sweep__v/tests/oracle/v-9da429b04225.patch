@@ -1,0 +1,14 @@
+diff --git a/vlib/v/checker/struct.v b/vlib/v/checker/struct.v
+index 4c436ac..89c2f78e 100644
+--- a/vlib/v/checker/struct.v
++++ b/vlib/v/checker/struct.v
+@@ -510,6 +510,9 @@ fn (mut c Checker) struct_init(mut node ast.StructInit, is_field_zero_struct_ini
+ 					if expr_type.has_flag(.option) {
+ 						c.error('cannot assign an Option value to a non-option struct field',
+ 							field.pos)
+ 					}
+ 				}
++				if expr_type.has_flag(.result) {
++					c.check_expr_opt_call(field.expr, field_info.typ)
++				}
+ 				expr_type_sym := c.table.sym(expr_type)

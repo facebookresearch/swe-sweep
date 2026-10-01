@@ -1,0 +1,14 @@
+diff --git a/src/main/java/io/reactivex/internal/util/AppendOnlyLinkedArrayList.java b/src/main/java/io/reactivex/internal/util/AppendOnlyLinkedArrayList.java
+index 9a8ed49f6..24d2beae5 100644
+--- a/src/main/java/io/reactivex/internal/util/AppendOnlyLinkedArrayList.java
++++ b/src/main/java/io/reactivex/internal/util/AppendOnlyLinkedArrayList.java
+@@ -175,6 +175,9 @@ public class AppendOnlyLinkedArrayList<T> {
+                 }
+             }
+             a = (Object[])a[c];
++            if (a == null) {
++                return;
++            }
+         }
+     }
+ }

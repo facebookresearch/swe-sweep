@@ -1,0 +1,75 @@
+diff --git a/tests/ui/filter_map_bool_then.fixed b/tests/ui/filter_map_bool_then.fixed
+index b3e112f19..d370b85a6 100644
+--- a/tests/ui/filter_map_bool_then.fixed
++++ b/tests/ui/filter_map_bool_then.fixed
+@@ -89,3 +89,24 @@ fn issue11503() {
+     let _: Vec<usize> = bools.iter().enumerate().filter(|&(i, b)| ****b).map(|(i, b)| i).collect();
+     //~^ filter_map_bool_then
+ }
++
++fn issue15047() {
++    #[derive(Clone, Copy)]
++    enum MyEnum {
++        A,
++        B,
++        C,
++    }
++
++    macro_rules! foo {
++        ($e:expr) => {
++            $e + 1
++        };
++    }
++
++    let x = 1;
++    let _ = [(MyEnum::A, "foo", 1i32)]
++        .iter()
++        .filter(|&(t, s, i)| matches!(t, MyEnum::A if s.starts_with("bar"))).map(|(t, s, i)| foo!(x));
++    //~^ filter_map_bool_then
++}
+diff --git a/tests/ui/filter_map_bool_then.rs b/tests/ui/filter_map_bool_then.rs
+index d996b3cb3..12295cc24 100644
+--- a/tests/ui/filter_map_bool_then.rs
++++ b/tests/ui/filter_map_bool_then.rs
+@@ -89,3 +89,24 @@ fn issue11503() {
+     let _: Vec<usize> = bools.iter().enumerate().filter_map(|(i, b)| b.then(|| i)).collect();
+     //~^ filter_map_bool_then
+ }
++
++fn issue15047() {
++    #[derive(Clone, Copy)]
++    enum MyEnum {
++        A,
++        B,
++        C,
++    }
++
++    macro_rules! foo {
++        ($e:expr) => {
++            $e + 1
++        };
++    }
++
++    let x = 1;
++    let _ = [(MyEnum::A, "foo", 1i32)]
++        .iter()
++        .filter_map(|(t, s, i)| matches!(t, MyEnum::A if s.starts_with("bar")).then(|| foo!(x)));
++    //~^ filter_map_bool_then
++}
+diff --git a/tests/ui/filter_map_bool_then.stderr b/tests/ui/filter_map_bool_then.stderr
+index aeb1baeb3..edf6c6559 100644
+--- a/tests/ui/filter_map_bool_then.stderr
++++ b/tests/ui/filter_map_bool_then.stderr
+@@ -61,5 +61,11 @@ error: usage of `bool::then` in `filter_map`
+ LL |     let _: Vec<usize> = bools.iter().enumerate().filter_map(|(i, b)| b.then(|| i)).collect();
+    |                                                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ help: use `filter` then `map` instead: `filter(|&(i, b)| ****b).map(|(i, b)| i)`
+ 
+-error: aborting due to 10 previous errors
++error: usage of `bool::then` in `filter_map`
++  --> tests/ui/filter_map_bool_then.rs:110:10
++   |
++LL |         .filter_map(|(t, s, i)| matches!(t, MyEnum::A if s.starts_with("bar")).then(|| foo!(x)));
++   |          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ help: use `filter` then `map` instead: `filter(|&(t, s, i)| matches!(t, MyEnum::A if s.starts_with("bar"))).map(|(t, s, i)| foo!(x))`
++
++error: aborting due to 11 previous errors
+ 

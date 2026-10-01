@@ -1,0 +1,20 @@
+diff --git a/activerecord/lib/active_record/persistence.rb b/activerecord/lib/active_record/persistence.rb
+index 9ec576088e9..97bcf01dc35 100644
+--- a/activerecord/lib/active_record/persistence.rb
++++ b/activerecord/lib/active_record/persistence.rb
+@@ -641,8 +641,15 @@ module ActiveRecord
+     # This means that any other modified attributes will still be dirty.
+     # Validations and callbacks are skipped. Supports the +touch+ option from
+     # +update_counters+, see that for more.
++    #
++    # This method raises an ActiveRecord::ActiveRecordError when called on new
++    # objects, or when at least one of the attributes is marked as readonly.
++    #
+     # Returns +self+.
+     def increment!(attribute, by = 1, touch: nil)
++      raise ActiveRecordError, "cannot update a new record" if new_record?
++      raise ActiveRecordError, "cannot update a destroyed record" if destroyed?
++
+       increment(attribute, by)
+       change = public_send(attribute) - (public_send(:"#{attribute}_in_database") || 0)
+       self.class.update_counters(id, attribute => change, touch: touch)

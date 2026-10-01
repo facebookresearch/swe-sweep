@@ -1,0 +1,96 @@
+diff --git a/tests/ui/search_is_some.rs b/tests/ui/search_is_some.rs
+index 4143b8bfb..802d27449 100644
+--- a/tests/ui/search_is_some.rs
++++ b/tests/ui/search_is_some.rs
+@@ -87,3 +87,18 @@ fn is_none() {
+     let _ = (0..1).find(some_closure).is_none();
+     //~^ search_is_some
+ }
++
++#[allow(clippy::match_like_matches_macro)]
++fn issue15102() {
++    let values = [None, Some(3)];
++    let has_even = values
++        //~^ search_is_some
++        .iter()
++        .find(|v| match v {
++            Some(x) if x % 2 == 0 => true,
++            _ => false,
++        })
++        .is_some();
++
++    println!("{has_even}");
++}
+diff --git a/tests/ui/search_is_some.stderr b/tests/ui/search_is_some.stderr
+index d9a43c891..d5412f901 100644
+--- a/tests/ui/search_is_some.stderr
++++ b/tests/ui/search_is_some.stderr
+@@ -90,5 +90,20 @@ error: called `is_none()` after searching an `Iterator` with `find`
+ LL |     let _ = (0..1).find(some_closure).is_none();
+    |             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ help: consider using: `!(0..1).any(some_closure)`
+ 
+-error: aborting due to 8 previous errors
++error: called `is_some()` after searching an `Iterator` with `find`
++  --> tests/ui/search_is_some.rs:94:20
++   |
++LL |       let has_even = values
++   |  ____________________^
++LL | |
++LL | |         .iter()
++LL | |         .find(|v| match v {
++...  |
++LL | |         })
++LL | |         .is_some();
++   | |__________________^
++   |
++   = help: this is more succinctly expressed by calling `any()`
++
++error: aborting due to 9 previous errors
+ 
+diff --git a/tests/ui/search_is_some_fixable_some.fixed b/tests/ui/search_is_some_fixable_some.fixed
+index 42b39b33b..c7a4422f3 100644
+--- a/tests/ui/search_is_some_fixable_some.fixed
++++ b/tests/ui/search_is_some_fixable_some.fixed
+@@ -289,3 +289,10 @@ mod issue9120 {
+         //~^ search_is_some
+     }
+ }
++
++fn issue15102() {
++    let values = [None, Some(3)];
++    let has_even = values.iter().any(|v| matches!(&v, Some(x) if x % 2 == 0));
++    //~^ search_is_some
++    println!("{has_even}");
++}
+diff --git a/tests/ui/search_is_some_fixable_some.rs b/tests/ui/search_is_some_fixable_some.rs
+index ca4f4d941..d6b1c67c9 100644
+--- a/tests/ui/search_is_some_fixable_some.rs
++++ b/tests/ui/search_is_some_fixable_some.rs
+@@ -297,3 +297,10 @@ mod issue9120 {
+         //~^ search_is_some
+     }
+ }
++
++fn issue15102() {
++    let values = [None, Some(3)];
++    let has_even = values.iter().find(|v| matches!(v, Some(x) if x % 2 == 0)).is_some();
++    //~^ search_is_some
++    println!("{has_even}");
++}
+diff --git a/tests/ui/search_is_some_fixable_some.stderr b/tests/ui/search_is_some_fixable_some.stderr
+index 8291f48d4..551a670d9 100644
+--- a/tests/ui/search_is_some_fixable_some.stderr
++++ b/tests/ui/search_is_some_fixable_some.stderr
+@@ -289,5 +289,11 @@ error: called `is_some()` after searching an `Iterator` with `find`
+ LL |         let _ = v.iter().find(|x: &&u32| (*arg_no_deref_dyn)(x)).is_some();
+    |                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ help: consider using: `any(|x: &u32| (*arg_no_deref_dyn)(&x))`
+ 
+-error: aborting due to 46 previous errors
++error: called `is_some()` after searching an `Iterator` with `find`
++  --> tests/ui/search_is_some_fixable_some.rs:303:34
++   |
++LL |     let has_even = values.iter().find(|v| matches!(v, Some(x) if x % 2 == 0)).is_some();
++   |                                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ help: consider using: `any(|v| matches!(&v, Some(x) if x % 2 == 0))`
++
++error: aborting due to 47 previous errors
+ 

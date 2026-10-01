@@ -1,0 +1,19 @@
+diff --git a/frmts/mrf/marfa.h b/frmts/mrf/marfa.h
+index 356e71e5a1..4e0db05ff3 100644
+--- a/frmts/mrf/marfa.h
++++ b/frmts/mrf/marfa.h
+@@ -387,6 +387,14 @@ class MRFDataset final : public GDALPamDataset
+         return m_oSRS.IsEmpty() ? nullptr : &m_oSRS;
+     }
+ 
++    CPLErr SetSpatialRef(const OGRSpatialReference *poSRS) override
++    {
++        m_oSRS.Clear();
++        if (poSRS)
++            m_oSRS = *poSRS;
++        return CE_None;
++    }
++
+     virtual CPLString const &GetPhotometricInterpretation()
+     {
+         return photometric;

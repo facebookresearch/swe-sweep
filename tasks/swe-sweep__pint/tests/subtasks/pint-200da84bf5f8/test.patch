@@ -1,0 +1,22 @@
+diff --git a/pint/testsuite/test_quantity.py b/pint/testsuite/test_quantity.py
+index 9836a8c..28cf075 100644
+--- a/pint/testsuite/test_quantity.py
++++ b/pint/testsuite/test_quantity.py
+@@ -595,6 +595,17 @@ class TestQuantity(QuantityTestCase):
+             self.Q_(FakeWrapper(42), "m")
+         assert FakeWrapper(self.Q_(42, "m")).q == self.Q_(42, "m")
+ 
++    @pytest.mark.parametrize(
++        ("unit_str", "expected_unit"),
++        [
++            ("hour/hr", {}),
++            ("cm centimeter cm centimeter", {"centimeter": 4}),
++        ],
++    )
++    def test_unit_canonical_name_parsing(self, unit_str, expected_unit):
++        q = self.Q_(1, unit_str)
++        assert q._units == UnitsContainer(expected_unit)
++
+ 
+ class TestQuantityToCompact(QuantityTestCase):
+     def assertQuantityAlmostIdentical(self, q1, q2):

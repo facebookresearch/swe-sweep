@@ -1,0 +1,33 @@
+diff --git a/vlib/v/gen/c/testdata/alias_of_array_method_call.out b/vlib/v/gen/c/testdata/alias_of_array_method_call.out
+new file mode 100644
+index 000000000..c3cefa78a
+--- /dev/null
++++ b/vlib/v/gen/c/testdata/alias_of_array_method_call.out
+@@ -0,0 +1 @@
++&Option(Element{})
+diff --git a/vlib/v/gen/c/testdata/alias_of_array_method_call.vv b/vlib/v/gen/c/testdata/alias_of_array_method_call.vv
+new file mode 100644
+index 000000000..46d28cc05
+--- /dev/null
++++ b/vlib/v/gen/c/testdata/alias_of_array_method_call.vv
+@@ -0,0 +1,20 @@
++struct Element {}
++
++type ElementStack = []&Element
++
++fn (mut stack ElementStack) pop_front() ?&Element {
++	return if stack.len > 0 {
++		val := stack.first()
++		stack.delete(0)
++		val
++	} else {
++		none
++	}
++}
++
++fn main() {
++	mut stack := ElementStack([]&Element{})
++	stack << &Element{}
++	a := stack.pop_front()
++	println(a)
++}

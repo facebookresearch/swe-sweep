@@ -1,0 +1,93 @@
+diff --git a/tests/ui/manual_is_ascii_check.fixed b/tests/ui/manual_is_ascii_check.fixed
+index 7b0d19068..406336dbd 100644
+--- a/tests/ui/manual_is_ascii_check.fixed
++++ b/tests/ui/manual_is_ascii_check.fixed
+@@ -108,6 +108,8 @@ fn generics() {
+     //~^ manual_is_ascii_check
+     take_while(|c: char| c.is_ascii_uppercase());
+     //~^ manual_is_ascii_check
++    take_while(|c: char| c.is_ascii_uppercase());
++    //~^ manual_is_ascii_check
+ }
+ 
+ fn adds_type_reference() {
+@@ -115,4 +117,6 @@ fn adds_type_reference() {
+     //~^ manual_is_ascii_check
+     let digits: Vec<&mut char> = ['1', 'A'].iter_mut().take_while(|c: &&mut char| c.is_ascii_digit()).collect();
+     //~^ manual_is_ascii_check
++    let digits: Vec<&mut char> = ['1', 'A'].iter_mut().take_while(|c: &&mut char| c.is_ascii_digit()).collect();
++    //~^ manual_is_ascii_check
+ }
+diff --git a/tests/ui/manual_is_ascii_check.rs b/tests/ui/manual_is_ascii_check.rs
+index e4f7fe9f5..a624497e7 100644
+--- a/tests/ui/manual_is_ascii_check.rs
++++ b/tests/ui/manual_is_ascii_check.rs
+@@ -108,6 +108,8 @@ fn generics() {
+     //~^ manual_is_ascii_check
+     take_while(|c: char| ('A'..='Z').contains(&c));
+     //~^ manual_is_ascii_check
++    take_while(|c| matches!(c, 'A'..='Z'));
++    //~^ manual_is_ascii_check
+ }
+ 
+ fn adds_type_reference() {
+@@ -115,4 +117,6 @@ fn adds_type_reference() {
+     //~^ manual_is_ascii_check
+     let digits: Vec<&mut char> = ['1', 'A'].iter_mut().take_while(|c| ('0'..='9').contains(c)).collect();
+     //~^ manual_is_ascii_check
++    let digits: Vec<&mut char> = ['1', 'A'].iter_mut().take_while(|c| matches!(c, '0'..='9')).collect();
++    //~^ manual_is_ascii_check
+ }
+diff --git a/tests/ui/manual_is_ascii_check.stderr b/tests/ui/manual_is_ascii_check.stderr
+index 9fd7f457b..cb2548ea7 100644
+--- a/tests/ui/manual_is_ascii_check.stderr
++++ b/tests/ui/manual_is_ascii_check.stderr
+@@ -176,7 +176,19 @@ LL |     take_while(|c: char| ('A'..='Z').contains(&c));
+    |                          ^^^^^^^^^^^^^^^^^^^^^^^^ help: try: `c.is_ascii_uppercase()`
+ 
+ error: manual check for common ascii range
+-  --> tests/ui/manual_is_ascii_check.rs:114:63
++  --> tests/ui/manual_is_ascii_check.rs:111:20
++   |
++LL |     take_while(|c| matches!(c, 'A'..='Z'));
++   |                    ^^^^^^^^^^^^^^^^^^^^^^
++   |
++help: try
++   |
++LL -     take_while(|c| matches!(c, 'A'..='Z'));
++LL +     take_while(|c: char| c.is_ascii_uppercase());
++   |
++
++error: manual check for common ascii range
++  --> tests/ui/manual_is_ascii_check.rs:116:63
+    |
+ LL |     let digits: Vec<&char> = ['1', 'A'].iter().take_while(|c| ('0'..='9').contains(c)).collect();
+    |                                                               ^^^^^^^^^^^^^^^^^^^^^^^
+@@ -188,7 +200,7 @@ LL +     let digits: Vec<&char> = ['1', 'A'].iter().take_while(|c: &&char| c.is_
+    |
+ 
+ error: manual check for common ascii range
+-  --> tests/ui/manual_is_ascii_check.rs:116:71
++  --> tests/ui/manual_is_ascii_check.rs:118:71
+    |
+ LL |     let digits: Vec<&mut char> = ['1', 'A'].iter_mut().take_while(|c| ('0'..='9').contains(c)).collect();
+    |                                                                       ^^^^^^^^^^^^^^^^^^^^^^^
+@@ -199,5 +211,17 @@ LL -     let digits: Vec<&mut char> = ['1', 'A'].iter_mut().take_while(|c| ('0'.
+ LL +     let digits: Vec<&mut char> = ['1', 'A'].iter_mut().take_while(|c: &&mut char| c.is_ascii_digit()).collect();
+    |
+ 
+-error: aborting due to 29 previous errors
++error: manual check for common ascii range
++  --> tests/ui/manual_is_ascii_check.rs:120:71
++   |
++LL |     let digits: Vec<&mut char> = ['1', 'A'].iter_mut().take_while(|c| matches!(c, '0'..='9')).collect();
++   |                                                                       ^^^^^^^^^^^^^^^^^^^^^^
++   |
++help: try
++   |
++LL -     let digits: Vec<&mut char> = ['1', 'A'].iter_mut().take_while(|c| matches!(c, '0'..='9')).collect();
++LL +     let digits: Vec<&mut char> = ['1', 'A'].iter_mut().take_while(|c: &&mut char| c.is_ascii_digit()).collect();
++   |
++
++error: aborting due to 31 previous errors
+ 

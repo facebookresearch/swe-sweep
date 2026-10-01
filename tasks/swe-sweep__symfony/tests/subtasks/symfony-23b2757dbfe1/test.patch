@@ -1,0 +1,23 @@
+diff --git a/src/Symfony/Component/RateLimiter/Tests/Policy/TokenBucketLimiterTest.php b/src/Symfony/Component/RateLimiter/Tests/Policy/TokenBucketLimiterTest.php
+index 8ed21c29cd8..bd72dc5c316 100644
+--- a/src/Symfony/Component/RateLimiter/Tests/Policy/TokenBucketLimiterTest.php
++++ b/src/Symfony/Component/RateLimiter/Tests/Policy/TokenBucketLimiterTest.php
+@@ -56,6 +56,18 @@ class TokenBucketLimiterTest extends TestCase
+         $limiter->reserve(15);
+     }
+ 
++    public function testReduceBucketSizeWhenAlreadyExistInStorageWithBiggerBucketSize()
++    {
++        $limiter = $this->createLimiter(100);
++
++        $limiter->consume();
++
++        $limiter2 = $this->createLimiter(1);
++        $limiter2->consume();
++
++        $this->assertFalse($limiter2->consume()->isAccepted());
++    }
++
+     public function testReserveMaxWaitingTime()
+     {
+         $this->expectException(MaxWaitDurationExceededException::class);

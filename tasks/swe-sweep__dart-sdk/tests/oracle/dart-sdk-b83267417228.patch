@@ -1,0 +1,275 @@
+diff --git a/pkg/vm/bin/kernel_service.dart b/pkg/vm/bin/kernel_service.dart
+index eb4078a..e940d4e 100644
+--- a/pkg/vm/bin/kernel_service.dart
++++ b/pkg/vm/bin/kernel_service.dart
+@@ -63,6 +63,7 @@ const String packageConfigFile = '.dart_tool/package_config.json';
+ //       purposes).
+ //   5 - List program dependencies (for creating depfiles)
+ //   6 - Isolate shutdown that potentially should result in compiler cleanup.
++//   8 - Reject last compilation result.
+ const int kCompileTag = 0;
+ const int kUpdateSourcesTag = 1;
+ const int kAcceptTag = 2;
+@@ -71,6 +72,7 @@ const int kCompileExpressionTag = 4;
+ const int kListDependenciesTag = 5;
+ const int kNotifyIsolateShutdownTag = 6;
+ const int kDetectNullabilityTag = 7;
++const int kRejectTag = 8;
+ 
+ bool allowDartInternalImport = false;
+ 
+@@ -113,7 +115,9 @@ CompilerOptions setupCompilerOptions(
+     ..packagesFileUri = packagesUri
+     ..sdkSummary = platformKernelPath
+     ..verbose = verbose
+-    ..omitPlatform = true
++    ..omitPlatform = false // so that compilation results can be rejected,
++                           // which potentially is only relevant for
++                           // incremental, rather than single-shot compilter
+     ..explicitExperimentalFlags = parseExperimentalFlags(
+         parseExperimentalArguments(expFlags), onError: (msg) {
+       errorsPlain.add(msg);
+@@ -351,6 +355,7 @@ class IncrementalCompilerWrapper extends Compiler {
+   }
+ 
+   void accept() => generator!.accept();
++  Future<void> reject() async => generator!.reject();
+   void invalidate(Uri uri) => generator!.invalidate(uri);
+ 
+   Future<IncrementalCompilerWrapper> clone(int isolateGroupId) async {
+@@ -418,7 +423,7 @@ class SingleShotCompilerWrapper extends Compiler {
+ 
+     Set<Library> loadedLibraries = createLoadedLibrariesSet(
+         compilerResult.loadedComponents, compilerResult.sdkComponent,
+-        includePlatform: !options.omitPlatform);
++        includePlatform: false);
+ 
+     return new CompilerResult(compilerResult.component, loadedLibraries,
+         compilerResult.classHierarchy, compilerResult.coreTypes);
+@@ -827,14 +832,21 @@ Future _processLoadRequest(request) async {
+     updateSources(compiler as IncrementalCompilerWrapper, sourceFiles);
+     port.send(new CompilationResult.ok(null).toResponse());
+     return;
+-  } else if (tag == kAcceptTag) {
++  } else if (tag == kAcceptTag || tag == kRejectTag) {
+     assert(
+-        incremental, "Incremental compiler required for use of 'kAcceptTag'");
++        incremental,
++        "Incremental compiler required for use of 'kAcceptTag' or "
++        "'kRejectTag");
+     compiler = lookupIncrementalCompiler(isolateGroupId);
+     // There are unit tests that invoke the IncrementalCompiler directly and
+     // request a reload, meaning that we won't have a compiler for this isolate.
+     if (compiler != null) {
+-      (compiler as IncrementalCompilerWrapper).accept();
++      final wrapper = compiler as IncrementalCompilerWrapper;
++      if (tag == kAcceptTag) {
++        wrapper.accept();
++      } else {
++        await wrapper.reject();
++      }
+     }
+     port.send(new CompilationResult.ok(null).toResponse());
+     return;
+diff --git a/pkg/vm/lib/incremental_compiler.dart b/pkg/vm/lib/incremental_compiler.dart
+index 79a9044..100ff23 100644
+--- a/pkg/vm/lib/incremental_compiler.dart
++++ b/pkg/vm/lib/incremental_compiler.dart
+@@ -29,29 +29,32 @@ class IncrementalCompiler {
+   bool initialized = false;
+   bool fullComponent = false;
+   Uri? initializeFromDillUri;
+-  List<Uri> _entryPoints;
++  List<Uri> _latestAcceptedEntryPoints;
++  List<Uri> _latestUsedEntryPoints;
+   final bool forExpressionCompilationOnly;
+ 
+-  List<Uri> get entryPoints => _entryPoints;
++  List<Uri> get entryPoints => _latestAcceptedEntryPoints;
+   IncrementalKernelGenerator get generator => _generator;
+   IncrementalCompilerResult? get lastKnownGoodResult => _lastKnownGood;
+ 
+-  IncrementalCompiler(this._compilerOptions, this._entryPoints,
++  IncrementalCompiler(this._compilerOptions, this._latestAcceptedEntryPoints,
+       {this.initializeFromDillUri, bool incrementalSerialization = true})
+-      : forExpressionCompilationOnly = false {
++      : forExpressionCompilationOnly = false,
++        _latestUsedEntryPoints = _latestAcceptedEntryPoints {
+     if (incrementalSerialization) {
+       incrementalSerializer = new IncrementalSerializer();
+     }
+-    _generator = new IncrementalKernelGenerator(_compilerOptions, _entryPoints,
++    _generator = new IncrementalKernelGenerator(_compilerOptions, _latestAcceptedEntryPoints,
+         initializeFromDillUri, false, incrementalSerializer);
+     _pendingDeltas = <IncrementalCompilerResult>[];
+   }
+ 
+   IncrementalCompiler.forExpressionCompilationOnly(
+-      Component component, this._compilerOptions, this._entryPoints)
+-      : forExpressionCompilationOnly = true {
++      Component component, this._compilerOptions, this._latestAcceptedEntryPoints)
++      : forExpressionCompilationOnly = true,
++        _latestUsedEntryPoints = _latestAcceptedEntryPoints {
+     _generator = new IncrementalKernelGenerator.forExpressionCompilationOnly(
+-        _compilerOptions, _entryPoints, component);
++        _compilerOptions, _latestAcceptedEntryPoints, component);
+     _pendingDeltas = <IncrementalCompilerResult>[];
+   }
+ 
+@@ -64,9 +67,9 @@ class IncrementalCompiler {
+     final task = new TimelineTask();
+     try {
+       task.start("IncrementalCompiler.compile");
+-      _entryPoints = entryPoints ?? _entryPoints;
++      _latestUsedEntryPoints = entryPoints ?? _latestAcceptedEntryPoints;
+       IncrementalCompilerResult compilerResult = await _generator.computeDelta(
+-          entryPoints: _entryPoints, fullComponent: fullComponent);
++          entryPoints: _latestUsedEntryPoints, fullComponent: fullComponent);
+       initialized = true;
+       fullComponent = false;
+       _pendingDeltas.add(compilerResult);
+@@ -150,6 +153,8 @@ class IncrementalCompiler {
+       lastKnownGood.component.addMetadataRepository(repo);
+     }
+     _pendingDeltas.clear();
++
++    _latestAcceptedEntryPoints = _latestUsedEntryPoints;
+   }
+ 
+   /// This lets incremental compiler know that results of last [compile] call
+@@ -175,8 +180,8 @@ class IncrementalCompiler {
+     _lastKnownGood?.component.relink();
+ 
+     _generator = new IncrementalKernelGenerator.fromComponent(_compilerOptions,
+-        _entryPoints, _lastKnownGood?.component, false, incrementalSerializer);
+-    await _generator.computeDelta(entryPoints: _entryPoints);
++        _latestAcceptedEntryPoints, _lastKnownGood?.component, false, incrementalSerializer);
++    await _generator.computeDelta(entryPoints: _latestAcceptedEntryPoints);
+   }
+ 
+   /// This tells incremental compiler that it needs rescan [uri] file during
+diff --git a/runtime/vm/dart_api_impl.cc b/runtime/vm/dart_api_impl.cc
+index 808b20d..6ba5b03 100644
+--- a/runtime/vm/dart_api_impl.cc
++++ b/runtime/vm/dart_api_impl.cc
+@@ -6152,14 +6152,16 @@ Dart_CompileToKernel(const char* script_uri,
+       script_uri, platform_kernel, platform_kernel_size, 0, NULL,
+       incremental_compile, snapshot_compile, package_config, NULL, NULL,
+       FLAG_sound_null_safety, verbosity);
+-  if (result.status == Dart_KernelCompilationStatus_Ok) {
+-    Dart_KernelCompilationResult accept_result =
+-        KernelIsolate::AcceptCompilation();
+-    if (accept_result.status != Dart_KernelCompilationStatus_Ok) {
++  if (incremental_compile) {
++    Dart_KernelCompilationResult ack_result =
++        result.status == Dart_KernelCompilationStatus_Ok
++            ? KernelIsolate::AcceptCompilation()
++            : KernelIsolate::RejectCompilation();
++    if (ack_result.status != Dart_KernelCompilationStatus_Ok) {
+       FATAL1(
+-          "An error occurred in the CFE while accepting the most recent"
++          "An error occurred in the CFE while acking the most recent"
+           " compilation results: %s",
+-          accept_result.error);
++          ack_result.error);
+     }
+   }
+ #endif
+diff --git a/runtime/vm/isolate_reload.cc b/runtime/vm/isolate_reload.cc
+index ded9b57..7978290 100644
+--- a/runtime/vm/isolate_reload.cc
++++ b/runtime/vm/isolate_reload.cc
+@@ -656,6 +656,28 @@ static ObjectPtr AcceptCompilation(Thread* thread) {
+   return Object::null();
+ }
+ 
++static ObjectPtr RejectCompilation(Thread* thread) {
++  TransitionVMToNative transition(thread);
++  Dart_KernelCompilationResult result = KernelIsolate::RejectCompilation();
++  if (result.status != Dart_KernelCompilationStatus_Ok) {
++    if (result.status != Dart_KernelCompilationStatus_MsgFailed) {
++      FATAL1(
++          "An error occurred while rejecting the most recent"
++          " compilation results: %s",
++          result.error);
++    }
++    TIR_Print(
++        "An error occurred while rejecting the most recent"
++        " compilation results: %s",
++        result.error);
++    Zone* zone = thread->zone();
++    const auto& error_str = String::Handle(zone, String::New(result.error));
++    free(result.error);
++    return ApiError::New(error_str);
++  }
++  return Object::null();
++}
++
+ // If [root_script_url] is null, attempt to load from [kernel_buffer].
+ bool IsolateGroupReloadContext::Reload(bool force_reload,
+                                        const char* root_script_url,
+@@ -711,6 +733,8 @@ bool IsolateGroupReloadContext::Reload(bool force_reload,
+           AddReasonForCancelling(new Aborted(Z, error));
+           ReportReasonsForCancelling();
+           CommonFinalizeTail(num_old_libs_);
++
++          RejectCompilation(thread);
+           return false;
+         }
+       }
+diff --git a/runtime/vm/kernel_isolate.cc b/runtime/vm/kernel_isolate.cc
+index f91e60a..d7f3c43 100644
+--- a/runtime/vm/kernel_isolate.cc
++++ b/runtime/vm/kernel_isolate.cc
+@@ -61,6 +61,7 @@ const int KernelIsolate::kCompileExpressionTag = 4;
+ const int KernelIsolate::kListDependenciesTag = 5;
+ const int KernelIsolate::kNotifyIsolateShutdown = 6;
+ const int KernelIsolate::kDetectNullabilityTag = 7;
++const int KernelIsolate::kRejectTag = 8;
+ 
+ const char* KernelIsolate::kName = DART_KERNEL_ISOLATE_NAME;
+ Dart_IsolateGroupCreateCallback KernelIsolate::create_group_callback_ = NULL;
+@@ -1213,6 +1214,23 @@ Dart_KernelCompilationResult KernelIsolate::AcceptCompilation() {
+       experimental_flags_, NULL, Dart_KernelCompilationVerbosityLevel_Error);
+ }
+ 
++Dart_KernelCompilationResult KernelIsolate::RejectCompilation() {
++  // This must be the main script to be loaded. Wait for Kernel isolate
++  // to finish initialization.
++  Dart_Port kernel_port = WaitForKernelPort();
++  if (kernel_port == ILLEGAL_PORT) {
++    Dart_KernelCompilationResult result = {};
++    result.status = Dart_KernelCompilationStatus_MsgFailed;
++    result.error = Utils::StrDup("Error while initializing Kernel isolate");
++    return result;
++  }
++  KernelCompilationRequest request;
++  return request.SendAndWaitForResponse(
++      kRejectTag, kernel_port, NULL, NULL, 0, 0, NULL, true, false, NULL, NULL,
++      NULL, /*default_null_safety=*/kNullSafetyOptionUnspecified,
++      experimental_flags_, NULL, Dart_KernelCompilationVerbosityLevel_Error);
++}
++
+ Dart_KernelCompilationResult KernelIsolate::CompileExpressionToKernel(
+     const uint8_t* platform_kernel,
+     intptr_t platform_kernel_size,
+diff --git a/runtime/vm/kernel_isolate.h b/runtime/vm/kernel_isolate.h
+index 08a7427..317de01 100644
+--- a/runtime/vm/kernel_isolate.h
++++ b/runtime/vm/kernel_isolate.h
+@@ -32,6 +32,7 @@ class KernelIsolate : public AllStatic {
+   static const int kListDependenciesTag;
+   static const int kNotifyIsolateShutdown;
+   static const int kDetectNullabilityTag;
++  static const int kRejectTag;
+ 
+   static void InitializeState();
+   static bool Start();
+@@ -64,6 +65,7 @@ class KernelIsolate : public AllStatic {
+                                const char* original_working_directory);
+ 
+   static Dart_KernelCompilationResult AcceptCompilation();
++  static Dart_KernelCompilationResult RejectCompilation();
+   static Dart_KernelCompilationResult UpdateInMemorySources(
+       int source_files_count,
+       Dart_SourceFile source_files[]);

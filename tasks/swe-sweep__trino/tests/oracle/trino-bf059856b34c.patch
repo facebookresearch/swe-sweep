@@ -1,0 +1,15 @@
+diff --git a/lib/trino-orc/src/main/java/io/trino/orc/stream/OrcInputStream.java b/lib/trino-orc/src/main/java/io/trino/orc/stream/OrcInputStream.java
+index 3f37981fc5e..cd0b6bf0b36 100644
+--- a/lib/trino-orc/src/main/java/io/trino/orc/stream/OrcInputStream.java
++++ b/lib/trino-orc/src/main/java/io/trino/orc/stream/OrcInputStream.java
+@@ -227,7 +227,9 @@ public final class OrcInputStream
+         int decompressedOffset = decodeDecompressedOffset(checkpoint);
+         // if checkpoint is within the current buffer, seek locally
+         int currentDecompressedBufferOffset = decodeDecompressedOffset(lastCheckpoint);
+-        if (current != null && compressedOffset == decodeCompressedBlockOffset(lastCheckpoint) && decompressedOffset < currentDecompressedBufferOffset + current.length()) {
++        if (current != null && compressedOffset == decodeCompressedBlockOffset(lastCheckpoint)
++                && decompressedOffset >= currentDecompressedBufferOffset
++                && decompressedOffset < currentDecompressedBufferOffset + current.length()) {
+             current.setPosition(decompressedOffset - currentDecompressedBufferOffset);
+             return;
+         }

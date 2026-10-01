@@ -1,0 +1,9 @@
+diff --git a/autotest/utilities/test_gdalinfo_lib.py b/autotest/utilities/test_gdalinfo_lib.py
+index d2d0a7efa7..e7b5b16ef6 100755
+--- a/autotest/utilities/test_gdalinfo_lib.py
++++ b/autotest/utilities/test_gdalinfo_lib.py
+@@ -228,3 +228,4 @@ def test_gdalinfo_lib_nodata_full_precision_float64():
+ 
+     ret = gdal.Info(ds, format="json")
+     assert ret["bands"][0]["noDataValue"] == float(nodata_str)
++    assert ret["stac"]["raster:bands"][0]["nodata"] == float(nodata_str)

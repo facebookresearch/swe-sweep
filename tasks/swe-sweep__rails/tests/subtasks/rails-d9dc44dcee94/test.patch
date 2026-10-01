@@ -1,0 +1,34 @@
+diff --git a/activesupport/test/core_ext/module/introspection_test.rb b/activesupport/test/core_ext/module/introspection_test.rb
+index 8d1a742eb29..d488cedcee0 100644
+--- a/activesupport/test/core_ext/module/introspection_test.rb
++++ b/activesupport/test/core_ext/module/introspection_test.rb
+@@ -26,6 +26,15 @@ class IntrospectionTest < ActiveSupport::TestCase
+     assert_equal "ParentA::B", ParentA::B::FrozenC.module_parent_name
+   end
+ 
++  def test_module_parent_name_notice_changes
++    klass = Class.new
++    assert_nil klass.module_parent_name
++    ParentA.const_set(:NewClass, klass)
++    assert_equal "ParentA", klass.module_parent_name
++  ensure
++    ParentA.send(:remove_const, :NewClass) if ParentA.const_defined?(:NewClass)
++  end
++
+   def test_module_parent
+     assert_equal ParentA::B, ParentA::B::C.module_parent
+     assert_equal ParentA, ParentA::B.module_parent
+@@ -36,4 +45,13 @@ class IntrospectionTest < ActiveSupport::TestCase
+     assert_equal [ParentA::B, ParentA, Object], ParentA::B::C.module_parents
+     assert_equal [ParentA, Object], ParentA::B.module_parents
+   end
++
++  def test_module_parent_notice_changes
++    klass = Class.new
++    assert_equal Object, klass.module_parent
++    ParentA.const_set(:NewClass, klass)
++    assert_equal ParentA, klass.module_parent
++  ensure
++    ParentA.send(:remove_const, :NewClass) if ParentA.const_defined?(:NewClass)
++  end
+ end

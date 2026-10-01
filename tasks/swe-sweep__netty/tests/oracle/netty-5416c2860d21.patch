@@ -1,0 +1,16 @@
+diff --git a/codec-http/src/main/java/io/netty/handler/codec/http/HttpObjectDecoder.java b/codec-http/src/main/java/io/netty/handler/codec/http/HttpObjectDecoder.java
+index 90d8d76684..28f048252f 100644
+--- a/codec-http/src/main/java/io/netty/handler/codec/http/HttpObjectDecoder.java
++++ b/codec-http/src/main/java/io/netty/handler/codec/http/HttpObjectDecoder.java
+@@ -743,6 +743,11 @@ public abstract class HttpObjectDecoder extends ByteToMessageDecoder {
+             }
+         }
+ 
++        if (nameEnd == length) {
++            // There was no colon present at all.
++            throw new IllegalArgumentException("No colon found");
++        }
++
+         for (colonEnd = nameEnd; colonEnd < length; colonEnd ++) {
+             if (sb.charAt(colonEnd) == ':') {
+                 colonEnd ++;

@@ -1,0 +1,22 @@
+diff --git a/lib/matplotlib/tests/test_collections.py b/lib/matplotlib/tests/test_collections.py
+index 2a1002b6df..43bbea34a2 100644
+--- a/lib/matplotlib/tests/test_collections.py
++++ b/lib/matplotlib/tests/test_collections.py
+@@ -531,6 +531,8 @@ def test_lslw_bcast():
+ 
+ @pytest.mark.style('default')
+ def test_capstyle():
++    col = mcollections.PathCollection([])
++    assert col.get_capstyle() is None
+     col = mcollections.PathCollection([], capstyle='round')
+     assert col.get_capstyle() == 'round'
+     col.set_capstyle('butt')
+@@ -539,6 +541,8 @@ def test_capstyle():
+ 
+ @pytest.mark.style('default')
+ def test_joinstyle():
++    col = mcollections.PathCollection([])
++    assert col.get_joinstyle() is None
+     col = mcollections.PathCollection([], joinstyle='round')
+     assert col.get_joinstyle() == 'round'
+     col.set_joinstyle('miter')

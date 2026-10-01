@@ -1,0 +1,22 @@
+diff --git a/src/net/mail/message_test.go b/src/net/mail/message_test.go
+index 80a17b2853..41c54b8687 100644
+--- a/src/net/mail/message_test.go
++++ b/src/net/mail/message_test.go
+@@ -344,6 +344,17 @@ func TestAddressParsingError(t *testing.T) {
+ 			t.Errorf(`mail.ParseAddress(%q) #%d want %q, got %v`, tc.text, i, tc.wantErrText, err)
+ 		}
+ 	}
++
++	t.Run("CustomWordDecoder", func(t *testing.T) {
++		p := &AddressParser{WordDecoder: &mime.WordDecoder{}}
++		for i, tc := range mustErrTestCases {
++			_, err := p.Parse(tc.text)
++			if err == nil || !strings.Contains(err.Error(), tc.wantErrText) {
++				t.Errorf(`p.Parse(%q) #%d want %q, got %v`, tc.text, i, tc.wantErrText, err)
++			}
++		}
++	})
++
+ }
+ 
+ func TestAddressParsing(t *testing.T) {

@@ -1,0 +1,22 @@
+diff --git a/test/bernoulli.jl b/test/bernoulli.jl
+new file mode 100644
+index 00000000..276a442a
+--- /dev/null
++++ b/test/bernoulli.jl
+@@ -0,0 +1,5 @@
++using Distributions
++using Test, Random
++
++@test typeof(rand(Bernoulli())) == Int
++@test typeof(rand(Bernoulli(), 10)) == Vector{Int}
+diff --git a/test/runtests.jl b/test/runtests.jl
+--- a/test/runtests.jl
++++ b/test/runtests.jl
+@@ -51,6 +51,7 @@ const tests = [
+     "functionals",
+     "chernoff",
+     "univariate_bounds",
++    "bernoulli",
+ ]
+ 
+ printstyled("Running tests:\n", color=:blue)

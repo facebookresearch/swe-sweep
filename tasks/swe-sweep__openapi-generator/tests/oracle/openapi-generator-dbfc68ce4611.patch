@@ -1,0 +1,14 @@
+diff --git a/modules/openapi-generator/src/main/resources/typescript-angular/api.service.mustache b/modules/openapi-generator/src/main/resources/typescript-angular/api.service.mustache
+index 82234384243..f60df119a66 100644
+--- a/modules/openapi-generator/src/main/resources/typescript-angular/api.service.mustache
++++ b/modules/openapi-generator/src/main/resources/typescript-angular/api.service.mustache
+@@ -260,6 +260,9 @@
+ {{#isOAuth}}
+             localVarHeaders = localVarHeaders.set('Authorization', 'Bearer ' + localVarCredential);
+ {{/isOAuth}}
++{{#isOpenId}}
++            localVarHeaders = localVarHeaders.set('Authorization', 'Bearer ' + localVarCredential);
++{{/isOpenId}}
+         }
+ 
+ {{/authMethods}}

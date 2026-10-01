@@ -1,0 +1,14 @@
+diff --git a/lib/trino-rcfile/src/main/java/io/trino/rcfile/RcFileDecoderUtils.java b/lib/trino-rcfile/src/main/java/io/trino/rcfile/RcFileDecoderUtils.java
+index 0000000..1111111 100644
+--- a/lib/trino-rcfile/src/main/java/io/trino/rcfile/RcFileDecoderUtils.java
++++ b/lib/trino-rcfile/src/main/java/io/trino/rcfile/RcFileDecoderUtils.java
+@@ -264,6 +264,8 @@ public final class RcFileDecoderUtils
+         if (indexEnd < 0) {
+             return length;
+         }
+-        return indexEnd - offset;
++        // end index could run over length because of large code points (e.g., 4-byte code points)
++        // or within length because of small code points (e.g., 1-byte code points)
++        return min(indexEnd - offset, length);
+     }
+ }

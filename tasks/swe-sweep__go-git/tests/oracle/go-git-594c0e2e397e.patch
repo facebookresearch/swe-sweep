@@ -1,0 +1,51 @@
+diff --git a/worktree_commit.go b/worktree_commit.go
+index dc79569..eb97ed2 100644
+--- a/worktree_commit.go
++++ b/worktree_commit.go
+@@ -2,6 +2,7 @@ package git
+ 
+ import (
+ 	"bytes"
++	"regexp"
+ 	"path"
+ 	"sort"
+ 	"strings"
+@@ -16,6 +17,12 @@ import (
+ 	"github.com/go-git/go-billy/v5"
+ )
+ 
++var (
++	// characters to be removed from user name and/or email before using them to build a commit object
++	// See https://git-scm.com/docs/git-commit#_commit_information
++	invalidCharactersRe = regexp.MustCompile(`[<>\n]`)
++)
++
+ // Commit stores the current contents of the index in a new commit along with
+ // a log message from the user describing the changes.
+ func (w *Worktree) Commit(msg string, opts *CommitOptions) (plumbing.Hash, error) {
+@@ -94,8 +101,8 @@ func (w *Worktree) updateHEAD(commit plumbing.Hash) error {
+ 
+ func (w *Worktree) buildCommitObject(msg string, opts *CommitOptions, tree plumbing.Hash) (plumbing.Hash, error) {
+ 	commit := &object.Commit{
+-		Author:       *opts.Author,
+-		Committer:    *opts.Committer,
++		Author:       w.sanitize(*opts.Author),
++		Committer:    w.sanitize(*opts.Committer),
+ 		Message:      msg,
+ 		TreeHash:     tree,
+ 		ParentHashes: opts.Parents,
+@@ -116,6 +123,14 @@ func (w *Worktree) buildCommitObject(msg string, opts *CommitOptions, tree plumb
+ 	return w.r.Storer.SetEncodedObject(obj)
+ }
+ 
++func (w *Worktree) sanitize(signature object.Signature) object.Signature {
++	return object.Signature{
++		Name:  invalidCharactersRe.ReplaceAllString(signature.Name, ""),
++		Email: invalidCharactersRe.ReplaceAllString(signature.Email, ""),
++		When:  signature.When,
++	}
++}
++
+ func (w *Worktree) buildCommitSignature(commit *object.Commit, signKey *openpgp.Entity) (string, error) {
+ 	encoded := &plumbing.MemoryObject{}
+ 	if err := commit.Encode(encoded); err != nil {

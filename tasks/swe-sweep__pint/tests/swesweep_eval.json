@@ -1,0 +1,153 @@
+{
+  "build_jobs": 4,
+  "container_repo": "/pint",
+  "evaluation": {
+    "paths": "pint",
+    "test_dirs": [
+      "testsuite"
+    ]
+  },
+  "upstream_image": "pandora-maxbug-pint:0.18",
+  "n_base_passing": 1257,
+  "n_base_test_ignore": 29,
+  "oracle_digest": "5c0b82458a21d45b5bf577e6da75bb96e17aeca90640e595894f084fdfba3133",
+  "oracle_pristine_paths": [],
+  "upstream_commit": "9f7399e15e6172900e0591deb5a57a45769d8205",
+  "reproduction": {
+    "needs_build": false,
+    "suite": "pytest",
+    "test_timeout": 900
+  },
+  "schema": 2,
+  "subtasks": [
+    {
+      "f2p": [
+        "pint.testsuite.test_numpy_func.TestNumPyFuncUtils::test_op_output_unit_div_offset_array_protocol",
+        "pint.testsuite.test_numpy_func.TestNumPyFuncUtils::test_op_output_unit_mul_offset_array_protocol"
+      ],
+      "id": "pint-101eedb4d6e6",
+      "target_files": [
+        "pint/facets/numpy/numpy_func.py"
+      ]
+    },
+    {
+      "f2p": [
+        "pint.testsuite.test_quantity.TestQuantity::test_round"
+      ],
+      "id": "pint-1eff66928073",
+      "target_files": [
+        "pint/facets/plain/quantity.py"
+      ]
+    },
+    {
+      "f2p": [
+        "pint.testsuite.test_quantity.TestQuantity::test_unit_canonical_name_parsing[cm centimeter cm centimeter-expected_unit1]",
+        "pint.testsuite.test_quantity.TestQuantity::test_unit_canonical_name_parsing[hour/hr-expected_unit0]"
+      ],
+      "id": "pint-200da84bf5f8",
+      "target_files": [
+        "pint/registry.py"
+      ]
+    },
+    {
+      "f2p": [
+        "pint.testsuite.test_pint_eval.TestPintEval::test_preprocessed_eval_tree"
+      ],
+      "id": "pint-2ad11498a114",
+      "target_files": [
+        "pint/util.py"
+      ]
+    },
+    {
+      "f2p": [
+        "pint.testsuite.test_pint_eval.TestPintEval::test_build_eval_tree[(5 % 2) m-((5 % 2) m)]",
+        "pint.testsuite.test_pint_eval.TestPintEval::test_build_eval_tree[(5 // 2) m-((5 // 2) m)]"
+      ],
+      "id": "pint-3ae392347c73",
+      "target_files": [
+        "pint/pint_eval.py"
+      ]
+    },
+    {
+      "f2p": [
+        "pint.testsuite.test_quantity.TestQuantity::test_to_reduced_units"
+      ],
+      "id": "pint-67eb9107e914",
+      "target_files": [
+        "pint/quantity.py"
+      ]
+    },
+    {
+      "f2p": [
+        "pint.testsuite.test_quantity.TestQuantity::test_is_compatible_with_with_context"
+      ],
+      "id": "pint-7e2f4a2d33e6",
+      "target_files": [
+        "pint/quantity.py",
+        "pint/unit.py"
+      ]
+    },
+    {
+      "f2p": [
+        "pint.testsuite.test_measurement.TestMeasurement::test_format_default"
+      ],
+      "id": "pint-7fb0164b441d",
+      "target_files": [
+        "pint/measurement.py"
+      ]
+    },
+    {
+      "f2p": [
+        "pint.testsuite.test_application_registry::test_modify_application_registry"
+      ],
+      "id": "pint-8193d01d5594",
+      "target_files": [
+        "pint/registry.py"
+      ]
+    },
+    {
+      "f2p": [
+        "pint.testsuite.test_issues.TestIssues::test_issue1066"
+      ],
+      "id": "pint-c59666b3f8e1",
+      "target_files": [
+        "pint/registry.py"
+      ]
+    },
+    {
+      "f2p": [
+        "pint.testsuite.test_numpy.TestNumpyUnclassified::test_setitem_mixed_masked"
+      ],
+      "id": "pint-dc5348ba2c2a",
+      "target_files": [
+        "pint/facets/numpy/quantity.py"
+      ]
+    },
+    {
+      "f2p": [
+        "pint.testsuite.test_unit.TestRegistry::test_wrap_referencing_integer_array",
+        "pint.testsuite.test_unit.TestRegistryWithDefaultRegistry::test_wrap_referencing_integer_array"
+      ],
+      "id": "pint-e11f97971c09",
+      "target_files": [
+        "pint/registry_helpers.py"
+      ]
+    },
+    {
+      "f2p": [
+        "pint.testsuite.test_numpy_func.TestNumPyFuncUtils::test_cross",
+        "pint.testsuite.test_numpy_func.TestNumPyFuncUtils::test_cross_no_autoconvert",
+        "pint.testsuite.test_numpy_func.TestNumPyFuncUtils::test_dot",
+        "pint.testsuite.test_numpy_func.TestNumPyFuncUtils::test_dot_no_autoconvert",
+        "pint.testsuite.test_numpy_func.TestNumPyFuncUtils::test_trapz",
+        "pint.testsuite.test_numpy_func.TestNumPyFuncUtils::test_trapz_no_autoconvert"
+      ],
+      "id": "pint-f3388c0c3a3f",
+      "target_files": [
+        "pint/facets/numpy/numpy_func.py"
+      ]
+    }
+  ],
+  "task": "pint",
+  "version": "0.18"
+}

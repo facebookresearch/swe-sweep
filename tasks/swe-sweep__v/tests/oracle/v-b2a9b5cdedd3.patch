@@ -1,0 +1,181 @@
+diff --git a/vlib/v/ast/ast.v b/vlib/v/ast/ast.v
+index d99be1839..32c879414 100644
+--- a/vlib/v/ast/ast.v
++++ b/vlib/v/ast/ast.v
+@@ -586,7 +586,12 @@ pub mut:
+ 	pos         token.Pos // function declaration position
+ }
+ 
+-pub fn (f &FnDecl) new_method_with_receiver_type(new_type Type) FnDecl {
++pub fn (f &FnDecl) new_method_with_receiver_type(new_type_ Type) FnDecl {
++	new_type := if f.params[0].typ.is_ptr() && !new_type_.is_ptr() {
++		new_type_.ref()
++	} else {
++		new_type_
++	}
+ 	unsafe {
+ 		mut new_method := f
+ 		new_method.params = f.params.clone()
+@@ -624,17 +629,18 @@ pub:
+ 	pos                token.Pos
+ 	return_type_pos    token.Pos
+ pub mut:
+-	return_type    Type
+-	receiver_type  Type // != 0, when .is_method == true
+-	name           string
+-	params         []Param
+-	source_fn      voidptr // set in the checker, while processing fn declarations // TODO get rid of voidptr
+-	usages         int
+-	generic_names  []string
+-	dep_names      []string // globals or consts dependent names
+-	attrs          []Attr   // all fn attributes
+-	is_conditional bool     // true for `[if abc]fn(){}`
+-	ctdefine_idx   int      // the index of the attribute, containing the compile time define [if mytag]
++	return_type       Type
++	receiver_type     Type // != 0, when .is_method == true
++	name              string
++	params            []Param
++	source_fn         voidptr // set in the checker, while processing fn declarations // TODO get rid of voidptr
++	usages            int
++	generic_names     []string
++	dep_names         []string // globals or consts dependent names
++	attrs             []Attr   // all fn attributes
++	is_conditional    bool     // true for `[if abc]fn(){}`
++	ctdefine_idx      int      // the index of the attribute, containing the compile time define [if mytag]
++	from_embeded_type Type     // for interface only, fn from the embedded interface
+ }
+ 
+ fn (f &Fn) method_equals(o &Fn) bool {
+@@ -672,7 +678,12 @@ pub fn (f &FnDecl) new_method_with_receiver_type
+ 	typ Type
+ }
+ 
+-pub fn (f &Fn) new_method_with_receiver_type(new_type Type) Fn {
++pub fn (f &Fn) new_method_with_receiver_type(new_type_ Type) Fn {
++	new_type := if f.params[0].typ.is_ptr() && !new_type_.is_ptr() {
++		new_type_.ref()
++	} else {
++		new_type_
++	}
+ 	unsafe {
+ 		mut new_method := f
+ 		new_method.params = f.params.clone()
+@@ -681,6 +692,11 @@ pub fn (f &Fn) new_method_with_receiver_type(new_type Type) Fn {
+ 				new_method.params[i].typ = new_type
+ 			}
+ 		}
++		new_method.from_embeded_type = if f.from_embeded_type != 0 {
++			f.from_embeded_type
++		} else {
++			f.params[0].typ
++		}
+ 		new_method.params[0].typ = new_type
+ 
+ 		return *new_method
+diff --git a/vlib/v/checker/fn.v b/vlib/v/checker/fn.v
+index e0bd5eafe..977df6773 100644
+--- a/vlib/v/checker/fn.v
++++ b/vlib/v/checker/fn.v
+@@ -1762,6 +1762,10 @@ fn (mut c Checker) method_call(mut node ast.CallExpr) ast.Type {
+ 	if m := c.table.find_method(left_sym, method_name) {
+ 		method = m
+ 		has_method = true
++		if left_sym.kind == .interface_ && m.from_embeded_type != 0 {
++			is_method_from_embed = true
++			node.from_embed_types = [m.from_embeded_type]
++		}
+ 	} else {
+ 		if final_left_sym.kind in [.struct_, .sum_type, .interface_, .alias, .array] {
+ 			mut parent_type := ast.void_type
+diff --git a/vlib/v/gen/c/fn.v b/vlib/v/gen/c/fn.v
+index c607a944c..b82f5a9be 100644
+--- a/vlib/v/gen/c/fn.v
++++ b/vlib/v/gen/c/fn.v
+@@ -1412,6 +1412,8 @@ fn (mut g Gen) method_call(node ast.CallExpr) {
+ 	}
+ 	is_array_method_first_last_repeat := final_left_sym.kind == .array
+ 		&& node.name in ['first', 'last', 'repeat']
++	is_interface := left_sym.kind == .interface_
++		&& g.table.sym(node.receiver_type).kind == .interface_
+ 	if node.receiver_type.is_ptr() && (!left_type.is_ptr()
+ 		|| node.from_embed_types.len != 0 || (left_type.has_flag(.shared_f) && node.name != 'str')) {
+ 		// The receiver is a reference, but the caller provided a value
+@@ -1461,7 +1463,7 @@ fn (mut g Gen) method_call(node ast.CallExpr) {
+ 			g.write('(map[]){')
+ 			g.expr(node.left)
+ 			g.write('}[0]')
+-		} else if node.from_embed_types.len > 0 {
++		} else if !is_interface && node.from_embed_types.len > 0 {
+ 			n_ptr := node.left_type.nr_muls() - 1
+ 			if n_ptr > 0 {
+ 				g.write('(')
+@@ -1471,23 +1473,56 @@ fn (mut g Gen) method_call(node ast.CallExpr) {
+ 			} else {
+ 				g.expr(node.left)
+ 			}
++		} else if is_interface && node.from_embed_types.len > 0 {
++			if g.out.last_n(1) == '&' {
++				g.go_back(1)
++			}
++			if node.receiver_type.is_ptr() && left_type.is_ptr() {
++				// (main__IFoo*)bar
++				g.write('(')
++				g.write(g.table.sym(node.from_embed_types.last()).cname)
++				g.write('*)')
++				g.expr(node.left)
++			} else if node.receiver_type.is_ptr() && !left_type.is_ptr() {
++				// (main__IFoo*)&bar
++				g.write('(')
++				g.write(g.table.sym(node.from_embed_types.last()).cname)
++				g.write('*)&')
++				g.expr(node.left)
++			} else if !node.receiver_type.is_ptr() && left_type.is_ptr() {
++				// *((main__IFoo*)bar)
++				g.write('*((')
++				g.write(g.table.sym(node.from_embed_types.last()).cname)
++				g.write('*)')
++				g.expr(node.left)
++				g.write(')')
++			} else {
++				// *((main__IFoo*)&bar)
++				g.write('*((')
++				g.write(g.table.sym(node.from_embed_types.last()).cname)
++				g.write('*)&')
++				g.expr(node.left)
++				g.write(')')
++			}
+ 		} else {
+ 			g.expr(node.left)
+ 		}
+-		for i, embed in node.from_embed_types {
+-			embed_sym := g.table.sym(embed)
+-			embed_name := embed_sym.embed_name()
+-			is_left_ptr := if i == 0 {
+-				left_type.is_ptr()
+-			} else {
+-				node.from_embed_types[i - 1].is_ptr()
++		if !is_interface || node.from_embed_types.len == 0 {
++			for i, embed in node.from_embed_types {
++				embed_sym := g.table.sym(embed)
++				embed_name := embed_sym.embed_name()
++				is_left_ptr := if i == 0 {
++					left_type.is_ptr()
++				} else {
++					node.from_embed_types[i - 1].is_ptr()
++				}
++				if is_left_ptr {
++					g.write('->')
++				} else {
++					g.write('.')
++				}
++				g.write(embed_name)
+ 			}
+-			if is_left_ptr {
+-				g.write('->')
+-			} else {
+-				g.write('.')
+-			}
+-			g.write(embed_name)
+ 		}
+ 		if left_type.has_flag(.shared_f)
+ 			&& (left_type != node.receiver_type || is_array_method_first_last_repeat) {

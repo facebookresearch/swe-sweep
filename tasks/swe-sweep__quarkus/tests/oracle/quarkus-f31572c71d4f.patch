@@ -1,0 +1,13 @@
+diff --git a/extensions/hibernate-orm/deployment/src/main/java/io/quarkus/hibernate/orm/deployment/HibernateOrmCdiProcessor.java b/extensions/hibernate-orm/deployment/src/main/java/io/quarkus/hibernate/orm/deployment/HibernateOrmCdiProcessor.java
+index 2e13291ee59..18451c89dbd 100644
+--- a/extensions/hibernate-orm/deployment/src/main/java/io/quarkus/hibernate/orm/deployment/HibernateOrmCdiProcessor.java
++++ b/extensions/hibernate-orm/deployment/src/main/java/io/quarkus/hibernate/orm/deployment/HibernateOrmCdiProcessor.java
+@@ -236,7 +236,7 @@ public class HibernateOrmCdiProcessor {
+                 // same for StatelessSession
+                 syntheticBeanBuildItemBuildProducer
+                         .produce(createSyntheticBean(persistenceUnitName,
+-                                true, true,
++                                isDefaultPU, isNamedPU,
+                                 StatelessSession.class, STATELESS_SESSION_EXPOSED_TYPES, false)
+                                 .createWith(recorder.statelessSessionSupplier(persistenceUnitName))
+                                 .addInjectionPoint(ClassType.create(DotName.createSimple(TransactionSessions.class)))

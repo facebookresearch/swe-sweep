@@ -1,0 +1,48 @@
+diff --git a/tests/Main.idr b/tests/Main.idr
+index 33ff5cde9..93ec07136 100644
+--- a/tests/Main.idr
++++ b/tests/Main.idr
+@@ -203,6 +203,7 @@ idrisTests = MkTestPool "Misc" [] Nothing
+        -- Quotation and reflection
+        "reflection001", "reflection002", "reflection003", "reflection004",
+        "reflection005", "reflection006", "reflection007", "reflection008",
+        "reflection009","reflection010",
++       "reflection013",
+        -- The 'with' rule
+        "with001", "with002", "with004", "with005", "with006",
+        -- with-disambiguation
+diff --git a/tests/idris2/reflection013/WithUnambig.idr b/tests/idris2/reflection013/WithUnambig.idr
+new file mode 100644
+index 000000000..fb319b441
+--- /dev/null
++++ b/tests/idris2/reflection013/WithUnambig.idr
+@@ -0,0 +1,12 @@
++import Language.Reflection
++
++x : TTImp
++x = `(with Prelude.Nil [])
++
++%language ElabReflection
++
++x' : Elab (List Nat)
++x' = check x
++
++l : List Nat
++l = 1 :: %runElab x'
+diff --git a/tests/idris2/reflection013/expected b/tests/idris2/reflection013/expected
+new file mode 100644
+index 000000000..47483d206
+--- /dev/null
++++ b/tests/idris2/reflection013/expected
+@@ -0,0 +1 @@
++1/1: Building WithUnambig (WithUnambig.idr)
+diff --git a/tests/idris2/reflection013/run b/tests/idris2/reflection013/run
+new file mode 100755
+index 000000000..05d35edea
+--- /dev/null
++++ b/tests/idris2/reflection013/run
+@@ -0,0 +1,4 @@
++rm -rf build
++
++$1 --no-color --console-width 0 --no-banner --check WithUnambig.idr
++

@@ -1,0 +1,22 @@
+diff --git a/test/initializationsystem.jl b/test/initializationsystem.jl
+index 482147beba..d535d42011 100644
+--- a/test/initializationsystem.jl
++++ b/test/initializationsystem.jl
+@@ -486,3 +486,17 @@ end
+     ssys = structural_simplify(sys)
+     @test_throws ArgumentError ODEProblem(ssys, [x => 3], (0, 1), []) # y should have a guess
+ end
++
++# https://github.com/SciML/ModelingToolkit.jl/issues/3029
++@testset "Derivatives in Initialization Equations" begin
++    @variables x(t)
++    sys = ODESystem(
++        [D(D(x)) ~ 0], t; initialization_eqs = [x ~ 0, D(x) ~ 1], name = :sys) |>
++          structural_simplify
++    @test_nowarn ODEProblem(sys, [], (0.0, 1.0), [])
++
++    sys = ODESystem(
++        [D(D(x)) ~ 0], t; initialization_eqs = [x ~ 0, D(D(x)) ~ 0], name = :sys) |>
++          structural_simplify
++    @test_nowarn ODEProblem(sys, [D(x) => 1.0], (0.0, 1.0), [])
++end

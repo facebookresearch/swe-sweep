@@ -1,0 +1,12 @@
+diff --git a/sklearn/cluster/affinity_propagation_.py b/sklearn/cluster/affinity_propagation_.py
+--- a/sklearn/cluster/affinity_propagation_.py
++++ b/sklearn/cluster/affinity_propagation_.py
+@@ -100,7 +100,7 @@
+     tmp = np.zeros((n_samples, n_samples))
+ 
+     # Remove degeneracies
+-    S += ((np.finfo(np.double).eps * S + np.finfo(np.double).tiny * 100) *
++    S += ((np.finfo(S.dtype).eps * S + np.finfo(S.dtype).tiny * 100) *
+           random_state.randn(n_samples, n_samples))
+ 
+     # Execute parallel affinity propagation updates

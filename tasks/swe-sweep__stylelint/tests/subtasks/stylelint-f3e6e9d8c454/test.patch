@@ -1,0 +1,67 @@
+diff --git a/lib/rules/selector-pseudo-element-allowed-list/__tests__/index.mjs b/lib/rules/selector-pseudo-element-allowed-list/__tests__/index.mjs
+index 14fbced9b..4cd79c4d1 100644
+--- a/lib/rules/selector-pseudo-element-allowed-list/__tests__/index.mjs
++++ b/lib/rules/selector-pseudo-element-allowed-list/__tests__/index.mjs
+@@ -1,3 +1,5 @@
++import { stripIndent } from 'common-tags';
++
+ import rule from '../index.mjs';
+ const { messages, ruleName } = rule;
+ 
+@@ -30,6 +32,16 @@ testRule({
+ 		{
+ 			code: 'a::MY-other-pseudo-element {}',
+ 		},
++		{
++			code: stripIndent`
++				/* stylelint-disable-next-line selector-pseudo-element-allowed-list */
++				a::after, /* stylelint-disable-next-line selector-pseudo-element-allowed-list */
++				a::after,
++				/* stylelint-disable-next-line selector-pseudo-element-allowed-list */
++				a::after
++				{}
++			`,
++		},
+ 	],
+ 
+ 	reject: [
+@@ -73,6 +85,39 @@ testRule({
+ 			endLine: 1,
+ 			endColumn: 25,
+ 		},
++		{
++			code: stripIndent`
++				/* a comment */
++				a::after, /* a comment */
++				a::after,
++				/* a comment */
++				a::after
++				{}
++			`,
++			warnings: [
++				{
++					message: messages.rejected('::after'),
++					line: 2,
++					column: 2,
++					endLine: 2,
++					endColumn: 9,
++				},
++				{
++					message: messages.rejected('::after'),
++					line: 3,
++					column: 2,
++					endLine: 3,
++					endColumn: 9,
++				},
++				{
++					message: messages.rejected('::after'),
++					line: 5,
++					column: 2,
++					endLine: 5,
++					endColumn: 9,
++				},
++			],
++		},
+ 	],
+ });
+ 

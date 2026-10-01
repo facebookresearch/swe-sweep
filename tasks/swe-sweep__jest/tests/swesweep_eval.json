@@ -1,0 +1,212 @@
+{
+  "build_jobs": 4,
+  "container_repo": "/jest",
+  "evaluation": {
+    "suite": "reproduction",
+    "visible_timeout": 14400
+  },
+  "upstream_image": "pandora-maxbug-jest:29.0.0",
+  "n_base_passing": 0,
+  "n_base_test_ignore": 1,
+  "oracle_digest": "f819250c9bd567fd0c6b112fc3fa1e2b083b5d4973fa082a4c1ceb2f149a1732",
+  "oracle_pristine_paths": [],
+  "upstream_commit": "9f7399e15e6172900e0591deb5a57a45769d8205",
+  "reproduction": {
+    "build_cmd": "yarn build:js",
+    "jobs_env": "SWESWEEP_BUILD_JOBS",
+    "suite": "jest",
+    "test_timeout": 1200
+  },
+  "schema": 2,
+  "subtasks": [
+    {
+      "f2p": [
+        "copies value of inherited getters"
+      ],
+      "id": "jest-0ea6ca85c260",
+      "target_files": [
+        "packages/jest-matcher-utils/src/deepCyclicCopyReplaceable.ts"
+      ]
+    },
+    {
+      "f2p": [
+        "shouldInstrument should return false when file is a .json module"
+      ],
+      "id": "jest-191da9cd5acb",
+      "target_files": [
+        "packages/jest-transform/src/shouldInstrument.ts"
+      ]
+    },
+    {
+      "f2p": [
+        "collectHandles should not be false positives for some special objects such as `TLSWRAP`"
+      ],
+      "id": "jest-196bdbaf2128",
+      "target_files": [
+        "packages/jest-core/src/collectHandles.ts"
+      ]
+    },
+    {
+      "f2p": [
+        "errors on a missing --config when multiple projects are specified",
+        "uses --config for the global config when multiple projects are specified"
+      ],
+      "id": "jest-1b9ad2cc90f5",
+      "target_files": [
+        "packages/jest-config/src/index.ts"
+      ]
+    },
+    {
+      "f2p": [
+        "typeEquality returns undefined if given mock.calls and []"
+      ],
+      "id": "jest-4f878dcb5e6c",
+      "target_files": [
+        "packages/expect-utils/src/utils.ts"
+      ]
+    },
+    {
+      "f2p": [
+        "moduleMocker generateFromMetadata handles custom toString of transpiled modules"
+      ],
+      "id": "jest-59f0a0841cb2",
+      "target_files": [
+        "packages/jest-mock/src/index.ts"
+      ]
+    },
+    {
+      "f2p": [
+        "babel-plugin-jest-hoist TS typeof usage in jest.mock"
+      ],
+      "id": "jest-6668311237c9",
+      "target_files": [
+        "packages/babel-plugin-jest-hoist/src/index.ts"
+      ]
+    },
+    {
+      "f2p": [
+        "ModuleMap serialization reports duplicates as DuplicateHasteCandidatesError after a round-trip"
+      ],
+      "id": "jest-71e0249f78f1",
+      "target_files": [
+        "packages/jest-haste-map/src/ModuleMap.ts"
+      ]
+    },
+    {
+      "f2p": [
+        "toMatchObject() toMatchObject ignores symbol key properties"
+      ],
+      "id": "jest-7a81ceb6dc1e",
+      "target_files": [
+        "packages/expect-utils/src/utils.ts"
+      ]
+    },
+    {
+      "f2p": [
+        "matches circular references nested in: arrays"
+      ],
+      "id": "jest-7d31dc47b7ef",
+      "target_files": [
+        "packages/expect-utils/src/utils.ts"
+      ]
+    },
+    {
+      "f2p": [
+        "resolveModule handles unmatched capture groups correctly"
+      ],
+      "id": "jest-8c3198b828f6",
+      "target_files": [
+        "packages/jest-resolve/src/resolver.ts"
+      ]
+    },
+    {
+      "f2p": [
+        "subsetEquality() subset is not object with keys returns undefined if subset is Map",
+        "subsetEquality() subset is not object with keys returns undefined if subset is Set"
+      ],
+      "id": "jest-a2919f6e4fec",
+      "target_files": [
+        "packages/expect-utils/src/utils.ts"
+      ]
+    },
+    {
+      "f2p": [
+        "counts todo tests when inside of a `describe.only`"
+      ],
+      "id": "jest-b3c445181c62",
+      "target_files": [
+        "packages/jest-circus/src/run.ts"
+      ]
+    },
+    {
+      "f2p": [
+        "iterableEquality returns false when given a symbols keys within inequal objects"
+      ],
+      "id": "jest-b90ad5e6a170",
+      "target_files": [
+        "packages/expect-utils/src/utils.ts"
+      ]
+    },
+    {
+      "f2p": [
+        "readConfigFileAndSetRootDir sets `rootDir` handles frozen config object",
+        "readConfigFileAndSetRootDir sets `rootDir` resolves relative path when the read config object if frozen"
+      ],
+      "id": "jest-c7c8d5c4a03c",
+      "target_files": [
+        "packages/jest-config/src/readConfigFileAndSetRootDir.ts"
+      ]
+    },
+    {
+      "f2p": [
+        "SearchSource getTestPaths filter tests based on an optional filter method"
+      ],
+      "id": "jest-da0237f4fd2c",
+      "target_files": [
+        "packages/jest-core/src/SearchSource.ts",
+        "packages/jest-core/src/types.ts"
+      ]
+    },
+    {
+      "f2p": [
+        "Snapshots get correct names in concurrent tests"
+      ],
+      "id": "jest-df07d8bf9dc6",
+      "target_files": [
+        "packages/expect/src/types.ts",
+        "packages/jest-circus/src/run.ts",
+        "packages/jest-snapshot/src/index.ts"
+      ]
+    },
+    {
+      "f2p": [
+        "DOMElement Plugin supports custom elements"
+      ],
+      "id": "jest-e79cfa98a14a",
+      "target_files": [
+        "packages/pretty-format/src/plugins/DOMElement.ts"
+      ]
+    },
+    {
+      "f2p": [
+        "--listTests flag --onlyFailures flag lists no tests when no failed tests exist",
+        "--listTests flag --onlyFailures flag lists only failed tests after a test run"
+      ],
+      "id": "jest-eb3c753a5578",
+      "target_files": [
+        "packages/jest-core/src/runJest.ts"
+      ]
+    },
+    {
+      "f2p": [
+        "saveInlineSnapshots() replaces string literal, not just template literal"
+      ],
+      "id": "jest-fc768f355e74",
+      "target_files": [
+        "packages/jest-snapshot/src/InlineSnapshots.ts"
+      ]
+    }
+  ],
+  "task": "jest",
+  "version": "29.0.0"
+}

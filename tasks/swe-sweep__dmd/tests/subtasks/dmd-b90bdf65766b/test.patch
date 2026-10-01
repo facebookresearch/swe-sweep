@@ -1,0 +1,21 @@
+diff --git a/compiler/test/compilable/test22638.d b/compiler/test/compilable/test22638.d
+new file mode 100644
+index 0000000000..d7b5fdf1a9
+--- /dev/null
++++ b/compiler/test/compilable/test22638.d
+@@ -0,0 +1,15 @@
++// https://issues.dlang.org/show_bug.cgi?id=22638
++
++struct S
++{
++    this(ref const(S));
++    ~this();
++}
++
++extern(C++) void set(const S s);
++
++void disp()
++{
++    S p;
++    return set(p);
++}

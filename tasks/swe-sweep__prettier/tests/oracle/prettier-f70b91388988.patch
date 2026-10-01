@@ -1,0 +1,28 @@
+diff --git a/src/cli/options/create-minimist-options.js b/src/cli/options/create-minimist-options.js
+index 153f68494..2bdfd60bd 100644
+--- a/src/cli/options/create-minimist-options.js
++++ b/src/cli/options/create-minimist-options.js
+@@ -1,6 +1,9 @@
+ export default function createMinimistOptions(detailedOptions) {
+   const booleanNames = [];
+-  const stringNames = [];
++  // Numeric-looking arguments will be returned as numbers unless opts.string or opts.boolean contains that argument name.
++  // To disable numeric conversion for non-option arguments, add '_' to opts.string.
++  // https://github.com/minimistjs/minimist#const-argv--parseargsargs-opts
++  const stringNames = ["_"];
+   const defaultValues = {};
+ 
+   for (const option of detailedOptions) {
+diff --git a/src/cli/options/parse-cli-arguments.js b/src/cli/options/parse-cli-arguments.js
+index 7681e9249..93696179c 100644
+--- a/src/cli/options/parse-cli-arguments.js
++++ b/src/cli/options/parse-cli-arguments.js
+@@ -28,7 +28,7 @@ function parseArgv(rawArguments, detailedOptions, logger, keys) {
+         return [option.forwardToApi || camelCase(key), value];
+       }),
+     ),
+-    _: normalized._?.map(String),
++    _: normalized._,
+     get __raw() {
+       return argv;
+     },

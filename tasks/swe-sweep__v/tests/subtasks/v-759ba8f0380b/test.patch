@@ -1,0 +1,19 @@
+diff --git a/vlib/v/tests/struct_field_option_type_with_default_value_init_test.v b/vlib/v/tests/struct_field_option_type_with_default_value_init_test.v
+new file mode 100644
+index 000000000..d154b540c
+--- /dev/null
++++ b/vlib/v/tests/struct_field_option_type_with_default_value_init_test.v
+@@ -0,0 +1,13 @@
++type SomeType = SomeStruct | string
++
++struct SomeStruct {}
++
++struct AnotherStruct {
++	field ?SomeType = 'default_string'
++}
++
++fn test_struct_field_option_type_with_default_value() {
++	s := AnotherStruct{}
++	println(s.field)
++	assert '${s.field}' == "Option(SomeType('default_string'))"
++}

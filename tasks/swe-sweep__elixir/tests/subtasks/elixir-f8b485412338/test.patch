@@ -1,0 +1,25 @@
+diff --git a/lib/elixir/test/elixir/code_normalizer/quoted_ast_test.exs b/lib/elixir/test/elixir/code_normalizer/quoted_ast_test.exs
+index 0f5db7f27..cc41cf20e 100644
+--- a/lib/elixir/test/elixir/code_normalizer/quoted_ast_test.exs
++++ b/lib/elixir/test/elixir/code_normalizer/quoted_ast_test.exs
+@@ -172,6 +172,20 @@ defmodule Code.Normalizer.QuotedASTTest do
+              ) == ~s[~S"""\n"123"\n"""]
+     end
+ 
++    test "regression: invalid sigil calls" do
++      assert quoted_to_string(quote do: sigil_r(<<"foo", 123>>, [])) ==
++               "sigil_r(<<\"foo\", 123>>, [])"
++
++      assert quoted_to_string(quote do: sigil_r(<<"foo">>, :invalid_modifiers)) ==
++               "sigil_r(\"foo\", :invalid_modifiers)"
++
++      assert quoted_to_string(quote do: sigil_r(<<"foo">>, [:invalid_modifier])) ==
++               "sigil_r(\"foo\", [:invalid_modifier])"
++
++      assert quoted_to_string(quote do: sigil_r(<<"foo">>, [])) == "~r\"foo\""
++      assert quoted_to_string(quote do: sigil_r(<<"foo">>, [?a, ?b, ?c])) == "~r\"foo\"abc"
++    end
++
+     test "tuple" do
+       assert quoted_to_string(quote do: {1, 2}) == "{1, 2}"
+       assert quoted_to_string(quote do: {1}) == "{1}"

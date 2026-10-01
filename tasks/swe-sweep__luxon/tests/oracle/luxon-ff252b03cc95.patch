@@ -1,0 +1,13 @@
+diff --git a/src/interval.js b/src/interval.js
+index 594bf2c7..9df38558 100644
+--- a/src/interval.js
++++ b/src/interval.js
+@@ -297,7 +297,7 @@ export default class Interval {
+     const sorted = dateTimes
+         .map(friendlyDateTime)
+         .filter(d => this.contains(d))
+-        .sort(),
++        .sort((a, b) => a.toMillis() - b.toMillis()),
+       results = [];
+     let { s } = this,
+       i = 0;

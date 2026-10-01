@@ -1,0 +1,25 @@
+diff --git a/db-protocol/postgresql/src/main/java/org/apache/shardingsphere/db/protocol/postgresql/packet/command/query/extended/bind/protocol/PostgreSQLArrayParameterDecoder.java b/db-protocol/postgresql/src/main/java/org/apache/shardingsphere/db/protocol/postgresql/packet/command/query/extended/bind/protocol/PostgreSQLArrayParameterDecoder.java
+--- a/db-protocol/postgresql/src/main/java/org/apache/shardingsphere/db/protocol/postgresql/packet/command/query/extended/bind/protocol/PostgreSQLArrayParameterDecoder.java
++++ b/db-protocol/postgresql/src/main/java/org/apache/shardingsphere/db/protocol/postgresql/packet/command/query/extended/bind/protocol/PostgreSQLArrayParameterDecoder.java
+@@ -24,7 +24,8 @@ import org.apache.shardingsphere.infra.util.exception.external.sql.type.generic.U
+ import java.nio.charset.StandardCharsets;
+ import java.util.ArrayList;
+ import java.util.Arrays;
+ import java.util.Collection;
++import java.util.Collections;
+ import java.util.stream.Collectors;
+ 
+ /**
+@@ -171,7 +172,11 @@ public final class PostgreSQLArrayParameterDecoder {
+     private Collection<String> decodeText(final String value) {
+         Preconditions.checkArgument(value.length() >= 2, "value length less than 2");
+         Preconditions.checkArgument('{' == value.charAt(0) && '}' == value.charAt(value.length() - 1), "value not start with '{' or not end with '}'");
+-        String[] elements = value.substring(1, value.length() - 1).split(",");
++        String content = value.substring(1, value.length() - 1);
++        if (content.isEmpty()) {
++            return Collections.emptyList();
++        }
++        String[] elements = content.split(",");
+         return Arrays.stream(elements).map(each -> {
+             if ("NULL".equals(each)) {
+                 return null;

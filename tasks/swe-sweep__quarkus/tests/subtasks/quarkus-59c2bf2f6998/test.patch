@@ -1,0 +1,230 @@
+diff --git a/extensions/resteasy-reactive/rest-client-reactive/deployment/src/test/java/io/quarkus/rest/client/reactive/redirect/RedirectTest.java b/extensions/resteasy-reactive/rest-client-reactive/deployment/src/test/java/io/quarkus/rest/client/reactive/redirect/RedirectTest.java
+index dc6971bf932..8c9b887e05b 100644
+--- a/extensions/resteasy-reactive/rest-client-reactive/deployment/src/test/java/io/quarkus/rest/client/reactive/redirect/RedirectTest.java
++++ b/extensions/resteasy-reactive/rest-client-reactive/deployment/src/test/java/io/quarkus/rest/client/reactive/redirect/RedirectTest.java
+@@ -19,7 +19,7 @@ public class RedirectTest {
+     @RegisterExtension
+     static final QuarkusUnitTest TEST = new QuarkusUnitTest()
+             .withApplicationRoot((jar) -> jar
+-                    .addClasses(RedirectingResourceClient.class,
++                    .addClasses(RedirectingResourceClient302.class, RedirectingResourceClient307.class,
+                             RedirectingResourceWithRegisterProviderRedirectHandlerClient.class,
+                             RedirectingResourceWithRedirectHandlerAnnotationClient.class,
+                             RedirectingResourceWithSeveralRedirectHandlerAnnotationsClient.class,
+@@ -31,50 +31,66 @@ public class RedirectTest {
+ 
+     @Test
+     void shouldRedirect3Times_whenMax4() {
+-        RedirectingResourceClient client = RestClientBuilder.newBuilder()
++        RedirectingResourceClient302 client = RestClientBuilder.newBuilder()
+                 .baseUri(uri)
+                 .followRedirects(true)
+                 .property(QuarkusRestClientProperties.MAX_REDIRECTS, 4)
+-                .build(RedirectingResourceClient.class);
++                .build(RedirectingResourceClient302.class);
+         Response call = client.call(3);
+         assertThat(call.getStatus()).isEqualTo(200);
+     }
+ 
+     @Test
+     void shouldNotRedirect3Times_whenMax2() {
+-        RedirectingResourceClient client = RestClientBuilder.newBuilder()
++        RedirectingResourceClient302 client = RestClientBuilder.newBuilder()
+                 .baseUri(uri)
+                 .followRedirects(true)
+                 .property(QuarkusRestClientProperties.MAX_REDIRECTS, 2)
+-                .build(RedirectingResourceClient.class);
+-        assertThat(client.call(3).getStatus()).isEqualTo(307);
++                .build(RedirectingResourceClient302.class);
++        assertThat(client.call(3).getStatus()).isEqualTo(302);
+     }
+ 
+     @Test
+     void shouldNotRedirectOnPostMethodsByDefault() {
+-        RedirectingResourceClient client = RestClientBuilder.newBuilder()
++        RedirectingResourceClient302 client302 = RestClientBuilder.newBuilder()
+                 .baseUri(uri)
+                 // this property should be ignored in POST
+                 .followRedirects(true)
+-                .build(RedirectingResourceClient.class);
+-        assertThat(client.post().getStatus()).isEqualTo(307);
++                .build(RedirectingResourceClient302.class);
++        assertThat(client302.post().getStatus()).isEqualTo(302);
++
++        RedirectingResourceClient307 client307 = RestClientBuilder.newBuilder()
++                .baseUri(uri)
++                // this property should be ignored in POST
++                .followRedirects(true)
++                .build(RedirectingResourceClient307.class);
++        assertThat(client307.post(1).getStatus()).isEqualTo(307);
+     }
+ 
+     @Test
+     void shouldRedirectWhenUsingCustomRedirectHandlerOnPostMethods() {
+-        RedirectingResourceClient client = RestClientBuilder.newBuilder()
++        RedirectingResourceClient302 client302 = RestClientBuilder.newBuilder()
+                 .baseUri(uri)
+                 // this property should be ignored in POST
+                 .followRedirects(true)
+                 // use custom redirect to enable redirection
+                 .register(EnablePostRedirectHandler.class)
+-                .build(RedirectingResourceClient.class);
+-        assertThat(client.post().getStatus()).isEqualTo(200);
++                .build(RedirectingResourceClient302.class);
++        assertThat(client302.post().getStatus()).isEqualTo(200);
++
++        RedirectingResourceClient307 client307 = RestClientBuilder.newBuilder()
++                .baseUri(uri)
++                // this property should be ignored in POST
++                .followRedirects(true)
++                // use custom redirect to enable redirection
++                .register(EnablePostRedirectHandler.class)
++                .build(RedirectingResourceClient307.class);
++        assertThat(client307.post(1).getStatus()).isEqualTo(200);
+     }
+ 
+     @Test
+     void shouldRedirectWhenRegisterProviderUsingCustomRedirectHandlerOnPostMethods() {
+-        RedirectingResourceClient client = RestClientBuilder.newBuilder()
++        RedirectingResourceClient302 client = RestClientBuilder.newBuilder()
+                 .baseUri(uri)
+                 // this property should be ignored in POST
+                 .followRedirects(true)
+@@ -84,7 +100,7 @@ public class RedirectTest {
+ 
+     @Test
+     void shouldRedirectWhenAnnotatedClientRedirectHandlerOnPostMethods() {
+-        RedirectingResourceClient client = RestClientBuilder.newBuilder()
++        RedirectingResourceClient302 client = RestClientBuilder.newBuilder()
+                 .baseUri(uri)
+                 // this property should be ignored in POST
+                 .followRedirects(true)
+@@ -94,11 +110,11 @@ public class RedirectTest {
+ 
+     @Test
+     void shouldNotRedirectWhenARedirectHandlerWithMorePriorityIsUsed() {
+-        RedirectingResourceClient client = RestClientBuilder.newBuilder()
++        RedirectingResourceClient302 client = RestClientBuilder.newBuilder()
+                 .baseUri(uri)
+                 // this property should be ignored in POST
+                 .followRedirects(true)
+                 .build(RedirectingResourceWithSeveralRedirectHandlerAnnotationsClient.class);
+-        assertThat(client.post().getStatus()).isEqualTo(307);
++        assertThat(client.post().getStatus()).isEqualTo(302);
+     }
+ }
+diff --git a/extensions/resteasy-reactive/rest-client-reactive/deployment/src/test/java/io/quarkus/rest/client/reactive/redirect/RedirectingResource.java b/extensions/resteasy-reactive/rest-client-reactive/deployment/src/test/java/io/quarkus/rest/client/reactive/redirect/RedirectingResource.java
+index 158e52b57ba..2681bc40a5f 100644
+--- a/extensions/resteasy-reactive/rest-client-reactive/deployment/src/test/java/io/quarkus/rest/client/reactive/redirect/RedirectingResource.java
++++ b/extensions/resteasy-reactive/rest-client-reactive/deployment/src/test/java/io/quarkus/rest/client/reactive/redirect/RedirectingResource.java
+@@ -12,18 +12,30 @@ import jakarta.ws.rs.core.Response;
+ public class RedirectingResource {
+ 
+     @GET
++    @Path("302")
+     public Response redirectedResponse(@QueryParam("redirects") Integer number) {
+         if (number == null || 0 == number) {
+             return Response.ok().build();
+         } else {
+-            return Response.temporaryRedirect(URI.create("/redirect?redirects=" + (number - 1))).build();
++            return Response.status(Response.Status.FOUND).location(URI.create("/redirect/302?redirects=" + (number - 1)))
++                    .build();
+         }
+     }
+ 
+     @POST
+-    @Path("/post")
++    @Path("/302/post")
+     public Response redirectedResponse() {
+         // it redirects to the GET resource
+-        return Response.temporaryRedirect(URI.create("/redirect?redirects=0")).build();
++        return Response.status(Response.Status.FOUND).location(URI.create("/redirect/302?redirects=0")).build();
++    }
++
++    @POST
++    @Path("/307")
++    public Response temporatyRedirectedResponse(@QueryParam("redirects") Integer number) {
++        if (number == null || 0 == number) {
++            return Response.ok().build();
++        }
++        // will redirect back to this method since the HTTP method should not change when returning 307
++        return Response.status(Response.Status.TEMPORARY_REDIRECT).location(URI.create("/redirect/307?redirects=0")).build();
+     }
+ }
+diff --git a/extensions/resteasy-reactive/rest-client-reactive/deployment/src/test/java/io/quarkus/rest/client/reactive/redirect/RedirectingResourceClient.java b/extensions/resteasy-reactive/rest-client-reactive/deployment/src/test/java/io/quarkus/rest/client/reactive/redirect/RedirectingResourceClient302.java
+similarity index 89%
+rename from extensions/resteasy-reactive/rest-client-reactive/deployment/src/test/java/io/quarkus/rest/client/reactive/redirect/RedirectingResourceClient.java
+rename to extensions/resteasy-reactive/rest-client-reactive/deployment/src/test/java/io/quarkus/rest/client/reactive/redirect/RedirectingResourceClient302.java
+index bd16c565691..a097b31d35a 100644
+--- a/extensions/resteasy-reactive/rest-client-reactive/deployment/src/test/java/io/quarkus/rest/client/reactive/redirect/RedirectingResourceClient.java
++++ b/extensions/resteasy-reactive/rest-client-reactive/deployment/src/test/java/io/quarkus/rest/client/reactive/redirect/RedirectingResourceClient302.java
+@@ -6,8 +6,8 @@ import jakarta.ws.rs.Path;
+ import jakarta.ws.rs.QueryParam;
+ import jakarta.ws.rs.core.Response;
+ 
+-@Path("/redirect")
+-public interface RedirectingResourceClient {
++@Path("/redirect/302")
++public interface RedirectingResourceClient302 {
+     @GET
+     Response call(@QueryParam("redirects") Integer numberOfRedirects);
+ 
+diff --git a/extensions/resteasy-reactive/rest-client-reactive/deployment/src/test/java/io/quarkus/rest/client/reactive/redirect/RedirectingResourceClient307.java b/extensions/resteasy-reactive/rest-client-reactive/deployment/src/test/java/io/quarkus/rest/client/reactive/redirect/RedirectingResourceClient307.java
+new file mode 100644
+index 00000000000..5d81d34a016
+--- /dev/null
++++ b/extensions/resteasy-reactive/rest-client-reactive/deployment/src/test/java/io/quarkus/rest/client/reactive/redirect/RedirectingResourceClient307.java
+@@ -0,0 +1,16 @@
++package io.quarkus.rest.client.reactive.redirect;
++
++import jakarta.ws.rs.POST;
++import jakarta.ws.rs.Path;
++import jakarta.ws.rs.QueryParam;
++import jakarta.ws.rs.core.Response;
++
++@Path("/redirect/307")
++public interface RedirectingResourceClient307 {
++    /**
++     * By default, the `quarkus.rest-client.follow-redirects` property only works in GET and HEAD resources, so POST resources
++     * are never redirect, unless users register a custom {@link org.jboss.resteasy.reactive.client.handlers.RedirectHandler}.
++     */
++    @POST
++    Response post(@QueryParam("redirects") Integer numberOfRedirects);
++}
+diff --git a/extensions/resteasy-reactive/rest-client-reactive/deployment/src/test/java/io/quarkus/rest/client/reactive/redirect/RedirectingResourceWithRedirectHandlerAnnotationClient.java b/extensions/resteasy-reactive/rest-client-reactive/deployment/src/test/java/io/quarkus/rest/client/reactive/redirect/RedirectingResourceWithRedirectHandlerAnnotationClient.java
+index 51a82397a99..f70437e20f8 100644
+--- a/extensions/resteasy-reactive/rest-client-reactive/deployment/src/test/java/io/quarkus/rest/client/reactive/redirect/RedirectingResourceWithRedirectHandlerAnnotationClient.java
++++ b/extensions/resteasy-reactive/rest-client-reactive/deployment/src/test/java/io/quarkus/rest/client/reactive/redirect/RedirectingResourceWithRedirectHandlerAnnotationClient.java
+@@ -6,7 +6,7 @@ import jakarta.ws.rs.core.Response;
+ 
+ import io.quarkus.rest.client.reactive.ClientRedirectHandler;
+ 
+-public interface RedirectingResourceWithRedirectHandlerAnnotationClient extends RedirectingResourceClient {
++public interface RedirectingResourceWithRedirectHandlerAnnotationClient extends RedirectingResourceClient302 {
+     @ClientRedirectHandler
+     static URI alwaysRedirect(Response response) {
+         if (response.getStatus() > 300) {
+diff --git a/extensions/resteasy-reactive/rest-client-reactive/deployment/src/test/java/io/quarkus/rest/client/reactive/redirect/RedirectingResourceWithRegisterProviderRedirectHandlerClient.java b/extensions/resteasy-reactive/rest-client-reactive/deployment/src/test/java/io/quarkus/rest/client/reactive/redirect/RedirectingResourceWithRegisterProviderRedirectHandlerClient.java
+index a145745fcfa..1b989d1de53 100644
+--- a/extensions/resteasy-reactive/rest-client-reactive/deployment/src/test/java/io/quarkus/rest/client/reactive/redirect/RedirectingResourceWithRegisterProviderRedirectHandlerClient.java
++++ b/extensions/resteasy-reactive/rest-client-reactive/deployment/src/test/java/io/quarkus/rest/client/reactive/redirect/RedirectingResourceWithRegisterProviderRedirectHandlerClient.java
+@@ -3,5 +3,5 @@ package io.quarkus.rest.client.reactive.redirect;
+ import org.eclipse.microprofile.rest.client.annotation.RegisterProvider;
+ 
+ @RegisterProvider(EnablePostRedirectHandler.class)
+-public interface RedirectingResourceWithRegisterProviderRedirectHandlerClient extends RedirectingResourceClient {
++public interface RedirectingResourceWithRegisterProviderRedirectHandlerClient extends RedirectingResourceClient302 {
+ }
+diff --git a/extensions/resteasy-reactive/rest-client-reactive/deployment/src/test/java/io/quarkus/rest/client/reactive/redirect/RedirectingResourceWithSeveralRedirectHandlerAnnotationsClient.java b/extensions/resteasy-reactive/rest-client-reactive/deployment/src/test/java/io/quarkus/rest/client/reactive/redirect/RedirectingResourceWithSeveralRedirectHandlerAnnotationsClient.java
+index 17a2b040083..2222657ba21 100644
+--- a/extensions/resteasy-reactive/rest-client-reactive/deployment/src/test/java/io/quarkus/rest/client/reactive/redirect/RedirectingResourceWithSeveralRedirectHandlerAnnotationsClient.java
++++ b/extensions/resteasy-reactive/rest-client-reactive/deployment/src/test/java/io/quarkus/rest/client/reactive/redirect/RedirectingResourceWithSeveralRedirectHandlerAnnotationsClient.java
+@@ -6,7 +6,7 @@ import jakarta.ws.rs.core.Response;
+ 
+ import io.quarkus.rest.client.reactive.ClientRedirectHandler;
+ 
+-public interface RedirectingResourceWithSeveralRedirectHandlerAnnotationsClient extends RedirectingResourceClient {
++public interface RedirectingResourceWithSeveralRedirectHandlerAnnotationsClient extends RedirectingResourceClient302 {
+     // This handler should never be called because it has lower priority than `neverRedirect`.
+     @ClientRedirectHandler(priority = -1)
+     static URI alwaysRedirect(Response response) {

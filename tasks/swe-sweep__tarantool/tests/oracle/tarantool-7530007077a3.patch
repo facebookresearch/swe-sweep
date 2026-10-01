@@ -1,0 +1,34 @@
+diff --git a/src/box/index_def.c b/src/box/index_def.c
+index 79394b8e54..60882dfcd5 100644
+--- a/src/box/index_def.c
++++ b/src/box/index_def.c
+@@ -97,13 +97,9 @@ index_def_new(uint32_t space_id, uint32_t iid, const char *name,
+ 	def->key_def = key_def_dup(key_def);
+ 	if (iid != 0) {
+ 		def->cmp_def = key_def_merge(key_def, pk_def);
+-		if (! opts->is_unique) {
+-			def->cmp_def->unique_part_count =
+-				def->cmp_def->part_count;
+-		} else {
++		if (opts->is_unique)
+ 			def->cmp_def->unique_part_count =
+ 				def->key_def->part_count;
+-		}
+ 	} else {
+ 		def->cmp_def = key_def_dup(key_def);
+ 	}
+diff --git a/src/box/memtx_tree.cc b/src/box/memtx_tree.cc
+index fed8c98f57..71fd0c59cb 100644
+--- a/src/box/memtx_tree.cc
++++ b/src/box/memtx_tree.cc
+@@ -905,8 +905,8 @@ memtx_tree_index_get_internal(struct index *base, const char *key,
+ 		memtx_tree_find(&index->tree, &key_data);
+ 	if (res == NULL) {
+ 		*result = NULL;
+-		if (part_count == cmp_def->part_count)
+-			memtx_tx_track_point(txn, space, base, key);
++		assert(part_count == cmp_def->unique_part_count);
++		memtx_tx_track_point(txn, space, base, key);
+ 		return 0;
+ 	}
+ 	bool is_multikey = base->def->key_def->is_multikey;

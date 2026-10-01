@@ -1,0 +1,95 @@
+diff --git a/activerecord/test/cases/counter_cache_test.rb b/activerecord/test/cases/counter_cache_test.rb
+index c4925929869..598007bbac9 100644
+--- a/activerecord/test/cases/counter_cache_test.rb
++++ b/activerecord/test/cases/counter_cache_test.rb
+@@ -2,6 +2,7 @@
+ 
+ require "cases/helper"
+ require "models/topic"
++require "models/bulb"
+ require "models/car"
+ require "models/aircraft"
+ require "models/wheel"
+@@ -215,6 +216,15 @@ class CounterCacheTest < ActiveRecord::TestCase
+     end
+   end
+ 
++  test "removing association updates counter" do
++    michael = people(:michael)
++    car = cars(:honda)
++
++    assert_difference -> { michael.reload.cars_count }, -1 do
++      car.destroy
++    end
++  end
++
+   test "update counters doesn't touch timestamps by default" do
+     @topic.update_column :updated_at, 5.minutes.ago
+     previously_updated_at = @topic.updated_at
+diff --git a/activerecord/test/fixtures/cars.yml b/activerecord/test/fixtures/cars.yml
+index b4c748aaa78..d4652538b2b 100644
+--- a/activerecord/test/fixtures/cars.yml
++++ b/activerecord/test/fixtures/cars.yml
+@@ -2,8 +2,10 @@ honda:
+   id: 1
+   name: honda
+   engines_count: 0
++  person_id: 1
+ 
+ zyke:
+   id: 2
+   name: zyke
+   engines_count: 0
++  person_id: 2
+diff --git a/activerecord/test/fixtures/people.yml b/activerecord/test/fixtures/people.yml
+index 0ec05e8d56e..2c5573e3485 100644
+--- a/activerecord/test/fixtures/people.yml
++++ b/activerecord/test/fixtures/people.yml
+@@ -6,6 +6,7 @@ michael:
+   gender: M
+   followers_count: 1
+   friends_too_count: 1
++  cars_count: 1
+ david:
+   id: 2
+   first_name: David
+@@ -14,6 +15,7 @@ david:
+   gender: M
+   followers_count: 1
+   friends_too_count: 1
++  cars_count: 1
+ susan:
+   id: 3
+   first_name: Susan
+diff --git a/activerecord/test/models/car.rb b/activerecord/test/models/car.rb
+index e1f989dad2b..546e1be61c3 100644
+--- a/activerecord/test/models/car.rb
++++ b/activerecord/test/models/car.rb
+@@ -1,6 +1,7 @@
+ # frozen_string_literal: true
+ 
+ class Car < ActiveRecord::Base
++  belongs_to :person, counter_cache: true
+   has_many :bulbs
+   has_many :all_bulbs, -> { unscope(where: :name) }, class_name: "Bulb"
+   has_many :all_bulbs2, -> { unscope(:where) }, class_name: "Bulb"
+diff --git a/activerecord/test/schema/schema.rb b/activerecord/test/schema/schema.rb
+index 4c9d585c259..7388b705d7a 100644
+--- a/activerecord/test/schema/schema.rb
++++ b/activerecord/test/schema/schema.rb
+@@ -185,6 +185,7 @@ ActiveRecord::Schema.define do
+   end
+ 
+   create_table :cars, force: true do |t|
++    t.belongs_to :person
+     t.string  :name
+     t.integer :engines_count
+     t.integer :wheels_count, default: 0, null: false
+@@ -828,6 +829,7 @@ ActiveRecord::Schema.define do
+     t.references :best_friend_of
+     t.integer    :insures, null: false, default: 0
+     t.timestamp :born_at
++    t.integer :cars_count, default: 0
+     t.timestamps null: false
+   end
+ 

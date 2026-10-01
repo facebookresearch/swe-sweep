@@ -1,0 +1,14 @@
+diff --git a/pandas/core/indexes/base.py b/pandas/core/indexes/base.py
+index 2615bfffb3..41355b9a44 100644
+--- a/pandas/core/indexes/base.py
++++ b/pandas/core/indexes/base.py
+@@ -4890,8 +4890,7 @@ class Index(IndexOpsMixin, PandasObject):
+             values, mask.sum(), converted  # type: ignore[arg-type]
+         )
+         np.putmask(values, mask, converted)
+-
+-        return type(self)._simple_new(values, name=self.name)
++        return self._shallow_copy(values)
+ 
+     def equals(self, other: Any) -> bool:
+         """

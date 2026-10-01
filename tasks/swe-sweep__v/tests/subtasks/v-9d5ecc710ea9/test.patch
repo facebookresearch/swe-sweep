@@ -1,0 +1,14 @@
+diff --git a/vlib/v/tests/generic_if_ret_test.v b/vlib/v/tests/generic_if_ret_test.v
+new file mode 100644
+index 000000000..407746889
+--- /dev/null
++++ b/vlib/v/tests/generic_if_ret_test.v
+@@ -0,0 +1,8 @@
++fn clamp[T](a T, x T, b T) T {
++	min := if x < b { x } else { b }
++	return if min < a { a } else { min }
++}
++
++fn test_main() {
++	assert dump(clamp(1, 2, 3)) == 2
++}

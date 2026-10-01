@@ -1,0 +1,85 @@
+diff --git a/testsuite/integration-arquillian/tests/base/src/test/java/org/keycloak/testsuite/actions/AppInitiatedActionResetPasswordTest.java b/testsuite/integration-arquillian/tests/base/src/test/java/org/keycloak/testsuite/actions/AppInitiatedActionResetPasswordTest.java
+index fb7da92..e318201 100755
+--- a/testsuite/integration-arquillian/tests/base/src/test/java/org/keycloak/testsuite/actions/AppInitiatedActionResetPasswordTest.java
++++ b/testsuite/integration-arquillian/tests/base/src/test/java/org/keycloak/testsuite/actions/AppInitiatedActionResetPasswordTest.java
+@@ -18,6 +18,8 @@ package org.keycloak.testsuite.actions;
+ 
+ import org.jboss.arquillian.drone.api.annotation.Drone;
+ import org.jboss.arquillian.graphene.page.Page;
++import org.hamcrest.MatcherAssert;
++import org.hamcrest.Matchers;
+ import org.junit.After;
+ import org.junit.Assert;
+ import org.junit.Rule;
+@@ -26,18 +28,23 @@ import org.keycloak.admin.client.resource.UserResource;
+ import org.keycloak.events.Details;
+ import org.keycloak.events.EventType;
+ import org.keycloak.models.UserModel;
++import org.keycloak.protocol.oidc.OIDCConfigAttributes;
++import org.keycloak.representations.LogoutToken;
+ import org.keycloak.representations.idm.EventRepresentation;
+ import org.keycloak.representations.idm.RealmRepresentation;
+ import org.keycloak.representations.idm.UserRepresentation;
+ import org.keycloak.representations.idm.UserSessionRepresentation;
+ import org.keycloak.testsuite.admin.ApiUtil;
+ import org.keycloak.testsuite.pages.LoginPasswordUpdatePage;
++import org.keycloak.testsuite.updaters.ClientAttributeUpdater;
+ import org.keycloak.testsuite.util.GreenMailRule;
+ import org.keycloak.testsuite.util.OAuthClient;
+ import org.keycloak.testsuite.util.SecondBrowser;
+ import org.openqa.selenium.WebDriver;
+ 
+ import java.util.List;
++import java.util.Set;
++import java.util.stream.Collectors;
+ 
+ import static org.junit.Assert.assertEquals;
+ import static org.junit.Assert.assertFalse;
+@@ -249,6 +256,47 @@ public class AppInitiatedActionResetPasswordTest extends AbstractAppInitiatedAct
+         assertEquals("Old session is still valid", firstSessionId, sessions.get(0).getId());
+     }
+ 
++    @Test
++    public void checkLogoutSessionsBackchannelLogout() throws Exception {
++        try (ClientAttributeUpdater updater = ClientAttributeUpdater.forClient(adminClient, oauth.getRealm(), oauth.getClientId())
++                .setAttribute(OIDCConfigAttributes.BACKCHANNEL_LOGOUT_URL, OAuthClient.APP_ROOT + "/admin/backchannelLogout")
++                .setAttribute(OIDCConfigAttributes.BACKCHANNEL_LOGOUT_SESSION_REQUIRED, "true")
++                .update()) {
++
++            loginPage.open();
++            loginPage.login("test-user@localhost", "password");
++            String firstSessionId = events.expectLogin().assertEvent().getSessionId();
++
++            // remove cookies to login again
++            oauth.getDriver().navigate().to(oauth.getCertsUrl(oauth.getRealm()));
++            oauth.getDriver().manage().deleteAllCookies();
++
++            oauth.openLoginForm();
++            oauth.doLogin("test-user@localhost", "password");
++            String secondSessionId = events.expectLogin().assertEvent().getSessionId();
++
++            // remove cookies to login again
++            oauth.getDriver().navigate().to(oauth.getCertsUrl(oauth.getRealm()));
++            oauth.getDriver().manage().deleteAllCookies();
++
++            oauth.openLoginForm();
++            oauth.doLogin("test-user@localhost", "password");
++            events.expectLogin().assertEvent();
++
++            doAIA(); // Trigger password update with logout checkbox
++            changePasswordPage.assertCurrent();
++            assertTrue("Logout sessions is checked by default", changePasswordPage.isLogoutSessionsChecked());
++            changePasswordPage.changePassword("new-password", "new-password");
++
++            List<LogoutToken> capturedLogoutTokens = List.of(
++                    testingClient.testApp().getBackChannelLogoutToken(),
++                    testingClient.testApp().getBackChannelLogoutToken());
++
++            Set<String> loggedOutSids = capturedLogoutTokens.stream().map(LogoutToken::getSid).collect(Collectors.toSet());
++            MatcherAssert.assertThat(loggedOutSids, Matchers.containsInAnyOrder(firstSessionId, secondSessionId));
++        }
++    }
++
+     @Test
+     public void uncheckLogoutSessions() {
+         OAuthClient oauth2 = new OAuthClient();

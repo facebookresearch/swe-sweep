@@ -1,0 +1,11 @@
+diff --git a/vlib/v/tests/options/option_array_compare_test.v b/vlib/v/tests/options/option_array_compare_test.v
+new file mode 100644
+index 000000000..7c9f7f3b7
+--- /dev/null
++++ b/vlib/v/tests/options/option_array_compare_test.v
+@@ -0,0 +1,5 @@
++fn test_main() {
++	mut a := []?int{}
++	a << none
++	assert a == [?int(none)]
++}

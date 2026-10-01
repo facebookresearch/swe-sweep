@@ -1,0 +1,12 @@
+diff --git a/packages/mui-material/src/Select/SelectInput.js b/packages/mui-material/src/Select/SelectInput.js
+index 72452dc1d8..90e5d4f256 100644
+--- a/packages/mui-material/src/Select/SelectInput.js
++++ b/packages/mui-material/src/Select/SelectInput.js
+@@ -549,6 +549,7 @@ const SelectInput = React.forwardRef(function SelectInput(props, ref) {
+         MenuListProps={{
+           'aria-labelledby': labelId,
+           role: 'listbox',
++          'aria-multiselectable': multiple ? 'true' : undefined,
+           disableListWrap: true,
+           ...MenuProps.MenuListProps,
+         }}

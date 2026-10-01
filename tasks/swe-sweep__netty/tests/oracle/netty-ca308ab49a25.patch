@@ -1,0 +1,17 @@
+diff --git a/codec/src/main/java/io/netty/handler/codec/json/JsonObjectDecoder.java b/codec/src/main/java/io/netty/handler/codec/json/JsonObjectDecoder.java
+index 123618b143..f63e62066e 100644
+--- a/codec/src/main/java/io/netty/handler/codec/json/JsonObjectDecoder.java
++++ b/codec/src/main/java/io/netty/handler/codec/json/JsonObjectDecoder.java
+@@ -91,11 +91,7 @@ public class JsonObjectDecoder extends ByteToMessageDecoder {
+         }
+ 
+         if (this.idx > in.readerIndex() && lastReaderIndex != in.readerIndex()) {
+-            this.idx = in.readerIndex();
+-            if (state == ST_DECODING_ARRAY_STREAM) {
+-                insideString = false;
+-                openBraces = 1;
+-            }
++            this.idx = in.readerIndex() + (idx - lastReaderIndex);
+         }
+ 
+         // index of next byte to process.

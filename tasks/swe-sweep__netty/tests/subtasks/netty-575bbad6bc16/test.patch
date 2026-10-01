@@ -1,0 +1,25 @@
+diff --git a/codec-mqtt/src/test/java/io/netty/handler/codec/mqtt/MqttConnectPayloadTest.java b/codec-mqtt/src/test/java/io/netty/handler/codec/mqtt/MqttConnectPayloadTest.java
+index 5a929dc1e5..f1d9dc0db1 100644
+--- a/codec-mqtt/src/test/java/io/netty/handler/codec/mqtt/MqttConnectPayloadTest.java
++++ b/codec-mqtt/src/test/java/io/netty/handler/codec/mqtt/MqttConnectPayloadTest.java
+@@ -21,6 +21,8 @@ import static org.junit.Assert.assertNull;
+ import io.netty.util.CharsetUtil;
+ import org.junit.Test;
+ 
++import java.util.Collections;
++
+ public class MqttConnectPayloadTest {
+ 
+     @Test
+@@ -88,4 +90,11 @@ public class MqttConnectPayloadTest {
+         assertNull(mqttConnectPayload.willMessageInBytes());
+         assertNull(mqttConnectPayload.willMessage());
+     }
++
++    /* See https://github.com/netty/netty/pull/9202 */
++    @Test
++    public void testEmptyTopicsToString() {
++        new MqttSubscribePayload(Collections.<MqttTopicSubscription>emptyList()).toString();
++        new MqttUnsubscribePayload(Collections.<String>emptyList()).toString();
++    }
+ }

@@ -1,0 +1,8 @@
+diff --git a/compiler/jsgen.nim b/compiler/jsgen.nim
+--- a/compiler/jsgen.nim
++++ b/compiler/jsgen.nim
+@@ -1331,3 +1331,3 @@
+     else:
+-      let kindOfIndexedExpr = skipTypes(n[0][0].typ, abstractVarRange).kind
++      let kindOfIndexedExpr = skipTypes(n[0][0].typ, abstractVarRange+tyUserTypeClasses).kind
+       case kindOfIndexedExpr

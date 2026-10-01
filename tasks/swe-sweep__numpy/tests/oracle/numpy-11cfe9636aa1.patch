@@ -1,0 +1,21 @@
+diff --git a/numpy/core/src/multiarray/arrayobject.c b/numpy/core/src/multiarray/arrayobject.c
+index b164112ad8..d18fe1b101 100644
+--- a/numpy/core/src/multiarray/arrayobject.c
++++ b/numpy/core/src/multiarray/arrayobject.c
+@@ -1167,7 +1167,15 @@ array_richcompare(PyArrayObject *self, PyObject *other, int cmp_op)
+                     newdims.len = result_ndim+1;
+                     memcpy(dimensions, PyArray_DIMS((PyArrayObject *)temp),
+                            sizeof(npy_intp)*result_ndim);
+-                    dimensions[result_ndim] = -1;
++
++                    /*
++                     * Compute the new dimension size manually, as reshaping
++                     * with -1 does not work on empty arrays.
++                     */
++                    dimensions[result_ndim] = PyArray_MultiplyList(
++                        PyArray_DIMS((PyArrayObject *)temp) + result_ndim,
++                        PyArray_NDIM((PyArrayObject *)temp) - result_ndim);
++
+                     temp2 = PyArray_Newshape((PyArrayObject *)temp,
+                                              &newdims, NPY_ANYORDER);
+                     if (temp2 == NULL) {

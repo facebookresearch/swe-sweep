@@ -1,0 +1,211 @@
+diff --git a/numpy/lib/tests/test_function_base.py b/numpy/lib/tests/test_function_base.py
+index 4103a9e..1e3e2d4 100644
+--- a/numpy/lib/tests/test_function_base.py
++++ b/numpy/lib/tests/test_function_base.py
+@@ -23,6 +23,7 @@ from numpy.lib import (
+     piecewise, place, rot90, select, setxor1d, sinc, split, trapz, trim_zeros,
+     unwrap, unique, vectorize
+     )
++from numpy.core.numeric import normalize_axis_tuple
+ 
+ from numpy.compat import long
+ 
+@@ -2613,6 +2614,32 @@ class TestPercentile(object):
+         assert_equal(np.percentile(d, [1, 7], axis=(0, 3),
+                                    keepdims=True).shape, (2, 1, 5, 7, 1))
+ 
++    @pytest.mark.parametrize('q', [7, [1, 7]])
++    @pytest.mark.parametrize(
++        argnames='axis',
++        argvalues=[
++            None,
++            1,
++            (1,),
++            (0, 1),
++            (-3, -1),
++        ]
++    )
++    def test_keepdims_out(self, q, axis):
++        d = np.ones((3, 5, 7, 11))
++        if axis is None:
++            shape_out = (1,) * d.ndim
++        else:
++            axis_norm = normalize_axis_tuple(axis, d.ndim)
++            shape_out = tuple(
++                1 if i in axis_norm else d.shape[i] for i in range(d.ndim))
++        shape_out = np.shape(q) + shape_out
++
++        out = np.empty(shape_out)
++        result = np.percentile(d, q, axis=axis, keepdims=True, out=out)
++        assert result is out
++        assert_equal(result.shape, shape_out)
++
+     def test_out(self):
+         o = np.zeros((4,))
+         d = np.ones((3, 4))
+@@ -3006,6 +3033,29 @@ class TestMedian(object):
+         assert_equal(np.median(d, axis=(0, 1, 3), keepdims=True).shape,
+                      (1, 1, 7, 1))
+ 
++    @pytest.mark.parametrize(
++        argnames='axis',
++        argvalues=[
++            None,
++            1,
++            (1, ),
++            (0, 1),
++            (-3, -1),
++        ]
++    )
++    def test_keepdims_out(self, axis):
++        d = np.ones((3, 5, 7, 11))
++        if axis is None:
++            shape_out = (1,) * d.ndim
++        else:
++            axis_norm = normalize_axis_tuple(axis, d.ndim)
++            shape_out = tuple(
++                1 if i in axis_norm else d.shape[i] for i in range(d.ndim))
++        out = np.empty(shape_out)
++        result = np.median(d, axis=axis, keepdims=True, out=out)
++        assert result is out
++        assert_equal(result.shape, shape_out)
++
+ 
+ class TestAdd_newdoc_ufunc(object):
+ 
+diff --git a/numpy/lib/tests/test_nanfunctions.py b/numpy/lib/tests/test_nanfunctions.py
+index 504372f..6e50910 100644
+--- a/numpy/lib/tests/test_nanfunctions.py
++++ b/numpy/lib/tests/test_nanfunctions.py
+@@ -2,7 +2,10 @@ from __future__ import division, absolute_import, print_function
+ 
+ import warnings
+ 
++import pytest
++
+ import numpy as np
++from numpy.core.numeric import normalize_axis_tuple
+ from numpy.testing import (
+     assert_, assert_equal, assert_almost_equal, assert_no_warnings,
+     assert_raises, assert_array_equal, suppress_warnings
+@@ -623,6 +626,33 @@ class TestNanFunctions_Median(object):
+             res = np.nanmedian(d, axis=(0, 1, 3), keepdims=True)
+             assert_equal(res.shape, (1, 1, 7, 1))
+ 
++    @pytest.mark.parametrize(
++        argnames='axis',
++        argvalues=[
++            None,
++            1,
++            (1, ),
++            (0, 1),
++            (-3, -1),
++        ]
++    )
++    def test_keepdims_out(self, axis):
++        d = np.ones((3, 5, 7, 11))
++        # Randomly set some elements to NaN:
++        w = np.random.random((4, 200)) * np.array(d.shape)[:, None]
++        w = w.astype(np.intp)
++        d[tuple(w)] = np.nan
++        if axis is None:
++            shape_out = (1,) * d.ndim
++        else:
++            axis_norm = normalize_axis_tuple(axis, d.ndim)
++            shape_out = tuple(
++                1 if i in axis_norm else d.shape[i] for i in range(d.ndim))
++        out = np.empty(shape_out)
++        result = np.nanmedian(d, axis=axis, keepdims=True, out=out)
++        assert result is out
++        assert_equal(result.shape, shape_out)
++
+     def test_out(self):
+         mat = np.random.rand(3, 3)
+         nan_mat = np.insert(mat, [0, 2], np.nan, axis=1)
+@@ -789,6 +819,36 @@ class TestNanFunctions_Percentile(object):
+             res = np.nanpercentile(d, 90, axis=(0, 1, 3), keepdims=True)
+             assert_equal(res.shape, (1, 1, 7, 1))
+ 
++    @pytest.mark.parametrize('q', [7, [1, 7]])
++    @pytest.mark.parametrize(
++        argnames='axis',
++        argvalues=[
++            None,
++            1,
++            (1,),
++            (0, 1),
++            (-3, -1),
++        ]
++    )
++    def test_keepdims_out(self, q, axis):
++        d = np.ones((3, 5, 7, 11))
++        # Randomly set some elements to NaN:
++        w = np.random.random((4, 200)) * np.array(d.shape)[:, None]
++        w = w.astype(np.intp)
++        d[tuple(w)] = np.nan
++        if axis is None:
++            shape_out = (1,) * d.ndim
++        else:
++            axis_norm = normalize_axis_tuple(axis, d.ndim)
++            shape_out = tuple(
++                1 if i in axis_norm else d.shape[i] for i in range(d.ndim))
++        shape_out = np.shape(q) + shape_out
++
++        out = np.empty(shape_out)
++        result = np.nanpercentile(d, q, axis=axis, keepdims=True, out=out)
++        assert result is out
++        assert_equal(result.shape, shape_out)
++
+     def test_out(self):
+         mat = np.random.rand(3, 3)
+         nan_mat = np.insert(mat, [0, 2], np.nan, axis=1)
+diff --git a/numpy/ma/tests/test_extras.py b/numpy/ma/tests/test_extras.py
+index c29bec2..1275f99 100644
+--- a/numpy/ma/tests/test_extras.py
++++ b/numpy/ma/tests/test_extras.py
+@@ -12,7 +12,10 @@ from __future__ import division, absolute_import, print_function
+ import warnings
+ import itertools
+ 
++import pytest
++
+ import numpy as np
++from numpy.core.numeric import normalize_axis_tuple
+ from numpy.testing import (
+     assert_warns, suppress_warnings, assert_raises,
+     )
+@@ -882,6 +885,34 @@ class TestMedian(object):
+             assert_(r is out)
+             assert_(type(r) is MaskedArray)
+ 
++    @pytest.mark.parametrize(
++        argnames='axis',
++        argvalues=[
++            None,
++            1,
++            (1, ),
++            (0, 1),
++            (-3, -1),
++        ]
++    )
++    def test_keepdims_out(self, axis):
++        mask = np.zeros((3, 5, 7, 11), dtype=bool)
++        # Randomly set some elements to True:
++        w = np.random.random((4, 200)) * np.array(mask.shape)[:, None]
++        w = w.astype(np.intp)
++        mask[tuple(w)] = np.nan
++        d = masked_array(np.ones(mask.shape), mask=mask)
++        if axis is None:
++            shape_out = (1,) * d.ndim
++        else:
++            axis_norm = normalize_axis_tuple(axis, d.ndim)
++            shape_out = tuple(
++                1 if i in axis_norm else d.shape[i] for i in range(d.ndim))
++        out = masked_array(np.empty(shape_out))
++        result = median(d, axis=axis, keepdims=True, out=out)
++        assert result is out
++        assert_equal(result.shape, shape_out)
++
+     def test_single_non_masked_value_on_axis(self):
+         data = [[1., 0.],
+                 [0., 3.],

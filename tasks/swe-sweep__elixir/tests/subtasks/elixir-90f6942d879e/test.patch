@@ -1,0 +1,26 @@
+diff --git a/lib/elixir/test/elixir/typespec_test.exs b/lib/elixir/test/elixir/typespec_test.exs
+index b226eceda..ef94451e4 100644
+--- a/lib/elixir/test/elixir/typespec_test.exs
++++ b/lib/elixir/test/elixir/typespec_test.exs
+@@ -1280,6 +1280,19 @@ defmodule TypespecTest do
+       Enum.each(specs_with_quoted, fn {spec, definition} ->
+         assert Macro.to_string(spec) == Macro.to_string(definition)
+       end)
+     end
+ 
++    test "spec_to_quoted collects nested type vars" do
++      bytecode =
++        test_module do
++          @spec foo(arg1 :: [t], arg2 :: [t]) :: atom() when t: var
++          def foo(_, _), do: :ok
++        end
++
++      [{{:foo, 2}, [spec]}] = specs(bytecode)
++
++      assert Macro.to_string(Code.Typespec.spec_to_quoted(:foo, spec)) ==
++               "foo(arg1 :: [t], arg2 :: [t]) :: atom() when t: var"
++    end
++
+     test "spec_to_quoted with maps with __struct__ key" do
+       defmodule A do
+         defstruct [:key]

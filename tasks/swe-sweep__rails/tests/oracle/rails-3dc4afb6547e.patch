@@ -1,0 +1,13 @@
+diff --git a/activesupport/lib/active_support/core_ext/string/filters.rb b/activesupport/lib/active_support/core_ext/string/filters.rb
+index 16d5d4cbc02..9e7e5511068 100644
+--- a/activesupport/lib/active_support/core_ext/string/filters.rb
++++ b/activesupport/lib/active_support/core_ext/string/filters.rb
+@@ -104,7 +104,7 @@ class String
+     when omission.bytesize == truncate_at
+       omission.dup
+     else
+-      self.class.new.tap do |cut|
++      self.class.new.force_encoding(encoding).tap do |cut|
+         cut_at = truncate_at - omission.bytesize
+ 
+         each_grapheme_cluster do |grapheme|

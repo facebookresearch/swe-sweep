@@ -1,0 +1,42 @@
+--- a/src/common/types/selection_vector.cpp	2026-08-31 05:16:25.197356186 +0000
++++ b/src/common/types/selection_vector.cpp	2026-08-31 05:16:25.197481581 +0000
+@@ -1,4 +1,5 @@
+ #include "duckdb/common/types/selection_vector.hpp"
++#include "duckdb/common/algorithm.hpp"
+ #include "duckdb/common/printer.hpp"
+ #include "duckdb/common/to_string.hpp"
+ 
+@@ -26,6 +27,10 @@
+ 	return result;
+ }
+ 
++void SelectionVector::Sort(idx_t count) {
++	std::sort(sel_vector, sel_vector + count);
++}
++
+ void SelectionVector::Print(idx_t count) const {
+ 	Printer::Print(ToString(count));
+ }
+--- a/src/execution/expression_executor/execute_conjunction.cpp	2026-08-31 05:16:33.508542848 +0000
++++ b/src/execution/expression_executor/execute_conjunction.cpp	2026-08-31 05:16:33.512680808 +0000
+@@ -134,6 +134,10 @@
+ 			}
+ 		}
+ 
++		if (true_sel) {
++			true_sel->Sort(result_count);
++		}
++
+ 		// adapt runtime statistics
+ 		auto end_time = high_resolution_clock::now();
+ 		state.adaptive_filter->AdaptRuntimeStatistics(duration_cast<duration<double>>(end_time - start_time).count());
+--- a/src/include/duckdb/common/types/selection_vector.hpp	2026-08-31 05:16:25.208276742 +0000
++++ b/src/include/duckdb/common/types/selection_vector.hpp	2026-08-31 05:16:25.208421470 +0000
+@@ -106,6 +106,7 @@
+ 
+ 	string ToString(idx_t count = 0) const;
+ 	void Print(idx_t count = 0) const;
++	void Sort(idx_t count);
+ 
+ 	inline sel_t &operator[](idx_t index) const {
+ 		return sel_vector[index];

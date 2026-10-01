@@ -1,0 +1,13 @@
+diff --git a/src/parser/parsed_data/create_index_info.cpp b/src/parser/parsed_data/create_index_info.cpp
+index 8f74c05c70..3d41ea4fea 100644
+--- a/src/parser/parsed_data/create_index_info.cpp
++++ b/src/parser/parsed_data/create_index_info.cpp
+@@ -4,7 +4,7 @@
+ 
+ namespace duckdb {
+ 
+-CreateIndexInfo::CreateIndexInfo() : CreateInfo(CatalogType::INDEX_ENTRY) {
++CreateIndexInfo::CreateIndexInfo() : CreateInfo(CatalogType::INDEX_ENTRY, INVALID_SCHEMA) {
+ }
+ 
+ CreateIndexInfo::CreateIndexInfo(const duckdb::CreateIndexInfo &info)

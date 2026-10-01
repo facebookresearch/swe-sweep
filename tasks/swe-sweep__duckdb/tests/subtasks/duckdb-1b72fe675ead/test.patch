@@ -1,0 +1,17 @@
+diff --git a/test/sql/types/enum/test_enum.test b/test/sql/types/enum/test_enum.test
+index 5366453dfb..c091c0fb4c 100644
+--- a/test/sql/types/enum/test_enum.test
++++ b/test/sql/types/enum/test_enum.test
+@@ -27,6 +27,11 @@
+ # Postgres accept empty ENUMs
+ statement ok
+ CREATE TYPE bla AS ENUM ();
+ 
++query II
++SELECT enum_first(NULL::bla), enum_last(NULL::bla);
++----
++NULL	NULL
++
+ #Enums with the same name shouldn't work
+ statement error
+ CREATE TYPE mood AS ENUM ('sad', 'ok', 'happy');

@@ -1,0 +1,16 @@
+diff --git a/crates/swc_ecma_lints/tests/pass/issue-4907/1/input.js b/crates/swc_ecma_lints/tests/pass/issue-4907/1/input.js
+new file mode 100644
+index 0000000000..9e8e7bd219
+--- /dev/null
++++ b/crates/swc_ecma_lints/tests/pass/issue-4907/1/input.js
+@@ -0,0 +1,9 @@
++export function promisify(original) {
++    if (kCustomPromisifiedSymbol && original[kCustomPromisifiedSymbol]) {
++      var fn = original[kCustomPromisifiedSymbol];
++      return fn;
++    }
++
++    function fn() {
++    }
++  }
+\ No newline at end of file

@@ -1,0 +1,36 @@
+diff --git a/expat/tests/runtests.c b/expat/tests/runtests.c
+--- a/expat/tests/runtests.c
++++ b/expat/tests/runtests.c
+@@ -6446,6 +6446,24 @@ START_TEST(test_default_doctype_handler) {
+ }
+ END_TEST
+ 
++START_TEST(test_empty_ext_param_entity_in_value) {
++  const char *text = "<!DOCTYPE r SYSTEM \"ext.dtd\"><r/>";
++  ExtOption options[] = {
++      {XCS("ext.dtd"), "<!ENTITY % pe SYSTEM \"empty\">"
++                       "<!ENTITY ge \"%pe;\">"},
++      {XCS("empty"), ""},
++      {NULL, NULL},
++  };
++
++  XML_SetParamEntityParsing(g_parser, XML_PARAM_ENTITY_PARSING_ALWAYS);
++  XML_SetExternalEntityRefHandler(g_parser, external_entity_optioner);
++  XML_SetUserData(g_parser, options);
++  if (_XML_Parse_SINGLE_BYTES(g_parser, text, (int)strlen(text), XML_TRUE)
++      == XML_STATUS_ERROR)
++    xml_failure(g_parser);
++}
++END_TEST
++
+ START_TEST(test_empty_element_abort) {
+   const char *text = "<abort/>";
+ 
+@@ -11842,6 +11860,7 @@ make_suite(void) {
+   tcase_add_test(tc_basic, test_bad_notation);
+   tcase_add_test(tc_basic, test_default_doctype_handler);
+   tcase_add_test(tc_basic, test_empty_element_abort);
++  tcase_add_test__ifdef_xml_dtd(tc_basic, test_empty_ext_param_entity_in_value);
+ 
+   suite_add_tcase(s, tc_namespace);
+   tcase_add_checked_fixture(tc_namespace, namespace_setup, namespace_teardown);

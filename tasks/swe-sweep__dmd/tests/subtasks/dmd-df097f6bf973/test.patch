@@ -1,0 +1,23 @@
+diff --git a/compiler/test/compilable/issue24409.d b/compiler/test/compilable/issue24409.d
+new file mode 100644
+index 0000000000..5d298df211
+--- /dev/null
++++ b/compiler/test/compilable/issue24409.d
+@@ -0,0 +1,17 @@
++static struct S
++{
++    union
++    {
++        int i;
++        long l;
++    }
++}
++
++int f()
++{
++    S* r = new S();
++    r.i = 5;
++    return r.i;
++}
++
++enum X = f();

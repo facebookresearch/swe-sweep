@@ -1,0 +1,22 @@
+diff --git a/tests/generics/tuninstantiated_failure.nim b/tests/generics/tuninstantiated_failure.nim
+new file mode 100644
+index 000000000..f09b115d6
+--- /dev/null
++++ b/tests/generics/tuninstantiated_failure.nim
+@@ -0,0 +1,16 @@
++discard """
++cmd: "nim check $file"
++"""
++
++type
++  Test[T, K] = object
++    name: string
++  Something = Test[int]
++
++func `[]`[T, K](x: var Test[T, K], idx: int): var Test[T, K] =
++  x
++
++var b: Something
++# Should give a type-mismatch since Something isn't a valid Test
++b[0].name = "Test" #[tt.Error
++            ^  type mismatch]#

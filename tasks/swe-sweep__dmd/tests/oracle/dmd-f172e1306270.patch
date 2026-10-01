@@ -1,0 +1,28 @@
+diff --git a/compiler/src/dmd/backend/dtype.d b/compiler/src/dmd/backend/dtype.d
+index e2afbba081..d9181a0277 100644
+--- a/compiler/src/dmd/backend/dtype.d
++++ b/compiler/src/dmd/backend/dtype.d
+@@ -304,6 +304,10 @@ L1:
+             case TYldouble:
+                 assert(0);
+ 
++            case TYcdouble:
++                sz = 8;         // not 16
++                break;
++
+             default:
+             err1:                   // let type_size() handle error messages
+                 sz = type_size(t);
+diff --git a/compiler/src/dmd/backend/var.d b/compiler/src/dmd/backend/var.d
+index f99f9a66aa..0ae23edd2b 100644
+--- a/compiler/src/dmd/backend/var.d
++++ b/compiler/src/dmd/backend/var.d
+@@ -938,7 +938,7 @@ __gshared byte[256] _tyalignsize =
+     TYildouble : SET_ALIGN,
+ 
+     TYcfloat   : 2*FLOATSIZE,
+-    TYcdouble  : 2*DOUBLESIZE,
++    TYcdouble  : DOUBLESIZE,
+     TYcldouble : SET_ALIGN,
+ 
+     TYfloat4  : 16,

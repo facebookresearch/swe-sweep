@@ -1,0 +1,35 @@
+diff --git a/common/src/test/java/io/netty/util/concurrent/DefaultPromiseTest.java b/common/src/test/java/io/netty/util/concurrent/DefaultPromiseTest.java
+index 8228703bf2..9c29f94a55 100644
+--- a/common/src/test/java/io/netty/util/concurrent/DefaultPromiseTest.java
++++ b/common/src/test/java/io/netty/util/concurrent/DefaultPromiseTest.java
+@@ -16,6 +16,7 @@
+ 
+ package io.netty.util.concurrent;
+ 
++import io.netty.util.Signal;
+ import io.netty.util.internal.logging.InternalLogger;
+ import io.netty.util.internal.logging.InternalLoggerFactory;
+ import org.junit.BeforeClass;
+@@ -241,6 +242,22 @@ public class DefaultPromiseTest {
+         }
+     }
+ 
++    @Test
++    public void signalUncancellableCompletionValue() {
++        final Promise<Signal> promise = new DefaultPromise<Signal>(ImmediateEventExecutor.INSTANCE);
++        promise.setSuccess(Signal.valueOf(DefaultPromise.class, "UNCANCELLABLE"));
++        assertTrue(promise.isDone());
++        assertTrue(promise.isSuccess());
++    }
++
++    @Test
++    public void signalSuccessCompletionValue() {
++        final Promise<Signal> promise = new DefaultPromise<Signal>(ImmediateEventExecutor.INSTANCE);
++        promise.setSuccess(Signal.valueOf(DefaultPromise.class, "SUCCESS"));
++        assertTrue(promise.isDone());
++        assertTrue(promise.isSuccess());
++    }
++
+     private static void testStackOverFlowChainedFuturesA(int promiseChainLength, final EventExecutor executor,
+                                                          boolean runTestInExecutorThread)
+             throws InterruptedException {

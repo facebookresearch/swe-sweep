@@ -1,0 +1,13 @@
+diff --git a/mpmath/matrices/linalg.py b/mpmath/matrices/linalg.py
+index e18e41d1..aecae11a 100644
+--- a/mpmath/matrices/linalg.py
++++ b/mpmath/matrices/linalg.py
+@@ -643,7 +643,7 @@ class LinearAlgebraMethods(object):
+         assert isinstance(A, ctx.matrix)
+         m = A.rows
+         n = A.cols
+-        assert n > 1
++        assert n >= 0
+         assert m >= n
+         assert edps >= 0
+ 

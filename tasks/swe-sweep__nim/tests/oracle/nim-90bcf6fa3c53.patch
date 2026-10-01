@@ -1,0 +1,52 @@
+diff --git a/compiler/ccgexprs.nim b/compiler/ccgexprs.nim
+index 1f1035115..9848366a1 100644
+--- a/compiler/ccgexprs.nim
++++ b/compiler/ccgexprs.nim
+@@ -2932,7 +2932,21 @@ proc expr(p: BProc, n: PNode, d: var TLoc) =
+      nkFromStmt, nkTemplateDef, nkMacroDef, nkStaticStmt:
+     discard
+   of nkPragma: genPragma(p, n)
+-  of nkPragmaBlock: expr(p, n.lastSon, d)
++  of nkPragmaBlock:
++    var inUncheckedAssignSection = 0
++    let pragmaList = n[0]
++    for pi in pragmaList:
++      if whichPragma(pi) == wCast:
++        case whichPragma(pi[1])
++        of wUncheckedAssign:
++          inUncheckedAssignSection = 1
++        else:
++          discard
++
++    inc p.inUncheckedAssignSection, inUncheckedAssignSection
++    expr(p, n.lastSon, d)
++    dec p.inUncheckedAssignSection, inUncheckedAssignSection
++
+   of nkProcDef, nkFuncDef, nkMethodDef, nkConverterDef:
+     if n[genericParamsPos].kind == nkEmpty:
+       var prc = n[namePos].sym
+diff --git a/compiler/ccgstmts.nim b/compiler/ccgstmts.nim
+index 58a6dd015..240fa55c8 100644
+--- a/compiler/ccgstmts.nim
++++ b/compiler/ccgstmts.nim
+@@ -1566,7 +1566,7 @@ proc asgnFieldDiscriminant(p: BProc, e: PNode) =
+   initLocExpr(p, e[0], a)
+   getTemp(p, a.t, tmp)
+   expr(p, e[1], tmp)
+-  if optTinyRtti notin p.config.globalOptions:
++  if optTinyRtti notin p.config.globalOptions and p.inUncheckedAssignSection == 0:
+     let field = dotExpr[1].sym
+     genDiscriminantCheck(p, a, tmp, dotExpr[0].typ, field)
+     message(p.config, e.info, warnCaseTransition)
+diff --git a/compiler/cgendata.nim b/compiler/cgendata.nim
+index 88b8d4090..449076725 100644
+--- a/compiler/cgendata.nim
++++ b/compiler/cgendata.nim
+@@ -99,6 +99,7 @@ type
+     withinTryWithExcept*: int # required for goto based exception handling
+     withinBlockLeaveActions*: int # complex to explain
+     sigConflicts*: CountTable[string]
++    inUncheckedAssignSection*: int
+ 
+   TTypeSeq* = seq[PType]
+   TypeCache* = Table[SigHash, Rope]

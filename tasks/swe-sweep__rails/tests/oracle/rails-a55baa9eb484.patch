@@ -1,0 +1,22 @@
+diff --git a/activerecord/lib/active_record/relation/query_methods.rb b/activerecord/lib/active_record/relation/query_methods.rb
+index 111c49a6202..8eef41b8b79 100644
+--- a/activerecord/lib/active_record/relation/query_methods.rb
++++ b/activerecord/lib/active_record/relation/query_methods.rb
+@@ -70,7 +70,7 @@ module ActiveRecord
+         associations.each do |association|
+           reflection = @scope.klass._reflect_on_association(association)
+           @scope.joins!(association)
+-          self.not(reflection.table_name => { reflection.association_primary_key => nil })
++          self.not(association => { reflection.association_primary_key => nil })
+         end
+ 
+         @scope
+@@ -98,7 +98,7 @@ module ActiveRecord
+         associations.each do |association|
+           reflection = @scope.klass._reflect_on_association(association)
+           @scope.left_outer_joins!(association)
+-          @scope.where!(reflection.table_name => { reflection.association_primary_key => nil })
++          @scope.where!(association => { reflection.association_primary_key => nil })
+         end
+ 
+         @scope

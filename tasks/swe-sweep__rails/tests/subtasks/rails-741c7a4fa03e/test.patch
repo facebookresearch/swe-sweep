@@ -1,0 +1,29 @@
+diff --git a/activerecord/test/cases/encryption/encryptable_record_test.rb b/activerecord/test/cases/encryption/encryptable_record_test.rb
+index 40f2e76a98e..3fc8aa7c666 100644
+--- a/activerecord/test/cases/encryption/encryptable_record_test.rb
++++ b/activerecord/test/cases/encryption/encryptable_record_test.rb
+@@ -292,6 +292,11 @@ class ActiveRecord::Encryption::EncryptableRecordTest < ActiveRecord::Encryption
+     assert_equal Encoding::US_ASCII, book.reload.name.encoding
+   end
+ 
++  test "support encrypted attributes defined on columns with default values" do
++    book = EncryptedBook.create!
++    assert_encrypted_attribute(book, :name, "<untitled>")
++  end
++
+   private
+     class FailingKeyProvider
+       def decryption_key(message) end
+diff --git a/activerecord/test/schema/schema.rb b/activerecord/test/schema/schema.rb
+index 89c3f85304f..cb81bf14fdf 100644
+--- a/activerecord/test/schema/schema.rb
++++ b/activerecord/test/schema/schema.rb
+@@ -141,7 +141,7 @@ ActiveRecord::Schema.define do
+   create_table :encrypted_books, id: :integer, force: true do |t|
+     t.references :author
+     t.string :format
+-    t.column :name, :string
++    t.column :name, :string, default: "<untitled>"
+     t.column :original_name, :string
+ 
+     t.datetime :created_at

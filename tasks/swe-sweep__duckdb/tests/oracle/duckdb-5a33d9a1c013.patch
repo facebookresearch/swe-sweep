@@ -1,0 +1,67 @@
+diff --git a/src/common/types.cpp b/src/common/types.cpp
+index d0d5041f88..c318528911 100644
+--- a/src/common/types.cpp
++++ b/src/common/types.cpp
+@@ -543,6 +543,34 @@ bool LogicalType::IsIntegral() const {
+ 	}
+ }
+ 
++bool LogicalType::IsSigned() const {
++	switch (id_) {
++	case LogicalTypeId::TINYINT:
++	case LogicalTypeId::SMALLINT:
++	case LogicalTypeId::INTEGER:
++	case LogicalTypeId::BIGINT:
++	case LogicalTypeId::HUGEINT:
++		return true;
++	default:
++		break;
++	}
++	return false;
++}
++
++bool LogicalType::IsUnsigned() const {
++	switch (id_) {
++	case LogicalTypeId::UTINYINT:
++	case LogicalTypeId::USMALLINT:
++	case LogicalTypeId::UINTEGER:
++	case LogicalTypeId::UBIGINT:
++	case LogicalTypeId::UHUGEINT:
++		return true;
++	default:
++		break;
++	}
++	return false;
++}
++
+ bool LogicalType::IsNumeric() const {
+ 	switch (id_) {
+ 	case LogicalTypeId::TINYINT:
+diff --git a/src/include/duckdb/common/types.hpp b/src/include/duckdb/common/types.hpp
+index ef7db7f749..75f48668dd 100644
+--- a/src/include/duckdb/common/types.hpp
++++ b/src/include/duckdb/common/types.hpp
+@@ -331,6 +331,9 @@ struct LogicalType {
+ 
+ 	DUCKDB_API void Verify() const;
+ 
++	DUCKDB_API bool IsSigned() const;
++	DUCKDB_API bool IsUnsigned() const;
++
+ 	DUCKDB_API bool IsValid() const;
+ 
+ 	template<class F>
+diff --git a/src/planner/expression/bound_cast_expression.cpp b/src/planner/expression/bound_cast_expression.cpp
+index 4168bf3e59..9419a8db0d 100644
+--- a/src/planner/expression/bound_cast_expression.cpp
++++ b/src/planner/expression/bound_cast_expression.cpp
+@@ -176,6 +176,9 @@ bool BoundCastExpression::CastIsInvertible(const LogicalType &source_type, const
+ 			return false;
+ 		}
+ 	}
++	if (source_type.IsSigned() && target_type.IsUnsigned()) {
++		return false;
++	}
+ 	return true;
+ }
+ 

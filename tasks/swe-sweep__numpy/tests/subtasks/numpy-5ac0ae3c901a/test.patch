@@ -1,0 +1,35 @@
+diff --git a/numpy/random/tests/test_regression.py b/numpy/random/tests/test_regression.py
+index 0000000..0000000 100644
+--- a/numpy/random/tests/test_regression.py
++++ b/numpy/random/tests/test_regression.py
+@@ -92,6 +92,30 @@ class TestRegression(object):
+         x = np.random.beta(0.0001, 0.0001, size=100)
+         assert_(not np.any(np.isnan(x)), 'Nans in np.random.beta')
+ 
++    def test_beta_expected_zero_frequency(self):
++        # gh-24475: For small a and b (e.g. a=0.0025, b=0.0025), beta
++        # would generate too many zeros.
++        np.random.seed(1234567890)
++        a = 0.0025
++        b = 0.0025
++        n = 1000000
++        x = np.random.beta(a, b, size=n)
++        nzeros = np.count_nonzero(x == 0)
++        # beta CDF at x = np.finfo(np.double).smallest_subnormal/2
++        # is p = 0.0776169083131899, e.g,
++        #
++        #    import numpy as np
++        #    from mpmath import mp
++        #    mp.dps = 160
++        #    x = mp.mpf(np.finfo(np.float64).smallest_subnormal)/2
++        #    # CDF of the beta distribution at x:
++        #    p = mp.betainc(a, b, x1=0, x2=x, regularized=True)
++        #    n = 1000000
++        #    exprected_freq = float(n*p)
++        #
++        expected_freq = 77616.90831318991
++        assert 0.95*expected_freq < nzeros < 1.05*expected_freq
++
+     def test_choice_sum_of_probs_tolerance(self):
+         # The sum of probs should be 1.0 with some tolerance.
+         # For low precision dtypes the tolerance was too tight.

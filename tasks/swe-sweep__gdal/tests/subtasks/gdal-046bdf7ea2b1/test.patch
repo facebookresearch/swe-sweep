@@ -1,0 +1,51 @@
+diff --git a/autotest/ogr/ogr_geojson.py b/autotest/ogr/ogr_geojson.py
+index ede36a1ccc..428b643711 100755
+--- a/autotest/ogr/ogr_geojson.py
++++ b/autotest/ogr/ogr_geojson.py
+@@ -4092,4 +4092,46 @@ def test_ogr_geojson_ogr2ogr_nln_with_input_dataset_having_name():
+     ds = ogr.Open(filename)
+     assert ds.GetLayer(0).GetName() == "new_name"
+     ds = None
+     gdal.Unlink(filename)
++
++
++###############################################################################
++# Test fix for https://github.com/OSGeo/gdal/issues/7313
++
++
++@pytest.mark.parametrize(
++    "properties",
++    [
++        ["a_string", 42.0, {"a_field": "a_value"}],
++        ["a_string", 42, {"a_field": "a_value"}],
++        ["a_string", {"a_field": "a_value"}, 42],
++        [42, "a_string", {"a_field": "a_value"}],
++        [42, {"a_field": "a_value"}, "a_string"],
++        [{"a_field": "a_value"}, 42, "a_string"],
++        [{"a_field": "a_value"}, "a_string", 42],
++    ],
++)
++def test_ogr_geojson_mixed_type_promotion(properties):
++
++    tmpfilename = "/vsimem/temp.json"
++
++    jdata = {"type": "FeatureCollection", "features": []}
++
++    for prop_val in properties:
++        jdata["features"].append({"type": "Feature", "properties": {"prop0": prop_val}})
++
++    gdal.FileFromMemBuffer(
++        tmpfilename,
++        json.dumps(jdata),
++    )
++
++    ds = gdal.OpenEx(tmpfilename, gdal.OF_VECTOR)
++    assert ds is not None
++
++    lyr = ds.GetLayer(0)
++    lyr_def = lyr.GetLayerDefn()
++    fld_def = lyr_def.GetFieldDefn(0)
++    assert fld_def.GetTypeName() == "String"
++    assert fld_def.GetSubType() == ogr.OFSTJSON
++
++    gdal.Unlink(tmpfilename)

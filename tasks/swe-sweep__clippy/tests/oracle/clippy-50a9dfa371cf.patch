@@ -1,0 +1,37 @@
+diff --git a/clippy_lints/src/loops/manual_slice_fill.rs b/clippy_lints/src/loops/manual_slice_fill.rs
+index 343f7c5d2..15c656cc7 100644
+--- a/clippy_lints/src/loops/manual_slice_fill.rs
++++ b/clippy_lints/src/loops/manual_slice_fill.rs
+@@ -2,7 +2,7 @@ use clippy_utils::diagnostics::span_lint_and_sugg;
+ use clippy_utils::eager_or_lazy::switch_to_eager_eval;
+ use clippy_utils::msrvs::{self, Msrv};
+ use clippy_utils::source::{HasSession, snippet_with_applicability};
+-use clippy_utils::ty::implements_trait;
++use clippy_utils::ty::{implements_trait, is_slice_like};
+ use clippy_utils::visitors::is_local_used;
+ use clippy_utils::{higher, peel_blocks_with_stmt, span_contains_comment};
+ use rustc_ast::ast::LitKind;
+@@ -58,6 +58,8 @@ pub(super) fn check<'tcx>(
+         && let Res::Local(idx_hir) = idx_path.res
+         && !is_local_used(cx, assignval, idx_hir)
+         && msrv.meets(cx, msrvs::SLICE_FILL)
++        && let slice_ty = cx.typeck_results().expr_ty(slice).peel_refs()
++        && is_slice_like(cx, slice_ty)
+     {
+         sugg(cx, body, expr, slice.span, assignval.span);
+     }
+diff --git a/clippy_utils/src/ty/mod.rs b/clippy_utils/src/ty/mod.rs
+index d30acfb75..db7233126 100644
+--- a/clippy_utils/src/ty/mod.rs
++++ b/clippy_utils/src/ty/mod.rs
+@@ -1369,3 +1369,10 @@ pub fn has_non_owning_mutable_access<'tcx>(cx: &LateContext<'tcx>, iter_ty: Ty<'
+     let mut phantoms = FxHashSet::default();
+     has_non_owning_mutable_access_inner(cx, &mut phantoms, iter_ty)
+ }
++
++/// Check if `ty` is slice-like, i.e., `&[T]`, `[T; N]`, or `Vec<T>`.
++pub fn is_slice_like<'tcx>(cx: &LateContext<'tcx>, ty: Ty<'tcx>) -> bool {
++    ty.is_slice()
++        || ty.is_array()
++        || matches!(ty.kind(), ty::Adt(adt_def, _) if cx.tcx.is_diagnostic_item(sym::Vec, adt_def.did()))
++}

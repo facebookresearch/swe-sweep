@@ -1,0 +1,51 @@
+diff --git a/plugins/removeEmptyContainers.js b/plugins/removeEmptyContainers.js
+index d803fc9..7d87ced 100644
+--- a/plugins/removeEmptyContainers.js
++++ b/plugins/removeEmptyContainers.js
+@@ -2,6 +2,7 @@
+ 
+ const { detachNodeFromParent } = require('../lib/xast.js');
+ const { elemsGroups } = require('./_collections.js');
++const { collectStylesheet, computeStyle } = require('../lib/style.js');
+ 
+ exports.name = 'removeEmptyContainers';
+ exports.description = 'removes empty container elements';
+@@ -21,7 +22,9 @@ exports.description = 'removes empty container elements';
+  *
+  * @type {import('./plugins-types').Plugin<'removeEmptyContainers'>}
+  */
+-exports.fn = () => {
++exports.fn = (root) => {
++  const stylesheet = collectStylesheet(root);
++
+   return {
+     element: {
+       exit: (node, parentNode) => {
+@@ -40,15 +43,22 @@ exports.fn = () => {
+         ) {
+           return;
+         }
+-        // The <g> may not have content, but the filter may cause a rectangle
+-        // to be created and filled with pattern.
+-        if (node.name === 'g' && node.attributes.filter != null) {
+-          return;
+-        }
++
+         // empty <mask> hides masked element
+         if (node.name === 'mask' && node.attributes.id != null) {
+           return;
+         }
++
++        // The <g> may not have content, but the filter may cause a rectangle
++        // to be created and filled with pattern.
++        if (
++          node.name === 'g' &&
++          (node.attributes.filter != null ||
++            computeStyle(stylesheet, node).filter)
++        ) {
++          return;
++        }
++
+         detachNodeFromParent(node, parentNode);
+       },
+     },

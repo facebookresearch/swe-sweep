@@ -1,0 +1,25 @@
+diff --git a/test/datetime/regexParse.test.js b/test/datetime/regexParse.test.js
+index 10f8c159..5d655887 100644
+--- a/test/datetime/regexParse.test.js
++++ b/test/datetime/regexParse.test.js
+@@ -424,6 +424,20 @@ test("DateTime.fromISO() accepts year-ordinalTtime", () => {
+   });
+ });
+ 
++test("DateTime.fromISO() accepts year-ordinalTtime+offset", () => {
++  const dt = DateTime.fromISO("2016-200T09:24:15.123+0600", { setZone: true });
++  expect(dt.zone.name).toBe("UTC+6");
++  expect(dt.toObject()).toEqual({
++    year: 2016,
++    month: 7,
++    day: 18,
++    hour: 9,
++    minute: 24,
++    second: 15,
++    millisecond: 123
++  });
++});
++
+ test("DateTime.fromISO() accepts hour:minute:second.millisecond", () => {
+   const { year, month, day } = DateTime.local();
+   isSame("09:24:15.123", {

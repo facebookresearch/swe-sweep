@@ -1,0 +1,14 @@
+diff --git a/src/Symfony/Component/Mailer/Bridge/Mailchimp/Transport/MandrillApiTransport.php b/src/Symfony/Component/Mailer/Bridge/Mailchimp/Transport/MandrillApiTransport.php
+index f370baa54bd..36b6ac6a853 100644
+--- a/src/Symfony/Component/Mailer/Bridge/Mailchimp/Transport/MandrillApiTransport.php
++++ b/src/Symfony/Component/Mailer/Bridge/Mailchimp/Transport/MandrillApiTransport.php
+@@ -111,6 +111,9 @@ class MandrillApiTransport extends AbstractApiTransport
+             }
+ 
+             if ('inline' === $disposition) {
++                if ($attachment->hasContentId()) {
++                    $att['name'] = $attachment->getContentId();
++                }
+                 $payload['message']['images'][] = $att;
+             } else {
+                 $payload['message']['attachments'][] = $att;

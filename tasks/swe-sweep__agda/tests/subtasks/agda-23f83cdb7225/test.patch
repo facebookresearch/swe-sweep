@@ -1,0 +1,33 @@
+diff --git a/test/Fail/Issue7266.agda b/test/Fail/Issue7266.agda
+new file mode 100644
+index 0000000000..d9febe3b86
+--- /dev/null
++++ b/test/Fail/Issue7266.agda
+@@ -0,0 +1,11 @@
++open import Agda.Builtin.Bool
++open import Agda.Builtin.Sigma
++open import Agda.Builtin.Unit
++
++P : Bool → Set
++P true = ⊤
++P false = Σ Bool λ _ → Bool
++
++f : (A : Bool) → P A → P A
++f true _ = f true tt
++f false (true , _) = true , true
+diff --git a/test/Fail/Issue7266.err b/test/Fail/Issue7266.err
+new file mode 100644
+index 0000000000..69e7f051a3
+--- /dev/null
++++ b/test/Fail/Issue7266.err
+@@ -0,0 +1,10 @@
++Issue7266.agda:10,1-11,19
++Incomplete pattern matching for f. Missing cases:
++  f false (false , snd₁)
++when checking the definition of f
++Issue7266.agda:9,1-11,33
++Termination checking failed for the following functions:
++  f
++Problematic calls:
++  f true tt
++    (at Issue7266.agda:10,12-13)

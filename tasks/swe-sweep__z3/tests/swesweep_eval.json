@@ -1,0 +1,139 @@
+{
+  "build_jobs": 4,
+  "container_repo": "/z3",
+  "evaluation": {
+    "suite": {
+      "build_dir": "/build",
+      "type": "z3-unit"
+    },
+    "test_dirs": [
+      "src/test"
+    ],
+    "visible_timeout": 10800
+  },
+  "upstream_image": "pandora-maxbug-z3:4.16.0",
+  "n_base_passing": 1,
+  "n_base_test_ignore": 0,
+  "oracle_digest": "9992b802955ead597a1f1e39ea5d22e82060373d1353d03c3099751fa6d41302",
+  "oracle_pristine_paths": [],
+  "upstream_commit": "9f7399e15e6172900e0591deb5a57a45769d8205",
+  "reproduction": {
+    "build_cmd": "cmake --build /build -j $SWESWEEP_BUILD_JOBS --target test-z3",
+    "build_timeout": 5400,
+    "jobs_env": "SWESWEEP_BUILD_JOBS",
+    "suite": {
+      "build_dir": "/build",
+      "type": "z3-unit"
+    },
+    "test_timeout": 1800
+  },
+  "schema": 2,
+  "subtasks": [
+    {
+      "f2p": [
+        "parametric_datatype"
+      ],
+      "id": "z3-21693e1cea96",
+      "target_files": [
+        "src/cmd_context/cmd_context.cpp",
+        "src/parsers/smt2/smt2parser.cpp"
+      ]
+    },
+    {
+      "f2p": [
+        "api_pb"
+      ],
+      "id": "z3-6aeffc53878d",
+      "target_files": [
+        "src/sat/smt/pb_internalize.cpp"
+      ]
+    },
+    {
+      "f2p": [
+        "nla_intervals"
+      ],
+      "id": "z3-7c5e71fa9a15",
+      "target_files": [
+        "src/math/lp/dioph_eq.cpp",
+        "src/math/lp/lar_solver.cpp",
+        "src/math/lp/lar_term.h",
+        "src/math/lp/nla_types.h"
+      ]
+    },
+    {
+      "f2p": [
+        "euf_arith_plugin"
+      ],
+      "id": "z3-845ca575f448",
+      "target_files": [
+        "src/ast/euf/euf_arith_plugin.cpp"
+      ]
+    },
+    {
+      "f2p": [
+        "api_algebraic"
+      ],
+      "id": "z3-9b51ad4d5969",
+      "target_files": [
+        "src/api/api_algebraic.cpp",
+        "src/api/z3_algebraic.h"
+      ]
+    },
+    {
+      "f2p": [
+        "smt_context"
+      ],
+      "id": "z3-b29e3fbe839f",
+      "target_files": [
+        "src/ast/fpa/fpa2bv_converter.cpp"
+      ]
+    },
+    {
+      "f2p": [
+        "parametric_datatype"
+      ],
+      "id": "z3-ce2e010dd3c0",
+      "target_files": [
+        "src/ast/datatype_decl_plugin.cpp"
+      ]
+    },
+    {
+      "f2p": [
+        "mbp_qel"
+      ],
+      "id": "z3-e0dd0ca5d4f1",
+      "target_files": [
+        "src/qe/mbp/mbp_dt_tg.cpp"
+      ]
+    },
+    {
+      "f2p": [
+        "qe_arith"
+      ],
+      "id": "z3-e530990a778e",
+      "target_files": [
+        "src/qe/qe_arith_plugin.cpp"
+      ]
+    },
+    {
+      "f2p": [
+        "api_algebraic"
+      ],
+      "id": "z3-f2490da70ca4",
+      "target_files": [
+        "src/math/polynomial/algebraic_numbers.cpp"
+      ]
+    },
+    {
+      "f2p": [
+        "api"
+      ],
+      "id": "z3-f3cd4349f4cb",
+      "target_files": [
+        "src/api/api_ast.cpp"
+      ]
+    }
+  ],
+  "task": "z3",
+  "version": "4.16.0"
+}

@@ -1,0 +1,63 @@
+diff --git a/codec-http/src/main/java/io/netty/handler/codec/http/HttpClientUpgradeHandler.java b/codec-http/src/main/java/io/netty/handler/codec/http/HttpClientUpgradeHandler.java
+index 235dbb1..8e70473 100644
+--- a/codec-http/src/main/java/io/netty/handler/codec/http/HttpClientUpgradeHandler.java
++++ b/codec-http/src/main/java/io/netty/handler/codec/http/HttpClientUpgradeHandler.java
+@@ -103,7 +103,7 @@ public class HttpClientUpgradeHandler extends HttpObjectAggregator implements Ch
+ 
+     private final SourceCodec sourceCodec;
+     private final UpgradeCodec upgradeCodec;
+-    private boolean upgradeRequested;
++    private UpgradeEvent currentUpgradeEvent;
+ 
+     /**
+      * Constructs the client upgrade handler.
+@@ -159,18 +159,18 @@ public class HttpClientUpgradeHandler extends HttpObjectAggregator implements Ch
+     @Override
+     public void write(ChannelHandlerContext ctx, Object msg, ChannelPromise promise)
+             throws Exception {
+-        if (!(msg instanceof HttpRequest)) {
++        if (!(msg instanceof HttpRequest) || currentUpgradeEvent == UpgradeEvent.UPGRADE_SUCCESSFUL) {
+             ctx.write(msg, promise);
+             return;
+         }
+ 
+-        if (upgradeRequested) {
++        if (currentUpgradeEvent == UpgradeEvent.UPGRADE_ISSUED) {
+             promise.setFailure(new IllegalStateException(
+                     "Attempting to write HTTP request with upgrade in progress"));
+             return;
+         }
+ 
+-        upgradeRequested = true;
++        currentUpgradeEvent = UpgradeEvent.UPGRADE_ISSUED;
+         setUpgradeRequestHeaders(ctx, (HttpRequest) msg);
+ 
+         // Continue writing the request.
+@@ -191,7 +191,7 @@ public class HttpClientUpgradeHandler extends HttpObjectAggregator implements Ch
+             throws Exception {
+         FullHttpResponse response = null;
+         try {
+-            if (!upgradeRequested) {
++            if (currentUpgradeEvent != UpgradeEvent.UPGRADE_ISSUED) {
+                 throw new IllegalStateException("Read HTTP response without requesting protocol switch");
+             }
+ 
+@@ -202,6 +202,7 @@ public class HttpClientUpgradeHandler extends HttpObjectAggregator implements Ch
+                     // and continue processing HTTP.
+                     // NOTE: not releasing the response since we're letting it propagate to the
+                     // next handler.
++                    currentUpgradeEvent = null;
+                     ctx.fireUserEventTriggered(UpgradeEvent.UPGRADE_REJECTED);
+                     removeThisHandler(ctx);
+                     ctx.fireChannelRead(msg);
+@@ -236,6 +237,10 @@ public class HttpClientUpgradeHandler extends HttpObjectAggregator implements Ch
+             sourceCodec.prepareUpgradeFrom(ctx);
+             upgradeCodec.upgradeTo(ctx, response);
+ 
++            // Let's set currentUpgradeEvent to UPGRADE_SUCCESSFUL as we will notify the pipeline about the successful
++            // upgrade now, which might results in a write that needs to be passed through.
++            currentUpgradeEvent = UpgradeEvent.UPGRADE_SUCCESSFUL;
++
+             // Notify that the upgrade to the new protocol completed successfully.
+             ctx.fireUserEventTriggered(UpgradeEvent.UPGRADE_SUCCESSFUL);
+ 

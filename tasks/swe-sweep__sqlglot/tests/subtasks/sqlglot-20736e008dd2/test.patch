@@ -1,0 +1,25 @@
+diff --git a/tests/dialects/test_sqlite.py b/tests/dialects/test_sqlite.py
+index f6105b7d3a..40cd63c6eb 100644
+--- a/tests/dialects/test_sqlite.py
++++ b/tests/dialects/test_sqlite.py
+@@ -235,6 +235,7 @@ class TestSQLite(Validator):
+             with self.subTest(f"ON CONFLICT {conflict_action}"):
+                 self.validate_identity("CREATE TABLE a (b, c, UNIQUE (b, c) ON CONFLICT IGNORE)")
+ 
++        self.validate_identity("CREATE TABLE over (x, y)")
+         self.validate_identity("INSERT OR ABORT INTO foo (x, y) VALUES (1, 2)")
+         self.validate_identity("INSERT OR FAIL INTO foo (x, y) VALUES (1, 2)")
+         self.validate_identity("INSERT OR IGNORE INTO foo (x, y) VALUES (1, 2)")
+diff --git a/tests/test_transpile.py b/tests/test_transpile.py
+index 1dab267a57..4b2b8da3bb 100644
+--- a/tests/test_transpile.py
++++ b/tests/test_transpile.py
+@@ -46,7 +46,7 @@ class TestTranspile(unittest.TestCase):
+             "SELECT 1 FROM a.b.table1 AS t UNPIVOT((c3) FOR c4 IN (a, b))",
+         )
+ 
+-        for key in ("union", "over", "from", "join"):
++        for key in ("union", "from", "join"):
+             with self.subTest(f"alias {key}"):
+                 self.validate(f"SELECT x AS {key}", f"SELECT x AS {key}")
+                 self.validate(f'SELECT x "{key}"', f'SELECT x AS "{key}"')

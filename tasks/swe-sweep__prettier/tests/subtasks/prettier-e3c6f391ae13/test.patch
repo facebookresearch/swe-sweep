@@ -1,0 +1,41 @@
+diff --git a/tests/format/typescript/prettier-ignore/__snapshots__/format.test.js.snap b/tests/format/typescript/prettier-ignore/__snapshots__/format.test.js.snap
+index 574b60950..367e8cf4f 100644
+--- a/tests/format/typescript/prettier-ignore/__snapshots__/format.test.js.snap
++++ b/tests/format/typescript/prettier-ignore/__snapshots__/format.test.js.snap
+@@ -18,6 +18,26 @@ export const foo = // prettier-ignore
+ ================================================================================
+ `;
+ 
++exports[`issue-16927.ts format 1`] = `
++====================================options=====================================
++parsers: ["typescript"]
++printWidth: 80
++                                                                                | printWidth
++=====================================input======================================
++type Foo = {
++    // prettier-ignore
++    [key: string]: bar;
++};
++
++=====================================output=====================================
++type Foo = {
++  // prettier-ignore
++  [key: string]: bar;
++};
++
++================================================================================
++`;
++
+ exports[`mapped-types.ts format 1`] = `
+ ====================================options=====================================
+ parsers: ["typescript"]
+diff --git a/tests/format/typescript/prettier-ignore/issue-16927.ts b/tests/format/typescript/prettier-ignore/issue-16927.ts
+new file mode 100644
+index 000000000..1ec77ded6
+--- /dev/null
++++ b/tests/format/typescript/prettier-ignore/issue-16927.ts
+@@ -0,0 +1,4 @@
++type Foo = {
++    // prettier-ignore
++    [key: string]: bar;
++};

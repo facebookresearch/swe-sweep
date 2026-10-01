@@ -1,0 +1,181 @@
+{
+  "build_jobs": 4,
+  "container_repo": "/shardingsphere",
+  "evaluation": {
+    "suite": "reproduction",
+    "visible_timeout": 14400
+  },
+  "upstream_image": "pandora-maxbug-shardingsphere:5.2.1",
+  "n_base_passing": 927,
+  "n_base_test_ignore": 4,
+  "oracle_digest": "8ce19c42caef466f41d7e16c720c228cd21239f4c0c97b9fee1c327ccc5fbd11",
+  "oracle_pristine_paths": [],
+  "upstream_commit": "9f7399e15e6172900e0591deb5a57a45769d8205",
+  "reproduction": {
+    "jobs_env": "SWESWEEP_BUILD_JOBS",
+    "needs_build": false,
+    "suite": {
+      "goal": "test",
+      "mvn_args": [
+        "-Dcheckstyle.skip=true",
+        "-Drat.skip=true",
+        "-Dlicense.skip=true",
+        "-Dspotbugs.skip=true",
+        "-Dmaven.javadoc.skip=true",
+        "-Denforcer.skip=true",
+        "-Dmaven.source.skip=true"
+      ],
+      "type": "maven"
+    },
+    "test_timeout": 1500
+  },
+  "schema": 2,
+  "subtasks": [
+    {
+      "f2p": [
+        "org.apache.shardingsphere.db.protocol.mysql.packet.binlog.row.column.value.string.MySQLJsonValueDecoderTest.assertDecodeTopLevelLiteralFalse",
+        "org.apache.shardingsphere.db.protocol.mysql.packet.binlog.row.column.value.string.MySQLJsonValueDecoderTest.assertDecodeTopLevelLiteralNull",
+        "org.apache.shardingsphere.db.protocol.mysql.packet.binlog.row.column.value.string.MySQLJsonValueDecoderTest.assertDecodeTopLevelLiteralTrue"
+      ],
+      "id": "shardingsphere-224db87968b9",
+      "target_files": [
+        "database/protocol/dialect/mysql/src/main/java/org/apache/shardingsphere/database/protocol/mysql/packet/binlog/row/column/value/string/MySQLJsonValueDecoder.java"
+      ]
+    },
+    {
+      "f2p": [
+        "org.apache.shardingsphere.infra.metadata.database.schema.loader.dialect.OracleSchemaMetaDataLoaderTest.assertLoadCondition7"
+      ],
+      "id": "shardingsphere-368456cf6f5f",
+      "target_files": [
+        "database/connector/dialect/oracle/src/main/java/org/apache/shardingsphere/database/connector/oracle/metadata/data/loader/OracleMetaDataLoader.java"
+      ]
+    },
+    {
+      "f2p": [
+        "org.apache.shardingsphere.mode.repository.cluster.etcd.EtcdRepositoryTest.assertWatchWithDeleteAndVersionOne"
+      ],
+      "id": "shardingsphere-4950dde7bc88",
+      "target_files": [
+        "mode/type/cluster/repository/provider/etcd/src/main/java/org/apache/shardingsphere/mode/repository/cluster/etcd/EtcdRepository.java"
+      ]
+    },
+    {
+      "f2p": [
+        "org.apache.shardingsphere.db.protocol.postgresql.packet.command.query.extended.bind.protocol.PostgreSQLStringBinaryProtocolValueTest.assertReadWithMultiByteCharset",
+        "org.apache.shardingsphere.db.protocol.postgresql.packet.command.query.extended.bind.protocol.PostgreSQLUnspecifiedBinaryProtocolValueTest.assertReadWithMultiByteCharset"
+      ],
+      "id": "shardingsphere-59c878d50307",
+      "target_files": [
+        "database/protocol/dialect/postgresql/src/main/java/org/apache/shardingsphere/database/protocol/postgresql/packet/command/query/extended/bind/protocol/PostgreSQLStringBinaryProtocolValue.java",
+        "database/protocol/dialect/postgresql/src/main/java/org/apache/shardingsphere/database/protocol/postgresql/packet/command/query/extended/bind/protocol/PostgreSQLUnspecifiedBinaryProtocolValue.java"
+      ]
+    },
+    {
+      "f2p": [
+        "org.apache.shardingsphere.readwritesplitting.algorithm.loadbalance.WeightReadQueryLoadBalanceAlgorithmTest.assertGetDataSourceWhenReadDataSourceChanged"
+      ],
+      "id": "shardingsphere-59c8fa498cbc",
+      "target_files": [
+        "features/readwrite-splitting/core/src/main/java/org/apache/shardingsphere/readwritesplitting/algorithm/loadbalance/FixedReplicaWeightReadQueryLoadBalanceAlgorithm.java",
+        "features/readwrite-splitting/core/src/main/java/org/apache/shardingsphere/readwritesplitting/algorithm/loadbalance/WeightReadQueryLoadBalanceAlgorithm.java"
+      ]
+    },
+    {
+      "f2p": [
+        "org.apache.shardingsphere.sharding.rewrite.token.pojo.ConstraintTokenTest.assertUpperCaseToString"
+      ],
+      "id": "shardingsphere-5da870d89eea",
+      "target_files": [
+        "features/sharding/core/src/main/java/org/apache/shardingsphere/sharding/rewrite/token/pojo/ConstraintToken.java"
+      ]
+    },
+    {
+      "f2p": [
+        "org.apache.shardingsphere.infra.database.metadata.url.StandardJdbcUrlParserTest.assertParseMySQLJdbcUrlWithIPV6"
+      ],
+      "id": "shardingsphere-666511867248",
+      "target_files": [
+        "infra/database/core/src/main/java/org/apache/shardingsphere/infra/database/core/connector/url/StandardJdbcUrlParser.java"
+      ]
+    },
+    {
+      "f2p": [
+        "org.apache.shardingsphere.sharding.route.engine.condition.ShardingConditionsTest.assertMergeWithBindingTables"
+      ],
+      "id": "shardingsphere-6b5c5d5ed08c",
+      "target_files": [
+        "features/sharding/core/src/main/java/org/apache/shardingsphere/sharding/route/engine/condition/ShardingConditions.java"
+      ]
+    },
+    {
+      "f2p": [
+        "org.apache.shardingsphere.db.protocol.postgresql.packet.command.query.extended.bind.protocol.PostgreSQLInt8BinaryProtocolValueTest.assertWrite"
+      ],
+      "id": "shardingsphere-94085efdede9",
+      "target_files": [
+        "db-protocol/postgresql/src/main/java/org/apache/shardingsphere/db/protocol/postgresql/packet/command/query/extended/bind/protocol/PostgreSQLInt8BinaryProtocolValue.java"
+      ]
+    },
+    {
+      "f2p": [
+        "org.apache.shardingsphere.infra.executor.sql.execute.result.query.impl.driver.jdbc.type.stream.JDBCStreamQueryResultTest.assertGetValueByZonedDateTime"
+      ],
+      "id": "shardingsphere-958386ed60d8",
+      "target_files": [
+        "infra/executor/src/main/java/org/apache/shardingsphere/infra/executor/sql/execute/result/query/impl/driver/jdbc/type/stream/JDBCStreamQueryResult.java"
+      ]
+    },
+    {
+      "f2p": [
+        "org.apache.shardingsphere.db.protocol.postgresql.packet.command.query.extended.bind.protocol.PostgreSQLArrayParameterDecoderTest.assertParseBoolArrayEmptyTextMode",
+        "org.apache.shardingsphere.db.protocol.postgresql.packet.command.query.extended.bind.protocol.PostgreSQLArrayParameterDecoderTest.assertParseInt4ArrayEmptyTextMode",
+        "org.apache.shardingsphere.db.protocol.postgresql.packet.command.query.extended.bind.protocol.PostgreSQLArrayParameterDecoderTest.assertParseStringArrayEmptyTextMode"
+      ],
+      "id": "shardingsphere-a9484de918cd",
+      "target_files": [
+        "database/protocol/dialect/postgresql/src/main/java/org/apache/shardingsphere/database/protocol/postgresql/packet/command/query/extended/bind/protocol/PostgreSQLArrayParameterDecoder.java"
+      ]
+    },
+    {
+      "f2p": [
+        "org.apache.shardingsphere.sharding.algorithm.sharding.datetime.AutoIntervalShardingAlgorithmTest.assertDoShardingWithCommaDecimalDefaultLocale"
+      ],
+      "id": "shardingsphere-b6613509f965",
+      "target_files": [
+        "features/sharding/core/src/main/java/org/apache/shardingsphere/sharding/algorithm/sharding/datetime/AutoIntervalShardingAlgorithm.java"
+      ]
+    },
+    {
+      "f2p": [
+        "org.apache.shardingsphere.infra.binder.segment.insert.values.InsertValueContextTest.assertGetLiteralValueWhenParameterisNull"
+      ],
+      "id": "shardingsphere-d8bd6875445d",
+      "target_files": [
+        "features/encrypt/core/src/main/java/org/apache/shardingsphere/encrypt/rewrite/parameter/rewriter/EncryptInsertValueParameterRewriter.java",
+        "features/encrypt/core/src/main/java/org/apache/shardingsphere/encrypt/rewrite/token/generator/EncryptInsertValuesTokenGenerator.java",
+        "infra/binder/src/main/java/org/apache/shardingsphere/infra/binder/segment/insert/values/InsertValueContext.java"
+      ]
+    },
+    {
+      "f2p": [
+        "org.apache.shardingsphere.sql.parser.opengauss.visitor.statement.impl.OpenGaussStatementSQLVisitorTest.assertVisitLimitWithOffsetAndRowCountParameterMarkers"
+      ],
+      "id": "shardingsphere-e8217d1c2007",
+      "target_files": [
+        "parser/sql/engine/dialect/opengauss/src/main/java/org/apache/shardingsphere/sql/parser/engine/opengauss/visitor/statement/OpenGaussStatementVisitor.java"
+      ]
+    },
+    {
+      "f2p": [
+        "org.apache.shardingsphere.data.pipeline.core.ingest.position.StringPrimaryKeyPositionTest.assertEmptyToNull"
+      ],
+      "id": "shardingsphere-fa45a6f57a93",
+      "target_files": [
+        "kernel/data-pipeline/core/src/main/java/org/apache/shardingsphere/data/pipeline/common/ingest/position/pk/type/StringPrimaryKeyPosition.java"
+      ]
+    }
+  ],
+  "task": "shardingsphere",
+  "version": "5.2.1"
+}

@@ -1,0 +1,40 @@
+diff --git a/src/runtime/pprof/proto_test.go b/src/runtime/pprof/proto_test.go
+index a4ae95d4c4..b22d6e2b03 100644
+--- a/src/runtime/pprof/proto_test.go
++++ b/src/runtime/pprof/proto_test.go
+@@ -7,6 +7,7 @@ package pprof
+ import (
+ 	"bytes"
+ 	"encoding/json"
++	"errors"
+ 	"fmt"
+ 	"internal/profile"
+ 	"internal/testenv"
+@@ -27,7 +28,9 @@ func translateCPUProfile(data []uint64) (*profile.Profile, error) {
+ 	if err := b.addCPUData(data, nil); err != nil {
+ 		return nil, err
+ 	}
+-	b.build()
++	if err := b.build(); err != nil {
++		return nil, err
++	}
+ 	return profile.Parse(&buf)
+ }
+ 
+@@ -434,3 +437,16 @@ func TestEmptyStack(t *testing.T) {
+ 		t.Fatalf("translating profile: %v", err)
+ 	}
+ }
++
++var errWrite = errors.New("error from writer")
++
++type errWriter struct{}
++
++func (errWriter) Write(p []byte) (int, error) { return 0, errWrite }
++
++func TestWriteToErr(t *testing.T) {
++	err := Lookup("heap").WriteTo(&errWriter{}, 0)
++	if !errors.Is(err, errWrite) {
++		t.Fatalf("want error from writer, got: %v", err)
++	}
++}

@@ -1,0 +1,926 @@
+{
+  "build_jobs": 4,
+  "container_repo": "/mypy",
+  "evaluation": {
+    "suite": {
+      "paths": [
+        "mypy/test",
+        "mypyc/test"
+      ],
+      "target_suite": {
+        "corpus_re": "^(?:test-data|mypyc/test-data)/.*\\.test$",
+        "drivers": [
+          "mypy/test",
+          "mypyc/test"
+        ],
+        "type": "pytest-inline-case"
+      },
+      "type": "pytest-eval"
+    },
+    "test_dirs": [
+      "test-data",
+      "typeshed"
+    ],
+    "visible_timeout": 14400
+  },
+  "upstream_image": "pandora-maxbug-mypy:1.13.0",
+  "n_base_passing": 11587,
+  "n_base_test_ignore": 785,
+  "oracle_digest": "1aa9f791b4f7fbfcb67b22f2bea0666a3ac48da96656ef5f9ff73226d7c9c035",
+  "oracle_pristine_paths": [],
+  "upstream_commit": "9f7399e15e6172900e0591deb5a57a45769d8205",
+  "reproduction": {
+    "needs_build": false,
+    "suite": {
+      "corpus_re": "^(?:test-data|mypyc/test-data)/.*\\.test$",
+      "drivers": [
+        "mypy/test",
+        "mypyc/test"
+      ],
+      "type": "pytest-inline-case"
+    },
+    "test_timeout": 900
+  },
+  "schema": 2,
+  "subtasks": [
+    {
+      "f2p": [
+        "mypy.test.testcheck.TypeCheckSuite.check-python312.test::testPEP695TypeVarNameClashNoCrashDeferredSymbol",
+        "mypy.test.testcheck.TypeCheckSuite.check-python312.test::testPEP695TypeVarNameClashNoCrashForwardReference",
+        "mypy.test.testcheck.TypeCheckSuite.check-python312.test::testPEP695TypeVarNameClashStarImport",
+        "mypy.test.testcheck.TypeCheckSuite.check-python312.test::testPEP695TypeVarNameClashTypeAlias"
+      ],
+      "id": "mypy-009d0c518532",
+      "target_files": [
+        "mypy/semanal.py"
+      ]
+    },
+    {
+      "f2p": [
+        "mypy.test.teststubgen.StubgenPythonSuite.stubgen.test::testGenericClassTypeVarTuplePy311",
+        "mypy.test.teststubgen.StubgenPythonSuite.stubgen.test::testGenericClassTypeVarTuplePy311_semanal"
+      ],
+      "id": "mypy-05606018eaa5",
+      "target_files": [
+        "mypy/stubutil.py"
+      ]
+    },
+    {
+      "f2p": [
+        "mypyc.test.test_namegen.TestNameGen::test_make_module_translation_map"
+      ],
+      "id": "mypy-0912e84691de",
+      "target_files": [
+        "mypyc/namegen.py"
+      ]
+    },
+    {
+      "f2p": [
+        "mypy.test.testcheck.TypeCheckSuite.check-modules.test::testStarImportDoesNotImportGeneratedIntersections"
+      ],
+      "id": "mypy-0bd8727d9d48",
+      "target_files": [
+        "mypy/checker.py"
+      ]
+    },
+    {
+      "f2p": [
+        "mypy.test.testcheck.TypeCheckSuite.check-newsemanal.test::testNestedClassSelfNoPlaceholder"
+      ],
+      "id": "mypy-140f734725d6",
+      "target_files": [
+        "mypy/semanal.py"
+      ]
+    },
+    {
+      "f2p": [
+        "mypy.test.testcheck.TypeCheckSuite.check-type-aliases.test::testTypeAliasTypeInvalid"
+      ],
+      "id": "mypy-149c2033f9a3",
+      "target_files": [
+        "mypy/semanal.py"
+      ]
+    },
+    {
+      "f2p": [
+        "mypy.test.testcheck.TypeCheckSuite.check-namedtuple.test::testNamedTupleOverlappingCheck"
+      ],
+      "id": "mypy-15e9a21d260c",
+      "target_files": [
+        "mypy/meet.py"
+      ]
+    },
+    {
+      "f2p": [
+        "mypy.test.testcheck.TypeCheckSuite.check-typevar-tuple.test::testTypeVarTupleLiteralValueAsTypeArgument"
+      ],
+      "id": "mypy-16c544300d4c",
+      "target_files": [
+        "mypy/checkexpr.py"
+      ]
+    },
+    {
+      "f2p": [
+        "mypy.test.testcheck.TypeCheckSuite.check-unreachable-code.test::testUnreachableBlockStaysUnreachableWithTypeVarConstraints"
+      ],
+      "id": "mypy-18a95b3767fb",
+      "target_files": [
+        "mypy/nodes.py",
+        "mypy/treetransform.py"
+      ]
+    },
+    {
+      "f2p": [
+        "mypy.test.testcheck.TypeCheckSuite.check-dataclasses.test::testDataclassWithMatchArgsAndKwOnly"
+      ],
+      "id": "mypy-1b033833a1c4",
+      "target_files": [
+        "mypy/plugins/dataclasses.py"
+      ]
+    },
+    {
+      "f2p": [
+        "mypy.test.testcheck.TypeCheckSuite.check-dataclasses.test::testDataclassSlotsWithDeferredBase"
+      ],
+      "id": "mypy-1f7ed03ffe79",
+      "target_files": [
+        "mypy/plugins/dataclasses.py"
+      ]
+    },
+    {
+      "f2p": [
+        "mypy.test.testcheck.TypeCheckSuite.check-typeddict.test::testTypedDictNestedInClassAndInherited"
+      ],
+      "id": "mypy-2663b5647e2b",
+      "target_files": [
+        "mypy/checkexpr.py",
+        "mypy/checkmember.py"
+      ]
+    },
+    {
+      "f2p": [
+        "mypy.test.testcheck.TypeCheckSuite.check-python312.test::testPEP695MultipleTypeVarTuples"
+      ],
+      "id": "mypy-27a7b94a5e70",
+      "target_files": [
+        "mypy/semanal.py"
+      ]
+    },
+    {
+      "f2p": [
+        "mypy.test.testcheck.TypeCheckSuite.check-tuples.test::testPropertyLongTupleReturnTypeMismatchUnion",
+        "mypy.test.testcheck.TypeCheckSuite.check-tuples.test::testPropertyLongTupleReturnTypeMismatchUnionWiderExpected"
+      ],
+      "id": "mypy-2933e23fd116",
+      "target_files": [
+        "mypy/messages.py"
+      ]
+    },
+    {
+      "f2p": [
+        "mypy.test.testsemanal.SemAnalErrorSuite.semanal-errors.test::testRedeclaredTypeVarWithinNestedGenericClass"
+      ],
+      "id": "mypy-29c8790e2beb",
+      "target_files": [
+        "mypy/message_registry.py",
+        "mypy/semanal.py",
+        "mypy/typeanal.py"
+      ]
+    },
+    {
+      "f2p": [
+        "mypy.test.testcheck.TypeCheckSuite.check-typevar-tuple.test::testTypeVarTupleInferAgainstAnyCallableSuffix"
+      ],
+      "id": "mypy-311b49a6e9d5",
+      "target_files": [
+        "mypy/constraints.py",
+        "mypy/types.py"
+      ]
+    },
+    {
+      "f2p": [
+        "mypy.test.testcheck.TypeCheckSuite.check-namedtuple.test::testNamedTupleDefaultValueDefer",
+        "mypy.test.testcheck.TypeCheckSuite.check-namedtuple.test::testNamedTupleDefaultValueDefer2"
+      ],
+      "id": "mypy-323b10a7a9ce",
+      "target_files": [
+        "mypy/semanal_namedtuple.py"
+      ]
+    },
+    {
+      "f2p": [
+        "mypy.test.testtypes.JoinSuite::test_join_type_type_type_var"
+      ],
+      "id": "mypy-36b87a502290",
+      "target_files": [
+        "mypy/join.py"
+      ]
+    },
+    {
+      "f2p": [
+        "mypy.test.testcheck.TypeCheckSuite.check-typeguard.test::testTypeGuardPassedAsTypeVarIsBool",
+        "mypy.test.testcheck.TypeCheckSuite.check-typeis.test::testTypeIsPassedAsTypeVarIsBool"
+      ],
+      "id": "mypy-38cdb416eb1c",
+      "target_files": [
+        "mypy/constraints.py"
+      ]
+    },
+    {
+      "f2p": [
+        "mypy.test.testdaemon.DaemonSuite.daemon.test::testDaemonImportAncestors"
+      ],
+      "id": "mypy-391bd24412b6",
+      "target_files": [
+        "mypy/dmypy_server.py"
+      ]
+    },
+    {
+      "f2p": [
+        "mypy.test.testcheck.TypeCheckSuite.check-dataclasses.test::testDunderReplaceCovariantOverride"
+      ],
+      "id": "mypy-39a98bbe05bb",
+      "target_files": [
+        "mypy/checker.py"
+      ]
+    },
+    {
+      "f2p": [
+        "mypy.test.testcheck.TypeCheckSuite.check-typevar-defaults.test::testGenericTypeAliasWithDefaultTypeVarPreservesNoneInDefault"
+      ],
+      "id": "mypy-3c75480d5f41",
+      "target_files": [
+        "mypy/typeanal.py"
+      ]
+    },
+    {
+      "f2p": [
+        "mypy.test.testcheck.TypeCheckSuite.check-generic-subtyping.test::testParameterizedGenericOverrideSelfWithProperty",
+        "mypy.test.testcheck.TypeCheckSuite.check-generic-subtyping.test::testParameterizedGenericOverrideWithProperty",
+        "mypy.test.testcheck.TypeCheckSuite.check-generic-subtyping.test::testParameterizedGenericOverrideWithSelfProperty"
+      ],
+      "id": "mypy-3cd6e6f0a766",
+      "target_files": [
+        "mypy/checker.py"
+      ]
+    },
+    {
+      "f2p": [
+        "mypy.test.testcheck.TypeCheckSuite.check-overloading.test::testTypeCheckOverloadImplOverlapVarArgsAndKwargs"
+      ],
+      "id": "mypy-3efafb6521f3",
+      "target_files": [
+        "mypy/typeops.py"
+      ]
+    },
+    {
+      "f2p": [
+        "mypy.test.testcheck.TypeCheckSuite.check-python312.test::testPEP695TypeAliasForwardReferenceInUnusedTypeVar"
+      ],
+      "id": "mypy-3f8e3e6d1c59",
+      "target_files": [
+        "mypy/semanal.py"
+      ]
+    },
+    {
+      "f2p": [
+        "mypy.test.testcheck.TypeCheckSuite.check-python312.test::testPEP695MultipleUnpacksInBareApplicationNoCrash"
+      ],
+      "id": "mypy-44b8c6c5a680",
+      "target_files": [
+        "mypy/semanal.py",
+        "mypy/typeanal.py"
+      ]
+    },
+    {
+      "f2p": [
+        "mypy.test.testcheck.TypeCheckSuite.check-python310.test::testAssignmentToFinalInMatchCaseNotAllowed"
+      ],
+      "id": "mypy-4804ccbe2e3c",
+      "target_files": [
+        "mypy/checker.py"
+      ]
+    },
+    {
+      "f2p": [
+        "mypy.test.testcheck.TypeCheckSuite.check-typeguard.test::testTypeGuardWithDefer",
+        "mypy.test.testcheck.TypeCheckSuite.check-typeis.test::testTypeIsWithDefer"
+      ],
+      "id": "mypy-4b3e4462481d",
+      "target_files": [
+        "mypy/typeanal.py"
+      ]
+    },
+    {
+      "f2p": [
+        "mypy.test.testcheck.TypeCheckSuite.check-python312.test::testPEP695AliasDoesNotReferToFullname"
+      ],
+      "id": "mypy-4d9996c4d0bd",
+      "target_files": [
+        "mypy/semanal.py"
+      ]
+    },
+    {
+      "f2p": [
+        "mypy.test.testcheck.TypeCheckSuite.check-typevar-defaults.test::testTypeVarDefaultsSwap",
+        "mypy.test.testcheck.TypeCheckSuite.check-typevar-defaults.test::testTypeVarDefaultsSwap2"
+      ],
+      "id": "mypy-576a426025c4",
+      "target_files": [
+        "mypy/expandtype.py"
+      ]
+    },
+    {
+      "f2p": [
+        "mypy.test.teststubgen.StubgenUtilSuite::test_infer_sig_from_docstring"
+      ],
+      "id": "mypy-5e7ac0944a51",
+      "target_files": [
+        "mypy/stubdoc.py"
+      ]
+    },
+    {
+      "f2p": [
+        "mypy.test.testcheck.TypeCheckSuite.check-typeddict.test::testTypedDictDecoratorUndefinedNames"
+      ],
+      "id": "mypy-6359e3251356",
+      "target_files": [
+        "mypy/semanal.py"
+      ]
+    },
+    {
+      "f2p": [
+        "mypy.test.testcheck.TypeCheckSuite.check-errorcodes.test::testErrorCodeWarnUnusedIgnores10_SloppyFormattingEmptyBrackets",
+        "mypy.test.testcheck.TypeCheckSuite.check-errorcodes.test::testErrorCodeWarnUnusedIgnores9_SloppyFormattingNotEmptyBrackets"
+      ],
+      "id": "mypy-64e080a1c4e3",
+      "target_files": [
+        "mypy/fastparse.py"
+      ]
+    },
+    {
+      "f2p": [
+        "mypy.test.testcmdline.PythonCmdlineSuite.cmdline.test::testImportlibImportCannotBeResolved"
+      ],
+      "id": "mypy-667842a9337f",
+      "target_files": [
+        "mypy/semanal.py"
+      ]
+    },
+    {
+      "f2p": [
+        "mypy.test.testcheck.TypeCheckSuite.check-isinstance.test::testTypeEqualsCheckUsingIsNonOverlapping",
+        "mypy.test.testcheck.TypeCheckSuite.check-typevar-values.test::testTypeVarValuesNarrowing"
+      ],
+      "id": "mypy-68266a6a6fbd",
+      "target_files": [
+        "mypy/checker.py"
+      ]
+    },
+    {
+      "f2p": [
+        "mypy.test.testcheck.TypeCheckSuite.check-typeddict.test::testTypedDictReadOnlyMutateMethods"
+      ],
+      "id": "mypy-6a3c2a63a2e2",
+      "target_files": [
+        "mypy/plugins/default.py"
+      ]
+    },
+    {
+      "f2p": [
+        "mypy.test.testcheck.TypeCheckSuite.check-python310.test::testMatchGuardAlwaysTrueAlwaysFalse"
+      ],
+      "id": "mypy-6b9efca7f9b8",
+      "target_files": [
+        "mypy/reachability.py"
+      ]
+    },
+    {
+      "f2p": [
+        "mypy.test.testcheck.TypeCheckSuite.check-python310.test::testMatchRebindsInnerFunctionName",
+        "mypy.test.testcheck.TypeCheckSuite.check-python310.test::testMatchRebindsOuterFunctionName"
+      ],
+      "id": "mypy-6fd786056fb7",
+      "target_files": [
+        "mypy/checker.py"
+      ]
+    },
+    {
+      "f2p": [
+        "mypy.test.testcheck.TypeCheckSuite.check-protocols.test::testOverloadProtocolSubtyping"
+      ],
+      "id": "mypy-7567f64ee493",
+      "target_files": [
+        "mypy/subtypes.py"
+      ]
+    },
+    {
+      "f2p": [
+        "mypy.test.testcheck.TypeCheckSuite.check-final.test::testCanAccessFinalClassInit"
+      ],
+      "id": "mypy-7cb10b2653e8",
+      "target_files": [
+        "mypy/checkmember.py"
+      ]
+    },
+    {
+      "f2p": [
+        "mypy.test.testcheck.TypeCheckSuite.check-flags.test::testDisableBytearrayPromotion"
+      ],
+      "id": "mypy-7df759c0198a",
+      "target_files": [
+        "mypy/checkexpr.py"
+      ]
+    },
+    {
+      "f2p": [
+        "mypy.test.testcheck.TypeCheckSuite.check-functions.test::testDistinctFormatting",
+        "mypy.test.testcheck.TypeCheckSuite.check-functions.test::testDistinctFormattingUnion"
+      ],
+      "id": "mypy-81152f9116ef",
+      "target_files": [
+        "mypy/messages.py"
+      ]
+    },
+    {
+      "f2p": [
+        "mypy.test.testcheck.TypeCheckSuite.check-parameter-specification.test::testRunParamSpecOverlappingOverloadsOrder"
+      ],
+      "id": "mypy-8c5080a34749",
+      "target_files": [
+        "mypy/checkexpr.py"
+      ]
+    },
+    {
+      "f2p": [
+        "mypy.test.testcheck.TypeCheckSuite.check-classes.test::testReverseOperatorWithOverloads3",
+        "mypy.test.testcheck.TypeCheckSuite.check-classes.test::testReverseOperatorWithOverloadsNested"
+      ],
+      "id": "mypy-8c5666435274",
+      "target_files": [
+        "mypy/checker.py"
+      ]
+    },
+    {
+      "f2p": [
+        "mypy.test.testcheck.TypeCheckSuite.check-protocols.test::testProtocolWithMultiContravariantTypeVarOverloads"
+      ],
+      "id": "mypy-8d75298a8989",
+      "target_files": [
+        "mypy/checker.py"
+      ]
+    },
+    {
+      "f2p": [
+        "mypy.test.testcheck.TypeCheckSuite.check-typeddict.test::testGenericTypedDictUpdate"
+      ],
+      "id": "mypy-8f236eea49ce",
+      "target_files": [
+        "mypy/constraints.py",
+        "mypy/meet.py",
+        "mypy/plugins/default.py",
+        "mypy/types.py"
+      ]
+    },
+    {
+      "f2p": [
+        "mypy.test.testcheck.TypeCheckSuite.check-python312.test::testPEP695MultipleNestedGenericClass1",
+        "mypy.test.testcheck.TypeCheckSuite.check-python312.test::testPEP695MultipleNestedGenericClass3",
+        "mypy.test.testcheck.TypeCheckSuite.check-python312.test::testPEP695MultipleNestedGenericClass4",
+        "mypy.test.testcheck.TypeCheckSuite.check-python312.test::testPEP695MultipleNestedGenericClass5",
+        "mypy.test.testfinegrained.FineGrainedSuite.fine-grained-python312.test::testPEP695MultipleNestedGenericClassMethodUpdated",
+        "mypy.test.testfinegrainedcache.FineGrainedCacheSuite.fine-grained-python312.test::testPEP695MultipleNestedGenericClassMethodUpdated_cached"
+      ],
+      "id": "mypy-915c37421a51",
+      "target_files": [
+        "mypy/semanal.py"
+      ]
+    },
+    {
+      "f2p": [
+        "mypy.test.teststubgen.StubgencSuite::test_generate_c_type_none_default"
+      ],
+      "id": "mypy-9260997706e1",
+      "target_files": [
+        "mypy/stubgenc.py"
+      ]
+    },
+    {
+      "f2p": [
+        "mypy.test.testcheck.TypeCheckSuite.check-statements.test::testYieldFromInvalidType"
+      ],
+      "id": "mypy-92985d6a52f2",
+      "target_files": [
+        "mypy/checkexpr.py"
+      ]
+    },
+    {
+      "f2p": [
+        "mypy.test.testcheck.TypeCheckSuite.check-typeddict.test::testTypedDictUnpackImportCycle"
+      ],
+      "id": "mypy-9361384b2d68",
+      "target_files": [
+        "mypy/semanal.py",
+        "mypy/semanal_namedtuple.py",
+        "mypy/semanal_typeddict.py"
+      ]
+    },
+    {
+      "f2p": [
+        "mypy.test.testcheck.TypeCheckSuite.check-dataclasses.test::testFrozenWithFinal"
+      ],
+      "id": "mypy-9527d7661826",
+      "target_files": [
+        "mypy/plugins/dataclasses.py"
+      ]
+    },
+    {
+      "f2p": [
+        "mypy.test.testcheck.TypeCheckSuite.check-slots.test::testSlotsOnSelfType"
+      ],
+      "id": "mypy-97bd3fdb99c6",
+      "target_files": [
+        "mypy/checker.py"
+      ]
+    },
+    {
+      "f2p": [
+        "mypy.test.testcheck.TypeCheckSuite.check-python311.test::testRedefineLocalWithinExceptStarTryClauses",
+        "mypy.test.testcheck.TypeCheckSuite.check-redefine.test::testRedefineLocalExceptVar",
+        "mypy.test.testcheck.TypeCheckSuite.check-redefine.test::testRedefineLocalWithinTryClauses"
+      ],
+      "id": "mypy-99a90e92c410",
+      "target_files": [
+        "mypy/renaming.py"
+      ]
+    },
+    {
+      "f2p": [
+        "mypy.test.testcheck.TypeCheckSuite.check-classes.test::testImplicitClassScopedNames"
+      ],
+      "id": "mypy-9bf72a9e0712",
+      "target_files": [
+        "mypy/semanal.py"
+      ]
+    },
+    {
+      "f2p": [
+        "mypy.test.testcheck.TypeCheckSuite.check-inference.test::testDeterminismCommutativityWithJoinInvolvingProtocolBaseAndPromotableType"
+      ],
+      "id": "mypy-9ee36bb7f7f4",
+      "target_files": [
+        "mypy/join.py"
+      ]
+    },
+    {
+      "f2p": [
+        "mypy.test.testcheck.TypeCheckSuite.check-expressions.test::testConditionalExpressionWithUnreachableBranches"
+      ],
+      "id": "mypy-a24865ef7967",
+      "target_files": [
+        "mypy/checker.py",
+        "mypy/checkexpr.py"
+      ]
+    },
+    {
+      "f2p": [
+        "mypy.test.testcheck.TypeCheckSuite.check-typevar-unbound.test::testUnboundTypeVar"
+      ],
+      "id": "mypy-a84f391197ed",
+      "target_files": [
+        "mypy/checker.py"
+      ]
+    },
+    {
+      "f2p": [
+        "mypy.test.testsubtypes.SubtypingSuite::test_fallback_not_subtype_of_tuple"
+      ],
+      "id": "mypy-aa1f85835ad2",
+      "target_files": [
+        "mypy/subtypes.py"
+      ]
+    },
+    {
+      "f2p": [
+        "mypy.test.testcheck.TypeCheckSuite.check-typevar-defaults.test::testTypeVarDefaultsValid"
+      ],
+      "id": "mypy-af1664f0b6dd",
+      "target_files": [
+        "mypy/mixedtraverser.py"
+      ]
+    },
+    {
+      "f2p": [
+        "mypyc.test.test_refcount.TestRefCountTransform.refcount.test::testBytesConcatRefcount",
+        "mypyc.test.test_refcount.TestRefCountTransform.refcount.test::testChainedBytesConcatRefcount"
+      ],
+      "id": "mypy-af5f37899bda",
+      "target_files": [
+        "mypyc/primitives/bytes_ops.py"
+      ]
+    },
+    {
+      "f2p": [
+        "mypy.test.testcheck.TypeCheckSuite.check-python38.test::testWalrusAssignmentAcrossCallArguments"
+      ],
+      "id": "mypy-b51edea17218",
+      "target_files": [
+        "mypy/checkexpr.py"
+      ]
+    },
+    {
+      "f2p": [
+        "mypy.test.testdaemon.DaemonSuite.daemon.test::testDaemonCheckTwoFilesFullTypeshed",
+        "mypy.test.testdaemon.DaemonSuite.daemon.test::testDaemonRunTwoFilesFullTypeshed"
+      ],
+      "id": "mypy-b76db672009f",
+      "target_files": [
+        "mypy/build.py",
+        "mypy/dmypy_server.py",
+        "mypy/metastore.py",
+        "mypy/server/update.py",
+        "mypy/util.py"
+      ]
+    },
+    {
+      "f2p": [
+        "mypy.test.testcheck.TypeCheckSuite.check-statements.test::testExceptWithMultipleTypes5"
+      ],
+      "id": "mypy-bce60137c00e",
+      "target_files": [
+        "mypy/checker.py",
+        "mypy/fastparse.py"
+      ]
+    },
+    {
+      "f2p": [
+        "mypy.test.testcheck.TypeCheckSuite.check-selftype.test::testGenericDescriptorWithSelfTypeAnnotationsAndOverloads"
+      ],
+      "id": "mypy-c26af3a4874d",
+      "target_files": [
+        "mypy/meet.py"
+      ]
+    },
+    {
+      "f2p": [
+        "mypy.test.teststubtest.StubtestUnit::test_decorated_overload"
+      ],
+      "id": "mypy-c2c15862e61c",
+      "target_files": [
+        "mypy/stubtest.py"
+      ]
+    },
+    {
+      "f2p": [
+        "mypy.test.testcheck.TypeCheckSuite.check-incremental.test::testUnreachableAfterToplevelAssertImportThirdParty",
+        "mypy.test.testcheck.TypeCheckSuite.check-unreachable-code.test::testUnreachableAfterToplevelAssertImportThirdParty",
+        "mypy.test.testcheck.TypeCheckSuite.check-unreachable-code.test::testUnreachableAfterToplevelAssertImportThirdParty2"
+      ],
+      "id": "mypy-c389ab198c42",
+      "target_files": [
+        "mypy/semanal_pass1.py"
+      ]
+    },
+    {
+      "f2p": [
+        "mypy.test.testcheck.TypeCheckSuite.check-inference.test::testInferOptionalAgainstAny"
+      ],
+      "id": "mypy-cc2a12c6db34",
+      "target_files": [
+        "mypy/constraints.py"
+      ]
+    },
+    {
+      "f2p": [
+        "mypy.test.teststubtest.StubtestUnit::test_arg_name"
+      ],
+      "id": "mypy-cebe30982f7c",
+      "target_files": [
+        "mypy/stubtest.py"
+      ]
+    },
+    {
+      "f2p": [
+        "mypy.test.testcheck.TypeCheckSuite.check-classes.test::testLambdaInAttributeCallValue"
+      ],
+      "id": "mypy-cee151841b59",
+      "target_files": [
+        "mypy/semanal.py"
+      ]
+    },
+    {
+      "f2p": [
+        "mypy.test.testcheck.TypeCheckSuite.check-typeddict.test::testTypedDictRequiredConsistentWithNotRequiredReadOnly"
+      ],
+      "id": "mypy-d034d5a002e7",
+      "target_files": [
+        "mypy/subtypes.py"
+      ]
+    },
+    {
+      "f2p": [
+        "mypy.test.testcheck.TypeCheckSuite.check-python312.test::testDataclassWithTypeVarTuple"
+      ],
+      "id": "mypy-d050890e814a",
+      "target_files": [
+        "mypy/plugins/dataclasses.py"
+      ]
+    },
+    {
+      "f2p": [
+        "mypy.test.testcheck.TypeCheckSuite.check-python310.test::testMatchClassPatternCaptureSelfSubtype"
+      ],
+      "id": "mypy-d15277a372c8",
+      "target_files": [
+        "mypy/checkpattern.py"
+      ]
+    },
+    {
+      "f2p": [
+        "mypy.test.testcheck.TypeCheckSuite.check-errorcodes.test::testErrorCodeWarnUnusedIgnores7_WarnWhenErrorCodeDisabled"
+      ],
+      "id": "mypy-d23966f21d5d",
+      "target_files": [
+        "mypy/errors.py"
+      ]
+    },
+    {
+      "f2p": [
+        "mypy.test.testcheck.TypeCheckSuite.check-typeddict.test::testTypedDictAnnotatedWithSpecialForms"
+      ],
+      "id": "mypy-d836ccc97f66",
+      "target_files": [
+        "mypy/typeanal.py"
+      ]
+    },
+    {
+      "f2p": [
+        "mypy.test.teststubtest.StubtestUnit::test_property"
+      ],
+      "id": "mypy-db3bf1a12467",
+      "target_files": [
+        "mypy/stubtest.py"
+      ]
+    },
+    {
+      "f2p": [
+        "mypy.test.testcheck.TypeCheckSuite.check-inference.test::testInferWalrusAssignmentAttrInCondition",
+        "mypy.test.testcheck.TypeCheckSuite.check-inference.test::testInferWalrusAssignmentIndexInCondition"
+      ],
+      "id": "mypy-de60a30b9a1c",
+      "target_files": [
+        "mypy/checker.py"
+      ]
+    },
+    {
+      "f2p": [
+        "mypy.test.testfinegrained.FineGrainedSuite.fine-grained-suggest.test::testSuggestReexportNamingNameMatchesModule1",
+        "mypy.test.testfinegrained.FineGrainedSuite.fine-grained-suggest.test::testSuggestReexportNamingNameMatchesModule2"
+      ],
+      "id": "mypy-df2f3313d1fe",
+      "target_files": [
+        "mypy/suggestions.py"
+      ]
+    },
+    {
+      "f2p": [
+        "mypy.test.testcheck.TypeCheckSuite.check-functions.test::testCallableJoinWithDefaults",
+        "mypy.test.testcheck.TypeCheckSuite.check-functions.test::testCallableJoinWithDefaultsMultiple"
+      ],
+      "id": "mypy-e789a87b66ae",
+      "target_files": [
+        "mypy/join.py"
+      ]
+    },
+    {
+      "f2p": [
+        "mypy.test.testmodulefinder.ModuleFinderSitePackagesSuite::test__packages_with_ns",
+        "mypy.test.testmodulefinder.ModuleFinderSitePackagesSuite::test__packages_without_ns"
+      ],
+      "id": "mypy-e895849ef997",
+      "target_files": [
+        "mypy/modulefinder.py"
+      ]
+    },
+    {
+      "f2p": [
+        "mypy.test.testcheck.TypeCheckSuite.check-python310.test::testMatchOrPatternExhaustiveness"
+      ],
+      "id": "mypy-e9950dca0f54",
+      "target_files": [
+        "mypy/checkpattern.py"
+      ]
+    },
+    {
+      "f2p": [
+        "mypy.test.testcheck.TypeCheckSuite.check-parameter-specification.test::testBindPartial",
+        "mypy.test.testcheck.TypeCheckSuite.check-parameter-specification.test::testBindPartialConcatenate",
+        "mypy.test.testcheck.TypeCheckSuite.check-parameter-specification.test::testOtherVarArgs"
+      ],
+      "id": "mypy-eac2bbb6874c",
+      "target_files": [
+        "mypy/checkexpr.py",
+        "mypy/plugins/functools.py",
+        "mypy/types.py"
+      ]
+    },
+    {
+      "f2p": [
+        "mypy.test.testcmdline.PythonCmdlineSuite.cmdline.test::testShadowFileWithPretty"
+      ],
+      "id": "mypy-ededcfd17872",
+      "target_files": [
+        "mypy/errors.py"
+      ]
+    },
+    {
+      "f2p": [
+        "mypy.test.testcheck.TypeCheckSuite.check-classes.test::testCorrectConstructorTypeWithAnyFallback"
+      ],
+      "id": "mypy-ee25617f4365",
+      "target_files": [
+        "mypy/typeops.py"
+      ]
+    },
+    {
+      "f2p": [
+        "mypy.test.testcheck.TypeCheckSuite.check-python310.test::testMatchSequencePatternTypeVarBoundNarrows",
+        "mypy.test.testcheck.TypeCheckSuite.check-python310.test::testMatchSequencePatternTypeVarBoundNoCrash"
+      ],
+      "id": "mypy-ef61397e10ba",
+      "target_files": [
+        "mypy/checkpattern.py"
+      ]
+    },
+    {
+      "f2p": [
+        "mypy.test.testcheck.TypeCheckSuite.check-inference-context.test::testInferenceContextReturningTypeVarUnion"
+      ],
+      "id": "mypy-ef70814067dc",
+      "target_files": [
+        "mypy/checkexpr.py"
+      ]
+    },
+    {
+      "f2p": [
+        "mypy.test.testcheck.TypeCheckSuite.check-type-promotion.test::testRejectPromotionsForProtocols"
+      ],
+      "id": "mypy-f03ffcd89565",
+      "target_files": [
+        "mypy/subtypes.py"
+      ]
+    },
+    {
+      "f2p": [
+        "mypy.test.testcheck.TypeCheckSuite.check-selftype.test::testSelfInMultipleInheritance"
+      ],
+      "id": "mypy-f1401c3974a5",
+      "target_files": [
+        "mypy/checker.py"
+      ]
+    },
+    {
+      "f2p": [
+        "mypy.test.testfinegrained.FineGrainedSuite.fine-grained-suggest.test::testSuggestNewInit"
+      ],
+      "id": "mypy-f5c1b7a35902",
+      "target_files": [
+        "mypy/checker.py",
+        "mypy/nodes.py",
+        "mypy/semanal.py",
+        "mypy/suggestions.py",
+        "mypy/typeops.py"
+      ]
+    },
+    {
+      "f2p": [
+        "mypy.test.testcheck.TypeCheckSuite.check-literal.test::testLiteralTernaryUnionNarrowing"
+      ],
+      "id": "mypy-fa326f27e506",
+      "target_files": [
+        "mypy/checkexpr.py"
+      ]
+    },
+    {
+      "f2p": [
+        "mypy.test.testcheck.TypeCheckSuite.check-parameter-specification.test::testParamSpecInTypeAliasIllegalBare"
+      ],
+      "id": "mypy-fc02f3c00e2a",
+      "target_files": [
+        "mypy/typeanal.py"
+      ]
+    },
+    {
+      "f2p": [
+        "mypy.test.testcheck.TypeCheckSuite.check-unreachable-code.test::testConditionalValuesNegation",
+        "mypy.test.testcheck.TypeCheckSuite.check-unreachable-code.test::testMypyFalseValuesInBinaryOps_no_empty"
+      ],
+      "id": "mypy-fff7d69833ae",
+      "target_files": [
+        "mypy/reachability.py"
+      ]
+    }
+  ],
+  "task": "mypy",
+  "version": "1.13.0"
+}

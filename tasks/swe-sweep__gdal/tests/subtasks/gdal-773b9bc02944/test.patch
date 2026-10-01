@@ -1,0 +1,32 @@
+diff --git a/autotest/gcore/multidim.py b/autotest/gcore/multidim.py
+index 31eb4e8..981583b 100644
+--- a/autotest/gcore/multidim.py
++++ b/autotest/gcore/multidim.py
+@@ -36,6 +36,27 @@ import pytest
+ from osgeo import gdal, osr
+ 
+ 
++@gdaltest.enable_exceptions()
++def test_multidim_asclassicdataset_single_dim():
++
++    drv = gdal.GetDriverByName("MEM")
++    mem_ds = drv.CreateMultiDimensional("myds")
++    rg = mem_ds.GetRootGroup()
++
++    dim = rg.CreateDimension("dim", None, None, 2)
++    ar = rg.CreateMDArray("ar", [dim], gdal.ExtendedDataType.Create(gdal.GDT_Float64))
++    ar.Write(array.array("d", [10.5, 20]))
++
++    assert ar.AsClassicDataset(0, 0).ReadRaster() == array.array("d", [10.5, 20])
++
++    with pytest.raises(Exception, match="Invalid iXDim and/or iYDim"):
++        ar.AsClassicDataset(0, 1)
++
++    with pytest.raises(Exception, match="Invalid iXDim and/or iYDim"):
++        ar.AsClassicDataset(1, 0)
++
++
++@gdaltest.enable_exceptions()
+ def test_multidim_asarray_epsg_4326():
+ 
+     ds = gdal.Open("../gdrivers/data/small_world.tif")

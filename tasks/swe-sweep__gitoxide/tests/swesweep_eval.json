@@ -1,0 +1,128 @@
+{
+  "build_jobs": 4,
+  "container_repo": "/gitoxide",
+  "evaluation": {
+    "suite": "reproduction",
+    "visible_timeout": 14400
+  },
+  "upstream_image": "pandora-maxbug-gitoxide:v0.54.0",
+  "n_base_passing": 2151,
+  "n_base_test_ignore": 8,
+  "oracle_digest": "3d921dcadf0d2f560080230a584a11b1a727e60ddd1824a3d1267882f5333cbe",
+  "oracle_pristine_paths": [],
+  "upstream_commit": "9f7399e15e6172900e0591deb5a57a45769d8205",
+  "reproduction": {
+    "needs_build": false,
+    "suite": {
+      "type": "cargo"
+    },
+    "test_timeout": 1800
+  },
+  "schema": 2,
+  "subtasks": [
+    {
+      "f2p": [
+        "url::parse::http::colon_in_username_roundtrips"
+      ],
+      "id": "gitoxide-087af1122d4a",
+      "target_files": [
+        "gix-url/src/lib.rs"
+      ]
+    },
+    {
+      "f2p": [
+        "gix::repository::open::discover_with_git_dir_environment_override_sets_trust"
+      ],
+      "id": "gitoxide-2fe8201cf622",
+      "target_files": [
+        "gix/src/open/repository.rs"
+      ]
+    },
+    {
+      "f2p": [
+        "gix::repository::worktree::with_core_worktree_config::relative_from_symlinked_git_dir",
+        "gix::submodule::open::status_uses_detached_worktree_from_symlinked_git_dir"
+      ],
+      "id": "gitoxide-7f3b36e58ea1",
+      "target_files": [
+        "gix/src/open/repository.rs"
+      ]
+    },
+    {
+      "f2p": [
+        "attributes::search::macro_attributes_expand_only_when_macro_is_set"
+      ],
+      "id": "gitoxide-7fda5caef1d2",
+      "target_files": [
+        "gix-attributes/src/search/outcome.rs"
+      ]
+    },
+    {
+      "f2p": [
+        "gix::repository::filter::worktree_file_to_object_opens_submodules_after_path_options_were_consumed"
+      ],
+      "id": "gitoxide-8b8b4465e5d4",
+      "target_files": [
+        "gix/src/open/options.rs",
+        "gix/src/open/repository.rs"
+      ]
+    },
+    {
+      "f2p": [
+        "gix::submodule::open::absolute_looking_names_remain_below_the_modules_directory"
+      ],
+      "id": "gitoxide-c2ff99412835",
+      "target_files": [
+        "gix/src/submodule/mod.rs"
+      ]
+    },
+    {
+      "f2p": [
+        "error::exn::erased_errors_are_found_by_source_iteration",
+        "error::exn::erased_frames_still_expose_the_original_error",
+        "error::exn::erased_into_inner_preserves_source_chain",
+        "gix::revision::spec::from_bytes::missing_revision_keeps_reference_lookup_error_in_error_sources_for_path_fallback"
+      ],
+      "id": "gitoxide-cb424463e314",
+      "target_files": [
+        "gitoxide-core/src/repository/merge/commit.rs",
+        "gitoxide-core/src/repository/merge/tree.rs",
+        "gitoxide-core/src/repository/status.rs",
+        "gix-chunk/src/file/decode.rs",
+        "gix-chunk/src/file/write.rs",
+        "gix-config/src/parse/error.rs",
+        "gix-date/src/parse/git.rs",
+        "gix-error/src/exn/impls.rs",
+        "gix-fs/src/dir/remove.rs",
+        "gix-imara-diff/src/unified_diff.rs",
+        "gix-object/src/commit/ref_iter.rs",
+        "gix-object/src/tree/editor.rs",
+        "gix-odb/src/store_impls/dynamic/find.rs",
+        "gix-protocol/src/remote_progress.rs",
+        "gix-ref/src/store/general/handle/find.rs",
+        "gix/src/head/peel.rs"
+      ]
+    },
+    {
+      "f2p": [
+        "gix::repository::filter::repo_local_filter_driver_configuration_overrides_global_configuration"
+      ],
+      "id": "gitoxide-da3551bc58fb",
+      "target_files": [
+        "gix/src/filter.rs"
+      ]
+    },
+    {
+      "f2p": [
+        "gix::repository::open::worktree_of_natively_bare_repo"
+      ],
+      "id": "gitoxide-f4ee8cb36084",
+      "target_files": [
+        "gix-discover/src/path.rs",
+        "gix/src/repository/location.rs"
+      ]
+    }
+  ],
+  "task": "gitoxide",
+  "version": "v0.54.0"
+}

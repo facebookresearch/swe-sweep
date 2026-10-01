@@ -1,0 +1,57 @@
+diff --git a/crates/ruff_linter/resources/test/fixtures/pyupgrade/UP020.py b/crates/ruff_linter/resources/test/fixtures/pyupgrade/UP020.py
+index 00c8f30239..92e5947eba 100644
+--- a/crates/ruff_linter/resources/test/fixtures/pyupgrade/UP020.py
++++ b/crates/ruff_linter/resources/test/fixtures/pyupgrade/UP020.py
+@@ -7,3 +7,11 @@ from io import open
+ 
+ with open("f.txt") as f:
+     print(f.read())
++
++
++with (
++    io  # text
++    # text
++    .open("file.txt") as f
++):
++    ...
+diff --git a/crates/ruff_linter/src/rules/pyupgrade/snapshots/ruff_linter__rules__pyupgrade__tests__UP020.py.snap b/crates/ruff_linter/src/rules/pyupgrade/snapshots/ruff_linter__rules__pyupgrade__tests__UP020.py.snap
+index ed65106..39760ad 100644
+--- a/crates/ruff_linter/src/rules/pyupgrade/snapshots/ruff_linter__rules__pyupgrade__tests__UP020.py.snap
++++ b/crates/ruff_linter/src/rules/pyupgrade/snapshots/ruff_linter__rules__pyupgrade__tests__UP020.py.snap
+@@ -40,3 +40,36 @@ UP020.py:8:6: UP020 [*] Use builtin `open`
+ 8     |-with open("f.txt") as f:
+    9  |+with builtins.open("f.txt") as f:
+ 9  10 |     print(f.read())
++10 11 | 
++11 12 | 
++
++UP020.py:13:5: UP020 [*] Use builtin `open`
++   |
++12 |   with (
++13 |       io  # text
++   |  _____^
++14 | |     # text
++15 | |     .open("file.txt") as f
++   | |_____________________^ UP020
++16 |   ):
++17 |       ...
++   |
++   = help: Replace with builtin `open`
++
++ℹ Unsafe fix
++4  4  |     print(f.read())
++5  5  | 
++6  6  | from io import open
++   7  |+import builtins
++7  8  | 
++8  9  | with open("f.txt") as f:
++9  10 |     print(f.read())
++10 11 | 
++11 12 | 
++12 13 | with (
++13    |-    io  # text
++14    |-    # text
++15    |-    .open("file.txt") as f
++   14 |+    builtins.open("file.txt") as f
++16 15 | ):
++17 16 |     ...

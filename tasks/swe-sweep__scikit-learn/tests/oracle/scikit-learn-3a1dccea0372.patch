@@ -1,0 +1,13 @@
+diff --git a/sklearn/mixture/gaussian_mixture.py b/sklearn/mixture/gaussian_mixture.py
+index 730f77a732..d710b0d018 100644
+--- a/sklearn/mixture/gaussian_mixture.py
++++ b/sklearn/mixture/gaussian_mixture.py
+@@ -647,7 +647,7 @@ class GaussianMixture(BaseMixture):
+             self.precisions_cholesky_ = linalg.cholesky(self.precisions_init,
+                                                         lower=True)
+         else:
+-            self.precisions_cholesky_ = self.precisions_init
++            self.precisions_cholesky_ = np.sqrt(self.precisions_init)
+ 
+     def _m_step(self, X, log_resp):
+         """M step.

@@ -1,0 +1,24 @@
+diff --git a/modules/openapi-generator/src/main/resources/JavaJaxRS/spec/enumClass.mustache b/modules/openapi-generator/src/main/resources/JavaJaxRS/spec/enumClass.mustache
+index 87985b167bd..d9b74552408 100644
+--- a/modules/openapi-generator/src/main/resources/JavaJaxRS/spec/enumClass.mustache
++++ b/modules/openapi-generator/src/main/resources/JavaJaxRS/spec/enumClass.mustache
+@@ -43,6 +43,6 @@
+                 return b;
+             }
+         }
+-        {{#isNullable}}return null;{{/isNullable}}{{^isNullable}}throw new IllegalArgumentException("Unexpected value '" + value + "'");{{/isNullable}}
++        {{#isNullable}}return null;{{/isNullable}}{{^isNullable}}{{#enumUnknownDefaultCase}}{{#allowableValues}}{{#enumVars}}{{#-last}}return {{{name}}};{{/-last}}{{/enumVars}}{{/allowableValues}}{{/enumUnknownDefaultCase}}{{^enumUnknownDefaultCase}}throw new IllegalArgumentException("Unexpected value '" + value + "'");{{/enumUnknownDefaultCase}}{{/isNullable}}
+     }
+ }
+diff --git a/modules/openapi-generator/src/main/resources/JavaJaxRS/spec/enumOuterClass.mustache b/modules/openapi-generator/src/main/resources/JavaJaxRS/spec/enumOuterClass.mustache
+index 17f29417c6d..c13a2f69986 100644
+--- a/modules/openapi-generator/src/main/resources/JavaJaxRS/spec/enumOuterClass.mustache
++++ b/modules/openapi-generator/src/main/resources/JavaJaxRS/spec/enumOuterClass.mustache
+@@ -53,6 +53,6 @@ import com.fasterxml.jackson.annotation.JsonValue;
+         return b;
+       }
+     }
+-    {{#isNullable}}return null;{{/isNullable}}{{^isNullable}}throw new IllegalArgumentException("Unexpected value '" + value + "'");{{/isNullable}}
++    {{#isNullable}}return null;{{/isNullable}}{{^isNullable}}{{#enumUnknownDefaultCase}}{{#allowableValues}}{{#enumVars}}{{#-last}}return {{{name}}};{{/-last}}{{/enumVars}}{{/allowableValues}}{{/enumUnknownDefaultCase}}{{^enumUnknownDefaultCase}}throw new IllegalArgumentException("Unexpected value '" + value + "'");{{/enumUnknownDefaultCase}}{{/isNullable}}
+   }
+ }

@@ -1,0 +1,45 @@
+diff --git a/pandas/tests/groupby/test_libgroupby.py b/pandas/tests/groupby/test_libgroupby.py
+index d10bcf9053..92c3b68d87 100644
+--- a/pandas/tests/groupby/test_libgroupby.py
++++ b/pandas/tests/groupby/test_libgroupby.py
+@@ -1,8 +1,10 @@
+ import numpy as np
++import pytest
+ 
+ from pandas._libs import groupby as libgroupby
+ from pandas._libs.groupby import (
+     group_cumprod_float64,
++    group_add,
+     group_cumsum,
+     group_var,
+ )
+@@ -233,3 +235,29 @@ def test_cython_group_transform_algos():
+         ]
+     )
+     tm.assert_numpy_array_equal(actual[:, 0].view("m8[ns]"), expected)
++
++
++@pytest.mark.parametrize(
++    "values, out",
++    [
++        ([[np.inf], [np.inf], [np.inf]], [[np.inf], [np.inf]]),
++        ([[np.inf], [np.inf], [-np.inf]], [[np.inf], [np.nan]]),
++        ([[np.inf], [-np.inf], [np.inf]], [[np.inf], [np.nan]]),
++        ([[np.inf], [-np.inf], [-np.inf]], [[np.inf], [-np.inf]]),
++    ],
++)
++def test_cython_group_sum_Inf_at_begining_and_end(values, out):
++    # GH #53606
++    actual = np.array([[np.nan], [np.nan]], dtype="float64")
++    counts = np.array([0, 0], dtype="int64")
++    data = np.array(values, dtype="float64")
++    labels = np.array([0, 1, 1], dtype=np.intp)
++
++    group_add(actual, counts, data, labels)
++
++    expected = np.array(out, dtype="float64")
++
++    tm.assert_numpy_array_equal(
++        actual,
++        expected,
++    )

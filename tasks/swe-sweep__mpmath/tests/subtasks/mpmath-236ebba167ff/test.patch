@@ -1,0 +1,15 @@
+diff --git a/mpmath/tests/test_functions2.py b/mpmath/tests/test_functions2.py
+index 1176fb4b..6d860f8a 100644
+--- a/mpmath/tests/test_functions2.py
++++ b/mpmath/tests/test_functions2.py
+@@ -2382,3 +2382,10 @@ def test_bessel_zeros_extra():
+             assert besselyzero(v,m).ae(yn_small_zeros[v][m-1])
+             assert besselyzero(v,m,1).ae(ynp_small_zeros[v][m-1])
+             assert besselyzero(v,m,1).ae(ynp_small_zeros[v][m-1])
++
++def test_issue_473():
++    assert mp.polylog(1, -mp.inf) == -mp.inf
++    assert mp.polylog(2, -mp.inf) == -mp.inf
++    assert mp.polylog(3, -mp.inf) == -mp.inf
++    assert mp.polylog(4, -mp.inf) == -mp.inf
++    assert mp.polylog(5, -mp.inf) == -mp.inf

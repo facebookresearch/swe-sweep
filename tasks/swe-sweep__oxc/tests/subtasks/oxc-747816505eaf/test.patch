@@ -1,0 +1,19 @@
+diff --git a/crates/oxc_transformer_plugins/tests/integrations/replace_global_defines.rs b/crates/oxc_transformer_plugins/tests/integrations/replace_global_defines.rs
+index 06a387fb1e..e181287f63 100644
+--- a/crates/oxc_transformer_plugins/tests/integrations/replace_global_defines.rs
++++ b/crates/oxc_transformer_plugins/tests/integrations/replace_global_defines.rs
+@@ -80,6 +80,14 @@ fn dot() {
+     test("foo(process['env'].NODE_ENV)", "foo(production)", &config);
+ }
+ 
++#[test]
++fn dot_with_partial_overlap() {
++    let config = config(&[("import.meta.foo.bar", "1")]);
++    test("console.log(import.meta.bar)", "console.log(import.meta.bar)", &config);
++    test("console.log(import.meta.foo)", "console.log(import.meta.foo)", &config);
++    test("console.log(import.meta.foo.bar)", "console.log(1)", &config);
++}
++
+ #[test]
+ fn dot_with_overlap() {
+     let config =

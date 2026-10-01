@@ -1,0 +1,21 @@
+diff --git a/tests/basics/int_big_error.py b/tests/basics/int_big_error.py
+index 79809aef1..1793cf325 100644
+--- a/tests/basics/int_big_error.py
++++ b/tests/basics/int_big_error.py
+@@ -7,6 +7,16 @@ try:
+ except ValueError:
+     print("ValueError")
+ 
++try:
++    i @ 0
++except TypeError:
++    print("TypeError")
++
++try:
++    i @= 0
++except TypeError:
++    print("TypeError")
++
+ try:
+     len(i)
+ except TypeError:

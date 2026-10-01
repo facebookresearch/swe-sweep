@@ -1,0 +1,122 @@
+diff --git a/lib/rules/function-url-quotes/index.cjs b/lib/rules/function-url-quotes/index.cjs
+index 287bfccdc..02edda8cc 100644
+--- a/lib/rules/function-url-quotes/index.cjs
++++ b/lib/rules/function-url-quotes/index.cjs
+@@ -2,6 +2,7 @@
+ // please instead edit the ESM counterpart and rebuild with Rollup (npm run build).
+ 'use strict';
+ 
++const cssTokenizer = require('@csstools/css-tokenizer');
+ const atRuleParamIndex = require('../../utils/atRuleParamIndex.cjs');
+ const declarationValueIndex = require('../../utils/declarationValueIndex.cjs');
+ const functionArgumentsSearch = require('../../utils/functionArgumentsSearch.cjs');
+@@ -156,6 +157,39 @@ const rule = (primary, secondaryOptions) => {
+ 			}
+ 		}
+ 
++		/**
++		 * Check if a URL requires quotes for valid CSS
++		 *
++		 * This function determines if a URL needs to be quoted when used in a CSS url() function.
++		 * It tokenizes the URL and checks if it would be parsed as a bad-url token, which indicates
++		 * that quotes are necessary for valid CSS.
++		 *
++		 * @param {string} url - The URL value, either quoted or unquoted
++		 * @returns {boolean} True if the URL requires quotes to be valid CSS, false otherwise
++		 */
++		function requiresQuotes(url) {
++			// Extract the URL content (remove quotes if present)
++			let urlContent = url;
++
++			const quote = url[0] ?? '';
++			const endQuoteIndex = url.lastIndexOf(quote);
++
++			if (endQuoteIndex > 0) {
++				urlContent = url.slice(1, endQuoteIndex);
++			}
++
++			const tokens = cssTokenizer.tokenize({ css: `url(${urlContent})` });
++
++			// there is always an EOF token, so we expect 2 tokens for a valid URL
++			if (tokens.length !== 2) return true;
++
++			const urlToken = tokens[0];
++
++			if (!cssTokenizer.isTokenURL(urlToken)) return true;
++
++			return false;
++		}
++
+ 		/**
+ 		 * @param {string} args
+ 		 * @param {number} index
+@@ -174,6 +208,9 @@ const rule = (primary, secondaryOptions) => {
+ 
+ 			const hasQuotes = leftTrimmedArgs.startsWith("'") || leftTrimmedArgs.startsWith('"');
+ 
++			// If quotes are required, don't complain about them being present
++			if (hasQuotes && requiresQuotes(leftTrimmedArgs)) return;
++
+ 			if (expectQuotes && hasQuotes) return;
+ 
+ 			if (!expectQuotes && !hasQuotes) return;
+diff --git a/lib/rules/function-url-quotes/index.mjs b/lib/rules/function-url-quotes/index.mjs
+index 455ec3516..546ac1125 100644
+--- a/lib/rules/function-url-quotes/index.mjs
++++ b/lib/rules/function-url-quotes/index.mjs
+@@ -1,3 +1,5 @@
++import { isTokenURL, tokenize } from '@csstools/css-tokenizer';
++
+ import atRuleParamIndex from '../../utils/atRuleParamIndex.mjs';
+ import declarationValueIndex from '../../utils/declarationValueIndex.mjs';
+ import functionArgumentsSearch from '../../utils/functionArgumentsSearch.mjs';
+@@ -152,6 +154,39 @@ const rule = (primary, secondaryOptions) => {
+ 			}
+ 		}
+ 
++		/**
++		 * Check if a URL requires quotes for valid CSS
++		 *
++		 * This function determines if a URL needs to be quoted when used in a CSS url() function.
++		 * It tokenizes the URL and checks if it would be parsed as a bad-url token, which indicates
++		 * that quotes are necessary for valid CSS.
++		 *
++		 * @param {string} url - The URL value, either quoted or unquoted
++		 * @returns {boolean} True if the URL requires quotes to be valid CSS, false otherwise
++		 */
++		function requiresQuotes(url) {
++			// Extract the URL content (remove quotes if present)
++			let urlContent = url;
++
++			const quote = url[0] ?? '';
++			const endQuoteIndex = url.lastIndexOf(quote);
++
++			if (endQuoteIndex > 0) {
++				urlContent = url.slice(1, endQuoteIndex);
++			}
++
++			const tokens = tokenize({ css: `url(${urlContent})` });
++
++			// there is always an EOF token, so we expect 2 tokens for a valid URL
++			if (tokens.length !== 2) return true;
++
++			const urlToken = tokens[0];
++
++			if (!isTokenURL(urlToken)) return true;
++
++			return false;
++		}
++
+ 		/**
+ 		 * @param {string} args
+ 		 * @param {number} index
+@@ -170,6 +205,9 @@ const rule = (primary, secondaryOptions) => {
+ 
+ 			const hasQuotes = leftTrimmedArgs.startsWith("'") || leftTrimmedArgs.startsWith('"');
+ 
++			// If quotes are required, don't complain about them being present
++			if (hasQuotes && requiresQuotes(leftTrimmedArgs)) return;
++
+ 			if (expectQuotes && hasQuotes) return;
+ 
+ 			if (!expectQuotes && !hasQuotes) return;

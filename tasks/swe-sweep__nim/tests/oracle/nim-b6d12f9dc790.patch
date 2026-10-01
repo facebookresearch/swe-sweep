@@ -1,0 +1,69 @@
+diff --git a/compiler/ast.nim b/compiler/ast.nim
+index abd2ff01e..9086860b9 100644
+--- a/compiler/ast.nim
++++ b/compiler/ast.nim
+@@ -2101,3 +2101,11 @@ proc skipAddr*(n: PNode): PNode {.inline.} =
+ proc isNewStyleConcept*(n: PNode): bool {.inline.} =
+   assert n.kind == nkTypeClassTy
+   result = n[0].kind == nkEmpty
++
++const
++  nodesToIgnoreSet* = {nkNone..pred(nkSym), succ(nkSym)..nkNilLit,
++    nkTypeSection, nkProcDef, nkConverterDef,
++    nkMethodDef, nkIteratorDef, nkMacroDef, nkTemplateDef, nkLambda, nkDo,
++    nkFuncDef, nkConstSection, nkConstDef, nkIncludeStmt, nkImportStmt,
++    nkExportStmt, nkPragma, nkCommentStmt, nkBreakState,
++    nkTypeOfExpr, nkMixinStmt, nkBindStmt}
+diff --git a/compiler/isolation_check.nim b/compiler/isolation_check.nim
+index 777e7f6ce..a8c5a3651 100644
+--- a/compiler/isolation_check.nim
++++ b/compiler/isolation_check.nim
+@@ -77,6 +77,17 @@ proc canAlias*(arg, ret: PType): bool =
+     var marker = initIntSet()
+     result = canAlias(arg, ret, marker)
+ 
++proc containsVariable(n: PNode): bool =
++  case n.kind
++  of nodesToIgnoreSet:
++    result = false
++  of nkSym:
++    result = n.sym.kind in {skForVar, skParam, skVar, skLet, skConst, skResult, skTemp}
++  else:
++    for ch in n:
++      if containsVariable(ch): return true
++    result = false
++
+ proc checkIsolate*(n: PNode): bool =
+   if types.containsTyRef(n.typ):
+     # XXX Maybe require that 'n.typ' is acyclic. This is not much
+@@ -96,7 +107,11 @@ proc checkIsolate*(n: PNode): bool =
+         else:
+           let argType = n[i].typ
+           if argType != nil and not isCompileTimeOnly(argType) and containsTyRef(argType):
+-            if argType.canAlias(n.typ):
++            if argType.canAlias(n.typ) or containsVariable(n[i]):
++              # bug #19013: Alias information is not enough, we need to check for potential
++              # "overlaps". I claim the problem can only happen by reading again from a location
++              # that materialized which is only possible if a variable that contains a `ref`
++              # is involved.
+               return false
+       result = true
+     of nkIfStmt, nkIfExpr:
+diff --git a/compiler/varpartitions.nim b/compiler/varpartitions.nim
+index 709d00fa0..721de900e 100644
+--- a/compiler/varpartitions.nim
++++ b/compiler/varpartitions.nim
+@@ -647,13 +647,6 @@ proc deps(c: var Partitions; dest, src: PNode) =
+                 when explainCursors: echo "D not a cursor ", d.sym, " reassignedTo ", c.s[srcid].reassignedTo
+                 c.s[vid].flags.incl preventCursor
+ 
+-const
+-  nodesToIgnoreSet = {nkNone..pred(nkSym), succ(nkSym)..nkNilLit,
+-    nkTypeSection, nkProcDef, nkConverterDef,
+-    nkMethodDef, nkIteratorDef, nkMacroDef, nkTemplateDef, nkLambda, nkDo,
+-    nkFuncDef, nkConstSection, nkConstDef, nkIncludeStmt, nkImportStmt,
+-    nkExportStmt, nkPragma, nkCommentStmt, nkBreakState,
+-    nkTypeOfExpr, nkMixinStmt, nkBindStmt}
+ 
+ proc potentialMutationViaArg(c: var Partitions; n: PNode; callee: PType) =
+   if constParameters in c.goals and tfNoSideEffect in callee.flags:

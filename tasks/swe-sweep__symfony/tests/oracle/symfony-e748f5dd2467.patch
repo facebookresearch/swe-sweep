@@ -1,0 +1,17 @@
+diff --git a/src/Symfony/Component/PropertyInfo/Extractor/ReflectionExtractor.php b/src/Symfony/Component/PropertyInfo/Extractor/ReflectionExtractor.php
+index ecdb9eeaa44..e83b3b5a162 100644
+--- a/src/Symfony/Component/PropertyInfo/Extractor/ReflectionExtractor.php
++++ b/src/Symfony/Component/PropertyInfo/Extractor/ReflectionExtractor.php
+@@ -709,6 +709,12 @@ class ReflectionExtractor implements PropertyListExtractorInterface, PropertyTyp
+         $pattern = implode('|', array_merge($this->accessorPrefixes, $this->mutatorPrefixes));
+ 
+         if ('' !== $pattern && preg_match('/^('.$pattern.')(.+)$/i', $methodName, $matches)) {
++            // a lowercase first letter means the prefix is part of a longer word rather than a
++            // prefix, e.g. "hash" or "cancel", so the method is not an accessor at all
++            if (ctype_lower($matches[2][0])) {
++                return null;
++            }
++
+             if (!\in_array($matches[1], $this->arrayMutatorPrefixes)) {
+                 return $matches[2];
+             }

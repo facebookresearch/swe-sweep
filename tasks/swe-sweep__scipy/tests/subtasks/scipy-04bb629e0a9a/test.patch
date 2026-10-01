@@ -1,0 +1,25 @@
+diff --git a/scipy/stats/tests/test_distributions.py b/scipy/stats/tests/test_distributions.py
+index e5a12be7a6..ad9fc1d375 100644
+--- a/scipy/stats/tests/test_distributions.py
++++ b/scipy/stats/tests/test_distributions.py
+@@ -3527,6 +3527,20 @@ def test_burr12_ppf_small_arg():
+     #   5.7735026918962575e-09
+     assert_allclose(quantile, 5.7735026918962575e-09)
+ 
++
++# Reference values were computed with mpmath using mp.dps = 80
++# and then cast to float.
++@pytest.mark.parametrize(
++    'p, c, d, ref',
++    [(1e-12, 20, 0.5, 15.848931924611135),
++     (1e-19, 20, 0.5, 79.43282347242815),
++     (1e-12, 0.25, 35, 2.0888618213462466),
++     (1e-80, 0.25, 35, 1360930951.7972188)]
++)
++def test_burr12_isf_near_zero(p, c, d, ref):
++    x = stats.burr12.isf(p, c, d)
++    assert_allclose(x, ref, rtol=1e-14)
++
+ 
+ def test_crystalball_function():
+     """

@@ -1,0 +1,20 @@
+diff --git a/actionview/lib/action_view/helpers/text_helper.rb b/actionview/lib/action_view/helpers/text_helper.rb
+index a1aec465979..3139ee410c4 100644
+--- a/actionview/lib/action_view/helpers/text_helper.rb
++++ b/actionview/lib/action_view/helpers/text_helper.rb
+@@ -260,7 +260,14 @@ module ActionView
+         prefix, first_part   = cut_excerpt_part(:first, first_part, separator, options)
+         postfix, second_part = cut_excerpt_part(:second, second_part, separator, options)
+ 
+-        affix = [first_part, separator, phrase, separator, second_part].join.strip
++        affix = [
++          first_part,
++          !first_part.empty? ? separator : "",
++          phrase,
++          !second_part.empty? ? separator : "",
++          second_part
++        ].join.strip
++
+         [prefix, affix, postfix].join
+       end
+ 

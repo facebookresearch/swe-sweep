@@ -1,0 +1,108 @@
+diff --git a/callbacks.go b/callbacks.go
+index de979e4..ca6b6d5 100644
+--- a/callbacks.go
++++ b/callbacks.go
+@@ -75,11 +75,7 @@ func (cs *callbacks) Raw() *processor {
+ func (p *processor) Execute(db *DB) *DB {
+ 	// call scopes
+ 	for len(db.Statement.scopes) > 0 {
+-		scopes := db.Statement.scopes
+-		db.Statement.scopes = nil
+-		for _, scope := range scopes {
+-			db = scope(db)
+-		}
++		db = db.executeScopes()
+ 	}
+ 
+ 	var (
+diff --git a/chainable_api.go b/chainable_api.go
+index a85235e..19d405c 100644
+--- a/chainable_api.go
++++ b/chainable_api.go
+@@ -270,6 +270,36 @@ func (db *DB) Scopes(funcs ...func(*DB) *DB) (tx *DB) {
+ 	return tx
+ }
+ 
++func (db *DB) executeScopes() (tx *DB) {
++	tx = db.getInstance()
++	scopes := db.Statement.scopes
++	if len(scopes) == 0 {
++		return tx
++	}
++	tx.Statement.scopes = nil
++
++	conditions := make([]clause.Interface, 0, 4)
++	if cs, ok := tx.Statement.Clauses["WHERE"]; ok && cs.Expression != nil {
++		conditions = append(conditions, cs.Expression.(clause.Interface))
++		cs.Expression = nil
++		tx.Statement.Clauses["WHERE"] = cs
++	}
++
++	for _, scope := range scopes {
++		tx = scope(tx)
++		if cs, ok := tx.Statement.Clauses["WHERE"]; ok && cs.Expression != nil {
++			conditions = append(conditions, cs.Expression.(clause.Interface))
++			cs.Expression = nil
++			tx.Statement.Clauses["WHERE"] = cs
++		}
++	}
++
++	for _, condition := range conditions {
++		tx.Statement.AddClause(condition)
++	}
++	return tx
++}
++
+ // Preload preload associations with given conditions
+ //    db.Preload("Orders", "state NOT IN (?)", "cancelled").Find(&users)
+ func (db *DB) Preload(query string, args ...interface{}) (tx *DB) {
+diff --git a/migrator.go b/migrator.go
+index 9c7cc2c..037afc3 100644
+--- a/migrator.go
++++ b/migrator.go
+@@ -13,11 +13,7 @@ func (db *DB) Migrator() Migrator {
+ 
+ 	// apply scopes to migrator
+ 	for len(tx.Statement.scopes) > 0 {
+-		scopes := tx.Statement.scopes
+-		tx.Statement.scopes = nil
+-		for _, scope := range scopes {
+-			tx = scope(tx)
+-		}
++		tx = tx.executeScopes()
+ 	}
+ 
+ 	return tx.Dialector.Migrator(tx.Session(&Session{}))
+diff --git a/statement.go b/statement.go
+index bc959f0..59c0b77 100644
+--- a/statement.go
++++ b/statement.go
+@@ -312,11 +312,9 @@ func (stmt *Statement) BuildCondition(query interface{}, args ...interface{}) []
+ 		case clause.Expression:
+ 			conds = append(conds, v)
+ 		case *DB:
+-			for _, scope := range v.Statement.scopes {
+-				v = scope(v)
+-			}
++			v.executeScopes()
+ 
+-			if cs, ok := v.Statement.Clauses["WHERE"]; ok {
++			if cs, ok := v.Statement.Clauses["WHERE"]; ok && cs.Expression != nil {
+ 				if where, ok := cs.Expression.(clause.Where); ok {
+ 					if len(where.Exprs) == 1 {
+ 						if orConds, ok := where.Exprs[0].(clause.OrConditions); ok {
+@@ -324,9 +322,13 @@ func (stmt *Statement) BuildCondition(query interface{}, args ...interface{}) []
+ 						}
+ 					}
+ 					conds = append(conds, clause.And(where.Exprs...))
+-				} else if cs.Expression != nil {
++				} else {
+ 					conds = append(conds, cs.Expression)
+ 				}
++				if v.Statement == stmt {
++					cs.Expression = nil
++					stmt.Statement.Clauses["WHERE"] = cs
++				}
+ 			}
+ 		case map[interface{}]interface{}:
+ 			for i, j := range v {

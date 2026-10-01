@@ -1,0 +1,17 @@
+diff --git a/vlib/v/tests/raw_string_ending_withs_backslash_test.v b/vlib/v/tests/raw_string_ending_withs_backslash_test.v
+new file mode 100644
+index 000000000..1f98a3faa
+--- /dev/null
++++ b/vlib/v/tests/raw_string_ending_withs_backslash_test.v
+@@ -0,0 +1,11 @@
++fn test_raw_string_ending_withs_backslack() {
++	str := r'line1 \
++	line2 \
++        line3\'
++
++	lines := str.split_into_lines()
++	assert lines.len == 3
++	assert lines[0] == 'line1 \\'
++	assert lines[1] == '\tline2 \\'
++	assert lines[2] == '        line3\\'
++}

@@ -1,0 +1,65 @@
+diff --git a/test/Succeed/Issue6931.agda b/test/Succeed/Issue6931.agda
+new file mode 100644
+index 0000000000..a6a8bbfee3
+--- /dev/null
++++ b/test/Succeed/Issue6931.agda
+@@ -0,0 +1,12 @@
++-- Andreas, Oskar, issue #6931:
++-- Dead code analysis should not prune telescopes of empty modules.
++
++module _ where
++
++postulate A : Set
++
++open import Issue6931.One A
++import Issue6931.Three as Three
++
++module M = Three.Public A b
++module N = Three.HasPrivate A b
+diff --git a/test/Succeed/Issue6931/One.agda b/test/Succeed/Issue6931/One.agda
+new file mode 100644
+index 0000000000..affe4d0003
+--- /dev/null
++++ b/test/Succeed/Issue6931/One.agda
+@@ -0,0 +1,4 @@
++module Issue6931.One (A : Set) where
++
++  data B : Set where
++    b : B
+diff --git a/test/Succeed/Issue6931/Three.agda b/test/Succeed/Issue6931/Three.agda
+new file mode 100644
+index 0000000000..6702148e4e
+--- /dev/null
++++ b/test/Succeed/Issue6931/Three.agda
+@@ -0,0 +1,18 @@
++import Issue6931.One as One
++
++module Issue6931.Three (A : Set) where
++
++  module Public
++    (open One A)
++    (x : B) where
++
++    -- must be empty
++
++  module HasPrivate
++    (open One A)
++    (x : B) where
++
++    -- or just have private definitions
++    private
++      postulate
++        priv : B
+diff --git a/test/Succeed/Issue6931/Two.agda b/test/Succeed/Issue6931/Two.agda
+new file mode 100644
+index 0000000000..07fc19561c
+--- /dev/null
++++ b/test/Succeed/Issue6931/Two.agda
+@@ -0,0 +1,7 @@
++import Issue6931.One as One
++
++module Issue6931.Two (A : Set)
++  (let module M = One A)
++  (x : M.B) where
++
++  -- must be empty

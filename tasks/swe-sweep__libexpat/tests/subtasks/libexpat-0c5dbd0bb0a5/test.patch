@@ -1,0 +1,83 @@
+diff --git a/expat/tests/runtests.c b/expat/tests/runtests.c
+index 1111111..2222222 100644
+--- a/expat/tests/runtests.c
++++ b/expat/tests/runtests.c
+@@ -11606,8 +11606,69 @@ START_TEST(test_helper_unsigned_char_to_printable) {
+     fail("unsignedCharToPrintable result mistaken");
+   if (strcmp(unsignedCharToPrintable('\\'), "\\\\") != 0)
+     fail("unsignedCharToPrintable result mistaken");
+ }
+ END_TEST
++
++START_TEST(test_amplification_isolated_external_parser) {
++  // NOTE: Length 44 is precisely twice the length of "<!ENTITY a SYSTEM 'b'>"
++  // (22) that is used in function accountingGetCurrentAmplification in
++  // xmlparse.c.
++  //                  1.........1.........1.........1.........1..4 => 44
++  const char doc[] = "<!ENTITY % p1 '123456789_123456789_1234567'>";
++  const int docLen = (int)sizeof(doc) - 1;
++  const float maximumToleratedAmplification = 2.0f;
++
++  struct TestCase {
++    int offsetOfThreshold;
++    enum XML_Status expectedStatus;
++  };
++
++  struct TestCase cases[] = {
++      {-2, XML_STATUS_ERROR}, {-1, XML_STATUS_ERROR}, {0, XML_STATUS_ERROR},
++      {+1, XML_STATUS_OK},    {+2, XML_STATUS_OK},
++  };
++
++  size_t i = 0;
++  for (; i < sizeof(cases) / sizeof(cases[0]); i++) {
++    const int offsetOfThreshold = cases[i].offsetOfThreshold;
++    const enum XML_Status expectedStatus = cases[i].expectedStatus;
++    const unsigned long long activationThresholdBytes
++        = docLen + offsetOfThreshold;
++
++    XML_Parser parser = XML_ParserCreate(NULL);
++    if (parser == NULL)
++      fail("parser is NULL");
++
++    if (XML_SetBillionLaughsAttackProtectionMaximumAmplification(
++            parser, maximumToleratedAmplification)
++        != XML_TRUE)
++      fail("Call to set maximum amplification failed");
++    if (XML_SetBillionLaughsAttackProtectionActivationThreshold(
++            parser, activationThresholdBytes)
++        != XML_TRUE)
++      fail("Call to set activation threshold failed");
++
++    XML_Parser ext_parser = XML_ExternalEntityParserCreate(parser, NULL, NULL);
++    if (ext_parser == NULL)
++      fail("ext_parser is NULL");
++
++    const enum XML_Status actualStatus
++        = _XML_Parse_SINGLE_BYTES(ext_parser, doc, docLen, XML_TRUE);
++
++    if (actualStatus != expectedStatus)
++      fail("Unexpected status from parsing");
++    if (actualStatus != XML_STATUS_OK) {
++      if (XML_GetErrorCode(ext_parser)
++          != XML_ERROR_AMPLIFICATION_LIMIT_BREACH)
++        fail("Unexpected error code from parsing");
++    }
++
++    XML_ParserFree(ext_parser);
++    XML_ParserFree(parser);
++  }
++}
++END_TEST
++
+ #endif // defined(XML_DTD)
+ 
+ static Suite *
+@@ -11986,6 +12046,8 @@ make_suite(void) {
+   tcase_add_test(tc_accounting, test_accounting_precision);
+   tcase_add_test(tc_accounting, test_billion_laughs_attack_protection_api);
+   tcase_add_test(tc_accounting, test_helper_unsigned_char_to_printable);
++  tcase_add_test__ifdef_xml_dtd(tc_accounting,
++                                test_amplification_isolated_external_parser);
+ #endif
+ 
+   return s;

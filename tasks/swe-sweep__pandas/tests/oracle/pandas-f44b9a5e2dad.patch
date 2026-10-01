@@ -1,0 +1,12 @@
+diff --git a/pandas/core/construction.py b/pandas/core/construction.py
+index 68d7f6c6f8..9d48bf612e 100644
+--- a/pandas/core/construction.py
++++ b/pandas/core/construction.py
+@@ -552,7 +552,6 @@ def sanitize_array(
+             subarr = subarr.astype(dtype, copy=copy)
+         elif copy:
+             subarr = subarr.copy()
+-        return subarr
+ 
+     else:
+         if isinstance(data, (set, frozenset)):

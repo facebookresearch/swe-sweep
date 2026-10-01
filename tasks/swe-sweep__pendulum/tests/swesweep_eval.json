@@ -1,0 +1,113 @@
+{
+  "build_jobs": 4,
+  "container_repo": "/pendulum",
+  "evaluation": {
+    "paths": "tests",
+    "visible_timeout": 5400
+  },
+  "upstream_image": "pandora-maxbug-pendulum:2.0.5",
+  "n_base_passing": 1688,
+  "n_base_test_ignore": 1,
+  "oracle_digest": "47e67973997b43f81d0f9b3e7334eedd3b16816f5f897b867a17feb5b5dffd2a",
+  "oracle_pristine_paths": [],
+  "upstream_commit": "9f7399e15e6172900e0591deb5a57a45769d8205",
+  "reproduction": {
+    "build_cmd": "python -c \"\nfrom distutils.core import setup, Extension\nsetup(script_args=['build_ext', '--inplace'], ext_modules=[\n    Extension('pendulum._extensions._helpers', ['pendulum/_extensions/_helpers.c']),\n    Extension('pendulum.parsing._iso8601', ['pendulum/parsing/_iso8601.c'])])\"\n",
+    "build_timeout": 600,
+    "suite": "pytest",
+    "test_timeout": 600
+  },
+  "schema": 2,
+  "subtasks": [
+    {
+      "f2p": [
+        "tests.duration.test_arithmetic::test_divide"
+      ],
+      "id": "pendulum-1595f48f564b",
+      "target_files": [
+        "pendulum/duration.py"
+      ]
+    },
+    {
+      "f2p": [
+        "tests.datetime.test_from_format::test_from_format_rejects_extra_text"
+      ],
+      "id": "pendulum-225dec817994",
+      "target_files": [
+        "pendulum/formatting/formatter.py"
+      ]
+    },
+    {
+      "f2p": [
+        "tests.period.test_behavior::test_equality_to_timedelta"
+      ],
+      "id": "pendulum-662e042dda7e",
+      "target_files": [
+        "pendulum/formatting/formatter.py",
+        "pendulum/parsing/__init__.py",
+        "pendulum/parsing/iso8601.py",
+        "pendulum/period.py",
+        "pendulum/tz/local_timezone.py",
+        "pendulum/tz/zoneinfo/posix_timezone.py"
+      ]
+    },
+    {
+      "f2p": [
+        "tests.datetime.test_sub::test_subtract_negative_over_dls_transitioning_off"
+      ],
+      "id": "pendulum-75a754fbde76",
+      "target_files": [
+        "pendulum/datetime.py"
+      ]
+    },
+    {
+      "f2p": [
+        "tests.date.test_sub::test_subtract_days_max"
+      ],
+      "id": "pendulum-7f5e8a33081a",
+      "target_files": [
+        "pendulum/tz/timezone.py"
+      ]
+    },
+    {
+      "f2p": [
+        "tests.datetime.test_replace::test_replace_tzinfo_dst_on"
+      ],
+      "id": "pendulum-9bd8b0756e71",
+      "target_files": [
+        "pendulum/datetime.py"
+      ]
+    },
+    {
+      "f2p": [
+        "tests.tz.test_timezone::test_utcoffset_pre_transition"
+      ],
+      "id": "pendulum-c40af175668e",
+      "target_files": [
+        "pendulum/tz/timezone.py",
+        "pendulum/tz/zoneinfo/transition.py"
+      ]
+    },
+    {
+      "f2p": [
+        "tests.period.test_behavior::test_inequality"
+      ],
+      "id": "pendulum-da30df1ded54",
+      "target_files": [
+        "pendulum/interval.py"
+      ]
+    },
+    {
+      "f2p": [
+        "tests.datetime.test_add::test_add_duration_across_transition_days"
+      ],
+      "id": "pendulum-f8a0d04ae308",
+      "target_files": [
+        "src/pendulum/datetime.py",
+        "src/pendulum/duration.py"
+      ]
+    }
+  ],
+  "task": "pendulum",
+  "version": "2.0.5"
+}

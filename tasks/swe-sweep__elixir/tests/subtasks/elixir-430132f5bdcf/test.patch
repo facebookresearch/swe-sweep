@@ -1,0 +1,17 @@
+diff --git a/lib/elixir/test/elixir/kernel/binary_test.exs b/lib/elixir/test/elixir/kernel/binary_test.exs
+index c48c2b961..6d68b4509 100644
+--- a/lib/elixir/test/elixir/kernel/binary_test.exs
++++ b/lib/elixir/test/elixir/kernel/binary_test.exs
+@@ -206,6 +206,12 @@ defmodule Kernel.BinaryTest do
+     assert_compile_error(message, fn ->
+       Code.eval_string(~s[<<"foo"::float>>])
+     end)
++
++    assert_compile_error(message, fn ->
++      # We need to wrap the example below in a module because
++      # we attempt to continue compilation when inside a function
++      Code.compile_string("defmodule Repro do\n  def run, do:  <<(<<1>>)::integer>>\nend")
++    end)
+ 
+     message = "invalid literal ~c\"foo\""
+ 

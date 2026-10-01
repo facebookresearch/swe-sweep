@@ -1,0 +1,17 @@
+diff --git a/lib/rules/font-family-no-missing-generic-family-keyword/__tests__/index.mjs b/lib/rules/font-family-no-missing-generic-family-keyword/__tests__/index.mjs
+index 30d3aaff8..9b977850d 100644
+--- a/lib/rules/font-family-no-missing-generic-family-keyword/__tests__/index.mjs
++++ b/lib/rules/font-family-no-missing-generic-family-keyword/__tests__/index.mjs
+@@ -50,6 +50,12 @@ testRule({
+ 		{
+ 			code: '@FONT-FACE { font-family: Gentium; }',
+ 		},
++		{
++			code: '@font-palette-values --foo { font-family: bar; }',
++		},
++		{
++			code: '@FONT-PALETTE-VALUES --foo { font-family: bar; }',
++		},
+ 		{
+ 			code: 'a { font: inherit; }',
+ 		},

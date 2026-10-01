@@ -1,0 +1,78 @@
+diff --git a/autotest/gcore/data/vrt/bottom_strip.tif b/autotest/gcore/data/vrt/bottom_strip.tif
+new file mode 100644
+index 0000000000000000000000000000000000000000..282bd3ab2b9ef87dc4c3ac7c1686514b299c7c5a
+GIT binary patch
+literal 32938
+zcmeIuu?@m75CzaPi4YPM1<+8qW(wNWEWjwtK*<PMGMt4A5Ahsb^nL!-Tb6qqBH|cP
+zrYM=(uk`%R>#pb4ntE=%{g6*(jyZSVob#~1^jvd)&D=VloZHZO4mqD9>i=6at~KY8
+z^NQFU0t5&UAV7cs0RjXF5FkK+009C72oNAZfB*pk1PBlyK!5-N0t5&UAV7cs0RjXF
+z5FkK+009C72oNAZfB*pk1PBlyK!5-N0t5&UAV7cs0RjXF5FkK+009C72oNAZfB*pk
+v1PBlyK!5-N0t5&UAV7cs0RjXF5FkK+009C72oNAZfB*pk1PBlyKw$d;;9-vs
+
+literal 0
+HcmV?d00001
+
+diff --git a/autotest/gcore/data/vrt/top_and_bottom_strips.vrt b/autotest/gcore/data/vrt/top_and_bottom_strips.vrt
+new file mode 100644
+index 0000000000..3bfae5ae8b
+--- /dev/null
++++ b/autotest/gcore/data/vrt/top_and_bottom_strips.vrt
+@@ -0,0 +1,20 @@
++<VRTDataset rasterXSize="256" rasterYSize="256">
++  <GeoTransform>  0.0000000000000000e+00,  1.0000000000000000e+00,  0.0000000000000000e+00,  0.0000000000000000e+00,  0.0000000000000000e+00, -1.0000000000000000e+00</GeoTransform>
++  <VRTRasterBand dataType="Byte" band="1">
++    <ColorInterp>Gray</ColorInterp>
++    <SimpleSource>
++      <SourceFilename relativeToVRT="1">top_strip.tif</SourceFilename>
++      <SourceBand>1</SourceBand>
++      <SourceProperties RasterXSize="256" RasterYSize="128" DataType="Byte" BlockXSize="256" BlockYSize="128" />
++      <SrcRect xOff="0" yOff="0" xSize="256" ySize="128" />
++      <DstRect xOff="0" yOff="0" xSize="256" ySize="128" />
++    </SimpleSource>
++    <SimpleSource>
++      <SourceFilename relativeToVRT="1">bottom_strip.tif</SourceFilename>
++      <SourceBand>1</SourceBand>
++      <SourceProperties RasterXSize="256" RasterYSize="128" DataType="Byte" BlockXSize="256" BlockYSize="128" />
++      <SrcRect xOff="0" yOff="0" xSize="256" ySize="128" />
++      <DstRect xOff="0" yOff="128" xSize="256" ySize="128" />
++    </SimpleSource>
++  </VRTRasterBand>
++</VRTDataset>
+diff --git a/autotest/gcore/data/vrt/top_strip.tif b/autotest/gcore/data/vrt/top_strip.tif
+new file mode 100644
+index 0000000000000000000000000000000000000000..bc84eab510f4b69d1a37014465505685a9b285ca
+GIT binary patch
+literal 32938
+zcmeIuu?+$-3<Xe!J0T>hD}aU~HB-=D%>s;aGf*<ZO^G8?WQdo@(YNF3t?MIB5pj+v
+zQ<O~YDLrr59(rzDQ_pShIOL_wG3V@?bs6T@o@>r;ncL1M>ptwfhMZp!^?&z_d(C=g
+zy|Zx$5FkK+009C72oNAZfB*pk1PBlyK!5-N0t5&UAV7cs0RjXF5FkK+009C72oNAZ
+zfB*pk1PBlyK!5-N0t5&UAV7cs0RjXF5FkK+009C72oNAZfB*pk1PBlyK!5-N0t5&U
+uAV7cs0RjXF5FkK+009C72oNAZfB*pk1PBlyK!5-N0t5&UAV7csf%pO7p9h`*
+
+literal 0
+HcmV?d00001
+
+diff --git a/autotest/gcore/vrt_read.py b/autotest/gcore/vrt_read.py
+--- a/autotest/gcore/vrt_read.py
++++ b/autotest/gcore/vrt_read.py
+@@ -2074,3 +2074,20 @@ def test_vrt_read_compute_statistics_mosaic_optimization_not_triggered():
+ 
+     vrt_stats = vrt_ds.GetRasterBand(1).ComputeStatistics(False)
+     assert vrt_stats == src_ds.GetRasterBand(1).ComputeStatistics(False)
++
++
++###############################################################################
++
++
++def test_vrt_read_top_and_bottom_strips_average():
++
++    ref_ds = gdal.Translate("", "data/vrt/top_and_bottom_strips.vrt", format="MEM")
++    ds = gdal.Open("data/vrt/top_and_bottom_strips.vrt")
++
++    args = (0, 127, 256, 129)
++    kwargs = {"buf_xsize": 128, "buf_ysize": 64, "resample_alg": gdal.GRIORA_Average}
++
++    ref_data = ref_ds.ReadRaster(*args, **kwargs)
++    assert ds.GetRasterBand(1).ReadRaster(*args, **kwargs) == ref_data
++    assert ds.ReadRaster(*args, **kwargs) == ref_data
++    assert ref_data[0] == 128

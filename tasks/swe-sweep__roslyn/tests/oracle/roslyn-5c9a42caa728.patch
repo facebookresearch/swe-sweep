@@ -1,0 +1,36 @@
+diff --git a/src/Compilers/Core/Portable/SourceGeneration/Nodes/SyntaxValueProvider_ForAttributeWithMetadataName.cs b/src/Compilers/Core/Portable/SourceGeneration/Nodes/SyntaxValueProvider_ForAttributeWithMetadataName.cs
+index 51067e25744..857ba813d9f 100644
+--- a/src/Compilers/Core/Portable/SourceGeneration/Nodes/SyntaxValueProvider_ForAttributeWithMetadataName.cs
++++ b/src/Compilers/Core/Portable/SourceGeneration/Nodes/SyntaxValueProvider_ForAttributeWithMetadataName.cs
+@@ -155,6 +155,9 @@ public partial struct SyntaxValueProvider
+             addMatchingAttributes(symbol.GetAttributes());
+             addMatchingAttributes((symbol as IMethodSymbol)?.GetReturnTypeAttributes());
+ 
++            if (symbol is INamedTypeSymbol namedTypeSymbol)
++                addPrimaryConstructorAttributes(namedTypeSymbol);
++
+             if (symbol is IAssemblySymbol assemblySymbol)
+             {
+                 foreach (var module in assemblySymbol.Modules)
+@@ -184,6 +187,21 @@ public partial struct SyntaxValueProvider
+                     }
+                 }
+             }
++
++            void addPrimaryConstructorAttributes(INamedTypeSymbol namedTypeSymbol)
++            {
++                foreach (var constructorSymbol in namedTypeSymbol.InstanceConstructors)
++                {
++                    foreach (var syntaxRef in constructorSymbol.DeclaringSyntaxReferences)
++                    {
++                        if (syntaxRef.GetSyntax(cancellationToken) == attributeTarget)
++                        {
++                            addMatchingAttributes(constructorSymbol.GetAttributes());
++                            return;
++                        }
++                    }
++                }
++            }
+         }
+     }
+ }

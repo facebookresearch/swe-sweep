@@ -1,0 +1,276 @@
+diff --git a/tests/assign/tassign.nim b/tests/assign/tassign.nim
+index da097ca83..fdec04d22 100644
+--- a/tests/assign/tassign.nim
++++ b/tests/assign/tassign.nim
+@@ -80,7 +80,7 @@ block tcopy:
+ 
+ block tgenericassign:
+   type
+-    TAny = object {.pure.}
++    TAny {.pure.} = object
+       value: pointer
+       rawType: pointer
+ 
+diff --git a/tests/ast_pattern_matching.nim b/tests/ast_pattern_matching.nim
+index d209493b6..0ba0aa57a 100644
+--- a/tests/ast_pattern_matching.nim
++++ b/tests/ast_pattern_matching.nim
+@@ -561,7 +561,7 @@ when isMainModule:
+         echo "got the ident m"
+ 
+     testRecCase:
+-      type Obj[T] = object {.inheritable.}
++      type Obj[T] {.inheritable.} = object
+         name: string
+         case isFat: bool
+         of true:
+diff --git a/tests/ccgbugs/targ_lefttoright.nim b/tests/ccgbugs/targ_lefttoright.nim
+index a49b87739..a0adce157 100644
+--- a/tests/ccgbugs/targ_lefttoright.nim
++++ b/tests/ccgbugs/targ_lefttoright.nim
+@@ -29,7 +29,7 @@ template test =
+   var b = 1
+   say (b += 1; b), (b += 1; b) #2,3
+ 
+-  type C = object {.byRef.}
++  type C {.byRef.} = object
+     i: int
+ 
+   proc say(a, b: C) =
+diff --git a/tests/ccgbugs/tccgen1.nim b/tests/ccgbugs/tccgen1.nim
+index 4917c9848..be571de08 100644
+--- a/tests/ccgbugs/tccgen1.nim
++++ b/tests/ccgbugs/tccgen1.nim
+@@ -7,7 +7,7 @@ type
+     Features: seq[Feature] # Read-Only
+ 
+   PNode* = ref Node
+-  Node = object {.inheritable.}
++  Node {.inheritable.} = object
+     attributes*: seq[PAttr]
+     childNodes*: seq[PNode]
+     FLocalName: string # Read-only
+diff --git a/tests/ccgbugs/tmissingbracket.nim b/tests/ccgbugs/tmissingbracket.nim
+index 468e13366..2919efe0e 100644
+--- a/tests/ccgbugs/tmissingbracket.nim
++++ b/tests/ccgbugs/tmissingbracket.nim
+@@ -11,7 +11,7 @@ type
+     className* : string
+   TClassOfTobj = object of TClassOfTCustomObject
+     nil
+-  TCustomObject = ref object {.inheritable.}
++  TCustomObject {.inheritable.} = ref object
+     class* : ptr TClassOfTCustomObject
+   TObj = ref object of TCustomObject
+     data: int
+diff --git a/tests/effects/teffects2.nim b/tests/effects/teffects2.nim
+index ec3c0a887..777a4cebc 100644
+--- a/tests/effects/teffects2.nim
++++ b/tests/effects/teffects2.nim
+@@ -4,7 +4,7 @@ discard """
+ """
+ {.push warningAsError[Effect]: on.}
+ type
+-  TObj = object {.pure, inheritable.}
++  TObj {.pure, inheritable.} = object
+   TObjB = object of TObj
+     a, b, c: string
+ 
+diff --git a/tests/effects/teffects3.nim b/tests/effects/teffects3.nim
+index ee5470c47..4c050510a 100644
+--- a/tests/effects/teffects3.nim
++++ b/tests/effects/teffects3.nim
+@@ -4,7 +4,7 @@ discard """
+ """
+ 
+ type
+-  TObj = object {.pure, inheritable.}
++  TObj {.pure, inheritable.} = object
+   TObjB = object of TObj
+     a, b, c: string
+     fn: proc (): int {.tags: [].}
+diff --git a/tests/effects/teffects4.nim b/tests/effects/teffects4.nim
+index 88cc0efa9..b875754b6 100644
+--- a/tests/effects/teffects4.nim
++++ b/tests/effects/teffects4.nim
+@@ -4,7 +4,7 @@ discard """
+ """
+ 
+ type
+-  TObj = object {.pure, inheritable.}
++  TObj {.pure, inheritable.} = object
+   TObjB = object of TObj
+     a, b, c: string
+     fn: proc (): int {.tags: [ReadIOEffect].}
+diff --git a/tests/generics/module_with_generics.nim b/tests/generics/module_with_generics.nim
+index e801a4790..960a694d7 100644
+--- a/tests/generics/module_with_generics.nim
++++ b/tests/generics/module_with_generics.nim
+@@ -1,5 +1,5 @@
+ type
+-  Base[T] = ref object {.inheritable.}
++  Base[T] {.inheritable.} = ref object
+     value*: T
+ 
+   Derived[T] = ref object of Base[T]
+diff --git a/tests/generics/tcan.nim b/tests/generics/tcan.nim
+index eea69cdb7..bbefa7233 100644
+--- a/tests/generics/tcan.nim
++++ b/tests/generics/tcan.nim
+@@ -31,7 +31,7 @@ block tinherit:
+ 
+ block tspecialise:
+   type
+-    TGen[T] = object {.inheritable.}
++    TGen[T] {.inheritable.} = object
+     TSpef = object of TGen[string]
+ 
+ 
+diff --git a/tests/macros/tgettypeinst.nim b/tests/macros/tgettypeinst.nim
+index 2f9557160..e722f14aa 100644
+--- a/tests/macros/tgettypeinst.nim
++++ b/tests/macros/tgettypeinst.nim
+@@ -191,14 +191,14 @@ template myAttr3() {.pragma.}
+ template serializationKey(key: string) {.pragma.}
+ 
+ type
+-  MyObj = object {.packed,myAttr,serializationKey: "one".}
++  MyObj {.packed,myAttr,serializationKey: "one".} = object
+     myField {.myAttr2,serializationKey: "two".}: int
+     myField2 {.myAttr3,serializationKey: "three".}: float
+ 
+ # field pragmas not currently supported
+ test(MyObj):
+   type
+-    _ = object {.packed,myAttr,serializationKey: "one".}
++    _ {.packed,myAttr,serializationKey: "one".} = object
+       myField: int
+       myField2: float
+ 
+diff --git a/tests/macros/tvtable.nim b/tests/macros/tvtable.nim
+index dc07a726b..0f322b7d5 100644
+--- a/tests/macros/tvtable.nim
++++ b/tests/macros/tvtable.nim
+@@ -18,7 +18,7 @@ type
+   # it's also possible to use a strongly typed tuple here
+   VTable = array[0..1, pointer]
+ 
+-  TBase = object {.inheritable.}
++  TBase {.inheritable.} = object
+     vtbl: ptr VTable
+ 
+   TUserObject1 = object of TBase
+diff --git a/tests/method/tmethod_issues.nim b/tests/method/tmethod_issues.nim
+index d5d1bb235..daaa46522 100644
+--- a/tests/method/tmethod_issues.nim
++++ b/tests/method/tmethod_issues.nim
+@@ -10,7 +10,7 @@ type B
+ 
+ 
+ # bug #1659
+-type Animal = ref object {.inheritable.}
++type Animal {.inheritable.} = ref object
+ type Dog = ref object of Animal
+ 
+ method say(a: Animal): auto {.base.} = "wat!"
+diff --git a/tests/method/tmultim.nim b/tests/method/tmultim.nim
+index b6fed024e..126eb7526 100644
+--- a/tests/method/tmultim.nim
++++ b/tests/method/tmultim.nim
+@@ -16,7 +16,7 @@ do nothing
+ 
+ # tmultim2
+ type
+-  TThing = object {.inheritable.}
++  TThing {.inheritable.} = object
+   TUnit = object of TThing
+     x: int
+   TParticle = object of TThing
+@@ -49,7 +49,7 @@ staticCollide(a, b)
+ 
+ # tmultim6
+ type
+-  Thing = object {.inheritable.}
++  Thing {.inheritable.} = object
+   Unit[T] = object of Thing
+     x: T
+   Particle = object of Thing
+@@ -81,7 +81,7 @@ method somethin(obj: RootObj) {.base.} =
+   echo "do nothing"
+ 
+ type
+-  TNode* = object {.inheritable.}
++  TNode* {.inheritable.} = object
+   PNode* = ref TNode
+ 
+   PNodeFoo* = ref object of TNode
+diff --git a/tests/objects/tobjconstr2.nim b/tests/objects/tobjconstr2.nim
+index 6253edab0..cf4a694b4 100644
+--- a/tests/objects/tobjconstr2.nim
++++ b/tests/objects/tobjconstr2.nim
+@@ -15,8 +15,8 @@ echo s[0].x
+ 
+ # bug #563
+ type
+-  Foo =
+-    object {.inheritable.}
++  Foo {.inheritable.} =
++    object
+       x: int
+ 
+   Bar =
+diff --git a/tests/stdlib/tstrset.nim b/tests/stdlib/tstrset.nim
+index 71a5520c2..feae66ff7 100644
+--- a/tests/stdlib/tstrset.nim
++++ b/tests/stdlib/tstrset.nim
+@@ -3,7 +3,7 @@
+ type
+   TRadixNodeKind = enum rnLinear, rnFull, rnLeaf
+   PRadixNode = ref TRadixNode
+-  TRadixNode = object {.inheritable.}
++  TRadixNode {.inheritable.} = object
+     kind: TRadixNodeKind
+   TRadixNodeLinear = object of TRadixNode
+     len: int8
+diff --git a/tests/typerel/tcommontype.nim b/tests/typerel/tcommontype.nim
+index 488047fd1..32ab2ff3a 100644
+--- a/tests/typerel/tcommontype.nim
++++ b/tests/typerel/tcommontype.nim
+@@ -1,5 +1,5 @@
+ type
+-  TAnimal=object {.inheritable.}
++  TAnimal {.inheritable.}=object
+   PAnimal=ref TAnimal
+ 
+   TDog=object of TAnimal
+diff --git a/tests/types/tfinalobj.nim b/tests/types/tfinalobj.nim
+index 94f2e4f0e..ad3085132 100644
+--- a/tests/types/tfinalobj.nim
++++ b/tests/types/tfinalobj.nim
+@@ -3,7 +3,7 @@ discard """
+ """
+ 
+ type
+-  TA = object {.pure, final.}
++  TA {.pure, final.} = object
+     x: string
+ 
+ var
+diff --git a/tests/types/tinheritref.nim b/tests/types/tinheritref.nim
+index 01f2307c0..b79926356 100644
+--- a/tests/types/tinheritref.nim
++++ b/tests/types/tinheritref.nim
+@@ -11,11 +11,11 @@ ob = T[int](elem: 23)
+ doAssert ob.elem == 23
+ 
+ type
+-  TTreeIteratorA* = ref object {.inheritable.}
++  TTreeIteratorA* {.inheritable.} = ref object
+ 
+   TKeysIteratorA* = ref object of TTreeIteratorA  #compiles
+ 
+-  TTreeIterator* [T,D] = ref object {.inheritable.}
++  TTreeIterator* [T,D] {.inheritable.} = ref object
+ 
+   TKeysIterator* [T,D] = ref object of TTreeIterator[T,D]  #this not
+ 

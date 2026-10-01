@@ -1,0 +1,17 @@
+diff --git a/callbacks/create.go b/callbacks/create.go
+index cb8429b..e5929ad 100644
+--- a/callbacks/create.go
++++ b/callbacks/create.go
+@@ -80,8 +80,11 @@ func Create(config *Config) func(db *gorm.DB) {
+ 		ok, mode := hasReturning(db, supportReturning)
+ 		if ok {
+ 			if c, ok := db.Statement.Clauses["ON CONFLICT"]; ok {
+-				if onConflict, _ := c.Expression.(clause.OnConflict); onConflict.DoNothing {
++				onConflict, _ := c.Expression.(clause.OnConflict)
++				if onConflict.DoNothing {
+ 					mode |= gorm.ScanOnConflictDoNothing
++				} else if len(onConflict.DoUpdates) > 0 || onConflict.UpdateAll {
++					mode |= gorm.ScanUpdate
+ 				}
+ 			}
+ 

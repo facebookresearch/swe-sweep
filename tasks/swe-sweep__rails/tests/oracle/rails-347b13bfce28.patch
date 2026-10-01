@@ -1,0 +1,13 @@
+diff --git a/activesupport/lib/active_support/cache/memory_store.rb b/activesupport/lib/active_support/cache/memory_store.rb
+index f03edefcec6..0f86012666d 100644
+--- a/activesupport/lib/active_support/cache/memory_store.rb
++++ b/activesupport/lib/active_support/cache/memory_store.rb
+@@ -166,7 +166,7 @@ module ActiveSupport
+         def write_entry(key, entry, **options)
+           payload = serialize_entry(entry, **options)
+           synchronize do
+-            return false if options[:unless_exist] && @data.key?(key)
++            return false if options[:unless_exist] && exist?(key)
+ 
+             old_payload = @data[key]
+             if old_payload

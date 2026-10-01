@@ -1,0 +1,36 @@
+diff --git a/mypy/semanal.py b/mypy/semanal.py
+--- a/mypy/semanal.py
++++ b/mypy/semanal.py
+@@ -2520,7 +2520,7 @@ class SemanticAnalyzer(
+         if info.tuple_type and info.tuple_type != base and not has_placeholder(info.tuple_type):
+             self.fail("Class has two incompatible bases derived from tuple", defn)
+             defn.has_incompatible_baseclass = True
+-        if info.special_alias and has_placeholder(info.special_alias.target):
++        if has_placeholder(base):
+             self.process_placeholder(
+                 None, "tuple base", defn, force_progress=base != info.tuple_type
+             )
+diff --git a/mypy/semanal_namedtuple.py b/mypy/semanal_namedtuple.py
+--- a/mypy/semanal_namedtuple.py
++++ b/mypy/semanal_namedtuple.py
+@@ -524,7 +524,7 @@ class NamedTupleAnalyzer:
+         info = existing_info or self.api.basic_new_typeinfo(name, fallback, line)
+         info.is_named_tuple = True
+         tuple_base = TupleType(types, fallback)
+-        if info.special_alias and has_placeholder(info.special_alias.target):
++        if has_placeholder(tuple_base):
+             self.api.process_placeholder(
+                 None, "NamedTuple item", info, force_progress=tuple_base != info.tuple_type
+             )
+diff --git a/mypy/semanal_typeddict.py b/mypy/semanal_typeddict.py
+--- a/mypy/semanal_typeddict.py
++++ b/mypy/semanal_typeddict.py
+@@ -594,7 +594,7 @@ class TypedDictAnalyzer:
+         typeddict_type = TypedDictType(
+             dict(zip(items, types)), required_keys, readonly_keys, fallback
+         )
+-        if info.special_alias and has_placeholder(info.special_alias.target):
++        if has_placeholder(typeddict_type):
+             self.api.process_placeholder(
+                 None, "TypedDict item", info, force_progress=typeddict_type != info.typeddict_type
+             )

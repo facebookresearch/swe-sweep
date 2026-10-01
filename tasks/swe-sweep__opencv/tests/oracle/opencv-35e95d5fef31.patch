@@ -1,0 +1,12 @@
+diff --git a/modules/core/src/persistence.cpp b/modules/core/src/persistence.cpp
+index c81edf674b..1e07119f4e 100644
+--- a/modules/core/src/persistence.cpp
++++ b/modules/core/src/persistence.cpp
+@@ -1819,7 +1819,6 @@ void FileStorage::endWriteStruct()
+ 
+ FileStorage::~FileStorage()
+ {
+-    p.release();
+ }
+ 
+ bool FileStorage::open(const String& filename, int flags, const String& encoding)

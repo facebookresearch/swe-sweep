@@ -1,0 +1,30 @@
+diff --git a/crates/swc_ecma_codegen/tests/fixture/issues/5289/input.js b/crates/swc_ecma_codegen/tests/fixture/issues/5289/input.js
+new file mode 100644
+index 0000000000..df16add131
+--- /dev/null
++++ b/crates/swc_ecma_codegen/tests/fixture/issues/5289/input.js
+@@ -0,0 +1,6 @@
++export default class Vector {
++  set_ = new Set();
++
++  *[Symbol.iterator]() {
++  }
++}
+\ No newline at end of file
+diff --git a/crates/swc_ecma_codegen/tests/fixture/issues/5289/output.js b/crates/swc_ecma_codegen/tests/fixture/issues/5289/output.js
+new file mode 100644
+index 0000000000..ffa25ef1c6
+--- /dev/null
++++ b/crates/swc_ecma_codegen/tests/fixture/issues/5289/output.js
+@@ -0,0 +1,4 @@
++export default class Vector {
++    set_ = new Set();
++    *[Symbol.iterator]() {}
++};
+diff --git a/crates/swc_ecma_codegen/tests/fixture/issues/5289/output.min.js b/crates/swc_ecma_codegen/tests/fixture/issues/5289/output.min.js
+new file mode 100644
+index 0000000000..22b94cd0f8
+--- /dev/null
++++ b/crates/swc_ecma_codegen/tests/fixture/issues/5289/output.min.js
+@@ -0,0 +1 @@
++export default class Vector{set_=new Set;*[Symbol.iterator](){}}

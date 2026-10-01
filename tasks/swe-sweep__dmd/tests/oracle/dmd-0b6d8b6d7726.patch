@@ -1,0 +1,12 @@
+diff --git a/compiler/src/dmd/expression.d b/compiler/src/dmd/expression.d
+index 42b4dd4..2c80750 100644
+--- a/compiler/src/dmd/expression.d
++++ b/compiler/src/dmd/expression.d
+@@ -4284,6 +4284,7 @@ extern (C++) abstract class UnaExp : Expression
+ 
+     override final Expression resolveLoc(const ref Loc loc, Scope* sc)
+     {
++        this.loc = loc;
+         e1 = e1.resolveLoc(loc, sc);
+         return this;
+     }

@@ -1,0 +1,44 @@
+diff --git a/vlib/v/fmt/tests/structs_input.vv b/vlib/v/fmt/tests/structs_input.vv
+index c17259a31..976eeb6c4 100644
+--- a/vlib/v/fmt/tests/structs_input.vv
++++ b/vlib/v/fmt/tests/structs_input.vv
+@@ -8,8 +8,8 @@ struct User {
+ }
+ 
+ struct FamousUser {
+-pub:
+ 	User
++pub:
+ 	aka string
+ }
+ 
+diff --git a/vlib/v/parser/tests/struct_embed_wrong_pos_in_pub_err.out b/vlib/v/parser/tests/struct_embed_wrong_pos_in_pub_err.out
+new file mode 100644
+index 000000000..23b9088f2
+--- /dev/null
++++ b/vlib/v/parser/tests/struct_embed_wrong_pos_in_pub_err.out
+@@ -0,0 +1,7 @@
++vlib/v/parser/tests/struct_embed_wrong_pos_in_pub_err.vv:6:5: error: struct embedding must be declared at the beginning of the struct body
++    4 | pub struct ThreadSafeLog {
++    5 | pub:
++    6 |     Log
++      |     ~~~
++    7 | pub mut:
++    8 |     mu Xyz
+diff --git a/vlib/v/parser/tests/struct_embed_wrong_pos_in_pub_err.vv b/vlib/v/parser/tests/struct_embed_wrong_pos_in_pub_err.vv
+new file mode 100644
+index 000000000..54e639873
+--- /dev/null
++++ b/vlib/v/parser/tests/struct_embed_wrong_pos_in_pub_err.vv
+@@ -0,0 +1,11 @@
++struct Log {}
++struct Xyz {}
++
++pub struct ThreadSafeLog {
++pub:
++    Log
++pub mut:
++    mu Xyz
++}
++
++fn main() {}

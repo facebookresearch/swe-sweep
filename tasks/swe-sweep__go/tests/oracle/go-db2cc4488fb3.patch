@@ -1,0 +1,13 @@
+diff --git a/src/debug/dwarf/line.go b/src/debug/dwarf/line.go
+index c4937ca7dd..bb281fbdd9 100644
+--- a/src/debug/dwarf/line.go
++++ b/src/debug/dwarf/line.go
+@@ -152,7 +152,7 @@ func (d *Data) LineReader(cu *Entry) (*LineReader, error) {
+ 		// cu has no line table.
+ 		return nil, nil
+ 	}
+-	if off > int64(len(d.line)) {
++	if off < 0 || off > int64(len(d.line)) {
+ 		return nil, errors.New("AttrStmtList value out of range")
+ 	}
+ 	// AttrCompDir is optional if all file names are absolute. Use

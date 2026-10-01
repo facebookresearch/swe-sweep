@@ -1,0 +1,19 @@
+diff --git a/actionpack/lib/action_dispatch/testing/integration.rb b/actionpack/lib/action_dispatch/testing/integration.rb
+index 8ca1cc34620..a4c368e1fbb 100644
+--- a/actionpack/lib/action_dispatch/testing/integration.rb
++++ b/actionpack/lib/action_dispatch/testing/integration.rb
+@@ -258,10 +258,13 @@ module ActionDispatch
+           "REQUEST_URI"    => path,
+           "HTTP_HOST"      => host,
+           "REMOTE_ADDR"    => remote_addr,
+-          "CONTENT_TYPE"   => request_encoder.content_type,
+           "HTTP_ACCEPT"    => request_encoder.accept_header || accept
+         }
+ 
++        if request_encoder.content_type
++          request_env["CONTENT_TYPE"] = request_encoder.content_type
++        end
++
+         wrapped_headers = Http::Headers.from_hash({})
+         wrapped_headers.merge!(headers) if headers
+ 

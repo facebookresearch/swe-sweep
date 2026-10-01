@@ -1,0 +1,29 @@
+diff --git a/lib/FileSystemInfo.js b/lib/FileSystemInfo.js
+index 6a08d9182..a553d827d 100644
+--- a/lib/FileSystemInfo.js
++++ b/lib/FileSystemInfo.js
+@@ -3172,7 +3172,7 @@ class FileSystemInfo {
+ 				},
+ 				/**
+ 				 * @param {string[]} files files
+-				 * @param {(string | ContextHash)[]} fileHashes hashes
++				 * @param {(string | ContextHash | null)[]} fileHashes hashes
+ 				 * @returns {ContextHash} reduced hash
+ 				 */
+ 				reduce: (files, fileHashes) => {
+@@ -3181,10 +3181,13 @@ class FileSystemInfo {
+ 
+ 					for (const file of files) hash.update(file);
+ 					for (const entry of fileHashes) {
+-						if (typeof entry === "string") {
++						// null for unsupported entry kinds (FIFO, socket); skip like the tsh reduce
++						if (!entry) {
++							continue;
++						} else if (typeof entry === "string") {
+ 							hash.update(entry);
+ 						} else {
+-							hash.update(entry.hash);
++							if (entry.hash) hash.update(entry.hash);
+ 							if (entry.symlinks) {
+ 								if (symlinks === undefined) symlinks = new Set();
+ 								addAll(entry.symlinks, symlinks);

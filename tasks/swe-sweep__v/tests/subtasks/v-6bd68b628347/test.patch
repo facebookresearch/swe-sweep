@@ -1,0 +1,42 @@
+diff --git a/vlib/v/fmt/tests/enum_decl_with_comment_expected.vv b/vlib/v/fmt/tests/enum_decl_with_comment_expected.vv
+new file mode 100644
+index 000000000..a00e34a3a
+--- /dev/null
++++ b/vlib/v/fmt/tests/enum_decl_with_comment_expected.vv
+@@ -0,0 +1,4 @@
++enum ABC { // enum ABC
++	// aaa
++	aaa
++}
+diff --git a/vlib/v/fmt/tests/enum_decl_with_comment_input.vv b/vlib/v/fmt/tests/enum_decl_with_comment_input.vv
+new file mode 100644
+index 000000000..abf424cdf
+--- /dev/null
++++ b/vlib/v/fmt/tests/enum_decl_with_comment_input.vv
+@@ -0,0 +1,5 @@
++enum ABC  // enum ABC
++{
++	// aaa
++	aaa
++}
+diff --git a/vlib/v/fmt/tests/interface_decl_with_comment_expected.vv b/vlib/v/fmt/tests/interface_decl_with_comment_expected.vv
+new file mode 100644
+index 000000000..0d0717a14
+--- /dev/null
++++ b/vlib/v/fmt/tests/interface_decl_with_comment_expected.vv
+@@ -0,0 +1,4 @@
++interface Abc { // interface Abc
++	a int
++	get_info() string
++}
+diff --git a/vlib/v/fmt/tests/interface_decl_with_comment_input.vv b/vlib/v/fmt/tests/interface_decl_with_comment_input.vv
+new file mode 100644
+index 000000000..5d2e58be2
+--- /dev/null
++++ b/vlib/v/fmt/tests/interface_decl_with_comment_input.vv
+@@ -0,0 +1,5 @@
++interface Abc   // interface Abc
++{
++	a int
++	get_info() string
++}

@@ -1,0 +1,26 @@
+diff --git a/test/plugins/prefixIds.12.svg b/test/plugins/prefixIds.12.svg
+new file mode 100644
+index 0000000..fb38f1f
+--- /dev/null
++++ b/test/plugins/prefixIds.12.svg
+@@ -0,0 +1,20 @@
++Prefix IDs should apply to all nodes in styles, namely when styles are split
++into multiple nodes due to XML comments.
++
++===
++
++<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1 1">
++  <style>
++    <!-- uwu -->
++    #a {}
++  </style>
++</svg>
++
++@@@
++
++<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1 1">
++    <style>
++<!--uwu-->
++        #prefixIds_12_svg__a{}
++    </style>
++</svg>

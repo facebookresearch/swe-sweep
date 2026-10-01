@@ -1,0 +1,13 @@
+diff --git a/vlib/v/tests/method_call_chain_test.v b/vlib/v/tests/method_call_chain_test.v
+new file mode 100644
+index 000000000..c9cef8d4b
+--- /dev/null
++++ b/vlib/v/tests/method_call_chain_test.v
+@@ -0,0 +1,7 @@
++// for issue 20395
++// Phenomenon: cgen brackets are asymmetric in chained method calls.
++fn test_main() {
++	mut path := 'hello/file.txt'
++	extension := path.split('.').pop()
++	assert extension == 'txt'
++}

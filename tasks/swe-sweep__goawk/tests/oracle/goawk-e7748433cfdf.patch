@@ -1,0 +1,49 @@
+diff --git a/internal/compiler/compiler.go b/internal/compiler/compiler.go
+index 5e6ac96..c00ffc5 100644
+--- a/internal/compiler/compiler.go
++++ b/internal/compiler/compiler.go
+@@ -1082,7 +1082,9 @@ func (c *compiler) regexIndex(r string) int {
+ 		return index // reuse existing constant
+ 	}
+ 	index := len(c.program.Regexes)
+-	c.program.Regexes = append(c.program.Regexes, regexp.MustCompile(AddRegexFlags(r)))
++	re := regexp.MustCompile(AddRegexFlags(r))
++	re.Longest() // other awks use leftmost-longest matching
++	c.program.Regexes = append(c.program.Regexes, re)
+ 	c.indexes.regexes[r] = index
+ 	return index
+ }
+diff --git a/interp/interp.go b/interp/interp.go
+index 0ef778e..b18d875 100644
+--- a/interp/interp.go
++++ b/interp/interp.go
+@@ -833,6 +833,7 @@ func (p *interp) setSpecial(index int, v value) error {
+ 			if err != nil {
+ 				return newError("invalid regex %q: %s", p.fieldSep, err)
+ 			}
++			re.Longest() // other awks use leftmost-longest matching
+ 			p.fieldSepRegex = re
+ 		}
+ 	case ast.V_OFMT:
+@@ -850,11 +851,13 @@ func (p *interp) setSpecial(index int, v value) error {
+ 			// Multi-byte unicode char falls back to regex splitter
+ 			sep := regexp.QuoteMeta(p.recordSep) // not strictly necessary as no multi-byte chars are regex meta chars
+ 			p.recordSepRegex = regexp.MustCompile(sep)
++			p.recordSepRegex.Longest() // other awks use leftmost-longest matching
+ 		default:
+ 			re, err := regexp.Compile(compiler.AddRegexFlags(p.recordSep))
+ 			if err != nil {
+ 				return newError("invalid regex %q: %s", p.recordSep, err)
+ 			}
++			re.Longest() // other awks use leftmost-longest matching
+ 			p.recordSepRegex = re
+ 		}
+ 	case ast.V_RT:
+@@ -1015,6 +1018,7 @@ func (p *interp) compileRegex(regex string) (*regexp.Regexp, error) {
+ 	if err != nil {
+ 		return nil, newError("invalid regex %q: %s", regex, err)
+ 	}
++	re.Longest() // other awks use leftmost-longest matching
+ 	// Dumb, non-LRU cache: just cache the first N regexes
+ 	if len(p.regexCache) < maxCachedRegexes {
+ 		p.regexCache[regex] = re

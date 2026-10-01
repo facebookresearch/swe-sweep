@@ -1,0 +1,24 @@
+diff --git a/test/regress/cli/CMakeLists.txt b/test/regress/cli/CMakeLists.txt
+index ab2c638d10..0c551b2bbc 100644
+--- a/test/regress/cli/CMakeLists.txt
++++ b/test/regress/cli/CMakeLists.txt
+@@ -809,6 +809,7 @@ set(regress_0_tests
+   regress0/int-to-bv/neg-consts.smt2
+   regress0/int-to-bv/not-enough-bits.smt2
+   regress0/int-to-bv/overflow.smt2
++  regress0/int-to-bv/proj-issue601.smt2
+   regress0/issue1063-overloading-dt-cons.smt2
+   regress0/issue1063-overloading-dt-fun.smt2
+   regress0/issue1063-overloading-dt-sel.smt2
+diff --git a/test/regress/cli/regress0/int-to-bv/proj-issue601.smt2 b/test/regress/cli/regress0/int-to-bv/proj-issue601.smt2
+new file mode 100644
+index 0000000000..6b9e0a5d5b
+--- /dev/null
++++ b/test/regress/cli/regress0/int-to-bv/proj-issue601.smt2
+@@ -0,0 +1,6 @@
++; EXPECT: sat
++(set-logic ALL)
++(set-option :solve-int-as-bv 3714675145)
++(declare-sort u 0)
++(define-fun f ((_f29_0 (Seq u))) (Seq u) _f29_0)
++(check-sat)

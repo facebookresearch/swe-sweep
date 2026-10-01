@@ -1,0 +1,13 @@
+diff --git a/datafusion/functions/src/regex/regexplike.rs b/datafusion/functions/src/regex/regexplike.rs
+index bc06d462c0..439a2dba06 100644
+--- a/datafusion/functions/src/regex/regexplike.rs
++++ b/datafusion/functions/src/regex/regexplike.rs
+@@ -356,7 +356,7 @@ fn handle_regexp_like(
+                 .map_err(|e| arrow_datafusion_err!(e))?
+         }
+         (Utf8, LargeUtf8) => {
+-            let value = values.as_string_view();
++            let value = values.as_string::<i32>();
+             let pattern = patterns.as_string::<i64>();
+ 
+             regexp::regexp_is_match(value, pattern, flags)

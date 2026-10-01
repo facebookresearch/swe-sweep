@@ -1,0 +1,57 @@
+diff --git a/activerecord/test/cases/calculations_test.rb b/activerecord/test/cases/calculations_test.rb
+index 428727733aa..45243de7728 100644
+--- a/activerecord/test/cases/calculations_test.rb
++++ b/activerecord/test/cases/calculations_test.rb
+@@ -12,6 +12,7 @@ require "models/author"
+ require "models/topic"
+ require "models/reply"
+ require "models/numeric_data"
++require "models/need_quoting"
+ require "models/minivan"
+ require "models/speedometer"
+ require "models/ship_part"
+@@ -1380,4 +1381,10 @@ class CalculationsTest < ActiveRecord::TestCase
+       end
+     end
+   end
++
++  test "group alias is properly quoted" do
++    assert_nothing_raised do
++      NeedQuoting.group(:name).count
++    end
++  end
+ end
+diff --git a/activerecord/test/fixtures/1_need_quoting.yml b/activerecord/test/fixtures/1_need_quoting.yml
+new file mode 100644
+index 00000000000..abc28f366b1
+--- /dev/null
++++ b/activerecord/test/fixtures/1_need_quoting.yml
+@@ -0,0 +1,2 @@
++- name: Foo
++- name: Bar
+diff --git a/activerecord/test/models/need_quoting.rb b/activerecord/test/models/need_quoting.rb
+new file mode 100644
+index 00000000000..1e50db4b1af
+--- /dev/null
++++ b/activerecord/test/models/need_quoting.rb
+@@ -0,0 +1,5 @@
++# frozen_string_literal: true
++
++class NeedQuoting < ActiveRecord::Base
++  self.table_name = "1_need_quoting"
++end
+diff --git a/activerecord/test/schema/schema.rb b/activerecord/test/schema/schema.rb
+index 471d89a3f8d..58b5a957243 100644
+--- a/activerecord/test/schema/schema.rb
++++ b/activerecord/test/schema/schema.rb
+@@ -8,6 +8,10 @@ ActiveRecord::Schema.define do
+   #                                                                     #
+   # ------------------------------------------------------------------- #
+ 
++  create_table :"1_need_quoting", force: true do |t|
++    t.string :name
++  end
++
+   create_table :accounts, force: true do |t|
+     t.references :firm, index: false
+     t.string  :firm_name

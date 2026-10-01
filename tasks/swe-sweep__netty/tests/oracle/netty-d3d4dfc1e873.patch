@@ -1,0 +1,15 @@
+diff --git a/codec-http2/src/main/java/io/netty/handler/codec/http2/Http2ConnectionHandler.java b/codec-http2/src/main/java/io/netty/handler/codec/http2/Http2ConnectionHandler.java
+index 358b2ff..6cdea63 100644
+--- a/codec-http2/src/main/java/io/netty/handler/codec/http2/Http2ConnectionHandler.java
++++ b/codec-http2/src/main/java/io/netty/handler/codec/http2/Http2ConnectionHandler.java
+@@ -469,8 +469,8 @@ public class Http2ConnectionHandler extends ByteToMessageDecoder implements Http
+     @Override
+     public void close(ChannelHandlerContext ctx, ChannelPromise promise) throws Exception {
+         promise = promise.unvoid();
+-        // Avoid NotYetConnectedException
+-        if (!ctx.channel().isActive()) {
++        // Avoid NotYetConnectedException and avoid sending before connection preface
++        if (!ctx.channel().isActive() || !prefaceSent()) {
+             ctx.close(promise);
+             return;
+         }

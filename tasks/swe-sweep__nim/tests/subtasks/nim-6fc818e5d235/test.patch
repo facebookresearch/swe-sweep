@@ -1,0 +1,175 @@
+diff --git a/testament/important_packages.nim b/testament/important_packages.nim
+index 0af0eb93e..e59198e67 100644
+--- a/testament/important_packages.nim
++++ b/testament/important_packages.nim
+@@ -83,7 +83,7 @@ pkg "iterutils"
+ pkg "jstin"
+ pkg "karax", "nim c -r tests/tester.nim"
+ pkg "kdtree", "nimble test -d:nimLegacyRandomInitRand", "https://github.com/jblindsay/kdtree"
+-pkg "loopfusion"
++pkg "loopfusion", url = "https://github.com/nim-lang/loop-fusion"
+ pkg "lockfreequeues"
+ pkg "macroutils"
+ pkg "manu"
+@@ -111,7 +111,7 @@ pkg "nimquery"
+ pkg "nimquery"
+ pkg "nimsl"
+ pkg "nimsvg"
+-pkg "nimterop", "nimble minitest"
++pkg "nimterop", "nimble minitest", url = "https://github.com/nim-lang/nimterop"
+ pkg "nimwc", "nim c nimwc.nim"
+ pkg "nimx", "nim c --threads:on test/main.nim", allowFailure = true
+ pkg "nitter", "nim c src/nitter.nim", "https://github.com/zedeus/nitter"
+@@ -131,7 +131,7 @@ pkg "protobuf", "nim c -o:protobuff -r src/protobuf.nim"
+ pkg "pylib"
+ pkg "rbtree"
+ pkg "react", "nimble example"
+-pkg "regex", "nim c src/regex"
++pkg "regex", "nim c src/regex", url = "https://github.com/nim-lang/nim-regex"
+ pkg "result", "nim c -r result.nim"
+ pkg "RollingHash", "nim c -r tests/test_cyclichash.nim"
+ pkg "rosencrantz", "nim c -o:rsncntz -r rosencrantz.nim"
+diff --git a/tests/stdlib/tmacros.nim b/tests/stdlib/tmacros.nim
+index c054b66c7..a03bcca2d 100644
+--- a/tests/stdlib/tmacros.nim
++++ b/tests/stdlib/tmacros.nim
+@@ -66,3 +66,139 @@ block: # bug #17454
+     doAssert call1(toString) == ""
+     doAssert call1(toString, 10) == "10"
+     doAssert call1(toString, 10, 11) == "1011"
++
++block: # bug #21326
++  macro foo(body: untyped): untyped =
++    let a = body.lineInfoObj()
++    let aLit = a.newLit
++    result = quote do:
++      doAssert $`a` == $`aLit`
++
++  foo:
++    let c = 1
++
++  template name(a: LineInfo): untyped =
++    discard a # `aLit` works though
++
++  macro foo3(body: untyped): untyped =
++    let a = body.lineInfoObj()
++    # let ax = newLit(a)
++    result = getAst(name(a))
++
++  foo3:
++    let c = 1
++
++block: # bug #7375
++  macro fails(b: static[bool]): untyped =
++    doAssert b == false
++    result = newStmtList()
++
++  macro foo(): untyped =
++
++    var b = false
++
++    ## Fails
++    result = quote do:
++      fails(`b`)
++
++  foo()
++
++  macro someMacro(): untyped =
++    template tmpl(boolean: bool) =
++      when boolean:
++        discard "it's true!"
++      else:
++        doAssert false
++    result = getAst(tmpl(true))
++
++  someMacro()
++
++block:
++  macro foo(): untyped =
++    result = quote do: `littleEndian`
++
++  doAssert littleEndian == foo()
++
++block:
++  macro eqSym(x, y: untyped): untyped =
++    let eq = $x == $y # Unfortunately eqIdent compares to string.
++    result = quote do: `eq`
++
++  var r, a, b: int
++
++  template fma(result: var int, a, b: int, op: untyped) =
++    # fused multiple-add
++    when eqSym(op, `+=`):
++      discard "+="
++    else:
++      discard "+"
++
++  fma(r, a, b, `+=`)
++
++block:
++  template test(boolArg: bool) =
++    static:
++      doAssert typeof(boolArg) is bool
++    let x: bool = boolArg # compile error here, because boolArg became an int
++
++  macro testWrapped1(boolArg: bool): untyped =
++    # forwarding boolArg directly works
++    result = getAst(test(boolArg))
++
++  macro testWrapped2(boolArg: bool): untyped =
++    # forwarding boolArg via a local variable also works
++    let b = boolArg
++    result = getAst(test(b))
++
++  macro testWrapped3(boolArg: bool): untyped =
++    # but using a literal `true` as a local variable will be converted to int
++    let b = true
++    result = getAst(test(b))
++
++  test(true) # ok
++  testWrapped1(true) # ok
++  testWrapped2(true) # ok
++  testWrapped3(true) 
++
++block:
++  macro foo(): untyped =
++    var s = { 'a', 'b' }
++    quote do:              
++      let t = `s`         
++      doAssert $typeof(t) == "set[char]"
++
++  foo()
++
++block: # bug #9607
++  proc fun1(info:LineInfo): string = "bar"
++  proc fun2(info:int): string = "bar"
++
++  macro echoL(args: varargs[untyped]): untyped =
++    let info = args.lineInfoObj
++    let fun1 = bindSym"fun1"
++    let fun2 = bindSym"fun2"
++
++    # this would work instead
++    # result = newCall(bindSym"fun2", info.line.newLit)
++
++    result = quote do:
++
++      # BUG1: ???(0, 0) Error: internal error: genLiteral: ty is nil
++      `fun1`(`info`)
++
++  macro echoM(args: varargs[untyped]): untyped =
++    let info = args.lineInfoObj
++    let fun1 = bindSym"fun1"
++    let fun2 = bindSym"fun2"
++
++    # this would work instead
++    # result = newCall(bindSym"fun2", info.line.newLit)
++
++    result = quote do:
++
++      # BUG1: ???(0, 0) Error: internal error: genLiteral: ty is nil
++      `fun2`(`info`.line)
++
++
++  doAssert echoL() == "bar"
++  doAssert echoM() == "bar"

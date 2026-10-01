@@ -1,0 +1,20 @@
+diff --git a/tests/arc/tarcmisc.nim b/tests/arc/tarcmisc.nim
+index 000000000..111111111 100644
+--- a/tests/arc/tarcmisc.nim
++++ b/tests/arc/tarcmisc.nim
+@@ -482,3 +482,15 @@ proc useForward =
+ 
+ let mikasa = BrokenObject()
+ mikasa.testMethod()
++
++
++template minIndexByIt: untyped =
++  var other = 3
++  other
++
++proc bug20303() =
++  var hlibs = @["hello", "world", "how", "are", "you"]
++  let res = hlibs[minIndexByIt()]
++  doAssert res == "are"
++
++bug20303()

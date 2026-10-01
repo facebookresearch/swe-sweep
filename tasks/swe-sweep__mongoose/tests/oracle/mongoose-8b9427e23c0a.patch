@@ -1,0 +1,34 @@
+diff --git a/lib/helpers/populate/assignRawDocsToIdStructure.js b/lib/helpers/populate/assignRawDocsToIdStructure.js
+index 6a0cc0665..765d69f06 100644
+--- a/lib/helpers/populate/assignRawDocsToIdStructure.js
++++ b/lib/helpers/populate/assignRawDocsToIdStructure.js
+@@ -32,9 +32,13 @@ const kHasArray = Symbol('mongoose#assignRawDocsToIdStructure#hasArray');
+  */
+ 
+ function assignRawDocsToIdStructure(rawIds, resultDocs, resultOrder, options, recursed) {
+-  // honor user specified sort order
++  // honor user specified sort order, unless we're populating a single
++  // virtual underneath an array (e.g. populating `employees.mostRecentShift` where
++  // `mostRecentShift` is a virtual with `justOne`)
+   const newOrder = [];
+-  const sorting = options.sort && rawIds.length > 1;
++  const sorting = options.isVirtual && options.justOne && rawIds.length > 1
++    ? false :
++    options.sort && rawIds.length > 1;
+   const nullIfNotFound = options.$nullIfNotFound;
+   let doc;
+   let sid;
+diff --git a/lib/helpers/populate/assignVals.js b/lib/helpers/populate/assignVals.js
+index a90758f2e..4221a8fbd 100644
+--- a/lib/helpers/populate/assignVals.js
++++ b/lib/helpers/populate/assignVals.js
+@@ -19,7 +19,8 @@ module.exports = function assignVals(o) {
+   // `o.options` contains options explicitly listed in `populateOptions`, like
+   // `match` and `limit`.
+   const populateOptions = Object.assign({}, o.options, userOptions, {
+-    justOne: o.justOne
++    justOne: o.justOne,
++    isVirtual: o.isVirtual
+   });
+   populateOptions.$nullIfNotFound = o.isVirtual;
+   const populatedModel = o.populatedModel;

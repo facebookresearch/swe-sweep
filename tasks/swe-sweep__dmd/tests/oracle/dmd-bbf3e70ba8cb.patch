@@ -1,0 +1,38 @@
+diff --git a/compiler/src/dmd/intrange.d b/compiler/src/dmd/intrange.d
+index 5f1b162e1a..d89fbb2ffc 100644
+--- a/compiler/src/dmd/intrange.d
++++ b/compiler/src/dmd/intrange.d
+@@ -667,7 +667,7 @@ struct IntRange
+             return widest();
+ 
+         // Don't treat the whole range as divide by 0 if only one end of a range is 0.
+-        // Issue 15289
++        // https://issues.dlang.org/show_bug.cgi?id=15289
+         if (rhs.imax.value == 0)
+         {
+             rhs.imax.value--;
+@@ -681,6 +681,11 @@ struct IntRange
+         {
+             return IntRange(imin / rhs.imax, imax / rhs.imin);
+         }
++        else if (rhs.imin.negative && !rhs.imax.negative) // divisor spans [-1, 0, 1]
++        {
++            SignExtendedNumber[4] bdy = [-imin, imin, -imax, imax];
++            return IntRange.fromNumbers4(bdy.ptr);
++        }
+         else
+         {
+             // [a,b] / [c,d] = [min (a/c, a/d, b/c, b/d), max (a/c, a/d, b/c, b/d)]
+diff --git a/druntime/src/core/internal/gc/impl/conservative/gc.d b/druntime/src/core/internal/gc/impl/conservative/gc.d
+index dd6f92a8a7..5eb5099fc1 100644
+--- a/druntime/src/core/internal/gc/impl/conservative/gc.d
++++ b/druntime/src/core/internal/gc/impl/conservative/gc.d
+@@ -1426,7 +1426,7 @@ short[PAGESIZE / 16][Bins.B_NUMSMALL + 1] calcBinBase()
+ 
+     foreach (i, size; binsize)
+     {
+-        short end = (PAGESIZE / size) * size;
++        short end = cast(short) ((PAGESIZE / size) * size);
+         short bsz = size / 16;
+         foreach (off; 0..PAGESIZE/16)
+         {

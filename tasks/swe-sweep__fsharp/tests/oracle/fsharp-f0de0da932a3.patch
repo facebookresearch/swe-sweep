@@ -1,0 +1,23 @@
+diff --git a/src/Compiler/Checking/NameResolution.fs b/src/Compiler/Checking/NameResolution.fs
+index 898dc78aa7..36eedebfbe 100644
+--- a/src/Compiler/Checking/NameResolution.fs
++++ b/src/Compiler/Checking/NameResolution.fs
+@@ -2105,6 +2105,8 @@ type TcResultsSinkImpl(tcGlobals, ?sourceText: ISourceText) =
+     let capturedOpenDeclarations = ResizeArray<OpenDeclaration>()
+     let capturedFormatSpecifierLocations = ResizeArray<_>()
+ 
++    let capturedFormatSpecifierRanges = HashSet<range>()
++
+     let capturedNameResolutionIdentifiers =
+         HashSet<pos * string>
+             ( { new IEqualityComparer<_> with
+@@ -2206,7 +2208,8 @@ type TcResultsSinkImpl(tcGlobals, ?sourceText: ISourceText) =
+                     capturedMethodGroupResolutions.Add(CapturedNameResolution(itemMethodGroup, [], occurenceType, nenv, ad, m))
+ 
+         member sink.NotifyFormatSpecifierLocation(m, numArgs) =
+-            capturedFormatSpecifierLocations.Add((m, numArgs))
++            if capturedFormatSpecifierRanges.Add(m) then
++                capturedFormatSpecifierLocations.Add((m, numArgs))
+ 
+         member sink.NotifyOpenDeclaration openDeclaration =
+             capturedOpenDeclarations.Add openDeclaration

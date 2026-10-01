@@ -1,0 +1,15 @@
+diff --git a/activerecord/lib/arel/nodes/and.rb b/activerecord/lib/arel/nodes/and.rb
+index bf516db35fa..919ffbaa030 100644
+--- a/activerecord/lib/arel/nodes/and.rb
++++ b/activerecord/lib/arel/nodes/and.rb
+@@ -18,6 +18,10 @@ module Arel # :nodoc: all
+         children[1]
+       end
+ 
++      def fetch_attribute(&block)
++        children.any? && children.all? { |child| child.fetch_attribute(&block) }
++      end
++
+       def hash
+         children.hash
+       end

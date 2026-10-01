@@ -1,0 +1,31 @@
+diff --git a/vlib/v/checker/if.v b/vlib/v/checker/if.v
+index 88fd2427e..70a042007 100644
+--- a/vlib/v/checker/if.v
++++ b/vlib/v/checker/if.v
+@@ -420,7 +420,11 @@ fn (mut c Checker) if_expr(mut node ast.IfExpr) ast.Type {
+ 						if node.typ == ast.void_type {
+ 							// first branch of if expression
+ 							node.is_expr = true
+-							node.typ = stmt.typ
++							if stmt.expr.is_auto_deref_var() {
++								node.typ = stmt.typ.deref()
++							} else {
++								node.typ = stmt.typ
++							}
+ 							continue
+ 						} else if node.typ in [ast.float_literal_type, ast.int_literal_type] {
+ 							if node.typ == ast.int_literal_type {
+diff --git a/vlib/v/gen/c/cgen.v b/vlib/v/gen/c/cgen.v
+index 21739f5b8..d8a5cef46 100644
+--- a/vlib/v/gen/c/cgen.v
++++ b/vlib/v/gen/c/cgen.v
+@@ -2186,6 +2186,9 @@ fn (mut g Gen) stmt(node ast.Stmt) {
+ 			// }
+ 			old_is_void_expr_stmt := g.is_void_expr_stmt
+ 			g.is_void_expr_stmt = !node.is_expr
++			if node.expr.is_auto_deref_var() {
++				g.write('*')
++			}
+ 			if node.typ != ast.void_type && g.expected_cast_type != 0
+ 				&& node.expr !in [ast.IfExpr, ast.MatchExpr] {
+ 				g.expr_with_cast(node.expr, node.typ, g.expected_cast_type)

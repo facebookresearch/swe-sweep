@@ -1,0 +1,22 @@
+diff --git a/pkg/analyzer/test/src/diagnostics/unused_result_test.dart b/pkg/analyzer/test/src/diagnostics/unused_result_test.dart
+index 3214b4d1499..4037eaa4645 100644
+--- a/pkg/analyzer/test/src/diagnostics/unused_result_test.dart
++++ b/pkg/analyzer/test/src/diagnostics/unused_result_test.dart
+@@ -655,6 +655,17 @@ bool f() {
+ ''');
+   }
+ 
++  test_interpolationExpression() async {
++    await assertNoErrorsInCode(r'''
++import 'package:meta/meta.dart';
++
++@useResult
++String get f => '';
++
++String g() => '$f';
++''');
++  }
++
+   test_method_result_assertInitializer() async {
+     await assertNoErrorsInCode('''
+ import 'package:meta/meta.dart';

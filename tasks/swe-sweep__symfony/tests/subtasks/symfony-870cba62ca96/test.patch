@@ -1,0 +1,18 @@
+diff --git a/src/Symfony/Component/Cache/Tests/Adapter/NullAdapterTest.php b/src/Symfony/Component/Cache/Tests/Adapter/NullAdapterTest.php
+index 8a79257..39491b5 100644
+--- a/src/Symfony/Component/Cache/Tests/Adapter/NullAdapterTest.php
++++ b/src/Symfony/Component/Cache/Tests/Adapter/NullAdapterTest.php
+@@ -138,4 +138,13 @@ class NullAdapterTest extends TestCase
+         $this->assertTrue($adapter->saveDeferred($item));
+         $this->assertTrue($this->createCachePool()->commit());
+     }
++
++    public function testTaggable()
++    {
++        $this->expectNotToPerformAssertions();
++        $adapter = $this->createCachePool();
++        $item = $adapter->getItem('any_item');
++        // No error triggered 'Cache item "%s" comes from a non tag-aware pool: you cannot tag it.'
++        $item->tag(['tag1']);
++    }
+ }

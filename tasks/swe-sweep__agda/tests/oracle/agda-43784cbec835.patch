@@ -1,0 +1,13 @@
+diff --git a/src/full/Agda/TypeChecking/Rules/Term.hs b/src/full/Agda/TypeChecking/Rules/Term.hs
+index 68f8f54a3c..7ab3e60625 100644
+--- a/src/full/Agda/TypeChecking/Rules/Term.hs
++++ b/src/full/Agda/TypeChecking/Rules/Term.hs
+@@ -1620,7 +1620,7 @@ checkLetBinding b@(A.LetBind i info x t e) ret =
+     -- #4131: Only DontExpandLast if no user written type signature
+     let check | getOrigin info == Inserted = checkDontExpandLast
+               | otherwise                  = checkExpr'
+-    t <- isType_ t
++    t <- workOnTypes $ isType_ t
+     v <- applyModalityToContext info $ check CmpLeq e t
+     addLetBinding info (A.unBind x) v t ret
+ 

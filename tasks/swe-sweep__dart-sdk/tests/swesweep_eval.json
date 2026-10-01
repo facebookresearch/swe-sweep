@@ -1,0 +1,506 @@
+{
+  "build_jobs": 4,
+  "container_repo": "/dart/sdk",
+  "evaluation": {
+    "suite": "reproduction",
+    "test_dirs": [
+      "tests",
+      "test"
+    ],
+    "visible_timeout": 21600
+  },
+  "upstream_image": "pandora-maxbug-dart-sdk:2.19.6",
+  "n_base_passing": 0,
+  "n_base_test_ignore": 1,
+  "oracle_digest": "4be6dec1bc33fbc3790e11c75c7a896ba877502d72af1d420241d06c96704b3e",
+  "oracle_pristine_paths": [],
+  "upstream_commit": "9f7399e15e6172900e0591deb5a57a45769d8205",
+  "reproduction": {
+    "build_cmd": "if git diff --name-only baseline | grep -q '^runtime/'; then ./tools/build.py --mode release --arch x64 create_sdk; fi",
+    "build_timeout": 3600,
+    "suite": {
+      "dart": "out/ReleaseX64/dart-sdk/bin/dart",
+      "dart_args": [
+        "--enable-asserts"
+      ],
+      "type": "dart-file",
+      "visible_selectors": [
+        "pkg",
+        "language",
+        "corelib"
+      ]
+    },
+    "test_timeout": 1800
+  },
+  "schema": 2,
+  "subtasks": [
+    {
+      "f2p": [
+        "pkg/analysis_server/test/lsp/completion_yaml_test.dart"
+      ],
+      "id": "dart-sdk-019fa81ae9d7",
+      "target_files": [
+        "pkg/analysis_server/lib/src/services/completion/yaml/yaml_completion_generator.dart"
+      ]
+    },
+    {
+      "f2p": [
+        "pkg/analysis_server/test/src/services/correction/fix/make_final_test.dart"
+      ],
+      "id": "dart-sdk-11b57bea4ab9",
+      "target_files": [
+        "pkg/analysis_server/lib/src/services/correction/dart/make_final.dart"
+      ]
+    },
+    {
+      "f2p": [
+        "pkg/analysis_server/test/src/services/correction/fix/add_switch_case_break_test.dart"
+      ],
+      "id": "dart-sdk-143cb9e2ef20",
+      "target_files": [
+        "pkg/analysis_server/lib/src/services/correction/dart/add_switch_case_break.dart"
+      ]
+    },
+    {
+      "f2p": [
+        "pkg/analyzer/test/src/dart/resolution/function_expression_invocation_test.dart"
+      ],
+      "id": "dart-sdk-22a961275f20",
+      "target_files": [
+        "pkg/analyzer/lib/src/dart/resolver/function_expression_invocation_resolver.dart"
+      ]
+    },
+    {
+      "f2p": [
+        "tests/corelib/bigint_test.dart"
+      ],
+      "id": "dart-sdk-2546381b56b3",
+      "target_files": [
+        "runtime/vm/compiler/asm_intrinsifier_ia32.cc",
+        "runtime/vm/compiler/asm_intrinsifier_x64.cc"
+      ]
+    },
+    {
+      "f2p": [
+        "pkg/analysis_server/test/src/services/correction/fix/convert_to_map_literal_test.dart"
+      ],
+      "id": "dart-sdk-3460a6401bdf",
+      "target_files": [
+        "pkg/analysis_server/lib/src/services/correction/dart/convert_to_map_literal.dart"
+      ]
+    },
+    {
+      "f2p": [
+        "pkg/analysis_server/test/src/services/correction/fix/create_method_test.dart"
+      ],
+      "id": "dart-sdk-3c1086a38fb5",
+      "target_files": [
+        "pkg/analysis_server/lib/src/services/correction/dart/abstract_producer.dart"
+      ]
+    },
+    {
+      "f2p": [
+        "pkg/analyzer/test/src/diagnostics/unused_result_test.dart"
+      ],
+      "id": "dart-sdk-3d8839f677d1",
+      "target_files": [
+        "pkg/analyzer/lib/src/error/use_result_verifier.dart"
+      ]
+    },
+    {
+      "f2p": [
+        "pkg/analyzer/test/src/dart/ast/to_source_visitor_test.dart"
+      ],
+      "id": "dart-sdk-426adc531625",
+      "target_files": [
+        "pkg/analyzer/lib/src/dart/ast/to_source_visitor.dart"
+      ]
+    },
+    {
+      "f2p": [
+        "pkg/analysis_server/test/src/services/correction/fix/add_key_to_constructors_test.dart"
+      ],
+      "id": "dart-sdk-49db0a6c1d0f",
+      "target_files": [
+        "pkg/analysis_server/lib/src/services/correction/dart/add_key_to_constructors.dart"
+      ]
+    },
+    {
+      "f2p": [
+        "tests/corelib/regexp/regexp_regress_52182_test.dart",
+        "tests/corelib_2/regexp/regexp_regress_52182_test.dart"
+      ],
+      "id": "dart-sdk-4d7cbbdd10d0",
+      "target_files": [
+        "runtime/vm/regexp_parser.cc"
+      ]
+    },
+    {
+      "f2p": [
+        "pkg/analysis_server/test/src/services/correction/fix/convert_to_named_arguments_test.dart"
+      ],
+      "id": "dart-sdk-522637c36728",
+      "target_files": [
+        "pkg/analysis_server/lib/src/services/correction/dart/convert_to_named_arguments.dart"
+      ]
+    },
+    {
+      "f2p": [
+        "pkg/analysis_server/test/edit/refactoring_test.dart",
+        "pkg/analysis_server/test/services/refactoring/legacy/rename_unit_member_test.dart"
+      ],
+      "id": "dart-sdk-59ce93f163ca",
+      "target_files": [
+        "pkg/analysis_server/lib/src/services/refactoring/legacy/refactoring.dart",
+        "pkg/analysis_server/lib/src/services/refactoring/legacy/rename_unit_member.dart"
+      ]
+    },
+    {
+      "f2p": [
+        "pkg/analyzer/test/src/diagnostics/dead_code_test.dart"
+      ],
+      "id": "dart-sdk-5ef881a3e821",
+      "target_files": [
+        "pkg/analyzer/lib/src/dart/resolver/variable_declaration_resolver.dart"
+      ]
+    },
+    {
+      "f2p": [
+        "pkg/analyzer/test/generated/patterns_parser_test.dart"
+      ],
+      "id": "dart-sdk-60281885b6da",
+      "target_files": [
+        "pkg/_fe_analyzer_shared/lib/src/parser/parser_impl.dart"
+      ]
+    },
+    {
+      "f2p": [
+        "pkg/analyzer/test/src/diagnostics/implicit_this_reference_in_initializer_test.dart"
+      ],
+      "id": "dart-sdk-607ba6f6a240",
+      "target_files": [
+        "pkg/analyzer/lib/src/generated/error_verifier.dart"
+      ]
+    },
+    {
+      "f2p": [
+        "pkg/analysis_server/test/src/services/correction/fix/sort_unnamed_constructor_first_test.dart"
+      ],
+      "id": "dart-sdk-62db48e224c0",
+      "target_files": [
+        "pkg/analysis_server/lib/src/services/correction/dart/sort_unnamed_constructor_first.dart"
+      ]
+    },
+    {
+      "f2p": [
+        "pkg/analyzer/test/src/dart/resolution/method_invocation_test.dart"
+      ],
+      "id": "dart-sdk-6dded5eadbb4",
+      "target_files": [
+        "pkg/analyzer/lib/src/dart/element/member.dart"
+      ]
+    },
+    {
+      "f2p": [
+        "pkg/analyzer/test/src/diagnostics/super_in_extension_test.dart"
+      ],
+      "id": "dart-sdk-734b4d599750",
+      "target_files": [
+        "pkg/analyzer/lib/src/generated/super_context.dart"
+      ]
+    },
+    {
+      "f2p": [
+        "pkg/analysis_server/test/src/services/correction/fix/replace_with_is_empty_test.dart",
+        "pkg/analysis_server/test/src/services/correction/fix/replace_with_is_not_empty_test.dart"
+      ],
+      "id": "dart-sdk-745e3f227f3e",
+      "target_files": [
+        "pkg/analysis_server/lib/src/services/correction/dart/replace_with_is_empty.dart"
+      ]
+    },
+    {
+      "f2p": [
+        "pkg/analysis_server/test/src/services/correction/fix/convert_to_generic_function_syntax_test.dart"
+      ],
+      "id": "dart-sdk-77b818a92611",
+      "target_files": [
+        "pkg/analysis_server/lib/src/services/correction/dart/convert_to_generic_function_syntax.dart"
+      ]
+    },
+    {
+      "f2p": [
+        "pkg/analyzer/test/src/dart/resolution/function_reference_test.dart"
+      ],
+      "id": "dart-sdk-8286aaa88e9d",
+      "target_files": [
+        "pkg/analyzer/lib/src/dart/resolver/function_reference_resolver.dart"
+      ]
+    },
+    {
+      "f2p": [
+        "tests/standalone/io/file_test.dart",
+        "tests/standalone_2/io/file_test.dart"
+      ],
+      "id": "dart-sdk-859671bfd770",
+      "target_files": [
+        "runtime/bin/file.h",
+        "sdk/lib/io/file_impl.dart"
+      ]
+    },
+    {
+      "f2p": [
+        "pkg/analyzer/test/src/diagnostics/invalid_annotation_target_test.dart"
+      ],
+      "id": "dart-sdk-8d22de2381e0",
+      "target_files": [
+        "pkg/analyzer/lib/src/error/annotation_verifier.dart"
+      ]
+    },
+    {
+      "f2p": [
+        "pkg/analysis_server/test/lsp/change_workspace_folders_test.dart"
+      ],
+      "id": "dart-sdk-9d4dc47b04fe",
+      "target_files": [
+        "pkg/analysis_server/lib/src/lsp/handlers/handler_change_workspace_folders.dart"
+      ]
+    },
+    {
+      "f2p": [
+        "pkg/analysis_server/test/lsp/implementation_test.dart"
+      ],
+      "id": "dart-sdk-9d9540a7aab3",
+      "target_files": [
+        "pkg/analysis_server/lib/src/lsp/handlers/handler_implementation.dart",
+        "pkg/analysis_server/lib/src/lsp/mapping.dart"
+      ]
+    },
+    {
+      "f2p": [
+        "pkg/analyzer/test/generated/invalid_code_test.dart"
+      ],
+      "id": "dart-sdk-9eb07cac2db5",
+      "target_files": [
+        "pkg/analyzer/lib/src/dart/resolver/resolution_visitor.dart"
+      ]
+    },
+    {
+      "f2p": [
+        "pkg/analysis_server/test/search/declarations_test.dart"
+      ],
+      "id": "dart-sdk-9ee8a837b0e1",
+      "target_files": [
+        "pkg/analysis_server/lib/src/handler/legacy/search_get_element_declarations.dart"
+      ]
+    },
+    {
+      "f2p": [
+        "runtime/tests/vm/dart/regress_54210_test.dart"
+      ],
+      "id": "dart-sdk-a4711b17f58c",
+      "target_files": [
+        "runtime/lib/object.cc"
+      ]
+    },
+    {
+      "f2p": [
+        "pkg/vm/test/incremental_compiler_test.dart"
+      ],
+      "id": "dart-sdk-b83267417228",
+      "target_files": [
+        "pkg/vm/bin/kernel_service.dart",
+        "pkg/vm/lib/incremental_compiler.dart",
+        "runtime/vm/dart_api_impl.cc",
+        "runtime/vm/isolate_reload.cc",
+        "runtime/vm/kernel_isolate.cc",
+        "runtime/vm/kernel_isolate.h"
+      ]
+    },
+    {
+      "f2p": [
+        "pkg/analysis_server/test/src/services/correction/fix/add_explicit_cast_test.dart"
+      ],
+      "id": "dart-sdk-bce9cf49dd3c",
+      "target_files": [
+        "pkg/analysis_server/lib/src/services/correction/dart/add_explicit_cast.dart"
+      ]
+    },
+    {
+      "f2p": [
+        "pkg/analysis_server/test/services/refactoring/legacy/inline_method_test.dart"
+      ],
+      "id": "dart-sdk-bdb1c27f9241",
+      "target_files": [
+        "pkg/analysis_server/lib/src/services/refactoring/legacy/inline_method.dart"
+      ]
+    },
+    {
+      "f2p": [
+        "pkg/analyzer/test/src/dart/resolution/method_invocation_test.dart"
+      ],
+      "id": "dart-sdk-c4592f8f3162",
+      "target_files": [
+        "pkg/analyzer/lib/src/summary2/top_level_inference.dart"
+      ]
+    },
+    {
+      "f2p": [
+        "pkg/analysis_server/test/src/services/correction/fix/remove_initializer_test.dart"
+      ],
+      "id": "dart-sdk-c62f73b30d93",
+      "target_files": [
+        "pkg/analysis_server/lib/src/services/correction/dart/remove_initializer.dart"
+      ]
+    },
+    {
+      "f2p": [
+        "runtime/tests/vm/dart/regress_56749_test.dart"
+      ],
+      "id": "dart-sdk-c6fcfaca43c9",
+      "target_files": [
+        "runtime/vm/object.cc",
+        "runtime/vm/object_test.cc"
+      ]
+    },
+    {
+      "f2p": [
+        "pkg/analyzer/test/src/lint/linter/linter_context_impl_test.dart"
+      ],
+      "id": "dart-sdk-c732010e1d70",
+      "target_files": [
+        "pkg/analyzer/lib/src/lint/linter.dart"
+      ]
+    },
+    {
+      "f2p": [
+        "pkg/analysis_server/test/services/refactoring/legacy/extract_widget_test.dart"
+      ],
+      "id": "dart-sdk-c92d851f2ca4",
+      "target_files": [
+        "pkg/analysis_server/lib/src/services/refactoring/legacy/extract_widget.dart"
+      ]
+    },
+    {
+      "f2p": [
+        "pkg/analyzer/test/src/diagnostics/type_parameter_referenced_by_static_test.dart"
+      ],
+      "id": "dart-sdk-c960588ce8a2",
+      "target_files": [
+        "pkg/analyzer/lib/src/generated/error_verifier.dart"
+      ]
+    },
+    {
+      "f2p": [
+        "pkg/analyzer_plugin/test/src/utilities/completion/optype_test.dart"
+      ],
+      "id": "dart-sdk-d02558b279d0",
+      "target_files": [
+        "pkg/analyzer_plugin/lib/src/utilities/completion/optype.dart"
+      ]
+    },
+    {
+      "f2p": [
+        "pkg/analyzer/test/src/diagnostics/use_of_nullable_value_test.dart"
+      ],
+      "id": "dart-sdk-d8a69c149c1f",
+      "target_files": [
+        "pkg/analyzer/lib/src/dart/resolver/method_invocation_resolver.dart",
+        "pkg/analyzer/lib/src/generated/element_resolver.dart"
+      ]
+    },
+    {
+      "f2p": [
+        "pkg/analysis_server/test/src/services/correction/assist/convert_class_to_enum_test.dart",
+        "pkg/analysis_server/test/src/services/correction/fix/convert_class_to_enum_test.dart"
+      ],
+      "id": "dart-sdk-d9dde156a394",
+      "target_files": [
+        "pkg/analysis_server/lib/src/services/correction/dart/convert_class_to_enum.dart"
+      ]
+    },
+    {
+      "f2p": [
+        "pkg/analysis_server/test/src/services/correction/fix/add_super_parameter_test.dart"
+      ],
+      "id": "dart-sdk-e16df2604489",
+      "target_files": [
+        "pkg/analysis_server/lib/src/services/correction/dart/add_super_parameter.dart"
+      ]
+    },
+    {
+      "f2p": [
+        "pkg/analysis_server/test/src/services/correction/fix/add_call_super_test.dart"
+      ],
+      "id": "dart-sdk-e4b87ad7f262",
+      "target_files": [
+        "pkg/analysis_server/lib/src/services/correction/dart/add_call_super.dart"
+      ]
+    },
+    {
+      "f2p": [
+        "pkg/analyzer/test/generated/error_parser_test.dart"
+      ],
+      "id": "dart-sdk-ecbbf8c3c117",
+      "target_files": [
+        "pkg/analyzer/lib/src/fasta/ast_builder.dart"
+      ]
+    },
+    {
+      "f2p": [
+        "pkg/analyzer/test/src/diagnostics/const_with_undefined_constructor_test.dart"
+      ],
+      "id": "dart-sdk-ecc5b1dc109e",
+      "target_files": [
+        "pkg/analyzer/lib/src/generated/error_verifier.dart"
+      ]
+    },
+    {
+      "f2p": [
+        "pkg/analyzer/test/src/diagnostics/unused_import_test.dart"
+      ],
+      "id": "dart-sdk-ef84e5c18f48",
+      "target_files": [
+        "pkg/analyzer/lib/src/error/imports_verifier.dart"
+      ]
+    },
+    {
+      "f2p": [
+        "runtime/tests/vm/dart/regress_60349_test.dart"
+      ],
+      "id": "dart-sdk-f8c91784427a",
+      "target_files": [
+        "runtime/vm/compiler/backend/constant_propagator.cc"
+      ]
+    },
+    {
+      "f2p": [
+        "pkg/analysis_server/test/src/services/correction/assist/add_type_annotation_test.dart"
+      ],
+      "id": "dart-sdk-f9f26b11580c",
+      "target_files": [
+        "pkg/analysis_server/lib/src/services/correction/dart/add_type_annotation.dart"
+      ]
+    },
+    {
+      "f2p": [
+        "pkg/analyzer/test/generated/constant_test.dart"
+      ],
+      "id": "dart-sdk-fde27470eac1",
+      "target_files": [
+        "pkg/analyzer/lib/src/dart/constant/evaluation.dart"
+      ]
+    },
+    {
+      "f2p": [
+        "pkg/analyzer/test/src/dart/resolution/postfix_expression_test.dart"
+      ],
+      "id": "dart-sdk-ff3c5f074fc0",
+      "target_files": [
+        "pkg/analyzer/lib/src/dart/element/type.dart"
+      ]
+    }
+  ],
+  "task": "dart-sdk",
+  "version": "2.19.6"
+}

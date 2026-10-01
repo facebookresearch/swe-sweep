@@ -1,0 +1,19 @@
+diff --git a/codec/src/test/java/io/netty/handler/codec/DateFormatterTest.java b/codec/src/test/java/io/netty/handler/codec/DateFormatterTest.java
+index e7b3d1af4c..38f29d749e 100644
+--- a/codec/src/test/java/io/netty/handler/codec/DateFormatterTest.java
++++ b/codec/src/test/java/io/netty/handler/codec/DateFormatterTest.java
+@@ -37,6 +37,14 @@ public class DateFormatterTest {
+         assertEquals(DATE, parseHttpDate("Sun, 6 Nov 1994 08:49:37 GMT"));
+     }
+ 
++    @Test
++    public void testParseHttpDateSubstringDoesNotOverrunEnd() {
++        // Set-Cookie header format with the date anywhere but last (RFC 6265 tokens are unordered).
++        String dateText = "Sun 08:49:37 06 Nov 1994";
++        assertEquals(DATE, parseHttpDate(dateText));
++        assertEquals(DATE, parseHttpDate(dateText + "; Path=/", 0, dateText.length()));
++    }
++
+     @Test
+     public void testParseWithDoubleDigitDay() {
+         assertEquals(DATE, parseHttpDate("Sun, 06 Nov 1994 08:49:37 GMT"));

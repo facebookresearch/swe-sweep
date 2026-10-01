@@ -1,0 +1,30 @@
+diff --git a/packages/@aws-cdk/aws-lambda/lib/singleton-lambda.ts b/packages/@aws-cdk/aws-lambda/lib/singleton-lambda.ts
+index 170f1f3e37..431b9bf6a7 100644
+--- a/packages/@aws-cdk/aws-lambda/lib/singleton-lambda.ts
++++ b/packages/@aws-cdk/aws-lambda/lib/singleton-lambda.ts
+@@ -1,3 +1,4 @@
++import * as ec2 from '@aws-cdk/aws-ec2';
+ import * as iam from '@aws-cdk/aws-iam';
+ import * as cdk from '@aws-cdk/core';
+ import { Construct } from 'constructs';
+@@ -63,6 +64,20 @@ export class SingletonFunction extends FunctionBase {
+     this.canCreatePermissions = true; // Doesn't matter, addPermission is overriden anyway
+   }
+ 
++  /**
++   * @inheritdoc
++   */
++  public get isBoundToVpc(): boolean {
++    return this.lambdaFunction.isBoundToVpc;
++  }
++
++  /**
++   * @inheritdoc
++   */
++  public get connections(): ec2.Connections {
++    return this.lambdaFunction.connections;
++  }
++
+   /**
+    * Returns a `lambda.Version` which represents the current version of this
+    * singleton Lambda function. A new version will be created every time the

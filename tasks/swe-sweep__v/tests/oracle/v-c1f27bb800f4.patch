@@ -1,0 +1,17 @@
+diff --git a/vlib/v/gen/c/struct.v b/vlib/v/gen/c/struct.v
+index 8cd01034f..f037958ba 100644
+--- a/vlib/v/gen/c/struct.v
++++ b/vlib/v/gen/c/struct.v
+@@ -393,7 +393,11 @@ fn (mut g Gen) struct_decl(s ast.Struct, name string, is_anon bool) {
+ 		return
+ 	}
+ 	if name.contains('_T_') {
+-		g.typedefs.writeln('typedef struct ${name} ${name};')
++		if s.is_union {
++			g.typedefs.writeln('typedef union ${name} ${name};')
++		} else {
++			g.typedefs.writeln('typedef struct ${name} ${name};')
++		}
+ 	}
+ 	// TODO avoid buffer manip
+ 	start_pos := g.type_definitions.len

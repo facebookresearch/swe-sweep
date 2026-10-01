@@ -1,0 +1,17 @@
+diff --git a/src/Symfony/Component/Security/Http/Firewall.php b/src/Symfony/Component/Security/Http/Firewall.php
+index f2f86a5dfa7..354181c872d 100644
+--- a/src/Symfony/Component/Security/Http/Firewall.php
++++ b/src/Symfony/Component/Security/Http/Firewall.php
+@@ -125,7 +125,11 @@ class Firewall implements EventSubscriberInterface
+     protected function callListeners(RequestEvent $event, iterable $listeners)
+     {
+         foreach ($listeners as $listener) {
+-            $listener($event);
++            if (!$listener instanceof FirewallListenerInterface) {
++                $listener($event);
++            } elseif (false !== $listener->supports($event->getRequest())) {
++                $listener->authenticate($event);
++            }
+ 
+             if ($event->hasResponse()) {
+                 break;

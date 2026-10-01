@@ -1,0 +1,59 @@
+diff --git a/src/Compilers/CSharp/Test/Emit3/Semantics/ExtensionOperatorsTests.cs b/src/Compilers/CSharp/Test/Emit3/Semantics/ExtensionOperatorsTests.cs
+index e065e100142..91bc7543598 100644
+--- a/src/Compilers/CSharp/Test/Emit3/Semantics/ExtensionOperatorsTests.cs
++++ b/src/Compilers/CSharp/Test/Emit3/Semantics/ExtensionOperatorsTests.cs
+@@ -23927,5 +23927,54 @@ static class E2
+             var binary = GetSyntax<BinaryExpressionSyntax>(tree, "new S() + new S()");
+             AssertEx.Equal("S E1.<G>$3B24C9A1A6673CA92CA71905DDEE0A6C.op_Addition(S s1, S s2)", model.GetSymbolInfo(binary).Symbol.ToTestDisplayString());
+         }
++
++        [Fact]
++        [WorkItem("https://github.com/dotnet/roslyn/issues/82977")]
++        public void Issue82977()
++        {
++            var src1 = $$$"""
++public struct V<T> 
++{
++    public T Value;
++    public V(T value) => this.Value = value;
++}
++
++public static class Extensions
++{
++    extension(V<float>)
++    {
++        public static V<float> operator /(V<float> a, V<float> b)
++        {
++            throw null;
++        }
++        
++        public static V<float> operator checked /(V<float> a, V<float> b)
++        {
++            System.Console.WriteLine("checked");
++            return new V<float>(checked(a.Value / b.Value));
++        }
++    }
++}
++""";
++            var src2 = $$$"""
++public static class Program
++{
++    public static void Main()
++    {
++        var x = new V<float>(1f);
++        checked
++        {
++            x = x / x;
++        }
++    }
++}
++""";
++
++            var comp1 = CreateCompilation([src1, src2], options: TestOptions.DebugExe);
++            CompileAndVerify(comp1, expectedOutput: "checked").VerifyDiagnostics();
++
++            var comp2 = CreateCompilation(src2, references: [comp1.EmitToImageReference()], options: TestOptions.DebugExe);
++            CompileAndVerify(comp2, expectedOutput: "checked").VerifyDiagnostics();
++        }
+     }
+ }

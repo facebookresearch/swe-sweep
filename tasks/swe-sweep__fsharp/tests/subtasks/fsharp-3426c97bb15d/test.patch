@@ -1,0 +1,29 @@
+diff --git a/tests/FSharp.Compiler.ComponentTests/Conformance/Types/TypeConstraints/IWSAMsAndSRTPs/IWSAMsAndSRTPsTests.fs b/tests/FSharp.Compiler.ComponentTests/Conformance/Types/TypeConstraints/IWSAMsAndSRTPs/IWSAMsAndSRTPsTests.fs
+index 2fd70fab94..fb6c648ca4 100644
+--- a/tests/FSharp.Compiler.ComponentTests/Conformance/Types/TypeConstraints/IWSAMsAndSRTPs/IWSAMsAndSRTPsTests.fs
++++ b/tests/FSharp.Compiler.ComponentTests/Conformance/Types/TypeConstraints/IWSAMsAndSRTPs/IWSAMsAndSRTPsTests.fs
+@@ -287,6 +287,24 @@ let main _ =
+             IL_000a:  ret
+           }"""]
+ 
++    [<Fact>]
++    let ``SRTP get_Item works on strings`` () =
++        FSharp """
++let inline indexInto (slice: ^T when ^T: (member get_Item: int -> ^U)) i : ^U =
++    slice.get_Item i
++
++[<EntryPoint>]
++let main _ =
++    if indexInto "abcde" 2 <> 'c' then
++        failwith "Unexpected result"
++
++    0
++        """
++        |> asExe
++        |> withOptions ["--nowarn:77"]
++        |> compileAndRun
++        |> shouldSucceed
++
+     [<Theory>]
+     [<InlineData("let inline f_set_Item<'T when 'T : (member Item: int -> string with set) >(x: 'T) = (^T : (member Item: int -> string with set) (x, 3, \"a\"))")>]
+     [<InlineData("let inline f_set_Item<'T when 'T : (member set_Item: int * string -> unit) >(x: 'T) = (^T : (member set_Item: int * string -> unit) (x, 3, \"a\"))")>]

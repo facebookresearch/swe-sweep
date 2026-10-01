@@ -1,0 +1,23 @@
+diff --git a/crates/swc_ecma_parser/src/parser/stmt/module_item.rs b/crates/swc_ecma_parser/src/parser/stmt/module_item.rs
+index 2021bf045f..2a91877e50 100644
+--- a/crates/swc_ecma_parser/src/parser/stmt/module_item.rs
++++ b/crates/swc_ecma_parser/src/parser/stmt/module_item.rs
+@@ -372,11 +372,15 @@ impl<I: Tokens> Parser<I> {
+ 
+         if self.input.syntax().typescript() {
+             if eat!(self, "import") {
++                let is_type_only = is!(self, "type") && peeked_is!(self, IdentRef);
++
++                if is_type_only {
++                    assert_and_bump!(self, "type");
++                }
++
+                 // export import A = B
+                 return self
+-                    .parse_ts_import_equals_decl(
+-                        start, /* is_export */ true, /* is_type_only */ false,
+-                    )
++                    .parse_ts_import_equals_decl(start, /* is_export */ true, is_type_only)
+                     .map(From::from);
+             }
+ 

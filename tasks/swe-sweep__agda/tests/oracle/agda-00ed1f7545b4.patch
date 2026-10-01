@@ -1,0 +1,14 @@
+diff --git a/src/full/Agda/TypeChecking/CompiledClause/Compile.hs b/src/full/Agda/TypeChecking/CompiledClause/Compile.hs
+--- a/src/full/Agda/TypeChecking/CompiledClause/Compile.hs
++++ b/src/full/Agda/TypeChecking/CompiledClause/Compile.hs
+@@ -164,7 +164,10 @@ compile cs = case nextSplit cs of
+     -- If there are more than one clauses, take the first one.
+     c = headWithDefault __IMPOSSIBLE__ cs
+     name (VarP _ x) = x
+     name (DotP _ _) = underscore
++    name (ConP _ cpi _) | conPLazy cpi = underscore
++    -- Issue #8626: forcing analysis can create lazy split, which appears
++    -- as lazy `ConP` patterns instead of `DotP` patterns.
+     name ConP{}  = __IMPOSSIBLE__
+     name DefP{}  = __IMPOSSIBLE__
+     name LitP{}  = __IMPOSSIBLE__

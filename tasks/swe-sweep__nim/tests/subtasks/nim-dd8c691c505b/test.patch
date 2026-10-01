@@ -1,0 +1,10 @@
+diff --git a/tests/misc/t6549.nim b/tests/misc/t6549.nim
+new file mode 100644
+index 000000000..1d7393318
+--- /dev/null
++++ b/tests/misc/t6549.nim
+@@ -0,0 +1,4 @@
++
++const l = $(range[low(uint64) .. high(uint64)])
++const r = "range 0..18446744073709551615(uint64)"
++doAssert l == r

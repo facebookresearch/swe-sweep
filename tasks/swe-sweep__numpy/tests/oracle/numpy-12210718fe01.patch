@@ -1,0 +1,13 @@
+diff --git a/numpy/core/fromnumeric.py b/numpy/core/fromnumeric.py
+index d943729869..7b179cf316 100644
+--- a/numpy/core/fromnumeric.py
++++ b/numpy/core/fromnumeric.py
+@@ -1385,7 +1385,7 @@ def squeeze(a, axis=None):
+     try:
+         squeeze = a.squeeze
+     except AttributeError:
+-        return _wrapit(a, 'squeeze')
++        return _wrapit(a, 'squeeze', axis=axis)
+     if axis is None:
+         return squeeze()
+     else:

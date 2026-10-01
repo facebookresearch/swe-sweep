@@ -1,0 +1,16 @@
+diff --git a/compiler/src/dmd/inlinecost.d b/compiler/src/dmd/inlinecost.d
+index 1be5a4a6aa..ea792f77ce 100644
+--- a/compiler/src/dmd/inlinecost.d
++++ b/compiler/src/dmd/inlinecost.d
+@@ -313,7 +313,11 @@ public:
+         if (s.increment)
+             s.increment.accept(this);
+         if (s._body)
++        {
++            nested += 1;
+             s._body.accept(this);
++            nested -= 1;
++        }
+         //printf("ForStatement: inlineCost = %d\n", cost);
+     }
+ 

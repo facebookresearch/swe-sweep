@@ -1,0 +1,79 @@
+{
+  "build_jobs": 4,
+  "container_repo": "/nuxt",
+  "evaluation": {
+    "suite": "reproduction",
+    "visible_timeout": 14400
+  },
+  "upstream_image": "pandora-maxbug-nuxt:4.3.0",
+  "n_base_passing": 660,
+  "n_base_test_ignore": 276,
+  "oracle_digest": "68b723abadd09e47240dea376482541edb0f4d9b169676ca67f1aa3e59e6b67e",
+  "oracle_pristine_paths": [],
+  "upstream_commit": "9f7399e15e6172900e0591deb5a57a45769d8205",
+  "reproduction": {
+    "needs_build": false,
+    "suite": "vitest",
+    "test_timeout": 1200
+  },
+  "schema": 2,
+  "subtasks": [
+    {
+      "f2p": [
+        "packages/nuxt/test/nuxt-link.test.ts nuxt-link:propsOrAttributes > `isExternal` is `false` > trailingSlashBehavior > leaves the URL untouched when trailingSlash is unset"
+      ],
+      "id": "nuxt-1ffed798c77c",
+      "target_files": [
+        "packages/nuxt/src/app/components/nuxt-link.ts"
+      ]
+    },
+    {
+      "f2p": [
+        "packages/kit/src/resolve.test.ts findPath > should resolve a directory with the dir type option"
+      ],
+      "id": "nuxt-50c3fefa7cbc",
+      "target_files": [
+        "packages/kit/src/resolve.ts"
+      ]
+    },
+    {
+      "f2p": [
+        "packages/nuxt/test/component-loader.test.ts components:loader > should auto-import deduplicated _resolveComponent calls (#30929)"
+      ],
+      "id": "nuxt-658333d2e70b",
+      "target_files": [
+        "packages/nuxt/src/components/plugins/loader.ts"
+      ]
+    },
+    {
+      "f2p": [
+        "packages/nuxt/test/page-metadata.test.ts page metadata > should handle script tag references inside template without extracting them",
+        "packages/nuxt/test/page-metadata.test.ts page metadata > should not confuse Script* component tags with <script> blocks"
+      ],
+      "id": "nuxt-87550344a2bf",
+      "target_files": [
+        "packages/nuxt/src/pages/utils.ts"
+      ]
+    },
+    {
+      "f2p": [
+        "packages/nuxt/test/unhead-imports.test.ts UnheadImportsPlugin > transformInclude > should exclude nuxt head runtime composables"
+      ],
+      "id": "nuxt-a63a0dcb4ae8",
+      "target_files": [
+        "packages/nuxt/src/head/plugins/unhead-imports.ts"
+      ]
+    },
+    {
+      "f2p": [
+        "packages/nuxt/test/pages.test.ts page:extends > keeps an explicit route name/path when reusing a file with a `definePageMeta` name (#27358)"
+      ],
+      "id": "nuxt-e83a5369bbb8",
+      "target_files": [
+        "packages/nuxt/src/pages/utils.ts"
+      ]
+    }
+  ],
+  "task": "nuxt",
+  "version": "4.3.0"
+}

@@ -1,0 +1,149 @@
+diff --git a/activerecord/lib/active_record/locking/optimistic.rb b/activerecord/lib/active_record/locking/optimistic.rb
+index 2b1f2bd730d..f710fb906be 100644
+--- a/activerecord/lib/active_record/locking/optimistic.rb
++++ b/activerecord/lib/active_record/locking/optimistic.rb
+@@ -2,14 +2,14 @@
+ 
+ module ActiveRecord
+   module Locking
+-    # == What is Optimistic Locking
++    # == What is \Optimistic \Locking
+     #
+     # Optimistic locking allows multiple users to access the same record for edits, and assumes a minimum of
+     # conflicts with the data. It does this by checking whether another process has made changes to a record since
+-    # it was opened, an <tt>ActiveRecord::StaleObjectError</tt> exception is thrown if that has occurred
++    # it was opened, an ActiveRecord::StaleObjectError exception is thrown if that has occurred
+     # and the update is ignored.
+     #
+-    # Check out <tt>ActiveRecord::Locking::Pessimistic</tt> for an alternative.
++    # Check out +ActiveRecord::Locking::Pessimistic+ for an alternative.
+     #
+     # == Usage
+     #
+@@ -69,6 +69,11 @@ module ActiveRecord
+         end
+       end
+ 
++      def initialize_dup(other) # :nodoc:
++        super
++        _clear_locking_column if locking_enabled?
++      end
++
+       private
+         def _create_record(attribute_names = self.attribute_names)
+           if locking_enabled?
+@@ -91,8 +96,7 @@ module ActiveRecord
+             locking_column = self.class.locking_column
+             lock_attribute_was = @attributes[locking_column]
+ 
+-            update_constraints = _primary_key_constraints_hash
+-            update_constraints[locking_column] = _lock_value_for_database(locking_column)
++            update_constraints = _query_constraints_hash
+ 
+             attribute_names = attribute_names.dup if attribute_names.frozen?
+             attribute_names << locking_column
+@@ -118,16 +122,9 @@ module ActiveRecord
+         end
+ 
+         def destroy_row
+-          return super unless locking_enabled?
++          affected_rows = super
+ 
+-          locking_column = self.class.locking_column
+-
+-          delete_constraints = _primary_key_constraints_hash
+-          delete_constraints[locking_column] = _lock_value_for_database(locking_column)
+-
+-          affected_rows = self.class._delete_record(delete_constraints)
+-
+-          if affected_rows != 1
++          if locking_enabled? && affected_rows != 1
+             raise ActiveRecord::StaleObjectError.new(self, "destroy")
+           end
+ 
+@@ -142,6 +139,18 @@ module ActiveRecord
+           end
+         end
+ 
++        def _clear_locking_column
++          self[self.class.locking_column] = nil
++          clear_attribute_change(self.class.locking_column)
++        end
++
++        def _query_constraints_hash
++          return super unless locking_enabled?
++
++          locking_column = self.class.locking_column
++          super.merge(locking_column => _lock_value_for_database(locking_column))
++        end
++
+         module ClassMethods
+           DEFAULT_LOCKING_COLUMN = "lock_version"
+ 
+@@ -159,10 +168,7 @@ module ActiveRecord
+           end
+ 
+           # The version column used for optimistic locking. Defaults to +lock_version+.
+-          def locking_column
+-            @locking_column = DEFAULT_LOCKING_COLUMN unless defined?(@locking_column)
+-            @locking_column
+-          end
++          attr_reader :locking_column
+ 
+           # Reset the column used for optimistic locking back to the +lock_version+ default.
+           def reset_locking_column
+@@ -182,6 +188,14 @@ module ActiveRecord
+             end
+             super
+           end
++
++          private
++            def inherited(base)
++              super
++              base.class_eval do
++                @locking_column = DEFAULT_LOCKING_COLUMN
++              end
++            end
+         end
+     end
+ 
+diff --git a/activerecord/lib/active_record/persistence.rb b/activerecord/lib/active_record/persistence.rb
+index 075a86d9b20..2bebe2843d4 100644
+--- a/activerecord/lib/active_record/persistence.rb
++++ b/activerecord/lib/active_record/persistence.rb
+@@ -813,7 +813,7 @@ module ActiveRecord
+         verify_readonly_attribute(name) || name
+       end
+ 
+-      update_constraints = _primary_key_constraints_hash
++      update_constraints = _query_constraints_hash
+       attributes = attributes.each_with_object({}) do |(k, v), h|
+         h[k] = @attributes.write_cast_value(k, v)
+         clear_attribute_change(k)
+@@ -1028,7 +1028,7 @@ module ActiveRecord
+         (self.class.default_scopes?(all_queries: true) || self.class.global_current_scope)
+     end
+ 
+-    def _primary_key_constraints_hash
++    def _query_constraints_hash
+       { @primary_key => id_in_database }
+     end
+ 
+@@ -1041,7 +1041,7 @@ module ActiveRecord
+     end
+ 
+     def _delete_row
+-      self.class._delete_record(_primary_key_constraints_hash)
++      self.class._delete_record(_query_constraints_hash)
+     end
+ 
+     def _touch_row(attribute_names, time)
+@@ -1057,7 +1057,7 @@ module ActiveRecord
+     def _update_row(attribute_names, attempted_action = "update")
+       self.class._update_record(
+         attributes_with_values(attribute_names),
+-        _primary_key_constraints_hash
++        _query_constraints_hash
+       )
+     end
+ 

@@ -1,0 +1,13 @@
+diff --git a/numpy/core/src/multiarray/nditer_pywrap.c b/numpy/core/src/multiarray/nditer_pywrap.c
+index 992bc013af..2770dfa650 100644
+--- a/numpy/core/src/multiarray/nditer_pywrap.c
++++ b/numpy/core/src/multiarray/nditer_pywrap.c
+@@ -1643,5 +1643,8 @@ npyiter_multi_index_set(
+         for (idim = 0; idim < ndim; ++idim) {
+             PyObject *v = PySequence_GetItem(value, idim);
++            if (v == NULL) {
++                return -1;
++            }
+             multi_index[idim] = PyInt_AsLong(v);
+             if (error_converting(multi_index[idim])) {
+                 Py_XDECREF(v);

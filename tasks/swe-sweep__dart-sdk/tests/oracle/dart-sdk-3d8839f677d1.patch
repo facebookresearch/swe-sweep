@@ -1,0 +1,12 @@
+diff --git a/pkg/analyzer/lib/src/error/use_result_verifier.dart b/pkg/analyzer/lib/src/error/use_result_verifier.dart
+index 018e2fdf786..232f8c2b6e7 100644
+--- a/pkg/analyzer/lib/src/error/use_result_verifier.dart
++++ b/pkg/analyzer/lib/src/error/use_result_verifier.dart
+@@ -227,6 +227,7 @@ class UseResultVerifier {
+         parent is FunctionExpressionInvocation ||
+         parent is IfStatement ||
+         parent is IndexExpression ||
++        parent is InterpolationExpression ||
+         parent is ListLiteral ||
+         parent is MapLiteralEntry ||
+         parent is MethodInvocation ||

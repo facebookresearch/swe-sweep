@@ -1,0 +1,29 @@
+diff --git a/autotest/gdrivers/png.py b/autotest/gdrivers/png.py
+index 66ebbf0181..3500f36d48 100755
+--- a/autotest/gdrivers/png.py
++++ b/autotest/gdrivers/png.py
+@@ -353,3 +353,13 @@
+     nbits = out_ds.GetRasterBand(1).GetMetadataItem("NBITS", "IMAGE_STRUCTURE")
+     gdal.Unlink("/vsimem/tmp.png")
+     assert nbits is None
++
++
++###############################################################################
++# Read test of 16-bit interlaced
++
++
++def test_png_read_interlace_16_bit():
++
++    ds = gdal.Open("data/png/uint16_interlaced.png")
++    assert ds.GetRasterBand(1).Checksum() == 4672
+diff --git a/autotest/gdrivers/data/png/uint16_interlaced.png b/autotest/gdrivers/data/png/uint16_interlaced.png
+new file mode 100644
+index 0000000000000000000000000000000000000000..327fec7748d4733041a8bb88727661677e2186e1
+GIT binary patch
+literal 85
+zcmeAS@N?(olHy`uVBq!ia0vp^A|NaPBpCZk*RcR;8BZ6-kcwN$2^Rcq5gI0sY`)H1
+h+!P`p6Ke5+i&5pPbHh|=xhSAI22WQ%mvv4FO#lJN6>tCm
+
+literal 0
+HcmV?d00001
+

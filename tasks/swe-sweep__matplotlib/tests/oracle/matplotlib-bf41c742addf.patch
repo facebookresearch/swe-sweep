@@ -1,0 +1,15 @@
+diff --git a/lib/matplotlib/_mathtext.py b/lib/matplotlib/_mathtext.py
+index 9f23e5e3ab..f81a0df809 100644
+--- a/lib/matplotlib/_mathtext.py
++++ b/lib/matplotlib/_mathtext.py
+@@ -2667,6 +2667,10 @@ class Parser:
+         if napostrophes:
+             if super is None:
+                 super = Hlist([])
++            elif not isinstance(super, Hlist):
++                # A single-char superscript is a bare Char; wrap it so the
++                # prime glyphs can be appended.
++                super = Hlist([super])
+             for i in range(napostrophes):
+                 super.children.extend(self.symbol(s, loc, ['\\prime']))
+             # kern() and hpack() needed to get the metrics right after

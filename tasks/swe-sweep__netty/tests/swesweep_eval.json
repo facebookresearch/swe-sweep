@@ -1,0 +1,947 @@
+{
+  "build_jobs": 4,
+  "container_repo": "/netty",
+  "evaluation": {
+    "suite": "reproduction",
+    "visible_timeout": 14400
+  },
+  "upstream_image": "pandora-maxbug-netty:4.1.18",
+  "n_base_passing": 0,
+  "n_base_test_ignore": 1,
+  "oracle_digest": "add4df5565ba8897c05a032c444d7f61df9ec57bfe7b243e5ace4973a918e2cb",
+  "oracle_pristine_paths": [],
+  "upstream_commit": "9f7399e15e6172900e0591deb5a57a45769d8205",
+  "reproduction": {
+    "jobs_env": "SWESWEEP_BUILD_JOBS",
+    "needs_build": false,
+    "suite": {
+      "goal": "test",
+      "mvn_args": [
+        "-Dcheckstyle.skip",
+        "-Dxml.skip",
+        "-Danimal.sniffer.skip",
+        "-Dmaven.javadoc.skip",
+        "-Denforcer.skip",
+        "-Dforbiddenapis.skip",
+        "-Dlicense.skip",
+        "-Dspotbugs.skip",
+        "-Dfindbugs.skip",
+        "-Djapicmp.skip",
+        "-Dmaven.source.skip"
+      ],
+      "type": "maven"
+    },
+    "test_timeout": 1500
+  },
+  "schema": 2,
+  "subtasks": [
+    {
+      "f2p": [
+        "io.netty.util.AsciiStringCharacterTest.testCachedSanitizesNonLatin1String",
+        "io.netty.util.AsciiStringCharacterTest.testCachedStringMatchesByteContent"
+      ],
+      "id": "netty-0181005e2cc5",
+      "target_files": [
+        "common/src/main/java/io/netty/util/AsciiString.java"
+      ]
+    },
+    {
+      "f2p": [
+        "io.netty.channel.local.LocalChannelTest.testAutoReadDisabledDifferentGroup"
+      ],
+      "id": "netty-029acbe51dbe",
+      "target_files": [
+        "transport/src/main/java/io/netty/channel/local/LocalChannel.java"
+      ]
+    },
+    {
+      "f2p": [
+        "io.netty.channel.AbstractCoalescingBufferQueueTest.testDecrementAllWhenReleaseAndFailAll",
+        "io.netty.channel.AbstractCoalescingBufferQueueTest.testDecrementAllWhenWriteAndRemoveAll"
+      ],
+      "id": "netty-02c9aeb658fb",
+      "target_files": [
+        "transport/src/main/java/io/netty/channel/AbstractCoalescingBufferQueue.java"
+      ]
+    },
+    {
+      "f2p": [
+        "io.netty.handler.codec.http.multipart.DiskFileUploadTest.setSetContentFromFileExceptionally"
+      ],
+      "id": "netty-06fa9b86e27c",
+      "target_files": [
+        "codec-http/src/main/java/io/netty/handler/codec/http/multipart/AbstractDiskHttpData.java"
+      ]
+    },
+    {
+      "f2p": [
+        "io.netty.handler.codec.dns.AbstractDnsRecordTest.testEqualsAndHashCodeIgnoreCase"
+      ],
+      "id": "netty-092b3edbfbbd",
+      "target_files": [
+        "codec-dns/src/main/java/io/netty/handler/codec/dns/AbstractDnsRecord.java"
+      ]
+    },
+    {
+      "f2p": [
+        "io.netty.channel.DefaultChannelPipelineTest.testThrowInOtherHandlerAfterInvokedFromExceptionCaught"
+      ],
+      "id": "netty-0a6d5f77d70d",
+      "target_files": [
+        "transport/src/main/java/io/netty/channel/AbstractChannelHandlerContext.java"
+      ]
+    },
+    {
+      "f2p": [
+        "io.netty.handler.codec.http.HttpContentCompressorTest.testEmpty"
+      ],
+      "id": "netty-0e5b5905f615",
+      "target_files": [
+        "codec-http/src/main/java/io/netty/handler/codec/http/HttpContentEncoder.java"
+      ]
+    },
+    {
+      "f2p": [
+        "io.netty.util.concurrent.DefaultPromiseTest.signalUncancellableCompletionValue"
+      ],
+      "id": "netty-0e8192c70f2c",
+      "target_files": [
+        "common/src/main/java/io/netty/util/concurrent/DefaultPromise.java"
+      ]
+    },
+    {
+      "f2p": [
+        "io.netty.handler.codec.http2.HttpConversionUtilTest.handlesRequestWithDoubleSlashPath"
+      ],
+      "id": "netty-1016d9ee3e8b",
+      "target_files": [
+        "codec-http2/src/main/java/io/netty/handler/codec/http2/HttpConversionUtil.java"
+      ]
+    },
+    {
+      "f2p": [
+        "io.netty.handler.codec.http.multipart.HttpPostRequestDecoderTest.testHttpPostStandardRequestDecoderToDiskNameContainingUnauthorizedChar"
+      ],
+      "id": "netty-107d74e8d1da",
+      "target_files": [
+        "codec-http/src/main/java/io/netty/handler/codec/http/multipart/AbstractDiskHttpData.java"
+      ]
+    },
+    {
+      "f2p": [
+        "io.netty.handler.codec.ByteToMessageDecoderTest.testDisorder"
+      ],
+      "id": "netty-191a4d5bdd0d",
+      "target_files": [
+        "codec/src/main/java/io/netty/handler/codec/ByteToMessageDecoder.java"
+      ]
+    },
+    {
+      "f2p": [
+        "io.netty.handler.codec.dns.DefaultDnsRecordEncoderTest.testEncodePtr"
+      ],
+      "id": "netty-197a14c0c331",
+      "target_files": [
+        "codec-dns/src/main/java/io/netty/handler/codec/dns/DefaultDnsRecordEncoder.java"
+      ]
+    },
+    {
+      "f2p": [
+        "io.netty.handler.codec.http2.CleartextHttp2ServerUpgradeHandlerTest.requiredHeadersInSeparateConnectionHeaders",
+        "io.netty.handler.codec.http2.CleartextHttp2ServerUpgradeHandlerTest.upgradeWithMultipleConnectionHeaders"
+      ],
+      "id": "netty-1c0b8c9b7d7c",
+      "target_files": [
+        "codec-http/src/main/java/io/netty/handler/codec/http/HttpServerUpgradeHandler.java"
+      ]
+    },
+    {
+      "f2p": [
+        "io.netty.channel.DefaultFileRegionTest.testTruncated"
+      ],
+      "id": "netty-1df5de5900ca",
+      "target_files": [
+        "transport-native-epoll/src/main/java/io/netty/channel/epoll/AbstractEpollStreamChannel.java",
+        "transport-native-kqueue/src/main/java/io/netty/channel/kqueue/AbstractKQueueStreamChannel.java",
+        "transport/src/main/java/io/netty/channel/AbstractChannel.java",
+        "transport/src/main/java/io/netty/channel/DefaultFileRegion.java"
+      ]
+    },
+    {
+      "f2p": [
+        "io.netty.buffer.DefaultByteBufHolderTest.testDifferentClassesAreNotEqual"
+      ],
+      "id": "netty-2037b06c383f",
+      "target_files": [
+        "buffer/src/main/java/io/netty/buffer/DefaultByteBufHolder.java"
+      ]
+    },
+    {
+      "f2p": [
+        "io.netty.handler.codec.http2.DefaultHttp2FrameWriterTest.writeLargeHeaders"
+      ],
+      "id": "netty-2254d1c26872",
+      "target_files": [
+        "codec-http2/src/main/java/io/netty/handler/codec/http2/DefaultHttp2FrameWriter.java"
+      ]
+    },
+    {
+      "f2p": [
+        "io.netty.handler.codec.http2.Http2MultiplexCodecTest.unhandledHttp2FramesShouldBePropagated"
+      ],
+      "id": "netty-230be36d0827",
+      "target_files": [
+        "codec-http2/src/main/java/io/netty/handler/codec/http2/Http2MultiplexCodec.java"
+      ]
+    },
+    {
+      "f2p": [
+        "io.netty.handler.codec.http2.DefaultHttp2LocalFlowControllerTest.windowUpdateShouldNotBeSentAfterStreamIsClosedForUnconsumedBytes"
+      ],
+      "id": "netty-246086a56bfe",
+      "target_files": [
+        "codec-http2/src/main/java/io/netty/handler/codec/http2/DefaultHttp2LocalFlowController.java"
+      ]
+    },
+    {
+      "f2p": [
+        "io.netty.handler.codec.http.websocketx.extensions.compression.PerMessageDeflateClientExtensionHandshakerTest.testCustomHandshake"
+      ],
+      "id": "netty-2503c4b629c8",
+      "target_files": [
+        "codec-http/src/main/java/io/netty/handler/codec/http/websocketx/extensions/compression/PerMessageDeflateClientExtensionHandshaker.java"
+      ]
+    },
+    {
+      "f2p": [
+        "io.netty.util.internal.AppendableCharSequenceTest.testEmptySubSequence"
+      ],
+      "id": "netty-256d49c2cb63",
+      "target_files": [
+        "common/src/main/java/io/netty/util/internal/AppendableCharSequence.java"
+      ]
+    },
+    {
+      "f2p": [
+        "io.netty.handler.codec.http.HttpRequestDecoderTest.testLeadingWhitespaceInFirstHeaderName"
+      ],
+      "id": "netty-282e9e403c0b",
+      "target_files": [
+        "codec-http/src/main/java/io/netty/handler/codec/http/HttpObjectDecoder.java"
+      ]
+    },
+    {
+      "f2p": [
+        "io.netty.handler.codec.http.DefaultHttpHeadersTest.names"
+      ],
+      "id": "netty-29068288650e",
+      "target_files": [
+        "codec/src/main/java/io/netty/handler/codec/HeadersUtils.java"
+      ]
+    },
+    {
+      "f2p": [
+        "io.netty.handler.codec.dns.AbstractDnsRecordTest.testEqualsAndHashCodeIgnoreCase"
+      ],
+      "id": "netty-2cb78930daa8",
+      "target_files": [
+        "codec-dns/src/main/java/io/netty5/handler/codec/dns/AbstractDnsRecord.java"
+      ]
+    },
+    {
+      "f2p": [
+        "io.netty.handler.codec.http2.Http2StreamFrameToHttpObjectCodecTest.testIsSharableBetweenChannels"
+      ],
+      "id": "netty-2f6d932c12d6",
+      "target_files": [
+        "codec-http2/src/main/java/io/netty/handler/codec/http2/Http2StreamFrameToHttpObjectCodec.java"
+      ]
+    },
+    {
+      "f2p": [
+        "io.netty.handler.codec.http.websocketx.extensions.compression.PerMessageDeflateClientExtensionHandshakerTest.testDecoderNoClientContext"
+      ],
+      "id": "netty-348c78646c71",
+      "target_files": [
+        "codec-http/src/main/java/io/netty/handler/codec/http/websocketx/extensions/compression/PerMessageDeflateClientExtensionHandshaker.java",
+        "codec-http/src/main/java/io/netty/handler/codec/http/websocketx/extensions/compression/PerMessageDeflateServerExtensionHandshaker.java"
+      ]
+    },
+    {
+      "f2p": [
+        "io.netty.handler.codec.http.cookie.ServerCookieEncoderTest.illegalCharInWrappedValueAppearsInException"
+      ],
+      "id": "netty-352de569226c",
+      "target_files": [
+        "codec-http/src/main/java/io/netty/handler/codec/http/cookie/CookieEncoder.java"
+      ]
+    },
+    {
+      "f2p": [
+        "__process_level_failure__"
+      ],
+      "id": "netty-35beb641497a",
+      "target_files": [
+        "handler-proxy/src/main/java/io/netty/handler/proxy/Socks5ProxyHandler.java"
+      ]
+    },
+    {
+      "f2p": [
+        "io.netty.handler.codec.ByteToMessageDecoderTest.testDecodeLast"
+      ],
+      "id": "netty-3668d05de2c9",
+      "target_files": [
+        "codec/src/main/java/io/netty/handler/codec/ByteToMessageDecoder.java"
+      ]
+    },
+    {
+      "f2p": [
+        "io.netty.util.concurrent.DefaultPromiseTest.setUncancellableGetNow"
+      ],
+      "id": "netty-3a4a6705db57",
+      "target_files": [
+        "common/src/main/java/io/netty/util/concurrent/DefaultPromise.java"
+      ]
+    },
+    {
+      "f2p": [
+        "io.netty.handler.codec.http.multipart.HttpPostRequestDecoderTest.testMultipartFormDataContentType"
+      ],
+      "id": "netty-3c02484e5e61",
+      "target_files": [
+        "codec-http/src/main/java/io/netty/handler/codec/http/multipart/HttpPostRequestDecoder.java"
+      ]
+    },
+    {
+      "f2p": [
+        "io.netty.handler.codec.dns.DefaultDnsRecordEncoderTest.testEncodePtr"
+      ],
+      "id": "netty-3ea067d1bbc4",
+      "target_files": [
+        "codec-dns/src/main/java/io/netty/handler/codec/dns/DefaultDnsRecordEncoder.java"
+      ]
+    },
+    {
+      "f2p": [
+        "__process_level_failure__"
+      ],
+      "id": "netty-3ea4939d9e53",
+      "target_files": [
+        "buffer/src/main/java/io/netty/buffer/UnsafeByteBufUtil.java"
+      ]
+    },
+    {
+      "f2p": [
+        "io.netty.handler.codec.http2.HttpConversionUtilTest.connectNoPath"
+      ],
+      "id": "netty-40ebfddb23ce",
+      "target_files": [
+        "codec-http2/src/main/java/io/netty/handler/codec/http2/HttpConversionUtil.java"
+      ]
+    },
+    {
+      "f2p": [
+        "io.netty.handler.codec.http2.DefaultHttp2LocalFlowControllerTest.windowUpdateShouldBeWrittenWhenStreamIsClosedAndFlushed"
+      ],
+      "id": "netty-41b18ec61d57",
+      "target_files": [
+        "codec-http2/src/main/java/io/netty/handler/codec/http2/DefaultHttp2LocalFlowController.java"
+      ]
+    },
+    {
+      "f2p": [
+        "io.netty.handler.codec.http.HttpObjectAggregatorTest.testOversizedRequestWithAutoReadFalse"
+      ],
+      "id": "netty-42fb69a9d3e6",
+      "target_files": [
+        "codec-http/src/main/java/io/netty/handler/codec/http/HttpObjectAggregator.java"
+      ]
+    },
+    {
+      "f2p": [
+        "io.netty.handler.codec.http.HttpClientCodecTest.testWebDavResponse"
+      ],
+      "id": "netty-446f231da1d9",
+      "target_files": [
+        "codec-http/src/main/java/io/netty/handler/codec/http/HttpClientCodec.java"
+      ]
+    },
+    {
+      "f2p": [
+        "io.netty.buffer.ReadOnlyByteBufTest.testDuplicateOfRetainedSliceHasTheSameCapacityAsTheSlice",
+        "io.netty.buffer.ReadOnlyByteBufTest.testDuplicateOfSliceHasTheSameCapacityAsTheSlice"
+      ],
+      "id": "netty-48071bfe1068",
+      "target_files": [
+        "buffer/src/main/java/io/netty/buffer/AbstractUnpooledSlicedByteBuf.java",
+        "buffer/src/main/java/io/netty/buffer/PooledSlicedByteBuf.java",
+        "buffer/src/main/java/io/netty/buffer/ReadOnlyByteBufferBuf.java"
+      ]
+    },
+    {
+      "f2p": [
+        "io.netty.handler.ssl.SslHandlerTest.testIncorrectLength"
+      ],
+      "id": "netty-4cfd65ae4daf",
+      "target_files": [
+        "handler/src/main/java/io/netty/handler/ssl/SslHandler.java"
+      ]
+    },
+    {
+      "f2p": [
+        "io.netty.handler.codec.MessageToMessageEncoderTest.testIntermediateWriteFailures"
+      ],
+      "id": "netty-5097ca601d21",
+      "target_files": [
+        "codec/src/main/java/io/netty/handler/codec/MessageToMessageEncoder.java"
+      ]
+    },
+    {
+      "f2p": [
+        "io.netty.handler.codec.http.HttpRequestDecoderTest.testHeaderWithNoValueAndMissingColon"
+      ],
+      "id": "netty-5416c2860d21",
+      "target_files": [
+        "codec-http/src/main/java/io/netty/handler/codec/http/HttpObjectDecoder.java"
+      ]
+    },
+    {
+      "f2p": [
+        "io.netty.buffer.ByteBufStreamTest.testRead"
+      ],
+      "id": "netty-55c6671ae47d",
+      "target_files": [
+        "buffer/src/main/java/io/netty/buffer/ByteBufInputStream.java"
+      ]
+    },
+    {
+      "f2p": [
+        "io.netty.handler.timeout.IdleStateHandlerTest.testObserveAllIdle",
+        "io.netty.handler.timeout.IdleStateHandlerTest.testObserveWriterIdle"
+      ],
+      "id": "netty-56a1139fb79a",
+      "target_files": [
+        "handler/src/main/java/io/netty/handler/timeout/IdleStateHandler.java",
+        "transport/src/main/java/io/netty/channel/ChannelOutboundBuffer.java"
+      ]
+    },
+    {
+      "f2p": [
+        "io.netty.handler.codec.http.cookie.ClientCookieDecoderTest.testDecodingInvalidValuesWithCommaAtStart"
+      ],
+      "id": "netty-5709ed9be0a2",
+      "target_files": [
+        "codec-http/src/main/java/io/netty/handler/codec/http/cookie/ClientCookieDecoder.java"
+      ]
+    },
+    {
+      "f2p": [
+        "io.netty.handler.codec.mqtt.MqttConnectPayloadTest.testEmptyTopicsToString"
+      ],
+      "id": "netty-575bbad6bc16",
+      "target_files": [
+        "codec-mqtt/src/main/java/io/netty/handler/codec/mqtt/MqttSubscribePayload.java",
+        "codec-mqtt/src/main/java/io/netty/handler/codec/mqtt/MqttUnsubscribePayload.java"
+      ]
+    },
+    {
+      "f2p": [
+        "io.netty.handler.codec.socksx.v5.Socks5InitialRequestDecoderTest.testUnpackingCausesDecodeFail"
+      ],
+      "id": "netty-58b7654f5a4a",
+      "target_files": [
+        "codec-socks/src/main/java/io/netty/handler/codec/socksx/v5/Socks5InitialRequestDecoder.java"
+      ]
+    },
+    {
+      "f2p": [
+        "io.netty.handler.traffic.TrafficShapingHandlerTest.testQueuedWritesReleasedAndFailedOnClose"
+      ],
+      "id": "netty-5c4e1d21c14c",
+      "target_files": [
+        "handler/src/main/java/io/netty/handler/traffic/AbstractTrafficShapingHandler.java",
+        "handler/src/main/java/io/netty/handler/traffic/ChannelTrafficShapingHandler.java",
+        "handler/src/main/java/io/netty/handler/traffic/GlobalChannelTrafficShapingHandler.java",
+        "handler/src/main/java/io/netty/handler/traffic/GlobalTrafficShapingHandler.java"
+      ]
+    },
+    {
+      "f2p": [
+        "io.netty.handler.flush.FlushConsolidationHandlerTest.testResend"
+      ],
+      "id": "netty-62775df4bc2d",
+      "target_files": [
+        "handler/src/main/java/io/netty/handler/flush/FlushConsolidationHandler.java"
+      ]
+    },
+    {
+      "f2p": [
+        "io.netty.handler.codec.base64.Base64Test.decodingFailsOnInvalidInputByte"
+      ],
+      "id": "netty-63d055919313",
+      "target_files": [
+        "codec/src/main/java/io/netty/handler/codec/base64/Base64.java",
+        "codec/src/main/java/io/netty/handler/codec/base64/Base64Dialect.java"
+      ]
+    },
+    {
+      "f2p": [
+        "io.netty.handler.codec.compression.SnappyTest.testLarge2ByteLiteralLengthAndCopyOffset"
+      ],
+      "id": "netty-6ff443e4c452",
+      "target_files": [
+        "codec/src/main/java/io/netty/handler/codec/compression/Snappy.java"
+      ]
+    },
+    {
+      "f2p": [
+        "io.netty.handler.codec.http.HttpClientUpgradeHandlerTest.testMultipleUpgradeRequestsFail"
+      ],
+      "id": "netty-719c89766457",
+      "target_files": [
+        "codec-http/src/main/java/io/netty/handler/codec/http/HttpClientUpgradeHandler.java"
+      ]
+    },
+    {
+      "f2p": [
+        "io.netty.handler.codec.http.multipart.HttpPostRequestEncoderTest.testEncodeChunkedContent"
+      ],
+      "id": "netty-71dfbf539dde",
+      "target_files": [
+        "codec-http/src/main/java/io/netty/handler/codec/http/multipart/HttpPostRequestEncoder.java"
+      ]
+    },
+    {
+      "f2p": [
+        "io.netty.handler.codec.ByteToMessageDecoderTest.releaseWhenCompositeCumulateThrows",
+        "io.netty.handler.codec.ByteToMessageDecoderTest.releaseWhenMergeCumulateThrows"
+      ],
+      "id": "netty-72e45c376c39",
+      "target_files": [
+        "codec/src/main/java/io/netty/handler/codec/ByteToMessageDecoder.java"
+      ]
+    },
+    {
+      "f2p": [
+        "io.netty.handler.codec.http2.Http2FrameCodecTest.invalidPayloadLength"
+      ],
+      "id": "netty-735ca906d4fb",
+      "target_files": [
+        "codec-http2/src/main/java/io/netty/handler/codec/http2/DefaultHttp2FrameReader.java"
+      ]
+    },
+    {
+      "f2p": [
+        "io.netty.handler.ipfilter.IpSubnetFilterTest.testIp6SubnetFilterDefaultRule"
+      ],
+      "id": "netty-7954686f7091",
+      "target_files": [
+        "handler/src/main/java/io/netty/handler/ipfilter/IpSubnetFilterRule.java"
+      ]
+    },
+    {
+      "f2p": [
+        "io.netty.handler.codec.CodecOutputListTest.testCodecOutputListAdd"
+      ],
+      "id": "netty-7c7802c2f846",
+      "target_files": [
+        "codec/src/main/java/io/netty/handler/codec/CodecOutputList.java"
+      ]
+    },
+    {
+      "f2p": [
+        "io.netty.handler.codec.compression.Lz4FrameDecoderTest.testRejectsCompressedDataBeyondDeclaredLength"
+      ],
+      "id": "netty-7cd043255b22",
+      "target_files": [
+        "codec/src/main/java/io/netty/handler/codec/compression/Lz4FrameDecoder.java"
+      ]
+    },
+    {
+      "f2p": [
+        "io.netty.handler.codec.http2.Http2StreamFrameToHttpObjectCodecTest.testDecodeFullResponseHeadersWithStreamID"
+      ],
+      "id": "netty-82bb2ffc0c99",
+      "target_files": [
+        "codec-http2/src/main/java/io/netty/handler/codec/http2/Http2StreamFrameToHttpObjectCodec.java"
+      ]
+    },
+    {
+      "f2p": [
+        "io.netty.handler.codec.http.HttpChunkedInputTest.testCloseReleasesUnsentLastHttpContent",
+        "io.netty.handler.codec.http.HttpChunkedInputTest.testCloseReleasesUnsentLastHttpContentWhenInputCloseThrows"
+      ],
+      "id": "netty-86b7b04f49e3",
+      "target_files": [
+        "codec-http/src/main/java/io/netty/handler/codec/http/HttpChunkedInput.java"
+      ]
+    },
+    {
+      "f2p": [
+        "io.netty.handler.codec.http2.Http2FrameCodecTest.flowControlShouldBeResilientToMissingStreams"
+      ],
+      "id": "netty-8b17588906f9",
+      "target_files": [
+        "codec-http2/src/main/java/io/netty/handler/codec/http2/Http2FrameCodec.java"
+      ]
+    },
+    {
+      "f2p": [
+        "io.netty.handler.codec.http.CombinedHttpHeadersTest.nonCombinableHeaderIterator"
+      ],
+      "id": "netty-8fba0032755b",
+      "target_files": [
+        "codec-http/src/main/java/io/netty/handler/codec/http/CombinedHttpHeaders.java"
+      ]
+    },
+    {
+      "f2p": [
+        "io.netty.handler.codec.DateFormatterTest.testParseHttpDateSubstringDoesNotOverrunEnd"
+      ],
+      "id": "netty-9009c14c000b",
+      "target_files": [
+        "codec/src/main/java/io/netty/handler/codec/DateFormatter.java"
+      ]
+    },
+    {
+      "f2p": [
+        "io.netty.handler.ipfilter.UniqueIpFilterTest.testUniqueIpFilterHandler"
+      ],
+      "id": "netty-92eff96b8cca",
+      "target_files": [
+        "handler/src/main/java/io/netty/handler/ipfilter/UniqueIpFilter.java"
+      ]
+    },
+    {
+      "f2p": [
+        "io.netty.util.NetUtilTest.testBytesToIpAddressWithOffset"
+      ],
+      "id": "netty-9550bb3c5d51",
+      "target_files": [
+        "common/src/main/java/io/netty/util/NetUtil.java"
+      ]
+    },
+    {
+      "f2p": [
+        "io.netty.handler.codec.http.HttpClientUpgradeHandlerTest.testSuccessfulUpgrade"
+      ],
+      "id": "netty-9629046fbcbf",
+      "target_files": [
+        "codec-http/src/main/java/io/netty/handler/codec/http/HttpClientUpgradeHandler.java"
+      ]
+    },
+    {
+      "f2p": [
+        "io.netty.handler.codec.http2.HpackDecoderTest.testAccountForHeaderOverhead"
+      ],
+      "id": "netty-9a343bf5f0ed",
+      "target_files": [
+        "codec-http2/src/main/java/io/netty/handler/codec/http2/HpackDecoder.java"
+      ]
+    },
+    {
+      "f2p": [
+        "io.netty.handler.codec.http.HttpContentCompressorTest.testChunkedContentWithAssembledResponseIdentityEncoding",
+        "io.netty.handler.codec.http.HttpContentCompressorTest.testContentWithAssembledResponseIdentityEncodingHttp10"
+      ],
+      "id": "netty-9a7b2475056c",
+      "target_files": [
+        "codec-http/src/main/java/io/netty/handler/codec/http/HttpContentEncoder.java"
+      ]
+    },
+    {
+      "f2p": [
+        "io.netty.buffer.ReadOnlyDirectByteBufferBufTest.testGetBytesByteBuffer"
+      ],
+      "id": "netty-9df8681f5e55",
+      "target_files": [
+        "buffer/src/main/java/io/netty/buffer/ReadOnlyByteBufferBuf.java",
+        "buffer/src/main/java/io/netty/buffer/ReadOnlyUnsafeDirectByteBuf.java"
+      ]
+    },
+    {
+      "f2p": [
+        "io.netty.channel.DefaultChannelPipelineTest.testWriteAndFlushThrowsReleaseMessage"
+      ],
+      "id": "netty-a19516f7327c",
+      "target_files": [
+        "transport/src/main/java/io/netty/channel/AbstractChannelHandlerContext.java"
+      ]
+    },
+    {
+      "f2p": [
+        "io.netty.buffer.ByteBufUtilTest.testWriteUsAsciiCompositeWrapped",
+        "io.netty.buffer.ByteBufUtilTest.testWriteUtf8CompositeWrapped"
+      ],
+      "id": "netty-a1b888999812",
+      "target_files": [
+        "buffer/src/main/java/io/netty/buffer/ByteBufUtil.java"
+      ]
+    },
+    {
+      "f2p": [
+        "io.netty.bootstrap.BootstrapTest.testGetResolverFailed"
+      ],
+      "id": "netty-a6a5c8f6a5af",
+      "target_files": [
+        "transport/src/main/java/io/netty/bootstrap/Bootstrap.java"
+      ]
+    },
+    {
+      "f2p": [
+        "io.netty.handler.codec.http.HttpContentCompressorTest.testChunkedContentWithAssembledResponse"
+      ],
+      "id": "netty-a71b2cc69f8c",
+      "target_files": [
+        "codec-http/src/main/java/io/netty/handler/codec/http/HttpContentEncoder.java"
+      ]
+    },
+    {
+      "f2p": [
+        "io.netty.channel.PendingWriteQueueTest.testRemoveAndWriteAllWithVoidPromise"
+      ],
+      "id": "netty-ae9c79ec1669",
+      "target_files": [
+        "transport/src/main/java/io/netty/channel/PendingWriteQueue.java"
+      ]
+    },
+    {
+      "f2p": [
+        "io.netty.handler.codec.http2.Http2ConnectionHandlerTest.writeMultipleRstFramesForSameStream"
+      ],
+      "id": "netty-b4a05b1ac662",
+      "target_files": [
+        "codec-http2/src/main/java/io/netty/handler/codec/http2/Http2ConnectionHandler.java"
+      ]
+    },
+    {
+      "f2p": [
+        "io.netty.handler.codec.DatagramPacketEncoderTest.testEncodeWithSenderIsNull"
+      ],
+      "id": "netty-b7be4187df0b",
+      "target_files": [
+        "codec/src/main/java/io/netty/handler/codec/DatagramPacketEncoder.java"
+      ]
+    },
+    {
+      "f2p": [
+        "io.netty.handler.codec.http2.Http2MultiplexCodecTest.channelClosedWhenInactiveFired"
+      ],
+      "id": "netty-b8c4c85d7c17",
+      "target_files": [
+        "codec-http2/src/main/java/io/netty/handler/codec/http2/Http2MultiplexCodec.java"
+      ]
+    },
+    {
+      "f2p": [
+        "io.netty.channel.ChannelOutboundBufferTest.testWriteTaskRejected"
+      ],
+      "id": "netty-ba635e0dc8ff",
+      "target_files": [
+        "transport/src/main/java/io/netty/channel/AbstractChannelHandlerContext.java"
+      ]
+    },
+    {
+      "f2p": [
+        "io.netty.handler.codec.http.multipart.DiskFileUploadTest.testEmptyBufferSetAfterNonEmptyBuffer",
+        "io.netty.handler.codec.http.multipart.DiskFileUploadTest.testEmptyBufferSetMultipleTimes"
+      ],
+      "id": "netty-bd315916df96",
+      "target_files": [
+        "codec-http/src/main/java/io/netty/handler/codec/http/multipart/AbstractDiskHttpData.java"
+      ]
+    },
+    {
+      "f2p": [
+        "io.netty.util.AbstractReferenceCountedTest.testReleaseErrorMessage"
+      ],
+      "id": "netty-bf95b878fd27",
+      "target_files": [
+        "buffer/src/main/java/io/netty/buffer/AbstractReferenceCountedByteBuf.java",
+        "common/src/main/java/io/netty/util/AbstractReferenceCounted.java"
+      ]
+    },
+    {
+      "f2p": [
+        "io.netty.buffer.EmptyByteBufTest.testGetCharSequence"
+      ],
+      "id": "netty-c62965842334",
+      "target_files": [
+        "buffer/src/main/java/io/netty/buffer/EmptyByteBuf.java"
+      ]
+    },
+    {
+      "f2p": [
+        "io.netty.handler.codec.json.JsonObjectDecoderTest.testMultipleJsonObjectsOverMultipleWrites"
+      ],
+      "id": "netty-ca308ab49a25",
+      "target_files": [
+        "codec/src/main/java/io/netty/handler/codec/json/JsonObjectDecoder.java"
+      ]
+    },
+    {
+      "f2p": [
+        "io.netty.handler.codec.http2.Http2MultiplexCodecTest.outboundStreamShouldNotWriteResetFrameOnClose_IfStreamDidntExist"
+      ],
+      "id": "netty-cadc2dd1ed8c",
+      "target_files": [
+        "codec-http2/src/main/java/io/netty/handler/codec/http2/Http2MultiplexCodec.java"
+      ]
+    },
+    {
+      "f2p": [
+        "io.netty.util.HashedWheelTimerTest.testOverflow"
+      ],
+      "id": "netty-cd26ad4918aa",
+      "target_files": [
+        "common/src/main/java/io/netty/util/HashedWheelTimer.java"
+      ]
+    },
+    {
+      "f2p": [
+        "io.netty.handler.codec.http.HttpContentDecoderTest.testChunkedRequestDecompression"
+      ],
+      "id": "netty-ce7a3897960f",
+      "target_files": [
+        "codec-http/src/main/java/io/netty/handler/codec/http/ComposedLastHttpContent.java",
+        "codec-http/src/main/java/io/netty/handler/codec/http/HttpContentDecoder.java",
+        "codec-http/src/main/java/io/netty/handler/codec/http/HttpContentEncoder.java"
+      ]
+    },
+    {
+      "f2p": [
+        "io.netty.util.AsciiStringCharacterTest.testContentEqualsIgnoreCase"
+      ],
+      "id": "netty-cf30a5309bca",
+      "target_files": [
+        "common/src/main/java/io/netty/util/AsciiString.java"
+      ]
+    },
+    {
+      "f2p": [
+        "io.netty.handler.codec.http2.Http2ConnectionHandlerTest.clientChannelClosedDoesNotSendGoAwayBeforePreface"
+      ],
+      "id": "netty-d3d4dfc1e873",
+      "target_files": [
+        "codec-http2/src/main/java/io/netty/handler/codec/http2/Http2ConnectionHandler.java"
+      ]
+    },
+    {
+      "f2p": [
+        "io.netty.handler.codec.memcache.binary.DefaultFullBinaryMemcacheRequestTest.fullCopy",
+        "io.netty.handler.codec.memcache.binary.DefaultFullBinaryMemcacheRequestTest.fullDuplicate",
+        "io.netty.handler.codec.memcache.binary.DefaultFullBinaryMemcacheRequestTest.fullReplace",
+        "io.netty.handler.codec.memcache.binary.DefaultFullBinaryMemcacheResponseTest.fullCopy",
+        "io.netty.handler.codec.memcache.binary.DefaultFullBinaryMemcacheResponseTest.fullDuplicate",
+        "io.netty.handler.codec.memcache.binary.DefaultFullBinaryMemcacheResponseTest.fullReplace"
+      ],
+      "id": "netty-d3e37fadfa46",
+      "target_files": [
+        "codec-memcache/src/main/java/io/netty/handler/codec/memcache/binary/AbstractBinaryMemcacheMessage.java",
+        "codec-memcache/src/main/java/io/netty/handler/codec/memcache/binary/DefaultBinaryMemcacheRequest.java",
+        "codec-memcache/src/main/java/io/netty/handler/codec/memcache/binary/DefaultBinaryMemcacheResponse.java",
+        "codec-memcache/src/main/java/io/netty/handler/codec/memcache/binary/DefaultFullBinaryMemcacheRequest.java",
+        "codec-memcache/src/main/java/io/netty/handler/codec/memcache/binary/DefaultFullBinaryMemcacheResponse.java"
+      ]
+    },
+    {
+      "f2p": [
+        "io.netty.handler.codec.http.HttpContentDecompressorTest.testInvokeReadWhenNotProduceMessage"
+      ],
+      "id": "netty-d8de585034c3",
+      "target_files": [
+        "codec-http/src/main/java/io/netty/handler/codec/http/HttpContentDecoder.java"
+      ]
+    },
+    {
+      "f2p": [
+        "io.netty.handler.codec.http.HttpClientUpgradeHandlerTest.forwardOnFailure"
+      ],
+      "id": "netty-e5de5877b631",
+      "target_files": [
+        "codec-http/src/main/java/io/netty/handler/codec/http/HttpClientUpgradeHandler.java"
+      ]
+    },
+    {
+      "f2p": [
+        "io.netty.handler.codec.http.HttpResponseDecoderTest.testTrailerWithEmptyLineInSeparateBuffer"
+      ],
+      "id": "netty-e604bbaaaf9c",
+      "target_files": [
+        "codec-http/src/main/java/io/netty/handler/codec/http/HttpObjectDecoder.java"
+      ]
+    },
+    {
+      "f2p": [
+        "io.netty.handler.codec.LineBasedFrameDecoderTest.testNotFailFast"
+      ],
+      "id": "netty-e8bbc5049252",
+      "target_files": [
+        "codec/src/main/java/io/netty/handler/codec/LineBasedFrameDecoder.java"
+      ]
+    },
+    {
+      "f2p": [
+        "io.netty.handler.traffic.TrafficShapingHandlerTest.testQueuedWritesReleasedAndFailedOnClose"
+      ],
+      "id": "netty-e8cb60dd8faa",
+      "target_files": [
+        "handler/src/main/java/io/netty/handler/traffic/AbstractTrafficShapingHandler.java",
+        "handler/src/main/java/io/netty/handler/traffic/ChannelTrafficShapingHandler.java",
+        "handler/src/main/java/io/netty/handler/traffic/GlobalChannelTrafficShapingHandler.java",
+        "handler/src/main/java/io/netty/handler/traffic/GlobalTrafficShapingHandler.java"
+      ]
+    },
+    {
+      "f2p": [
+        "io.netty.handler.stream.ChunkedWriteHandlerTest.testFailureWhenLastChunkFailed",
+        "io.netty.handler.stream.ChunkedWriteHandlerTest.testSkipAfterFailedChunkedFile",
+        "io.netty.handler.stream.ChunkedWriteHandlerTest.testSkipAfterFailedChunkedNioStream",
+        "io.netty.handler.stream.ChunkedWriteHandlerTest.testStopConsumingChunksWhenFailed"
+      ],
+      "id": "netty-eaf6de009435",
+      "target_files": [
+        "handler/src/main/java/io/netty/handler/stream/ChunkedWriteHandler.java"
+      ]
+    },
+    {
+      "f2p": [
+        "io.netty.handler.codec.http.HttpObjectAggregatorTest.invalidContinueLength"
+      ],
+      "id": "netty-efa9239a4731",
+      "target_files": [
+        "codec-http/src/main/java/io/netty/handler/codec/http/HttpObjectAggregator.java"
+      ]
+    },
+    {
+      "f2p": [
+        "io.netty.handler.codec.http.HttpRequestDecoderTest.reentrantClose"
+      ],
+      "id": "netty-f2a07e12d6c4",
+      "target_files": [
+        "transport/src/main/java/io/netty/channel/embedded/EmbeddedChannel.java"
+      ]
+    },
+    {
+      "f2p": [
+        "io.netty.handler.codec.CharSequenceValueConverterTest.testByteFromAsciiString",
+        "io.netty.handler.codec.CharSequenceValueConverterTest.testByteFromEmptyAsciiString"
+      ],
+      "id": "netty-f75e03176f54",
+      "target_files": [
+        "codec/src/main/java/io/netty/handler/codec/CharSequenceValueConverter.java"
+      ]
+    },
+    {
+      "f2p": [
+        "io.netty.handler.codec.http2.HpackDecoderTest.testDecodeCountsNamesOnlyOnce"
+      ],
+      "id": "netty-fc9b49c046b0",
+      "target_files": [
+        "codec-http2/src/main/java/io/netty/handler/codec/http2/HpackDecoder.java"
+      ]
+    }
+  ],
+  "task": "netty",
+  "version": "4.1.18"
+}

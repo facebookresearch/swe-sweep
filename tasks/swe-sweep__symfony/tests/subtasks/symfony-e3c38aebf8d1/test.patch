@@ -1,0 +1,29 @@
+diff --git a/src/Symfony/Component/Process/Tests/ExecutableFinderTest.php b/src/Symfony/Component/Process/Tests/ExecutableFinderTest.php
+index e5a34e0..c4876e4 100644
+--- a/src/Symfony/Component/Process/Tests/ExecutableFinderTest.php
++++ b/src/Symfony/Component/Process/Tests/ExecutableFinderTest.php
+@@ -137,6 +137,24 @@ class ExecutableFinderTest extends TestCase
+         $this->assertSamePath($target.'.BAT', $result);
+     }
+ 
++    /**
++     * @runInSeparateProcess
++     */
++    public function testEmptyDirInPath()
++    {
++        putenv(sprintf('PATH=%s:', \dirname(\PHP_BINARY)));
++
++        touch('executable');
++        chmod('executable', 0700);
++
++        $finder = new ExecutableFinder();
++        $result = $finder->find('executable');
++
++        $this->assertSame('./executable', $result);
++
++        unlink('executable');
++    }
++
+     private function assertSamePath($expected, $tested)
+     {
+         if ('\\' === \DIRECTORY_SEPARATOR) {

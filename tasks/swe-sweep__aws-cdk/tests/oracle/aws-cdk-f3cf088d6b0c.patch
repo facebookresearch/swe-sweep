@@ -1,0 +1,20 @@
+diff --git a/packages/@aws-cdk/aws-autoscaling/lib/step-scaling-policy.ts b/packages/@aws-cdk/aws-autoscaling/lib/step-scaling-policy.ts
+index ff96848cf0..2632d6ff02 100644
+--- a/packages/@aws-cdk/aws-autoscaling/lib/step-scaling-policy.ts
++++ b/packages/@aws-cdk/aws-autoscaling/lib/step-scaling-policy.ts
+@@ -108,6 +108,7 @@ export class StepScalingPolicy extends Construct {
+       this.lowerAction = new StepScalingAction(this, 'LowerPolicy', {
+         adjustmentType: props.adjustmentType,
+         cooldown: props.cooldown,
++        estimatedInstanceWarmup: props.estimatedInstanceWarmup,
+         metricAggregationType: props.metricAggregationType ?? aggregationTypeFromMetric(props.metric),
+         minAdjustmentMagnitude: props.minAdjustmentMagnitude,
+         autoScalingGroup: props.autoScalingGroup,
+@@ -138,6 +139,7 @@ export class StepScalingPolicy extends Construct {
+       this.upperAction = new StepScalingAction(this, 'UpperPolicy', {
+         adjustmentType: props.adjustmentType,
+         cooldown: props.cooldown,
++        estimatedInstanceWarmup: props.estimatedInstanceWarmup,
+         metricAggregationType: props.metricAggregationType ?? aggregationTypeFromMetric(props.metric),
+         minAdjustmentMagnitude: props.minAdjustmentMagnitude,
+         autoScalingGroup: props.autoScalingGroup,

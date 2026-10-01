@@ -1,0 +1,13 @@
+diff --git a/plugin/trino-iceberg/src/main/java/io/trino/plugin/iceberg/util/PrimitiveTypeMapBuilder.java b/plugin/trino-iceberg/src/main/java/io/trino/plugin/iceberg/util/PrimitiveTypeMapBuilder.java
+index 5e2a4034c4f..df7f862cf2b 100644
+--- a/plugin/trino-iceberg/src/main/java/io/trino/plugin/iceberg/util/PrimitiveTypeMapBuilder.java
++++ b/plugin/trino-iceberg/src/main/java/io/trino/plugin/iceberg/util/PrimitiveTypeMapBuilder.java
+@@ -82,7 +82,7 @@ public class PrimitiveTypeMapBuilder
+         parent = ImmutableList.<String>builder().addAll(parent).add(name).build();
+         for (RowType.Field field : type.getFields()) {
+             checkArgument(field.getName().isPresent(), "field in struct type doesn't have name");
+-            visitType(field.getType(), field.getName().get(), parent);
++            visitType(field.getType(), makeCompatibleName(field.getName().get()), parent);
+         }
+     }
+ }

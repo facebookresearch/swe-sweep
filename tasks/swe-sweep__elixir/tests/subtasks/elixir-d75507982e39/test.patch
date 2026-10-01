@@ -1,0 +1,14 @@
+diff --git a/lib/elixir/test/elixir/uri_test.exs b/lib/elixir/test/elixir/uri_test.exs
+index 8772ec97d..e627b0f84 100644
+--- a/lib/elixir/test/elixir/uri_test.exs
++++ b/lib/elixir/test/elixir/uri_test.exs
+@@ -387,6 +387,9 @@ defmodule URITest do
+     assert URI.merge("http://google.com/foo", "//example.com/baz")
+            |> to_string == "http://example.com/baz"
+ 
++    assert URI.merge("http://google.com/foo", URI.new!("//example.com/baz"))
++           |> to_string == "http://example.com/baz"
++
+     assert URI.merge("http://google.com/foo", "//example.com/.././bar/../../../baz")
+            |> to_string == "http://example.com/baz"
+ 

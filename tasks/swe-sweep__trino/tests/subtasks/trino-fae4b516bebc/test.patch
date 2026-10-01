@@ -1,0 +1,94 @@
+diff --git a/plugin/trino-hive/src/test/java/io/trino/plugin/hive/TestParquetPageSkipping.java b/plugin/trino-hive/src/test/java/io/trino/plugin/hive/TestParquetPageSkipping.java
+index bdcb296..2caba36 100644
+--- a/plugin/trino-hive/src/test/java/io/trino/plugin/hive/TestParquetPageSkipping.java
++++ b/plugin/trino-hive/src/test/java/io/trino/plugin/hive/TestParquetPageSkipping.java
+@@ -22,7 +22,8 @@ import io.trino.testing.QueryRunner;
+ import org.testng.annotations.DataProvider;
+ import org.testng.annotations.Test;
+ 
+-import static io.trino.testing.assertions.Assert.assertEquals;
++import static io.trino.testing.QueryAssertions.assertEqualsIgnoreOrder;
++import static io.trino.testing.sql.TestTable.randomTableSuffix;
+ import static io.trino.tpch.TpchTable.ORDERS;
+ import static java.lang.String.format;
+ import static org.testng.Assert.assertTrue;
+@@ -91,7 +92,7 @@ public class TestParquetPageSkipping
+         try {
+             buildSortedTables("totalprice", "double");
+             String query = "SELECT * FROM " + PAGE_SKIPPING_TABLE + " WHERE totalprice BETWEEN 100000 AND 131280 AND clerk = 'Clerk#000000624'";
+-            int rowCount = assertSameResults(query);
++            int rowCount = assertColumnIndexResults(query);
+             assertTrue(rowCount > 0);
+         }
+         finally {
+@@ -99,6 +100,29 @@ public class TestParquetPageSkipping
+         }
+     }
+ 
++    @Test
++    public void testPageSkippingWithNonSequentialOffsets()
++    {
++        String tableName = "test_random_" + randomTableSuffix();
++        int updateCount = 8192;
++        assertUpdate(
++                "CREATE TABLE " + tableName + " (col) WITH (format = 'PARQUET') AS " +
++                        "SELECT * FROM unnest(transform(repeat(1, 8192), x -> rand()))",
++                updateCount);
++        for (int i = 0; i < 8; i++) {
++            assertUpdate(
++                    "INSERT INTO " + tableName + " SELECT rand() FROM " + tableName,
++                    updateCount);
++            updateCount += updateCount;
++        }
++        // These queries select a subset of pages which are stored at non-sequential offsets
++        // This reproduces the issue identified in https://github.com/trinodb/trino/issues/9097
++        for (double i = 0; i < 1; i += 0.1) {
++            assertColumnIndexResults(format("SELECT * FROM %s WHERE col BETWEEN %f AND %f", tableName, i - 0.00001, i + 0.00001));
++        }
++        assertUpdate("DROP TABLE " + tableName);
++    }
++
+     @Test(dataProvider = "dataType")
+     public void testPageSkipping(String sortByColumn, String sortByColumnType, Object[][] valuesArray)
+     {
+@@ -109,15 +133,15 @@ public class TestParquetPageSkipping
+                 Object middleLowValue = values[1];
+                 Object middleHighValue = values[2];
+                 Object highValue = values[3];
+-                assertSameResults(format("SELECT %s FROM %s WHERE %s = %s", sortByColumn, PAGE_SKIPPING_TABLE, sortByColumn, middleLowValue));
+-                assertTrue(assertSameResults(format("SELECT %s FROM %s WHERE %s < %s ORDER BY %s", sortByColumn, PAGE_SKIPPING_TABLE, sortByColumn, lowValue, sortByColumn)) > 0);
+-                assertTrue(assertSameResults(format("SELECT %s FROM %s WHERE %s > %s ORDER BY %s", sortByColumn, PAGE_SKIPPING_TABLE, sortByColumn, highValue, sortByColumn)) > 0);
+-                assertTrue(assertSameResults(format("SELECT %s FROM %s WHERE %s BETWEEN %s AND %s ORDER BY %s", sortByColumn, PAGE_SKIPPING_TABLE, sortByColumn, middleLowValue, middleHighValue, sortByColumn)) > 0);
++                assertColumnIndexResults(format("SELECT %s FROM %s WHERE %s = %s", sortByColumn, PAGE_SKIPPING_TABLE, sortByColumn, middleLowValue));
++                assertTrue(assertColumnIndexResults(format("SELECT %s FROM %s WHERE %s < %s ORDER BY %s", sortByColumn, PAGE_SKIPPING_TABLE, sortByColumn, lowValue, sortByColumn)) > 0);
++                assertTrue(assertColumnIndexResults(format("SELECT %s FROM %s WHERE %s > %s ORDER BY %s", sortByColumn, PAGE_SKIPPING_TABLE, sortByColumn, highValue, sortByColumn)) > 0);
++                assertTrue(assertColumnIndexResults(format("SELECT %s FROM %s WHERE %s BETWEEN %s AND %s ORDER BY %s", sortByColumn, PAGE_SKIPPING_TABLE, sortByColumn, middleLowValue, middleHighValue, sortByColumn)) > 0);
+                 // Tests synchronization of reading values across columns
+-                assertSameResults(format("SELECT * FROM %s WHERE %s = %s ORDER BY orderkey", PAGE_SKIPPING_TABLE, sortByColumn, middleLowValue));
+-                assertTrue(assertSameResults(format("SELECT * FROM %s WHERE %s < %s ORDER BY orderkey", PAGE_SKIPPING_TABLE, sortByColumn, lowValue)) > 0);
+-                assertTrue(assertSameResults(format("SELECT * FROM %s WHERE %s > %s ORDER BY orderkey", PAGE_SKIPPING_TABLE, sortByColumn, highValue)) > 0);
+-                assertTrue(assertSameResults(format("SELECT * FROM %s WHERE %s BETWEEN %s AND %s ORDER BY orderkey", PAGE_SKIPPING_TABLE, sortByColumn, middleLowValue, middleHighValue)) > 0);
++                assertColumnIndexResults(format("SELECT * FROM %s WHERE %s = %s ORDER BY orderkey", PAGE_SKIPPING_TABLE, sortByColumn, middleLowValue));
++                assertTrue(assertColumnIndexResults(format("SELECT * FROM %s WHERE %s < %s ORDER BY orderkey", PAGE_SKIPPING_TABLE, sortByColumn, lowValue)) > 0);
++                assertTrue(assertColumnIndexResults(format("SELECT * FROM %s WHERE %s > %s ORDER BY orderkey", PAGE_SKIPPING_TABLE, sortByColumn, highValue)) > 0);
++                assertTrue(assertColumnIndexResults(format("SELECT * FROM %s WHERE %s BETWEEN %s AND %s ORDER BY orderkey", PAGE_SKIPPING_TABLE, sortByColumn, middleLowValue, middleHighValue)) > 0);
+             }
+         }
+         finally {
+@@ -125,14 +149,14 @@ public class TestParquetPageSkipping
+         }
+     }
+ 
+-    private int assertSameResults(String query)
++    private int assertColumnIndexResults(String query)
+     {
+         MaterializedResult withColumnIndexing = computeActual(query);
+         MaterializedResult withoutColumnIndexing = computeActual(Session.builder(getSession())
+                         .setCatalogSessionProperty(getSession().getCatalog().get(), "parquet_use_column_index", "false")
+                         .build(),
+                 query);
+-        assertEquals(withColumnIndexing, withoutColumnIndexing);
++        assertEqualsIgnoreOrder(withColumnIndexing, withoutColumnIndexing);
+         return withoutColumnIndexing.getRowCount();
+     }
+ 

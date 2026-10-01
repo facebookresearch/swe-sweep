@@ -1,0 +1,40 @@
+diff --git a/tests/pkg/path with spaces/.gitignore b/tests/pkg/path with spaces/.gitignore
+new file mode 100644
+index 0000000000..bfb30ec8c7
+--- /dev/null
++++ b/tests/pkg/path with spaces/.gitignore	
+@@ -0,0 +1 @@
++/.lake
+diff --git a/tests/pkg/path with spaces/Main.lean b/tests/pkg/path with spaces/Main.lean
+new file mode 100644
+index 0000000000..dccecb1f5c
+--- /dev/null
++++ b/tests/pkg/path with spaces/Main.lean	
+@@ -0,0 +1,2 @@
++def main : IO Unit :=
++  IO.println s!"Hello, world!"
+diff --git a/tests/pkg/path with spaces/lakefile.toml b/tests/pkg/path with spaces/lakefile.toml
+new file mode 100644
+index 0000000000..f625d3e7a9
+--- /dev/null
++++ b/tests/pkg/path with spaces/lakefile.toml	
+@@ -0,0 +1,6 @@
++name = "path with spaces"
++defaultTargets = ["«path with spaces»"]
++
++[[lean_exe]]
++name = "path with spaces"
++root = "Main"
+diff --git a/tests/pkg/path with spaces/test.sh b/tests/pkg/path with spaces/test.sh
+new file mode 100755
+index 0000000000..914152639e
+--- /dev/null
++++ b/tests/pkg/path with spaces/test.sh	
+@@ -0,0 +1,7 @@
++#!/usr/bin/env bash
++
++rm -rf .lake/build
++lake exe "path with spaces"
++# presence of this file should not break process spawn
++touch .lake/build/bin/path
++lake exe "path with spaces"

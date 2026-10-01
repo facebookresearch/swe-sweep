@@ -1,0 +1,380 @@
+{
+  "build_jobs": 4,
+  "container_repo": "/repo",
+  "evaluation": {
+    "suite": "reproduction",
+    "visible_timeout": 14400
+  },
+  "upstream_image": "pandora-maxbug-datafusion:52.0.0",
+  "n_base_passing": 0,
+  "n_base_test_ignore": 1,
+  "oracle_digest": "4e558c34d7028d30f1ac3ffcc5915884f5829e98443aca24866fe2a569b89a78",
+  "oracle_pristine_paths": [],
+  "upstream_commit": "9f7399e15e6172900e0591deb5a57a45769d8205",
+  "reproduction": {
+    "needs_build": false,
+    "suite": {
+      "slt_crate": "datafusion/sqllogictest",
+      "slt_dir": "datafusion/sqllogictest/test_files",
+      "slt_target": "sqllogictests",
+      "type": "cargo-sqllogic"
+    },
+    "test_timeout": 1800
+  },
+  "schema": 2,
+  "subtasks": [
+    {
+      "f2p": [
+        "slt::metadata.slt"
+      ],
+      "id": "datafusion-00a095a3ba37",
+      "target_files": [
+        "datafusion/expr/src/expr.rs"
+      ]
+    },
+    {
+      "f2p": [
+        "slt::array.slt"
+      ],
+      "id": "datafusion-028503614053",
+      "target_files": [
+        "datafusion/functions-nested/src/concat.rs"
+      ]
+    },
+    {
+      "f2p": [
+        "slt::window.slt"
+      ],
+      "id": "datafusion-041bd0b3ffae",
+      "target_files": [
+        "datafusion/functions-window/src/ntile.rs"
+      ]
+    },
+    {
+      "f2p": [
+        "slt::preserve_file_partitioning.slt"
+      ],
+      "id": "datafusion-16dc9c65b930",
+      "target_files": [
+        "datafusion/physical-plan/src/joins/hash_join/exec.rs"
+      ]
+    },
+    {
+      "f2p": [
+        "slt::expr.slt"
+      ],
+      "id": "datafusion-1928e1d0b3a8",
+      "target_files": [
+        "datafusion/sql/src/expr/mod.rs",
+        "datafusion/sql/src/expr/value.rs"
+      ]
+    },
+    {
+      "f2p": [
+        "slt::limit_single_row_batches.slt"
+      ],
+      "id": "datafusion-19614e9541ef",
+      "target_files": [
+        "datafusion/physical-plan/src/coalesce/mod.rs",
+        "datafusion/physical-plan/src/filter.rs"
+      ]
+    },
+    {
+      "f2p": [
+        "slt::limit.slt"
+      ],
+      "id": "datafusion-296f2ca9db69",
+      "target_files": [
+        "datafusion/datasource/src/memory.rs"
+      ]
+    },
+    {
+      "f2p": [
+        "slt::select.slt"
+      ],
+      "id": "datafusion-2b17272fb9e4",
+      "target_files": [
+        "datafusion/physical-expr/src/analysis.rs"
+      ]
+    },
+    {
+      "f2p": [
+        "slt::ddl.slt"
+      ],
+      "id": "datafusion-2dbb42a5f472",
+      "target_files": [
+        "datafusion/sql/src/statement.rs"
+      ]
+    },
+    {
+      "f2p": [
+        "slt::regexp_like.slt"
+      ],
+      "id": "datafusion-2f530946129b",
+      "target_files": [
+        "datafusion/functions/src/regex/regexplike.rs"
+      ]
+    },
+    {
+      "f2p": [
+        "slt::shuffle.slt"
+      ],
+      "id": "datafusion-38b89559b95d",
+      "target_files": [
+        "datafusion/spark/src/function/array/shuffle.rs"
+      ]
+    },
+    {
+      "f2p": [
+        "slt::window.slt"
+      ],
+      "id": "datafusion-4342d97a1fcb",
+      "target_files": [
+        "datafusion/physical-expr/src/window/sliding_aggregate.rs"
+      ]
+    },
+    {
+      "f2p": [
+        "slt::monotonic_projection_test.slt"
+      ],
+      "id": "datafusion-444accd04d0e",
+      "target_files": [
+        "datafusion/physical-expr/src/expressions/cast.rs"
+      ]
+    },
+    {
+      "f2p": [
+        "slt::window.slt"
+      ],
+      "id": "datafusion-4c27e6a1f610",
+      "target_files": [
+        "datafusion/physical-plan/src/filter.rs"
+      ]
+    },
+    {
+      "f2p": [
+        "slt::dates.slt"
+      ],
+      "id": "datafusion-4d04780b6f93",
+      "target_files": [
+        "datafusion/functions/src/datetime/to_date.rs"
+      ]
+    },
+    {
+      "f2p": [
+        "slt::array.slt"
+      ],
+      "id": "datafusion-4e6ad2945428",
+      "target_files": [
+        "datafusion/functions-nested/src/string.rs"
+      ]
+    },
+    {
+      "f2p": [
+        "slt::group_by.slt"
+      ],
+      "id": "datafusion-4f6c1d14e63b",
+      "target_files": [
+        "datafusion/expr/src/logical_plan/plan.rs",
+        "datafusion/optimizer/src/analyzer/resolve_grouping_function.rs",
+        "datafusion/physical-plan/src/aggregates/mod.rs"
+      ]
+    },
+    {
+      "f2p": [
+        "slt::dynamic_filter_pushdown_config.slt"
+      ],
+      "id": "datafusion-50e3d15700ed",
+      "target_files": [
+        "datafusion/physical-plan/src/aggregates/mod.rs"
+      ]
+    },
+    {
+      "f2p": [
+        "slt::joins.slt"
+      ],
+      "id": "datafusion-54cd63207b90",
+      "target_files": [
+        "datafusion/physical-plan/src/joins/utils.rs"
+      ]
+    },
+    {
+      "f2p": [
+        "slt::window.slt"
+      ],
+      "id": "datafusion-559bef81812b",
+      "target_files": [
+        "datafusion/functions-aggregate/src/average.rs"
+      ]
+    },
+    {
+      "f2p": [
+        "slt::aggregate.slt"
+      ],
+      "id": "datafusion-56586b03cf17",
+      "target_files": [
+        "datafusion/functions-aggregate/src/array_agg.rs"
+      ]
+    },
+    {
+      "f2p": [
+        "slt::array.slt"
+      ],
+      "id": "datafusion-5fcd97255f35",
+      "target_files": [
+        "datafusion/functions-nested/src/sort.rs"
+      ]
+    },
+    {
+      "f2p": [
+        "slt::map.slt"
+      ],
+      "id": "datafusion-76cfe1ae0daf",
+      "target_files": [
+        "datafusion/functions-nested/src/map.rs"
+      ]
+    },
+    {
+      "f2p": [
+        "slt::joins.slt"
+      ],
+      "id": "datafusion-79dccf8e5c7c",
+      "target_files": [
+        "datafusion/physical-plan/src/joins/hash_join/inlist_builder.rs"
+      ]
+    },
+    {
+      "f2p": [
+        "slt::select.slt"
+      ],
+      "id": "datafusion-7c3f07aafdb6",
+      "target_files": [
+        "datafusion/expr-common/src/interval_arithmetic.rs"
+      ]
+    },
+    {
+      "f2p": [
+        "slt::aggregate.slt"
+      ],
+      "id": "datafusion-7ca66713a471",
+      "target_files": [
+        "datafusion/functions-aggregate/src/median.rs"
+      ]
+    },
+    {
+      "f2p": [
+        "slt::dynamic_filter_pushdown_config.slt"
+      ],
+      "id": "datafusion-81250ea52705",
+      "target_files": [
+        "datafusion/physical-plan/src/aggregates/mod.rs"
+      ]
+    },
+    {
+      "f2p": [
+        "slt::expr.slt"
+      ],
+      "id": "datafusion-8dfeefac14d8",
+      "target_files": [
+        "datafusion/functions/src/string/concat.rs",
+        "datafusion/functions/src/string/concat_ws.rs"
+      ]
+    },
+    {
+      "f2p": [
+        "slt::scalar.slt"
+      ],
+      "id": "datafusion-9ae725c61b9b",
+      "target_files": [
+        "datafusion/expr-common/src/type_coercion/binary.rs",
+        "datafusion/expr-common/src/type_coercion/binary/tests/arithmetic.rs"
+      ]
+    },
+    {
+      "f2p": [
+        "slt::next_day.slt"
+      ],
+      "id": "datafusion-a043400808af",
+      "target_files": [
+        "datafusion/spark/src/function/datetime/next_day.rs"
+      ]
+    },
+    {
+      "f2p": [
+        "sql_integration::test_using_join_wildcard_schema_semi_anti"
+      ],
+      "id": "datafusion-b3cf4bb3d575",
+      "target_files": [
+        "datafusion/expr/src/utils.rs"
+      ]
+    },
+    {
+      "f2p": [
+        "slt::type_coercion.slt"
+      ],
+      "id": "datafusion-bc6fc0e08763",
+      "target_files": [
+        "datafusion/optimizer/src/analyzer/type_coercion.rs"
+      ]
+    },
+    {
+      "f2p": [
+        "slt::dates.slt",
+        "slt::timestamps.slt"
+      ],
+      "id": "datafusion-c2fc1c519890",
+      "target_files": [
+        "datafusion/functions/src/datetime/common.rs"
+      ]
+    },
+    {
+      "f2p": [
+        "slt::aggregate.slt"
+      ],
+      "id": "datafusion-d7dc90f19664",
+      "target_files": [
+        "datafusion/functions-aggregate/src/median.rs"
+      ]
+    },
+    {
+      "f2p": [
+        "slt::cte_quoted_reference.slt"
+      ],
+      "id": "datafusion-dd156424a34f",
+      "target_files": [
+        "datafusion/sql/src/resolve.rs"
+      ]
+    },
+    {
+      "f2p": [
+        "slt::aggregate.slt"
+      ],
+      "id": "datafusion-e67b635283fe",
+      "target_files": [
+        "datafusion/expr-common/src/accumulator.rs",
+        "datafusion/functions-aggregate/src/percentile_cont.rs",
+        "datafusion/functions-aggregate/src/string_agg.rs"
+      ]
+    },
+    {
+      "f2p": [
+        "slt::group_by.slt"
+      ],
+      "id": "datafusion-e9c4509049de",
+      "target_files": [
+        "datafusion/sql/src/select.rs"
+      ]
+    },
+    {
+      "f2p": [
+        "slt::window.slt"
+      ],
+      "id": "datafusion-fdbb4f4d736f",
+      "target_files": [
+        "datafusion/physical-plan/src/filter.rs"
+      ]
+    }
+  ],
+  "task": "datafusion",
+  "version": "52.0.0"
+}

@@ -1,0 +1,64 @@
+diff --git a/packages/babel-plugin-jest-hoist/src/__tests__/__snapshots__/hoistPlugin.test.ts.snap b/packages/babel-plugin-jest-hoist/src/__tests__/__snapshots__/hoistPlugin.test.ts.snap
+index 3a5a0817ba..a95af4e804 100644
+--- a/packages/babel-plugin-jest-hoist/src/__tests__/__snapshots__/hoistPlugin.test.ts.snap
++++ b/packages/babel-plugin-jest-hoist/src/__tests__/__snapshots__/hoistPlugin.test.ts.snap
+@@ -1,5 +1,31 @@
+ // Jest Snapshot v1, https://goo.gl/fbAQLP
+ 
++exports[`babel-plugin-jest-hoist TS typeof usage in jest.mock: TS typeof usage in jest.mock 1`] = `
++
++jest.mock('some-module', () => {
++  const actual = jest.requireActual('some-module');
++
++  return jest.fn<typeof actual.method>();
++});
++
++      ↓ ↓ ↓ ↓ ↓ ↓
++
++_getJestObj().mock('some-module', () => {
++  const actual = jest.requireActual('some-module');
++  return jest.fn();
++});
++
++function _getJestObj() {
++  const {jest} = require('@jest/globals');
++
++  _getJestObj = () => jest;
++
++  return jest;
++}
++
++
++`;
++
+ exports[`babel-plugin-jest-hoist automatic react runtime: automatic react runtime 1`] = `
+ 
+ jest.mock('./App', () => () => <div>Hello world</div>);
+diff --git a/packages/babel-plugin-jest-hoist/src/__tests__/hoistPlugin.test.ts b/packages/babel-plugin-jest-hoist/src/__tests__/hoistPlugin.test.ts
+index 685ab680aa..7828b50953 100644
+--- a/packages/babel-plugin-jest-hoist/src/__tests__/hoistPlugin.test.ts
++++ b/packages/babel-plugin-jest-hoist/src/__tests__/hoistPlugin.test.ts
+@@ -134,6 +134,23 @@ pluginTester({
+       formatResult,
+       snapshot: true,
+     },
++    'TS typeof usage in jest.mock': {
++      babelOptions: {
++        babelrc: false,
++        configFile: false,
++        filename: path.resolve(__dirname, '../file.ts'),
++        presets: [[require.resolve('@babel/preset-typescript')]],
++      },
++      code: formatResult(`
++        jest.mock('some-module', () => {
++          const actual = jest.requireActual('some-module');
++
++          return jest.fn<typeof actual.method>();
++        });
++      `),
++      formatResult,
++      snapshot: true,
++    },
+   },
+   /* eslint-enable */
+ });

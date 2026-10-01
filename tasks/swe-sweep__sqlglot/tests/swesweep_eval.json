@@ -1,0 +1,1263 @@
+{
+  "build_jobs": 4,
+  "container_repo": "/sqlglot",
+  "evaluation": {
+    "suite": {
+      "paths": [
+        "tests"
+      ],
+      "target_suite": {
+        "corpora": [
+          [
+            "^tests/fixtures/optimizer/.*\\.sql$",
+            "tests/test_optimizer.py"
+          ],
+          [
+            "^tests/fixtures/[^/]+\\.sql$",
+            "tests/test_transpile.py"
+          ],
+          [
+            "^tests/fixtures/jsonpath/.*$",
+            "tests/test_jsonpath.py"
+          ]
+        ],
+        "type": "pytest-corpus"
+      },
+      "type": "pytest-eval"
+    },
+    "visible_timeout": 7200
+  },
+  "upstream_image": "pandora-maxbug-sqlglot:26.1.0",
+  "n_base_passing": 651,
+  "n_base_test_ignore": 0,
+  "oracle_digest": "5fafc040e8ce7ee4db7261660e0881e65bbeaf5dbc0972ded12bd71dabdea1ab",
+  "oracle_pristine_paths": [],
+  "upstream_commit": "9f7399e15e6172900e0591deb5a57a45769d8205",
+  "reproduction": {
+    "needs_build": false,
+    "suite": {
+      "corpora": [
+        [
+          "^tests/fixtures/optimizer/.*\\.sql$",
+          "tests/test_optimizer.py"
+        ],
+        [
+          "^tests/fixtures/[^/]+\\.sql$",
+          "tests/test_transpile.py"
+        ],
+        [
+          "^tests/fixtures/jsonpath/.*$",
+          "tests/test_jsonpath.py"
+        ]
+      ],
+      "type": "pytest-corpus"
+    }
+  },
+  "schema": 2,
+  "subtasks": [
+    {
+      "f2p": [
+        "tests.test_optimizer.TestOptimizer::test_simplify"
+      ],
+      "id": "sqlglot-007ef7242d76",
+      "target_files": [
+        "sqlglot/optimizer/simplify.py"
+      ]
+    },
+    {
+      "f2p": [
+        "tests.test_optimizer.TestOptimizer::test_struct_annotation_bigquery"
+      ],
+      "id": "sqlglot-017bc2edbf03",
+      "target_files": [
+        "sqlglot/optimizer/annotate_types.py"
+      ]
+    },
+    {
+      "f2p": [
+        "tests.test_optimizer.TestOptimizer::test_simplify"
+      ],
+      "id": "sqlglot-0242b2ee3f1d",
+      "target_files": [
+        "sqlglot/optimizer/simplify.py"
+      ]
+    },
+    {
+      "f2p": [
+        "tests.dialects.test_postgres.TestPostgres::test_json_extract"
+      ],
+      "id": "sqlglot-02a1ab36db51",
+      "target_files": [
+        "sqlglot/dialects/dialect.py"
+      ]
+    },
+    {
+      "f2p": [
+        "tests.test_optimizer.TestOptimizer::test_qualify_tables"
+      ],
+      "id": "sqlglot-04e76cb129ce",
+      "target_files": [
+        "sqlglot/optimizer/qualify_tables.py"
+      ]
+    },
+    {
+      "f2p": [
+        "tests.dialects.test_duckdb.TestDuckDB::test_duckdb"
+      ],
+      "id": "sqlglot-0aedbcb2d4b9",
+      "target_files": [
+        "sqlglot/dialects/duckdb.py"
+      ]
+    },
+    {
+      "f2p": [
+        "tests.dialects.test_sqlite.TestSQLite::test_sqlite"
+      ],
+      "id": "sqlglot-0dc34655fa2f",
+      "target_files": [
+        "sqlglot/parser.py"
+      ]
+    },
+    {
+      "f2p": [
+        "tests.dialects.test_clickhouse.TestClickhouse::test_ddl"
+      ],
+      "id": "sqlglot-0e2a823c3cb5",
+      "target_files": [
+        "sqlglot/parser.py"
+      ]
+    },
+    {
+      "f2p": [
+        "tests.dialects.test_postgres.TestPostgres::test_ddl"
+      ],
+      "id": "sqlglot-114bc1d5d5d0",
+      "target_files": [
+        "sqlglot/parser.py"
+      ]
+    },
+    {
+      "f2p": [
+        "tests.dialects.test_tsql.TestTSQL::test_top"
+      ],
+      "id": "sqlglot-121b11ded1cb",
+      "target_files": [
+        "sqlglot/dialects/tsql.py"
+      ]
+    },
+    {
+      "f2p": [
+        "tests.test_tokens.TestTokens::test_token_line_col"
+      ],
+      "id": "sqlglot-13221597cd7f",
+      "target_files": [
+        "sqlglot/tokens.py",
+        "sqlglotrs/src/tokenizer.rs"
+      ]
+    },
+    {
+      "f2p": [
+        "tests.test_optimizer.TestOptimizer::test_qualify_columns"
+      ],
+      "id": "sqlglot-140f476c48c0",
+      "target_files": [
+        "sqlglot/expressions.py",
+        "sqlglot/optimizer/qualify_columns.py",
+        "sqlglot/optimizer/scope.py"
+      ]
+    },
+    {
+      "f2p": [
+        "tests.dialects.test_duckdb.TestDuckDB::test_duckdb"
+      ],
+      "id": "sqlglot-1543d51e5524",
+      "target_files": [
+        "sqlglot/tokens.py",
+        "sqlglotrs/src/tokenizer.rs"
+      ]
+    },
+    {
+      "f2p": [
+        "tests.dialects.test_dialect.TestDialect::test_alias"
+      ],
+      "id": "sqlglot-18a57576dd25",
+      "target_files": [
+        "sqlglot/parser.py"
+      ]
+    },
+    {
+      "f2p": [
+        "tests.dialects.test_databricks.TestDatabricks::test_databricks"
+      ],
+      "id": "sqlglot-19ad9c25f671",
+      "target_files": [
+        "sqlglot/dialects/databricks.py",
+        "sqlglot/dialects/hive.py"
+      ]
+    },
+    {
+      "f2p": [
+        "tests.dialects.test_bigquery.TestBigQuery::test_bigquery"
+      ],
+      "id": "sqlglot-1ea378cbf125",
+      "target_files": [
+        "sqlglot/generator.py"
+      ]
+    },
+    {
+      "f2p": [
+        "tests.dialects.test_bigquery.TestBigQuery::test_with_offset"
+      ],
+      "id": "sqlglot-1f49bfcefba9",
+      "target_files": [
+        "sqlglot/parser.py"
+      ]
+    },
+    {
+      "f2p": [
+        "tests.dialects.test_sqlite.TestSQLite::test_ddl"
+      ],
+      "id": "sqlglot-20736e008dd2",
+      "target_files": [
+        "sqlglot/parser.py"
+      ]
+    },
+    {
+      "f2p": [
+        "tests.test_transpile.TestTranspile::test_identity"
+      ],
+      "id": "sqlglot-2498d36f5781",
+      "target_files": [
+        "sqlglot/tokens.py"
+      ]
+    },
+    {
+      "f2p": [
+        "tests.dialects.test_snowflake.TestSnowflake::test_snowflake"
+      ],
+      "id": "sqlglot-257339571843",
+      "target_files": [
+        "sqlglot/dialects/snowflake.py"
+      ]
+    },
+    {
+      "f2p": [
+        "tests.test_optimizer.TestOptimizer::test_qualify_columns"
+      ],
+      "id": "sqlglot-25b78a662fbd",
+      "target_files": [
+        "sqlglot/optimizer/qualify_columns.py"
+      ]
+    },
+    {
+      "f2p": [
+        "tests.dialects.test_oracle.TestOracle::test_oracle"
+      ],
+      "id": "sqlglot-2920c32ddf98",
+      "target_files": [
+        "sqlglot/dialects/oracle.py"
+      ]
+    },
+    {
+      "f2p": [
+        "tests.dialects.test_snowflake.TestSnowflake::test_snowflake"
+      ],
+      "id": "sqlglot-2958933338d4",
+      "target_files": [
+        "sqlglot/parser.py"
+      ]
+    },
+    {
+      "f2p": [
+        "tests.test_optimizer.TestOptimizer::test_pushdown_projections_keeps_recursive_cte_self_referenced_columns"
+      ],
+      "id": "sqlglot-29a03dbed869",
+      "target_files": [
+        "sqlglot/optimizer/pushdown_projections.py"
+      ]
+    },
+    {
+      "f2p": [
+        "tests.dialects.test_trino.TestTrino::test_trino"
+      ],
+      "id": "sqlglot-2a558b729410",
+      "target_files": [
+        "sqlglot/dialects/trino.py"
+      ]
+    },
+    {
+      "f2p": [
+        "tests.test_parser.TestParser::test_parse_drop_schema"
+      ],
+      "id": "sqlglot-2cd682769f3a",
+      "target_files": [
+        "sqlglot/parser.py"
+      ]
+    },
+    {
+      "f2p": [
+        "tests.dialects.test_oracle.TestOracle::test_hints"
+      ],
+      "id": "sqlglot-2e0c63c4e938",
+      "target_files": [
+        "sqlglot/dialects/oracle.py",
+        "sqlglot/parser.py"
+      ]
+    },
+    {
+      "f2p": [
+        "tests.dialects.test_bigquery.TestBigQuery::test_bigquery"
+      ],
+      "id": "sqlglot-2f80ead4ee63",
+      "target_files": [
+        "sqlglot/dialects/bigquery.py"
+      ]
+    },
+    {
+      "f2p": [
+        "tests.test_optimizer.TestOptimizer::test_pushdown_predicates"
+      ],
+      "id": "sqlglot-31368734f0ec",
+      "target_files": [
+        "sqlglot/optimizer/pushdown_predicates.py"
+      ]
+    },
+    {
+      "f2p": [
+        "tests.test_transforms.TestTransforms::test_eliminate_semi_and_anti_joins"
+      ],
+      "id": "sqlglot-32a5fb93e3ba",
+      "target_files": [
+        "sqlglot/transforms.py"
+      ]
+    },
+    {
+      "f2p": [
+        "tests.dialects.test_tsql.TestTSQL::test_ddl"
+      ],
+      "id": "sqlglot-33aebf9165af",
+      "target_files": [
+        "sqlglot/parser.py"
+      ]
+    },
+    {
+      "f2p": [
+        "tests.dialects.test_tsql.TestTSQL::test_lateral_subquery",
+        "tests.dialects.test_tsql.TestTSQL::test_lateral_table_valued_function"
+      ],
+      "id": "sqlglot-347d99555a29",
+      "target_files": [
+        "sqlglot/dialects/postgres.py"
+      ]
+    },
+    {
+      "f2p": [
+        "tests.dialects.test_snowflake.TestSnowflake::test_snowflake"
+      ],
+      "id": "sqlglot-35352221f913",
+      "target_files": [
+        "sqlglot/dialects/redshift.py"
+      ]
+    },
+    {
+      "f2p": [
+        "tests.test_optimizer.TestOptimizer::test_optimize_joins"
+      ],
+      "id": "sqlglot-35b9ddab3a61",
+      "target_files": [
+        "sqlglot/optimizer/optimize_joins.py"
+      ]
+    },
+    {
+      "f2p": [
+        "tests.test_expressions.TestExpressions::test_alias_with_placeholder"
+      ],
+      "id": "sqlglot-37522e95fe00",
+      "target_files": [
+        "sqlglot/expressions/core.py"
+      ]
+    },
+    {
+      "f2p": [
+        "tests.dialects.test_oracle.TestOracle::test_merge_builder_alias"
+      ],
+      "id": "sqlglot-3be32e151f0b",
+      "target_files": [
+        "sqlglot/expressions.py"
+      ]
+    },
+    {
+      "f2p": [
+        "tests.test_optimizer.TestOptimizer::test_qualify_columns"
+      ],
+      "id": "sqlglot-3e88b71ff68f",
+      "target_files": [
+        "sqlglot/optimizer/qualify_columns.py"
+      ]
+    },
+    {
+      "f2p": [
+        "tests.dialects.test_dialect.TestDialect::test_merge"
+      ],
+      "id": "sqlglot-4154508aaa36",
+      "target_files": [
+        "sqlglot/dialects/dialect.py"
+      ]
+    },
+    {
+      "f2p": [
+        "tests.dialects.test_postgres.TestPostgres::test_udt"
+      ],
+      "id": "sqlglot-4499332cbf27",
+      "target_files": [
+        "sqlglot/dialects/postgres.py",
+        "sqlglot/expressions.py",
+        "sqlglot/parser.py"
+      ]
+    },
+    {
+      "f2p": [
+        "tests.dialects.test_bigquery.TestBigQuery::test_week"
+      ],
+      "id": "sqlglot-48e21dadbddd",
+      "target_files": [
+        "sqlglot/dialects/bigquery.py",
+        "sqlglot/dialects/dialect.py",
+        "sqlglot/expressions.py",
+        "sqlglot/generator.py"
+      ]
+    },
+    {
+      "f2p": [
+        "tests.dialects.test_trino.TestTrino::test_trino"
+      ],
+      "id": "sqlglot-49d77174e3c1",
+      "target_files": [
+        "sqlglot/expressions.py"
+      ]
+    },
+    {
+      "f2p": [
+        "tests.dialects.test_bigquery.TestBigQuery::test_bigquery"
+      ],
+      "id": "sqlglot-4a6190e5072e",
+      "target_files": [
+        "sqlglot/generator.py"
+      ]
+    },
+    {
+      "f2p": [
+        "tests.dialects.test_duckdb.TestDuckDB::test_duckdb"
+      ],
+      "id": "sqlglot-4b4dc4ba4a63",
+      "target_files": [
+        "sqlglot/generator.py",
+        "sqlglot/parser.py"
+      ]
+    },
+    {
+      "f2p": [
+        "tests.dialects.test_sqlite.TestSQLite::test_sqlite"
+      ],
+      "id": "sqlglot-4e0d0471abfe",
+      "target_files": [
+        "sqlglot/dialects/sqlite.py"
+      ]
+    },
+    {
+      "f2p": [
+        "tests.dialects.test_databricks.TestDatabricks::test_json"
+      ],
+      "id": "sqlglot-4ee28586a6c6",
+      "target_files": [
+        "sqlglot/dialects/spark2.py"
+      ]
+    },
+    {
+      "f2p": [
+        "tests.test_jsonpath.TestJsonpath::test_union_preserves_falsey_members"
+      ],
+      "id": "sqlglot-4fb5b04be452",
+      "target_files": [
+        "sqlglot/jsonpath.py"
+      ]
+    },
+    {
+      "f2p": [
+        "tests.dialects.test_snowflake.TestSnowflake::test_snowflake"
+      ],
+      "id": "sqlglot-51573465307d",
+      "target_files": [
+        "sqlglot/dialects/snowflake.py"
+      ]
+    },
+    {
+      "f2p": [
+        "tests.test_optimizer.TestOptimizer::test_unnest_subqueries_with_agg_fix"
+      ],
+      "id": "sqlglot-552658b8e1c6",
+      "target_files": [
+        "sqlglot/optimizer/unnest_subqueries.py"
+      ]
+    },
+    {
+      "f2p": [
+        "tests.dialects.test_dialect.TestDialect::test_is_with_dcolon"
+      ],
+      "id": "sqlglot-555ba1dbbb1e",
+      "target_files": [
+        "sqlglot/parser.py"
+      ]
+    },
+    {
+      "f2p": [
+        "tests.dialects.test_duckdb.TestDuckDB::test_duckdb"
+      ],
+      "id": "sqlglot-583195a53322",
+      "target_files": [
+        "sqlglot/dialects/duckdb.py",
+        "sqlglot/generator.py",
+        "sqlglot/parser.py"
+      ]
+    },
+    {
+      "f2p": [
+        "tests.dialects.test_snowflake.TestSnowflake::test_snowflake"
+      ],
+      "id": "sqlglot-5858730338b9",
+      "target_files": [
+        "sqlglot/dialects/snowflake.py"
+      ]
+    },
+    {
+      "f2p": [
+        "tests.test_optimizer.TestOptimizer::test_qualify_columns__invalid"
+      ],
+      "id": "sqlglot-5aeedc1e2f35",
+      "target_files": [
+        "sqlglot/optimizer/qualify_columns.py"
+      ]
+    },
+    {
+      "f2p": [
+        "tests.test_optimizer.TestOptimizer::test_scope"
+      ],
+      "id": "sqlglot-5c773668f12b",
+      "target_files": [
+        "sqlglot/optimizer/scope.py"
+      ]
+    },
+    {
+      "f2p": [
+        "tests.test_lineage.TestLineage::test_pivot_with_subquery"
+      ],
+      "id": "sqlglot-5d0b0f49d29e",
+      "target_files": [
+        "sqlglot/lineage.py"
+      ]
+    },
+    {
+      "f2p": [
+        "tests.dialects.test_snowflake.TestSnowflake::test_snowflake"
+      ],
+      "id": "sqlglot-5d76e127d959",
+      "target_files": [
+        "sqlglot/dialects/snowflake.py"
+      ]
+    },
+    {
+      "f2p": [
+        "tests.dialects.test_tsql.TestTSQL::test_tsql"
+      ],
+      "id": "sqlglot-62678d7bd2c8",
+      "target_files": [
+        "sqlglot/parser.py"
+      ]
+    },
+    {
+      "f2p": [
+        "tests.test_parser.TestParser::test_no_paren_functions_after_dot"
+      ],
+      "id": "sqlglot-6a6782c0ecaf",
+      "target_files": [
+        "sqlglot/parser.py"
+      ]
+    },
+    {
+      "f2p": [
+        "tests.dialects.test_tsql.TestTSQL::test_tsql"
+      ],
+      "id": "sqlglot-6ea8c315ff5e",
+      "target_files": [
+        "sqlglot/dialects/tsql.py"
+      ]
+    },
+    {
+      "f2p": [
+        "tests.test_optimizer.TestOptimizer::test_unnest_subqueries"
+      ],
+      "id": "sqlglot-6f5b26f29729",
+      "target_files": [
+        "sqlglot/optimizer/unnest_subqueries.py"
+      ]
+    },
+    {
+      "f2p": [
+        "tests.dialects.test_clickhouse.TestClickhouse::test_clickhouse"
+      ],
+      "id": "sqlglot-712beedfa0aa",
+      "target_files": [
+        "sqlglot/dialects/clickhouse.py"
+      ]
+    },
+    {
+      "f2p": [
+        "tests.dialects.test_mysql.TestMySQL::test_ddl"
+      ],
+      "id": "sqlglot-7686797037f1",
+      "target_files": [
+        "sqlglot/parser.py"
+      ]
+    },
+    {
+      "f2p": [
+        "tests.test_transpile.TestTranspile::test_identity"
+      ],
+      "id": "sqlglot-77760628837f",
+      "target_files": [
+        "sqlglot/parser.py"
+      ]
+    },
+    {
+      "f2p": [
+        "tests.test_transpile.TestTranspile::test_identity"
+      ],
+      "id": "sqlglot-77f7b5535b6a",
+      "target_files": [
+        "sqlglot/parser.py"
+      ]
+    },
+    {
+      "f2p": [
+        "tests.dialects.test_snowflake.TestSnowflake::test_staged_files"
+      ],
+      "id": "sqlglot-786480d10f54",
+      "target_files": [
+        "sqlglot/generator.py"
+      ]
+    },
+    {
+      "f2p": [
+        "tests.dialects.test_clickhouse.TestClickhouse::test_aggregate_function_column_with_any_keyword"
+      ],
+      "id": "sqlglot-79adcb4f9ecd",
+      "target_files": [
+        "sqlglot/parser.py"
+      ]
+    },
+    {
+      "f2p": [
+        "tests.dialects.test_hive.TestHive::test_lateral_view"
+      ],
+      "id": "sqlglot-7bde8ae1c2ba",
+      "target_files": [
+        "sqlglot/dialects/dialect.py"
+      ]
+    },
+    {
+      "f2p": [
+        "tests.test_optimizer.TestOptimizer::test_qualify_tables"
+      ],
+      "id": "sqlglot-7bf6536a14d8",
+      "target_files": [
+        "sqlglot/optimizer/qualify_tables.py"
+      ]
+    },
+    {
+      "f2p": [
+        "tests.dialects.test_athena.TestAthena::test_ctas"
+      ],
+      "id": "sqlglot-7c369050fde8",
+      "target_files": [
+        "sqlglot/dialects/athena.py"
+      ]
+    },
+    {
+      "f2p": [
+        "tests.dialects.test_duckdb.TestDuckDB::test_duckdb"
+      ],
+      "id": "sqlglot-7fc51e45c19e",
+      "target_files": [
+        "sqlglot/dialects/duckdb.py"
+      ]
+    },
+    {
+      "f2p": [
+        "tests.test_executor.TestExecutor::test_typed_division"
+      ],
+      "id": "sqlglot-7fdf719af545",
+      "target_files": [
+        "sqlglot/generators/python.py"
+      ]
+    },
+    {
+      "f2p": [
+        "tests.test_optimizer.TestOptimizer::test_expand_alias_refs"
+      ],
+      "id": "sqlglot-870056e838eb",
+      "target_files": [
+        "sqlglot/optimizer/qualify_columns.py"
+      ]
+    },
+    {
+      "f2p": [
+        "tests.dialects.test_postgres.TestPostgres::test_postgres"
+      ],
+      "id": "sqlglot-8818731c0cf6",
+      "target_files": [
+        "sqlglot/parser.py"
+      ]
+    },
+    {
+      "f2p": [
+        "tests.dialects.test_snowflake.TestSnowflake::test_null_treatment"
+      ],
+      "id": "sqlglot-8b038de99dff",
+      "target_files": [
+        "sqlglot/dialects/snowflake.py"
+      ]
+    },
+    {
+      "f2p": [
+        "tests.test_optimizer.TestOptimizer::test_simplify"
+      ],
+      "id": "sqlglot-8b0f90fab6ec",
+      "target_files": [
+        "sqlglot/optimizer/simplify.py"
+      ]
+    },
+    {
+      "f2p": [
+        "tests.dialects.test_athena.TestAthena::test_ddl_quoting"
+      ],
+      "id": "sqlglot-8b207af99373",
+      "target_files": [
+        "sqlglot/dialects/athena.py"
+      ]
+    },
+    {
+      "f2p": [
+        "tests.test_optimizer.TestOptimizer::test_qualify_columns"
+      ],
+      "id": "sqlglot-8da572603676",
+      "target_files": [
+        "sqlglot/parser.py"
+      ]
+    },
+    {
+      "f2p": [
+        "tests.test_transpile.TestTranspile::test_identity"
+      ],
+      "id": "sqlglot-917c46c25282",
+      "target_files": [
+        "sqlglot/parser.py"
+      ]
+    },
+    {
+      "f2p": [
+        "tests.dialects.test_duckdb.TestDuckDB::test_duckdb"
+      ],
+      "id": "sqlglot-91e7eb04c0ed",
+      "target_files": [
+        "sqlglot/parser.py"
+      ]
+    },
+    {
+      "f2p": [
+        "tests.dialects.test_clickhouse.TestClickhouse::test_agg_functions"
+      ],
+      "id": "sqlglot-956bc38dd60c",
+      "target_files": [
+        "sqlglot/parsers/clickhouse.py"
+      ]
+    },
+    {
+      "f2p": [
+        "tests.test_optimizer.TestOptimizer::test_pushdown_predicates"
+      ],
+      "id": "sqlglot-971fcef4ca5a",
+      "target_files": [
+        "sqlglot/optimizer/pushdown_predicates.py"
+      ]
+    },
+    {
+      "f2p": [
+        "tests.dialects.test_postgres.TestPostgres::test_postgres"
+      ],
+      "id": "sqlglot-98171fbf17c6",
+      "target_files": [
+        "sqlglot/parser.py"
+      ]
+    },
+    {
+      "f2p": [
+        "tests.test_diff.TestDiff::test_none_args_are_not_treated_as_leaves"
+      ],
+      "id": "sqlglot-9a1c577dc7b5",
+      "target_files": [
+        "sqlglot/diff.py"
+      ]
+    },
+    {
+      "f2p": [
+        "tests.test_lineage.TestLineage::test_table_udtf_snowflake"
+      ],
+      "id": "sqlglot-9ac019c8d3e0",
+      "target_files": [
+        "sqlglot/dialects/snowflake.py",
+        "sqlglot/expressions.py",
+        "sqlglot/generator.py",
+        "sqlglot/parser.py"
+      ]
+    },
+    {
+      "f2p": [
+        "tests.dialects.test_redshift.TestRedshift::test_identity"
+      ],
+      "id": "sqlglot-9d2ced9017c4",
+      "target_files": [
+        "sqlglot/dialects/redshift.py",
+        "sqlglot/generator.py"
+      ]
+    },
+    {
+      "f2p": [
+        "tests.dialects.test_duckdb.TestDuckDB::test_duckdb"
+      ],
+      "id": "sqlglot-9e8d28198dd4",
+      "target_files": [
+        "sqlglot/dialects/duckdb.py"
+      ]
+    },
+    {
+      "f2p": [
+        "tests.dialects.test_clickhouse.TestClickhouse::test_clickhouse"
+      ],
+      "id": "sqlglot-9ee93f78dc97",
+      "target_files": [
+        "sqlglot/dialects/clickhouse.py"
+      ]
+    },
+    {
+      "f2p": [
+        "tests.test_transpile.TestTranspile::test_identity"
+      ],
+      "id": "sqlglot-9fa9787367e5",
+      "target_files": [
+        "sqlglot/parser.py"
+      ]
+    },
+    {
+      "f2p": [
+        "tests.test_lineage.TestLineage::test_lineage_join_with_qualified_star"
+      ],
+      "id": "sqlglot-a067959a04f6",
+      "target_files": [
+        "sqlglot/lineage.py"
+      ]
+    },
+    {
+      "f2p": [
+        "tests.dialects.test_dialect.TestDialect::test_parse_at_time_zone"
+      ],
+      "id": "sqlglot-a07d70b389e8",
+      "target_files": [
+        "sqlglot/parser.py"
+      ]
+    },
+    {
+      "f2p": [
+        "tests.dialects.test_databricks.TestDatabricks::test_databricks"
+      ],
+      "id": "sqlglot-a22fa8dd7ae9",
+      "target_files": [
+        "sqlglot/dialects/hive.py"
+      ]
+    },
+    {
+      "f2p": [
+        "tests.dialects.test_mysql.TestMySQL::test_ddl"
+      ],
+      "id": "sqlglot-a24ece4d6bfc",
+      "target_files": [
+        "sqlglot/parser.py"
+      ]
+    },
+    {
+      "f2p": [
+        "tests.dialects.test_bigquery.TestBigQuery::test_override_normalization_strategy"
+      ],
+      "id": "sqlglot-a5de94db6e7a",
+      "target_files": [
+        "sqlglot/dialects/bigquery.py"
+      ]
+    },
+    {
+      "f2p": [
+        "tests.dialects.test_bigquery.TestBigQuery::test_bigquery"
+      ],
+      "id": "sqlglot-a7f09c382b06",
+      "target_files": [
+        "sqlglot/transforms.py"
+      ]
+    },
+    {
+      "f2p": [
+        "tests.dialects.test_snowflake.TestSnowflake::test_snowflake"
+      ],
+      "id": "sqlglot-aa19c46a556c",
+      "target_files": [
+        "sqlglot/dialects/snowflake.py"
+      ]
+    },
+    {
+      "f2p": [
+        "tests.test_optimizer.TestOptimizer::test_canonicalize"
+      ],
+      "id": "sqlglot-aaf4d13226eb",
+      "target_files": [
+        "sqlglot/optimizer/canonicalize.py"
+      ]
+    },
+    {
+      "f2p": [
+        "tests.dialects.test_tsql.TestTSQL::test_ddl"
+      ],
+      "id": "sqlglot-b1ef9609f58d",
+      "target_files": [
+        "sqlglot/dialects/tsql.py",
+        "sqlglot/generator.py"
+      ]
+    },
+    {
+      "f2p": [
+        "tests.dialects.test_snowflake.TestSnowflake::test_snowflake"
+      ],
+      "id": "sqlglot-b7e562f8ff5f",
+      "target_files": [
+        "sqlglot/parser.py"
+      ]
+    },
+    {
+      "f2p": [
+        "tests.dialects.test_duckdb.TestDuckDB::test_from_first_with_parentheses"
+      ],
+      "id": "sqlglot-b9c58dd18fe3",
+      "target_files": [
+        "sqlglot/parser.py"
+      ]
+    },
+    {
+      "f2p": [
+        "tests.test_optimizer.TestOptimizer::test_qualify_tables"
+      ],
+      "id": "sqlglot-ba56fda71f66",
+      "target_files": [
+        "sqlglot/optimizer/qualify_tables.py"
+      ]
+    },
+    {
+      "f2p": [
+        "tests.dialects.test_presto.TestPresto::test_presto"
+      ],
+      "id": "sqlglot-ba5768c0493e",
+      "target_files": [
+        "sqlglot/dialects/presto.py"
+      ]
+    },
+    {
+      "f2p": [
+        "tests.dialects.test_clickhouse.TestClickhouse::test_clickhouse",
+        "tests.dialects.test_clickhouse.TestClickhouse::test_drop_on_cluster"
+      ],
+      "id": "sqlglot-bae93eed7c8a",
+      "target_files": [
+        "sqlglot/dialects/clickhouse.py"
+      ]
+    },
+    {
+      "f2p": [
+        "tests.test_optimizer.TestOptimizer::test_qualify_columns"
+      ],
+      "id": "sqlglot-c9ae109ae649",
+      "target_files": [
+        "sqlglot/expressions.py",
+        "sqlglot/optimizer/qualify_columns.py"
+      ]
+    },
+    {
+      "f2p": [
+        "tests.test_optimizer.TestOptimizer::test_manually_annotate_snowflake"
+      ],
+      "id": "sqlglot-ca29866a18b8",
+      "target_files": [
+        "sqlglot/optimizer/annotate_types.py",
+        "sqlglot/optimizer/isolate_table_selects.py",
+        "sqlglot/optimizer/pushdown_projections.py",
+        "sqlglot/optimizer/qualify_columns.py"
+      ]
+    },
+    {
+      "f2p": [
+        "tests.dialects.test_bigquery.TestBigQuery::test_warnings"
+      ],
+      "id": "sqlglot-cb0f222503ba",
+      "target_files": [
+        "sqlglot/parsers/bigquery.py"
+      ]
+    },
+    {
+      "f2p": [
+        "tests.test_executor.TestExecutor::test_outer_joins_preserve_unmatched_rows"
+      ],
+      "id": "sqlglot-cb6a7677ec87",
+      "target_files": [
+        "sqlglot/executor/python.py"
+      ]
+    },
+    {
+      "f2p": [
+        "tests.dialects.test_spark.TestSpark::test_binary_string"
+      ],
+      "id": "sqlglot-ce86b275f3e8",
+      "target_files": [
+        "sqlglot/tokens.py",
+        "sqlglotrs/src/tokenizer.rs"
+      ]
+    },
+    {
+      "f2p": [
+        "tests.test_optimizer.TestOptimizer::test_annotate_object_construct"
+      ],
+      "id": "sqlglot-d23253881fd0",
+      "target_files": [
+        "sqlglot/dialects/snowflake.py"
+      ]
+    },
+    {
+      "f2p": [
+        "tests.dialects.test_presto.TestPresto::test_presto"
+      ],
+      "id": "sqlglot-d35d654013e0",
+      "target_files": [
+        "sqlglot/parser.py"
+      ]
+    },
+    {
+      "f2p": [
+        "tests.dialects.test_postgres.TestPostgres::test_postgres"
+      ],
+      "id": "sqlglot-d526cd3eb9ba",
+      "target_files": [
+        "sqlglot/parser.py"
+      ]
+    },
+    {
+      "f2p": [
+        "tests.test_optimizer.TestOptimizer::test_merge_subqueries"
+      ],
+      "id": "sqlglot-d58ed7932ada",
+      "target_files": [
+        "sqlglot/optimizer/merge_subqueries.py"
+      ]
+    },
+    {
+      "f2p": [
+        "tests.dialects.test_hive.TestHive::test_percentile"
+      ],
+      "id": "sqlglot-dae54e4b1cf5",
+      "target_files": [
+        "sqlglot/dialects/hive.py"
+      ]
+    },
+    {
+      "f2p": [
+        "tests.dialects.test_mysql.TestMySQL::test_convert"
+      ],
+      "id": "sqlglot-db91174d02cc",
+      "target_files": [
+        "sqlglot/parser.py"
+      ]
+    },
+    {
+      "f2p": [
+        "tests.dialects.test_postgres.TestPostgres::test_postgres"
+      ],
+      "id": "sqlglot-dbf55d8e1438",
+      "target_files": [
+        "sqlglot/dialects/postgres.py"
+      ]
+    },
+    {
+      "f2p": [
+        "tests.dialects.test_bigquery.TestBigQuery::test_array_concat"
+      ],
+      "id": "sqlglot-dd3a88a9b8b0",
+      "target_files": [
+        "sqlglot/generator.py"
+      ]
+    },
+    {
+      "f2p": [
+        "tests.test_optimizer.TestOptimizer::test_qualify_columns"
+      ],
+      "id": "sqlglot-de1dfbb75f69",
+      "target_files": [
+        "sqlglot/optimizer/qualify_columns.py"
+      ]
+    },
+    {
+      "f2p": [
+        "tests.test_optimizer.TestOptimizer::test_simplify"
+      ],
+      "id": "sqlglot-df25519660c4",
+      "target_files": [
+        "sqlglot/optimizer/simplify.py"
+      ]
+    },
+    {
+      "f2p": [
+        "tests.test_executor.TestExecutor::test_null_ordering_honors_nulls_first_and_dialect_defaults"
+      ],
+      "id": "sqlglot-e262dc758916",
+      "target_files": [
+        "sqlglot/executor/env.py"
+      ]
+    },
+    {
+      "f2p": [
+        "tests.dialects.test_postgres.TestPostgres::test_postgres"
+      ],
+      "id": "sqlglot-e30ce6335db4",
+      "target_files": [
+        "sqlglot/expressions.py",
+        "sqlglot/generator.py",
+        "sqlglot/parser.py"
+      ]
+    },
+    {
+      "f2p": [
+        "tests.test_optimizer.TestOptimizer::test_qualify_columns"
+      ],
+      "id": "sqlglot-e5ffdbe14805",
+      "target_files": [
+        "sqlglot/expressions.py"
+      ]
+    },
+    {
+      "f2p": [
+        "tests.test_optimizer.TestOptimizer::test_qualify_columns"
+      ],
+      "id": "sqlglot-e950881ebe41",
+      "target_files": [
+        "sqlglot/optimizer/scope.py"
+      ]
+    },
+    {
+      "f2p": [
+        "tests.test_optimizer.TestOptimizer::test_union_annotation"
+      ],
+      "id": "sqlglot-e9b6e0007747",
+      "target_files": [
+        "sqlglot/optimizer/annotate_types.py"
+      ]
+    },
+    {
+      "f2p": [
+        "tests.dialects.test_athena.TestAthena::test_ddl"
+      ],
+      "id": "sqlglot-ea4dd2f1bac0",
+      "target_files": [
+        "sqlglot/dialects/athena.py"
+      ]
+    },
+    {
+      "f2p": [
+        "tests.test_time.TestTime::test_subsecond_precision"
+      ],
+      "id": "sqlglot-ee09bb19535c",
+      "target_files": [
+        "sqlglot/time.py"
+      ]
+    },
+    {
+      "f2p": [
+        "tests.dialects.test_bigquery.TestBigQuery::test_bitwise_and"
+      ],
+      "id": "sqlglot-ef495a732b7d",
+      "target_files": [
+        "sqlglot/dialects/snowflake.py"
+      ]
+    },
+    {
+      "f2p": [
+        "tests.dialects.test_bigquery.TestBigQuery::test_bigquery"
+      ],
+      "id": "sqlglot-f614ebe813a3",
+      "target_files": [
+        "sqlglot/generator.py"
+      ]
+    },
+    {
+      "f2p": [
+        "tests.dialects.test_snowflake.TestSnowflake::test_snowflake"
+      ],
+      "id": "sqlglot-f65145f16736",
+      "target_files": [
+        "sqlglot/dialects/snowflake.py"
+      ]
+    },
+    {
+      "f2p": [
+        "tests.test_expressions.TestExpressions::test_cast"
+      ],
+      "id": "sqlglot-f72fc2c8fa63",
+      "target_files": [
+        "sqlglot/expressions/builders.py"
+      ]
+    },
+    {
+      "f2p": [
+        "tests.test_optimizer.TestOptimizer::test_merge_subqueries"
+      ],
+      "id": "sqlglot-fac79b3fda4e",
+      "target_files": [
+        "sqlglot/optimizer/merge_subqueries.py"
+      ]
+    },
+    {
+      "f2p": [
+        "tests.dialects.test_postgres.TestPostgres::test_postgres"
+      ],
+      "id": "sqlglot-fb007949e86d",
+      "target_files": [
+        "sqlglot/expressions.py"
+      ]
+    },
+    {
+      "f2p": [
+        "tests.dialects.test_postgres.TestPostgres::test_ddl"
+      ],
+      "id": "sqlglot-fd0e113e4eef",
+      "target_files": [
+        "sqlglot/dialects/dialect.py",
+        "sqlglot/dialects/oracle.py",
+        "sqlglot/dialects/tsql.py",
+        "sqlglot/generator.py",
+        "sqlglot/parser.py"
+      ]
+    }
+  ],
+  "task": "sqlglot",
+  "version": "26.1.0"
+}

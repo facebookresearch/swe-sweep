@@ -1,0 +1,1110 @@
+{
+  "build_jobs": 4,
+  "container_repo": "/repo",
+  "evaluation": {
+    "suite": "reproduction",
+    "visible_timeout": 14400
+  },
+  "upstream_image": "pandora-maxbug-duckdb:v0.10.0",
+  "n_base_passing": 2828,
+  "n_base_test_ignore": 3,
+  "oracle_digest": "f4b657feb77676804e42134ba4d6dd20e69d297d05b695307879415215263aa2",
+  "oracle_pristine_paths": [],
+  "upstream_commit": "9f7399e15e6172900e0591deb5a57a45769d8205",
+  "reproduction": {
+    "build_cmd": "GEN=ninja BUILD_ICU=1 BUILD_INET=1 BUILD_PARQUET=1 BUILD_TPCH=1 BUILD_TPCDS=1 BUILD_FTS=1 BUILD_JSON=1 BUILD_EXCEL=1 CMAKE_BUILD_PARALLEL_LEVEL=\"${SWESWEEP_BUILD_JOBS:-8}\" make release",
+    "build_timeout": 5400,
+    "needs_build": true,
+    "suite": {
+      "binary": "build/release/test/unittest",
+      "type": "duckdb-unittest"
+    },
+    "test_timeout": 1800
+  },
+  "schema": 2,
+  "subtasks": [
+    {
+      "f2p": [
+        "test/sql/table_function/duckdb_constraints_issue11284.test"
+      ],
+      "id": "duckdb-0072efd0dc57",
+      "target_files": [
+        "src/catalog/catalog_entry/duck_table_entry.cpp",
+        "src/catalog/catalog_entry/table_catalog_entry.cpp",
+        "src/function/table/system/duckdb_constraints.cpp",
+        "src/function/table/system/duckdb_tables.cpp",
+        "src/function/table/system/pragma_table_info.cpp",
+        "src/include/duckdb/parser/constraints/unique_constraint.hpp",
+        "src/parser/constraints/unique_constraint.cpp",
+        "src/planner/binder/statement/bind_create.cpp",
+        "src/planner/binder/statement/bind_create_table.cpp"
+      ]
+    },
+    {
+      "f2p": [
+        "test/sql/sample/same_seed_same_sample.test"
+      ],
+      "id": "duckdb-0134ded867ec",
+      "target_files": [
+        "src/include/duckdb/execution/operator/helper/physical_reservoir_sample.hpp",
+        "src/include/duckdb/parser/parsed_data/sample_options.hpp",
+        "src/parser/parsed_data/sample_options.cpp",
+        "src/parser/transform/helpers/transform_sample.cpp"
+      ]
+    },
+    {
+      "f2p": [
+        "test/optimizer/joins/lateral_cross_join.test"
+      ],
+      "id": "duckdb-025b1abedd19",
+      "target_files": [
+        "src/include/duckdb/parser/tableref/joinref.hpp",
+        "src/parser/tableref/joinref.cpp",
+        "src/parser/transform/tableref/transform_from.cpp",
+        "src/storage/serialization/serialize_tableref.cpp"
+      ]
+    },
+    {
+      "f2p": [
+        "test/sql/types/struct/struct_unnest_recursion.test"
+      ],
+      "id": "duckdb-064a85ba2b9e",
+      "target_files": [
+        "src/include/duckdb/planner/query_node/bound_select_node.hpp",
+        "src/planner/binder/query_node/bind_select_node.cpp",
+        "src/planner/expression_binder/base_select_binder.cpp"
+      ]
+    },
+    {
+      "f2p": [
+        "test/sql/parser/join_alias.test"
+      ],
+      "id": "duckdb-0bcc094e9155",
+      "target_files": [
+        "src/parser/transform/tableref/transform_join.cpp"
+      ]
+    },
+    {
+      "f2p": [
+        "test/sql/collate/collate_subquery.test"
+      ],
+      "id": "duckdb-0e8e823ac5dd",
+      "target_files": [
+        "src/planner/binder/expression/bind_collate_expression.cpp"
+      ]
+    },
+    {
+      "f2p": [
+        "test/sql/subquery/exists/test_exists_union_by_name.test"
+      ],
+      "id": "duckdb-15becaa25700",
+      "target_files": [
+        "src/planner/binder/query_node/plan_subquery.cpp",
+        "src/planner/subquery/flatten_dependent_join.cpp"
+      ]
+    },
+    {
+      "f2p": [
+        "test/sql/cast/test_bit_cast.test"
+      ],
+      "id": "duckdb-165dc49e8f37",
+      "target_files": [
+        "src/common/types/bit.cpp"
+      ]
+    },
+    {
+      "f2p": [
+        "test/sql/storage/compression/rle/rle_many_repeated.test_slow"
+      ],
+      "id": "duckdb-16912ea8773c",
+      "target_files": [
+        "src/storage/compression/rle.cpp"
+      ]
+    },
+    {
+      "f2p": [
+        "test/sql/pivot/pivot_15141.test"
+      ],
+      "id": "duckdb-1790251e63cf",
+      "target_files": [
+        "src/parser/transform/statement/transform_pivot_stmt.cpp"
+      ]
+    },
+    {
+      "f2p": [
+        "test/sql/subquery/scalar/test_correlated_subquery.test"
+      ],
+      "id": "duckdb-19a0be39629f",
+      "target_files": [
+        "src/planner/expression.cpp"
+      ]
+    },
+    {
+      "f2p": [
+        "test/optimizer/unnest_rewriter_issue_14542.test"
+      ],
+      "id": "duckdb-19c1b85d79d3",
+      "target_files": [
+        "src/include/duckdb/optimizer/unnest_rewriter.hpp",
+        "src/optimizer/unnest_rewriter.cpp"
+      ]
+    },
+    {
+      "f2p": [
+        "test/sql/function/list/lambdas/reduce.test"
+      ],
+      "id": "duckdb-1b0e6e7cf25b",
+      "target_files": [
+        "src/core_functions/scalar/list/list_reduce.cpp"
+      ]
+    },
+    {
+      "f2p": [
+        "test/sql/types/enum/test_enum.test"
+      ],
+      "id": "duckdb-1b72fe675ead",
+      "target_files": [
+        "extension/core_functions/scalar/enum/enum_functions.cpp"
+      ]
+    },
+    {
+      "f2p": [
+        "test/sql/function/timestamp/test_icu_strptime.test"
+      ],
+      "id": "duckdb-1e65f66ebffc",
+      "target_files": [
+        "extension/icu/icu-strptime.cpp"
+      ]
+    },
+    {
+      "f2p": [
+        "test/sql/aggregate/aggregates/test_minmax_14145.test"
+      ],
+      "id": "duckdb-1e81c42dd1a4",
+      "target_files": [
+        "src/core_functions/aggregate/distributive/minmax.cpp"
+      ]
+    },
+    {
+      "f2p": [
+        "test/sql/subquery/exists/test_issue_22267.test"
+      ],
+      "id": "duckdb-200dcf6a4fde",
+      "target_files": [
+        "src/optimizer/filter_pushdown.cpp"
+      ]
+    },
+    {
+      "f2p": [
+        "test/sql/types/list/list_parse_recursion.test"
+      ],
+      "id": "duckdb-2020c8d7a281",
+      "target_files": [
+        "src/function/cast/vector_cast_helpers.cpp"
+      ]
+    },
+    {
+      "f2p": [
+        "test/sql/table_function/duckdb_memory_convert_to_persistent.test"
+      ],
+      "id": "duckdb-21cff7c1d5c6",
+      "target_files": [
+        "src/storage/buffer/block_handle.cpp"
+      ]
+    },
+    {
+      "f2p": [
+        "test/sql/optimizer/expression/test_timestamp_offset.test"
+      ],
+      "id": "duckdb-2217f9b6532e",
+      "target_files": [
+        "src/planner/expression/bound_cast_expression.cpp"
+      ]
+    },
+    {
+      "f2p": [
+        "test/sql/prepared/parameter_order_subquery.test"
+      ],
+      "id": "duckdb-22ad99fe6d43",
+      "target_files": [
+        "src/parser/transform/expression/transform_subquery.cpp"
+      ]
+    },
+    {
+      "f2p": [
+        "test/sql/excel/test_excel_numformat.test"
+      ],
+      "id": "duckdb-2380f9735ed0",
+      "target_files": [
+        "extension/excel/numformat/nf_calendar.cpp"
+      ]
+    },
+    {
+      "f2p": [
+        "test/sql/storage/concurrent_table_insertion.test_slow"
+      ],
+      "id": "duckdb-24278e9ffd28",
+      "target_files": [
+        "src/include/duckdb/storage/data_table.hpp",
+        "src/include/duckdb/storage/table/append_state.hpp",
+        "src/include/duckdb/storage/table/row_group_collection.hpp",
+        "src/storage/data_table.cpp",
+        "src/storage/local_storage.cpp",
+        "src/storage/table/row_group.cpp",
+        "src/storage/table/row_group_collection.cpp"
+      ]
+    },
+    {
+      "f2p": [
+        "test/optimizer/issue_12181.test"
+      ],
+      "id": "duckdb-282d562aa395",
+      "target_files": [
+        "src/optimizer/rule/move_constants.cpp"
+      ]
+    },
+    {
+      "f2p": [
+        "test/sql/constraints/foreignkey/test_fk_alter.test"
+      ],
+      "id": "duckdb-2b390ca9f79d",
+      "target_files": [
+        "src/catalog/catalog_entry/duck_schema_entry.cpp",
+        "src/catalog/catalog_set.cpp",
+        "src/catalog/dependency_manager.cpp",
+        "src/include/duckdb/catalog/dependency_manager.hpp"
+      ]
+    },
+    {
+      "f2p": [
+        "test/sql/function/string/like_unicode.test"
+      ],
+      "id": "duckdb-350ed10c5eea",
+      "target_files": [
+        "src/function/scalar/string/like.cpp"
+      ]
+    },
+    {
+      "f2p": [
+        "test/sql/prepared/prepare_window_functions.test"
+      ],
+      "id": "duckdb-35212bbdc849",
+      "target_files": [
+        "src/planner/binder/expression/bind_window_expression.cpp"
+      ]
+    },
+    {
+      "f2p": [
+        "test/optimizer/joins/filter_on_subquery_with_aggregate.test"
+      ],
+      "id": "duckdb-36c38199ce20",
+      "target_files": [
+        "src/include/duckdb/optimizer/join_order/relation_manager.hpp",
+        "src/optimizer/join_order/relation_manager.cpp"
+      ]
+    },
+    {
+      "f2p": [
+        "test/sql/types/hugeint/test_hugeint_exponent.test"
+      ],
+      "id": "duckdb-37580a29144b",
+      "target_files": [
+        "src/common/operator/cast_operators.cpp"
+      ]
+    },
+    {
+      "f2p": [
+        "test/sql/upsert/test_generated_column.test"
+      ],
+      "id": "duckdb-3a50d7579d15",
+      "target_files": [
+        "src/planner/binder/statement/bind_insert.cpp"
+      ]
+    },
+    {
+      "f2p": [
+        "test/issues/general/test_14286.test"
+      ],
+      "id": "duckdb-3f1087fd04f8",
+      "target_files": [
+        "src/execution/operator/aggregate/physical_hash_aggregate.cpp"
+      ]
+    },
+    {
+      "f2p": [
+        "test/sql/join/semianti/test_simple_anti_join.test"
+      ],
+      "id": "duckdb-3f3cf4083ba4",
+      "target_files": [
+        "src/optimizer/deliminator.cpp"
+      ]
+    },
+    {
+      "f2p": [
+        "test/fuzzer/public/unsatisfiable_filter_prune.test"
+      ],
+      "id": "duckdb-3f7b28468e2e",
+      "target_files": [
+        "src/optimizer/filter_combiner.cpp"
+      ]
+    },
+    {
+      "f2p": [
+        "test/sql/types/nested/array/array_list_aggregate.test"
+      ],
+      "id": "duckdb-43b086a35dd5",
+      "target_files": [
+        "src/common/types/vector.cpp"
+      ]
+    },
+    {
+      "f2p": [
+        "test/optimizer/joins/cross_join_and_unnest_dont_work.test"
+      ],
+      "id": "duckdb-4473cf27097c",
+      "target_files": [
+        "src/optimizer/join_order/relation_manager.cpp"
+      ]
+    },
+    {
+      "f2p": [
+        "test/sql/function/string/test_printf.test"
+      ],
+      "id": "duckdb-46a43d62ed7c",
+      "target_files": [
+        "src/core_functions/scalar/string/printf.cpp"
+      ]
+    },
+    {
+      "f2p": [
+        "test/sql/aggregate/having/having_without_groupby.test"
+      ],
+      "id": "duckdb-4815019d7a34",
+      "target_files": [
+        "src/execution/physical_plan/plan_filter.cpp",
+        "src/planner/binder/query_node/plan_select_node.cpp"
+      ]
+    },
+    {
+      "f2p": [
+        "test/sql/types/timestamp/test_timestamp.test"
+      ],
+      "id": "duckdb-4b18f32ec21e",
+      "target_files": [
+        "src/common/types/timestamp.cpp"
+      ]
+    },
+    {
+      "f2p": [
+        "test/fuzzer/duckfuzz/bind_limit_num.test"
+      ],
+      "id": "duckdb-4c125bd36641",
+      "target_files": [
+        "src/optimizer/join_order/relation_manager.cpp"
+      ]
+    },
+    {
+      "f2p": [
+        "test/sql/order/issue_11936.test"
+      ],
+      "id": "duckdb-4f2d8e8eaf2f",
+      "target_files": [
+        "src/common/row_operations/row_radix_scatter.cpp"
+      ]
+    },
+    {
+      "f2p": [
+        "test/optimizer/joins/update_nodes_in_full_path.test"
+      ],
+      "id": "duckdb-4fae7f8bb350",
+      "target_files": [
+        "src/include/duckdb/optimizer/join_order/cost_model.hpp",
+        "src/include/duckdb/optimizer/join_order/join_node.hpp",
+        "src/include/duckdb/optimizer/join_order/plan_enumerator.hpp",
+        "src/optimizer/join_order/cardinality_estimator.cpp",
+        "src/optimizer/join_order/cost_model.cpp",
+        "src/optimizer/join_order/join_node.cpp",
+        "src/optimizer/join_order/join_order_optimizer.cpp",
+        "src/optimizer/join_order/plan_enumerator.cpp"
+      ]
+    },
+    {
+      "f2p": [
+        "test/sql/function/list/list_zip.test"
+      ],
+      "id": "duckdb-4fc939834090",
+      "target_files": [
+        "src/function/scalar/list/list_zip.cpp"
+      ]
+    },
+    {
+      "f2p": [
+        "test/optimizer/compressed_materialization.test_coverage"
+      ],
+      "id": "duckdb-55543d201747",
+      "target_files": [
+        "src/include/duckdb/optimizer/compressed_materialization.hpp",
+        "src/include/duckdb/optimizer/optimizer.hpp",
+        "src/include/duckdb/optimizer/statistics_propagator.hpp",
+        "src/optimizer/compressed_materialization.cpp",
+        "src/optimizer/compressed_materialization/compress_aggregate.cpp",
+        "src/optimizer/optimizer.cpp",
+        "src/optimizer/statistics/expression/propagate_aggregate.cpp",
+        "src/optimizer/statistics/expression/propagate_between.cpp",
+        "src/optimizer/statistics/expression/propagate_case.cpp",
+        "src/optimizer/statistics/expression/propagate_cast.cpp",
+        "src/optimizer/statistics/expression/propagate_columnref.cpp",
+        "src/optimizer/statistics/expression/propagate_comparison.cpp",
+        "src/optimizer/statistics/expression/propagate_conjunction.cpp",
+        "src/optimizer/statistics/expression/propagate_constant.cpp",
+        "src/optimizer/statistics/expression/propagate_function.cpp",
+        "src/optimizer/statistics/expression/propagate_operator.cpp",
+        "src/optimizer/statistics/operator/propagate_aggregate.cpp",
+        "src/optimizer/statistics/operator/propagate_cross_product.cpp",
+        "src/optimizer/statistics/operator/propagate_filter.cpp",
+        "src/optimizer/statistics/operator/propagate_get.cpp",
+        "src/optimizer/statistics/operator/propagate_join.cpp",
+        "src/optimizer/statistics/operator/propagate_limit.cpp",
+        "src/optimizer/statistics/operator/propagate_order.cpp",
+        "src/optimizer/statistics/operator/propagate_projection.cpp",
+        "src/optimizer/statistics/operator/propagate_set_operation.cpp",
+        "src/optimizer/statistics/operator/propagate_window.cpp",
+        "src/optimizer/statistics_propagator.cpp"
+      ]
+    },
+    {
+      "f2p": [
+        "test/optimizer/optimize_unsigned_vs_signed_ints.test"
+      ],
+      "id": "duckdb-5a33d9a1c013",
+      "target_files": [
+        "src/common/types.cpp",
+        "src/include/duckdb/common/types.hpp",
+        "src/planner/expression/bound_cast_expression.cpp"
+      ]
+    },
+    {
+      "f2p": [
+        "test/sql/types/bit/bit_issue_11211.test"
+      ],
+      "id": "duckdb-5b031435d1c2",
+      "target_files": [
+        "src/common/types/bit.cpp"
+      ]
+    },
+    {
+      "f2p": [
+        "test/sql/collate/collate_in_subquery.test"
+      ],
+      "id": "duckdb-5b6992a0f3a6",
+      "target_files": [
+        "src/planner/binder/query_node/plan_subquery.cpp",
+        "src/planner/subquery/flatten_dependent_join.cpp"
+      ]
+    },
+    {
+      "f2p": [
+        "test/sql/fts/issue_13866.test"
+      ],
+      "id": "duckdb-5e618dfa2d4f",
+      "target_files": [
+        "extension/fts/fts_indexing.cpp"
+      ]
+    },
+    {
+      "f2p": [
+        "test/issues/general/test_11280.test_slow"
+      ],
+      "id": "duckdb-61c3cfc37903",
+      "target_files": [
+        "src/common/vector_operations/vector_hash.cpp",
+        "src/execution/join_hashtable.cpp"
+      ]
+    },
+    {
+      "f2p": [
+        "test/sql/catalog/view/test_view_duplicate_columns.test"
+      ],
+      "id": "duckdb-62047414f1fa",
+      "target_files": [
+        "src/function/table/system/duckdb_columns.cpp"
+      ]
+    },
+    {
+      "f2p": [
+        "test/sql/upsert/upsert_local_no_tuples.test"
+      ],
+      "id": "duckdb-62e8b51ffa88",
+      "target_files": [
+        "src/storage/local_storage.cpp"
+      ]
+    },
+    {
+      "f2p": [
+        "test/fuzzer/pedro/in_clause_setop_rewrite.test"
+      ],
+      "id": "duckdb-647f5416bff8",
+      "target_files": [
+        "src/include/duckdb/optimizer/in_clause_rewriter.hpp",
+        "src/optimizer/in_clause_rewriter.cpp",
+        "src/optimizer/remove_unused_columns.cpp"
+      ]
+    },
+    {
+      "f2p": [
+        "test/sql/delete/cleanup_delete_on_conflict.test"
+      ],
+      "id": "duckdb-663c7d842c69",
+      "target_files": [
+        "src/storage/table/chunk_info.cpp"
+      ]
+    },
+    {
+      "f2p": [
+        "test/issues/general/test_17310.test"
+      ],
+      "id": "duckdb-675eb44147c9",
+      "target_files": [
+        "src/common/operator/cast_operators.cpp"
+      ]
+    },
+    {
+      "f2p": [
+        "test/sql/types/nested/array/array_cast.test"
+      ],
+      "id": "duckdb-685162621323",
+      "target_files": [
+        "src/function/cast/list_casts.cpp"
+      ]
+    },
+    {
+      "f2p": [
+        "test/sql/explain/explain_execute.test"
+      ],
+      "id": "duckdb-69a6459a8108",
+      "target_files": [
+        "src/common/render_tree.cpp",
+        "src/execution/operator/scan/physical_positional_scan.cpp",
+        "src/include/duckdb/execution/operator/scan/physical_positional_scan.hpp"
+      ]
+    },
+    {
+      "f2p": [
+        "test/sql/copy/parquet/copy_ninf_stats.test"
+      ],
+      "id": "duckdb-6dcb9e7c2bb4",
+      "target_files": [
+        "extension/parquet/column_writer.cpp",
+        "src/function/table/system/test_all_types.cpp",
+        "src/include/duckdb/common/limits.hpp"
+      ]
+    },
+    {
+      "f2p": [
+        "test/sql/types/nested/map/map_from_entries/dictionary_vector.test"
+      ],
+      "id": "duckdb-6f234f9c4978",
+      "target_files": [
+        "src/function/scalar/nested_functions.cpp"
+      ]
+    },
+    {
+      "f2p": [
+        "test/sql/join/asof/test_asof_join_pushdown.test"
+      ],
+      "id": "duckdb-7463773a3cb5",
+      "target_files": [
+        "src/optimizer/pushdown/pushdown_cross_product.cpp",
+        "src/optimizer/pushdown/pushdown_inner_join.cpp"
+      ]
+    },
+    {
+      "f2p": [
+        "test/sql/create/create_index_on_issue_13643.test"
+      ],
+      "id": "duckdb-75521326481f",
+      "target_files": [
+        "src/parser/parsed_data/create_index_info.cpp"
+      ]
+    },
+    {
+      "f2p": [
+        "test/sql/storage/filter_pushdown_struct.test"
+      ],
+      "id": "duckdb-7b570403d686",
+      "target_files": [
+        "src/include/duckdb/storage/table/column_segment.hpp",
+        "src/storage/table/column_data.cpp",
+        "src/storage/table/column_segment.cpp"
+      ]
+    },
+    {
+      "f2p": [
+        "test/sql/tpcds/dsdgen_readonly.test",
+        "test/sql/tpch/dbgen_readonly.test"
+      ],
+      "id": "duckdb-7fa52ed2bd69",
+      "target_files": [
+        "extension/tpcds/tpcds_extension.cpp",
+        "extension/tpch/tpch_extension.cpp",
+        "src/include/duckdb/function/table_function.hpp",
+        "src/planner/binder/tableref/bind_table_function.cpp",
+        "src/planner/operator/logical_get.cpp"
+      ]
+    },
+    {
+      "f2p": [
+        "test/sql/types/enum/test_enum.test"
+      ],
+      "id": "duckdb-824a50418841",
+      "target_files": [
+        "src/core_functions/scalar/enum/enum_functions.cpp"
+      ]
+    },
+    {
+      "f2p": [
+        "test/sql/window/test_streaming_window.test"
+      ],
+      "id": "duckdb-8450ad72d657",
+      "target_files": [
+        "src/execution/operator/aggregate/physical_streaming_window.cpp"
+      ]
+    },
+    {
+      "f2p": [
+        "test/sql/types/map/map_cast.test"
+      ],
+      "id": "duckdb-85e3b88d8300",
+      "target_files": [
+        "src/function/cast/map_cast.cpp"
+      ]
+    },
+    {
+      "f2p": [
+        "test/sql/storage/struct_default_entries.test_slow"
+      ],
+      "id": "duckdb-863b896717f1",
+      "target_files": [
+        "src/storage/table/array_column_data.cpp",
+        "src/storage/table/struct_column_data.cpp"
+      ]
+    },
+    {
+      "f2p": [
+        "test/sql/cast/timestamp_date_cast.test"
+      ],
+      "id": "duckdb-8679358a0503",
+      "target_files": [
+        "src/planner/expression/bound_cast_expression.cpp"
+      ]
+    },
+    {
+      "f2p": [
+        "test/sql/function/operator/test_bitwise_ops.test"
+      ],
+      "id": "duckdb-86fe04caf9f4",
+      "target_files": [
+        "src/core_functions/scalar/operators/bitwise.cpp"
+      ]
+    },
+    {
+      "f2p": [
+        "test/sql/json/scalar/test_json_create.test"
+      ],
+      "id": "duckdb-8a3e974e8727",
+      "target_files": [
+        "extension/json/json_functions/json_create.cpp"
+      ]
+    },
+    {
+      "f2p": [
+        "test/sql/subquery/scalar/array_order_subquery.test"
+      ],
+      "id": "duckdb-8dcd0ac1cae0",
+      "target_files": [
+        "src/parser/transform/expression/transform_subquery.cpp"
+      ]
+    },
+    {
+      "f2p": [
+        "test/sql/function/generic/test_set.test"
+      ],
+      "id": "duckdb-8ef8ca9824ab",
+      "target_files": [
+        "src/core_functions/scalar/generic/current_setting.cpp"
+      ]
+    },
+    {
+      "f2p": [
+        "test/sql/pivot/pivot_case_insensitive.test"
+      ],
+      "id": "duckdb-8fee68dc6ef2",
+      "target_files": [
+        "src/planner/binder/tableref/bind_pivot.cpp"
+      ]
+    },
+    {
+      "f2p": [
+        "test/sql/window/test_duplicate_partition.test"
+      ],
+      "id": "duckdb-9247c5568ef1",
+      "target_files": [
+        "src/planner/expression/bound_window_expression.cpp"
+      ]
+    },
+    {
+      "f2p": [
+        "test/optimizer/union_exclude.test"
+      ],
+      "id": "duckdb-94dd9ceb3b3a",
+      "target_files": [
+        "src/optimizer/remove_unused_columns.cpp"
+      ]
+    },
+    {
+      "f2p": [
+        "test/sql/aggregate/group/test_group_by_null_length.test"
+      ],
+      "id": "duckdb-95c312388f7b",
+      "target_files": [
+        "src/planner/binder/query_node/bind_select_node.cpp"
+      ]
+    },
+    {
+      "f2p": [
+        "test/sql/attach/attach_dbname_quotes.test"
+      ],
+      "id": "duckdb-96cd6f4c49c4",
+      "target_files": [
+        "src/catalog/catalog_search_path.cpp",
+        "src/parser/transform/statement/transform_use.cpp"
+      ]
+    },
+    {
+      "f2p": [
+        "test/sql/conjunction/or_comparison.test"
+      ],
+      "id": "duckdb-99482115caaa",
+      "target_files": [
+        "src/common/types/selection_vector.cpp",
+        "src/execution/expression_executor/execute_conjunction.cpp",
+        "src/include/duckdb/common/types/selection_vector.hpp"
+      ]
+    },
+    {
+      "f2p": [
+        "test/sql/attach/attach_foreign_key.test"
+      ],
+      "id": "duckdb-9dda7601a697",
+      "target_files": [
+        "src/storage/data_table.cpp"
+      ]
+    },
+    {
+      "f2p": [
+        "test/sql/parser/dollar_quotes_internal_issue2224.test"
+      ],
+      "id": "duckdb-a3491d68d372",
+      "target_files": [
+        "src/parser/parser.cpp"
+      ]
+    },
+    {
+      "f2p": [
+        "test/sql/optimizer/expression/test_in_clause_simplification.test"
+      ],
+      "id": "duckdb-a36a17c4de98",
+      "target_files": [
+        "src/optimizer/rule/in_clause_simplification_rule.cpp"
+      ]
+    },
+    {
+      "f2p": [
+        "test/sql/function/list/lambdas/table_functions.test"
+      ],
+      "id": "duckdb-a5eb42c56587",
+      "target_files": [
+        "src/include/duckdb/planner/expression_binder/alter_binder.hpp",
+        "src/include/duckdb/planner/table_binding.hpp",
+        "src/planner/expression_binder/alter_binder.cpp"
+      ]
+    },
+    {
+      "f2p": [
+        "test/sql/copy/parquet/parquet_write_repeated_lists.test"
+      ],
+      "id": "duckdb-a61365926289",
+      "target_files": [
+        "extension/parquet/column_writer.cpp"
+      ]
+    },
+    {
+      "f2p": [
+        "test/fuzzer/duckfuzz/window_order_bind_failure.test"
+      ],
+      "id": "duckdb-a82cf49f86dd",
+      "target_files": [
+        "src/planner/binder/expression/bind_window_expression.cpp"
+      ]
+    },
+    {
+      "f2p": [
+        "test/sql/prepared/prepare_from_first.test"
+      ],
+      "id": "duckdb-ab8e5666b8b2",
+      "target_files": [
+        "src/parser/transform/statement/transform_select_node.cpp"
+      ]
+    },
+    {
+      "f2p": [
+        "test/fuzzer/public/lateral_in_right_side_of_join.test"
+      ],
+      "id": "duckdb-af0f5334fb87",
+      "target_files": [
+        "src/planner/subquery/flatten_dependent_join.cpp"
+      ]
+    },
+    {
+      "f2p": [
+        "test/sql/function/timestamp/test_date_diff_epoch.test"
+      ],
+      "id": "duckdb-b16e2dce4c66",
+      "target_files": [
+        "src/core_functions/scalar/date/date_diff.cpp"
+      ]
+    },
+    {
+      "f2p": [
+        "test/issues/general/test_14540.test"
+      ],
+      "id": "duckdb-b189dd7ff15f",
+      "target_files": [
+        "src/optimizer/unnest_rewriter.cpp"
+      ]
+    },
+    {
+      "f2p": [
+        "test/sql/function/timestamp/test_strptime.test"
+      ],
+      "id": "duckdb-b219521ef1e5",
+      "target_files": [
+        "src/function/scalar/strftime_format.cpp"
+      ]
+    },
+    {
+      "f2p": [
+        "test/sql/cast/string_to_integer_exponent_cast.test"
+      ],
+      "id": "duckdb-b59aa14f8b3f",
+      "target_files": [
+        "src/include/duckdb/common/operator/integer_cast_operator.hpp"
+      ]
+    },
+    {
+      "f2p": [
+        "test/sql/subquery/complex/complex_correlated_subquery_issue.test"
+      ],
+      "id": "duckdb-b6d9ac9ac4c4",
+      "target_files": [
+        "src/planner/subquery/flatten_dependent_join.cpp"
+      ]
+    },
+    {
+      "f2p": [
+        "test/sql/window/test_window_unnest_error.test"
+      ],
+      "id": "duckdb-b9b1bb8a239b",
+      "target_files": [
+        "src/include/duckdb/planner/expression_binder/base_select_binder.hpp",
+        "src/planner/binder/expression/bind_unnest_expression.cpp",
+        "src/planner/binder/expression/bind_window_expression.cpp",
+        "src/planner/expression_binder/base_select_binder.cpp",
+        "src/planner/expression_binder/having_binder.cpp",
+        "src/planner/expression_binder/qualify_binder.cpp"
+      ]
+    },
+    {
+      "f2p": [
+        "test/issues/general/test_16524.test"
+      ],
+      "id": "duckdb-ba44421804d6",
+      "target_files": [
+        "src/planner/binder/query_node/plan_subquery.cpp"
+      ]
+    },
+    {
+      "f2p": [
+        "test/optimizer/joins/join_on_doubles.test",
+        "test/optimizer/joins/join_on_floats.test"
+      ],
+      "id": "duckdb-c6f9dfd6591b",
+      "target_files": [
+        "src/common/types.cpp",
+        "src/include/duckdb/common/types.hpp",
+        "src/optimizer/remove_unused_columns.cpp"
+      ]
+    },
+    {
+      "f2p": [
+        "test/sql/storage/delete/delete_final_row_group.test"
+      ],
+      "id": "duckdb-c9112165759d",
+      "target_files": [
+        "src/include/duckdb/storage/table/segment_tree.hpp",
+        "src/storage/table/row_group_collection.cpp"
+      ]
+    },
+    {
+      "f2p": [
+        "test/issues/general/test_18163.test"
+      ],
+      "id": "duckdb-cfdd5889da28",
+      "target_files": [
+        "extension/core_functions/include/core_functions/aggregate/algebraic/stddev.hpp"
+      ]
+    },
+    {
+      "f2p": [
+        "test/sql/subquery/scalar/nested_subquery_window.test",
+        "test/sql/subquery/scalar/test_correlated_window.test"
+      ],
+      "id": "duckdb-da5c7335ea4b",
+      "target_files": [
+        "src/planner/subquery/flatten_dependent_join.cpp"
+      ]
+    },
+    {
+      "f2p": [
+        "test/sql/json/issues/issue11804.test"
+      ],
+      "id": "duckdb-dbd78f790c07",
+      "target_files": [
+        "extension/json/include/json_executors.hpp",
+        "extension/json/json_functions/json_type.cpp"
+      ]
+    },
+    {
+      "f2p": [
+        "test/sql/storage/types/list/empty_float_arrays.test"
+      ],
+      "id": "duckdb-dc96153f0266",
+      "target_files": [
+        "src/include/duckdb/storage/compression/alp/alp_analyze.hpp",
+        "src/include/duckdb/storage/compression/alprd/alprd_analyze.hpp",
+        "src/storage/table/column_data_checkpointer.cpp"
+      ]
+    },
+    {
+      "f2p": [
+        "test/fuzzer/sqlsmith/window_function_error.test"
+      ],
+      "id": "duckdb-de68e49f3522",
+      "target_files": [
+        "src/execution/window_segment_tree.cpp"
+      ]
+    },
+    {
+      "f2p": [
+        "test/sql/types/list/recursive_unnest.test"
+      ],
+      "id": "duckdb-e2c62d0b96d9",
+      "target_files": [
+        "src/planner/binder/expression/bind_unnest_expression.cpp"
+      ]
+    },
+    {
+      "f2p": [
+        "test/fuzzer/duckfuzz/correlated_subqueries.test"
+      ],
+      "id": "duckdb-e544467a8f42",
+      "target_files": [
+        "src/planner/binder/query_node/plan_subquery.cpp"
+      ]
+    },
+    {
+      "f2p": [
+        "test/sql/json/test_json_serialize_sql.test"
+      ],
+      "id": "duckdb-e5c74941dc92",
+      "target_files": [
+        "src/parser/tableref/joinref.cpp"
+      ]
+    },
+    {
+      "f2p": [
+        "test/sql/json/scalar/test_json_arrow_expr.test"
+      ],
+      "id": "duckdb-eca6287b0265",
+      "target_files": [
+        "src/planner/binder/expression/bind_lambda.cpp",
+        "src/planner/binder/expression/bind_operator_expression.cpp"
+      ]
+    },
+    {
+      "f2p": [
+        "test/sql/types/interval/test_interval_comparison.test"
+      ],
+      "id": "duckdb-ef0ded97b22b",
+      "target_files": [
+        "src/include/duckdb/common/types/interval.hpp"
+      ]
+    },
+    {
+      "f2p": [
+        "test/issues/general/test_16783.test"
+      ],
+      "id": "duckdb-f0ea35020083",
+      "target_files": [
+        "src/optimizer/rule/distributivity.cpp"
+      ]
+    },
+    {
+      "f2p": [
+        "test/sql/storage/reclaim_space/reclaim_space_lists.test_slow"
+      ],
+      "id": "duckdb-f2cf1db95264",
+      "target_files": [
+        "src/storage/table/list_column_data.cpp"
+      ]
+    },
+    {
+      "f2p": [
+        "test/sql/join/iejoin/predicate_expressions.test"
+      ],
+      "id": "duckdb-f42aff9fc29f",
+      "target_files": [
+        "src/execution/operator/join/physical_iejoin.cpp"
+      ]
+    },
+    {
+      "f2p": [
+        "test/sql/types/enum/test_enum_schema.test"
+      ],
+      "id": "duckdb-fa43a31dc1a0",
+      "target_files": [
+        "src/planner/binder/statement/bind_create_table.cpp"
+      ]
+    },
+    {
+      "f2p": [
+        "test/sql/catalog/test_set_search_path.test"
+      ],
+      "id": "duckdb-fbcfadceb477",
+      "target_files": [
+        "src/catalog/default/default_functions.cpp"
+      ]
+    },
+    {
+      "f2p": [
+        "test/fuzzer/duckfuzz/arg_minmax_by_decimal.test"
+      ],
+      "id": "duckdb-ffb453f07fce",
+      "target_files": [
+        "src/core_functions/aggregate/distributive/arg_min_max.cpp"
+      ]
+    }
+  ],
+  "task": "duckdb",
+  "version": "v0.10.0"
+}

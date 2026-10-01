@@ -1,0 +1,17 @@
+diff --git a/vlib/v/fmt/tests/struct_fixed_array_ident_keep.vv b/vlib/v/fmt/tests/struct_fixed_array_ident_keep.vv
+new file mode 100644
+index 000000000..cb2d171bd
+--- /dev/null
++++ b/vlib/v/fmt/tests/struct_fixed_array_ident_keep.vv
+@@ -0,0 +1,11 @@
++import crypto.ed25519
++
++struct SSHClientHello {
++	version    u8
++	public_key [ed25519.public_key_size]u8
++}
++
++fn main() {
++	a := SSHClientHello{}
++	assert a.public_key.len == ed25519.public_key_size
++}

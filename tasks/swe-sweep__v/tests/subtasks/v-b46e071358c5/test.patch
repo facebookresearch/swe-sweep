@@ -1,0 +1,15 @@
+diff --git a/vlib/v/tests/const_order_with_str_interp_test.v b/vlib/v/tests/const_order_with_str_interp_test.v
+new file mode 100644
+index 000000000..7e069b3c9
+--- /dev/null
++++ b/vlib/v/tests/const_order_with_str_interp_test.v
+@@ -0,0 +1,9 @@
++import os
++
++const exe_path = os.executable()
++const exe_old_path = '${exe_path}.old'
++
++fn test_main() {
++	assert exe_path == os.executable()
++	assert exe_old_path == '${os.executable()}.old'
++}

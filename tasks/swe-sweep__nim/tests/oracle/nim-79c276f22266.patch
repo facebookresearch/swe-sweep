@@ -1,0 +1,13 @@
+diff --git a/compiler/sigmatch.nim b/compiler/sigmatch.nim
+index 60b0fe612..7124315d9 100644
+--- a/compiler/sigmatch.nim
++++ b/compiler/sigmatch.nim
+@@ -2131,6 +2131,8 @@ proc paramTypesMatchAux(m: var TCandidate, f, a: PType,
+       result = c.semInferredLambda(c, m.bindings, arg)
+     elif arg.kind != nkSym:
+       return nil
++    elif arg.sym.kind in {skMacro, skTemplate}:
++      return nil
+     else:
+       let inferred = c.semGenerateInstance(c, arg.sym, m.bindings, arg.info)
+       result = newSymNode(inferred, arg.info)

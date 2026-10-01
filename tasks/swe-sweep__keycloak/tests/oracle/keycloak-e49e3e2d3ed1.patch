@@ -1,0 +1,13 @@
+diff --git a/services/src/main/java/org/keycloak/services/resources/admin/AuthenticationManagementResource.java b/services/src/main/java/org/keycloak/services/resources/admin/AuthenticationManagementResource.java
+index 1300f2af6e..9415592c85 100755
+--- a/services/src/main/java/org/keycloak/services/resources/admin/AuthenticationManagementResource.java
++++ b/services/src/main/java/org/keycloak/services/resources/admin/AuthenticationManagementResource.java
+@@ -844,7 +844,7 @@ public class AuthenticationManagementResource {
+     @Operation( summary = "Get Single Execution")
+     public AuthenticationExecutionRepresentation getExecution(final @PathParam("executionId") String executionId) {
+     	//http://localhost:8080/auth/admin/realms/master/authentication/executions/cf26211b-9e68-4788-b754-1afd02e59d7f
+-        auth.realm().requireManageRealm();
++        auth.realm().requireViewRealm();
+ 
+         final Optional<AuthenticationExecutionModel> model = Optional.ofNullable(realm.getAuthenticationExecutionById(executionId));
+         if (!model.isPresent()) {

@@ -1,0 +1,113 @@
+diff --git a/lib/rules/selector-attribute-operator-allowed-list/index.cjs b/lib/rules/selector-attribute-operator-allowed-list/index.cjs
+index ebc3d5d9e..f28ecaea8 100644
+--- a/lib/rules/selector-attribute-operator-allowed-list/index.cjs
++++ b/lib/rules/selector-attribute-operator-allowed-list/index.cjs
+@@ -2,6 +2,7 @@
+ // please instead edit the ESM counterpart and rebuild with Rollup (npm run build).
+ 'use strict';
+ 
++const getRuleSelector = require('../../utils/getRuleSelector.cjs');
+ const isStandardSyntaxRule = require('../../utils/isStandardSyntaxRule.cjs');
+ const validateTypes = require('../../utils/validateTypes.cjs');
+ const parseSelector = require('../../utils/parseSelector.cjs');
+@@ -44,26 +45,28 @@ const rule = (primary) => {
+ 				return;
+ 			}
+ 
+-			parseSelector(selector, result, ruleNode)?.walkAttributes((attributeNode) => {
+-				const { operator } = attributeNode;
++			parseSelector(getRuleSelector(ruleNode), result, ruleNode)?.walkAttributes(
++				(attributeNode) => {
++					const { operator } = attributeNode;
+ 
+-				if (!operator || primaryValues.has(operator)) {
+-					return;
+-				}
++					if (!operator || primaryValues.has(operator)) {
++						return;
++					}
+ 
+-				const index = attributeNode.sourceIndex + attributeNode.offsetOf('operator');
+-				const endIndex = index + operator.length;
++					const index = attributeNode.sourceIndex + attributeNode.offsetOf('operator');
++					const endIndex = index + operator.length;
+ 
+-				report({
+-					message: messages.rejected,
+-					messageArgs: [operator],
+-					node: ruleNode,
+-					index,
+-					endIndex,
+-					result,
+-					ruleName,
+-				});
+-			});
++					report({
++						message: messages.rejected,
++						messageArgs: [operator],
++						node: ruleNode,
++						index,
++						endIndex,
++						result,
++						ruleName,
++					});
++				},
++			);
+ 		});
+ 	};
+ };
+diff --git a/lib/rules/selector-attribute-operator-allowed-list/index.mjs b/lib/rules/selector-attribute-operator-allowed-list/index.mjs
+index ef38860c3..dd2d8eded 100644
+--- a/lib/rules/selector-attribute-operator-allowed-list/index.mjs
++++ b/lib/rules/selector-attribute-operator-allowed-list/index.mjs
+@@ -1,3 +1,4 @@
++import getRuleSelector from '../../utils/getRuleSelector.mjs';
+ import isStandardSyntaxRule from '../../utils/isStandardSyntaxRule.mjs';
+ import { isString } from '../../utils/validateTypes.mjs';
+ import parseSelector from '../../utils/parseSelector.mjs';
+@@ -40,26 +41,28 @@ const rule = (primary) => {
+ 				return;
+ 			}
+ 
+-			parseSelector(selector, result, ruleNode)?.walkAttributes((attributeNode) => {
+-				const { operator } = attributeNode;
++			parseSelector(getRuleSelector(ruleNode), result, ruleNode)?.walkAttributes(
++				(attributeNode) => {
++					const { operator } = attributeNode;
+ 
+-				if (!operator || primaryValues.has(operator)) {
+-					return;
+-				}
++					if (!operator || primaryValues.has(operator)) {
++						return;
++					}
+ 
+-				const index = attributeNode.sourceIndex + attributeNode.offsetOf('operator');
+-				const endIndex = index + operator.length;
++					const index = attributeNode.sourceIndex + attributeNode.offsetOf('operator');
++					const endIndex = index + operator.length;
+ 
+-				report({
+-					message: messages.rejected,
+-					messageArgs: [operator],
+-					node: ruleNode,
+-					index,
+-					endIndex,
+-					result,
+-					ruleName,
+-				});
+-			});
++					report({
++						message: messages.rejected,
++						messageArgs: [operator],
++						node: ruleNode,
++						index,
++						endIndex,
++						result,
++						ruleName,
++					});
++				},
++			);
+ 		});
+ 	};
+ };

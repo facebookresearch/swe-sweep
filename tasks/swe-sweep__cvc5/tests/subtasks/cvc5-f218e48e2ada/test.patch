@@ -1,0 +1,24 @@
+diff --git a/test/regress/cli/CMakeLists.txt b/test/regress/cli/CMakeLists.txt
+index 1d03ecbdbb..36c57d37d3 100644
+--- a/test/regress/cli/CMakeLists.txt
++++ b/test/regress/cli/CMakeLists.txt
+@@ -1508,6 +1508,7 @@ set(regress_0_tests
+   regress0/strings/indexof_re.smt2
+   regress0/strings/indexof_re-start-index.smt2
+   regress0/strings/is_digit_simple.smt2
++  regress0/strings/issue11710-numeric-max.smt2
+   regress0/strings/issue1189.smt2
+   regress0/strings/issue2958.smt2
+   regress0/strings/issue3440.smt2
+diff --git a/test/regress/cli/regress0/strings/issue11710-numeric-max.smt2 b/test/regress/cli/regress0/strings/issue11710-numeric-max.smt2
+new file mode 100644
+index 0000000000..b67102f62c
+--- /dev/null
++++ b/test/regress/cli/regress0/strings/issue11710-numeric-max.smt2
+@@ -0,0 +1,6 @@
++; EXPECT: sat
++(set-logic QF_BVSLIA)
++(declare-fun s () String)
++(declare-fun m () (_ BitVec 32))
++(assert (= "0" (str.substr s 1 (bv2nat m))))
++(check-sat)

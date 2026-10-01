@@ -1,0 +1,35 @@
+diff --git a/packages/jest-transform/src/__tests__/shouldInstrument.test.ts b/packages/jest-transform/src/__tests__/shouldInstrument.test.ts
+index cb1e66a38a..e48229f06a 100644
+--- a/packages/jest-transform/src/__tests__/shouldInstrument.test.ts
++++ b/packages/jest-transform/src/__tests__/shouldInstrument.test.ts
+@@ -97,8 +97,14 @@ describe('shouldInstrument', () => {
+       testShouldInstrument('do/collect/sum.coverage.test.js', defaultOptions, {
+         forceCoverageMatch: ['**/*.(coverage).(test).js'],
+         testRegex: ['.*\\.(test)\\.(js)$'],
+       });
+     });
++
++    it('when file is a .json module, but matches forceCoverageMatch', () => {
++      testShouldInstrument('do/collect/coverage.json', defaultOptions, {
++        forceCoverageMatch: ['**/do/**/*.json'],
++      });
++    });
+   });
+ 
+   describe('should return false', () => {
+@@ -203,7 +215,15 @@ describe('shouldInstrument', () => {
+     it('if file is in setupFilesAfterEnv', () => {
+       testShouldInstrument('setupTest.js', defaultOptions, {
+         setupFilesAfterEnv: ['setupTest.js'],
+       });
+     });
++
++    it('when file is a .json module', () => {
++      testShouldInstrument(
++        'dont/collect/coverage.json',
++        defaultOptions,
++        defaultConfig,
++      );
++    });
+   });
+ });

@@ -1,0 +1,27 @@
+diff --git a/activejob/test/cases/test_helper_test.rb b/activejob/test/cases/test_helper_test.rb
+index dd771a722fc..e85eb68a045 100644
+--- a/activejob/test/cases/test_helper_test.rb
++++ b/activejob/test/cases/test_helper_test.rb
+@@ -9,6 +9,7 @@ require "jobs/logging_job"
+ require "jobs/nested_job"
+ require "jobs/rescue_job"
+ require "jobs/raising_job"
++require "jobs/retry_job"
+ require "jobs/inherited_job"
+ require "jobs/multiple_kwargs_job"
+ require "models/person"
+@@ -2027,6 +2028,14 @@ class PerformedJobsTest < ActiveJob::TestCase
+     assert_equal 2, queue_adapter.performed_jobs.count
+   end
+ 
++  test "perform_enqueued_jobs doesn't raise if discard_on ActiveJob::DeserializationError" do
++    RetryJob.perform_later Person.new(404), 1
++
++    assert_nothing_raised do
++      perform_enqueued_jobs(only: RetryJob)
++    end
++  end
++
+   test "TestAdapter respect max attempts" do
+     perform_enqueued_jobs(only: RaisingJob) do
+       assert_raises(RaisingJob::MyError) do

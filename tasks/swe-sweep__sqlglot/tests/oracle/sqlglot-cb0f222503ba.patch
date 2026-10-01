@@ -1,0 +1,22 @@
+diff --git a/sqlglot/dialects/bigquery.py b/sqlglot/dialects/bigquery.py
+index 390e1aa..a7ae16e 100644
+--- a/sqlglot/dialects/bigquery.py
++++ b/sqlglot/dialects/bigquery.py
+@@ -760,13 +760,15 @@ class BigQuery(Dialect):
+                 for expression in bracket.expressions:
+                     name = expression.name.upper()
+ 
+-                    if name not in self.BRACKET_OFFSETS:
++                    expressions = expression.expressions
++
++                    if name not in self.BRACKET_OFFSETS or not expressions:
+                         break
+ 
+                     offset, safe = self.BRACKET_OFFSETS[name]
+                     bracket.set("offset", offset)
+                     bracket.set("safe", safe)
+-                    expression.replace(expression.expressions[0])
++                    expression.replace(expressions[0])
+ 
+             return bracket
+ 

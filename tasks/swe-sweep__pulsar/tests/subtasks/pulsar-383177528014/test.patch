@@ -1,0 +1,52 @@
+diff --git a/pulsar-client/src/test/java/org/apache/pulsar/client/impl/schema/AvroSchemaTest.java b/pulsar-client/src/test/java/org/apache/pulsar/client/impl/schema/AvroSchemaTest.java
+index d69f8bf..787f730 100644
+--- a/pulsar-client/src/test/java/org/apache/pulsar/client/impl/schema/AvroSchemaTest.java
++++ b/pulsar-client/src/test/java/org/apache/pulsar/client/impl/schema/AvroSchemaTest.java
+@@ -470,7 +470,47 @@ public class AvroSchemaTest {
+         AvroSchema<TimestampStruct> schema2 = AvroSchema.of(SchemaDefinition.<TimestampStruct>builder()
+                 .withPojo(TimestampStruct.class).withJSR310ConversionEnabled(true).build());
+         Assert.assertEquals(
+                 schema2.getAvroSchema().getFields().get(0).schema().getTypes().get(1).getLogicalType().getName(),
+                 new TimeConversions.TimestampMillisConversion().getLogicalTypeName());
+     }
++
++    public static class UuidLogicalTypeDto {
++        public UUID id;
++        public String name;
++
++        public UuidLogicalTypeDto() {
++        }
++
++        public UuidLogicalTypeDto(UUID id, String name) {
++            this.id = id;
++            this.name = name;
++        }
++    }
++
++    @Test
++    public void testDecodeUuidLogicalTypeWithClass() {
++        UUID id = UUID.randomUUID();
++        String name = "name";
++        AvroSchema<UuidLogicalTypeDto> schema = AvroSchema.of(UuidLogicalTypeDto.class);
++        byte[] encoded = schema.encode(new UuidLogicalTypeDto(id, name));
++
++        UuidLogicalTypeDto decoded = schema.decode(encoded);
++        assertEquals(decoded.id, id);
++        assertEquals(decoded.name, name);
++    }
++
++    @Test
++    public void testDecodeUuidLogicalTypeWithJsonDef() {
++        UUID id = UUID.randomUUID();
++        String name = "name";
++        AvroSchema<UuidLogicalTypeDto> schemaFromClass = AvroSchema.of(UuidLogicalTypeDto.class);
++        byte[] encoded = schemaFromClass.encode(new UuidLogicalTypeDto(id, name));
++        String jsonDef = schemaFromClass.getSchemaInfo().getSchemaDefinition();
++
++        AvroSchema<UuidLogicalTypeDto> schemaFromJsonDef = AvroSchema.of(
++                SchemaDefinition.<UuidLogicalTypeDto>builder().withJsonDef(jsonDef).build());
++        UuidLogicalTypeDto decoded = schemaFromJsonDef.decode(encoded);
++        assertEquals(decoded.id, id);
++        assertEquals(decoded.name, name);
++    }
+ }

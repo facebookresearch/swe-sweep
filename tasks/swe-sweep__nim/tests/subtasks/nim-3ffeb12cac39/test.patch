@@ -1,0 +1,14 @@
+diff --git a/tests/system/tsystem_misc.nim b/tests/system/tsystem_misc.nim
+index c8e2b2a9d..1debb7c48 100644
+--- a/tests/system/tsystem_misc.nim
++++ b/tests/system/tsystem_misc.nim
+@@ -214,3 +214,9 @@ block:
+   doAssert not compiles(echo p.rawProc.repr)
+   doAssert not compiles(echo p.rawEnv.repr)
+   doAssert not compiles(echo p.finished)
++
++block: # bug #23894
++  let v = high(uint) div 2
++  let s = v + 1 # 9223372036854775808
++  let m = succ v
++  doAssert s == m

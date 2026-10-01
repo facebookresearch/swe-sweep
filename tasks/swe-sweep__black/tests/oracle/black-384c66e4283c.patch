@@ -1,0 +1,28 @@
+diff --git a/src/black/parsing.py b/src/black/parsing.py
+index 0019b0c0..93d017cb 100644
+--- a/src/black/parsing.py
++++ b/src/black/parsing.py
+@@ -242,7 +242,7 @@ def stringify_ast(node: Union[ast.AST, ast3.AST], depth: int = 0) -> Iterator[st
+                     and isinstance(node, (ast.Delete, ast3.Delete))
+                     and isinstance(item, (ast.Tuple, ast3.Tuple))
+                 ):
+-                    for elt in item.elts:
++                    for elt in _unwrap_tuples(item):
+                         yield from stringify_ast(elt, depth + 2)
+ 
+                 elif isinstance(item, (ast.AST, ast3.AST)):
+@@ -273,6 +273,14 @@ def stringify_ast(node: Union[ast.AST, ast3.AST], depth: int = 0) -> Iterator[st
+     yield f"{'  ' * depth})  # /{node.__class__.__name__}"
+ 
+ 
++def _unwrap_tuples(node: Union[ast.Tuple, ast3.Tuple]) -> Iterator[ast.AST]:
++    for elt in node.elts:
++        if isinstance(elt, (ast.Tuple, ast3.Tuple)):
++            yield from _unwrap_tuples(elt)
++        else:
++            yield elt
++
++
+ def fixup_ast_constants(node: Union[ast.AST, ast3.AST]) -> Union[ast.AST, ast3.AST]:
+     """Map ast nodes deprecated in 3.8 to Constant."""
+     if isinstance(node, (ast.Str, ast3.Str, ast.Bytes, ast3.Bytes)):

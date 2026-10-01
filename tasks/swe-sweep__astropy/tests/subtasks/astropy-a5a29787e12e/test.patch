@@ -1,0 +1,47 @@
+diff --git a/astropy/coordinates/tests/test_regression.py b/astropy/coordinates/tests/test_regression.py
+index 5e711cccd0..edc51c9fe2 100644
+--- a/astropy/coordinates/tests/test_regression.py
++++ b/astropy/coordinates/tests/test_regression.py
+@@ -744,3 +744,14 @@ def test_regression_10291():
+     assert_quantity_allclose(
+         venus.separation(sun), 554.427 * u.arcsecond, atol=0.001 * u.arcsecond
+     )
++
++
++def test_regression_17008():
++    """Test that one can transform a SkyCoord with empty data to other frames.
++
++    The underlying bug that caused the problem reported in gh-17008
++    is tested in utils/iers/tests/test_iers.py::test_empty_mjd
++    """
++    s = SkyCoord([] * u.deg, [] * u.deg, obstime=Time([], format="iso"))
++    itrs = s.itrs  # This failed before.
++    assert itrs.size == 0
+diff --git a/astropy/utils/iers/tests/test_iers.py b/astropy/utils/iers/tests/test_iers.py
+index 73bb3dda2b..fc216b704e 100644
+--- a/astropy/utils/iers/tests/test_iers.py
++++ b/astropy/utils/iers/tests/test_iers.py
+@@ -343,6 +343,23 @@ class TestIERS_Auto:
+             assert dat["MJD"][-1] == (57539.0 + 60) * u.d
+ 
+ 
++@pytest.mark.parametrize("query", ["ut1_utc", "pm_xy"])
++@pytest.mark.parametrize("jd", [np.array([]), Time([], format="mjd")])
++@pytest.mark.parametrize("return_status", [False, True])
++def test_empty_mjd(query, jd, return_status):
++    # Regression test for gh-17008
++    with iers.conf.set_temp("auto_download", False):
++        iers_table = iers.IERS_Auto.open()
++        result = getattr(iers_table, query)(jd, return_status=return_status)
++        n_exp = (1 if query == "ut1_utc" else 2) + (1 if return_status else 0)
++        if n_exp == 1:
++            assert isinstance(result, np.ndarray)
++            assert result.size == 0
++        else:
++            assert len(result) == n_exp
++            assert all(r.size == 0 for r in result)
++
++
+ @pytest.mark.remote_data
+ def test_IERS_B_parameters_loading_into_IERS_Auto():
+     A = iers.IERS_Auto.open()

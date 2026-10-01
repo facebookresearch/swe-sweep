@@ -1,0 +1,53 @@
+diff --git a/crates/ruff_linter/resources/test/fixtures/pyupgrade/UP008.py b/crates/ruff_linter/resources/test/fixtures/pyupgrade/UP008.py
+index e9d68ebc3a..d1a5ed5923 100644
+--- a/crates/ruff_linter/resources/test/fixtures/pyupgrade/UP008.py
++++ b/crates/ruff_linter/resources/test/fixtures/pyupgrade/UP008.py
+@@ -79,3 +79,14 @@ class DataClass:
+ def normal(self):
+     super(DataClass, self).f()  # OK
+     super().f()  # OK (`TypeError` in practice)
++
++
++# see: https://github.com/astral-sh/ruff/issues/18477
++class A:
++    def foo(self):
++        pass
++
++
++class B(A):
++    def bar(self):
++        super(__class__, self).foo()
+\ No newline at end of file
+diff --git a/crates/ruff_linter/src/rules/pyupgrade/snapshots/ruff_linter__rules__pyupgrade__tests__UP008.py.snap b/crates/ruff_linter/src/rules/pyupgrade/snapshots/ruff_linter__rules__pyupgrade__tests__UP008.py.snap
+index 45c029d2d0..47a3305a79 100644
+--- a/crates/ruff_linter/src/rules/pyupgrade/snapshots/ruff_linter__rules__pyupgrade__tests__UP008.py.snap
++++ b/crates/ruff_linter/src/rules/pyupgrade/snapshots/ruff_linter__rules__pyupgrade__tests__UP008.py.snap
+@@ -1,6 +1,5 @@
+ ---
+ source: crates/ruff_linter/src/rules/pyupgrade/mod.rs
+-snapshot_kind: text
+ ---
+ UP008.py:17:23: UP008 [*] Use `super()` instead of `super(__class__, self)`
+    |
+@@ -126,4 +125,20 @@ UP008.py:74:14: UP008 [*] Use `super()` instead of `super(__class__, self)`
+    74 |+        super().f()  # Error
+ 75 75 |         super().f()  # OK
+ 76 76 | 
+-77 77 |
++77 77 | 
++
++UP008.py:92:14: UP008 [*] Use `super()` instead of `super(__class__, self)`
++   |
++90 | class B(A):
++91 |     def bar(self):
++92 |         super(__class__, self).foo()
++   |              ^^^^^^^^^^^^^^^^^ UP008
++   |
++   = help: Remove `__super__` parameters
++
++ℹ Unsafe fix
++89 89 | 
++90 90 | class B(A):
++91 91 |     def bar(self):
++92    |-        super(__class__, self).foo()
++   92 |+        super().foo()

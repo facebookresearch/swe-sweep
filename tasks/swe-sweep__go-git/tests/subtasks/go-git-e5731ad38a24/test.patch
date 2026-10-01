@@ -1,0 +1,45 @@
+diff --git a/plumbing/protocol/packp/srvresp_test.go b/plumbing/protocol/packp/srvresp_test.go
+index aa0af528..b7270e79 100644
+--- a/plumbing/protocol/packp/srvresp_test.go
++++ b/plumbing/protocol/packp/srvresp_test.go
+@@ -3,6 +3,7 @@ package packp
+ import (
+ 	"bufio"
+ 	"bytes"
++	"fmt"
+ 
+ 	"github.com/go-git/go-git/v5/plumbing"
+ 
+@@ -23,6 +24,32 @@ func (s *ServerResponseSuite) TestDecodeNAK(c *C) {
+ 	c.Assert(sr.ACKs, HasLen, 0)
+ }
+ 
++func (s *ServerResponseSuite) TestDecodeNewLine(c *C) {
++	raw := "\n"
++
++	sr := &ServerResponse{}
++	err := sr.Decode(bufio.NewReader(bytes.NewBufferString(raw)), false)
++	c.Assert(err, NotNil)
++	c.Assert(err.Error(), Equals, "invalid pkt-len found")
++}
++
++func (s *ServerResponseSuite) TestDecodeEmpty(c *C) {
++	raw := ""
++
++	sr := &ServerResponse{}
++	err := sr.Decode(bufio.NewReader(bytes.NewBufferString(raw)), false)
++	c.Assert(err, IsNil)
++}
++
++func (s *ServerResponseSuite) TestDecodePartial(c *C) {
++	raw := "000600\n"
++
++	sr := &ServerResponse{}
++	err := sr.Decode(bufio.NewReader(bytes.NewBufferString(raw)), false)
++	c.Assert(err, NotNil)
++	c.Assert(err.Error(), Equals, fmt.Sprintf("unexpected content %q", "00"))
++}
++
+ func (s *ServerResponseSuite) TestDecodeACK(c *C) {
+ 	raw := "0031ACK 6ecf0ef2c2dffb796033e5a02219af86ec6584e5\n"
+ 

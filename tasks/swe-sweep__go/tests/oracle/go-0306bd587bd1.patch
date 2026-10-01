@@ -1,0 +1,22 @@
+diff --git a/src/crypto/x509/x509.go b/src/crypto/x509/x509.go
+index 3e26941573..47bb428110 100644
+--- a/src/crypto/x509/x509.go
++++ b/src/crypto/x509/x509.go
+@@ -2111,8 +2111,16 @@ func CreateCertificateRequest(rand io.Reader, template *CertificateRequest, priv
+ 		signed = h.Sum(nil)
+ 	}
+ 
++	var signerOpts crypto.SignerOpts = hashFunc
++	if template.SignatureAlgorithm != 0 && template.SignatureAlgorithm.isRSAPSS() {
++		signerOpts = &rsa.PSSOptions{
++			SaltLength: rsa.PSSSaltLengthEqualsHash,
++			Hash:       hashFunc,
++		}
++	}
++
+ 	var signature []byte
+-	signature, err = key.Sign(rand, signed, hashFunc)
++	signature, err = key.Sign(rand, signed, signerOpts)
+ 	if err != nil {
+ 		return
+ 	}

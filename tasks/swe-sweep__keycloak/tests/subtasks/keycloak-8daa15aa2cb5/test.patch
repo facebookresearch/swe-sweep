@@ -1,0 +1,83 @@
+diff --git a/quarkus/runtime/src/test/java/org/keycloak/quarkus/runtime/configuration/ConfigArgsConfigSourceTest.java b/quarkus/runtime/src/test/java/org/keycloak/quarkus/runtime/configuration/ConfigArgsConfigSourceTest.java
+index e3b29040db..cc79ae5480 100644
+--- a/quarkus/runtime/src/test/java/org/keycloak/quarkus/runtime/configuration/ConfigArgsConfigSourceTest.java
++++ b/quarkus/runtime/src/test/java/org/keycloak/quarkus/runtime/configuration/ConfigArgsConfigSourceTest.java
+@@ -32,5 +32,17 @@ public class ConfigArgsConfigSourceTest {
+         ConfigArgsConfigSource.parseConfigArgs(Arrays.asList("--key=value", "-cf", "file", "command", "arg", "--db", "value"), (key, value) -> values.add(key+'='+value), values::add);
+         assertEquals(Arrays.asList("--key=value", "-cf=file", "command", "arg", "--db=value"), values);
+     }
++    
++    @Test
++    public void testArgEndingInSemiColon() {
++        ConfigArgsConfigSource.setCliArgs("--some=thing;", "--else=value");
++        assertEquals(Arrays.asList("--some=thing;", "--else=value"), ConfigArgsConfigSource.getAllCliArgs());
++    }
++    
++    @Test
++    public void testArgCommas() {
++        ConfigArgsConfigSource.setCliArgs("--some=,,,", "--else=,");
++        assertEquals(Arrays.asList("--some=,,,", "--else=,"), ConfigArgsConfigSource.getAllCliArgs());
++    }
+ 
+ }
+diff --git a/quarkus/runtime/src/test/java/org/keycloak/quarkus/runtime/configuration/test/ConfigurationTest.java b/quarkus/runtime/src/test/java/org/keycloak/quarkus/runtime/configuration/test/ConfigurationTest.java
+index 950a3dbed9..dcb98fd112 100644
+--- a/quarkus/runtime/src/test/java/org/keycloak/quarkus/runtime/configuration/test/ConfigurationTest.java
++++ b/quarkus/runtime/src/test/java/org/keycloak/quarkus/runtime/configuration/test/ConfigurationTest.java
+@@ -23,6 +23,5 @@ import static org.hamcrest.MatcherAssert.assertThat;
+ import static org.junit.Assert.assertEquals;
+ import static org.junit.Assert.assertTrue;
+ import static org.keycloak.quarkus.runtime.Environment.isWindows;
+-import static org.keycloak.quarkus.runtime.configuration.ConfigArgsConfigSource.CLI_ARGS;
+ 
+ import java.lang.reflect.Field;
+@@ -119,6 +118,7 @@ public class ConfigurationTest {
+         }
+ 
+         SmallRyeConfigProviderResolver.class.cast(ConfigProviderResolver.instance()).releaseConfig(ConfigProvider.getConfig());
++        ConfigArgsConfigSource.setCliArgs();
+     }
+ 
+     @Test
+@@ -248,13 +248,13 @@ public class ConfigurationTest {
+         assertEquals(1, config.getPropertyNames().size());
+         assertEquals("JKS", config.get("type"));
+ 
+-        System.getProperties().remove(CLI_ARGS);
++        ConfigArgsConfigSource.setCliArgs();
+         System.setProperty("kc.spi-client-registration-openid-connect-static-jwk-url", "http://c.jwk.url");
+         config = initConfig("client-registration", "openid-connect");
+         assertEquals(1, config.getPropertyNames().size());
+         assertEquals("http://c.jwk.url", config.get("static-jwk-url"));
+ 
+-        System.getProperties().remove(CLI_ARGS);
++        ConfigArgsConfigSource.setCliArgs();
+         System.getProperties().remove("kc.spi-client-registration-openid-connect-static-jwk-url");
+         putEnvVar("KC_SPI_CLIENT_REGISTRATION_OPENID_CONNECT_STATIC_JWK_URL", "http://c.jwk.url/from-env");
+         config = initConfig("client-registration", "openid-connect");
+@@ -461,7 +461,7 @@ public class ConfigurationTest {
+         ConfigArgsConfigSource.setCliArgs("--db=mssql", "--db-url=jdbc:sqlserver://localhost/keycloak");
+         System.setProperty("kc.db-driver", "com.microsoft.sqlserver.jdbc.SQLServerDriver");
+         System.setProperty("kc.transaction-xa-enabled", "false");
+-        assertTrue(System.getProperty(CLI_ARGS, "").contains("mssql"));
++        assertTrue(ConfigArgsConfigSource.getAllCliArgs().contains("--db=mssql"));
+         SmallRyeConfig config = createConfig();
+         assertEquals("jdbc:sqlserver://localhost/keycloak", config.getConfigValue("quarkus.datasource.jdbc.url").getValue());
+         assertEquals("mssql", config.getConfigValue("quarkus.datasource.db-kind").getValue());
+@@ -478,14 +478,14 @@ public class ConfigurationTest {
+     @Test
+     public void testTransactionTypeChangesDriver() {
+         ConfigArgsConfigSource.setCliArgs("--db=mssql", "--transaction-xa-enabled=false");
+-        assertTrue(System.getProperty(CLI_ARGS, "").contains("mssql"));
++        assertTrue(ConfigArgsConfigSource.getAllCliArgs().contains("--db=mssql"));
+ 
+         SmallRyeConfig jtaEnabledConfig = createConfig();
+         assertEquals("com.microsoft.sqlserver.jdbc.SQLServerDriver", jtaEnabledConfig.getConfigValue("quarkus.datasource.jdbc.driver").getValue());
+         assertEquals("enabled", jtaEnabledConfig.getConfigValue("quarkus.datasource.jdbc.transactions").getValue());
+ 
+         ConfigArgsConfigSource.setCliArgs("--db=mssql", "--transaction-xa-enabled=true");
+-        assertTrue(System.getProperty(CLI_ARGS, "").contains("mssql"));
++        assertTrue(ConfigArgsConfigSource.getAllCliArgs().contains("--db=mssql"));
+         SmallRyeConfig xaConfig = createConfig();
+ 
+         assertEquals("com.microsoft.sqlserver.jdbc.SQLServerXADataSource", xaConfig.getConfigValue("quarkus.datasource.jdbc.driver").getValue());

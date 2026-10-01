@@ -1,0 +1,11 @@
+diff --git a/vlib/v/fmt/tests/import_selective_map_keep.vv b/vlib/v/fmt/tests/import_selective_map_keep.vv
+new file mode 100644
+index 000000000..f5ee64e21
+--- /dev/null
++++ b/vlib/v/fmt/tests/import_selective_map_keep.vv
+@@ -0,0 +1,5 @@
++import time { Duration }
++
++fn main() {
++	println(map[string]Duration{})
++}

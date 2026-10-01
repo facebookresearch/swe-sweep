@@ -1,0 +1,15 @@
+diff --git a/vlib/v/ast/table.v b/vlib/v/ast/table.v
+index 05903ffb3..8e2ac86fe 100644
+--- a/vlib/v/ast/table.v
++++ b/vlib/v/ast/table.v
+@@ -1378,8 +1378,8 @@ pub fn (t &Table) has_deep_child_no_ref(ts &TypeSymbol, name string) bool {
+ 	if ts.info is Struct {
+ 		for field in ts.info.fields {
+ 			sym := t.sym(field.typ)
+-			if !field.typ.is_ptr() && ((sym.name == name && !field.typ.has_flag(.option))
+-				|| t.has_deep_child_no_ref(sym, name)) {
++			if !field.typ.is_ptr() && !field.typ.has_flag(.option)
++				&& (sym.name == name || t.has_deep_child_no_ref(sym, name)) {
+ 				return true
+ 			}
+ 		}

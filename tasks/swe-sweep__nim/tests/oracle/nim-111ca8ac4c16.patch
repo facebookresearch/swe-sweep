@@ -1,0 +1,13 @@
+diff --git a/lib/pure/base64.nim b/lib/pure/base64.nim
+index 6af5345f2..591d22cc0 100644
+--- a/lib/pure/base64.nim
++++ b/lib/pure/base64.nim
+@@ -244,7 +244,7 @@ proc decode*(s: string): string =
+     inputLen = s.len
+     inputEnds = 0
+   # strip trailing characters
+-  while s[inputLen - 1] in {'\n', '\r', ' ', '='}:
++  while inputLen > 0 and s[inputLen - 1] in {'\n', '\r', ' ', '='}:
+     dec inputLen
+   # hot loop: read 4 characters at at time
+   inputEnds = inputLen - 4

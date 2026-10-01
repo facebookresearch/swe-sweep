@@ -1,0 +1,49 @@
+diff --git a/src/include/duckdb/execution/operator/helper/physical_reservoir_sample.hpp b/src/include/duckdb/execution/operator/helper/physical_reservoir_sample.hpp
+index 9ff7bf62a5..e4a581dcac 100644
+--- a/src/include/duckdb/execution/operator/helper/physical_reservoir_sample.hpp
++++ b/src/include/duckdb/execution/operator/helper/physical_reservoir_sample.hpp
+@@ -41,7 +41,7 @@ public:
+ 	SinkFinalizeType Finalize(Pipeline &pipeline, Event &event, ClientContext &context,
+ 	                          OperatorSinkFinalizeInput &input) const override;
+ 	bool ParallelSink() const override {
+-		return true;
++		return !options->repeatable;
+ 	}
+ 
+ 	bool IsSink() const override {
+diff --git a/src/include/duckdb/parser/parsed_data/sample_options.hpp b/src/include/duckdb/parser/parsed_data/sample_options.hpp
+index e6f8b571cd..dadbcfe922 100644
+--- a/src/include/duckdb/parser/parsed_data/sample_options.hpp
++++ b/src/include/duckdb/parser/parsed_data/sample_options.hpp
+@@ -25,6 +25,7 @@ struct SampleOptions {
+ 	bool is_percentage;
+ 	SampleMethod method;
+ 	int64_t seed = -1;
++	bool repeatable = false;
+ 
+ 	unique_ptr<SampleOptions> Copy();
+ 	static bool Equals(SampleOptions *a, SampleOptions *b);
+diff --git a/src/parser/parsed_data/sample_options.cpp b/src/parser/parsed_data/sample_options.cpp
+index 010ae2e6f9..54be9d1cb9 100644
+--- a/src/parser/parsed_data/sample_options.cpp
++++ b/src/parser/parsed_data/sample_options.cpp
+@@ -17,6 +17,7 @@ unique_ptr<SampleOptions> SampleOptions::Copy() {
+ 	result->is_percentage = is_percentage;
+ 	result->method = method;
+ 	result->seed = seed;
++	result->repeatable = repeatable;
+ 	return result;
+ }
+ 
+diff --git a/src/parser/transform/helpers/transform_sample.cpp b/src/parser/transform/helpers/transform_sample.cpp
+index 1873a1ce9d..65f66927f2 100644
+--- a/src/parser/transform/helpers/transform_sample.cpp
++++ b/src/parser/transform/helpers/transform_sample.cpp
+@@ -50,6 +50,7 @@ unique_ptr<SampleOptions> Transformer::TransformSampleOptions(optional_ptr<duckd
+ 	}
+ 	if (sample_options.has_seed) {
+ 		result->seed = sample_options.seed;
++		result->repeatable = true;
+ 	}
+ 	return result;
+ }

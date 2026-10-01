@@ -1,0 +1,23 @@
+diff --git a/tests/data/simple_cases/comments2.py b/tests/data/simple_cases/comments2.py
+index 37e185ab..1487dc4b 100644
+--- a/tests/data/simple_cases/comments2.py
++++ b/tests/data/simple_cases/comments2.py
+@@ -154,6 +154,9 @@ class Test:
+                 not parsed.hostname.strip()):
+             pass
+ 
++
++a = "type comment with trailing space"  # type: str   
++
+ #######################
+ ### SECTION COMMENT ###
+ #######################
+@@ -332,6 +335,8 @@ class Test:
+             pass
+ 
+ 
++a = "type comment with trailing space"  # type: str
++
+ #######################
+ ### SECTION COMMENT ###
+ #######################

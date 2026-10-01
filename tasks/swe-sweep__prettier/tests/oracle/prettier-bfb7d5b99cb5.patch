@@ -1,0 +1,51 @@
+diff --git a/src/language-js/print/jsx.js b/src/language-js/print/jsx.js
+index a2a705491..20b106a7c 100644
+--- a/src/language-js/print/jsx.js
++++ b/src/language-js/print/jsx.js
+@@ -504,13 +504,7 @@ function maybeWrapJsxElementInParens(path, elem, options) {
+     return elem;
+   }
+ 
+-  const shouldBreak = path.match(
+-    undefined,
+-    (node) => node.type === "ArrowFunctionExpression",
+-    isCallExpression,
+-    (node) => node.type === "JSXExpressionContainer",
+-  );
+-
++  const shouldBreak = shouldBreakJsxElement(path);
+   const needsParens = pathNeedsParens(path, options);
+ 
+   return group(
+@@ -524,6 +518,31 @@ function maybeWrapJsxElementInParens(path, elem, options) {
+   );
+ }
+ 
++function shouldBreakJsxElement(path) {
++  return (
++    path.match(
++      undefined,
++      (node) => node.type === "ArrowFunctionExpression",
++      isCallExpression,
++    ) &&
++    // Babel
++    (path.match(
++      undefined,
++      undefined,
++      undefined,
++      (node) => node.type === "JSXExpressionContainer",
++    ) ||
++      // Estree
++      path.match(
++        undefined,
++        undefined,
++        undefined,
++        (node) => node.type === "ChainExpression",
++        (node) => node.type === "JSXExpressionContainer",
++      ))
++  );
++}
++
+ function printJsxAttribute(path, options, print) {
+   const { node } = path;
+   const parts = [];

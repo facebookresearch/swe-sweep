@@ -1,0 +1,16 @@
+diff --git a/src/go/printer/nodes.go b/src/go/printer/nodes.go
+index 2cc84dc6a9..c7cab46f17 100644
+--- a/src/go/printer/nodes.go
++++ b/src/go/printer/nodes.go
+@@ -1746,8 +1746,9 @@ func (p *printer) nodeSize(n ast.Node, maxSize int) (size int) {
+ 	}
+ 	if buf.Len() <= maxSize {
+ 		for _, ch := range buf.Bytes() {
+-			if ch < ' ' {
+-				return
++			switch ch {
++			case '\n', '\f':
++				return // does not fit in a single line
+ 			}
+ 		}
+ 		size = buf.Len() // n fits

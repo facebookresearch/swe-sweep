@@ -1,0 +1,13 @@
+diff --git a/activesupport/lib/active_support/encrypted_configuration.rb b/activesupport/lib/active_support/encrypted_configuration.rb
+index 23f451a6fd9..3628e2b563a 100644
+--- a/activesupport/lib/active_support/encrypted_configuration.rb
++++ b/activesupport/lib/active_support/encrypted_configuration.rb
+@@ -47,7 +47,7 @@ module ActiveSupport
+       end
+ 
+       def options
+-        @options ||= ActiveSupport::InheritableOptions.new(deep_transform(config))
++        @options ||= deep_transform(config)
+       end
+ 
+       def deserialize(config)

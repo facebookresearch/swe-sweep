@@ -1,0 +1,14 @@
+diff --git a/src/function/scalar/strftime_format.cpp b/src/function/scalar/strftime_format.cpp
+index 3525519a9d..8ab46ace70 100644
+--- a/src/function/scalar/strftime_format.cpp
++++ b/src/function/scalar/strftime_format.cpp
+@@ -1185,8 +1185,7 @@ bool StrpTimeFormat::Parse(const char *data, size_t size, ParseResult &result, b
+ 				case StrTimeSpecifier::YEAR_WITHOUT_CENTURY_PADDED:
+ 				case StrTimeSpecifier::YEAR_WITHOUT_CENTURY:
+ 				case StrTimeSpecifier::YEAR_DECIMAL:
+-					// Part of the offset
+-					break;
++					// Switch to offset parsing
+ 				case StrTimeSpecifier::WEEKDAY_DECIMAL:
+ 					// First offset specifier
+ 					offset_specifier = specifiers[i];

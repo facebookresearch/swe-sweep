@@ -1,0 +1,317 @@
+diff --git a/src/Symfony/Component/Validator/Tests/Constraints/AllTest.php b/src/Symfony/Component/Validator/Tests/Constraints/AllTest.php
+index c91f06875e3..08c303f81e7 100644
+--- a/src/Symfony/Component/Validator/Tests/Constraints/AllTest.php
++++ b/src/Symfony/Component/Validator/Tests/Constraints/AllTest.php
+@@ -15,6 +15,7 @@ use PHPUnit\Framework\TestCase;
+ use Symfony\Component\Validator\Constraints\All;
+ use Symfony\Component\Validator\Constraints\Valid;
+ use Symfony\Component\Validator\Exception\ConstraintDefinitionException;
++use Symfony\Component\Validator\Exception\MissingOptionsException;
+ 
+ /**
+  * @author Bernhard Schussek <bschussek@gmail.com>
+@@ -36,4 +37,20 @@ class AllTest extends TestCase
+             new Valid(),
+         ]);
+     }
++
++    public function testMissingConstraints()
++    {
++        $this->expectException(MissingOptionsException::class);
++        $this->expectExceptionMessage(\sprintf('The options "constraints" must be set for constraint "%s".', All::class));
++
++        new All(null);
++    }
++
++    public function testMissingConstraintsDoctrineStyle()
++    {
++        $this->expectException(MissingOptionsException::class);
++        $this->expectExceptionMessage(\sprintf('The options "constraints" must be set for constraint "%s".', All::class));
++
++        new All([]);
++    }
+ }
+diff --git a/src/Symfony/Component/Validator/Tests/Constraints/AtLeastOneOfTest.php b/src/Symfony/Component/Validator/Tests/Constraints/AtLeastOneOfTest.php
+index 66b8168dfbb..25e1878f4b5 100644
+--- a/src/Symfony/Component/Validator/Tests/Constraints/AtLeastOneOfTest.php
++++ b/src/Symfony/Component/Validator/Tests/Constraints/AtLeastOneOfTest.php
+@@ -15,6 +15,7 @@ use PHPUnit\Framework\TestCase;
+ use Symfony\Component\Validator\Constraints\AtLeastOneOf;
+ use Symfony\Component\Validator\Constraints\Valid;
+ use Symfony\Component\Validator\Exception\ConstraintDefinitionException;
++use Symfony\Component\Validator\Exception\MissingOptionsException;
+ 
+ /**
+  * @author Przemysław Bogusz <przemyslaw.bogusz@tubotax.pl>
+@@ -36,4 +37,20 @@ class AtLeastOneOfTest extends TestCase
+             new Valid(),
+         ]);
+     }
++
++    public function testMissingConstraints()
++    {
++        $this->expectException(MissingOptionsException::class);
++        $this->expectExceptionMessage(\sprintf('The options "constraints" must be set for constraint "%s".', AtLeastOneOf::class));
++
++        new AtLeastOneOf(null);
++    }
++
++    public function testMissingConstraintsDoctrineStyle()
++    {
++        $this->expectException(MissingOptionsException::class);
++        $this->expectExceptionMessage(\sprintf('The options "constraints" must be set for constraint "%s".', AtLeastOneOf::class));
++
++        new AtLeastOneOf([]);
++    }
+ }
+diff --git a/src/Symfony/Component/Validator/Tests/Constraints/CardSchemeTest.php b/src/Symfony/Component/Validator/Tests/Constraints/CardSchemeTest.php
+index af0781b6556..a50930b9b6e 100644
+--- a/src/Symfony/Component/Validator/Tests/Constraints/CardSchemeTest.php
++++ b/src/Symfony/Component/Validator/Tests/Constraints/CardSchemeTest.php
+@@ -13,6 +13,7 @@ namespace Symfony\Component\Validator\Tests\Constraints;
+ 
+ use PHPUnit\Framework\TestCase;
+ use Symfony\Component\Validator\Constraints\CardScheme;
++use Symfony\Component\Validator\Exception\MissingOptionsException;
+ use Symfony\Component\Validator\Mapping\ClassMetadata;
+ use Symfony\Component\Validator\Mapping\Loader\AttributeLoader;
+ 
+@@ -37,6 +38,14 @@ class CardSchemeTest extends TestCase
+         self::assertSame(['my_group'], $cConstraint->groups);
+         self::assertSame('some attached data', $cConstraint->payload);
+     }
++
++    public function testMissingSchemes()
++    {
++        $this->expectException(MissingOptionsException::class);
++        $this->expectExceptionMessage(\sprintf('The options "schemes" must be set for constraint "%s".', CardScheme::class));
++
++        new CardScheme(null);
++    }
+ }
+ 
+ class CardSchemeDummy
+diff --git a/src/Symfony/Component/Validator/Tests/Constraints/CollectionTest.php b/src/Symfony/Component/Validator/Tests/Constraints/CollectionTest.php
+index a362e96..d3709ef 100644
+--- a/src/Symfony/Component/Validator/Tests/Constraints/CollectionTest.php
++++ b/src/Symfony/Component/Validator/Tests/Constraints/CollectionTest.php
+@@ -18,6 +18,7 @@ use Symfony\Component\Validator\Constraints\Optional;
+ use Symfony\Component\Validator\Constraints\Required;
+ use Symfony\Component\Validator\Constraints\Valid;
+ use Symfony\Component\Validator\Exception\ConstraintDefinitionException;
++use Symfony\Component\Validator\Exception\MissingOptionsException;
+ 
+ /**
+  * @author Bernhard Schussek <bschussek@gmail.com>
+@@ -113,4 +114,11 @@ class CollectionTest extends TestCase
+         $this->assertEquals(['Default'], $constraint->fields['foo']->groups);
+         $this->assertEquals(['Default'], $constraint->fields['bar']->groups);
+     }
++    public function testMissingFields()
++    {
++        $this->expectException(MissingOptionsException::class);
++        $this->expectExceptionMessage(\sprintf('The options "fields" must be set for constraint "%s".', Collection::class));
++
++        new Collection(null);
++    }
+ }
+diff --git a/src/Symfony/Component/Validator/Tests/Constraints/CssColorTest.php b/src/Symfony/Component/Validator/Tests/Constraints/CssColorTest.php
+index 09938760bf5..8f718c6ce38 100644
+--- a/src/Symfony/Component/Validator/Tests/Constraints/CssColorTest.php
++++ b/src/Symfony/Component/Validator/Tests/Constraints/CssColorTest.php
+@@ -40,6 +40,46 @@ final class CssColorTest extends TestCase
+         self::assertSame(['my_group'], $cConstraint->groups);
+         self::assertSame('some attached data', $cConstraint->payload);
+     }
++
++    public function testMissingPattern()
++    {
++        $constraint = new CssColor(null);
++
++        $this->assertSame([
++            CssColor::HEX_LONG,
++            CssColor::HEX_LONG_WITH_ALPHA,
++            CssColor::HEX_SHORT,
++            CssColor::HEX_SHORT_WITH_ALPHA,
++            CssColor::BASIC_NAMED_COLORS,
++            CssColor::EXTENDED_NAMED_COLORS,
++            CssColor::SYSTEM_COLORS,
++            CssColor::KEYWORDS,
++            CssColor::RGB,
++            CssColor::RGBA,
++            CssColor::HSL,
++            CssColor::HSLA,
++        ], $constraint->formats);
++    }
++
++    public function testMissingPatternDoctrineStyle()
++    {
++        $constraint = new CssColor([]);
++
++        $this->assertSame([
++            CssColor::HEX_LONG,
++            CssColor::HEX_LONG_WITH_ALPHA,
++            CssColor::HEX_SHORT,
++            CssColor::HEX_SHORT_WITH_ALPHA,
++            CssColor::BASIC_NAMED_COLORS,
++            CssColor::EXTENDED_NAMED_COLORS,
++            CssColor::SYSTEM_COLORS,
++            CssColor::KEYWORDS,
++            CssColor::RGB,
++            CssColor::RGBA,
++            CssColor::HSL,
++            CssColor::HSLA,
++        ], $constraint->formats);
++    }
+ }
+ 
+ class CssColorDummy
+diff --git a/src/Symfony/Component/Validator/Tests/Constraints/ExpressionTest.php b/src/Symfony/Component/Validator/Tests/Constraints/ExpressionTest.php
+index 89db330b99c..97fcab838ed 100644
+--- a/src/Symfony/Component/Validator/Tests/Constraints/ExpressionTest.php
++++ b/src/Symfony/Component/Validator/Tests/Constraints/ExpressionTest.php
+@@ -13,6 +13,7 @@ namespace Symfony\Component\Validator\Tests\Constraints;
+ 
+ use PHPUnit\Framework\TestCase;
+ use Symfony\Component\Validator\Constraints\Expression;
++use Symfony\Component\Validator\Exception\MissingOptionsException;
+ use Symfony\Component\Validator\Mapping\ClassMetadata;
+ use Symfony\Component\Validator\Mapping\Loader\AttributeLoader;
+ 
+@@ -41,6 +42,22 @@ class ExpressionTest extends TestCase
+         self::assertSame('some attached data', $cConstraint->payload);
+         self::assertFalse($cConstraint->negate);
+     }
++
++    public function testMissingPattern()
++    {
++        $this->expectException(MissingOptionsException::class);
++        $this->expectExceptionMessage(\sprintf('The options "expression" must be set for constraint "%s".', Expression::class));
++
++        new Expression(null);
++    }
++
++    public function testMissingPatternDoctrineStyle()
++    {
++        $this->expectException(MissingOptionsException::class);
++        $this->expectExceptionMessage(\sprintf('The options "expression" must be set for constraint "%s".', Expression::class));
++
++        new Expression([]);
++    }
+ }
+ 
+ class ExpressionDummy
+diff --git a/src/Symfony/Component/Validator/Tests/Constraints/RegexTest.php b/src/Symfony/Component/Validator/Tests/Constraints/RegexTest.php
+index ba24fb0cb20..4df86e434d4 100644
+--- a/src/Symfony/Component/Validator/Tests/Constraints/RegexTest.php
++++ b/src/Symfony/Component/Validator/Tests/Constraints/RegexTest.php
+@@ -14,6 +14,7 @@ namespace Symfony\Component\Validator\Tests\Constraints;
+ use PHPUnit\Framework\TestCase;
+ use Symfony\Component\Validator\Constraints\Regex;
+ use Symfony\Component\Validator\Exception\InvalidArgumentException;
++use Symfony\Component\Validator\Exception\MissingOptionsException;
+ use Symfony\Component\Validator\Mapping\ClassMetadata;
+ use Symfony\Component\Validator\Mapping\Loader\AttributeLoader;
+ 
+@@ -132,6 +133,22 @@ class RegexTest extends TestCase
+         self::assertSame(['my_group'], $cConstraint->groups);
+         self::assertSame('some attached data', $cConstraint->payload);
+     }
++
++    public function testMissingPattern()
++    {
++        $this->expectException(MissingOptionsException::class);
++        $this->expectExceptionMessage(\sprintf('The options "pattern" must be set for constraint "%s".', Regex::class));
++
++        new Regex(null);
++    }
++
++    public function testMissingPatternDoctrineStyle()
++    {
++        $this->expectException(MissingOptionsException::class);
++        $this->expectExceptionMessage(\sprintf('The options "pattern" must be set for constraint "%s".', Regex::class));
++
++        new Regex([]);
++    }
+ }
+ 
+ class RegexDummy
+diff --git a/src/Symfony/Component/Validator/Tests/Constraints/SequentiallyTest.php b/src/Symfony/Component/Validator/Tests/Constraints/SequentiallyTest.php
+index 62b23513f18..87aa9b46cd1 100644
+--- a/src/Symfony/Component/Validator/Tests/Constraints/SequentiallyTest.php
++++ b/src/Symfony/Component/Validator/Tests/Constraints/SequentiallyTest.php
+@@ -15,6 +15,7 @@ use PHPUnit\Framework\TestCase;
+ use Symfony\Component\Validator\Constraints\Sequentially;
+ use Symfony\Component\Validator\Constraints\Valid;
+ use Symfony\Component\Validator\Exception\ConstraintDefinitionException;
++use Symfony\Component\Validator\Exception\MissingOptionsException;
+ 
+ class SequentiallyTest extends TestCase
+ {
+@@ -35,4 +36,20 @@ class SequentiallyTest extends TestCase
+             new Valid(),
+         ]);
+     }
++
++    public function testMissingConstraints()
++    {
++        $this->expectException(MissingOptionsException::class);
++        $this->expectExceptionMessage(\sprintf('The options "constraints" must be set for constraint "%s".', Sequentially::class));
++
++        new Sequentially(null);
++    }
++
++    public function testMissingConstraintsDoctrineStyle()
++    {
++        $this->expectException(MissingOptionsException::class);
++        $this->expectExceptionMessage(\sprintf('The options "constraints" must be set for constraint "%s".', Sequentially::class));
++
++        new Sequentially([]);
++    }
+ }
+diff --git a/src/Symfony/Component/Validator/Tests/Constraints/TypeTest.php b/src/Symfony/Component/Validator/Tests/Constraints/TypeTest.php
+index 2c018cdbf3d..73acddd4314 100644
+--- a/src/Symfony/Component/Validator/Tests/Constraints/TypeTest.php
++++ b/src/Symfony/Component/Validator/Tests/Constraints/TypeTest.php
+@@ -13,6 +13,7 @@ namespace Symfony\Component\Validator\Tests\Constraints;
+ 
+ use PHPUnit\Framework\TestCase;
+ use Symfony\Component\Validator\Constraints\Type;
++use Symfony\Component\Validator\Exception\MissingOptionsException;
+ use Symfony\Component\Validator\Mapping\ClassMetadata;
+ use Symfony\Component\Validator\Mapping\Loader\AttributeLoader;
+ 
+@@ -36,6 +37,14 @@ class TypeTest extends TestCase
+         self::assertSame(['my_group'], $cConstraint->groups);
+         self::assertSame('some attached data', $cConstraint->payload);
+     }
++
++    public function testMissingType()
++    {
++        $this->expectException(MissingOptionsException::class);
++        $this->expectExceptionMessage(\sprintf('The options "type" must be set for constraint "%s".', Type::class));
++
++        new Type(null);
++    }
+ }
+ 
+ class TypeDummy
+diff --git a/src/Symfony/Component/Validator/Tests/Constraints/WhenTest.php b/src/Symfony/Component/Validator/Tests/Constraints/WhenTest.php
+index de13876db68..72b08d6bded 100644
+--- a/src/Symfony/Component/Validator/Tests/Constraints/WhenTest.php
++++ b/src/Symfony/Component/Validator/Tests/Constraints/WhenTest.php
+@@ -37,6 +37,14 @@ final class WhenTest extends TestCase
+         new When([]);
+     }
+ 
++    public function testMissingConstraints()
++    {
++        $this->expectException(MissingOptionsException::class);
++        $this->expectExceptionMessage('The options "constraints" must be set for constraint "Symfony\Component\Validator\Constraints\When".');
++
++        new When('true');
++    }
++
+     public function testNonConstraintsAreRejected()
+     {
+         $this->expectException(ConstraintDefinitionException::class);

@@ -1,0 +1,17 @@
+diff --git a/compiler/ccgexprs.nim b/compiler/ccgexprs.nim
+index 455c1de75..65f2ea70d 100644
+--- a/compiler/ccgexprs.nim
++++ b/compiler/ccgexprs.nim
+@@ -3019,8 +3019,12 @@ proc getNullValueAux(p: BProc; t: PType; obj, constOrNil: PNode,
+                      isConst: bool, info: TLineInfo) =
+   case obj.kind
+   of nkRecList:
++    let isUnion = tfUnion in t.flags
+     for it in obj.sons:
+       getNullValueAux(p, t, it, constOrNil, result, count, isConst, info)
++      if isUnion:
++        # generate only 1 field for default value of union
++        return
+   of nkRecCase:
+     getNullValueAux(p, t, obj[0], constOrNil, result, count, isConst, info)
+     if count > 0: result.add ", "

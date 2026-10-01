@@ -1,0 +1,33 @@
+diff --git a/crates/swc_ecma_minifier/src/compress/pure/misc.rs b/crates/swc_ecma_minifier/src/compress/pure/misc.rs
+index 7feb17a5e6..6c6a00172f 100644
+--- a/crates/swc_ecma_minifier/src/compress/pure/misc.rs
++++ b/crates/swc_ecma_minifier/src/compress/pure/misc.rs
+@@ -535,7 +535,7 @@ impl Pure<'_> {
+         if self.options.side_effects {
+             match e {
+                 Expr::Unary(UnaryExpr {
+-                    op: op!("void") | op!("typeof") | op!(unary, "+") | op!(unary, "-"),
++                    op: op!("void") | op!(unary, "+") | op!(unary, "-"),
+                     arg,
+                     ..
+                 }) => {
+diff --git a/crates/swc_ecma_transforms_optimization/src/simplify/branch/mod.rs b/crates/swc_ecma_transforms_optimization/src/simplify/branch/mod.rs
+index 51425300e7..fd9538fa95 100644
+--- a/crates/swc_ecma_transforms_optimization/src/simplify/branch/mod.rs
++++ b/crates/swc_ecma_transforms_optimization/src/simplify/branch/mod.rs
+@@ -1516,12 +1516,9 @@ fn ignore_result(e: Expr, drop_str_lit: bool, ctx: &ExprCtx) -> Option<Expr> {
+                 Some(Expr::Unary(UnaryExpr { span, op, arg }))
+             }
+ 
+-            op!("void")
+-            | op!("typeof")
+-            | op!(unary, "+")
+-            | op!(unary, "-")
+-            | op!("!")
+-            | op!("~") => ignore_result(*arg, true, ctx),
++            op!("void") | op!(unary, "+") | op!(unary, "-") | op!("!") | op!("~") => {
++                ignore_result(*arg, true, ctx)
++            }
+             _ => Some(Expr::Unary(UnaryExpr { span, op, arg })),
+         },
+ 

@@ -1,0 +1,16 @@
+diff --git a/packages/mui-material/src/ButtonBase/TouchRipple.test.js b/packages/mui-material/src/ButtonBase/TouchRipple.test.js
+index 0f225674f8..5342e23515 100644
+--- a/packages/mui-material/src/ButtonBase/TouchRipple.test.js
++++ b/packages/mui-material/src/ButtonBase/TouchRipple.test.js
+@@ -266,5 +266,11 @@ describe('<TouchRipple />', () => {
+       // "react state update on an unmounted component"
+       clock.runAll();
+     });
++
++    it('should handle empty event.touches', () => {
++      const { instance } = renderTouchRipple();
++
++      expect(() => instance.start({ type: 'touchstart', touches: [] })).not.toErrorDev();
++    });
+   });
+ });

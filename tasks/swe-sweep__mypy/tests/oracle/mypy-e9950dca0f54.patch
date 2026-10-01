@@ -1,0 +1,14 @@
+diff --git a/mypy/checkpattern.py b/mypy/checkpattern.py
+index a7121712a..5ea617d3a 100644
+--- a/mypy/checkpattern.py
++++ b/mypy/checkpattern.py
+@@ -158,7 +158,8 @@ class PatternChecker(PatternVisitor[PatternType]):
+         for pattern in o.patterns:
+             pattern_type = self.accept(pattern, current_type)
+             pattern_types.append(pattern_type)
+-            current_type = pattern_type.rest_type
++            if not is_uninhabited(pattern_type.type):
++                current_type = pattern_type.rest_type
+ 
+         #
+         # Collect the final type

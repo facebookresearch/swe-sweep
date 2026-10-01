@@ -1,0 +1,27 @@
+diff --git a/test-data/unit/check-selftype.test b/test-data/unit/check-selftype.test
+index fa853ac48..814007f0e 100644
+--- a/test-data/unit/check-selftype.test
++++ b/test-data/unit/check-selftype.test
+@@ -2176,3 +2176,22 @@ class count:
+ def foo(x: Union[range[int], count]) -> None:
+     for item in x:
+         reveal_type(item)  # N: Revealed type is "builtins.int"
++
++[case testSelfInMultipleInheritance]
++from typing_extensions import Self
++
++class A:
++    foo: int
++    def method(self: Self, other: Self) -> None:
++        self.foo
++        other.foo
++
++class B:
++    bar: str
++    def method(self: Self, other: Self) -> None:
++        self.bar
++        other.bar
++
++class C(A, B):  # OK: both methods take Self
++    pass
++[builtins fixtures/tuple.pyi]

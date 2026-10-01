@@ -1,0 +1,13 @@
+diff --git a/sklearn/pipeline.py b/sklearn/pipeline.py
+index 6c98ea70ef..348ae8df21 100644
+--- a/sklearn/pipeline.py
++++ b/sklearn/pipeline.py
+@@ -356,7 +356,7 @@ class Pipeline(_BasePipeline):
+         Xt = X
+         for name, transform in self.steps[:-1]:
+             if transform is not None:
+-                Xt = transform.transform(Xt)
++                Xt = transform.fit_transform(Xt)
+         return self.steps[-1][-1].fit_predict(Xt, y, **fit_params)
+ 
+     @if_delegate_has_method(delegate='_final_estimator')

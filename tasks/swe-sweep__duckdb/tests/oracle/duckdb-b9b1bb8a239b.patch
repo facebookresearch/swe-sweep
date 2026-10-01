@@ -1,0 +1,253 @@
+diff --git a/src/include/duckdb/planner/expression_binder/base_select_binder.hpp b/src/include/duckdb/planner/expression_binder/base_select_binder.hpp
+index c05e1d8d99..80faa01535 100644
+--- a/src/include/duckdb/planner/expression_binder/base_select_binder.hpp
++++ b/src/include/duckdb/planner/expression_binder/base_select_binder.hpp
+@@ -56,9 +56,11 @@ protected:
+ protected:
+ 	BindResult BindColumnRef(unique_ptr<ParsedExpression> &expr_ptr, idx_t depth);
+ 	BindResult BindGroupingFunction(OperatorExpression &op, idx_t depth) override;
++
++	//! Binds a WINDOW expression and returns the result.
+ 	BindResult BindWindow(WindowExpression &expr, idx_t depth);
+ 
+-	idx_t TryBindGroup(ParsedExpression &expr, idx_t depth);
++	idx_t TryBindGroup(ParsedExpression &expr);
+ 	BindResult BindGroup(ParsedExpression &expr, idx_t depth, idx_t group_index);
+ 
+ 	bool QualifyColumnAlias(const ColumnRefExpression &colref) override;
+diff --git a/src/planner/binder/expression/bind_unnest_expression.cpp b/src/planner/binder/expression/bind_unnest_expression.cpp
+index 92a41d7f6c..3df73284d8 100644
+--- a/src/planner/binder/expression/bind_unnest_expression.cpp
++++ b/src/planner/binder/expression/bind_unnest_expression.cpp
+@@ -47,10 +47,15 @@ BindResult SelectBinder::BindUnnest(FunctionExpression &function, idx_t depth, b
+ 	if (depth > 0) {
+ 		return BindResult(BinderException(function, "UNNEST() for correlated expressions is not supported yet"));
+ 	}
++
+ 	ErrorData error;
+ 	if (function.children.empty()) {
+ 		return BindResult(BinderException(function, "UNNEST() requires a single argument"));
+ 	}
++	if (inside_window) {
++		return BindResult(BinderException(function, UnsupportedUnnestMessage()));
++	}
++
+ 	idx_t max_depth = 1;
+ 	if (function.children.size() != 1) {
+ 		bool has_parameter = false;
+diff --git a/src/planner/binder/expression/bind_window_expression.cpp b/src/planner/binder/expression/bind_window_expression.cpp
+index 2c64e2e05f..677ec8dd12 100644
+--- a/src/planner/binder/expression/bind_window_expression.cpp
++++ b/src/planner/binder/expression/bind_window_expression.cpp
+@@ -1,6 +1,11 @@
+-#include "duckdb/parser/expression/window_expression.hpp"
++#include "duckdb/catalog/catalog.hpp"
++#include "duckdb/catalog/catalog_entry/aggregate_function_catalog_entry.hpp"
++#include "duckdb/function/function_binder.hpp"
++#include "duckdb/function/scalar_function.hpp"
++#include "duckdb/main/config.hpp"
+ #include "duckdb/parser/expression/constant_expression.hpp"
+ #include "duckdb/parser/expression/function_expression.hpp"
++#include "duckdb/parser/expression/window_expression.hpp"
+ #include "duckdb/planner/expression/bound_aggregate_expression.hpp"
+ #include "duckdb/planner/expression/bound_cast_expression.hpp"
+ #include "duckdb/planner/expression/bound_columnref_expression.hpp"
+@@ -8,13 +13,6 @@
+ #include "duckdb/planner/expression/bound_window_expression.hpp"
+ #include "duckdb/planner/expression_binder/select_binder.hpp"
+ #include "duckdb/planner/query_node/bound_select_node.hpp"
+-#include "duckdb/planner/binder.hpp"
+-#include "duckdb/main/config.hpp"
+-#include "duckdb/function/scalar_function.hpp"
+-#include "duckdb/function/function_binder.hpp"
+-
+-#include "duckdb/catalog/catalog.hpp"
+-#include "duckdb/catalog/catalog_entry/aggregate_function_catalog_entry.hpp"
+ 
+ namespace duckdb {
+ 
+@@ -153,6 +151,7 @@ BindResult BaseSelectBinder::BindWindow(WindowExpression &window, idx_t depth) {
+ 	if (depth > 0) {
+ 		throw BinderException(error_context, "correlated columns in window functions not supported");
+ 	}
++
+ 	// If we have range expressions, then only one order by clause is allowed.
+ 	const auto is_range =
+ 	    (window.start == WindowBoundary::EXPR_PRECEDING_RANGE || window.start == WindowBoundary::EXPR_FOLLOWING_RANGE ||
+@@ -162,7 +161,7 @@ BindResult BaseSelectBinder::BindWindow(WindowExpression &window, idx_t depth) {
+ 	}
+ 	// bind inside the children of the window function
+ 	// we set the inside_window flag to true to prevent binding nested window functions
+-	this->inside_window = true;
++	inside_window = true;
+ 	ErrorData error;
+ 	for (auto &child : window.children) {
+ 		BindChild(child, depth, error);
+@@ -194,7 +193,7 @@ BindResult BaseSelectBinder::BindWindow(WindowExpression &window, idx_t depth) {
+ 	BindChild(window.offset_expr, depth, error);
+ 	BindChild(window.default_expr, depth, error);
+ 
+-	this->inside_window = false;
++	inside_window = false;
+ 	if (error.HasError()) {
+ 		// failed to bind children of window function
+ 		return BindResult(std::move(error));
+@@ -249,21 +248,23 @@ BindResult BaseSelectBinder::BindWindow(WindowExpression &window, idx_t depth) {
+ 		D_ASSERT(func.type == CatalogType::AGGREGATE_FUNCTION_ENTRY);
+ 
+ 		// bind the aggregate
+-		ErrorData error;
++		ErrorData error_aggr;
+ 		FunctionBinder function_binder(context);
+-		auto best_function = function_binder.BindFunction(func.name, func.functions, types, error);
++		auto best_function = function_binder.BindFunction(func.name, func.functions, types, error_aggr);
+ 		if (best_function == DConstants::INVALID_INDEX) {
+-			error.AddQueryLocation(window);
+-			error.Throw();
++			error_aggr.AddQueryLocation(window);
++			error_aggr.Throw();
+ 		}
++
+ 		// found a matching function! bind it as an aggregate
+ 		auto bound_function = func.functions.GetFunctionByOffset(best_function);
+-		auto bound_aggregate = function_binder.BindAggregateFunction(bound_function, std::move(children));
++		auto window_bound_aggregate = function_binder.BindAggregateFunction(bound_function, std::move(children));
+ 		// create the aggregate
+-		aggregate = make_uniq<AggregateFunction>(bound_aggregate->function);
+-		bind_info = std::move(bound_aggregate->bind_info);
+-		children = std::move(bound_aggregate->children);
+-		sql_type = bound_aggregate->return_type;
++		aggregate = make_uniq<AggregateFunction>(window_bound_aggregate->function);
++		bind_info = std::move(window_bound_aggregate->bind_info);
++		children = std::move(window_bound_aggregate->children);
++		sql_type = window_bound_aggregate->return_type;
++
+ 	} else {
+ 		// fetch the child of the non-aggregate window function (if any)
+ 		sql_type = ResolveWindowExpressionType(window.type, types);
+@@ -286,26 +287,28 @@ BindResult BaseSelectBinder::BindWindow(WindowExpression &window, idx_t depth) {
+ 	if (window.start == WindowBoundary::EXPR_PRECEDING_RANGE) {
+ 		D_ASSERT(window.orders.size() == 1);
+ 		range_sense = config.ResolveOrder(window.orders[0].type);
+-		const auto name = (range_sense == OrderType::ASCENDING) ? "-" : "+";
+-		start_type = BindRangeExpression(context, name, window.start_expr, window.orders[0].expression);
++		const auto range_name = (range_sense == OrderType::ASCENDING) ? "-" : "+";
++		start_type = BindRangeExpression(context, range_name, window.start_expr, window.orders[0].expression);
++
+ 	} else if (window.start == WindowBoundary::EXPR_FOLLOWING_RANGE) {
+ 		D_ASSERT(window.orders.size() == 1);
+ 		range_sense = config.ResolveOrder(window.orders[0].type);
+-		const auto name = (range_sense == OrderType::ASCENDING) ? "+" : "-";
+-		start_type = BindRangeExpression(context, name, window.start_expr, window.orders[0].expression);
++		const auto range_name = (range_sense == OrderType::ASCENDING) ? "+" : "-";
++		start_type = BindRangeExpression(context, range_name, window.start_expr, window.orders[0].expression);
+ 	}
+ 
+ 	LogicalType end_type = LogicalType::BIGINT;
+ 	if (window.end == WindowBoundary::EXPR_PRECEDING_RANGE) {
+ 		D_ASSERT(window.orders.size() == 1);
+ 		range_sense = config.ResolveOrder(window.orders[0].type);
+-		const auto name = (range_sense == OrderType::ASCENDING) ? "-" : "+";
+-		end_type = BindRangeExpression(context, name, window.end_expr, window.orders[0].expression);
++		const auto range_name = (range_sense == OrderType::ASCENDING) ? "-" : "+";
++		end_type = BindRangeExpression(context, range_name, window.end_expr, window.orders[0].expression);
++
+ 	} else if (window.end == WindowBoundary::EXPR_FOLLOWING_RANGE) {
+ 		D_ASSERT(window.orders.size() == 1);
+ 		range_sense = config.ResolveOrder(window.orders[0].type);
+-		const auto name = (range_sense == OrderType::ASCENDING) ? "+" : "-";
+-		end_type = BindRangeExpression(context, name, window.end_expr, window.orders[0].expression);
++		const auto range_name = (range_sense == OrderType::ASCENDING) ? "+" : "-";
++		end_type = BindRangeExpression(context, range_name, window.end_expr, window.orders[0].expression);
+ 	}
+ 
+ 	// Cast ORDER and boundary expressions to the same type
+@@ -337,7 +340,6 @@ BindResult BaseSelectBinder::BindWindow(WindowExpression &window, idx_t depth) {
+ 	}
+ 
+ 	result->filter_expr = CastWindowExpression(window.filter_expr, LogicalType::BOOLEAN);
+-
+ 	result->start_expr = CastWindowExpression(window.start_expr, start_type);
+ 	result->end_expr = CastWindowExpression(window.end_expr, end_type);
+ 	result->offset_expr = CastWindowExpression(window.offset_expr, LogicalType::BIGINT);
+diff --git a/src/planner/expression_binder/base_select_binder.cpp b/src/planner/expression_binder/base_select_binder.cpp
+index b4708561e2..4501a717f1 100644
+--- a/src/planner/expression_binder/base_select_binder.cpp
++++ b/src/planner/expression_binder/base_select_binder.cpp
+@@ -4,10 +4,8 @@
+ #include "duckdb/parser/expression/columnref_expression.hpp"
+ #include "duckdb/parser/expression/operator_expression.hpp"
+ #include "duckdb/parser/expression/window_expression.hpp"
+-#include "duckdb/parser/parsed_expression_iterator.hpp"
+ #include "duckdb/planner/binder.hpp"
+ #include "duckdb/planner/expression/bound_columnref_expression.hpp"
+-#include "duckdb/planner/expression/bound_window_expression.hpp"
+ #include "duckdb/planner/expression_binder/aggregate_binder.hpp"
+ #include "duckdb/planner/query_node/bound_select_node.hpp"
+ 
+@@ -26,7 +24,7 @@ BaseSelectBinder::BaseSelectBinder(Binder &binder, ClientContext &context, Bound
+ BindResult BaseSelectBinder::BindExpression(unique_ptr<ParsedExpression> &expr_ptr, idx_t depth, bool root_expression) {
+ 	auto &expr = *expr_ptr;
+ 	// check if the expression binds to one of the groups
+-	auto group_index = TryBindGroup(expr, depth);
++	auto group_index = TryBindGroup(expr);
+ 	if (group_index != DConstants::INVALID_INDEX) {
+ 		return BindGroup(expr, depth, group_index);
+ 	}
+@@ -42,7 +40,7 @@ BindResult BaseSelectBinder::BindExpression(unique_ptr<ParsedExpression> &expr_p
+ 	}
+ }
+ 
+-idx_t BaseSelectBinder::TryBindGroup(ParsedExpression &expr, idx_t depth) {
++idx_t BaseSelectBinder::TryBindGroup(ParsedExpression &expr) {
+ 	// first check the group alias map, if expr is a ColumnRefExpression
+ 	if (expr.type == ExpressionType::COLUMN_REF) {
+ 		auto &colref = expr.Cast<ColumnRefExpression>();
+@@ -61,9 +59,9 @@ idx_t BaseSelectBinder::TryBindGroup(ParsedExpression &expr, idx_t depth) {
+ 		return entry->second;
+ 	}
+ #ifdef DEBUG
+-	for (auto entry : info.map) {
+-		D_ASSERT(!entry.first.get().Equals(expr));
+-		D_ASSERT(!expr.Equals(entry.first.get()));
++	for (auto map_entry : info.map) {
++		D_ASSERT(!map_entry.first.get().Equals(expr));
++		D_ASSERT(!expr.Equals(map_entry.first.get()));
+ 	}
+ #endif
+ 	return DConstants::INVALID_INDEX;
+@@ -121,7 +119,7 @@ BindResult BaseSelectBinder::BindGroupingFunction(OperatorExpression &op, idx_t
+ 	group_indexes.reserve(op.children.size());
+ 	for (auto &child : op.children) {
+ 		ExpressionBinder::QualifyColumnNames(binder, child);
+-		auto idx = TryBindGroup(*child, depth);
++		auto idx = TryBindGroup(*child);
+ 		if (idx == DConstants::INVALID_INDEX) {
+ 			return BindResult(BinderException(op, "GROUPING child \"%s\" must be a grouping column", child->GetName()));
+ 		}
+diff --git a/src/planner/expression_binder/having_binder.cpp b/src/planner/expression_binder/having_binder.cpp
+index 9cc1e6c26a..428ac15136 100644
+--- a/src/planner/expression_binder/having_binder.cpp
++++ b/src/planner/expression_binder/having_binder.cpp
+@@ -57,7 +57,7 @@ BindResult HavingBinder::BindColumnRef(unique_ptr<ParsedExpression> &expr_ptr, i
+ BindResult HavingBinder::BindExpression(unique_ptr<ParsedExpression> &expr_ptr, idx_t depth, bool root_expression) {
+ 	auto &expr = *expr_ptr;
+ 	// check if the expression binds to one of the groups
+-	auto group_index = TryBindGroup(expr, depth);
++	auto group_index = TryBindGroup(expr);
+ 	if (group_index != DConstants::INVALID_INDEX) {
+ 		return BindGroup(expr, depth, group_index);
+ 	}
+diff --git a/src/planner/expression_binder/qualify_binder.cpp b/src/planner/expression_binder/qualify_binder.cpp
+index 7a486cf81f..ff40ae9a2d 100644
+--- a/src/planner/expression_binder/qualify_binder.cpp
++++ b/src/planner/expression_binder/qualify_binder.cpp
+@@ -39,7 +39,7 @@ BindResult QualifyBinder::BindColumnRef(unique_ptr<ParsedExpression> &expr_ptr,
+ BindResult QualifyBinder::BindExpression(unique_ptr<ParsedExpression> &expr_ptr, idx_t depth, bool root_expression) {
+ 	auto &expr = *expr_ptr;
+ 	// check if the expression binds to one of the groups
+-	auto group_index = TryBindGroup(expr, depth);
++	auto group_index = TryBindGroup(expr);
+ 	if (group_index != DConstants::INVALID_INDEX) {
+ 		return BindGroup(expr, depth, group_index);
+ 	}

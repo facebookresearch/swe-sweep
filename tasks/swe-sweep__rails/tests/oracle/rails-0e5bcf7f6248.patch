@@ -1,0 +1,13 @@
+diff --git a/actionview/lib/action_view/helpers/form_helper.rb b/actionview/lib/action_view/helpers/form_helper.rb
+index 49a787f749d..0b76865fa61 100644
+--- a/actionview/lib/action_view/helpers/form_helper.rb
++++ b/actionview/lib/action_view/helpers/form_helper.rb
+@@ -1706,7 +1706,7 @@ module ActionView
+       end
+ 
+       def self._to_partial_path
+-        @_to_partial_path ||= name.demodulize.underscore.sub!(/_builder$/, "")
++        @_to_partial_path ||= name.demodulize.underscore.sub(/_builder$/, "")
+       end
+ 
+       def to_partial_path

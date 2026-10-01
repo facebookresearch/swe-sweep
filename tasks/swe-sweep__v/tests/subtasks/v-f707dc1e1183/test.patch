@@ -1,0 +1,26 @@
+diff --git a/vlib/v/tests/option_selector_assign_test.v b/vlib/v/tests/option_selector_assign_test.v
+new file mode 100644
+index 000000000..08d45dad5
+--- /dev/null
++++ b/vlib/v/tests/option_selector_assign_test.v
+@@ -0,0 +1,20 @@
++struct Tree {
++mut:
++	nr_elems int
++	parent   ?&Tree
++}
++
++fn (mut t Tree) set_nr_elems(name string, value int) {
++	t.parent or { return }.nr_elems = value
++}
++
++fn test_main() {
++	parent := Tree{
++		nr_elems: 11
++	}
++	mut child := Tree{
++		parent: &parent
++	}
++	child.set_nr_elems('Buzz', 123)
++	assert child.parent or { return }.nr_elems == 123
++}

@@ -1,0 +1,386 @@
+{
+  "build_jobs": 4,
+  "container_repo": "/roslyn",
+  "evaluation": {
+    "suite": "reproduction",
+    "test_dirs": [
+      "Test",
+      "CodeAnalysisTest",
+      "MSBuildTaskTests",
+      "VBCSCompilerTests"
+    ],
+    "visible_timeout": 21600
+  },
+  "upstream_image": "pandora-maxbug-roslyn:10.0.100",
+  "n_base_passing": 114881,
+  "n_base_test_ignore": 5259,
+  "oracle_digest": "a6477f78ee390c69f85bf3cd3782cb5f7743a49eda8aa6605908f3bd620eec44",
+  "oracle_pristine_paths": [],
+  "upstream_commit": "9f7399e15e6172900e0591deb5a57a45769d8205",
+  "reproduction": {
+    "needs_build": false,
+    "suite": {
+      "configuration": "Release",
+      "solution": "Compilers.slnf",
+      "type": "dotnet-test"
+    },
+    "test_timeout": 3600
+  },
+  "schema": 2,
+  "subtasks": [
+    {
+      "f2p": [
+        "Microsoft.CodeAnalysis.CSharp.UnitTests.DynamicTests.TestOmittedTypeArgsOnDynamicMemberAccess2"
+      ],
+      "id": "roslyn-13e38774dd0d",
+      "target_files": [
+        "src/Compilers/CSharp/Portable/Binder/Binder_Expressions.cs",
+        "src/Compilers/CSharp/Portable/Binder/Binder_Symbols.cs"
+      ]
+    },
+    {
+      "f2p": [
+        "Microsoft.CodeAnalysis.CSharp.UnitTests.PatternMatchingTests_ListPatterns.PointerType_ListPattern_NoIndex",
+        "Microsoft.CodeAnalysis.CSharp.UnitTests.PatternMatchingTests_ListPatterns.PointerType_ListPattern_WithIndex"
+      ],
+      "id": "roslyn-19392d53f4a9",
+      "target_files": [
+        "src/Compilers/CSharp/Portable/Binder/Binder_Patterns.cs",
+        "src/Compilers/CSharp/Portable/Binder/Binder_Statements.cs",
+        "src/Compilers/CSharp/Portable/BoundTree/BoundListPattern.cs"
+      ]
+    },
+    {
+      "f2p": [
+        "Microsoft.CodeAnalysis.CSharp.UnitTests.Semantics.DeconstructionTests.GetDeconstructionInfo_01"
+      ],
+      "id": "roslyn-2068fcc3b53f",
+      "target_files": [
+        "src/Compilers/CSharp/Portable/Compilation/MemberSemanticModel.cs"
+      ]
+    },
+    {
+      "f2p": [
+        "Microsoft.CodeAnalysis.VisualBasic.UnitTests.DeclaringSyntaxNodeTests.CatchVariableDeclaringSyntax"
+      ],
+      "id": "roslyn-21d406d9d4b2",
+      "target_files": [
+        "src/Compilers/VisualBasic/Portable/Symbols/Source/LocalSymbol.vb"
+      ]
+    },
+    {
+      "f2p": [
+        "Microsoft.CodeAnalysis.CSharp.UnitTests.AsyncParsingTests.AwaitInInterpolatedString_WithParentheses"
+      ],
+      "id": "roslyn-2730ba811675",
+      "target_files": [
+        "src/Compilers/CSharp/Portable/Parser/LanguageParser.cs",
+        "src/Compilers/CSharp/Portable/Parser/LanguageParser_InterpolatedString.cs"
+      ]
+    },
+    {
+      "f2p": [
+        "Microsoft.CodeAnalysis.CSharp.UnitTests.PatternSwitchTests.GotoCase_01(type1: \"int\", type2: \"nint\")",
+        "Microsoft.CodeAnalysis.CSharp.UnitTests.PatternSwitchTests.GotoCase_01(type1: \"nint\", type2: \"int\")",
+        "Microsoft.CodeAnalysis.CSharp.UnitTests.PatternSwitchTests.GotoCase_01(type1: \"nuint\", type2: \"uint\")",
+        "Microsoft.CodeAnalysis.CSharp.UnitTests.PatternSwitchTests.GotoCase_01(type1: \"uint\", type2: \"nuint\")",
+        "Microsoft.CodeAnalysis.CSharp.UnitTests.PatternSwitchTests.GotoCase_06",
+        "Microsoft.CodeAnalysis.CSharp.UnitTests.PatternSwitchTests.GotoCase_07",
+        "Microsoft.CodeAnalysis.CSharp.UnitTests.PatternSwitchTests.GotoCase_08",
+        "Microsoft.CodeAnalysis.CSharp.UnitTests.PatternSwitchTests.GotoCase_09",
+        "Microsoft.CodeAnalysis.CSharp.UnitTests.PatternSwitchTests.GotoCase_10",
+        "Microsoft.CodeAnalysis.CSharp.UnitTests.PatternSwitchTests.GotoCase_11"
+      ],
+      "id": "roslyn-34e074deb46e",
+      "target_files": [
+        "src/Compilers/CSharp/Portable/Binder/SwitchBinder.cs"
+      ]
+    },
+    {
+      "f2p": [
+        "Microsoft.CodeAnalysis.CSharp.UnitTests.PatternParsingTests.ParenthesizedTypeOrConstant1",
+        "Microsoft.CodeAnalysis.CSharp.UnitTests.PatternParsingTests.ParenthesizedTypeOrConstant8"
+      ],
+      "id": "roslyn-3a19da7bf8ed",
+      "target_files": [
+        "src/Compilers/CSharp/Portable/Parser/LanguageParser.cs",
+        "src/Compilers/CSharp/Portable/Parser/LanguageParser_Patterns.cs"
+      ]
+    },
+    {
+      "f2p": [
+        "Microsoft.CodeAnalysis.CSharp.UnitTests.FieldKeywordTests.SetsRequiredMembersInSubtype",
+        "Microsoft.CodeAnalysis.CSharp.UnitTests.FieldKeywordTests.SetsRequiredMembers_Subtype_NullResilientBaseProp"
+      ],
+      "id": "roslyn-3dbbef4f86fb",
+      "target_files": [
+        "src/Compilers/CSharp/Portable/FlowAnalysis/NullableWalker.cs"
+      ]
+    },
+    {
+      "f2p": [
+        "Microsoft.CodeAnalysis.CSharp.UnitTests.SymbolDisplayTests.UseArityForGenericTypes_VBSymbol(useMetadata: False)",
+        "Microsoft.CodeAnalysis.CSharp.UnitTests.SymbolDisplayTests.UseArityForGenericTypes_VBSymbol(useMetadata: True)",
+        "Microsoft.CodeAnalysis.VisualBasic.UnitTests.SymbolDisplayTests.UseArityForGenericTypes_CSharpSymbol(useMetadata: False)",
+        "Microsoft.CodeAnalysis.VisualBasic.UnitTests.SymbolDisplayTests.UseArityForGenericTypes_CSharpSymbol(useMetadata: True)"
+      ],
+      "id": "roslyn-3ea8b74b62eb",
+      "target_files": [
+        "src/Compilers/CSharp/Portable/SymbolDisplay/SymbolDisplayVisitor.Types.cs",
+        "src/Compilers/VisualBasic/Portable/SymbolDisplay/SymbolDisplayVisitor.Types.vb"
+      ]
+    },
+    {
+      "f2p": [
+        "Microsoft.CodeAnalysis.UnitTests.Emit.StringTokenMapTests.UniqueStrings"
+      ],
+      "id": "roslyn-4aec6224fad1",
+      "target_files": [
+        "src/Compilers/Core/Portable/CodeGen/StringTokenMap.cs"
+      ]
+    },
+    {
+      "f2p": [
+        "Microsoft.CodeAnalysis.CSharp.Semantic.UnitTests.SourceGeneration.GeneratorDriverTests_Attributes_FullyQualifiedName.FindConstructorAttribute_PartialPrimary1",
+        "Microsoft.CodeAnalysis.CSharp.Semantic.UnitTests.SourceGeneration.GeneratorDriverTests_Attributes_FullyQualifiedName.FindConstructorAttribute_PartialPrimary2",
+        "Microsoft.CodeAnalysis.CSharp.Semantic.UnitTests.SourceGeneration.GeneratorDriverTests_Attributes_FullyQualifiedName.FindConstructorAttribute_PartialWithIgnored1",
+        "Microsoft.CodeAnalysis.CSharp.Semantic.UnitTests.SourceGeneration.GeneratorDriverTests_Attributes_FullyQualifiedName.FindConstructorAttribute_PartialWithMultipleParameterLists1",
+        "Microsoft.CodeAnalysis.CSharp.Semantic.UnitTests.SourceGeneration.GeneratorDriverTests_Attributes_FullyQualifiedName.FindConstructorAttribute_Primary1",
+        "Microsoft.CodeAnalysis.CSharp.Semantic.UnitTests.SourceGeneration.GeneratorDriverTests_Attributes_FullyQualifiedName.FindConstructorAttribute_Primary2"
+      ],
+      "id": "roslyn-5c9a42caa728",
+      "target_files": [
+        "src/Compilers/Core/Portable/SourceGeneration/Nodes/SyntaxValueProvider_ForAttributeWithMetadataName.cs"
+      ]
+    },
+    {
+      "f2p": [
+        "Microsoft.CodeAnalysis.CSharp.UnitTests.CrefTests.Cref_FunctionPointer"
+      ],
+      "id": "roslyn-5cf4d972e187",
+      "target_files": [
+        "src/Compilers/CSharp/Portable/Symbols/Symbol.cs"
+      ]
+    },
+    {
+      "f2p": [
+        "Microsoft.CodeAnalysis.CSharp.UnitTests.PatternsVsRegions.RegionITuplePattern",
+        "Microsoft.CodeAnalysis.CSharp.UnitTests.PatternsVsRegions.RegionInIsPattern06",
+        "Microsoft.CodeAnalysis.CSharp.UnitTests.PatternsVsRegions.RegionInIsPattern07",
+        "Microsoft.CodeAnalysis.CSharp.UnitTests.PatternsVsRegions.RegionInIsPattern08",
+        "Microsoft.CodeAnalysis.CSharp.UnitTests.PatternsVsRegions.RegionInIsPattern09",
+        "Microsoft.CodeAnalysis.CSharp.UnitTests.PatternsVsRegions.RegionInSwitch01",
+        "Microsoft.CodeAnalysis.CSharp.UnitTests.PatternsVsRegions.RegionListPattern",
+        "Microsoft.CodeAnalysis.CSharp.UnitTests.PatternsVsRegions.RegionOrPattern",
+        "Microsoft.CodeAnalysis.CSharp.UnitTests.PatternsVsRegions.RegionSlicePattern",
+        "Microsoft.CodeAnalysis.CSharp.UnitTests.PatternsVsRegions.RegionWithinSubpattern03"
+      ],
+      "id": "roslyn-65ffdb597ab9",
+      "target_files": [
+        "src/Compilers/CSharp/Portable/FlowAnalysis/VariablesDeclaredWalker.cs"
+      ]
+    },
+    {
+      "f2p": [
+        "Microsoft.CodeAnalysis.CSharp.UnitTests.UnsafeTests.ExplicitImplementation_01",
+        "Microsoft.CodeAnalysis.CSharp.UnitTests.UnsafeTests.ExplicitImplementation_04",
+        "Microsoft.CodeAnalysis.CSharp.UnitTests.UnsafeTests.ExplicitImplementation_05",
+        "Microsoft.CodeAnalysis.CSharp.UnitTests.UnsafeTests.ExplicitImplementation_06"
+      ],
+      "id": "roslyn-80b69641a422",
+      "target_files": [
+        "src/Compilers/CSharp/Portable/Binder/BinderFactory.BinderFactoryVisitor.cs",
+        "src/Compilers/CSharp/Portable/Compilation/SyntaxTreeSemanticModel.cs",
+        "src/Compilers/CSharp/Portable/Symbols/Source/ExplicitInterfaceHelpers.cs",
+        "src/Compilers/CSharp/Portable/Symbols/Source/SourceCustomEventSymbol.cs",
+        "src/Compilers/CSharp/Portable/Symbols/Source/SourceOrdinaryMethodSymbol.cs",
+        "src/Compilers/CSharp/Portable/Symbols/Source/SourcePropertySymbol.cs",
+        "src/Compilers/CSharp/Portable/Symbols/Source/SourceUserDefinedConversionSymbol.cs",
+        "src/Compilers/CSharp/Portable/Symbols/Source/SourceUserDefinedOperatorSymbol.cs"
+      ]
+    },
+    {
+      "f2p": [
+        "Microsoft.CodeAnalysis.CSharp.UnitTests.DeclarationParsingTests.DelegateWithTupleReturnType_TopLevel",
+        "Microsoft.CodeAnalysis.CSharp.UnitTests.DeclarationParsingTests.DelegateWithTupleReturnType_TopLevel2"
+      ],
+      "id": "roslyn-8fd6e37e3de9",
+      "target_files": [
+        "src/Compilers/CSharp/Portable/Parser/LanguageParser.cs"
+      ]
+    },
+    {
+      "f2p": [
+        "Microsoft.CodeAnalysis.CSharp.UnitTests.Semantics.ExtensionOperatorsTests.Issue82977"
+      ],
+      "id": "roslyn-916f562335d9",
+      "target_files": [
+        "src/Compilers/CSharp/Portable/Binder/Semantics/Operators/UnaryOperatorOverloadResolution.cs",
+        "src/Compilers/CSharp/Portable/Symbols/Source/SourceMemberContainerSymbol.cs"
+      ]
+    },
+    {
+      "f2p": [
+        "Microsoft.CodeAnalysis.CSharp.UnitTests.RefUnsafeInIteratorAndAsyncTests.RefAnalysis_Iterator",
+        "Microsoft.CodeAnalysis.CSharp.UnitTests.RefUnsafeInIteratorAndAsyncTests.RefAnalysis_Iterator_LocalFunction",
+        "Microsoft.CodeAnalysis.CSharp.UnitTests.RefUnsafeInIteratorAndAsyncTests.RefAnalysis_Iterator_LocalFunction_Nested",
+        "Microsoft.CodeAnalysis.CSharp.UnitTests.RefUnsafeInIteratorAndAsyncTests.RefAnalysis_Iterator_LocalFunction_UnsafeBlock"
+      ],
+      "id": "roslyn-9c815c2f86d2",
+      "target_files": [
+        "src/Compilers/CSharp/Portable/Binder/Binder_Flags.cs",
+        "src/Compilers/CSharp/Portable/Binder/RefSafetyAnalysis.cs"
+      ]
+    },
+    {
+      "f2p": [
+        "Microsoft.CodeAnalysis.CSharp.UnitTests.GetSemanticInfoTests.GetPreprocessingSymbolInfoOnUnrelatedDirective"
+      ],
+      "id": "roslyn-9cb430445a0e",
+      "target_files": [
+        "src/Compilers/CSharp/Portable/Compilation/CSharpSemanticModel.cs"
+      ]
+    },
+    {
+      "f2p": [
+        "Microsoft.CodeAnalysis.CSharp.UnitTests.SyntaxNormalizerTests.TestNormalizeSuppression_01"
+      ],
+      "id": "roslyn-a1cb4f6d37c2",
+      "target_files": [
+        "src/Compilers/CSharp/Portable/Syntax/SyntaxNormalizer.cs"
+      ]
+    },
+    {
+      "f2p": [
+        "Microsoft.CodeAnalysis.CSharp.UnitTests.CodeGen.PatternTests.BaseClassOrNull",
+        "Microsoft.CodeAnalysis.CSharp.UnitTests.CodeGen.PatternTests.InterfaceOrNull"
+      ],
+      "id": "roslyn-b57c3d3b5ea0",
+      "target_files": [
+        "src/Compilers/CSharp/Portable/Binder/DecisionDagBuilder.cs"
+      ]
+    },
+    {
+      "f2p": [
+        "Microsoft.CodeAnalysis.CSharp.UnitTests.Semantics.ExtensionTests.InvalidReceiverWithNewExtensionInFileClass",
+        "Microsoft.CodeAnalysis.CSharp.UnitTests.Semantics.ExtensionTests.InvalidReceiverWithOldExtensionInFileClass(languageVersion: CSharp10)",
+        "Microsoft.CodeAnalysis.CSharp.UnitTests.Semantics.ExtensionTests.InvalidReceiverWithOldExtensionInFileClass(languageVersion: Latest)"
+      ],
+      "id": "roslyn-b93bb0489536",
+      "target_files": [
+        "src/Compilers/CSharp/Portable/Binder/Binder_Crefs.cs",
+        "src/Compilers/CSharp/Portable/Binder/Binder_Expressions.cs",
+        "src/Compilers/CSharp/Portable/Binder/Binder_Lookup.cs",
+        "src/Compilers/CSharp/Portable/Binder/SingleLookupResult.cs"
+      ]
+    },
+    {
+      "f2p": [
+        "Microsoft.CodeAnalysis.CSharp.UnitTests.UnsafeTests.UsingStatic_Multiple"
+      ],
+      "id": "roslyn-bd0bd4aa121a",
+      "target_files": [
+        "src/Compilers/CSharp/Portable/Symbols/Source/SourceNamespaceSymbol.AliasesAndUsings.cs"
+      ]
+    },
+    {
+      "f2p": [
+        "__process_level_failure__"
+      ],
+      "id": "roslyn-c04e416510cf",
+      "target_files": [
+        "src/Compilers/Core/Portable/CommandLine/AnalyzerConfig.SectionNameMatching.cs"
+      ]
+    },
+    {
+      "f2p": [
+        "Microsoft.CodeAnalysis.CSharp.UnitTests.Semantics.ExtensionTests.ReceiverParameter_TypeParameter_TopLevelExtension"
+      ],
+      "id": "roslyn-c28454c5035b",
+      "target_files": [
+        "src/Compilers/CSharp/Portable/Symbols/Source/ParameterHelpers.cs"
+      ]
+    },
+    {
+      "f2p": [
+        "Microsoft.CodeAnalysis.CSharp.UnitTests.IOperationTests_IInterpolatedStringExpression.ObjectInitializerWithMissingAccessor_01",
+        "Microsoft.CodeAnalysis.CSharp.UnitTests.IOperationTests_IInterpolatedStringExpression.ObjectInitializerWithMissingAccessor_02",
+        "Microsoft.CodeAnalysis.CSharp.UnitTests.IOperationTests_IInterpolatedStringExpression.ObjectInitializerWithMissingAccessor_03"
+      ],
+      "id": "roslyn-c85c7be5fb3f",
+      "target_files": [
+        "src/Compilers/CSharp/Portable/Binder/Binder_Expressions.cs",
+        "src/Compilers/Core/Portable/Operations/ControlFlowGraphBuilder.InterpolatedStringContext.cs",
+        "src/Compilers/Core/Portable/Operations/ControlFlowGraphBuilder.cs"
+      ]
+    },
+    {
+      "f2p": [
+        "Microsoft.CodeAnalysis.CSharp.UnitTests.Semantics.ExtensionTests.Cref_68",
+        "Microsoft.CodeAnalysis.CSharp.UnitTests.Semantics.ExtensionTests.Cref_69",
+        "Microsoft.CodeAnalysis.CSharp.UnitTests.Semantics.ExtensionTests.Cref_70"
+      ],
+      "id": "roslyn-c99e312cebb0",
+      "target_files": [
+        "src/Compilers/CSharp/Portable/Syntax/SyntaxFactory.cs"
+      ]
+    },
+    {
+      "f2p": [
+        "Microsoft.CodeAnalysis.UnitTests.Text.SourceTextTests.Comparer_EqualityContract_SameContentFromStream",
+        "Microsoft.CodeAnalysis.UnitTests.Text.SourceTextTests.Comparer_EqualityContract_SameContent_DifferentEncodings",
+        "Microsoft.CodeAnalysis.UnitTests.Text.SourceTextTests.Comparer_EqualityContract_SameContent_WithAndWithoutBOM",
+        "Microsoft.CodeAnalysis.UnitTests.Text.SourceTextTests.Comparer_GetContentHash_MatchesComparerHashCode"
+      ],
+      "id": "roslyn-cde5d465a97d",
+      "target_files": [
+        "src/Compilers/Core/Portable/Text/SourceTextComparer.cs"
+      ]
+    },
+    {
+      "f2p": [
+        "Microsoft.CodeAnalysis.CSharp.UnitTests.CodeGen.IndexAndRangeTests.ImplicitRangeIndexer_ObjectInitializer_01",
+        "Microsoft.CodeAnalysis.CSharp.UnitTests.CodeGen.IndexAndRangeTests.ImplicitRangeIndexer_ObjectInitializer_02"
+      ],
+      "id": "roslyn-d8b9f8fe632a",
+      "target_files": [
+        "src/Compilers/CSharp/Portable/Lowering/LocalRewriter/LocalRewriter_IndexerAccess.cs"
+      ]
+    },
+    {
+      "f2p": [
+        "Microsoft.CodeAnalysis.CSharp.UnitTests.Semantics.ExtensionTests.Params_Nullable_01",
+        "Microsoft.CodeAnalysis.CSharp.UnitTests.Semantics.ExtensionTests.Params_Nullable_02",
+        "Microsoft.CodeAnalysis.CSharp.UnitTests.Semantics.ExtensionTests.Params_Nullable_03"
+      ],
+      "id": "roslyn-ed72ff09334c",
+      "target_files": [
+        "src/Compilers/CSharp/Portable/FlowAnalysis/NullableWalker.cs"
+      ]
+    },
+    {
+      "f2p": [
+        "Microsoft.CodeAnalysis.CSharp.UnitTests.SyntaxNodeTests.TestAncestorsOfDirectiveTrivia",
+        "Microsoft.CodeAnalysis.CSharp.UnitTests.SyntaxNodeTests.TestAncestorsOfDocumentationCommentTrivia"
+      ],
+      "id": "roslyn-f765ceac3c15",
+      "target_files": [
+        "src/Compilers/Core/Portable/Syntax/SyntaxNode.cs"
+      ]
+    },
+    {
+      "f2p": [
+        "Microsoft.CodeAnalysis.CSharp.UnitTests.RefUnsafeInIteratorAndAsyncTests.Await_RefStruct_OutVar_01",
+        "Microsoft.CodeAnalysis.CSharp.UnitTests.RefUnsafeInIteratorAndAsyncTests.Await_RefStruct_OutVar_02"
+      ],
+      "id": "roslyn-fbf6b8d26294",
+      "target_files": [
+        "src/Compilers/CSharp/Portable/FlowAnalysis/AbstractFlowPass.cs",
+        "src/Compilers/CSharp/Portable/FlowAnalysis/DefiniteAssignment.cs",
+        "src/Compilers/CSharp/Portable/Lowering/Instrumentation/DebugInfoInjector_SequencePoints.cs"
+      ]
+    }
+  ],
+  "task": "roslyn",
+  "version": "10.0.100"
+}

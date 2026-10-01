@@ -1,0 +1,13 @@
+diff --git a/independent-projects/resteasy-reactive/client/runtime/src/main/java/org/jboss/resteasy/reactive/client/impl/ClientBuilderImpl.java b/independent-projects/resteasy-reactive/client/runtime/src/main/java/org/jboss/resteasy/reactive/client/impl/ClientBuilderImpl.java
+index 8bfcc874f44..290134c5a75 100644
+--- a/independent-projects/resteasy-reactive/client/runtime/src/main/java/org/jboss/resteasy/reactive/client/impl/ClientBuilderImpl.java
++++ b/independent-projects/resteasy-reactive/client/runtime/src/main/java/org/jboss/resteasy/reactive/client/impl/ClientBuilderImpl.java
+@@ -288,7 +288,7 @@ public class ClientBuilderImpl extends ClientBuilder {
+         clientLogger.setBodySize(loggingBodySize);
+ 
+         return new ClientImpl(options,
+-                configuration,
++                new ConfigurationImpl(configuration),
+                 CLIENT_CONTEXT_RESOLVER.resolve(Thread.currentThread().getContextClassLoader()),
+                 hostnameVerifier,
+                 sslContext,

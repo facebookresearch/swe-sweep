@@ -1,0 +1,16 @@
+diff --git a/src/Symfony/Component/OptionsResolver/OptionsResolver.php b/src/Symfony/Component/OptionsResolver/OptionsResolver.php
+index 9b9fe43cce4..3a232a3802c 100644
+--- a/src/Symfony/Component/OptionsResolver/OptionsResolver.php
++++ b/src/Symfony/Component/OptionsResolver/OptionsResolver.php
+@@ -964,6 +964,11 @@ class OptionsResolver implements Options
+                 $resolver = new self();
+                 $resolver->prototype = false;
+                 $resolver->parentsOptions = $this->parentsOptions;
++
++                if ($this->prototype && null !== $this->prototypeIndex && null !== ($parentOptionKey = array_key_last($resolver->parentsOptions))) {
++                    $resolver->parentsOptions[$parentOptionKey] .= \sprintf('[%s]', $this->prototypeIndex);
++                }
++
+                 $resolver->parentsOptions[] = $option;
+                 foreach ($this->nested[$option] as $closure) {
+                     $closure($resolver, $this);

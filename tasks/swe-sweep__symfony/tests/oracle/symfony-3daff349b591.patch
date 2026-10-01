@@ -1,0 +1,15 @@
+diff --git a/src/Symfony/Component/Serializer/Debug/TraceableSerializer.php b/src/Symfony/Component/Serializer/Debug/TraceableSerializer.php
+index dd22e8678e7..964fd750318 100644
+--- a/src/Symfony/Component/Serializer/Debug/TraceableSerializer.php
++++ b/src/Symfony/Component/Serializer/Debug/TraceableSerializer.php
+@@ -179,8 +179,8 @@ class TraceableSerializer implements SerializerInterface, NormalizerInterface, D
+                 && $method === $trace[$i]['function']
+                 && is_a($trace[$i]['class'], $interface, true)
+             ) {
+-                $file = $trace[$i]['file'];
+-                $line = $trace[$i]['line'];
++                $file = $trace[$i]['file'] ?? $trace[$i + 1]['file'];
++                $line = $trace[$i]['line'] ?? $trace[$i + 1]['line'];
+ 
+                 break;
+             }

@@ -1,0 +1,16 @@
+diff --git a/numpy/lib/tests/test_function_base.py b/numpy/lib/tests/test_function_base.py
+index 66110b479877..c7dfe56731b4 100644
+--- a/numpy/lib/tests/test_function_base.py
++++ b/numpy/lib/tests/test_function_base.py
+@@ -538,6 +538,11 @@ class TestInsert(object):
+         b = np.insert(a, [0, 2], val)
+         assert_array_equal(b[[0, 3]], np.array(val, dtype=b.dtype))
+ 
++    @pytest.mark.parametrize('idx', [4, -4])
++    def test_index_out_of_bounds(self, idx):
++        with pytest.raises(IndexError, match='out of bounds'):
++            np.insert([0, 1, 2], [idx], [3, 4])
++
+ 
+ class TestAmax(object):
+ 

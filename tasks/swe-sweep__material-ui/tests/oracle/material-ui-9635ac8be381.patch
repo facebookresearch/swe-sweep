@@ -1,0 +1,30 @@
+diff --git a/packages/mui-material/src/SwipeableDrawer/SwipeableDrawer.js b/packages/mui-material/src/SwipeableDrawer/SwipeableDrawer.js
+index 89a02141c8..6f6de52277 100644
+--- a/packages/mui-material/src/SwipeableDrawer/SwipeableDrawer.js
++++ b/packages/mui-material/src/SwipeableDrawer/SwipeableDrawer.js
+@@ -5,6 +5,7 @@ import { elementTypeAcceptingRef } from '@mui/utils';
+ import { useThemeProps } from '@mui/system';
+ import { NoSsr } from '@mui/base';
+ import Drawer, { getAnchor, isHorizontal } from '../Drawer/Drawer';
++import useForkRef from '../utils/useForkRef';
+ import ownerDocument from '../utils/ownerDocument';
+ import ownerWindow from '../utils/ownerWindow';
+ import useEventCallback from '../utils/useEventCallback';
+@@ -168,6 +169,8 @@ const SwipeableDrawer = React.forwardRef(function SwipeableDrawer(inProps, ref)
+   const backdropRef = React.useRef();
+   const paperRef = React.useRef();
+ 
++  const handleRef = useForkRef(PaperProps.ref, paperRef);
++
+   const touchDetected = React.useRef(false);
+ 
+   // Ref for transition duration based on / to match swipe speed
+@@ -574,7 +577,7 @@ const SwipeableDrawer = React.forwardRef(function SwipeableDrawer(inProps, ref)
+             pointerEvents: variant === 'temporary' && !open ? 'none' : '',
+             ...PaperProps.style,
+           },
+-          ref: paperRef,
++          ref: handleRef,
+         }}
+         anchor={anchor}
+         transitionDuration={calculatedDurationRef.current || transitionDuration}

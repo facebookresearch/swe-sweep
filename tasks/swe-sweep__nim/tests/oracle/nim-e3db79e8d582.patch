@@ -1,0 +1,115 @@
+diff --git a/compiler/ast.nim b/compiler/ast.nim
+index 9679c10c1..198d21bea 100644
+--- a/compiler/ast.nim
++++ b/compiler/ast.nim
+@@ -2047,6 +2047,9 @@ template detailedInfo*(sym: PSym): string =
+ proc isInlineIterator*(typ: PType): bool {.inline.} =
+   typ.kind == tyProc and tfIterator in typ.flags and typ.callConv != ccClosure
+ 
++proc isIterator*(typ: PType): bool {.inline.} =
++  typ.kind == tyProc and tfIterator in typ.flags
++
+ proc isClosureIterator*(typ: PType): bool {.inline.} =
+   typ.kind == tyProc and tfIterator in typ.flags and typ.callConv == ccClosure
+ 
+diff --git a/compiler/docgen.nim b/compiler/docgen.nim
+index e2c04430c..0a24d2e09 100644
+--- a/compiler/docgen.nim
++++ b/compiler/docgen.nim
+@@ -558,7 +558,7 @@ proc runAllExamples(d: PDoc) =
+ 
+ proc quoted(a: string): string = result.addQuoted(a)
+ 
+-proc toInstantiationInfo(conf: ConfigRef, info: TLineInfo): auto =
++proc toInstantiationInfo(conf: ConfigRef, info: TLineInfo): (string, int, int) =
+   # xxx expose in compiler/lineinfos.nim
+   (conf.toMsgFilename(info), info.line.int, info.col.int + ColOffset)
+ 
+diff --git a/compiler/lookups.nim b/compiler/lookups.nim
+index 2121982a6..df5a5333e 100644
+--- a/compiler/lookups.nim
++++ b/compiler/lookups.nim
+@@ -422,7 +422,7 @@ type SpellCandidate = object
+   msg: string
+   sym: PSym
+ 
+-template toOrderTup(a: SpellCandidate): auto =
++template toOrderTup(a: SpellCandidate): (int, int, string) =
+   # `dist` is first, to favor nearby matches
+   # `depth` is next, to favor nearby enclosing scopes among ties
+   # `sym.name.s` is last, to make the list ordered and deterministic among ties
+diff --git a/compiler/sem.nim b/compiler/sem.nim
+index a1388bd87..1f8e217b3 100644
+--- a/compiler/sem.nim
++++ b/compiler/sem.nim
+@@ -81,7 +81,7 @@ template semIdeForTemplateOrGeneric(c: PContext; n: PNode;
+ proc fitNodePostMatch(c: PContext, formal: PType, arg: PNode): PNode =
+   let x = arg.skipConv
+   if (x.kind == nkCurly and formal.kind == tySet and formal.base.kind != tyGenericParam) or
+-    (x.kind in {nkPar, nkTupleConstr}) and formal.kind notin {tyUntyped, tyBuiltInTypeClass}:
++    (x.kind in {nkPar, nkTupleConstr}) and formal.kind notin {tyUntyped, tyBuiltInTypeClass, tyAnything}:
+     changeType(c, x, formal, check=true)
+   result = arg
+   result = skipHiddenSubConv(result, c.graph, c.idgen)
+@@ -438,7 +438,7 @@ proc semAfterMacroCall(c: PContext, call, macroResult: PNode,
+       # does not mean we expect a tyTypeDesc.
+       retType = retType[0]
+     case retType.kind
+-    of tyUntyped:
++    of tyUntyped, tyAnything:
+       # Not expecting a type here allows templates like in ``tmodulealias.in``.
+       result = semExpr(c, result, flags)
+     of tyTyped:
+diff --git a/compiler/semexprs.nim b/compiler/semexprs.nim
+index 064eae0b7..2efa1259a 100644
+--- a/compiler/semexprs.nim
++++ b/compiler/semexprs.nim
+@@ -1843,6 +1843,8 @@ proc semAsgn(c: PContext, n: PNode; mode=asgnNormal): PNode =
+         var rhsTyp = rhs.typ
+         if rhsTyp.kind in tyUserTypeClasses and rhsTyp.isResolvedUserTypeClass:
+           rhsTyp = rhsTyp.lastSon
++        if lhs.sym.typ.kind == tyAnything:
++          rhsTyp = rhsTyp.skipIntLit(c.idgen)
+         if cmpTypes(c, lhs.typ, rhsTyp) in {isGeneric, isEqual}:
+           internalAssert c.config, c.p.resultSym != nil
+           # Make sure the type is valid for the result variable
+@@ -1916,8 +1918,8 @@ proc semProcBody(c: PContext, n: PNode; expectedType: PType = nil): PNode =
+     else:
+       localError(c.config, c.p.resultSym.info, errCannotInferReturnType %
+         c.p.owner.name.s)
+-  if isInlineIterator(c.p.owner.typ) and c.p.owner.typ[0] != nil and
+-      c.p.owner.typ[0].kind == tyUntyped:
++  if isIterator(c.p.owner.typ) and c.p.owner.typ[0] != nil and
++      c.p.owner.typ[0].kind == tyAnything:
+     localError(c.config, c.p.owner.info, errCannotInferReturnType %
+       c.p.owner.name.s)
+   closeScope(c)
+diff --git a/compiler/semstmts.nim b/compiler/semstmts.nim
+index a006013b8..d19d75611 100644
+--- a/compiler/semstmts.nim
++++ b/compiler/semstmts.nim
+@@ -2179,8 +2179,7 @@ proc semProcAux(c: PContext, n: PNode, kind: TSymKind,
+     if hasProto: localError(c.config, n.info, errImplOfXexpected % proto.name.s)
+     if {sfImportc, sfBorrow, sfError} * s.flags == {} and s.magic == mNone:
+       # this is a forward declaration and we're building the prototype
+-      if s.kind in {skProc, skFunc} and s.typ[0] != nil and s.typ[0].kind == tyUntyped:
+-        # `auto` is represented as `tyUntyped` at this point in compilation.
++      if s.kind in {skProc, skFunc} and s.typ[0] != nil and s.typ[0].kind == tyAnything:
+         localError(c.config, n[paramsPos][0].info, "return type 'auto' cannot be used in forward declarations")
+ 
+       incl(s.flags, sfForward)
+diff --git a/compiler/semtypes.nim b/compiler/semtypes.nim
+index 3eaf29755..dca0d753b 100644
+--- a/compiler/semtypes.nim
++++ b/compiler/semtypes.nim
+@@ -1405,9 +1405,7 @@ proc semProcTypeNode(c: PContext, n, genericParams: PNode,
+             "' is only valid for macros and templates")
+       # 'auto' as a return type does not imply a generic:
+       elif r.kind == tyAnything:
+-        # 'p(): auto' and 'p(): untyped' are equivalent, but the rest of the
+-        # compiler is hardly aware of 'auto':
+-        r = newTypeS(tyUntyped, c)
++        discard
+       elif r.kind == tyStatic:
+         # type allowed should forbid this type
+         discard

@@ -1,0 +1,38 @@
+diff --git a/test/Succeed/Issue7044.agda b/test/Succeed/Issue7044.agda
+new file mode 100644
+index 0000000000..b3bf6d01f7
+--- /dev/null
++++ b/test/Succeed/Issue7044.agda
+@@ -0,0 +1,6 @@
++-- Andreas, 2024-01-02, issue #7044, test case by Christian Sattler.
++
++import Issue7044Import
++
++-- Used to crash with internal error when trying to serialized
++-- a blocked definition.
+diff --git a/test/Succeed/Issue7044Import.agda b/test/Succeed/Issue7044Import.agda
+new file mode 100644
+index 0000000000..cc9c3a9b92
+--- /dev/null
++++ b/test/Succeed/Issue7044Import.agda
+@@ -0,0 +1,20 @@
++-- Andreas, 2024-01-02, issue #7044, test case by Christian Sattler.
++-- This module has a blocked definition, which needs to be serialized
++-- correctly as postulate blocked forever.
++
++{-# OPTIONS --allow-unsolved-metas #-}
++
++module Issue7044Import where
++
++data T : Set where
++  t : T
++
++postulate
++  X : Set
++  x : X
++
++A : Set
++A = {!!}
++
++foo : A → X
++foo t = x

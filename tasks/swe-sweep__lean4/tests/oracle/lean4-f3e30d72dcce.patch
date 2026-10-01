@@ -1,0 +1,37 @@
+diff --git a/src/Init/Data/Array/Mem.lean b/src/Init/Data/Array/Mem.lean
+index 09406b80f6..cda31733b7 100644
+--- a/src/Init/Data/Array/Mem.lean
++++ b/src/Init/Data/Array/Mem.lean
+@@ -38,8 +38,8 @@ macro "array_get_dec" : tactic =>
+     -- subsumed by simp
+     -- | with_reducible apply sizeOf_get
+     -- | with_reducible apply sizeOf_getElem
+-    | (with_reducible apply Nat.lt_trans (sizeOf_get ..)); simp_arith
+-    | (with_reducible apply Nat.lt_trans (sizeOf_getElem ..)); simp_arith
++    | (with_reducible apply Nat.lt_of_lt_of_le (sizeOf_get ..)); simp_arith
++    | (with_reducible apply Nat.lt_of_lt_of_le (sizeOf_getElem ..)); simp_arith
+     )
+ 
+ macro_rules | `(tactic| decreasing_trivial) => `(tactic| array_get_dec)
+@@ -52,7 +52,7 @@ macro "array_mem_dec" : tactic =>
+   `(tactic| first
+     | with_reducible apply Array.sizeOf_lt_of_mem; assumption; done
+     | with_reducible
+-        apply Nat.lt_trans (Array.sizeOf_lt_of_mem ?h)
++        apply Nat.lt_of_lt_of_le (Array.sizeOf_lt_of_mem ?h)
+         case' h => assumption
+       simp_arith)
+ 
+diff --git a/src/Init/Data/List/BasicAux.lean b/src/Init/Data/List/BasicAux.lean
+index 307b4d4216..e37af41afe 100644
+--- a/src/Init/Data/List/BasicAux.lean
++++ b/src/Init/Data/List/BasicAux.lean
+@@ -192,7 +192,7 @@ macro "sizeOf_list_dec" : tactic =>
+   `(tactic| first
+     | with_reducible apply sizeOf_lt_of_mem; assumption; done
+     | with_reducible
+-        apply Nat.lt_trans (sizeOf_lt_of_mem ?h)
++        apply Nat.lt_of_lt_of_le (sizeOf_lt_of_mem ?h)
+         case' h => assumption
+       simp_arith)
+ 

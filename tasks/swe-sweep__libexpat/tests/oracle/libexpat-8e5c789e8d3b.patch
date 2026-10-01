@@ -1,0 +1,16 @@
+diff --git a/expat/lib/xmlparse.c b/expat/lib/xmlparse.c
+index d54af683..5ce31402 100644
+--- a/expat/lib/xmlparse.c
++++ b/expat/lib/xmlparse.c
+@@ -2067,6 +2067,11 @@ XML_GetBuffer(XML_Parser parser, int len) {
+     keep = (int)EXPAT_SAFE_PTR_DIFF(parser->m_bufferPtr, parser->m_buffer);
+     if (keep > XML_CONTEXT_BYTES)
+       keep = XML_CONTEXT_BYTES;
++    /* Detect and prevent integer overflow */
++    if (keep > INT_MAX - neededSize) {
++      parser->m_errorCode = XML_ERROR_NO_MEMORY;
++      return NULL;
++    }
+     neededSize += keep;
+ #endif /* defined XML_CONTEXT_BYTES */
+     if (neededSize

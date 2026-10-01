@@ -1,0 +1,38 @@
+diff --git a/core/src/main/java/org/keycloak/representations/IDToken.java b/core/src/main/java/org/keycloak/representations/IDToken.java
+index 33c54b70ef..8f7f25958f 100755
+--- a/core/src/main/java/org/keycloak/representations/IDToken.java
++++ b/core/src/main/java/org/keycloak/representations/IDToken.java
+@@ -140,7 +140,7 @@ public class IDToken extends JsonWebToken {
+     // Financial API - Part 2: Read and Write API Security Profile
+     // http://openid.net/specs/openid-financial-api-part-2.html#authorization-server
+     @JsonProperty(S_HASH)
+-    protected String stateHash; 
++    protected String stateHash;
+ 
+     public String getNonce() {
+         return nonce;
+@@ -172,7 +172,7 @@ public class IDToken extends JsonWebToken {
+     @Deprecated
+     @JsonIgnore
+     public String getSessionState() {
+-        return sessionId;
++        return getSessionId();
+     }
+ 
+     public String getAccessTokenHash() {
+diff --git a/core/src/main/java/org/keycloak/representations/RefreshToken.java b/core/src/main/java/org/keycloak/representations/RefreshToken.java
+index b7c0f77b13..2f6b5a1b75 100755
+--- a/core/src/main/java/org/keycloak/representations/RefreshToken.java
++++ b/core/src/main/java/org/keycloak/representations/RefreshToken.java
+@@ -53,4 +53,11 @@ public class RefreshToken extends AccessToken {
+     public TokenCategory getCategory() {
+         return TokenCategory.INTERNAL;
+     }
++
++    @Override
++    public String getSessionId() {
++        String sessionId = super.getSessionId();
++        // Fallback as offline tokens created in Keycloak 14 or earlier have only the "session_state" claim, but not "sid"
++        return sessionId != null ? sessionId : (String) getOtherClaims().get(IDToken.SESSION_STATE);
++    }
+ }

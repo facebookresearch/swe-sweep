@@ -1,0 +1,164 @@
+diff --git a/src/Symfony/Component/Validator/Tests/Mapping/Loader/Fixtures/ConstraintWithNamedArguments.php b/src/Symfony/Component/Validator/Tests/Mapping/Loader/Fixtures/ConstraintWithNamedArguments.php
+new file mode 100644
+index 00000000000..70579011c3c
+--- /dev/null
++++ b/src/Symfony/Component/Validator/Tests/Mapping/Loader/Fixtures/ConstraintWithNamedArguments.php
+@@ -0,0 +1,33 @@
++<?php
++
++/*
++ * This file is part of the Symfony package.
++ *
++ * (c) Fabien Potencier <fabien@symfony.com>
++ *
++ * For the full copyright and license information, please view the LICENSE
++ * file that was distributed with this source code.
++ */
++
++namespace Symfony\Component\Validator\Tests\Mapping\Loader\Fixtures;
++
++use Symfony\Component\Validator\Attribute\HasNamedArguments;
++use Symfony\Component\Validator\Constraint;
++
++class ConstraintWithNamedArguments extends Constraint
++{
++    public $choices;
++
++    #[HasNamedArguments]
++    public function __construct(array|string|null $choices = [], ?array $groups = null)
++    {
++        parent::__construct([], $groups);
++
++        $this->choices = $choices;
++    }
++
++    public function getTargets(): string
++    {
++        return self::CLASS_CONSTRAINT;
++    }
++}
+diff --git a/src/Symfony/Component/Validator/Tests/Mapping/Loader/Fixtures/ConstraintWithoutValueWithNamedArguments.php b/src/Symfony/Component/Validator/Tests/Mapping/Loader/Fixtures/ConstraintWithoutValueWithNamedArguments.php
+new file mode 100644
+index 00000000000..af950fc139a
+--- /dev/null
++++ b/src/Symfony/Component/Validator/Tests/Mapping/Loader/Fixtures/ConstraintWithoutValueWithNamedArguments.php
+@@ -0,0 +1,29 @@
++<?php
++
++/*
++ * This file is part of the Symfony package.
++ *
++ * (c) Fabien Potencier <fabien@symfony.com>
++ *
++ * For the full copyright and license information, please view the LICENSE
++ * file that was distributed with this source code.
++ */
++
++namespace Symfony\Component\Validator\Tests\Mapping\Loader\Fixtures;
++
++use Symfony\Component\Validator\Attribute\HasNamedArguments;
++use Symfony\Component\Validator\Constraint;
++
++class ConstraintWithoutValueWithNamedArguments extends Constraint
++{
++    #[HasNamedArguments]
++    public function __construct(?array $groups = null)
++    {
++        parent::__construct([], $groups);
++    }
++
++    public function getTargets(): string
++    {
++        return self::CLASS_CONSTRAINT;
++    }
++}
+diff --git a/src/Symfony/Component/Validator/Tests/Mapping/Loader/XmlFileLoaderTest.php b/src/Symfony/Component/Validator/Tests/Mapping/Loader/XmlFileLoaderTest.php
+index 5ba519ab195..2385dc888b2 100644
+--- a/src/Symfony/Component/Validator/Tests/Mapping/Loader/XmlFileLoaderTest.php
++++ b/src/Symfony/Component/Validator/Tests/Mapping/Loader/XmlFileLoaderTest.php
+@@ -32,6 +32,8 @@ use Symfony\Component\Validator\Tests\Fixtures\ConstraintWithRequiredArgument;
+ use Symfony\Component\Validator\Tests\Fixtures\Entity_81;
+ use Symfony\Component\Validator\Tests\Fixtures\NestedAttribute\Entity;
+ use Symfony\Component\Validator\Tests\Fixtures\NestedAttribute\GroupSequenceProviderEntity;
++use Symfony\Component\Validator\Tests\Mapping\Loader\Fixtures\ConstraintWithNamedArguments;
++use Symfony\Component\Validator\Tests\Mapping\Loader\Fixtures\ConstraintWithoutValueWithNamedArguments;
+ 
+ class XmlFileLoaderTest extends TestCase
+ {
+@@ -66,6 +68,9 @@ class XmlFileLoaderTest extends TestCase
+         $expected->addConstraint(new Callback('validateMeStatic'));
+         $expected->addConstraint(new Callback(['Symfony\Component\Validator\Tests\Fixtures\CallbackClass', 'callback']));
+         $expected->addConstraint(new Traverse(false));
++        $expected->addConstraint(new ConstraintWithNamedArguments('foo'));
++        $expected->addConstraint(new ConstraintWithNamedArguments(['foo', 'bar']));
++        $expected->addConstraint(new ConstraintWithoutValueWithNamedArguments(['foo']));
+         $expected->addPropertyConstraint('firstName', new NotNull());
+         $expected->addPropertyConstraint('firstName', new Range(['min' => 3]));
+         $expected->addPropertyConstraint('firstName', new Choice(['A', 'B']));
+diff --git a/src/Symfony/Component/Validator/Tests/Mapping/Loader/YamlFileLoaderTest.php b/src/Symfony/Component/Validator/Tests/Mapping/Loader/YamlFileLoaderTest.php
+index a5c983939bc..e34e5466ed6 100644
+--- a/src/Symfony/Component/Validator/Tests/Mapping/Loader/YamlFileLoaderTest.php
++++ b/src/Symfony/Component/Validator/Tests/Mapping/Loader/YamlFileLoaderTest.php
+@@ -29,6 +29,8 @@ use Symfony\Component\Validator\Tests\Fixtures\ConstraintWithRequiredArgument;
+ use Symfony\Component\Validator\Tests\Fixtures\Entity_81;
+ use Symfony\Component\Validator\Tests\Fixtures\NestedAttribute\Entity;
+ use Symfony\Component\Validator\Tests\Fixtures\NestedAttribute\GroupSequenceProviderEntity;
++use Symfony\Component\Validator\Tests\Mapping\Loader\Fixtures\ConstraintWithNamedArguments;
++use Symfony\Component\Validator\Tests\Mapping\Loader\Fixtures\ConstraintWithoutValueWithNamedArguments;
+ 
+ class YamlFileLoaderTest extends TestCase
+ {
+@@ -109,6 +111,9 @@ class YamlFileLoaderTest extends TestCase
+         $expected->addConstraint(new Callback('validateMe'));
+         $expected->addConstraint(new Callback('validateMeStatic'));
+         $expected->addConstraint(new Callback(['Symfony\Component\Validator\Tests\Fixtures\CallbackClass', 'callback']));
++        $expected->addConstraint(new ConstraintWithoutValueWithNamedArguments());
++        $expected->addConstraint(new ConstraintWithNamedArguments('foo'));
++        $expected->addConstraint(new ConstraintWithNamedArguments(['foo', 'bar']));
+         $expected->addPropertyConstraint('firstName', new NotNull());
+         $expected->addPropertyConstraint('firstName', new Range(['min' => 3]));
+         $expected->addPropertyConstraint('firstName', new Choice(['A', 'B']));
+diff --git a/src/Symfony/Component/Validator/Tests/Mapping/Loader/constraint-mapping.xml b/src/Symfony/Component/Validator/Tests/Mapping/Loader/constraint-mapping.xml
+index 6183b074a65..8a7975f1141 100644
+--- a/src/Symfony/Component/Validator/Tests/Mapping/Loader/constraint-mapping.xml
++++ b/src/Symfony/Component/Validator/Tests/Mapping/Loader/constraint-mapping.xml
+@@ -36,6 +36,22 @@
+         false
+     </constraint>
+ 
++    <!-- Constraint with named arguments support with scalar value -->
++    <constraint name="Symfony\Component\Validator\Tests\Mapping\Loader\Fixtures\ConstraintWithNamedArguments">
++      foo
++    </constraint>
++
++    <!-- Constraint with named arguments support with array value -->
++    <constraint name="Symfony\Component\Validator\Tests\Mapping\Loader\Fixtures\ConstraintWithNamedArguments">
++      <value>foo</value>
++      <value>bar</value>
++    </constraint>
++
++    <!-- Constraint with named arguments support with exactly one group -->
++    <constraint name="Symfony\Component\Validator\Tests\Mapping\Loader\Fixtures\ConstraintWithoutValueWithNamedArguments">
++      <option name="groups">foo</option>
++    </constraint>
++
+     <!-- PROPERTY CONSTRAINTS -->
+ 
+     <property name="firstName">
+diff --git a/src/Symfony/Component/Validator/Tests/Mapping/Loader/constraint-mapping.yml b/src/Symfony/Component/Validator/Tests/Mapping/Loader/constraint-mapping.yml
+index 0cf87cffe0a..af091a89fad 100644
+--- a/src/Symfony/Component/Validator/Tests/Mapping/Loader/constraint-mapping.yml
++++ b/src/Symfony/Component/Validator/Tests/Mapping/Loader/constraint-mapping.yml
+@@ -15,6 +15,12 @@ Symfony\Component\Validator\Tests\Fixtures\NestedAttribute\Entity:
+     - Callback: validateMe
+     - Callback: validateMeStatic
+     - Callback: [Symfony\Component\Validator\Tests\Fixtures\CallbackClass, callback]
++    # Constraint with named arguments support without value
++    - Symfony\Component\Validator\Tests\Mapping\Loader\Fixtures\ConstraintWithoutValueWithNamedArguments: ~
++    # Constraint with named arguments support with scalar value
++    - Symfony\Component\Validator\Tests\Mapping\Loader\Fixtures\ConstraintWithNamedArguments: foo
++    # Constraint with named arguments support with array value
++    - Symfony\Component\Validator\Tests\Mapping\Loader\Fixtures\ConstraintWithNamedArguments: [foo, bar]
+ 
+   properties:
+     firstName:

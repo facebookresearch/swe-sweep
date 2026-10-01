@@ -1,0 +1,433 @@
+{
+  "build_jobs": 4,
+  "container_repo": "/trino",
+  "evaluation": {
+    "suite": "reproduction",
+    "visible_timeout": 14400
+  },
+  "upstream_image": "pandora-maxbug-trino:361",
+  "n_base_passing": 50,
+  "n_base_test_ignore": 0,
+  "oracle_digest": "85a3ac89dcc9d312e5cb046e21d1a7946347022c29de9aef7b5ec09bcbc5a14c",
+  "oracle_pristine_paths": [],
+  "upstream_commit": "9f7399e15e6172900e0591deb5a57a45769d8205",
+  "reproduction": {
+    "jobs_env": "SWESWEEP_BUILD_JOBS",
+    "needs_build": false,
+    "suite": {
+      "goal": "test",
+      "mvn_args": [
+        "-Dair.check.skip-all=true",
+        "-Dmaven.javadoc.skip=true",
+        "-Denforcer.skip=true",
+        "-Dmaven.source.skip=true"
+      ],
+      "type": "maven"
+    },
+    "test_timeout": 1800
+  },
+  "schema": 2,
+  "subtasks": [
+    {
+      "f2p": [
+        "io.trino.plugin.hive.TestParquetPageSkipping.testFilteringOnColumnNameWithDot"
+      ],
+      "id": "trino-0654db89b71e",
+      "target_files": [
+        "lib/trino-parquet/src/main/java/io/trino/parquet/predicate/TupleDomainParquetPredicate.java"
+      ]
+    },
+    {
+      "f2p": [
+        "io.trino.plugin.iceberg.TestIcebergMaterializedViews.testCreateWithDuplicateSourceTableSucceeds"
+      ],
+      "id": "trino-0a637acd94da",
+      "target_files": [
+        "plugin/trino-iceberg/src/main/java/io/trino/plugin/iceberg/IcebergMetadata.java"
+      ]
+    },
+    {
+      "f2p": [
+        "io.trino.block.TestDictionaryBlock.testNestedCompact"
+      ],
+      "id": "trino-0e90f65c64ae",
+      "target_files": [
+        "core/trino-spi/src/main/java/io/trino/spi/block/DictionaryBlock.java"
+      ]
+    },
+    {
+      "f2p": [
+        "__process_level_failure__"
+      ],
+      "id": "trino-165617cc376a",
+      "target_files": [
+        "core/trino-main/src/main/java/io/trino/sql/planner/PlanOptimizers.java",
+        "core/trino-main/src/main/java/io/trino/sql/planner/iterative/rule/PushPredicateIntoTableScan.java",
+        "core/trino-main/src/main/java/io/trino/sql/planner/iterative/rule/RemoveRedundantTableScanPredicate.java",
+        "core/trino-main/src/main/java/io/trino/sql/planner/iterative/rule/SimplifyExpressions.java",
+        "core/trino-main/src/main/java/io/trino/sql/planner/optimizations/AddExchanges.java"
+      ]
+    },
+    {
+      "f2p": [
+        "io.trino.tests.TestInformationSchemaConnector.testMixedPredicate",
+        "io.trino.tests.TestInformationSchemaConnector.testSchemaNamePredicate",
+        "io.trino.tests.TestInformationSchemaConnector.testTableNamePredicate"
+      ],
+      "id": "trino-1f113d65e1d4",
+      "target_files": [
+        "core/trino-main/src/main/java/io/trino/connector/informationschema/InformationSchemaMetadata.java"
+      ]
+    },
+    {
+      "f2p": [
+        "io.trino.jdbc.TestJdbcConnection.testPreparedStatementCreationOption"
+      ],
+      "id": "trino-27e052ea63ec",
+      "target_files": [
+        "client/trino-jdbc/src/main/java/io/trino/jdbc/TrinoConnection.java"
+      ]
+    },
+    {
+      "f2p": [
+        "io.trino.sql.planner.TestLogicalPlanner.testDifferentOuterParentScopeSubqueries"
+      ],
+      "id": "trino-296b4a2be7e8",
+      "target_files": [
+        "core/trino-main/src/main/java/io/trino/sql/planner/ScopeAware.java"
+      ]
+    },
+    {
+      "f2p": [
+        "io.trino.sql.planner.TestEffectivePredicateExtractor.testValues"
+      ],
+      "id": "trino-2a28a7e6c9f9",
+      "target_files": [
+        "core/trino-main/src/main/java/io/trino/sql/planner/EffectivePredicateExtractor.java"
+      ]
+    },
+    {
+      "f2p": [
+        "io.trino.sql.query.TestSelectAll.testSelectAllFromRow"
+      ],
+      "id": "trino-2b875fea05f8",
+      "target_files": [
+        "core/trino-main/src/main/java/io/trino/sql/planner/TranslationMap.java"
+      ]
+    },
+    {
+      "f2p": [
+        "io.trino.sql.planner.TestDynamicFilter.testNotDistinctFromLeftJoin"
+      ],
+      "id": "trino-378e8fadfe3e",
+      "target_files": [
+        "core/trino-main/src/main/java/io/trino/metadata/FunctionRegistry.java",
+        "core/trino-main/src/main/java/io/trino/sql/DynamicFilters.java"
+      ]
+    },
+    {
+      "f2p": [
+        "io.trino.operator.scalar.timestamptz.TestOperators.testAddIntervalYearToMonth",
+        "io.trino.operator.scalar.timestamptz.TestOperators.testSubtractIntervalYearToMonth"
+      ],
+      "id": "trino-38bfebebbb5c",
+      "target_files": [
+        "core/trino-main/src/main/java/io/trino/operator/scalar/timestamptz/TimestampWithTimeZoneOperators.java"
+      ]
+    },
+    {
+      "f2p": [
+        "io.trino.sql.parser.TestSqlParser.testSessionIdentifiers"
+      ],
+      "id": "trino-3b002123bdd5",
+      "target_files": [
+        "core/trino-parser/src/main/java/io/trino/sql/SqlFormatter.java"
+      ]
+    },
+    {
+      "f2p": [
+        "io.trino.rcfile.TestRcFileDecoderUtils.testCalculateTruncationLength"
+      ],
+      "id": "trino-3f197bc45308",
+      "target_files": [
+        "lib/trino-hive-formats/src/main/java/io/trino/hive/formats/ReadWriteUtils.java"
+      ]
+    },
+    {
+      "f2p": [
+        "io.trino.plugin.tpcds.TestTpcds.testDateColumnValuesCorrectness"
+      ],
+      "id": "trino-45153eeda455",
+      "target_files": [
+        "plugin/trino-tpcds/src/main/java/io/trino/plugin/tpcds/TpcdsRecordSet.java"
+      ]
+    },
+    {
+      "f2p": [
+        "io.trino.plugin.hive.TestBackgroundHiveSplitLoader.testIncompleteDynamicFilterTimeout"
+      ],
+      "id": "trino-45aab4b0071d",
+      "target_files": [
+        "plugin/trino-hive/src/main/java/io/trino/plugin/hive/BackgroundHiveSplitLoader.java"
+      ]
+    },
+    {
+      "f2p": [
+        "io.trino.sql.query.TestJoin.testJoinWithComplexCriteria"
+      ],
+      "id": "trino-4666f6afee9f",
+      "target_files": [
+        "core/trino-main/src/main/java/io/trino/sql/planner/NullabilityAnalyzer.java"
+      ]
+    },
+    {
+      "f2p": [
+        "io.trino.operator.TestWindowOperator.testClose"
+      ],
+      "id": "trino-46e87b2ccd72",
+      "target_files": [
+        "core/trino-main/src/main/java/io/trino/operator/WindowInfo.java"
+      ]
+    },
+    {
+      "f2p": [
+        "io.trino.tests.TestDistributedEngineOnlyQueries.testInsertTableIntoTable"
+      ],
+      "id": "trino-4e4ccbf44a7e",
+      "target_files": [
+        "core/trino-main/src/main/java/io/trino/sql/planner/LogicalPlanner.java"
+      ]
+    },
+    {
+      "f2p": [
+        "io.trino.server.TestSliceSerialization.testRoundTrip"
+      ],
+      "id": "trino-538410af21ab",
+      "target_files": [
+        "core/trino-main/src/main/java/io/trino/server/SliceSerialization.java"
+      ]
+    },
+    {
+      "f2p": [
+        "io.trino.operator.scalar.TestMathFunctions.testRound"
+      ],
+      "id": "trino-5404257312c6",
+      "target_files": [
+        "core/trino-main/src/main/java/io/trino/operator/scalar/MathFunctions.java"
+      ]
+    },
+    {
+      "f2p": [
+        "io.trino.plugin.hive.TestHiveConnectorTest.testIoExplainWithStructuralTypes"
+      ],
+      "id": "trino-5e4933c36870",
+      "target_files": [
+        "core/trino-main/src/main/java/io/trino/sql/planner/planprinter/IoPlanPrinter.java",
+        "core/trino-main/src/main/java/io/trino/sql/planner/planprinter/ValuePrinter.java"
+      ]
+    },
+    {
+      "f2p": [
+        "io.trino.server.TestQueryResource.testIdempotentResults"
+      ],
+      "id": "trino-5f3ea620e8a6",
+      "target_files": [
+        "core/trino-main/src/main/java/io/trino/server/protocol/QueryResultRows.java"
+      ]
+    },
+    {
+      "f2p": [
+        "io.trino.sql.query.TestRecursiveCte.testDuplicateOutputsInAnchorAndStepRelation"
+      ],
+      "id": "trino-66386a9ccc04",
+      "target_files": [
+        "core/trino-main/src/main/java/io/trino/sql/planner/QueryPlanner.java"
+      ]
+    },
+    {
+      "f2p": [
+        "io.trino.geospatial.serde.TestGeometrySerialization.testPolygon"
+      ],
+      "id": "trino-6e309eec8df8",
+      "target_files": [
+        "lib/trino-geospatial-toolkit/src/main/java/io/trino/geospatial/serde/JtsGeometrySerde.java"
+      ]
+    },
+    {
+      "f2p": [
+        "io.trino.operator.scalar.timestamptz.TestTimestampWithTimeZone.testToIso8601"
+      ],
+      "id": "trino-6f0d4db2c7ed",
+      "target_files": [
+        "core/trino-main/src/main/java/io/trino/operator/scalar/timestamptz/ToIso8601.java"
+      ]
+    },
+    {
+      "f2p": [
+        "io.trino.plugin.hive.optimizer.TestConnectorPushdownRulesWithHive.testPushdownWithDuplicateExpressions"
+      ],
+      "id": "trino-7271371ace39",
+      "target_files": [
+        "core/trino-main/src/main/java/io/trino/sql/planner/iterative/rule/PushProjectionIntoTableScan.java"
+      ]
+    },
+    {
+      "f2p": [
+        "io.trino.orc.TestSliceDictionaryColumnWriter.testBloomFiltersAfterConvertToDirect"
+      ],
+      "id": "trino-7731bd9c5643",
+      "target_files": [
+        "lib/trino-orc/src/main/java/io/trino/orc/writer/SliceDictionaryColumnWriter.java"
+      ]
+    },
+    {
+      "f2p": [
+        "io.trino.sql.parser.TestSqlParser.testPrepareDropView"
+      ],
+      "id": "trino-77479c3d6298",
+      "target_files": [
+        "core/trino-parser/src/main/java/io/trino/sql/SqlFormatter.java"
+      ]
+    },
+    {
+      "f2p": [
+        "io.trino.type.TestDecimalCasts.testShortDecimalToRealDoubleRounding"
+      ],
+      "id": "trino-7d460aa38a49",
+      "target_files": [
+        "core/trino-spi/src/main/java/io/trino/spi/type/DecimalConversions.java"
+      ]
+    },
+    {
+      "f2p": [
+        "io.trino.plugin.hive.TestShowStats.testShowStatsWithBoolean"
+      ],
+      "id": "trino-84e63bf33b14",
+      "target_files": [
+        "core/trino-main/src/main/java/io/trino/sql/rewrite/ShowStatsRewrite.java"
+      ]
+    },
+    {
+      "f2p": [
+        "io.trino.tests.TestTablesample.testInSubquery"
+      ],
+      "id": "trino-8c092fc417f3",
+      "target_files": [
+        "core/trino-parser/src/main/java/io/trino/sql/tree/SampledRelation.java"
+      ]
+    },
+    {
+      "f2p": [
+        "io.trino.operator.scalar.TestMathFunctions.testRound"
+      ],
+      "id": "trino-9a4d7c41c069",
+      "target_files": [
+        "core/trino-main/src/main/java/io/trino/operator/scalar/MathFunctions.java"
+      ]
+    },
+    {
+      "f2p": [
+        "io.trino.jdbc.TestJdbcPreparedStatement.testConvertDecimal"
+      ],
+      "id": "trino-a67fe6e5c5d0",
+      "target_files": [
+        "client/trino-jdbc/src/main/java/io/trino/jdbc/TrinoPreparedStatement.java"
+      ]
+    },
+    {
+      "f2p": [
+        "io.trino.type.TestCharacterStringCasts.testVarcharToCharSaturatedFloorCast"
+      ],
+      "id": "trino-b60bd141dd6b",
+      "target_files": [
+        "core/trino-main/src/main/java/io/trino/operator/scalar/CharacterStringCasts.java"
+      ]
+    },
+    {
+      "f2p": [
+        "io.trino.plugin.hive.TestHiveDynamicPartitionPruning.testJoinWithComparingSameColumnUnderDifferentConditions"
+      ],
+      "id": "trino-bd6c132349d8",
+      "target_files": [
+        "core/trino-main/src/main/java/io/trino/server/DynamicFilterService.java"
+      ]
+    },
+    {
+      "f2p": [
+        "io.trino.sql.parser.TestSqlParser.testDropTable",
+        "io.trino.sql.parser.TestSqlParser.testInsertInto"
+      ],
+      "id": "trino-be6262608766",
+      "target_files": [
+        "core/trino-parser/src/main/java/io/trino/sql/SqlFormatter.java"
+      ]
+    },
+    {
+      "f2p": [
+        "io.trino.orc.stream.TestLongStreamV2.testSmallValue"
+      ],
+      "id": "trino-bf059856b34c",
+      "target_files": [
+        "lib/trino-orc/src/main/java/io/trino/orc/stream/OrcInputStream.java"
+      ]
+    },
+    {
+      "f2p": [
+        "io.trino.plugin.iceberg.util.TestPrimitiveTypeMapBuilder.testMakeTypeMapProducesCorrectMapForTypesWithQuotes"
+      ],
+      "id": "trino-d1819ad4e6e2",
+      "target_files": [
+        "plugin/trino-iceberg/src/main/java/io/trino/plugin/iceberg/util/PrimitiveTypeMapBuilder.java"
+      ]
+    },
+    {
+      "f2p": [
+        "io.trino.execution.TestTableRedirection.testTableListing"
+      ],
+      "id": "trino-ee34a852b379",
+      "target_files": [
+        "core/trino-main/src/main/java/io/trino/metadata/MetadataListing.java",
+        "core/trino-main/src/main/java/io/trino/metadata/MetadataManager.java"
+      ]
+    },
+    {
+      "f2p": [
+        "io.trino.plugin.hive.TestHiveConnectorTest.testParquetShortDecimalPredicatePushdown"
+      ],
+      "id": "trino-ef48a1f92f25",
+      "target_files": [
+        "lib/trino-parquet/src/main/java/io/trino/parquet/predicate/PredicateUtils.java"
+      ]
+    },
+    {
+      "f2p": [
+        "io.trino.plugin.tpcds.TestTpcds.testTimeRepresentation"
+      ],
+      "id": "trino-f692cdff3d78",
+      "target_files": [
+        "plugin/trino-tpcds/src/main/java/io/trino/plugin/tpcds/TpcdsRecordSet.java"
+      ]
+    },
+    {
+      "f2p": [
+        "io.trino.plugin.hive.TestParquetPageSkipping.testPageSkippingWithNonSequentialOffsets"
+      ],
+      "id": "trino-fae4b516bebc",
+      "target_files": [
+        "lib/trino-parquet/src/main/java/io/trino/parquet/reader/FilteredOffsetIndex.java",
+        "lib/trino-parquet/src/main/java/io/trino/parquet/reader/ParquetColumnChunk.java"
+      ]
+    },
+    {
+      "f2p": [
+        "io.trino.sql.query.TestColumnMask.testMultipleMasksUsingOtherMaskedColumns"
+      ],
+      "id": "trino-fc950eb7dd1a",
+      "target_files": [
+        "core/trino-main/src/main/java/io/trino/sql/planner/iterative/rule/InlineProjections.java"
+      ]
+    }
+  ],
+  "task": "trino",
+  "version": "361"
+}

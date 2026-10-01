@@ -1,0 +1,13 @@
+diff --git a/xarray/core/missing.py b/xarray/core/missing.py
+index 1caa79a7..d7f0be5f 100644
+--- a/xarray/core/missing.py
++++ b/xarray/core/missing.py
+@@ -48,7 +48,7 @@ def _get_nan_block_lengths(
+         .where(valid)
+         .bfill(dim=dim)
+         .where(~valid, 0)
+-        .fillna(index[-1] - valid_arange.max())
++        .fillna(index[-1] - valid_arange.max(dim=[dim]))
+     )
+ 
+     return nan_block_lengths

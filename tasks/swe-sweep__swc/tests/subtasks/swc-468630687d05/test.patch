@@ -1,0 +1,40 @@
+diff --git a/crates/swc_ecma_codegen/tests/fixture/typescript/interface/input.ts b/crates/swc_ecma_codegen/tests/fixture/typescript/interface/input.ts
+new file mode 100644
+index 0000000000..4502827b01
+--- /dev/null
++++ b/crates/swc_ecma_codegen/tests/fixture/typescript/interface/input.ts
+@@ -0,0 +1,14 @@
++const symbol1 = Symbol();
++const symbol2 = Symbol();
++const symbol3 = Symbol();
++
++export interface Test {
++  [symbol1]: string;
++  [symbol2](): string;
++  get [symbol3](): string;
++  set [symbol3](value: string);
++  prop1: string;
++  method1(value: string, param2: number): string;
++  get method2(): string;
++  set method2(value: string);
++}
+\ No newline at end of file
+diff --git a/crates/swc_ecma_codegen/tests/fixture/typescript/interface/output.ts b/crates/swc_ecma_codegen/tests/fixture/typescript/interface/output.ts
+new file mode 100644
+index 0000000000..ab8b42f791
+--- /dev/null
++++ b/crates/swc_ecma_codegen/tests/fixture/typescript/interface/output.ts
+@@ -0,0 +1,13 @@
++const symbol1 = Symbol();
++const symbol2 = Symbol();
++const symbol3 = Symbol();
++export interface Test {
++    [symbol1]: string;
++    [symbol2](): string;
++    get [symbol3](): string;
++    set [symbol3](value: string);
++    prop1: string;
++    method1(value: string, param2: number): string;
++    get method2(): string;
++    set method2(value: string);
++}

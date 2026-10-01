@@ -1,0 +1,12 @@
+diff --git a/src/Symfony/Bundle/SecurityBundle/DataCollector/SecurityDataCollector.php b/src/Symfony/Bundle/SecurityBundle/DataCollector/SecurityDataCollector.php
+index 01eea81a383..72c76964bcb 100644
+--- a/src/Symfony/Bundle/SecurityBundle/DataCollector/SecurityDataCollector.php
++++ b/src/Symfony/Bundle/SecurityBundle/DataCollector/SecurityDataCollector.php
+@@ -145,6 +145,7 @@ class SecurityDataCollector extends DataCollector implements LateDataCollectorIn
+         // collect voters and access decision manager information
+         if ($this->accessDecisionManager instanceof TraceableAccessDecisionManager) {
+             $this->data['voter_strategy'] = $this->accessDecisionManager->getStrategy();
++            $this->data['voters'] = [];
+ 
+             foreach ($this->accessDecisionManager->getVoters() as $voter) {
+                 if ($voter instanceof TraceableVoter) {

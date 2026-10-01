@@ -1,0 +1,12 @@
+diff --git a/pandas/_libs/src/ujson/python/objToJSON.c b/pandas/_libs/src/ujson/python/objToJSON.c
+index cf530c8c07..06c3d823f7 100644
+--- a/pandas/_libs/src/ujson/python/objToJSON.c
++++ b/pandas/_libs/src/ujson/python/objToJSON.c
+@@ -927,7 +927,6 @@ int Dir_iterNext(JSOBJ _obj, JSONTypeContext *tc) {
+ 
+         GET_TC(tc)->itemName = itemName;
+         GET_TC(tc)->itemValue = itemValue;
+-        GET_TC(tc)->index++;
+ 
+         itemName = attr;
+         break;

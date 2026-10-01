@@ -1,0 +1,44 @@
+diff --git a/sklearn/cluster/tests/test_birch.py b/sklearn/cluster/tests/test_birch.py
+index c5d88c2bc6..3e7c6bb093 100644
+--- a/sklearn/cluster/tests/test_birch.py
++++ b/sklearn/cluster/tests/test_birch.py
+@@ -157,3 +157,39 @@ def test_threshold():
+     brc = Birch(threshold=5.0, n_clusters=None)
+     brc.fit(X)
+     check_threshold(brc, 5.)
++
++
++def test_both_subclusters_updated():
++    """Check that both subclusters are updated when a node a split, even when there are
++    duplicated data points. Non-regression test for #23269.
++    """
++
++    X = np.array(
++        [
++            [-2.6192791, -1.5053215],
++            [-2.9993038, -1.6863596],
++            [-2.3724914, -1.3438171],
++            [-2.336792, -1.3417323],
++            [-2.4089134, -1.3290224],
++            [-2.3724914, -1.3438171],
++            [-3.364009, -1.8846745],
++            [-2.3724914, -1.3438171],
++            [-2.617677, -1.5003285],
++            [-2.2960556, -1.3260119],
++            [-2.3724914, -1.3438171],
++            [-2.5459878, -1.4533926],
++            [-2.25979, -1.3003055],
++            [-2.4089134, -1.3290224],
++            [-2.3724914, -1.3438171],
++            [-2.4089134, -1.3290224],
++            [-2.5459878, -1.4533926],
++            [-2.3724914, -1.3438171],
++            [-2.9720619, -1.7058647],
++            [-2.336792, -1.3417323],
++            [-2.3724914, -1.3438171],
++        ],
++        dtype=np.float32,
++    )
++
++    # no error
++    Birch(branching_factor=5, threshold=1e-5, n_clusters=None).fit(X)

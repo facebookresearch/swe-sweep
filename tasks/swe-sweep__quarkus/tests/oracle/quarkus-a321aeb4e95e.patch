@@ -1,0 +1,28 @@
+diff --git a/independent-projects/arc/processor/src/main/java/io/quarkus/arc/processor/BeanInfo.java b/independent-projects/arc/processor/src/main/java/io/quarkus/arc/processor/BeanInfo.java
+index 6d67a7b13e8..8a8e131ed07 100644
+--- a/independent-projects/arc/processor/src/main/java/io/quarkus/arc/processor/BeanInfo.java
++++ b/independent-projects/arc/processor/src/main/java/io/quarkus/arc/processor/BeanInfo.java
+@@ -417,7 +417,7 @@ public class BeanInfo implements InjectionTargetInfo {
+      * @return {@code true} if the bean requires some customized destroy logic
+      */
+     public boolean hasDestroyLogic() {
+-        if (isInterceptor() || isDecorator()) {
++        if (isInterceptor()) {
+             return false;
+         }
+         if (disposer != null || destroyerConsumer != null) {
+diff --git a/independent-projects/arc/processor/src/main/java/io/quarkus/arc/processor/DecoratorGenerator.java b/independent-projects/arc/processor/src/main/java/io/quarkus/arc/processor/DecoratorGenerator.java
+index 2b3183d63d6..6b465ba11a4 100644
+--- a/independent-projects/arc/processor/src/main/java/io/quarkus/arc/processor/DecoratorGenerator.java
++++ b/independent-projects/arc/processor/src/main/java/io/quarkus/arc/processor/DecoratorGenerator.java
+@@ -125,6 +125,10 @@ public class DecoratorGenerator extends BeanGenerator {
+         implementCreate(classOutput, decoratorCreator, decorator, providerType, baseName,
+                 injectionPointToProviderField, Collections.emptyMap(), Collections.emptyMap(),
+                 targetPackage, isApplicationClass);
++        if (decorator.hasDestroyLogic()) {
++            implementDestroy(decorator, decoratorCreator, providerType, Collections.emptyMap(), isApplicationClass, baseName,
++                    targetPackage);
++        }
+         implementGet(decorator, decoratorCreator, providerType, baseName);
+         implementGetTypes(decoratorCreator, beanTypes.getFieldDescriptor());
+         implementGetBeanClass(decorator, decoratorCreator);

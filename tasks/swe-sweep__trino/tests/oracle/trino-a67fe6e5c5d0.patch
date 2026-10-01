@@ -1,0 +1,13 @@
+diff --git a/client/trino-jdbc/src/main/java/io/trino/jdbc/TrinoPreparedStatement.java b/client/trino-jdbc/src/main/java/io/trino/jdbc/TrinoPreparedStatement.java
+index e9af388bbeb..e315f767937 100644
+--- a/client/trino-jdbc/src/main/java/io/trino/jdbc/TrinoPreparedStatement.java
++++ b/client/trino-jdbc/src/main/java/io/trino/jdbc/TrinoPreparedStatement.java
+@@ -252,7 +252,7 @@ public class TrinoPreparedStatement
+             setNull(parameterIndex, Types.DECIMAL);
+         }
+         else {
+-            setParameter(parameterIndex, formatLiteral("DECIMAL", x.toString()));
++            setParameter(parameterIndex, formatLiteral("DECIMAL", x.toPlainString()));
+         }
+     }
+ 

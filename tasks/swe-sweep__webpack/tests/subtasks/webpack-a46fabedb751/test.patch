@@ -1,0 +1,48 @@
+diff --git a/test/configCases/web/node-source-global/index.js b/test/configCases/web/node-source-global/index.js
+new file mode 100644
+index 000000000..31fa335c8
+--- /dev/null
++++ b/test/configCases/web/node-source-global/index.js
+@@ -0,0 +1,9 @@
++it("should disallow rename global", () => {
++	var shouldBeGlobal = global;
++	// prevent optimizations
++	var method = shouldBeGlobal[String.fromCharCode(40, 40, 40)];
++	method && method();
++	eval("expect(shouldBeGlobal.value1).toBe('value1')");
++	expect(shouldBeGlobal.test).toBe("test");
++	expect(global.test).toBe("test");
++});
+diff --git a/test/configCases/web/node-source-global/test.config.js b/test/configCases/web/node-source-global/test.config.js
+new file mode 100644
+index 000000000..b5337739a
+--- /dev/null
++++ b/test/configCases/web/node-source-global/test.config.js
+@@ -0,0 +1,8 @@
++module.exports = {
++	moduleScope(scope) {
++		scope.global = scope.global || {};
++		scope.global.value1 = "error";
++		scope.globalThis = scope.globalThis || {};
++		scope.globalThis.value1 = "value1";
++	}
++};
+diff --git a/test/configCases/web/node-source-global/webpack.config.js b/test/configCases/web/node-source-global/webpack.config.js
+new file mode 100644
+index 000000000..4cae9c33b
+--- /dev/null
++++ b/test/configCases/web/node-source-global/webpack.config.js
+@@ -0,0 +1,13 @@
++const { DefinePlugin } = require("../../../../");
++
++/** @type {import("../../../../").Configuration} */
++module.exports = {
++	node: {
++		global: true
++	},
++	plugins: [
++		new DefinePlugin({
++			"global.test": "'test'"
++		})
++	]
++};

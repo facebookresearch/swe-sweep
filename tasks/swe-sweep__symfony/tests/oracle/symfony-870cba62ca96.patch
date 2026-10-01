@@ -1,0 +1,12 @@
+diff --git a/src/Symfony/Component/Cache/Adapter/NullAdapter.php b/src/Symfony/Component/Cache/Adapter/NullAdapter.php
+index c38326ff6a6..4fd51c9eca1 100644
+--- a/src/Symfony/Component/Cache/Adapter/NullAdapter.php
++++ b/src/Symfony/Component/Cache/Adapter/NullAdapter.php
+@@ -28,6 +28,7 @@ class NullAdapter implements AdapterInterface, CacheInterface, NamespacedPoolInt
+         self::$createCacheItem ??= \Closure::bind(
+             static function ($key) {
+                 $item = new CacheItem();
++                $item->isTaggable = true;
+                 $item->key = $key;
+                 $item->isHit = false;
+ 

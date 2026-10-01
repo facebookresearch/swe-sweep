@@ -1,0 +1,147 @@
+diff --git a/tests/ui/match_ref_pats.fixed b/tests/ui/match_ref_pats.fixed
+index 8add3da0c..f72754683 100644
+--- a/tests/ui/match_ref_pats.fixed
++++ b/tests/ui/match_ref_pats.fixed
+@@ -1,6 +1,12 @@
+ #![warn(clippy::match_ref_pats)]
+ #![allow(dead_code, unused_variables)]
+-#![allow(clippy::enum_variant_names, clippy::equatable_if_let, clippy::uninlined_format_args)]
++#![allow(
++    clippy::enum_variant_names,
++    clippy::equatable_if_let,
++    clippy::uninlined_format_args,
++    clippy::empty_loop,
++    clippy::diverging_sub_expression
++)]
+ 
+ fn ref_pats() {
+     {
+@@ -120,4 +126,32 @@ mod issue_7740 {
+     }
+ }
+ 
++mod issue15378 {
++    fn never_in_match() {
++        match unimplemented!() {
++            &_ => {},
++            &&&42 => {
++                todo!()
++            },
++            _ => {},
++        }
++
++        match panic!() {
++            &_ => {},
++            &&&42 => {
++                todo!()
++            },
++            _ => {},
++        }
++
++        match loop {} {
++            &_ => {},
++            &&&42 => {
++                todo!()
++            },
++            _ => {},
++        }
++    }
++}
++
+ fn main() {}
+diff --git a/tests/ui/match_ref_pats.rs b/tests/ui/match_ref_pats.rs
+index 07889b0df..eca4d584a 100644
+--- a/tests/ui/match_ref_pats.rs
++++ b/tests/ui/match_ref_pats.rs
+@@ -1,6 +1,12 @@
+ #![warn(clippy::match_ref_pats)]
+ #![allow(dead_code, unused_variables)]
+-#![allow(clippy::enum_variant_names, clippy::equatable_if_let, clippy::uninlined_format_args)]
++#![allow(
++    clippy::enum_variant_names,
++    clippy::equatable_if_let,
++    clippy::uninlined_format_args,
++    clippy::empty_loop,
++    clippy::diverging_sub_expression
++)]
+ 
+ fn ref_pats() {
+     {
+@@ -120,4 +126,32 @@ mod issue_7740 {
+     }
+ }
+ 
++mod issue15378 {
++    fn never_in_match() {
++        match unimplemented!() {
++            &_ => {},
++            &&&42 => {
++                todo!()
++            },
++            _ => {},
++        }
++
++        match panic!() {
++            &_ => {},
++            &&&42 => {
++                todo!()
++            },
++            _ => {},
++        }
++
++        match loop {} {
++            &_ => {},
++            &&&42 => {
++                todo!()
++            },
++            _ => {},
++        }
++    }
++}
++
+ fn main() {}
+diff --git a/tests/ui/match_ref_pats.stderr b/tests/ui/match_ref_pats.stderr
+index f81b290b3..ecb08e697 100644
+--- a/tests/ui/match_ref_pats.stderr
++++ b/tests/ui/match_ref_pats.stderr
+@@ -1,5 +1,5 @@
+ error: you don't need to add `&` to all patterns
+-  --> tests/ui/match_ref_pats.rs:8:9
++  --> tests/ui/match_ref_pats.rs:14:9
+    |
+ LL | /         match v {
+ LL | |
+@@ -19,7 +19,7 @@ LL ~             None => println!("none"),
+    |
+ 
+ error: you don't need to add `&` to both the expression and the patterns
+-  --> tests/ui/match_ref_pats.rs:26:5
++  --> tests/ui/match_ref_pats.rs:32:5
+    |
+ LL | /     match &w {
+ LL | |
+@@ -37,7 +37,7 @@ LL ~         None => println!("none"),
+    |
+ 
+ error: redundant pattern matching, consider using `is_none()`
+-  --> tests/ui/match_ref_pats.rs:39:12
++  --> tests/ui/match_ref_pats.rs:45:12
+    |
+ LL |     if let &None = a {
+    |     -------^^^^^---- help: try: `if a.is_none()`
+@@ -46,13 +46,13 @@ LL |     if let &None = a {
+    = help: to override `-D warnings` add `#[allow(clippy::redundant_pattern_matching)]`
+ 
+ error: redundant pattern matching, consider using `is_none()`
+-  --> tests/ui/match_ref_pats.rs:45:12
++  --> tests/ui/match_ref_pats.rs:51:12
+    |
+ LL |     if let &None = &b {
+    |     -------^^^^^----- help: try: `if b.is_none()`
+ 
+ error: you don't need to add `&` to all patterns
+-  --> tests/ui/match_ref_pats.rs:106:9
++  --> tests/ui/match_ref_pats.rs:112:9
+    |
+ LL | /         match foobar_variant!(0) {
+ LL | |

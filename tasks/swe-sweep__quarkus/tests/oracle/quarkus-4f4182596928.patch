@@ -1,0 +1,28 @@
+diff --git a/independent-projects/resteasy-reactive/server/runtime/src/main/java/org/jboss/resteasy/reactive/server/core/ResteasyReactiveRequestContext.java b/independent-projects/resteasy-reactive/server/runtime/src/main/java/org/jboss/resteasy/reactive/server/core/ResteasyReactiveRequestContext.java
+index cb3cec7776e..657599ca1a9 100644
+--- a/independent-projects/resteasy-reactive/server/runtime/src/main/java/org/jboss/resteasy/reactive/server/core/ResteasyReactiveRequestContext.java
++++ b/independent-projects/resteasy-reactive/server/runtime/src/main/java/org/jboss/resteasy/reactive/server/core/ResteasyReactiveRequestContext.java
+@@ -435,6 +435,9 @@ public abstract class ResteasyReactiveRequestContext
+             if (!prefix.isEmpty()) {
+                 // FIXME: can we really have paths that don't start with the prefix if there's a prefix?
+                 if (path.startsWith(prefix)) {
++                    if (path.length() == prefix.length()) {
++                        return "/";
++                    }
+                     return path.substring(prefix.length());
+                 }
+             }
+diff --git a/independent-projects/resteasy-reactive/server/runtime/src/main/java/org/jboss/resteasy/reactive/server/jaxrs/UriInfoImpl.java b/independent-projects/resteasy-reactive/server/runtime/src/main/java/org/jboss/resteasy/reactive/server/jaxrs/UriInfoImpl.java
+index 987bbf28381..7dd314457a2 100644
+--- a/independent-projects/resteasy-reactive/server/runtime/src/main/java/org/jboss/resteasy/reactive/server/jaxrs/UriInfoImpl.java
++++ b/independent-projects/resteasy-reactive/server/runtime/src/main/java/org/jboss/resteasy/reactive/server/jaxrs/UriInfoImpl.java
+@@ -55,6 +55,9 @@ public class UriInfoImpl implements UriInfo {
+         if (prefix.isEmpty())
+             return path;
+         // else skip the prefix
++        if (path.length() == prefix.length()) {
++            return "/";
++        }
+         return path.substring(prefix.length());
+     }
+ 

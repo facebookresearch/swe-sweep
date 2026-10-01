@@ -1,0 +1,16 @@
+diff --git a/sqlglot/dialects/postgres.py b/sqlglot/dialects/postgres.py
+index 1332eea11a..c51928f364 100644
+--- a/sqlglot/dialects/postgres.py
++++ b/sqlglot/dialects/postgres.py
+@@ -499,6 +499,11 @@ class Postgres(Dialect):
+             TokenType.END: lambda self: self._parse_commit_or_rollback(),
+         }
+ 
++        UNARY_PARSERS = {
++            **parser.Parser.UNARY_PARSERS,
++            TokenType.RLIKE: lambda self: self.expression(exp.BitwiseNot, this=self._parse_unary()),
++        }
++
+         JSON_ARROWS_REQUIRE_JSON_TYPE = True
+ 
+         COLUMN_OPERATORS = {

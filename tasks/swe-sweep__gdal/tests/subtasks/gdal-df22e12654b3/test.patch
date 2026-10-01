@@ -1,0 +1,27 @@
+diff --git a/autotest/utilities/test_gdalwarp_lib.py b/autotest/utilities/test_gdalwarp_lib.py
+index 7b8e16f1ef..4738c3639d 100755
+--- a/autotest/utilities/test_gdalwarp_lib.py
++++ b/autotest/utilities/test_gdalwarp_lib.py
+@@ -3128,3 +3128,22 @@ def test_gdalwarp_lib_cleanup():
+         os.remove("tmp/testgdalwarp_gcp.tif")
+     except OSError:
+         pass
++
++
++###############################################################################
++# Test bugfix for https://github.com/OSGeo/gdal/issues/10892
++
++
++def test_gdalwarp_lib_average_ten_ten_to_one_one():
++
++    src_ds = gdal.GetDriverByName("MEM").Create("", 10, 10)
++    src_ds.SetGeoTransform([0, 1, 0, 0, 0, -1])
++    srs = osr.SpatialReference()
++    srs.SetFromUserInput("WGS84")
++    srs.SetAxisMappingStrategy(osr.OAMS_TRADITIONAL_GIS_ORDER)
++    src_ds.SetSpatialRef(srs)
++    src_ds.GetRasterBand(1).Fill(1)
++    out_ds = gdal.Warp(
++        "", src_ds, width=1, height=1, resampleAlg=gdal.GRIORA_Average, format="MEM"
++    )
++    assert out_ds.GetRasterBand(1).ComputeRasterMinMax() == (1, 1)

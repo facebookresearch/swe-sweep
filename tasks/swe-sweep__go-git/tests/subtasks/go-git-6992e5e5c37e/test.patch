@@ -1,0 +1,45 @@
+diff --git a/worktree_test.go b/worktree_test.go
+index 75d87118..941bcb17 100644
+--- a/worktree_test.go
++++ b/worktree_test.go
+@@ -1253,6 +1253,39 @@ func (s *WorktreeSuite) TestAddUntracked(c *C) {
+ 	c.Assert(obj, NotNil)
+ 	c.Assert(obj.Size(), Equals, int64(3))
+ }
+ 
++func (s *WorktreeSuite) TestAddAbsolutePath(c *C) {
++	dir := c.MkDir()
++
++	r, err := PlainInit(dir, false)
++	c.Assert(err, IsNil)
++
++	w, err := r.Worktree()
++	c.Assert(err, IsNil)
++
++	err = util.WriteFile(w.Filesystem, "foo.txt", []byte("FOO"), 0o644)
++	c.Assert(err, IsNil)
++
++	absPath := filepath.Join(dir, "foo.txt")
++	_, err = w.Add(absPath)
++	c.Assert(err, IsNil)
++
++	idx, err := w.r.Storer.Index()
++	c.Assert(err, IsNil)
++
++	_, err = idx.Entry("foo.txt")
++	c.Assert(err, IsNil)
++
++	_, err = idx.Entry(absPath)
++	c.Assert(err, NotNil)
++
++	status, err := w.Status()
++	c.Assert(err, IsNil)
++
++	file := status.File("foo.txt")
++	c.Assert(file.Staging, Equals, Added)
++	c.Assert(file.Worktree, Equals, Unmodified)
++}
++
+ func (s *WorktreeSuite) TestIgnored(c *C) {
+ 	fs := memfs.New()
+ 	w := &Worktree{

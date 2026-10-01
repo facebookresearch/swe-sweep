@@ -1,0 +1,26 @@
+diff --git a/activerecord/lib/active_record/associations/collection_proxy.rb b/activerecord/lib/active_record/associations/collection_proxy.rb
+index f3d106c55d2..471a19e9233 100644
+--- a/activerecord/lib/active_record/associations/collection_proxy.rb
++++ b/activerecord/lib/active_record/associations/collection_proxy.rb
+@@ -1108,7 +1108,7 @@ module ActiveRecord
+       ].flat_map { |klass|
+         klass.public_instance_methods(false)
+       } - self.public_instance_methods(false) - [:select] + [
+-        :scoping, :values, :insert, :insert_all, :insert!, :insert_all!, :upsert, :upsert_all
++        :scoping, :values, :insert, :insert_all, :insert!, :insert_all!, :upsert, :upsert_all, :load_async
+       ]
+ 
+       delegate(*delegate_methods, to: :scope)
+diff --git a/activerecord/lib/active_record/connection_adapters/sqlite3_adapter.rb b/activerecord/lib/active_record/connection_adapters/sqlite3_adapter.rb
+index ada25ae27dd..5215a533406 100644
+--- a/activerecord/lib/active_record/connection_adapters/sqlite3_adapter.rb
++++ b/activerecord/lib/active_record/connection_adapters/sqlite3_adapter.rb
+@@ -364,7 +364,7 @@ module ActiveRecord
+       end
+ 
+       def get_database_version # :nodoc:
+-        SQLite3Adapter::Version.new(query_value("SELECT sqlite_version(*)"))
++        SQLite3Adapter::Version.new(query_value("SELECT sqlite_version(*)", "SCHEMA"))
+       end
+ 
+       def check_version # :nodoc:

@@ -1,0 +1,118 @@
+diff --git a/integration-tests/rest-client-reactive-http2/src/main/java/io/quarkus/it/rest/client/http2/Client2.java b/integration-tests/rest-client-reactive-http2/src/main/java/io/quarkus/it/rest/client/http2/Client2.java
+new file mode 100644
+index 00000000000..40decac897c
+--- /dev/null
++++ b/integration-tests/rest-client-reactive-http2/src/main/java/io/quarkus/it/rest/client/http2/Client2.java
+@@ -0,0 +1,12 @@
++package io.quarkus.it.rest.client.http2;
++
++import jakarta.ws.rs.GET;
++import jakarta.ws.rs.Path;
++import jakarta.ws.rs.core.Response;
++
++@Path("/ping")
++public interface Client2 {
++
++    @GET
++    Response ping();
++}
+diff --git a/integration-tests/rest-client-reactive-http2/src/main/java/io/quarkus/it/rest/client/http2/Resource.java b/integration-tests/rest-client-reactive-http2/src/main/java/io/quarkus/it/rest/client/http2/Resource.java
+index 85511e3d23b..3689f13e03b 100644
+--- a/integration-tests/rest-client-reactive-http2/src/main/java/io/quarkus/it/rest/client/http2/Resource.java
++++ b/integration-tests/rest-client-reactive-http2/src/main/java/io/quarkus/it/rest/client/http2/Resource.java
+@@ -1,17 +1,33 @@
+ package io.quarkus.it.rest.client.http2;
+ 
++import java.net.MalformedURLException;
++import java.net.URL;
++
+ import jakarta.ws.rs.GET;
+ import jakarta.ws.rs.Path;
+ import jakarta.ws.rs.core.Response;
+ 
++import org.eclipse.microprofile.config.inject.ConfigProperty;
++import org.eclipse.microprofile.rest.client.RestClientBuilder;
+ import org.eclipse.microprofile.rest.client.inject.RestClient;
+ import org.jboss.resteasy.reactive.client.impl.ClientResponseImpl;
+ 
+ @Path("")
+ public class Resource {
+ 
+-    @RestClient
+-    Client client;
++    private final Client client;
++    private final Client2 client2;
++
++    public Resource(@ConfigProperty(name = "test.url") String testUrl, @RestClient Client client) {
++        this.client = client;
++        try {
++            this.client2 = RestClientBuilder.newBuilder()
++                    .baseUrl(new URL(testUrl))
++                    .build(Client2.class);
++        } catch (MalformedURLException e) {
++            throw new RuntimeException(e);
++        }
++    }
+ 
+     @GET
+     @Path("/client/ping")
+@@ -24,6 +40,17 @@ public class Resource {
+         return Response.noContent().build();
+     }
+ 
++    @GET
++    @Path("/client2/ping")
++    public Response client2() {
++        Response response = client2.ping();
++        if (((ClientResponseImpl) response).getHttpVersion().equals("HTTP_2")) {
++            return response;
++        }
++
++        return Response.noContent().build();
++    }
++
+     @GET
+     @Path("/ping")
+     public String ping() {
+diff --git a/integration-tests/rest-client-reactive-http2/src/main/resources/application.properties b/integration-tests/rest-client-reactive-http2/src/main/resources/application.properties
+index b9da60f1803..d7be5e72bc3 100644
+--- a/integration-tests/rest-client-reactive-http2/src/main/resources/application.properties
++++ b/integration-tests/rest-client-reactive-http2/src/main/resources/application.properties
+@@ -4,4 +4,7 @@ quarkus.rest-client.basic-client.http2=true
+ quarkus.rest-client.multipart-client.url=${test.url}
+ quarkus.rest-client.multipart-client.http2=true
+ 
+-quarkus.http.http2=true
+\ No newline at end of file
++#used for the manually created client
++quarkus.rest-client.http2=true
++
++quarkus.http.http2=true
+diff --git a/integration-tests/rest-client-reactive-http2/src/test/java/io/quarkus/it/rest/client/http2/ResourceTest.java b/integration-tests/rest-client-reactive-http2/src/test/java/io/quarkus/it/rest/client/http2/ResourceTest.java
+index 6ca48e8e5eb..3c8c0253458 100644
+--- a/integration-tests/rest-client-reactive-http2/src/test/java/io/quarkus/it/rest/client/http2/ResourceTest.java
++++ b/integration-tests/rest-client-reactive-http2/src/test/java/io/quarkus/it/rest/client/http2/ResourceTest.java
+@@ -28,6 +28,9 @@ public class ResourceTest {
+     @TestHTTPResource(value = "/client/ping")
+     URL clientUrl;
+ 
++    @TestHTTPResource(value = "/client2/ping")
++    URL client2Url;
++
+     private WebClient webClient;
+ 
+     @BeforeEach
+@@ -56,6 +59,13 @@ public class ResourceTest {
+         assertEquals("pong", response.bodyAsString());
+     }
+ 
++    @Test
++    public void shouldReturnPongFromManuallyCreatedClient() throws Exception {
++        HttpResponse<?> response = call(client2Url);
++        // if it's empty, it's because the REST Client is not using the HTTP/2 version
++        assertEquals("pong", response.bodyAsString());
++    }
++
+     private HttpResponse<?> call(URL url) throws Exception {
+         CompletableFuture<HttpResponse<Buffer>> result = new CompletableFuture<>();
+         webClient.get(url.getPort(), url.getHost(), url.getPath())

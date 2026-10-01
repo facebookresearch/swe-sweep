@@ -1,0 +1,13 @@
+diff --git a/numpy/core/src/multiarray/descriptor.c b/numpy/core/src/multiarray/descriptor.c
+index bb3cc9d..725ba67 100644
+--- a/numpy/core/src/multiarray/descriptor.c
++++ b/numpy/core/src/multiarray/descriptor.c
+@@ -1283,7 +1283,7 @@ _convert_from_dict(PyObject *obj, int align)
+             return NULL;
+         }
+         /* If align is set, make sure the alignment divides into the size */
+-        if (align && itemsize % new->alignment != 0) {
++        if (align && new->alignment > 0 && itemsize % new->alignment != 0) {
+             PyErr_Format(PyExc_ValueError,
+                     "NumPy dtype descriptor requires alignment of %d bytes, "
+                     "which is not divisible into the specified itemsize %d",

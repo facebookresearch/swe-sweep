@@ -1,0 +1,17 @@
+diff --git a/dolphinscheduler-task-plugin/dolphinscheduler-task-pytorch/src/test/java/org/apache/dolphinscheduler/plugin/task/pytorch/PytorchTaskTest.java b/dolphinscheduler-task-plugin/dolphinscheduler-task-pytorch/src/test/java/org/apache/dolphinscheduler/plugin/task/pytorch/PytorchTaskTest.java
+index c213021607..e35a175df1 100644
+--- a/dolphinscheduler-task-plugin/dolphinscheduler-task-pytorch/src/test/java/org/apache/dolphinscheduler/plugin/task/pytorch/PytorchTaskTest.java
++++ b/dolphinscheduler-task-plugin/dolphinscheduler-task-pytorch/src/test/java/org/apache/dolphinscheduler/plugin/task/pytorch/PytorchTaskTest.java
+@@ -72,6 +72,12 @@ public class PytorchTaskTest {
+ 
+     }
+ 
++    @Test
++    public void testGitProjectUrlInjection() {
++        Assertions.assertFalse(GitProjectManager.isGitPath("git@& cat /etc/passwd >/poc.txt #"));
++        Assertions.assertFalse(GitProjectManager.isGitPath("git@| cat /etc/passwd >/poc.txt #"));
++    }
++
+     @Test
+     public void testGitProject() {
+ 

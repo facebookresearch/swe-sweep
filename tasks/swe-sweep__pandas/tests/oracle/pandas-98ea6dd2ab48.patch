@@ -1,0 +1,17 @@
+diff --git a/pandas/core/indexing.py b/pandas/core/indexing.py
+index 8f776d280a..0ac44ba53a 100644
+--- a/pandas/core/indexing.py
++++ b/pandas/core/indexing.py
+@@ -1540,7 +1540,11 @@ class _iLocIndexer(_LocationIndexer):
+     def _get_setitem_indexer(self, key):
+         # GH#32257 Fall through to let numpy do validation
+         if is_iterator(key):
+-            return list(key)
++            key = list(key)
++
++        if self.axis is not None:
++            return self._convert_tuple(key)
++
+         return key
+ 
+     # -------------------------------------------------------------------

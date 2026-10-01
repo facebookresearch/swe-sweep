@@ -1,0 +1,39 @@
+diff --git a/compiler/src/dmd/dsymbolsem.d b/compiler/src/dmd/dsymbolsem.d
+index 322f43ea40..5a1434d698 100644
+--- a/compiler/src/dmd/dsymbolsem.d
++++ b/compiler/src/dmd/dsymbolsem.d
+@@ -338,6 +338,11 @@ private extern(C++) final class DsymbolSemanticVisitor : Visitor
+             return;
+         assert(dsym.semanticRun <= PASS.semantic);
+ 
++        if (!sc)
++            return;
++
++        dsym.semanticRun = PASS.semantic;
++
+         dsym.storage_class |= sc.stc & STC.deprecated_;
+         dsym.visibility = sc.visibility;
+         dsym.userAttribDecl = sc.userAttribDecl;
+diff --git a/compiler/src/dmd/dtemplate.d b/compiler/src/dmd/dtemplate.d
+index 6c78a62a94..305848f72c 100644
+--- a/compiler/src/dmd/dtemplate.d
++++ b/compiler/src/dmd/dtemplate.d
+@@ -6591,7 +6591,17 @@ extern (C++) class TemplateInstance : ScopeDsymbol
+         }
+ 
+         TemplateInstance ti = s.parent ? s.parent.isTemplateInstance() : null;
+-        if (ti && (ti.name == s.ident || ti.toAlias().ident == s.ident) && ti.tempdecl)
++
++        /* This avoids the VarDeclaration.toAlias() which runs semantic() too soon
++         */
++        static bool matchId(TemplateInstance ti, Identifier id)
++        {
++            if (ti.aliasdecl && ti.aliasdecl.isVarDeclaration())
++                return ti.aliasdecl.isVarDeclaration().ident == id;
++            return ti.toAlias().ident == id;
++        }
++
++        if (ti && (ti.name == s.ident || matchId(ti, s.ident)) && ti.tempdecl)
+         {
+             /* This is so that one can refer to the enclosing
+              * template, even if it has the same name as a member

@@ -1,0 +1,26 @@
+diff --git a/numpy/core/tests/test_dtype.py b/numpy/core/tests/test_dtype.py
+index 9c88ddb5cd79..2db170d09c4e 100644
+--- a/numpy/core/tests/test_dtype.py
++++ b/numpy/core/tests/test_dtype.py
+@@ -212,6 +212,21 @@ class TestRecord:
+         assert_equal(dt1.descr, [('a', '|i1'), ('', '|V3'),
+                                  ('b', [('f0', '<i2'), ('', '|V2'),
+                                  ('f1', '<f4')], (2,))])
++
++    def test_empty_struct_alignment(self):
++        # Empty dtypes should have an alignment of 1
++        dt = np.dtype([], align=True)
++        assert_equal(dt.alignment, 1)
++        dt = np.dtype([('f0', [])], align=True)
++        assert_equal(dt.alignment, 1)
++        dt = np.dtype({'names': [],
++                       'formats': [],
++                       'offsets': []}, align=True)
++        assert_equal(dt.alignment, 1)
++        dt = np.dtype({'names': ['f0'],
++                       'formats': [[]],
++                       'offsets': [0]}, align=True)
++        assert_equal(dt.alignment, 1)
+         
+ 
+     def test_union_struct(self):

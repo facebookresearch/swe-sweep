@@ -1,0 +1,35 @@
+diff --git a/pkg/analyzer/test/src/dart/resolution/postfix_expression_test.dart b/pkg/analyzer/test/src/dart/resolution/postfix_expression_test.dart
+index 02a909ad394..5c63587d2b4 100644
+--- a/pkg/analyzer/test/src/dart/resolution/postfix_expression_test.dart
++++ b/pkg/analyzer/test/src/dart/resolution/postfix_expression_test.dart
+@@ -412,6 +412,30 @@ PostfixExpression
+ ''');
+   }
+ 
++  test_nullCheck_interfaceType_viaAlias() async {
++    await assertNoErrorsInCode(r'''
++typedef A = String;
++
++void f(A? x) {
++  x!;
++}
++''');
++
++    final node = findNode.postfix('x!');
++    assertResolvedNodeText(node, r'''
++PostfixExpression
++  operand: SimpleIdentifier
++    token: x
++    staticElement: self::@function::f::@parameter::x
++    staticType: String?
++      alias: self::@typeAlias::A
++  operator: !
++  staticElement: <null>
++  staticType: String
++    alias: self::@typeAlias::A
++''');
++  }
++
+   test_nullCheck_null() async {
+     await assertErrorsInCode('''
+ void f(Null x) {

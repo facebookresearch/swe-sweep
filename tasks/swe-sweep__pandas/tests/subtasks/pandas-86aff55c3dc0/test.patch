@@ -1,0 +1,17 @@
+diff --git a/pandas/tests/reductions/test_reductions.py b/pandas/tests/reductions/test_reductions.py
+index a7bb807272..485b50f657 100644
+--- a/pandas/tests/reductions/test_reductions.py
++++ b/pandas/tests/reductions/test_reductions.py
+@@ -769,6 +769,12 @@ class TestSeriesReductions:
+                 result = s.max(skipna=False)
+                 assert np.allclose(float(result), v[-1])
+ 
++    def test_var_complex_array(self):
++        # GH#61645
++        ser = Series([-1j, 0j, 1j], dtype=complex)
++        assert ser.var(ddof=1) == 1.0
++        assert ser.std(ddof=1) == 1.0
++
+     def test_empty_timeseries_reductions_return_nat(self):
+         # covers GH#11245
+         for dtype in ("m8[ns]", "m8[ns]", "M8[ns]", "M8[ns, UTC]"):

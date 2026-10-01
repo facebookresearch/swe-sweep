@@ -1,0 +1,12 @@
+diff --git a/pkg/analyzer/lib/src/generated/error_verifier.dart b/pkg/analyzer/lib/src/generated/error_verifier.dart
+index 7545d9aa64b..b7d9688df82 100644
+--- a/pkg/analyzer/lib/src/generated/error_verifier.dart
++++ b/pkg/analyzer/lib/src/generated/error_verifier.dart
+@@ -873,6 +873,7 @@ class ErrorVerifier extends RecursiveAstVisitor<void>
+   @override
+   void visitFunctionReference(FunctionReference node) {
+     _typeArgumentsVerifier.checkFunctionReference(node);
++    super.visitFunctionReference(node);
+   }
+ 
+   @override

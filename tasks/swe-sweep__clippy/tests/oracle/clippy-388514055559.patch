@@ -1,0 +1,16 @@
+diff --git a/clippy_lints/src/semicolon_block.rs b/clippy_lints/src/semicolon_block.rs
+index bfa7980cd..90f2307ef 100644
+--- a/clippy_lints/src/semicolon_block.rs
++++ b/clippy_lints/src/semicolon_block.rs
+@@ -165,6 +165,11 @@ impl LateLintPass<'_> for SemicolonBlock {
+                 kind: ExprKind::Block(block @ Block { expr: Some(tail), .. }, _),
+                 ..
+             }) if !block.span.from_expansion() => {
++                let attrs = cx.tcx.hir_attrs(stmt.hir_id);
++                if !attrs.is_empty() && !cx.tcx.features().stmt_expr_attributes() {
++                    return;
++                }
++
+                 self.semicolon_inside_block(cx, block, tail, stmt.span);
+             },
+             _ => (),

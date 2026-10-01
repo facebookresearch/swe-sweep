@@ -1,0 +1,26 @@
+diff --git a/vlib/strconv/format_mem.c.v b/vlib/strconv/format_mem.c.v
+index 6896ebf..6c7be21 100644
+--- a/vlib/strconv/format_mem.c.v
++++ b/vlib/strconv/format_mem.c.v
+@@ -329,8 +329,8 @@ pub fn format_fl(f f64, p BF_param) string {
+ 			tmp.free()
+ 		}
+ 
+-		mut buf := [strconv.max_size_f64_char]u8{} // write temp float buffer in stack
+-		mut out := [strconv.max_size_f64_char]u8{} // out buffer
++		mut buf := []u8{len: p.len0 + 32} // write temp float buffer in stack
++		mut out := []u8{len: p.len0 + 32} // out buffer
+ 		mut buf_i := 0 // index temporary string
+ 		mut out_i := 0 // index output string
+ 
+@@ -400,8 +400,8 @@ pub fn format_es(f f64, p BF_param) string {
+ 			tmp.free()
+ 		}
+ 
+-		mut buf := [strconv.max_size_f64_char]u8{} // write temp float buffer in stack
+-		mut out := [strconv.max_size_f64_char]u8{} // out buffer
++		mut buf := []u8{len: p.len0 + 32} // write temp float buffer in stack
++		mut out := []u8{len: p.len0 + 32} // out buffer
+ 		mut buf_i := 0 // index temporary string
+ 		mut out_i := 0 // index output string
+ 

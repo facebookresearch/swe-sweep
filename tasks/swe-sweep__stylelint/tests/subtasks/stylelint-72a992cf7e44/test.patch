@@ -1,0 +1,70 @@
+diff --git a/lib/rules/selector-disallowed-list/__tests__/index.mjs b/lib/rules/selector-disallowed-list/__tests__/index.mjs
+index a40908f7f..7c36d174c 100644
+--- a/lib/rules/selector-disallowed-list/__tests__/index.mjs
++++ b/lib/rules/selector-disallowed-list/__tests__/index.mjs
+@@ -1,6 +1,7 @@
+-import rule from '../index.mjs';
+ import { stripIndent } from 'common-tags';
+ 
++import rule from '../index.mjs';
++
+ const { messages, ruleName } = rule;
+ 
+ testRule({
+@@ -86,6 +87,16 @@ testRule({
+ 		{
+ 			code: '.fooo {}',
+ 		},
++		{
++			code: stripIndent`
++				/* stylelint-disable-next-line selector-disallowed-list */
++				.foo, /* stylelint-disable-next-line selector-disallowed-list */
++				.foo,
++				/* stylelint-disable-next-line selector-disallowed-list */
++				.foo
++				{}
++			`,
++		},
+ 	],
+ 
+ 	reject: [
+@@ -121,6 +132,39 @@ testRule({
+ 			endColumn: 11,
+ 			endLine: 1,
+ 		},
++		{
++			code: stripIndent`
++				/* a comment */
++				.foo, /* a comment */
++				.foo,
++				/* a comment */
++				.foo
++				{}
++			`,
++			warnings: [
++				{
++					message: messages.rejected('.foo'),
++					line: 2,
++					column: 1,
++					endLine: 2,
++					endColumn: 5,
++				},
++				{
++					message: messages.rejected('.foo'),
++					line: 3,
++					column: 1,
++					endLine: 3,
++					endColumn: 5,
++				},
++				{
++					message: messages.rejected('.foo'),
++					line: 5,
++					column: 1,
++					endLine: 5,
++					endColumn: 5,
++				},
++			],
++		},
+ 	],
+ });
+ 

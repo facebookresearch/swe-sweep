@@ -1,0 +1,13 @@
+diff --git a/src/encoding/asn1/asn1.go b/src/encoding/asn1/asn1.go
+index 2e320897e3..f743cd6f69 100644
+--- a/src/encoding/asn1/asn1.go
++++ b/src/encoding/asn1/asn1.go
+@@ -365,7 +365,7 @@ func parseUTCTime(bytes []byte) (ret time.Time, err error) {
+ // parseGeneralizedTime parses the GeneralizedTime from the given byte slice
+ // and returns the resulting time.
+ func parseGeneralizedTime(bytes []byte) (ret time.Time, err error) {
+-	const formatStr = "20060102150405Z0700"
++	const formatStr = "20060102150405.999999999Z0700"
+ 	s := string(bytes)
+ 
+ 	if ret, err = time.Parse(formatStr, s); err != nil {

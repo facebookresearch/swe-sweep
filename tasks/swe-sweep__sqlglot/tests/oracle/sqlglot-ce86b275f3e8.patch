@@ -1,0 +1,26 @@
+diff --git a/sqlglot/tokens.py b/sqlglot/tokens.py
+index 9acf0cb006..74b7a81319 100644
+--- a/sqlglot/tokens.py
++++ b/sqlglot/tokens.py
+@@ -1427,7 +1427,7 @@ class Tokenizer(metaclass=_Tokenizer):
+         self._advance(len(start))
+         text = self._extract_string(end, raw_string=token_type == TokenType.RAW_STRING)
+ 
+-        if base:
++        if base and text:
+             try:
+                 int(text, base)
+             except Exception:
+diff --git a/sqlglotrs/src/tokenizer.rs b/sqlglotrs/src/tokenizer.rs
+index 6ca02a1421..90266ddb72 100644
+--- a/sqlglotrs/src/tokenizer.rs
++++ b/sqlglotrs/src/tokenizer.rs
+@@ -468,7 +468,7 @@ impl<'a> TokenizerState<'a> {
+             self.extract_string(&end, false, token_type == self.token_types.raw_string, true)?;
+ 
+         if let Some(b) = base {
+-            if u128::from_str_radix(&text, b).is_err() {
++            if !text.is_empty() && u128::from_str_radix(&text, b).is_err() {
+                 return self.error_result(format!(
+                     "Numeric string contains invalid characters from {}:{}",
+                     self.line, self.start

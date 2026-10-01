@@ -1,0 +1,61 @@
+diff --git a/compiler/src/dmd/dimport.d b/compiler/src/dmd/dimport.d
+index b653d9bbf8..c4d5ddbc07 100644
+--- a/compiler/src/dmd/dimport.d
++++ b/compiler/src/dmd/dimport.d
+@@ -26,6 +26,7 @@ import dmd.location;
+ import dmd.mtype;
+ import dmd.visitor;
+ 
++import core.stdc.stdio;
+ /***********************************************************
+  */
+ extern (C++) final class Import : Dsymbol
+@@ -232,7 +233,20 @@ extern (C++) final class Import : Dsymbol
+          * most likely because of parsing errors.
+          * Therefore we cannot trust the resulting AST.
+          */
+-        if (load(sc)) return;
++        if (load(sc))
++        {
++            // https://issues.dlang.org/show_bug.cgi?id=23873
++            // For imports that are not at module or function level,
++            // e.g. aggregate level, the import symbol is added to the
++            // symbol table and later semantic is performed on it.
++            // This leads to semantic analysis on an malformed AST
++            // which causes all kinds of segfaults.
++            // The fix is to note that the module has errors and avoid
++            // semantic analysis on it.
++            if(mod)
++                mod.errors = true;
++            return;
++        }
+ 
+         if (!mod) return; // Failed
+ 
+diff --git a/compiler/src/dmd/dsymbolsem.d b/compiler/src/dmd/dsymbolsem.d
+index 40c1f55..e359cb8 100644
+--- a/compiler/src/dmd/dsymbolsem.d
++++ b/compiler/src/dmd/dsymbolsem.d
+@@ -1273,9 +1273,9 @@ private extern(C++) final class DsymbolSemanticVisitor : Visitor
+     {
+         static if (LOG)
+         {
+-            printf("Import::semantic('%s') %s\n", toPrettyChars(), id.toChars());
++            printf("Import::semantic('%s') %s\n", imp.toPrettyChars(), imp.id.toChars());
+             scope(exit)
+-                printf("-Import::semantic('%s'), pkg = %p\n", toChars(), pkg);
++                printf("-Import::semantic('%s'), pkg = %p\n", imp.toChars(), imp.pkg);
+         }
+         if (imp.semanticRun > PASS.initial)
+             return;
+@@ -1340,7 +1340,9 @@ private extern(C++) final class DsymbolSemanticVisitor : Visitor
+ 
+             if (!loadErrored)
+             {
+-                imp.mod.dsymbolSemantic(null);
++                // if a module has errors it means that parsing has failed.
++                if (!imp.mod.errors)
++                    imp.mod.dsymbolSemantic(null);
+             }
+ 
+             if (imp.mod.needmoduleinfo)

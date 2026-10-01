@@ -1,0 +1,13 @@
+diff --git a/compiler/ast.nim b/compiler/ast.nim
+index f8343c1a3..6610a1333 100644
+--- a/compiler/ast.nim
++++ b/compiler/ast.nim
+@@ -1506,7 +1506,7 @@ proc assignType*(dest, src: PType) =
+   # this fixes 'type TLock = TSysLock':
+   if src.sym != nil:
+     if dest.sym != nil:
+-      dest.sym.flags.incl src.sym.flags-{sfExported}
++      dest.sym.flags.incl src.sym.flags-{sfUsed, sfExported}
+       if dest.sym.annex == nil: dest.sym.annex = src.sym.annex
+       mergeLoc(dest.sym.loc, src.sym.loc)
+     else:

@@ -1,0 +1,15 @@
+diff --git a/ogr/ogrsf_frmts/geojson/ogrgeojsonseqdriver.cpp b/ogr/ogrsf_frmts/geojson/ogrgeojsonseqdriver.cpp
+index 690232d95a..d6f77baf01 100644
+--- a/ogr/ogrsf_frmts/geojson/ogrgeojsonseqdriver.cpp
++++ b/ogr/ogrsf_frmts/geojson/ogrgeojsonseqdriver.cpp
+@@ -826,7 +826,9 @@ bool OGRGeoJSONSeqDataSource::Create(const char *pszName,
+     /*      Create the output file.                                         */
+     /* -------------------------------------------------------------------- */
+     m_bSupportsRead =
+-        VSIFileManager::GetHandler(pszName)->SupportsRead(pszName);
++        VSIFileManager::GetHandler(pszName)->SupportsRead(pszName) &&
++        VSIFileManager::GetHandler(pszName)->SupportsRandomWrite(pszName,
++                                                                 false);
+     m_bAtEOF = !m_bSupportsRead;
+     m_fp = VSIFOpenExL(pszName, m_bSupportsRead ? "wb+" : "wb", true);
+     if (nullptr == m_fp)

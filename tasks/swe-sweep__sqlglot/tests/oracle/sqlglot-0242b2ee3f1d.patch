@@ -1,0 +1,13 @@
+diff --git a/sqlglot/optimizer/simplify.py b/sqlglot/optimizer/simplify.py
+index d3e553fe23..f51125b982 100644
+--- a/sqlglot/optimizer/simplify.py
++++ b/sqlglot/optimizer/simplify.py
+@@ -1125,7 +1125,7 @@ def remove_where_true(expression):
+ 
+ def always_true(expression):
+     return (isinstance(expression, exp.Boolean) and expression.this) or (
+-        isinstance(expression, exp.Literal) and not is_zero(expression)
++        isinstance(expression, exp.Literal) and expression.is_number and not is_zero(expression)
+     )
+ 
+ 

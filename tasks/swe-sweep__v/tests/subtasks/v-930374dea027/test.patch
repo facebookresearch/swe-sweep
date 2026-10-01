@@ -1,0 +1,18 @@
+diff --git a/vlib/json/json_test.v b/vlib/json/json_test.v
+index 90fbddb28..5449bd363 100644
+--- a/vlib/json/json_test.v
++++ b/vlib/json/json_test.v
+@@ -455,6 +455,13 @@ fn test_omit_empty() {
+ 	// println(json.encode_pretty(foo))
+ }
+ 
++fn test_encode_struct_expression() {
++	assert json.encode(Foo2{'Foo'}) == '{"name":"Foo"}'
++	assert json.encode_pretty(Foo2{'Bar'}) == '{
++	"name":	"Bar"
++}'
++}
++
+ struct Asdasd {
+ 	data GamePacketData
+ }

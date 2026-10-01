@@ -1,0 +1,55 @@
+diff --git a/cmd/tools/vtest-self.v b/cmd/tools/vtest-self.v
+index 4440cdedd..c65bb2eb1 100644
+--- a/cmd/tools/vtest-self.v
++++ b/cmd/tools/vtest-self.v
+@@ -242,7 +242,8 @@ const (
+ 		'do_not_remove',
+ 		'vlib/v/tests/const_fixed_array_containing_references_to_itself_test.v', // error C2099: initializer is not a constant
+ 		'vlib/v/tests/const_and_global_with_same_name_test.v', // error C2099: initializer is not a constant
+-		'vlib/v/tests/sumtype_as_cast_test.v', // error: cannot support compound statement expression ({expr; expr; expr;})
++		'vlib/v/tests/sumtype_as_cast_1_test.v', // error: cannot support compound statement expression ({expr; expr; expr;})
++		'vlib/v/tests/sumtype_as_cast_2_test.v', // error: cannot support compound statement expression ({expr; expr; expr;})
+ 	]
+ 	skip_on_windows               = [
+ 		'do_not_remove',
+diff --git a/vlib/v/tests/sumtype_as_cast_test.v b/vlib/v/tests/sumtype_as_cast_1_test.v
+similarity index 100%
+rename from vlib/v/tests/sumtype_as_cast_test.v
+rename to vlib/v/tests/sumtype_as_cast_1_test.v
+diff --git a/vlib/v/tests/sumtype_as_cast_2_test.v b/vlib/v/tests/sumtype_as_cast_2_test.v
+new file mode 100644
+index 000000000..de002006d
+--- /dev/null
++++ b/vlib/v/tests/sumtype_as_cast_2_test.v
+@@ -0,0 +1,31 @@
++type Numbers = int | string
++
++struct Values {
++	value Numbers
++}
++
++struct Wrapper {
++	element []Values
++mut:
++	index int
++}
++
++fn (mut instance Wrapper) get() Values {
++	instance.index++
++	return instance.element[0]
++}
++
++fn test_sumtype_as_cast() {
++	mut wrapper := Wrapper{
++		element: [
++			Values{
++				value: 1
++			},
++			Values{
++				value: '2'
++			},
++		]
++	}
++	println(wrapper.get().value as int)
++	assert wrapper.index == 1
++}

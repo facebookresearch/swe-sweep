@@ -1,0 +1,53 @@
+diff --git a/test/WatchTestCases.template.js b/test/WatchTestCases.template.js
+index a971f3657..68dbce53a 100644
+--- a/test/WatchTestCases.template.js
++++ b/test/WatchTestCases.template.js
+@@ -396,7 +396,7 @@ const describeCases = config => {
+ 																done
+ 															)
+ 														) {
+-															compiler.close();
++															compiler.close(() => {});
+ 															return;
+ 														}
+ 														compiler.close(done);
+diff --git a/test/watchCases/plugins/profiling-plugin/0/index.js b/test/watchCases/plugins/profiling-plugin/0/index.js
+new file mode 100644
+index 000000000..cecdb3b9c
+--- /dev/null
++++ b/test/watchCases/plugins/profiling-plugin/0/index.js
+@@ -0,0 +1,3 @@
++it("compiles", function() {
++	expect(WATCH_STEP).toBe("0");
++})
+\ No newline at end of file
+diff --git a/test/watchCases/plugins/profiling-plugin/1/index.js b/test/watchCases/plugins/profiling-plugin/1/index.js
+new file mode 100644
+index 000000000..5e1eb9ebd
+--- /dev/null
++++ b/test/watchCases/plugins/profiling-plugin/1/index.js
+@@ -0,0 +1,3 @@
++it("should not crash on recompile", function() {
++	expect(WATCH_STEP).toBe("1");
++})
+diff --git a/test/watchCases/plugins/profiling-plugin/deprecations.js b/test/watchCases/plugins/profiling-plugin/deprecations.js
+new file mode 100644
+index 000000000..dee16addc
+--- /dev/null
++++ b/test/watchCases/plugins/profiling-plugin/deprecations.js
+@@ -0,0 +1,3 @@
++module.exports = [
++	{ code: /DEP_WEBPACK_COMPILATION_NORMAL_MODULE_LOADER_HOOK/ }
++];
+diff --git a/test/watchCases/plugins/profiling-plugin/webpack.config.js b/test/watchCases/plugins/profiling-plugin/webpack.config.js
+new file mode 100644
+index 000000000..3d258a435
+--- /dev/null
++++ b/test/watchCases/plugins/profiling-plugin/webpack.config.js
+@@ -0,0 +1,6 @@
++var webpack = require("../../../../");
++
++/** @type {import("../../../../").Configuration} */
++module.exports = {
++	plugins: [new webpack.debug.ProfilingPlugin()]
++};

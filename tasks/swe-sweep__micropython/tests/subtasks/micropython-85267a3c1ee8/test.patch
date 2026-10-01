@@ -1,0 +1,227 @@
+diff --git a/tests/basics/int_bytes.py b/tests/basics/int_bytes.py
+index d1837ea75..15c12640e 100644
+--- a/tests/basics/int_bytes.py
++++ b/tests/basics/int_bytes.py
+@@ -1,3 +1,5 @@
++import sys
++
+ print((10).to_bytes(1, "little"))
+ print((111111).to_bytes(4, "little"))
+ print((100).to_bytes(10, "little"))
+@@ -20,3 +22,74 @@ try:
+     (1).to_bytes(-1, "little")
+ except ValueError:
+     print("ValueError")
++
++# zero byte destination should also raise an error
++try:
++    (1).to_bytes(0, "little")
++except OverflowError:
++    print("OverflowError")
++
++# except for converting 0 to a zero-length byte array
++print((0).to_bytes(0, "big"))
++
++# byte length can fit the integer directly
++print((0xFF).to_bytes(1, "little"))
++print((0xFF).to_bytes(1, "big"))
++print((0xEFF).to_bytes(2, "little"))
++print((0xEFF).to_bytes(2, "big"))
++print((0xCDEFF).to_bytes(3, "little"))
++print((0xCDEFF).to_bytes(3, "big"))
++
++# OverFlowError if not big enough
++
++try:
++    (0x123).to_bytes(1, "big")
++except OverflowError:
++    print("OverflowError")
++
++try:
++    (0x12345).to_bytes(2, "big")
++except OverflowError:
++    print("OverflowError")
++
++try:
++    (0x1234567).to_bytes(3, "big")
++except OverflowError:
++    print("OverflowError")
++
++
++# negative representations
++
++# MicroPython int.to_bytes() behaves as if signed=True for negative numbers
++if "micropython" in repr(sys.implementation):
++
++    def to_bytes_compat(i, l, e):
++        return i.to_bytes(l, e)
++else:
++    # Implement MicroPython compatible behaviour for CPython
++    def to_bytes_compat(i, l, e):
++        return i.to_bytes(l, e, signed=i < 0)
++
++
++print(to_bytes_compat(-1, 1, "little"))
++print(to_bytes_compat(-1, 3, "little"))
++print(to_bytes_compat(-1, 1, "big"))
++print(to_bytes_compat(-1, 3, "big"))
++print(to_bytes_compat(-128, 1, "big"))
++print(to_bytes_compat(-32768, 2, "big"))
++print(to_bytes_compat(-(1 << 23), 3, "big"))
++
++try:
++    print(to_bytes_compat(-129, 1, "big"))
++except OverflowError:
++    print("OverflowError")
++
++try:
++    print(to_bytes_compat(-32769, 2, "big"))
++except OverflowError:
++    print("OverflowError")
++
++try:
++    print(to_bytes_compat(-(1 << 23) - 1, 2, "big"))
++except OverflowError:
++    print("OverflowError")
+diff --git a/tests/basics/int_bytes_int64.py b/tests/basics/int_bytes_int64.py
+new file mode 100644
+index 000000000..032dbccc5
+--- /dev/null
++++ b/tests/basics/int_bytes_int64.py
+@@ -0,0 +1,52 @@
++import sys
++
++# Depending on the port, the numbers in this test may be implemented as "small"
++# native 64 bit ints, arbitrary precision large ints, or large integers using 64-bit
++# long longs.
++
++try:
++    x = int.from_bytes(b"\x6F\xAB\xCD\x12\x34\x56\x78\xFB", "big")
++except OverflowError:
++    print("SKIP")  # Port can't represent this size of integer at all
++    raise SystemExit
++
++print(hex(x))
++b = x.to_bytes(8, "little")
++print(b)
++print(x.to_bytes(8, "big"))
++
++# padding in output
++print(x.to_bytes(20, "little"))
++print(x.to_bytes(20, "big"))
++
++# check that extra zero bytes don't change the internal int value
++print(int.from_bytes(b + bytes(10), "little") == x)
++
++# can't write to a zero-length bytes object
++try:
++    x.to_bytes(0, "little")
++except OverflowError:
++    print("OverflowError")
++
++# or one that it too short
++try:
++    x.to_bytes(7, "big")
++except OverflowError:
++    print("OverflowError")
++
++# negative representations
++
++# MicroPython int.to_bytes() behaves as if signed=True for negative numbers
++if "micropython" in repr(sys.implementation):
++
++    def to_bytes_compat(i, l, e):
++        return i.to_bytes(l, e)
++else:
++    # Implement MicroPython compatible behaviour for CPython
++    def to_bytes_compat(i, l, e):
++        return i.to_bytes(l, e, signed=i < 0)
++
++
++print(to_bytes_compat(-x, 8, "little"))
++print(to_bytes_compat(-x, 20, "big"))
++print(to_bytes_compat(-x, 20, "little"))
+diff --git a/tests/basics/int_bytes_intbig.py b/tests/basics/int_bytes_intbig.py
+index 147362bef..13cf5d008 100644
+--- a/tests/basics/int_bytes_intbig.py
++++ b/tests/basics/int_bytes_intbig.py
+@@ -1,3 +1,5 @@
++import sys
++
+ print((2**64).to_bytes(9, "little"))
+ print((2**64).to_bytes(9, "big"))
+ 
+@@ -10,5 +12,51 @@ print(ib)
+ print(il.to_bytes(20, "little"))
+ print(ib.to_bytes(20, "big"))
+ 
++# check padding comes out correctly
++print(il.to_bytes(40, "little"))
++print(ib.to_bytes(40, "big"))
++
+ # check that extra zero bytes don't change the internal int value
+ print(int.from_bytes(b + bytes(10), "little") == int.from_bytes(b, "little"))
++
++# can't write to a zero-length bytes object
++try:
++    ib.to_bytes(0, "little")
++except OverflowError:
++    print("OverflowError")
++
++# or one that it too short
++try:
++    ib.to_bytes(18, "big")
++except OverflowError:
++    print("OverflowError")
++
++# negative representations
++
++# MicroPython int.to_bytes() behaves as if signed=True for negative numbers
++if "micropython" in repr(sys.implementation):
++
++    def to_bytes_compat(i, l, e):
++        return i.to_bytes(l, e)
++else:
++    # Implement MicroPython compatible behaviour for CPython
++    def to_bytes_compat(i, l, e):
++        return i.to_bytes(l, e, signed=i < 0)
++
++
++print(to_bytes_compat(-ib, 20, "big"))
++print(to_bytes_compat(ib * -ib, 40, "big"))
++
++# case where an additional byte is needed for sign bit
++ib = (2**64) - 1
++print(ib.to_bytes(8, "little"))
++
++ib *= -1
++
++try:
++    print(to_bytes_compat(ib, 8, "little"))
++except OverflowError:
++    print("OverflowError")
++
++print(to_bytes_compat(ib, 9, "little"))
++print(to_bytes_compat(ib, 9, "big"))
+diff --git a/tests/cpydiff/types_int_to_bytes.py b/tests/cpydiff/types_int_to_bytes.py
+new file mode 100644
+index 000000000..6530a2a32
+--- /dev/null
++++ b/tests/cpydiff/types_int_to_bytes.py
+@@ -0,0 +1,16 @@
++"""
++categories: Types,int
++description: ``to_bytes`` method doesn't implement signed parameter.
++cause: The ``signed`` keyword-only parameter is not implemented for ``int.to_bytes()``.
++
++When the integer is negative, MicroPython behaves the same as CPython ``int.to_bytes(..., signed=True)``
++
++When the integer is non-negative, MicroPython behaves the same as CPython ``int.to_bytes(..., signed=False)``.
++
++(The difference is subtle, but in CPython a positive integer converted with ``signed=True`` may require one byte more in the output length, in order to fit the 0 sign bit.)
++
++workaround: Take care when calling ``to_bytes()`` on an integer value which may be negative.
++"""
++
++x = -1
++print(x.to_bytes(1, "big"))

@@ -1,0 +1,15 @@
+diff --git a/pint/quantity.py b/pint/quantity.py
+index a189192..e70a02c 100644
+--- a/pint/quantity.py
++++ b/pint/quantity.py
+@@ -1584,8 +1584,8 @@ class _Quantity(
+     def __abs__(self) -> Quantity[_MagnitudeType]:
+         return self.__class__(abs(self._magnitude), self._units)
+ 
+-    def __round__(self, ndigits: Optional[int] = 0) -> Quantity[int]:
+-        return self.__class__(round(self._magnitude, ndigits=ndigits), self._units)
++    def __round__(self, ndigits: Optional[int] = None) -> Quantity[int]:
++        return self.__class__(round(self._magnitude, ndigits), self._units)
+ 
+     def __pos__(self) -> Quantity[_MagnitudeType]:
+         return self.__class__(operator.pos(self._magnitude), self._units)

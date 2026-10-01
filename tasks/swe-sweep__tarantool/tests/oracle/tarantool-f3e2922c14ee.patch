@@ -1,0 +1,56 @@
+diff --git a/src/box/execute.c b/src/box/execute.c
+index 8d906945ab..92ab978b11 100644
+--- a/src/box/execute.c
++++ b/src/box/execute.c
+@@ -219,12 +219,13 @@ sql_execute_prepared(uint32_t stmt_id, const struct sql_bind *bind,
+ 					       bind_count, port, region);
+ 	}
+ 	/*
+-	 * Clear all set from previous execution cycle
+-	 * values to be bound.
++	 * Clear all set from previous execution cycle values to be bound and
++	 * remove autoincrement IDs generated in that cycle.
+ 	 */
+ 	sql_unbind(stmt);
+ 	if (sql_bind(stmt, bind, bind_count) != 0)
+ 		return -1;
++	sql_reset_autoinc_id_list(stmt);
+ 	enum sql_serialization_format format = sql_column_count(stmt) > 0 ?
+ 					       DQL_EXECUTE : DML_EXECUTE;
+ 	port_sql_create(port, stmt, format, false);
+diff --git a/src/box/sql/sqlInt.h b/src/box/sql/sqlInt.h
+index 93fb1ceb67..66a11d1999 100644
+--- a/src/box/sql/sqlInt.h
++++ b/src/box/sql/sqlInt.h
+@@ -506,6 +506,13 @@ sql_vfs_register(sql_vfs *, int makeDflt);
+ void
+ sql_unbind(struct sql_stmt *stmt);
+ 
++/**
++ * Reset the list of identifiers generated during the auto-increment of this
++ * prepared statement.
++ */
++void
++sql_reset_autoinc_id_list(struct sql_stmt *stmt);
++
+ int
+ sql_bind_double(sql_stmt *, int, double);
+ 
+diff --git a/src/box/sql/vdbeapi.c b/src/box/sql/vdbeapi.c
+index 48ea3a54cf..8d52f158b1 100644
+--- a/src/box/sql/vdbeapi.c
++++ b/src/box/sql/vdbeapi.c
+@@ -445,6 +445,13 @@ sql_unbind(struct sql_stmt *stmt)
+ 	}
+ }
+ 
++void
++sql_reset_autoinc_id_list(struct sql_stmt *stmt)
++{
++	struct Vdbe *v = (struct Vdbe *)stmt;
++	stailq_create(&v->autoinc_id_list);
++}
++
+ int
+ sql_bind_double(sql_stmt * pStmt, int i, double rValue)
+ {

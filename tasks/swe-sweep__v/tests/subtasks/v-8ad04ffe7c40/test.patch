@@ -1,0 +1,16 @@
+diff --git a/vlib/v/tests/comptime_for_mod_name_test.v b/vlib/v/tests/comptime_for_mod_name_test.v
+new file mode 100644
+index 000000000..04cc037e2
+--- /dev/null
++++ b/vlib/v/tests/comptime_for_mod_name_test.v
+@@ -0,0 +1,10 @@
++import net.http
++
++fn test_main() {
++	mut count := 0
++	$for method_val in http.Method.values {
++		println(method_val.name)
++		count++
++	}
++	assert count > 0
++}

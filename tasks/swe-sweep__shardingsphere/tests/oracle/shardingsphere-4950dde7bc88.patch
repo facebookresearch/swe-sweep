@@ -1,0 +1,18 @@
+diff --git a/mode/type/cluster/repository/provider/etcd/src/main/java/org/apache/shardingsphere/mode/repository/cluster/etcd/EtcdRepository.java b/mode/type/cluster/repository/provider/etcd/src/main/java/org/apache/shardingsphere/mode/repository/cluster/etcd/EtcdRepository.java
+index 59394a6bdf1..28d9fe5a7b4 100644
+--- a/mode/type/cluster/repository/provider/etcd/src/main/java/org/apache/shardingsphere/mode/repository/cluster/etcd/EtcdRepository.java
++++ b/mode/type/cluster/repository/provider/etcd/src/main/java/org/apache/shardingsphere/mode/repository/cluster/etcd/EtcdRepository.java
+@@ -176,12 +176,9 @@ public final class EtcdRepository implements ClusterPersistRepository {
+     }
+     
+     private Type getEventChangedType(final WatchEvent event) {
+-        if (1 == event.getKeyValue().getVersion()) {
+-            return Type.ADDED;
+-        }
+         switch (event.getEventType()) {
+             case PUT:
+-                return Type.UPDATED;
++                return 1 == event.getKeyValue().getVersion() ? Type.ADDED : Type.UPDATED;
+             case DELETE:
+                 return Type.DELETED;
+             default:

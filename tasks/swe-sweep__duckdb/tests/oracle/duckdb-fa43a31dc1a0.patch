@@ -1,0 +1,13 @@
+diff --git a/src/planner/binder/statement/bind_create_table.cpp b/src/planner/binder/statement/bind_create_table.cpp
+index 683c475..c1752b7 100644
+--- a/src/planner/binder/statement/bind_create_table.cpp
++++ b/src/planner/binder/statement/bind_create_table.cpp
+@@ -298,7 +298,7 @@ unique_ptr<BoundCreateTableInfo> Binder::BindCreateTableInfo(unique_ptr<CreateIn
+ 		if (column.Type().id() == LogicalTypeId::VARCHAR) {
+ 			ExpressionBinder::TestCollation(context, StringType::GetCollation(column.Type()));
+ 		}
+-		BindLogicalType(context, column.TypeMutable(), &result->schema.catalog);
++		BindLogicalType(context, column.TypeMutable(), &result->schema.catalog, result->schema.name);
+ 	}
+ 	result->dependencies.VerifyDependencies(schema.catalog, result->Base().table);
+ 	properties.allow_stream_result = false;

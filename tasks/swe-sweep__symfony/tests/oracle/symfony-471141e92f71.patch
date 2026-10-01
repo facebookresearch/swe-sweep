@@ -1,0 +1,15 @@
+diff --git a/src/Symfony/Component/Messenger/Handler/BatchHandlerTrait.php b/src/Symfony/Component/Messenger/Handler/BatchHandlerTrait.php
+index db56788f519..b19269d3069 100644
+--- a/src/Symfony/Component/Messenger/Handler/BatchHandlerTrait.php
++++ b/src/Symfony/Component/Messenger/Handler/BatchHandlerTrait.php
+@@ -40,6 +40,10 @@ trait BatchHandlerTrait
+             $this->jobs[] = [$message, $ack];
+             $this->flush(true);
+ 
++            if ($error = $ack->getError()) {
++                throw $error;
++            }
++
+             return $ack->getResult();
+         }
+ 

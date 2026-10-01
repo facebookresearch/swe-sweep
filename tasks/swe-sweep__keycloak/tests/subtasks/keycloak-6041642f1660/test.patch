@@ -1,0 +1,107 @@
+diff --git a/testsuite/integration-arquillian/tests/base/src/test/java/org/keycloak/testsuite/broker/AbstractBaseBrokerTest.java b/testsuite/integration-arquillian/tests/base/src/test/java/org/keycloak/testsuite/broker/AbstractBaseBrokerTest.java
+index b55e7126ca..0f28b163ef 100644
+--- a/testsuite/integration-arquillian/tests/base/src/test/java/org/keycloak/testsuite/broker/AbstractBaseBrokerTest.java
++++ b/testsuite/integration-arquillian/tests/base/src/test/java/org/keycloak/testsuite/broker/AbstractBaseBrokerTest.java
+@@ -338,7 +338,7 @@ public abstract class AbstractBaseBrokerTest extends AbstractKeycloakTest {
+                     .clientId(clientId)
+                     .initiatingIdp(initiatingIdp);
+ 
+-            if (clientId != null || idTokenHint != null) {
++            if (redirectUri != null && (clientId != null || idTokenHint != null)) {
+                 builder.postLogoutRedirectUri(encodeUrl(redirectUri));
+             }
+ 
+diff --git a/testsuite/integration-arquillian/tests/base/src/test/java/org/keycloak/testsuite/broker/KcOidcBrokerLogoutTest.java b/testsuite/integration-arquillian/tests/base/src/test/java/org/keycloak/testsuite/broker/KcOidcBrokerLogoutTest.java
+index d0bce18f0f..733bdaab06 100644
+--- a/testsuite/integration-arquillian/tests/base/src/test/java/org/keycloak/testsuite/broker/KcOidcBrokerLogoutTest.java
++++ b/testsuite/integration-arquillian/tests/base/src/test/java/org/keycloak/testsuite/broker/KcOidcBrokerLogoutTest.java
+@@ -1,5 +1,6 @@
+ package org.keycloak.testsuite.broker;
+ 
++import org.junit.Assert;
+ import org.junit.Rule;
+ import org.junit.Test;
+ import org.keycloak.OAuth2Constants;
+@@ -8,11 +9,14 @@ import org.keycloak.admin.client.resource.IdentityProviderResource;
+ import org.keycloak.admin.client.resource.RealmResource;
+ import org.keycloak.common.VerificationException;
+ import org.keycloak.cookie.CookieType;
++import org.keycloak.protocol.oidc.OIDCConfigAttributes;
+ import org.keycloak.representations.IDToken;
+ import org.keycloak.representations.idm.IdentityProviderRepresentation;
+ import org.keycloak.testsuite.AssertEvents;
++import org.keycloak.testsuite.updaters.ClientAttributeUpdater;
+ import org.keycloak.testsuite.util.AccountHelper;
+ import org.keycloak.testsuite.util.OAuthClient;
++import org.keycloak.testsuite.util.WaitUtils;
+ 
+ import static org.junit.Assert.assertEquals;
+ import static org.keycloak.testsuite.broker.BrokerTestConstants.REALM_CONS_NAME;
+@@ -22,7 +26,6 @@ import static org.keycloak.testsuite.broker.BrokerTestTools.waitForPage;
+ 
+ import java.util.HashMap;
+ import java.util.Map;
+-import java.util.concurrent.TimeUnit;
+ 
+ public class KcOidcBrokerLogoutTest extends AbstractKcOidcBrokerLogoutTest {
+ 
+@@ -162,7 +165,6 @@ public class KcOidcBrokerLogoutTest extends AbstractKcOidcBrokerLogoutTest {
+             identityProviderResource.update(representation);
+             logInAsUserInIDPForFirstTime();
+             appPage.assertCurrent();
+-            driver.manage().timeouts().pageLoadTimeout(1, TimeUnit.DAYS);
+             executeLogoutFromRealm(
+                     getConsumerRoot(),
+                     bc.consumerRealmName(),
+@@ -231,4 +233,51 @@ public class KcOidcBrokerLogoutTest extends AbstractKcOidcBrokerLogoutTest {
+             identityProviderResource.update(representation);
+         }
+     }
++
++    @Test
++    public void testFrontChannelLogoutRequestsSendingOnlyClientIdWithFrontChannelLogoutApp() throws Exception {
++        RealmResource realm = adminClient.realm(bc.consumerRealmName());
++        IdentityProviderResource identityProviderResource = realm.identityProviders().get(bc.getIDPAlias());
++        IdentityProviderRepresentation representation = identityProviderResource.toRepresentation();
++        Map<String, String> config = representation.getConfig();
++        Map<String, String> originalConfig = new HashMap<>(config);
++
++        try (ClientAttributeUpdater clientUpdater = ClientAttributeUpdater.forClient(adminClient, bc.consumerRealmName(), "broker-app")
++                .setFrontchannelLogout(true)
++                .setAttribute(OIDCConfigAttributes.FRONT_CHANNEL_LOGOUT_URI, getConsumerRoot() + "/auth/realms/" + bc.consumerRealmName() + "/app/logout")
++                .update()){
++            config.put("backchannelSupported", Boolean.FALSE.toString());
++            config.put("sendIdTokenOnLogout", Boolean.FALSE.toString());
++            config.put("sendClientIdOnLogout", Boolean.TRUE.toString());
++            identityProviderResource.update(representation);
++            logInAsUserInIDPForFirstTime();
++            appPage.assertCurrent();
++            executeLogoutFromRealm(
++                    getConsumerRoot(),
++                    bc.consumerRealmName(),
++                    "something-else",
++                    null,
++                    "broker-app",
++                    null
++            );
++            logoutConfirmPage.isCurrent();
++            // confirm logout at consumer
++            logoutConfirmPage.confirmLogout();
++            // confirm logout at provider
++            logoutConfirmPage.confirmLogout();
++
++            WaitUtils.waitForPageToLoad();
++            logoutConfirmPage.isCurrent();
++            Assert.assertTrue(driver.getPageSource().contains("You are logging out from following apps"));
++            Assert.assertTrue(driver.getPageSource().contains("broker-app"));
++
++            oauth.clientId("account");
++            oauth.redirectUri(getConsumerRoot() + "/auth/realms/" + REALM_PROV_NAME + "/account");
++            loginPage.open(REALM_PROV_NAME);
++            waitForPage(driver, "sign in to provider", true);
++        } finally {
++            representation.setConfig(originalConfig);
++            identityProviderResource.update(representation);
++        }
++    }
+ }

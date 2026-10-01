@@ -1,0 +1,17 @@
+diff --git a/pandas/tests/indexes/ranges/test_range.py b/pandas/tests/indexes/ranges/test_range.py
+index 4edec0bf95..b964fb43f1 100644
+--- a/pandas/tests/indexes/ranges/test_range.py
++++ b/pandas/tests/indexes/ranges/test_range.py
+@@ -527,6 +527,12 @@ class TestRangeIndex(NumericBase):
+     def test_isin_range(self, base):
+         # GH#41151
+         values = RangeIndex(0, 1)
+         result = base.isin(values)
+         expected = np.array([True, False])
+         tm.assert_numpy_array_equal(result, expected)
++
++    def test_range_index_rsub_by_const(self):
++        # GH#53255
++        result = 3 - RangeIndex(0, 4, 1)
++        expected = RangeIndex(3, -1, -1)
++        tm.assert_index_equal(result, expected)

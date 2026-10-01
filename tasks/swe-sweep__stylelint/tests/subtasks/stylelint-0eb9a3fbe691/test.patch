@@ -1,0 +1,67 @@
+diff --git a/lib/rules/selector-combinator-disallowed-list/__tests__/index.mjs b/lib/rules/selector-combinator-disallowed-list/__tests__/index.mjs
+index 46f3eefa0..d63ff8ee2 100644
+--- a/lib/rules/selector-combinator-disallowed-list/__tests__/index.mjs
++++ b/lib/rules/selector-combinator-disallowed-list/__tests__/index.mjs
+@@ -1,3 +1,5 @@
++import { stripIndent } from 'common-tags';
++
+ import rule from '../index.mjs';
+ const { messages, ruleName } = rule;
+ 
+@@ -21,6 +23,16 @@ testRule({
+ 		{
+ 			code: 'a:not(b ~ c) {}',
+ 		},
++		{
++			code: stripIndent`
++				/* stylelint-disable-next-line selector-combinator-disallowed-list */
++				a + b, /* stylelint-disable-next-line selector-combinator-disallowed-list */
++				a + b,
++				/* stylelint-disable-next-line selector-combinator-disallowed-list */
++				a + b
++				{}
++			`,
++		},
+ 	],
+ 
+ 	reject: [
+@@ -72,6 +84,39 @@ testRule({
+ 			endLine: 1,
+ 			endColumn: 4,
+ 		},
++		{
++			code: stripIndent`
++				/* a comment */
++				a > b, /* a comment */
++				a > b,
++				/* a comment */
++				a > b
++				{}
++			`,
++			warnings: [
++				{
++					line: 2,
++					column: 3,
++					endLine: 2,
++					endColumn: 4,
++					message: messages.rejected('>'),
++				},
++				{
++					line: 3,
++					column: 3,
++					endLine: 3,
++					endColumn: 4,
++					message: messages.rejected('>'),
++				},
++				{
++					line: 5,
++					column: 3,
++					endLine: 5,
++					endColumn: 4,
++					message: messages.rejected('>'),
++				},
++			],
++		},
+ 	],
+ });
+ 

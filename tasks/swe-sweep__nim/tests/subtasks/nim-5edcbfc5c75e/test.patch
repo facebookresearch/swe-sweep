@@ -1,0 +1,37 @@
+diff --git a/tests/metatype/ttypetraits.nim b/tests/metatype/ttypetraits.nim
+index 0107f6b04..46601c107 100644
+--- a/tests/metatype/ttypetraits.nim
++++ b/tests/metatype/ttypetraits.nim
+@@ -350,3 +350,32 @@ block:
+     doAssert MyEnum.enumLen == 4
+     doAssert OtherEnum.enumLen == 3
+     doAssert MyFlag.enumLen == 4
++
++block: # bug #25789
++  type
++    L[T; N: static int] = distinct seq[T]
++    EPF = distinct L[int, 100]
++
++  var e: EPF = EPF(L[int, 100](@[1, 2, 3]))
++
++  template classifyGeneric[T](x: T): bool =
++    when typeof(x) is L:
++      true
++    else:
++      false
++
++  template classifyConcrete[T](x: T): bool =
++    when typeof(x) is L[int, 100]:
++      true
++    else:
++      false
++
++  let viaConv = L[int, 100](e)
++  doAssert $type(viaConv) == "L[system.int, 100]"
++  doAssert classifyGeneric(viaConv)
++  doAssert classifyConcrete(viaConv)
++
++  let viaDB = distinctBase(e, recursive = false)
++  doAssert $type(viaDB) == "L[system.int, 100]"
++  doAssert classifyGeneric(viaDB)
++  doAssert classifyConcrete(viaDB)

@@ -1,0 +1,40 @@
+diff --git a/packages/mui-material/src/Rating/Rating.d.ts b/packages/mui-material/src/Rating/Rating.d.ts
+index b232f44adc..839946456d 100644
+--- a/packages/mui-material/src/Rating/Rating.d.ts
++++ b/packages/mui-material/src/Rating/Rating.d.ts
+@@ -74,7 +74,7 @@ export interface RatingProps
+   /**
+    * The name attribute of the radio `input` elements.
+    * This input `name` should be unique within the page.
+-   * Being unique within a form is insufficient since the `name` is used to generated IDs.
++   * Being unique within a form is insufficient since the `name` is used to generate IDs.
+    */
+   name?: string;
+   /**
+diff --git a/packages/mui-material/src/Rating/Rating.js b/packages/mui-material/src/Rating/Rating.js
+index 7f5c9447b1..0bdc81e0b8 100644
+--- a/packages/mui-material/src/Rating/Rating.js
++++ b/packages/mui-material/src/Rating/Rating.js
+@@ -242,7 +242,12 @@ function RatingItem(props) {
+   const isFocused = itemValue <= focus;
+   const isChecked = itemValue === ratingValueRounded;
+ 
+-  const id = useId();
++  // "name" ensures unique IDs across different Rating components in React 17,
++  // preventing one component from affecting another. React 18's useId already handles this.
++  // Update to const id = useId(); when React 17 support is dropped.
++  // More details: https://github.com/mui/material-ui/issues/40997
++  const id = `${name}-${useId()}`;
++
+   const container = (
+     <RatingIcon
+       as={IconContainerComponent}
+@@ -705,7 +710,7 @@ Rating.propTypes /* remove-proptypes */ = {
+   /**
+    * The name attribute of the radio `input` elements.
+    * This input `name` should be unique within the page.
+-   * Being unique within a form is insufficient since the `name` is used to generated IDs.
++   * Being unique within a form is insufficient since the `name` is used to generate IDs.
+    */
+   name: PropTypes.string,
+   /**

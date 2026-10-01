@@ -1,0 +1,13 @@
+diff --git a/astropy/stats/sigma_clipping.py b/astropy/stats/sigma_clipping.py
+index fcd0481c3c..0719c3f24b 100644
+--- a/astropy/stats/sigma_clipping.py
++++ b/astropy/stats/sigma_clipping.py
+@@ -429,7 +429,7 @@ class SigmaClip:
+ 
+         # remove masked values and convert to ndarray
+         if isinstance(filtered_data, np.ma.MaskedArray):
+-            filtered_data = filtered_data.data[~filtered_data.mask]
++            filtered_data = filtered_data._data[~filtered_data.mask]
+ 
+         # remove invalid values
+         good_mask = np.isfinite(filtered_data)

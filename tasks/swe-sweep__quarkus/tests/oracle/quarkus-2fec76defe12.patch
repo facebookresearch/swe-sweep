@@ -1,0 +1,30 @@
+diff --git a/independent-projects/resteasy-reactive/server/runtime/src/main/java/org/jboss/resteasy/reactive/server/core/ResteasyReactiveRequestContext.java b/independent-projects/resteasy-reactive/server/runtime/src/main/java/org/jboss/resteasy/reactive/server/core/ResteasyReactiveRequestContext.java
+index bbc5f7b8ca5..c78440bc189 100644
+--- a/independent-projects/resteasy-reactive/server/runtime/src/main/java/org/jboss/resteasy/reactive/server/core/ResteasyReactiveRequestContext.java
++++ b/independent-projects/resteasy-reactive/server/runtime/src/main/java/org/jboss/resteasy/reactive/server/core/ResteasyReactiveRequestContext.java
+@@ -113,6 +113,8 @@ public abstract class ResteasyReactiveRequestContext
+     private String scheme;
+     // this is only set if we override the requestUri
+     private String authority;
++    // this is only set if we override the requestUri
++    private String query;
+     private String remaining;
+     private EncodedMediaType responseContentType;
+     private Annotation[] methodAnnotations;
+@@ -450,7 +452,7 @@ public abstract class ResteasyReactiveRequestContext
+         // Note: we could store our cache as normalised, but I'm not sure if the vertx one is normalised
+         if (absoluteUri == null) {
+             try {
+-                absoluteUri = new URI(scheme, authority, path, null, null).toASCIIString();
++                absoluteUri = new URI(scheme, authority, path, query, null).toASCIIString();
+             } catch (URISyntaxException e) {
+                 throw new RuntimeException(e);
+             }
+@@ -474,6 +476,7 @@ public abstract class ResteasyReactiveRequestContext
+         this.path = requestURI.getPath();
+         this.authority = requestURI.getRawAuthority();
+         this.scheme = requestURI.getScheme();
++        this.query = requestURI.getQuery();
+         setQueryParamsFrom(requestURI.toString());
+         // invalidate those
+         this.uriInfo = null;

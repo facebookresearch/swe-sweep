@@ -1,0 +1,18 @@
+diff --git a/test/compress/new.js b/test/compress/new.js
+index 8a155e81..91f45a84 100644
+--- a/test/compress/new.js
++++ b/test/compress/new.js
+@@ -116,3 +116,13 @@ dot_parenthesis_2: {
+     expect_exact: "console.log(typeof new function(){Math.random()}.constructor);"
+     expect_stdout: "function"
+ }
++
++new_prefixed_template_string: {
++    input: {
++        new (foo()`bar`)();
++        new (foo()`bar`);
++        new foo`bar`();
++        new foo`${bar()}`();
++    }
++    expect_exact: "new(foo()`bar`);new(foo()`bar`);new(foo`bar`);new(foo`${bar()}`);"
++}

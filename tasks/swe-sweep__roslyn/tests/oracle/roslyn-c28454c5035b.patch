@@ -1,0 +1,13 @@
+diff --git a/src/Compilers/CSharp/Portable/Symbols/Source/ParameterHelpers.cs b/src/Compilers/CSharp/Portable/Symbols/Source/ParameterHelpers.cs
+index f5d244f233d..fcf618b63d4 100644
+--- a/src/Compilers/CSharp/Portable/Symbols/Source/ParameterHelpers.cs
++++ b/src/Compilers/CSharp/Portable/Symbols/Source/ParameterHelpers.cs
+@@ -532,7 +532,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
+             Debug.Assert(extensionMember.GetIsNewExtensionMember());
+ 
+             NamedTypeSymbol extension = extensionMember.ContainingType;
+-            if (extension.ExtensionParameter is not { } extensionParameter || extension.ContainingType.Arity != 0)
++            if (extension.ExtensionParameter is not { } extensionParameter || extension.ContainingType?.Arity != 0)
+             {
+                 // error cases, already reported elsewhere
+                 return;

@@ -1,0 +1,13 @@
+diff --git a/lib/matplotlib/lines.py b/lib/matplotlib/lines.py
+index 2c92b09909..c251a47915 100644
+--- a/lib/matplotlib/lines.py
++++ b/lib/matplotlib/lines.py
+@@ -36,7 +36,7 @@ def _get_dash_pattern(style):
+     if isinstance(style, str):
+         style = ls_mapper.get(style, style)
+     # un-dashed styles
+-    if style in ['solid', 'None']:
++    if style in ['solid', 'None', 'none', '', ' ']:
+         offset = 0
+         dashes = None
+     # dashed styles

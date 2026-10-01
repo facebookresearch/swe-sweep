@@ -1,0 +1,13 @@
+diff --git a/vlib/v/parser/parse_type.v b/vlib/v/parser/parse_type.v
+index a16561619..3b9ad7d25 100644
+--- a/vlib/v/parser/parse_type.v
++++ b/vlib/v/parser/parse_type.v
+@@ -424,7 +424,7 @@ fn (mut p Parser) parse_type() ast.Type {
+ 		is_required_field := p.inside_struct_field_decl && p.tok.kind == .lsbr
+ 			&& p.peek_tok.kind == .name && p.peek_tok.lit == 'required'
+ 
+-		if p.tok.line_nr > line_nr || p.tok.kind in [.comma, .rpar] || is_required_field {
++		if p.tok.line_nr > line_nr || p.tok.kind in [.comma, .rpar, .assign] || is_required_field {
+ 			mut typ := ast.void_type
+ 			if is_option {
+ 				typ = typ.set_flag(.option)

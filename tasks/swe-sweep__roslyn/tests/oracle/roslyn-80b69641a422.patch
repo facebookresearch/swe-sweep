@@ -1,0 +1,209 @@
+diff --git a/src/Compilers/CSharp/Portable/Binder/BinderFactory.BinderFactoryVisitor.cs b/src/Compilers/CSharp/Portable/Binder/BinderFactory.BinderFactoryVisitor.cs
+index 7cdbac32031..a84a68327cc 100644
+--- a/src/Compilers/CSharp/Portable/Binder/BinderFactory.BinderFactoryVisitor.cs
++++ b/src/Compilers/CSharp/Portable/Binder/BinderFactory.BinderFactoryVisitor.cs
+@@ -466,13 +466,13 @@ namespace Microsoft.CodeAnalysis.CSharp
+                         return WellKnownMemberNames.DestructorName;
+                     case SyntaxKind.OperatorDeclaration:
+                         var operatorDeclaration = (OperatorDeclarationSyntax)baseMethodDeclarationSyntax;
+-                        return ExplicitInterfaceHelpers.GetMemberName(outerBinder, operatorDeclaration.ExplicitInterfaceSpecifier, OperatorFacts.OperatorNameFromDeclaration(operatorDeclaration));
++                        return ExplicitInterfaceHelpers.GetMemberName(outerBinder, baseMethodDeclarationSyntax.Modifiers, operatorDeclaration.ExplicitInterfaceSpecifier, OperatorFacts.OperatorNameFromDeclaration(operatorDeclaration));
+                     case SyntaxKind.ConversionOperatorDeclaration:
+                         var conversionDeclaration = (ConversionOperatorDeclarationSyntax)baseMethodDeclarationSyntax;
+-                        return ExplicitInterfaceHelpers.GetMemberName(outerBinder, conversionDeclaration.ExplicitInterfaceSpecifier, OperatorFacts.OperatorNameFromDeclaration(conversionDeclaration));
++                        return ExplicitInterfaceHelpers.GetMemberName(outerBinder, baseMethodDeclarationSyntax.Modifiers, conversionDeclaration.ExplicitInterfaceSpecifier, OperatorFacts.OperatorNameFromDeclaration(conversionDeclaration));
+                     case SyntaxKind.MethodDeclaration:
+                         MethodDeclarationSyntax methodDeclSyntax = (MethodDeclarationSyntax)baseMethodDeclarationSyntax;
+-                        return ExplicitInterfaceHelpers.GetMemberName(outerBinder, methodDeclSyntax.ExplicitInterfaceSpecifier, methodDeclSyntax.Identifier.ValueText);
++                        return ExplicitInterfaceHelpers.GetMemberName(outerBinder, baseMethodDeclarationSyntax.Modifiers, methodDeclSyntax.ExplicitInterfaceSpecifier, methodDeclSyntax.Identifier.ValueText);
+                     default:
+                         throw ExceptionUtilities.UnexpectedValue(baseMethodDeclarationSyntax.Kind());
+                 }
+@@ -491,13 +491,13 @@ namespace Microsoft.CodeAnalysis.CSharp
+                 {
+                     case SyntaxKind.PropertyDeclaration:
+                         var propertyDecl = (PropertyDeclarationSyntax)basePropertyDeclarationSyntax;
+-                        return ExplicitInterfaceHelpers.GetMemberName(outerBinder, explicitInterfaceSpecifierSyntax, propertyDecl.Identifier.ValueText);
++                        return ExplicitInterfaceHelpers.GetMemberName(outerBinder, basePropertyDeclarationSyntax.Modifiers, explicitInterfaceSpecifierSyntax, propertyDecl.Identifier.ValueText);
+                     case SyntaxKind.IndexerDeclaration:
+-                        return ExplicitInterfaceHelpers.GetMemberName(outerBinder, explicitInterfaceSpecifierSyntax, WellKnownMemberNames.Indexer);
++                        return ExplicitInterfaceHelpers.GetMemberName(outerBinder, basePropertyDeclarationSyntax.Modifiers, explicitInterfaceSpecifierSyntax, WellKnownMemberNames.Indexer);
+                     case SyntaxKind.EventDeclaration:
+                     case SyntaxKind.EventFieldDeclaration:
+                         var eventDecl = (EventDeclarationSyntax)basePropertyDeclarationSyntax;
+-                        return ExplicitInterfaceHelpers.GetMemberName(outerBinder, explicitInterfaceSpecifierSyntax, eventDecl.Identifier.ValueText);
++                        return ExplicitInterfaceHelpers.GetMemberName(outerBinder, eventDecl.Modifiers, explicitInterfaceSpecifierSyntax, eventDecl.Identifier.ValueText);
+                     default:
+                         throw ExceptionUtilities.UnexpectedValue(basePropertyDeclarationSyntax.Kind());
+                 }
+diff --git a/src/Compilers/CSharp/Portable/Compilation/SyntaxTreeSemanticModel.cs b/src/Compilers/CSharp/Portable/Compilation/SyntaxTreeSemanticModel.cs
+index c02333c6c03..4eda8fbb98e 100644
+--- a/src/Compilers/CSharp/Portable/Compilation/SyntaxTreeSemanticModel.cs
++++ b/src/Compilers/CSharp/Portable/Compilation/SyntaxTreeSemanticModel.cs
+@@ -1653,25 +1653,25 @@ namespace Microsoft.CodeAnalysis.CSharp
+                 case SyntaxKind.MethodDeclaration:
+                     {
+                         var methodDecl = (MethodDeclarationSyntax)declaration;
+-                        return GetDeclarationName(declaration, methodDecl.ExplicitInterfaceSpecifier, methodDecl.Identifier.ValueText);
++                        return GetDeclarationName(declaration, methodDecl.Modifiers, methodDecl.ExplicitInterfaceSpecifier, methodDecl.Identifier.ValueText);
+                     }
+ 
+                 case SyntaxKind.PropertyDeclaration:
+                     {
+                         var propertyDecl = (PropertyDeclarationSyntax)declaration;
+-                        return GetDeclarationName(declaration, propertyDecl.ExplicitInterfaceSpecifier, propertyDecl.Identifier.ValueText);
++                        return GetDeclarationName(declaration, propertyDecl.Modifiers, propertyDecl.ExplicitInterfaceSpecifier, propertyDecl.Identifier.ValueText);
+                     }
+ 
+                 case SyntaxKind.IndexerDeclaration:
+                     {
+                         var indexerDecl = (IndexerDeclarationSyntax)declaration;
+-                        return GetDeclarationName(declaration, indexerDecl.ExplicitInterfaceSpecifier, WellKnownMemberNames.Indexer);
++                        return GetDeclarationName(declaration, indexerDecl.Modifiers, indexerDecl.ExplicitInterfaceSpecifier, WellKnownMemberNames.Indexer);
+                     }
+ 
+                 case SyntaxKind.EventDeclaration:
+                     {
+                         var eventDecl = (EventDeclarationSyntax)declaration;
+-                        return GetDeclarationName(declaration, eventDecl.ExplicitInterfaceSpecifier, eventDecl.Identifier.ValueText);
++                        return GetDeclarationName(declaration, eventDecl.Modifiers, eventDecl.ExplicitInterfaceSpecifier, eventDecl.Identifier.ValueText);
+                     }
+ 
+                 case SyntaxKind.DelegateDeclaration:
+@@ -1707,13 +1707,13 @@ namespace Microsoft.CodeAnalysis.CSharp
+                 case SyntaxKind.OperatorDeclaration:
+                     {
+                         var operatorDecl = (OperatorDeclarationSyntax)declaration;
+-                        return GetDeclarationName(declaration, operatorDecl.ExplicitInterfaceSpecifier, OperatorFacts.OperatorNameFromDeclaration(operatorDecl));
++                        return GetDeclarationName(declaration, operatorDecl.Modifiers, operatorDecl.ExplicitInterfaceSpecifier, OperatorFacts.OperatorNameFromDeclaration(operatorDecl));
+                     }
+ 
+                 case SyntaxKind.ConversionOperatorDeclaration:
+                     {
+                         var operatorDecl = (ConversionOperatorDeclarationSyntax)declaration;
+-                        return GetDeclarationName(declaration, operatorDecl.ExplicitInterfaceSpecifier, OperatorFacts.OperatorNameFromDeclaration(operatorDecl));
++                        return GetDeclarationName(declaration, operatorDecl.Modifiers, operatorDecl.ExplicitInterfaceSpecifier, OperatorFacts.OperatorNameFromDeclaration(operatorDecl));
+                     }
+ 
+                 case SyntaxKind.EventFieldDeclaration:
+@@ -1729,7 +1729,7 @@ namespace Microsoft.CodeAnalysis.CSharp
+             }
+         }
+ 
+-        private string GetDeclarationName(CSharpSyntaxNode declaration, ExplicitInterfaceSpecifierSyntax explicitInterfaceSpecifierOpt, string memberName)
++        private string GetDeclarationName(CSharpSyntaxNode declaration, SyntaxTokenList modifiers, ExplicitInterfaceSpecifierSyntax explicitInterfaceSpecifierOpt, string memberName)
+         {
+             if (explicitInterfaceSpecifierOpt == null)
+             {
+@@ -1741,7 +1741,7 @@ namespace Microsoft.CodeAnalysis.CSharp
+             //  Option 2: detect explicit impl and return null
+             //  Option 3: get a binder and figure out the name
+             // For now, we're going with Option 3
+-            return ExplicitInterfaceHelpers.GetMemberName(_binderFactory.GetBinder(declaration), explicitInterfaceSpecifierOpt, memberName);
++            return ExplicitInterfaceHelpers.GetMemberName(_binderFactory.GetBinder(declaration), modifiers, explicitInterfaceSpecifierOpt, memberName);
+         }
+ 
+         private NamespaceSymbol GetDeclaredNamespace(NamespaceOrTypeSymbol container, TextSpan declarationSpan, NameSyntax name)
+diff --git a/src/Compilers/CSharp/Portable/Symbols/Source/ExplicitInterfaceHelpers.cs b/src/Compilers/CSharp/Portable/Symbols/Source/ExplicitInterfaceHelpers.cs
+index cd719570a53..f918df07f4d 100644
+--- a/src/Compilers/CSharp/Portable/Symbols/Source/ExplicitInterfaceHelpers.cs
++++ b/src/Compilers/CSharp/Portable/Symbols/Source/ExplicitInterfaceHelpers.cs
+@@ -21,18 +21,20 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
+     {
+         public static string GetMemberName(
+             Binder binder,
++            SyntaxTokenList modifiers,
+             ExplicitInterfaceSpecifierSyntax explicitInterfaceSpecifierOpt,
+             string name)
+         {
+             TypeSymbol discardedExplicitInterfaceType;
+             string discardedAliasOpt;
+-            string methodName = GetMemberNameAndInterfaceSymbol(binder, explicitInterfaceSpecifierOpt, name, BindingDiagnosticBag.Discarded, out discardedExplicitInterfaceType, out discardedAliasOpt);
++            string methodName = GetMemberNameAndInterfaceSymbol(binder, modifiers, explicitInterfaceSpecifierOpt, name, BindingDiagnosticBag.Discarded, out discardedExplicitInterfaceType, out discardedAliasOpt);
+ 
+             return methodName;
+         }
+ 
+         public static string GetMemberNameAndInterfaceSymbol(
+             Binder binder,
++            SyntaxTokenList modifiers,
+             ExplicitInterfaceSpecifierSyntax explicitInterfaceSpecifierOpt,
+             string name,
+             BindingDiagnosticBag diagnostics,
+@@ -50,6 +52,8 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
+             // that might result in a recursive attempt to bind the containing class.
+             binder = binder.WithAdditionalFlags(BinderFlags.SuppressConstraintChecks | BinderFlags.SuppressObsoleteChecks);
+ 
++            binder = binder.SetOrClearUnsafeRegionIfNecessary(modifiers);
++
+             NameSyntax explicitInterfaceName = explicitInterfaceSpecifierOpt.Name;
+             explicitInterfaceTypeOpt = binder.BindType(explicitInterfaceName, diagnostics).Type;
+             aliasQualifierOpt = explicitInterfaceName.GetAliasQualifierOpt();
+diff --git a/src/Compilers/CSharp/Portable/Symbols/Source/SourceCustomEventSymbol.cs b/src/Compilers/CSharp/Portable/Symbols/Source/SourceCustomEventSymbol.cs
+index b5faa9b49e1..6bc34aa9eec 100644
+--- a/src/Compilers/CSharp/Portable/Symbols/Source/SourceCustomEventSymbol.cs
++++ b/src/Compilers/CSharp/Portable/Symbols/Source/SourceCustomEventSymbol.cs
+@@ -33,7 +33,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
+             bool isExplicitInterfaceImplementation = interfaceSpecifier != null;
+ 
+             string? aliasQualifierOpt;
+-            _name = ExplicitInterfaceHelpers.GetMemberNameAndInterfaceSymbol(binder, interfaceSpecifier, nameToken.ValueText, diagnostics, out _explicitInterfaceType, out aliasQualifierOpt);
++            _name = ExplicitInterfaceHelpers.GetMemberNameAndInterfaceSymbol(binder, syntax.Modifiers, interfaceSpecifier, nameToken.ValueText, diagnostics, out _explicitInterfaceType, out aliasQualifierOpt);
+ 
+             _type = BindEventType(binder, syntax.Type, diagnostics);
+ 
+diff --git a/src/Compilers/CSharp/Portable/Symbols/Source/SourceOrdinaryMethodSymbol.cs b/src/Compilers/CSharp/Portable/Symbols/Source/SourceOrdinaryMethodSymbol.cs
+index 20595933253..bbb8a8cde88 100644
+--- a/src/Compilers/CSharp/Portable/Symbols/Source/SourceOrdinaryMethodSymbol.cs
++++ b/src/Compilers/CSharp/Portable/Symbols/Source/SourceOrdinaryMethodSymbol.cs
+@@ -31,7 +31,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
+             var nameToken = syntax.Identifier;
+ 
+             TypeSymbol explicitInterfaceType;
+-            var name = ExplicitInterfaceHelpers.GetMemberNameAndInterfaceSymbol(bodyBinder, interfaceSpecifier, nameToken.ValueText, diagnostics, out explicitInterfaceType, aliasQualifierOpt: out _);
++            var name = ExplicitInterfaceHelpers.GetMemberNameAndInterfaceSymbol(bodyBinder, syntax.Modifiers, interfaceSpecifier, nameToken.ValueText, diagnostics, out explicitInterfaceType, aliasQualifierOpt: out _);
+             var location = new SourceLocation(nameToken);
+ 
+             var methodKind = interfaceSpecifier == null
+diff --git a/src/Compilers/CSharp/Portable/Symbols/Source/SourcePropertySymbol.cs b/src/Compilers/CSharp/Portable/Symbols/Source/SourcePropertySymbol.cs
+index 9ece43e96e0..07ac7d1a0f7 100644
+--- a/src/Compilers/CSharp/Portable/Symbols/Source/SourcePropertySymbol.cs
++++ b/src/Compilers/CSharp/Portable/Symbols/Source/SourcePropertySymbol.cs
+@@ -73,10 +73,9 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
+             bool hasAutoPropertyGet = allowAutoPropertyAccessors && getSyntax != null && !hasGetAccessorImplementation;
+             bool hasAutoPropertySet = allowAutoPropertyAccessors && setSyntax != null && !hasSetAccessorImplementation;
+ 
+-            binder = binder.SetOrClearUnsafeRegionIfNecessary(modifiersTokenList);
+             TypeSymbol? explicitInterfaceType;
+             string? aliasQualifierOpt;
+-            string memberName = ExplicitInterfaceHelpers.GetMemberNameAndInterfaceSymbol(binder, explicitInterfaceSpecifier, name, diagnostics, out explicitInterfaceType, out aliasQualifierOpt);
++            string memberName = ExplicitInterfaceHelpers.GetMemberNameAndInterfaceSymbol(binder, modifiersTokenList, explicitInterfaceSpecifier, name, diagnostics, out explicitInterfaceType, out aliasQualifierOpt);
+ 
+             return new SourcePropertySymbol(
+                 containingType,
+diff --git a/src/Compilers/CSharp/Portable/Symbols/Source/SourceUserDefinedConversionSymbol.cs b/src/Compilers/CSharp/Portable/Symbols/Source/SourceUserDefinedConversionSymbol.cs
+index 2d8b6e67cd6..9e7e92e87f3 100644
+--- a/src/Compilers/CSharp/Portable/Symbols/Source/SourceUserDefinedConversionSymbol.cs
++++ b/src/Compilers/CSharp/Portable/Symbols/Source/SourceUserDefinedConversionSymbol.cs
+@@ -38,7 +38,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
+             var interfaceSpecifier = syntax.ExplicitInterfaceSpecifier;
+ 
+             TypeSymbol explicitInterfaceType;
+-            name = ExplicitInterfaceHelpers.GetMemberNameAndInterfaceSymbol(bodyBinder, interfaceSpecifier, name, diagnostics, out explicitInterfaceType, aliasQualifierOpt: out _);
++            name = ExplicitInterfaceHelpers.GetMemberNameAndInterfaceSymbol(bodyBinder, syntax.Modifiers, interfaceSpecifier, name, diagnostics, out explicitInterfaceType, aliasQualifierOpt: out _);
+ 
+             var methodKind = interfaceSpecifier == null
+                 ? MethodKind.Conversion
+diff --git a/src/Compilers/CSharp/Portable/Symbols/Source/SourceUserDefinedOperatorSymbol.cs b/src/Compilers/CSharp/Portable/Symbols/Source/SourceUserDefinedOperatorSymbol.cs
+index ab820074dd9..39002a2a931 100644
+--- a/src/Compilers/CSharp/Portable/Symbols/Source/SourceUserDefinedOperatorSymbol.cs
++++ b/src/Compilers/CSharp/Portable/Symbols/Source/SourceUserDefinedOperatorSymbol.cs
+@@ -44,7 +44,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
+             var interfaceSpecifier = syntax.ExplicitInterfaceSpecifier;
+ 
+             TypeSymbol explicitInterfaceType;
+-            name = ExplicitInterfaceHelpers.GetMemberNameAndInterfaceSymbol(bodyBinder, interfaceSpecifier, name, diagnostics, out explicitInterfaceType, aliasQualifierOpt: out _);
++            name = ExplicitInterfaceHelpers.GetMemberNameAndInterfaceSymbol(bodyBinder, syntax.Modifiers, interfaceSpecifier, name, diagnostics, out explicitInterfaceType, aliasQualifierOpt: out _);
+ 
+             var methodKind = interfaceSpecifier == null
+                 ? MethodKind.UserDefinedOperator

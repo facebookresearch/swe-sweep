@@ -1,0 +1,35 @@
+diff --git a/test/integration-test/scaling/src/test/java/org/apache/shardingsphere/integration/data/pipeline/cases/migration/general/MySQLMigrationGeneralIT.java b/test/integration-test/scaling/src/test/java/org/apache/shardingsphere/integration/data/pipeline/cases/migration/general/MySQLMigrationGeneralIT.java
+--- a/test/integration-test/scaling/src/test/java/org/apache/shardingsphere/integration/data/pipeline/cases/migration/general/MySQLMigrationGeneralIT.java
++++ b/test/integration-test/scaling/src/test/java/org/apache/shardingsphere/integration/data/pipeline/cases/migration/general/MySQLMigrationGeneralIT.java
+@@ -98,6 +98,8 @@ public final class MySQLMigrationGeneralIT extends AbstractMigrationITCase {
+         startIncrementTask(new MySQLIncrementTask(jdbcTemplate, getSourceTableOrderName(), keyGenerateAlgorithm, 30));
+         String orderJobId = getJobIdByTableName(getSourceTableOrderName());
+         String orderItemJobId = getJobIdByTableName("t_order_item");
++        stopMigrationByJobId(orderJobId);
++        startMigrationByJobId(orderJobId);
+         assertMigrationSuccessById(orderJobId, "DATA_MATCH");
+         assertMigrationSuccessById(orderItemJobId, "DATA_MATCH");
+         assertMigrationSuccessById(orderItemJobId, "CRC32_MATCH");
+diff --git a/test/pipeline/src/test/java/org/apache/shardingsphere/data/pipeline/core/ingest/position/StringPrimaryKeyPositionTest.java b/test/pipeline/src/test/java/org/apache/shardingsphere/data/pipeline/core/ingest/position/StringPrimaryKeyPositionTest.java
+--- a/test/pipeline/src/test/java/org/apache/shardingsphere/data/pipeline/core/ingest/position/StringPrimaryKeyPositionTest.java
++++ b/test/pipeline/src/test/java/org/apache/shardingsphere/data/pipeline/core/ingest/position/StringPrimaryKeyPositionTest.java
+@@ -24,6 +24,7 @@ import org.junit.Test;
+ 
+ import static org.hamcrest.CoreMatchers.is;
+ import static org.hamcrest.MatcherAssert.assertThat;
++import static org.junit.Assert.assertNull;
+ import static org.junit.Assert.assertTrue;
+ 
+ public final class StringPrimaryKeyPositionTest {
+@@ -46,4 +47,11 @@ public final class StringPrimaryKeyPositionTest {
+     public void assertToString() {
+         assertThat(new StringPrimaryKeyPosition("hi", "jk").toString(), is("s,hi,jk"));
+     }
++    
++    @Test
++    public void assertEmptyToNull() {
++        StringPrimaryKeyPosition actual = new StringPrimaryKeyPosition("", "");
++        assertNull(actual.getBeginValue());
++        assertNull(actual.getEndValue());
++    }
+ }

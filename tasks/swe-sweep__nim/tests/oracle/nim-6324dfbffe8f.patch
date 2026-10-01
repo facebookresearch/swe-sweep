@@ -1,0 +1,12 @@
+diff --git a/compiler/semtypes.nim b/compiler/semtypes.nim
+--- a/compiler/semtypes.nim
++++ b/compiler/semtypes.nim
+@@ -1320,3 +1320,6 @@
+       if {optNimV1Emulation, optNimV12Emulation} * c.config.globalOptions == {}:
+-        a[j] = newSymNode(arg)
++        if a[j].kind == nkPragmaExpr:
++          a[j][0] = newSymNode(arg)
++        else:
++          a[j] = newSymNode(arg)
+ 
+   var r: PType

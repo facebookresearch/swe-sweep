@@ -1,0 +1,21 @@
+diff --git a/lib/types/array/methods/index.js b/lib/types/array/methods/index.js
+index 90d3aa83e..13b3f493c 100644
+--- a/lib/types/array/methods/index.js
++++ b/lib/types/array/methods/index.js
+@@ -137,12 +137,13 @@ const methods = {
+     this._markModified();
+ 
+     // only allow shifting once
+-    if (this._shifted) {
++    const __array = this.__array;
++    if (__array._shifted) {
+       return;
+     }
+-    this._shifted = true;
++    __array._shifted = true;
+ 
+-    return [].shift.call(this);
++    return [].shift.call(__array);
+   },
+ 
+   /**

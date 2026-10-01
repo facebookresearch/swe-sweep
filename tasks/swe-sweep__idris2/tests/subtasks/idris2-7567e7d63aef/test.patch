@@ -1,0 +1,155 @@
+diff --git a/tests/Main.idr b/tests/Main.idr
+index de75a821a..1219fd198 100644
+--- a/tests/Main.idr
++++ b/tests/Main.idr
+@@ -122,7 +122,7 @@ idrisTestsPerformance = MkTestPool "Performance" [] Nothing
+        -- Performance: things which have been slow in the past, or which
+        -- pose interesting challenges for the elaborator
+       ["perf001", "perf002", "perf003", "perf004", "perf005",
+-       "perf007", "perf008", "perf009"]
++       "perf007", "perf008", "perf009", "perf011"]
+ 
+ idrisTestsRegression : TestPool
+ idrisTestsRegression = MkTestPool "Various regressions" [] Nothing
+diff --git a/tests/idris2/perf011/A.idr b/tests/idris2/perf011/A.idr
+new file mode 100644
+index 000000000..194e7b277
+--- /dev/null
++++ b/tests/idris2/perf011/A.idr
+@@ -0,0 +1,6 @@
++module A
++
++public export
++-- interface AInt x where
++interface BFromInteger x where
++  foo : Integer -> x
+diff --git a/tests/idris2/perf011/B.idr b/tests/idris2/perf011/B.idr
+new file mode 100644
+index 000000000..2ef05b7a9
+--- /dev/null
++++ b/tests/idris2/perf011/B.idr
+@@ -0,0 +1,12 @@
++module B
++
++import A
++
++public export
++
++--if you change the name of the function from BFromInteger to AInt here and in A.idr, as
++--below, the problem disappears. Not sure the pattern here, but some names cause an issue
++--and some do not
++-- BFunc : AInt x => (a : x) -> Type
++BFunc : BFromInteger x => (a : x) -> Type
++BFunc a = (a = a)
+diff --git a/tests/idris2/perf011/C.idr b/tests/idris2/perf011/C.idr
+new file mode 100644
+index 000000000..ed937cf28
+--- /dev/null
++++ b/tests/idris2/perf011/C.idr
+@@ -0,0 +1,8 @@
++module C
++
++import B
++
++foo : BFunc x
++foo1 : BFunc x
++foo2 : BFunc x
++foo3 : BFunc x
+diff --git a/tests/idris2/perf011/expected b/tests/idris2/perf011/expected
+new file mode 100644
+index 000000000..eb2afae8a
+--- /dev/null
++++ b/tests/idris2/perf011/expected
+@@ -0,0 +1,83 @@
++1/3: Building A (A.idr)
++2/3: Building B (B.idr)
++3/3: Building C (C.idr)
++Error: While processing type of foo. Can't find an implementation for BFromInteger ?x.
++
++C:5:7--5:14
++ 1 | module C
++ 2 | 
++ 3 | import B
++ 4 | 
++ 5 | foo : BFunc x
++           ^^^^^^^
++
++Possible cause: Undefined name A.BFromInteger. 
++
++C:5:7--5:14
++ 1 | module C
++ 2 | 
++ 3 | import B
++ 4 | 
++ 5 | foo : BFunc x
++           ^^^^^^^
++Did you mean: fromInteger?
++Error: While processing type of foo1. Can't find an implementation for BFromInteger ?x.
++
++C:6:8--6:15
++ 2 | 
++ 3 | import B
++ 4 | 
++ 5 | foo : BFunc x
++ 6 | foo1 : BFunc x
++            ^^^^^^^
++
++Possible cause: Undefined name A.BFromInteger. 
++
++C:6:8--6:15
++ 2 | 
++ 3 | import B
++ 4 | 
++ 5 | foo : BFunc x
++ 6 | foo1 : BFunc x
++            ^^^^^^^
++Did you mean: fromInteger?
++Error: While processing type of foo2. Can't find an implementation for BFromInteger ?x.
++
++C:7:8--7:15
++ 3 | import B
++ 4 | 
++ 5 | foo : BFunc x
++ 6 | foo1 : BFunc x
++ 7 | foo2 : BFunc x
++            ^^^^^^^
++
++Possible cause: Undefined name A.BFromInteger. 
++
++C:7:8--7:15
++ 3 | import B
++ 4 | 
++ 5 | foo : BFunc x
++ 6 | foo1 : BFunc x
++ 7 | foo2 : BFunc x
++            ^^^^^^^
++Did you mean: fromInteger?
++Error: While processing type of foo3. Can't find an implementation for BFromInteger ?x.
++
++C:8:8--8:15
++ 4 | 
++ 5 | foo : BFunc x
++ 6 | foo1 : BFunc x
++ 7 | foo2 : BFunc x
++ 8 | foo3 : BFunc x
++            ^^^^^^^
++
++Possible cause: Undefined name A.BFromInteger. 
++
++C:8:8--8:15
++ 4 | 
++ 5 | foo : BFunc x
++ 6 | foo1 : BFunc x
++ 7 | foo2 : BFunc x
++ 8 | foo3 : BFunc x
++            ^^^^^^^
++Did you mean: fromInteger?
+diff --git a/tests/idris2/perf011/run b/tests/idris2/perf011/run
+new file mode 100644
+index 000000000..605ef5cff
+--- /dev/null
++++ b/tests/idris2/perf011/run
+@@ -0,0 +1,3 @@
++rm -rf build
++
++$1 --no-color --console-width 0 --check C.idr

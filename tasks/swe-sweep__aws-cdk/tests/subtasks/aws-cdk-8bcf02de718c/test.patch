@@ -1,0 +1,94 @@
+diff --git a/packages/@aws-cdk/core/test/staging.test.ts b/packages/@aws-cdk/core/test/staging.test.ts
+index ee87780..0a5d466 100644
+--- a/packages/@aws-cdk/core/test/staging.test.ts
++++ b/packages/@aws-cdk/core/test/staging.test.ts
+@@ -19,6 +19,7 @@ enum DockerStubCommand {
+ }
+ 
+ const FIXTURE_TEST1_DIR = path.join(__dirname, 'fs', 'fixtures', 'test1');
++const FIXTURE_TEST1_HASH = '2f37f937c51e2c191af66acf9b09f548926008ec68c575bd2ee54b6e997c0e00';
+ const FIXTURE_TARBALL = path.join(__dirname, 'fs', 'fixtures.tar.gz');
+ 
+ const userInfo = os.userInfo();
+@@ -44,20 +45,41 @@ nodeunitShim({
+   'base case'(test: Test) {
+     // GIVEN
+     const stack = new Stack();
+-    const sourcePath = path.join(__dirname, 'fs', 'fixtures', 'test1');
++    const sourcePath = FIXTURE_TEST1_DIR;
+ 
+     // WHEN
+     const staging = new AssetStaging(stack, 's1', { sourcePath });
+ 
+-    test.deepEqual(staging.sourceHash, '2f37f937c51e2c191af66acf9b09f548926008ec68c575bd2ee54b6e997c0e00');
++    test.deepEqual(staging.sourceHash, FIXTURE_TEST1_HASH);
+     test.deepEqual(staging.sourcePath, sourcePath);
+-    test.deepEqual(path.basename(staging.stagedPath), 'asset.2f37f937c51e2c191af66acf9b09f548926008ec68c575bd2ee54b6e997c0e00');
+-    test.deepEqual(path.basename(staging.relativeStagedPath(stack)), 'asset.2f37f937c51e2c191af66acf9b09f548926008ec68c575bd2ee54b6e997c0e00');
++    test.deepEqual(path.basename(staging.stagedPath), `asset.${FIXTURE_TEST1_HASH}`);
++    test.deepEqual(path.basename(staging.relativeStagedPath(stack)), `asset.${FIXTURE_TEST1_HASH}`);
+     test.deepEqual(staging.packaging, FileAssetPackaging.ZIP_DIRECTORY);
+     test.deepEqual(staging.isArchive, true);
+     test.done();
+   },
+ 
++  'base case if source directory is a symlink'(test: Test) {
++    // GIVEN
++    const stack = new Stack();
++    const sourcePath = path.join(os.tmpdir(), 'asset-symlink');
++    if (fs.existsSync(sourcePath)) { fs.unlinkSync(sourcePath); }
++    fs.symlinkSync(FIXTURE_TEST1_DIR, sourcePath);
++
++    try {
++      const staging = new AssetStaging(stack, 's1', { sourcePath });
++
++      // Should be the same asset hash as in the previous test
++      test.deepEqual(staging.assetHash, FIXTURE_TEST1_HASH);
++    } finally {
++      if (fs.existsSync(sourcePath)) {
++        fs.unlinkSync(sourcePath);
++      }
++    }
++
++    test.done();
++  },
++
+   'staging of an archive file correctly sets packaging and isArchive'(test: Test) {
+     // GIVEN
+     const stack = new Stack();
+@@ -143,7 +165,7 @@ nodeunitShim({
+     // WHEN
+     const staging = new AssetStaging(stack, 's1', { sourcePath });
+ 
+-    test.deepEqual(staging.sourceHash, '2f37f937c51e2c191af66acf9b09f548926008ec68c575bd2ee54b6e997c0e00');
++    test.deepEqual(staging.sourceHash, FIXTURE_TEST1_HASH);
+     test.deepEqual(staging.sourcePath, sourcePath);
+     test.deepEqual(staging.stagedPath, sourcePath);
+     test.deepEqual(staging.relativeStagedPath(stack), sourcePath);
+@@ -162,7 +184,7 @@ nodeunitShim({
+     // THEN
+     const assembly = app.synth();
+     test.deepEqual(fs.readdirSync(assembly.directory), [
+-      'asset.2f37f937c51e2c191af66acf9b09f548926008ec68c575bd2ee54b6e997c0e00',
++      `asset.${FIXTURE_TEST1_HASH}`,
+       'asset.af10ac04b3b607b0f8659c8f0cee8c343025ee75baf0b146f10f0e5311d2c46b.gz',
+       'cdk.out',
+       'manifest.json',
+@@ -189,7 +211,7 @@ nodeunitShim({
+     test.deepEqual(fs.readdirSync(assembly.directory), [
+       'assembly-Stage1',
+       'assembly-Stage2',
+-      'asset.2f37f937c51e2c191af66acf9b09f548926008ec68c575bd2ee54b6e997c0e00',
++      `asset.${FIXTURE_TEST1_HASH}`,
+       'cdk.out',
+       'manifest.json',
+       'tree.json',
+@@ -209,7 +231,7 @@ nodeunitShim({
+ 
+     // THEN
+     test.notEqual(withoutExtra.sourceHash, withExtra.sourceHash);
+-    test.deepEqual(withoutExtra.sourceHash, '2f37f937c51e2c191af66acf9b09f548926008ec68c575bd2ee54b6e997c0e00');
++    test.deepEqual(withoutExtra.sourceHash, FIXTURE_TEST1_HASH);
+     test.deepEqual(withExtra.sourceHash, 'c95c915a5722bb9019e2c725d11868e5a619b55f36172f76bcbcaa8bb2d10c5f');
+     test.done();
+   },

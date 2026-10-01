@@ -1,0 +1,55 @@
+diff --git a/tests/iter/t21737.nim b/tests/iter/t21737.nim
+new file mode 100644
+index 000000000..da06faea7
+--- /dev/null
++++ b/tests/iter/t21737.nim
+@@ -0,0 +1,22 @@
++discard """
++  action: compile
++"""
++
++template mytoSeq*(iter: untyped): untyped =
++  var result: seq[typeof(iter)]# = @[]
++  for x in iter:
++    result.add(x)
++  result
++
++iterator test(dir:int): int =
++  yield 1234
++
++iterator walkGlobKinds (): int =
++  let dir2 = 123
++  let it = mytoSeq(test(dir2))  
++
++proc main()=
++    let it = iterator(): int=
++      for path in walkGlobKinds():
++          yield path
++main()
+diff --git a/tests/iter/t22548.nim b/tests/iter/t22548.nim
+new file mode 100644
+index 000000000..b9abb75d0
+--- /dev/null
++++ b/tests/iter/t22548.nim
+@@ -0,0 +1,21 @@
++discard """
++  action: compile
++"""
++
++type Xxx[T] = object
++
++iterator x(v: string): char =
++  var v2: Xxx[int]
++
++  var y: v2.T
++
++  echo y
++
++proc bbb(vv: string): proc () =
++  proc xxx() =
++    for c in x(vv):
++      echo c
++
++  return xxx
++
++bbb("test")()

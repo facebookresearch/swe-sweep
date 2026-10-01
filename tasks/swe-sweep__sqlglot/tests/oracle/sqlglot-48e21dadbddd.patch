@@ -1,0 +1,52 @@
+diff --git a/sqlglot/dialects/bigquery.py b/sqlglot/dialects/bigquery.py
+index 23c9ef67af..43294b5e0e 100644
+--- a/sqlglot/dialects/bigquery.py
++++ b/sqlglot/dialects/bigquery.py
+@@ -661,6 +661,7 @@ class BigQuery(Dialect):
+             "TO_JSON_STRING": exp.JSONFormat.from_arg_list,
+             "FORMAT_DATETIME": _build_format_time(exp.TsOrDsToDatetime),
+             "FORMAT_TIMESTAMP": _build_format_time(exp.TsOrDsToTimestamp),
++            "WEEK": lambda args: exp.WeekStart(this=exp.var(seq_get(args, 0))),
+         }
+ 
+         FUNCTION_PARSERS = {
+diff --git a/sqlglot/dialects/dialect.py b/sqlglot/dialects/dialect.py
+index b82a797b72..371418bd3b 100644
+--- a/sqlglot/dialects/dialect.py
++++ b/sqlglot/dialects/dialect.py
+@@ -1656,7 +1656,7 @@ def unit_to_str(expression: exp.Expression, default: str = "DAY") -> t.Optional[
+ def unit_to_var(expression: exp.Expression, default: str = "DAY") -> t.Optional[exp.Expression]:
+     unit = expression.args.get("unit")
+ 
+-    if isinstance(unit, (exp.Var, exp.Placeholder)):
++    if isinstance(unit, (exp.Var, exp.Placeholder, exp.WeekStart)):
+         return unit
+     return exp.Var(this=default) if default else None
+ 
+diff --git a/sqlglot/expressions.py b/sqlglot/expressions.py
+index aab827c256..eb2c2bad00 100644
+--- a/sqlglot/expressions.py
++++ b/sqlglot/expressions.py
+@@ -7129,6 +7129,10 @@ class Week(Func):
+     arg_types = {"this": True, "mode": False}
+ 
+ 
++class WeekStart(Expression):
++    pass
++
++
+ class XMLElement(Func):
+     _sql_names = ["XMLELEMENT"]
+     arg_types = {"this": True, "expressions": False}
+diff --git a/sqlglot/generator.py b/sqlglot/generator.py
+index c2170163c2..48a3133b0c 100644
+--- a/sqlglot/generator.py
++++ b/sqlglot/generator.py
+@@ -219,6 +219,7 @@ class Generator(metaclass=_Generator):
+         exp.VarMap: lambda self, e: self.func("MAP", e.args["keys"], e.args["values"]),
+         exp.ViewAttributeProperty: lambda self, e: f"WITH {self.sql(e, 'this')}",
+         exp.VolatileProperty: lambda *_: "VOLATILE",
++        exp.WeekStart: lambda self, e: f"WEEK({self.sql(e, 'this')})",
+         exp.WithJournalTableProperty: lambda self, e: f"WITH JOURNAL TABLE={self.sql(e, 'this')}",
+         exp.WithProcedureOptions: lambda self, e: f"WITH {self.expressions(e, flat=True)}",
+         exp.WithSchemaBindingProperty: lambda self, e: f"WITH SCHEMA {self.sql(e, 'this')}",

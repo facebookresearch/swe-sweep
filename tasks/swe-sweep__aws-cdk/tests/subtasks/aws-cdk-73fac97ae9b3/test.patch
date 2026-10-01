@@ -1,0 +1,51 @@
+diff --git a/packages/@aws-cdk/aws-stepfunctions/test/fields.test.ts b/packages/@aws-cdk/aws-stepfunctions/test/fields.test.ts
+index a919912..8124ddf 100644
+--- a/packages/@aws-cdk/aws-stepfunctions/test/fields.test.ts
++++ b/packages/@aws-cdk/aws-stepfunctions/test/fields.test.ts
+@@ -32,6 +32,46 @@ describe('Fields', () => {
+       ],
+     });
+   }),
++  test('correctly serialize a nested array', () => {
++    expect(
++      FieldUtils.renderObject({
++        nestedArray: [
++          [
++            [123, 123],
++            [456, 456],
++          ],
++        ],
++      }),
++    ).toStrictEqual({
++      nestedArray: [
++        [
++          [123, 123],
++          [456, 456],
++        ],
++      ],
++    });
++  }),
++  test('deep replace correctly handles fields in nested arrays', () => {
++    expect(
++      FieldUtils.renderObject({
++        deep: [
++          [
++            {
++              deepField: JsonPath.numberAt('$.numField'),
++            },
++          ],
++        ],
++      }),
++    ).toStrictEqual({
++      deep: [
++        [
++          {
++            'deepField.$': '$.numField',
++          },
++        ],
++      ],
++    });
++  }),
+   test('exercise contextpaths', () => {
+     expect(
+       FieldUtils.renderObject({

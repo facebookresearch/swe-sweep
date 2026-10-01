@@ -1,0 +1,16 @@
+diff --git a/src/cmd/go/internal/work/security_test.go b/src/cmd/go/internal/work/security_test.go
+index 8cecc74eae..c05ba7b9a4 100644
+--- a/src/cmd/go/internal/work/security_test.go
++++ b/src/cmd/go/internal/work/security_test.go
+@@ -230,6 +230,11 @@ var badLinkerFlags = [][]string{
+ 	{"-Wl,-R,@foo"},
+ 	{"-Wl,--just-symbols,@foo"},
+ 	{"../x.o"},
++	{"-Wl,-R,"},
++	{"-Wl,-O"},
++	{"-Wl,-e="},
++	{"-Wl,-e,"},
++	{"-Wl,-R,-flag"},
+ }
+ 
+ func TestCheckLinkerFlags(t *testing.T) {

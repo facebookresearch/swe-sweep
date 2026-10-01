@@ -1,0 +1,15 @@
+diff --git a/ext/random/engine_xoshiro256starstar.c b/ext/random/engine_xoshiro256starstar.c
+index 1a054362f06..12db8198978 100644
+--- a/ext/random/engine_xoshiro256starstar.c
++++ b/ext/random/engine_xoshiro256starstar.c
+@@ -151,6 +151,10 @@ static bool unserialize(void *state, HashTable *data)
+ 		}
+ 	}
+ 
++	if (UNEXPECTED(s->state[0] == 0 && s->state[1] == 0 && s->state[2] == 0 && s->state[3] == 0)) {
++		return false;
++	}
++
+ 	return true;
+ }
+ 

@@ -1,0 +1,13 @@
+diff --git a/src/click/core.py b/src/click/core.py
+index 455f52f..0b924ca 100644
+--- a/src/click/core.py
++++ b/src/click/core.py
+@@ -2822,6 +2822,8 @@ class Option(Parameter):
+         rv = super().resolve_envvar_value(ctx)
+ 
+         if rv is not None:
++            if self.is_flag and self.flag_value:
++                return str(self.flag_value)
+             return rv
+ 
+         if (

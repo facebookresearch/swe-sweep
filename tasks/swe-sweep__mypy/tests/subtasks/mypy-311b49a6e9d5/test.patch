@@ -1,0 +1,20 @@
+diff --git a/test-data/unit/check-typevar-tuple.test b/test-data/unit/check-typevar-tuple.test
+index 2cc84c8e6..57a96291b 100644
+--- a/test-data/unit/check-typevar-tuple.test
++++ b/test-data/unit/check-typevar-tuple.test
+@@ -2487,3 +2487,15 @@ c: C[int, str]  # E: Can only replace ParamSpec with a parameter types list or a
+ c: C[int, str]  # E: Can only replace ParamSpec with a parameter types list or another ParamSpec, got "int"
+ reveal_type(c.fn)  # N: Revealed type is "def (*Any, **Any)"
+ [builtins fixtures/tuple.pyi]
++
++[case testTypeVarTupleInferAgainstAnyCallableSuffix]
++from typing import Any, Callable, TypeVar, TypeVarTuple
++
++Ts = TypeVarTuple("Ts")
++R = TypeVar("R")
++def deco(func: Callable[[*Ts, int], R]) -> Callable[[*Ts], R]:
++    ...
++
++untyped: Any
++reveal_type(deco(untyped))  # N: Revealed type is "def (*Any) -> Any"
++[builtins fixtures/tuple.pyi]

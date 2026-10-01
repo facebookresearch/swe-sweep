@@ -1,0 +1,14 @@
+diff --git a/modules/openapi-generator/src/main/resources/JavaSpring/converter.mustache b/modules/openapi-generator/src/main/resources/JavaSpring/converter.mustache
+index 4578768ddda..b573b65fb0d 100644
+--- a/modules/openapi-generator/src/main/resources/JavaSpring/converter.mustache
++++ b/modules/openapi-generator/src/main/resources/JavaSpring/converter.mustache
+@@ -1,5 +1,9 @@
+ package {{configPackage}};
+ 
++import java.math.BigDecimal;
++import java.net.URI;
++import java.util.UUID;
++
+ {{#models}}
+     {{#model}}
+         {{#isEnum}}

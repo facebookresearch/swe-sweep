@@ -1,0 +1,21 @@
+diff --git a/xarray/tests/test_groupby.py b/xarray/tests/test_groupby.py
+index 9d9c22cf..dc869cc3 100644
+--- a/xarray/tests/test_groupby.py
++++ b/xarray/tests/test_groupby.py
+@@ -1859,3 +1859,16 @@
+ 
+ 
+ # TODO: move other groupby tests from test_dataset and test_dataarray over here
++
++
++def test_groupby_transpose():
++    # GH5361
++    data = xr.DataArray(
++        np.random.randn(4, 2),
++        dims=["x", "z"],
++        coords={"x": ["a", "b", "a", "c"], "y": ("x", [0, 1, 0, 2])},
++    )
++    first = data.T.groupby("x").sum()
++    second = data.groupby("x").sum()
++
++    assert_identical(first, second.transpose(*first.dims))

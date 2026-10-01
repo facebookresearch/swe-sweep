@@ -1,0 +1,52 @@
+diff --git a/src/common/types.cpp b/src/common/types.cpp
+index c7c4d5c..004d6e8 100644
+--- a/src/common/types.cpp
++++ b/src/common/types.cpp
+@@ -544,6 +544,16 @@ bool LogicalType::IsIntegral() const {
+ 	}
+ }
+ 
++bool LogicalType::IsFloating() const {
++	switch (id_) {
++	case LogicalTypeId::FLOAT:
++	case LogicalTypeId::DOUBLE:
++		return true;
++	default:
++		return false;
++	}
++}
++
+ bool LogicalType::IsNumeric() const {
+ 	switch (id_) {
+ 	case LogicalTypeId::TINYINT:
+diff --git a/src/include/duckdb/common/types.hpp b/src/include/duckdb/common/types.hpp
+index 04c0e96..f9d5cbe 100644
+--- a/src/include/duckdb/common/types.hpp
++++ b/src/include/duckdb/common/types.hpp
+@@ -310,6 +310,7 @@ struct LogicalType {
+ 	}
+ 	DUCKDB_API string ToString() const;
+ 	DUCKDB_API bool IsIntegral() const;
++	DUCKDB_API bool IsFloating() const;
+ 	DUCKDB_API bool IsNumeric() const;
+ 	DUCKDB_API hash_t Hash() const;
+ 	DUCKDB_API void SetAlias(string alias);
+diff --git a/src/optimizer/remove_unused_columns.cpp b/src/optimizer/remove_unused_columns.cpp
+index bd71de7..6bf8c6d 100644
+--- a/src/optimizer/remove_unused_columns.cpp
++++ b/src/optimizer/remove_unused_columns.cpp
+@@ -83,10 +83,13 @@ void RemoveUnusedColumns::VisitOperator(LogicalOperator &op) {
+ 			// for inner joins with equality predicates in the form of (X=Y)
+ 			// we can replace any references to the RHS (Y) to references to the LHS (X)
+ 			// this reduces the amount of columns we need to extract from the join hash table
++			// (except in the case of floating point numbers which have +0 and -0, equal but different).
+ 			for (auto &cond : comp_join.conditions) {
+ 				if (cond.comparison == ExpressionType::COMPARE_EQUAL) {
+ 					if (cond.left->expression_class == ExpressionClass::BOUND_COLUMN_REF &&
+-					    cond.right->expression_class == ExpressionClass::BOUND_COLUMN_REF) {
++					    cond.right->expression_class == ExpressionClass::BOUND_COLUMN_REF &&
++					    !(cond.left->Cast<BoundColumnRefExpression>().return_type.IsFloating() &&
++					      cond.right->Cast<BoundColumnRefExpression>().return_type.IsFloating())) {
+ 						// comparison join between two bound column refs
+ 						// we can replace any reference to the RHS (build-side) with a reference to the LHS (probe-side)
+ 						auto &lhs_col = cond.left->Cast<BoundColumnRefExpression>();

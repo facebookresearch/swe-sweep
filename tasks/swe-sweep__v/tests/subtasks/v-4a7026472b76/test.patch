@@ -1,0 +1,28 @@
+diff --git a/vlib/regex/regex_anchor_test.v b/vlib/regex/regex_anchor_test.v
+new file mode 100644
+index 000000000..488ab39b1
+--- /dev/null
++++ b/vlib/regex/regex_anchor_test.v
+@@ -0,0 +1,22 @@
++import regex
++
++fn test_anchor_start() {
++	mut re := regex.regex_opt(r'^\w+') or { panic(err) }
++	start, end := re.find('id.')
++	assert start == 0
++	assert end == 2
++}
++
++fn test_anchor_end() {
++	mut re := regex.regex_opt(r'\w+$') or { panic(err) }
++	start, end := re.find('(id')
++	assert start == 1
++	assert end == 3
++}
++
++fn test_anchor_both() {
++	mut re := regex.regex_opt(r'^\w+$') or { panic(err) }
++	start, end := re.find('(id)')
++	assert start == -1
++	assert end == -1
++}

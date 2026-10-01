@@ -1,0 +1,19 @@
+diff --git a/vlib/v/tests/array_sort_with_fn_call_test.v b/vlib/v/tests/array_sort_with_fn_call_test.v
+new file mode 100644
+index 000000000..65d55ebb8
+--- /dev/null
++++ b/vlib/v/tests/array_sort_with_fn_call_test.v
+@@ -0,0 +1,13 @@
++struct Info {
++mut:
++	fields []string
++}
++
++fn test_sort_with_fn_call() {
++	mut info := Info{
++		fields: ['aaa(', 'b(']
++	}
++	info.fields.sort(a.before('(').len < b.before('(').len)
++	println(info.fields)
++	assert info.fields == ['b(', 'aaa(']
++}

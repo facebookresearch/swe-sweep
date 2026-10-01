@@ -1,0 +1,12 @@
+diff --git a/src/html/template/js.go b/src/html/template/js.go
+index b3bf94801b..e2db30f966 100644
+--- a/src/html/template/js.go
++++ b/src/html/template/js.go
+@@ -462,6 +462,7 @@ func isJSType(mimeType string) bool {
+ 	mimeType = strings.TrimSpace(mimeType)
+ 	switch mimeType {
+ 	case
++		"",
+ 		"application/ecmascript",
+ 		"application/javascript",
+ 		"application/json",

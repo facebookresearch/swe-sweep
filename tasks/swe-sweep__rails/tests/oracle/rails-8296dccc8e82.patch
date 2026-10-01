@@ -1,0 +1,15 @@
+diff --git a/activesupport/lib/active_support/hash_with_indifferent_access.rb b/activesupport/lib/active_support/hash_with_indifferent_access.rb
+index 2f771d7e97d..4fa4e3b08ba 100644
+--- a/activesupport/lib/active_support/hash_with_indifferent_access.rb
++++ b/activesupport/lib/active_support/hash_with_indifferent_access.rb
+@@ -313,10 +313,6 @@ module ActiveSupport
+     end
+     alias_method :without, :except
+ 
+-    def stringify_keys!; self end
+-    def deep_stringify_keys!; self end
+-    def stringify_keys; dup end
+-    def deep_stringify_keys; dup end
+     undef :symbolize_keys!
+     undef :deep_symbolize_keys!
+     def symbolize_keys; to_hash.symbolize_keys! end

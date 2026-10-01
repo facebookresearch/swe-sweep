@@ -1,0 +1,24 @@
+diff --git a/crates/swc_ecma_codegen/tests/fixture/issues/6171/input.ts b/crates/swc_ecma_codegen/tests/fixture/issues/6171/input.ts
+new file mode 100644
+index 0000000000..00a3cc43a3
+--- /dev/null
++++ b/crates/swc_ecma_codegen/tests/fixture/issues/6171/input.ts
+@@ -0,0 +1,6 @@
++type ReadonlyDict = {
++    readonly [key: string]: string;
++};
++type Dict = {
++    [key: string]: string;
++};
+diff --git a/crates/swc_ecma_codegen/tests/fixture/issues/6171/output.ts b/crates/swc_ecma_codegen/tests/fixture/issues/6171/output.ts
+new file mode 100644
+index 0000000000..00a3cc43a3
+--- /dev/null
++++ b/crates/swc_ecma_codegen/tests/fixture/issues/6171/output.ts
+@@ -0,0 +1,6 @@
++type ReadonlyDict = {
++    readonly [key: string]: string;
++};
++type Dict = {
++    [key: string]: string;
++};

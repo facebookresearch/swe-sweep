@@ -1,0 +1,12 @@
+diff --git a/tests/test_ty.rs b/tests/test_ty.rs
+index a03abaa3..335cafa2 100644
+--- a/tests/test_ty.rs
++++ b/tests/test_ty.rs
+@@ -9,6 +9,7 @@ use syn::Type;
+ #[test]
+ fn test_mut_self() {
+     syn::parse_str::<Type>("fn(mut self)").unwrap();
++    syn::parse_str::<Type>("fn(mut self,)").unwrap();
+     syn::parse_str::<Type>("fn(mut self: ())").unwrap();
+     syn::parse_str::<Type>("fn(mut self: ...)").unwrap_err();
+     syn::parse_str::<Type>("fn(mut self: mut self)").unwrap_err();

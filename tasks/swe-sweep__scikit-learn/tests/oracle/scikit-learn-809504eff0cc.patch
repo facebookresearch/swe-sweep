@@ -1,0 +1,14 @@
+diff --git a/sklearn/decomposition/incremental_pca.py b/sklearn/decomposition/incremental_pca.py
+index 9e636b0661..589796a7c9 100644
+--- a/sklearn/decomposition/incremental_pca.py
++++ b/sklearn/decomposition/incremental_pca.py
+@@ -256,7 +256,8 @@ class IncrementalPCA(_BasePCA):
+         self.explained_variance_ = explained_variance[:self.n_components_]
+         self.explained_variance_ratio_ = \
+             explained_variance_ratio[:self.n_components_]
+-        if self.n_components_ < n_features:
++        # we already checked `self.n_components <= n_samples` above
++        if self.n_components_ not in (n_samples, n_features):
+             self.noise_variance_ = \
+                 explained_variance[self.n_components_:].mean()
+         else:

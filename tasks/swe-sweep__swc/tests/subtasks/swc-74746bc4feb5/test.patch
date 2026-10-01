@@ -1,0 +1,63 @@
+diff --git a/crates/swc_ecma_parser/tests/typescript/import/export-import-type-require/input.ts b/crates/swc_ecma_parser/tests/typescript/import/export-import-type-require/input.ts
+new file mode 100644
+index 0000000000..6be78c34bb
+--- /dev/null
++++ b/crates/swc_ecma_parser/tests/typescript/import/export-import-type-require/input.ts
+@@ -0,0 +1 @@
++export import type React = require("react");
+diff --git a/crates/swc_ecma_parser/tests/typescript/import/export-import-type-require/input.ts.json b/crates/swc_ecma_parser/tests/typescript/import/export-import-type-require/input.ts.json
+new file mode 100644
+index 0000000000..7b3a3d8e96
+--- /dev/null
++++ b/crates/swc_ecma_parser/tests/typescript/import/export-import-type-require/input.ts.json
+@@ -0,0 +1,50 @@
++{
++  "type": "Module",
++  "span": {
++    "start": 1,
++    "end": 45,
++    "ctxt": 0
++  },
++  "body": [
++    {
++      "type": "TsImportEqualsDeclaration",
++      "span": {
++        "start": 1,
++        "end": 45,
++        "ctxt": 0
++      },
++      "declare": false,
++      "isExport": true,
++      "isTypeOnly": true,
++      "id": {
++        "type": "Identifier",
++        "span": {
++          "start": 20,
++          "end": 25,
++          "ctxt": 0
++        },
++        "value": "React",
++        "optional": false
++      },
++      "moduleRef": {
++        "type": "TsExternalModuleReference",
++        "span": {
++          "start": 28,
++          "end": 44,
++          "ctxt": 0
++        },
++        "expression": {
++          "type": "StringLiteral",
++          "span": {
++            "start": 36,
++            "end": 43,
++            "ctxt": 0
++          },
++          "value": "react",
++          "raw": "\"react\""
++        }
++      }
++    }
++  ],
++  "interpreter": null
++}

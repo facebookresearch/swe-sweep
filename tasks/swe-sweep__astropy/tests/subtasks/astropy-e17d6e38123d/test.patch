@@ -1,0 +1,18 @@
+diff --git a/astropy/io/fits/tests/test_image.py b/astropy/io/fits/tests/test_image.py
+index 9095c3cd5c..c02d157267 100644
+--- a/astropy/io/fits/tests/test_image.py
++++ b/astropy/io/fits/tests/test_image.py
+@@ -2001,6 +2001,13 @@ def test_scale_implicit_casting():
+     hdu.scale(bzero=1.3)
+ 
+ 
++def test_scale_floats():
++    data = np.arange(10) / 10
++    hdu = fits.ImageHDU(data)
++    hdu.scale("float32")
++    np.testing.assert_array_equal(hdu.data, data.astype("float32"))
++
++
+ def test_bzero_implicit_casting_compressed():
+ 
+     # Regression test for an issue that occurred because Numpy now does not

@@ -1,0 +1,49 @@
+diff --git a/packages/@aws-cdk/core/test/staging.test.ts b/packages/@aws-cdk/core/test/staging.test.ts
+index 9c2c0a0f11..6b2bd8e76e 100644
+--- a/packages/@aws-cdk/core/test/staging.test.ts
++++ b/packages/@aws-cdk/core/test/staging.test.ts
+@@ -816,6 +816,44 @@ nodeunitShim({
+     test.done();
+   },
+ 
++  'correctly skips bundling with stack under stage'(test: Test) {
++    // GIVEN
++    const app = new App();
++
++    const stage = new Stage(app, 'Stage');
++    stage.node.setContext(cxapi.BUNDLING_STACKS, ['Stage/Stack1']);
++
++    const stack1 = new Stack(stage, 'Stack1');
++    const stack2 = new Stack(stage, 'Stack2');
++    const directory = path.join(__dirname, 'fs', 'fixtures', 'test1');
++
++    new AssetStaging(stack1, 'Asset', {
++      sourcePath: directory,
++      assetHashType: AssetHashType.OUTPUT,
++      bundling: {
++        image: BundlingDockerImage.fromRegistry('alpine'),
++        command: [DockerStubCommand.SUCCESS],
++      },
++    });
++
++    new AssetStaging(stack2, 'Asset', {
++      sourcePath: directory,
++      assetHashType: AssetHashType.OUTPUT,
++      bundling: {
++        image: BundlingDockerImage.fromRegistry('alpine'),
++        command: [DockerStubCommand.MULTIPLE_FILES],
++      },
++    });
++
++    const dockerStubInput = readDockerStubInputConcat();
++    // Docker ran for the asset in Stack1
++    test.ok(dockerStubInput.indexOf(DockerStubCommand.SUCCESS) >= 0);
++    // DOcker did not run for the asset in Stack2
++    test.ok(dockerStubInput.indexOf(DockerStubCommand.MULTIPLE_FILES) < 0);
++
++    test.done();
++  },
++
+   'bundling still occurs with partial wildcard'(test: Test) {
+     // GIVEN
+     const app = new App();

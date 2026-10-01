@@ -1,0 +1,10 @@
+diff --git a/tests/lean/run/issue8098.lean b/tests/lean/run/issue8098.lean
+new file mode 100644
+index 0000000000..80aacf0853
+--- /dev/null
++++ b/tests/lean/run/issue8098.lean
+@@ -0,0 +1,4 @@
++example : Id Unit := do
++  if let true ← true then pure ()
++  if let true <- true then pure ()
++  pure ()

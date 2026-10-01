@@ -1,0 +1,25 @@
+diff --git a/tests/template/t6217.nim b/tests/template/t6217.nim
+new file mode 100644
+index 000000000..b27b61881
+--- /dev/null
++++ b/tests/template/t6217.nim
+@@ -0,0 +1,19 @@
++discard """
++  output: '''
++start
++side effect!
++end
++'''
++"""
++
++# bug #6217
++
++template optMul{`*`(a, 2)}(a: int{noSideEffect}): int = a+a
++
++proc f(): int =
++  echo "side effect!"
++  result = 55
++
++echo "start"
++doAssert f() * 2 == 110
++echo "end"

@@ -1,0 +1,34 @@
+diff --git a/tests/data/simple_cases/remove_await_parens.py b/tests/data/simple_cases/remove_await_parens.py
+index 8c7223d2..073150c5 100644
+--- a/tests/data/simple_cases/remove_await_parens.py
++++ b/tests/data/simple_cases/remove_await_parens.py
+@@ -80,6 +80,15 @@ async def main():
+ async def main():
+     await (yield)
+ 
++async def main():
++    await (a ** b)
++    await (a[b] ** c)
++    await (a ** b[c])
++    await ((a + b) ** (c + d))
++    await (a + b)
++    await (a[b])
++    await (a[b ** c])
++
+ # output
+ import asyncio
+ 
+@@ -174,3 +183,13 @@ async def main():
+ 
+ async def main():
+     await (yield)
++
++
++async def main():
++    await (a**b)
++    await (a[b] ** c)
++    await (a ** b[c])
++    await ((a + b) ** (c + d))
++    await (a + b)
++    await a[b]
++    await a[b**c]

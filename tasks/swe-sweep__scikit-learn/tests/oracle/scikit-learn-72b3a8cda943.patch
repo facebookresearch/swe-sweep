@@ -1,0 +1,13 @@
+diff --git a/sklearn/feature_extraction/image.py b/sklearn/feature_extraction/image.py
+index 154ec87012..7d71a2b5f2 100644
+--- a/sklearn/feature_extraction/image.py
++++ b/sklearn/feature_extraction/image.py
+@@ -82,7 +82,7 @@ def _mask_edges_weights(mask, edges, weights=None):
+         maxval = edges.max()
+     else:
+         maxval = 0
+-    order = np.searchsorted(np.unique(edges.ravel()), np.arange(maxval + 1))
++    order = np.searchsorted(np.flatnonzero(mask), np.arange(maxval + 1))
+     edges = order[edges]
+     if weights is None:
+         return edges

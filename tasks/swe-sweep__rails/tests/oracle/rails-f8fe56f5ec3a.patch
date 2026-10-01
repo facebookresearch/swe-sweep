@@ -1,0 +1,13 @@
+diff --git a/actionpack/lib/action_controller/metal/live.rb b/actionpack/lib/action_controller/metal/live.rb
+index 5b9dd0128a6..ae3de7bfeb2 100644
+--- a/actionpack/lib/action_controller/metal/live.rb
++++ b/actionpack/lib/action_controller/metal/live.rb
+@@ -321,7 +321,7 @@ module ActionController
+     def send_stream(filename:, disposition: "attachment", type: nil)
+       response.headers["Content-Type"] =
+         (type.is_a?(Symbol) ? Mime[type].to_s : type) ||
+-        Mime::Type.lookup_by_extension(File.extname(filename).downcase.delete(".")) ||
++        Mime::Type.lookup_by_extension(File.extname(filename).downcase.delete("."))&.to_s ||
+         "application/octet-stream"
+ 
+       response.headers["Content-Disposition"] =

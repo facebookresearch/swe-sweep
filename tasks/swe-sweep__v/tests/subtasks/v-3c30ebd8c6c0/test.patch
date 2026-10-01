@@ -1,0 +1,29 @@
+diff --git a/vlib/v/slow_tests/inout/printing_slice_of_fn_call_string.out b/vlib/v/slow_tests/inout/printing_slice_of_fn_call_string.out
+new file mode 100644
+index 000000000..9cc1d6688
+--- /dev/null
++++ b/vlib/v/slow_tests/inout/printing_slice_of_fn_call_string.out
+@@ -0,0 +1,2 @@
++Get called
++ello
+diff --git a/vlib/v/slow_tests/inout/printing_slice_of_fn_call_string.vv b/vlib/v/slow_tests/inout/printing_slice_of_fn_call_string.vv
+new file mode 100644
+index 000000000..71c7cc2ff
+--- /dev/null
++++ b/vlib/v/slow_tests/inout/printing_slice_of_fn_call_string.vv
+@@ -0,0 +1,15 @@
++struct Wrapper {
++	element string
++}
++
++fn (instance Wrapper) get() string {
++	println("Get called")
++	return instance.element
++}
++
++fn main() {
++	wrapper := Wrapper{
++		element: "Hello"
++	}
++	println(wrapper.get()[1..])
++}

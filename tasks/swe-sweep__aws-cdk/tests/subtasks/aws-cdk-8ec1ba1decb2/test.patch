@@ -1,0 +1,58 @@
+diff --git a/packages/@aws-cdk/aws-elasticloadbalancingv2/test/alb/listener.test.ts b/packages/@aws-cdk/aws-elasticloadbalancingv2/test/alb/listener.test.ts
+index d4095c93c5..e1e100db6e 100644
+--- a/packages/@aws-cdk/aws-elasticloadbalancingv2/test/alb/listener.test.ts
++++ b/packages/@aws-cdk/aws-elasticloadbalancingv2/test/alb/listener.test.ts
+@@ -260,6 +260,53 @@ describe('tests', () => {
+     });
+   });
+ 
++  test('bind is called for all next targets', () => {
++    // GIVEN
++    const stack = new cdk.Stack();
++    const vpc = new ec2.Vpc(stack, 'Stack');
++    const lb = new elbv2.ApplicationLoadBalancer(stack, 'LB', { vpc });
++    const listener = lb.addListener('Listener', { port: 80 });
++    const fake = new FakeSelfRegisteringTarget(stack, 'FakeTG', vpc);
++    const group = new elbv2.ApplicationTargetGroup(stack, 'TargetGroup', {
++      vpc,
++      port: 80,
++      targets: [fake],
++    });
++
++    // WHEN
++    listener.addAction('first-action', {
++      action: elbv2.ListenerAction.authenticateOidc({
++        next: elbv2.ListenerAction.forward([group]),
++        issuer: 'dummy',
++        clientId: 'dummy',
++        clientSecret: cdk.SecretValue.plainText('dummy'),
++        tokenEndpoint: 'dummy',
++        userInfoEndpoint: 'dummy',
++        authorizationEndpoint: 'dummy',
++      }),
++    });
++
++    // THEN
++    expect(stack).toHaveResource('AWS::EC2::SecurityGroupIngress', {
++      IpProtocol: 'tcp',
++      Description: 'Load balancer to target',
++      FromPort: 80,
++      ToPort: 80,
++      GroupId: {
++        'Fn::GetAtt': [
++          'FakeTGSG50E257DF',
++          'GroupId',
++        ],
++      },
++      SourceSecurityGroupId: {
++        'Fn::GetAtt': [
++          'LBSecurityGroup8A41EA2B',
++          'GroupId',
++        ],
++      },
++    });
++  });
++
+   test('Can implicitly create target groups with and without conditions', () => {
+     // GIVEN
+     const stack = new cdk.Stack();

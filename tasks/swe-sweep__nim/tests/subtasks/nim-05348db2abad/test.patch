@@ -1,0 +1,19 @@
+diff --git a/tests/vm/tvmmisc.nim b/tests/vm/tvmmisc.nim
+index 1429ef6e9..cade68577 100644
+--- a/tests/vm/tvmmisc.nim
++++ b/tests/vm/tvmmisc.nim
+@@ -232,6 +232,14 @@ block: # bug #15595
+   static: main()
+   main()
+ 
++block: # issue #20543
++  type F = proc()
++  const myArray = block:
++    var r: array[1, F]
++    r[0] = nil
++    r
++  doAssert isNil(myArray[0])
++
+ # bug #15363
+ import sequtils
+ 

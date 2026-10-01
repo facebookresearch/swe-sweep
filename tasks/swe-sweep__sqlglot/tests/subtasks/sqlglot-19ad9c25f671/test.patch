@@ -1,0 +1,29 @@
+diff --git a/tests/dialects/test_databricks.py b/tests/dialects/test_databricks.py
+index e6d1e7a697..78265f1755 100644
+--- a/tests/dialects/test_databricks.py
++++ b/tests/dialects/test_databricks.py
+@@ -63,6 +63,24 @@ class TestDatabricks(Validator):
+             r"SELECT '\\\\foo.bar\\'",
+         )
+ 
++        self.validate_all(
++            "SELECT c1:item[1].price",
++            read={
++                "spark": "SELECT GET_JSON_OBJECT(c1, '$.item[1].price')",
++            },
++            write={
++                "databricks": "SELECT c1:item[1].price",
++                "spark": "SELECT GET_JSON_OBJECT(c1, '$.item[1].price')",
++            },
++        )
++
++        self.validate_all(
++            "SELECT GET_JSON_OBJECT(c1, '$.item[1].price')",
++            write={
++                "databricks": "SELECT c1:item[1].price",
++                "spark": "SELECT GET_JSON_OBJECT(c1, '$.item[1].price')",
++            },
++        )
+         self.validate_all(
+             "CREATE TABLE foo (x INT GENERATED ALWAYS AS (YEAR(y)))",
+             write={

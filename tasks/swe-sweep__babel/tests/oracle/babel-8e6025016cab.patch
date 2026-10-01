@@ -1,0 +1,13 @@
+diff --git a/packages/babel-parser/src/parser/statement.js b/packages/babel-parser/src/parser/statement.js
+--- a/packages/babel-parser/src/parser/statement.js
++++ b/packages/babel-parser/src/parser/statement.js
+@@ -773,5 +773,8 @@ export default class StatementParser extends ExpressionParser {
+     }
+     node.left = init;
+-    node.right = this.parseExpression();
++    node.right =
++      type === "ForInStatement"
++        ? this.parseExpression()
++        : this.parseMaybeAssign();
+     this.expect(tt.parenR);
+     node.body = this.parseStatement(false);

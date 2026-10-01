@@ -1,0 +1,13 @@
+diff --git a/tinygrad/uop/ops.py b/tinygrad/uop/ops.py
+index 748e28038..93f8db1b9 100644
+--- a/tinygrad/uop/ops.py
++++ b/tinygrad/uop/ops.py
+@@ -839,7 +839,7 @@ class CustomKernel:
+   grad_fxn: Callable|None = None
+   # sadly CustomKernel can't be pickled or reconstructed as a str
+   def __reduce__(self): return (CustomKernel, (panic,))
+-  def __repr__(self): return "CustomKernel(panic)"
++  def __repr__(self): return f"CustomKernel({id(self.fxn)})"
+ 
+ @dataclass(frozen=True)
+ class Kernel:

@@ -1,0 +1,13 @@
+diff --git a/src/Symfony/Component/HttpKernel/DataCollector/LoggerDataCollector.php b/src/Symfony/Component/HttpKernel/DataCollector/LoggerDataCollector.php
+index cf17e7a7396..2b406c7db35 100644
+--- a/src/Symfony/Component/HttpKernel/DataCollector/LoggerDataCollector.php
++++ b/src/Symfony/Component/HttpKernel/DataCollector/LoggerDataCollector.php
+@@ -306,7 +306,7 @@ class LoggerDataCollector extends DataCollector implements LateDataCollectorInte
+                     'name' => $log['priorityName'],
+                 ];
+             }
+-            if ('WARNING' === $log['priorityName']) {
++            if ('WARNING' === $log['priorityName'] || 'warning' === $log['priorityName']) {
+                 ++$count['warning_count'];
+             }
+ 

@@ -1,0 +1,22 @@
+diff --git a/railties/test/generators/scaffold_controller_generator_test.rb b/railties/test/generators/scaffold_controller_generator_test.rb
+index 5dfac345635..08381d16eb5 100644
+--- a/railties/test/generators/scaffold_controller_generator_test.rb
++++ b/railties/test/generators/scaffold_controller_generator_test.rb
+@@ -207,14 +207,17 @@ class ScaffoldControllerGeneratorTest < Rails::Generators::TestCase
+   def test_model_name_option
+     run_generator ["Admin::User", "--model-name=User"]
+     assert_file "app/controllers/admin/users_controller.rb" do |content|
++      assert_match "# GET /admin/users", content
+       assert_instance_method :index, content do |m|
+         assert_match("@users = User.all", m)
+       end
+ 
++      assert_match "# POST /admin/users", content
+       assert_instance_method :create, content do |m|
+         assert_match("redirect_to [:admin, @user]", m)
+       end
+ 
++      assert_match "# PATCH/PUT /admin/users/1", content
+       assert_instance_method :update, content do |m|
+         assert_match("redirect_to [:admin, @user]", m)
+       end

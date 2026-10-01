@@ -1,0 +1,33 @@
+diff --git a/packages/jest-resolve/src/__mocks__/foo/bar/index.js b/packages/jest-resolve/src/__mocks__/foo/bar/index.js
+new file mode 100644
+index 0000000000..e69de29bb2
+diff --git a/packages/jest-resolve/src/__tests__/resolve.test.ts b/packages/jest-resolve/src/__tests__/resolve.test.ts
+index 1bc9c447f1..a027d1065a 100644
+--- a/packages/jest-resolve/src/__tests__/resolve.test.ts
++++ b/packages/jest-resolve/src/__tests__/resolve.test.ts
+@@ -561,6 +561,25 @@ describe('resolveModule', () => {
+     expect(mockUserResolver).toHaveBeenCalled();
+     expect(mockUserResolver.mock.calls[0][0]).toBe('fs');
+   });
++
++  it('handles unmatched capture groups correctly', () => {
++    const resolver = new Resolver(moduleMap, {
++      extensions: ['.js'],
++      moduleNameMapper: [
++        {
++          moduleName: './__mocks__/foo$1',
++          regex: /^@Foo(\/.*)?$/,
++        },
++      ],
++    } as ResolverConfig);
++    const src = require.resolve('../');
++    expect(resolver.resolveModule(src, '@Foo')).toBe(
++      require.resolve('../__mocks__/foo.js'),
++    );
++    expect(resolver.resolveModule(src, '@Foo/bar')).toBe(
++      require.resolve('../__mocks__/foo/bar/index.js'),
++    );
++  });
+ });
+ 
+ describe('resolveModuleAsync', () => {

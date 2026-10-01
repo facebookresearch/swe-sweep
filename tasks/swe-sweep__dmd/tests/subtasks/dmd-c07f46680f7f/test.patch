@@ -1,0 +1,15 @@
+diff --git a/compiler/test/compilable/b20243.d b/compiler/test/compilable/b20243.d
+new file mode 100644
+index 0000000000..792dcf302d
+--- /dev/null
++++ b/compiler/test/compilable/b20243.d
+@@ -0,0 +1,9 @@
++module b20243;
++
++inout(int) f(inout(int)[inout(string)] x);
++const(int)[const(string)] x;
++static assert(is(typeof(f(x)) == const(int)));
++
++inout(int)[inout(string)] g(inout(int) y);
++const(int) y;
++static assert(is(typeof(g(y)) == const(int)[const(string)]));

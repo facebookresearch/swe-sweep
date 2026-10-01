@@ -1,0 +1,28 @@
+diff --git a/independent-projects/resteasy-reactive/common/runtime/src/test/java/org/jboss/resteasy/reactive/common/headers/MediaTypeHeaderDelegateTest.java b/independent-projects/resteasy-reactive/common/runtime/src/test/java/org/jboss/resteasy/reactive/common/headers/MediaTypeHeaderDelegateTest.java
+new file mode 100644
+index 00000000000..4141af5ff6c
+--- /dev/null
++++ b/independent-projects/resteasy-reactive/common/runtime/src/test/java/org/jboss/resteasy/reactive/common/headers/MediaTypeHeaderDelegateTest.java
+@@ -0,0 +1,21 @@
++package org.jboss.resteasy.reactive.common.headers;
++
++import org.junit.jupiter.api.Assertions;
++import org.junit.jupiter.api.Test;
++
++public class MediaTypeHeaderDelegateTest {
++
++    public void parsingBrokenMediaTypeShouldThrowIllegalArgumentException_minimized() {
++        Assertions.assertThrows(IllegalArgumentException.class, () -> {
++            MediaTypeHeaderDelegate.parse("x; /x");
++        });
++    }
++
++    @Test
++    public void parsingBrokenMediaTypeShouldThrowIllegalArgumentException_actual() {
++        Assertions.assertThrows(IllegalArgumentException.class, () -> {
++            MediaTypeHeaderDelegate.parse("() { ::}; echo \"NS:\" $(/bin/sh -c \"expr 123456 - 123456\")");
++        });
++    }
++
++}
+\ No newline at end of file

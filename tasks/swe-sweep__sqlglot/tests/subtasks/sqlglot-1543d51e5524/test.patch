@@ -1,0 +1,15 @@
+diff --git a/tests/dialects/test_duckdb.py b/tests/dialects/test_duckdb.py
+index 38ba4bc6c8..4c98b7bf33 100644
+--- a/tests/dialects/test_duckdb.py
++++ b/tests/dialects/test_duckdb.py
+@@ -255,6 +255,10 @@ class TestDuckDB(Validator):
+             parse_one("a // b", read="duckdb").assert_is(exp.IntDiv).sql(dialect="duckdb"), "a // b"
+         )
+ 
++        self.validate_identity(
++            "SELECT tbl.x*1e4+tbl.y FROM tbl",
++            "SELECT tbl.x * 1e4 + tbl.y FROM tbl",
++        )
+         self.validate_identity("SELECT UNNEST([1, 2])").selects[0].assert_is(exp.UDTF)
+         self.validate_identity("'red' IN flags").args["field"].assert_is(exp.Column)
+         self.validate_identity("'red' IN tbl.flags")

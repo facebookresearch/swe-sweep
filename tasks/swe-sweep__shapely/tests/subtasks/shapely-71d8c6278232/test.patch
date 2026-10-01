@@ -1,0 +1,26 @@
+diff --git a/shapely/tests/geometry/test_collection.py b/shapely/tests/geometry/test_collection.py
+index 95813fc3..68dc3408 100644
+--- a/shapely/tests/geometry/test_collection.py
++++ b/shapely/tests/geometry/test_collection.py
+@@ -21,6 +21,7 @@ def geometrycollection_geojson():
+     "geom",
+     [
+         GeometryCollection(),
++        GeometryCollection([]),
+         shape({"type": "GeometryCollection", "geometries": []}),
+         wkt.loads("GEOMETRYCOLLECTION EMPTY"),
+     ],
+@@ -59,6 +60,13 @@ def test_child_with_deleted_parent():
+     assert child.wkt is not None
+ 
+ 
++def test_from_numpy_array():
++    geoms = np.array([Point(0, 0), LineString([(1, 1), (2, 2)])])
++    geom = GeometryCollection(geoms)
++    assert len(geom.geoms) == 2
++    np.testing.assert_array_equal(geoms, geom.geoms)
++
++
+ def test_from_geojson(geometrycollection_geojson):
+     geom = shape(geometrycollection_geojson)
+     assert geom.geom_type == "GeometryCollection"

@@ -1,0 +1,13 @@
+diff --git a/numpy/fft/fftpack.py b/numpy/fft/fftpack.py
+index 2199797ad90..4edeecc075a 100644
+--- a/numpy/fft/fftpack.py
++++ b/numpy/fft/fftpack.py
+@@ -1097,7 +1097,7 @@ def rfftn(a, s=None, axes=None, norm=None):
+     a = array(a, copy=True, dtype=float)
+     s, axes = _cook_nd_args(a, s, axes)
+     a = rfft(a, s[-1], axes[-1], norm)
+-    for ii in range(len(axes)-1):
++    for ii in range(len(axes)-2, -1, -1):
+         a = fft(a, s[ii], axes[ii], norm)
+     return a
+ 

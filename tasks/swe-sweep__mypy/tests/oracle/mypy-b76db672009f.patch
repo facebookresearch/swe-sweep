@@ -1,0 +1,150 @@
+diff --git a/mypy/build.py b/mypy/build.py
+index 4745610d7..40dd73313 100644
+--- a/mypy/build.py
++++ b/mypy/build.py
+@@ -1050,7 +1050,10 @@ PLUGIN_SNAPSHOT_FILE: Final = "@plugins_snapshot.json"
+ def write_plugins_snapshot(manager: BuildManager) -> None:
+     """Write snapshot of versions and hashes of currently active plugins."""
+     snapshot = json_dumps(manager.plugins_snapshot)
+-    if not manager.metastore.write(PLUGIN_SNAPSHOT_FILE, snapshot):
++    if (
++        not manager.metastore.write(PLUGIN_SNAPSHOT_FILE, snapshot)
++        and manager.options.cache_dir != os.devnull
++    ):
+         manager.errors.set_file(_cache_dir_prefix(manager.options), None, manager.options)
+         manager.errors.report(0, 0, "Error writing plugins snapshot", blocker=True)
+ 
+diff --git a/mypy/dmypy_server.py b/mypy/dmypy_server.py
+index f8a0f91f8..70cfaa5b2 100644
+--- a/mypy/dmypy_server.py
++++ b/mypy/dmypy_server.py
+@@ -625,6 +625,8 @@ class Server:
+         changed, new_files = self.find_reachable_changed_modules(
+             sources, graph, seen, changed_paths
+         )
++        # Same as in fine_grained_increment().
++        self.add_explicitly_new(sources, changed)
+         if explicit_export_types:
+             # Same as in fine_grained_increment().
+             add_all_sources_to_changed(sources, changed)
+@@ -888,6 +890,22 @@ class Server:
+             assert path
+             removed.append((source.module, path))
+ 
++        self.add_explicitly_new(sources, changed)
++
++        # Find anything that has had its module path change because of added or removed __init__s
++        last = {s.path: s.module for s in self.previous_sources}
++        for s in sources:
++            assert s.path
++            if s.path in last and last[s.path] != s.module:
++                # Mark it as removed from its old name and changed at its new name
++                removed.append((last[s.path], s.path))
++                changed.append((s.module, s.path))
++
++        return changed, removed
++
++    def add_explicitly_new(
++        self, sources: list[BuildSource], changed: list[tuple[str, str]]
++    ) -> None:
+         # Always add modules that were (re-)added, since they may be detected as not changed by
+         # fswatcher (if they were actually not changed), but they may still need to be checked
+         # in case they had errors before they were deleted from sources on previous runs.
+@@ -903,17 +921,6 @@ class Server:
+             ]
+         )
+ 
+-        # Find anything that has had its module path change because of added or removed __init__s
+-        last = {s.path: s.module for s in self.previous_sources}
+-        for s in sources:
+-            assert s.path
+-            if s.path in last and last[s.path] != s.module:
+-                # Mark it as removed from its old name and changed at its new name
+-                removed.append((last[s.path], s.path))
+-                changed.append((s.module, s.path))
+-
+-        return changed, removed
+-
+     def cmd_inspect(
+         self,
+         show: str,
+diff --git a/mypy/metastore.py b/mypy/metastore.py
+index 21fb8730f..ece397360 100644
+--- a/mypy/metastore.py
++++ b/mypy/metastore.py
+@@ -27,7 +27,7 @@ class MetadataStore:
+ 
+     @abstractmethod
+     def getmtime(self, name: str) -> float:
+-        """Read the mtime of a metadata entry..
++        """Read the mtime of a metadata entry.
+ 
+         Raises FileNotFound if the entry does not exist.
+         """
+diff --git a/mypy/server/update.py b/mypy/server/update.py
+index 6bf8c8d07..fdc311bbf 100644
+--- a/mypy/server/update.py
++++ b/mypy/server/update.py
+@@ -146,11 +146,7 @@ from mypy.nodes import (
+     TypeInfo,
+ )
+ from mypy.options import Options
+-from mypy.semanal_main import (
+-    core_modules,
+-    semantic_analysis_for_scc,
+-    semantic_analysis_for_targets,
+-)
++from mypy.semanal_main import semantic_analysis_for_scc, semantic_analysis_for_targets
+ from mypy.server.astdiff import (
+     SymbolSnapshot,
+     compare_symbol_table_snapshots,
+@@ -162,11 +158,12 @@ from mypy.server.deps import get_dependencies_of_target, merge_dependencies
+ from mypy.server.target import trigger_to_target
+ from mypy.server.trigger import WILDCARD_TAG, make_trigger
+ from mypy.typestate import type_state
+-from mypy.util import module_prefix, split_target
++from mypy.util import is_stdlib_file, module_prefix, split_target
+ 
+ MAX_ITER: Final = 1000
+ 
+-SENSITIVE_INTERNAL_MODULES = tuple(core_modules) + ("mypy_extensions", "typing_extensions")
++# These are modules beyond stdlib that have some special meaning for mypy.
++SENSITIVE_INTERNAL_MODULES = ("mypy_extensions", "typing_extensions")
+ 
+ 
+ class FineGrainedBuildManager:
+@@ -406,7 +403,10 @@ class FineGrainedBuildManager:
+         # builtins and friends could potentially get triggered because
+         # of protocol stuff, but nothing good could possibly come from
+         # actually updating them.
+-        if module in SENSITIVE_INTERNAL_MODULES:
++        if (
++            is_stdlib_file(self.manager.options.abs_custom_typeshed_dir, path)
++            or module in SENSITIVE_INTERNAL_MODULES
++        ):
+             return [], (module, path), None
+ 
+         manager = self.manager
+diff --git a/mypy/util.py b/mypy/util.py
+index 3c550958a..67d1aa519 100644
+--- a/mypy/util.py
++++ b/mypy/util.py
+@@ -870,6 +870,18 @@ def is_typeshed_file(typeshed_dir: str | None, file: str) -> bool:
+         return False
+ 
+ 
++def is_stdlib_file(typeshed_dir: str | None, file: str) -> bool:
++    if "stdlib" not in file:
++        # Fast path
++        return False
++    typeshed_dir = typeshed_dir if typeshed_dir is not None else TYPESHED_DIR
++    stdlib_dir = os.path.join(typeshed_dir, "stdlib")
++    try:
++        return os.path.commonpath((stdlib_dir, os.path.abspath(file))) == stdlib_dir
++    except ValueError:  # Different drives on Windows
++        return False
++
++
+ def is_stub_package_file(file: str) -> bool:
+     # Use hacky heuristics to check whether file is part of a PEP 561 stub package.
+     if not file.endswith(".pyi"):

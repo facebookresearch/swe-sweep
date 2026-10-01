@@ -1,0 +1,13 @@
+diff --git a/src/Compiler/Service/ServiceParseTreeWalk.fs b/src/Compiler/Service/ServiceParseTreeWalk.fs
+index 659f4c4bc6..33734db9a6 100644
+--- a/src/Compiler/Service/ServiceParseTreeWalk.fs
++++ b/src/Compiler/Service/ServiceParseTreeWalk.fs
+@@ -1014,6 +1014,8 @@ module SyntaxTraversal =
+                 let path = SyntaxNode.SynBinding b :: origPath
+ 
+                 match b with
++                | SynBinding(kind = SynBindingKind.Do; expr = expr) -> traverseSynExpr path expr
++
+                 | SynBinding(headPat = synPat; expr = synExpr; attributes = attributes; range = m) ->
+                     [
+                         yield! attributeApplicationDives path attributes

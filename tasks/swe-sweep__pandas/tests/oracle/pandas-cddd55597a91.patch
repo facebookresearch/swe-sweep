@@ -1,0 +1,12 @@
+diff --git a/pandas/core/groupby/generic.py b/pandas/core/groupby/generic.py
+index 9b341845c7..81c5e74957 100644
+--- a/pandas/core/groupby/generic.py
++++ b/pandas/core/groupby/generic.py
+@@ -1699,6 +1699,7 @@ class DataFrameGroupBy(GroupBy[DataFrame]):
+                 selection=colname,
+                 grouper=self.grouper,
+                 exclusions=self.exclusions,
++                observed=self.observed,
+             )
+ 
+     def _apply_to_column_groupbys(self, func, obj: FrameOrSeries) -> DataFrame:

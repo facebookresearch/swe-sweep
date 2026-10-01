@@ -1,0 +1,48 @@
+diff --git a/numpy/f2py/tests/test_callback.py b/numpy/f2py/tests/test_callback.py
+index 37736af21285..4d4f2b443a99 100644
+--- a/numpy/f2py/tests/test_callback.py
++++ b/numpy/f2py/tests/test_callback.py
+@@ -163,3 +163,43 @@ class TestF77Callback(util.F2PyTest):
+         f = getattr(self.module, 'string_callback_array')
+         res = f(callback, cu, len(cu))
+         assert_(res == 0, repr(res))
++
++
++class TestGH18335(util.F2PyTest):
++    """The reproduction of the reported issue requires specific input that
++    extensions may break the issue conditions, so the reproducer is
++    implemented as a separate test class. Do not extend this test with
++    other tests!
++    """
++
++    suffix = '.f90'
++
++    code = textwrap.dedent(
++        """
++        ! When gh18335_workaround is defined as an extension,
++        ! the issue cannot be reproduced.
++        !subroutine gh18335_workaround(f, y)
++        !  implicit none
++        !  external f
++        !  integer(kind=1) :: y(1)
++        !  call f(y)
++        !end subroutine gh18335_workaround
++
++        function gh18335(f) result (r)
++          implicit none
++          external f
++          integer(kind=1) :: y(1), r
++          y(1) = 123
++          call f(y)
++          r = y(1)
++        end function gh18335
++        """)
++
++    def test_gh18335(self):
++
++        def foo(x):
++            x[0] += 1
++
++        y = np.array([1, 2, 3], dtype=np.int8)
++        r = self.module.gh18335(foo)
++        assert r == 123 + 1

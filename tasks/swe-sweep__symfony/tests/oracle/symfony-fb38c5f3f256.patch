@@ -1,0 +1,15 @@
+diff --git a/src/Symfony/Component/Validator/Constraints/RegexValidator.php b/src/Symfony/Component/Validator/Constraints/RegexValidator.php
+index 4e9ae9039ff..5303e095bce 100644
+--- a/src/Symfony/Component/Validator/Constraints/RegexValidator.php
++++ b/src/Symfony/Component/Validator/Constraints/RegexValidator.php
+@@ -47,7 +47,9 @@ class RegexValidator extends ConstraintValidator
+             $value = ($constraint->normalizer)($value);
+         }
+ 
+-        if ($constraint->match xor preg_match($constraint->pattern, $value)) {
++        $expectedResult = $constraint->match ? 1 : 0;
++
++        if (preg_match($constraint->pattern, $value) !== $expectedResult) {
+             $this->context->buildViolation($constraint->message)
+                 ->setParameter('{{ value }}', $this->formatValue($value))
+                 ->setParameter('{{ pattern }}', $constraint->pattern)

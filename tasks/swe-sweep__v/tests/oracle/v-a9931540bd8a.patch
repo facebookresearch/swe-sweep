@@ -1,0 +1,14 @@
+diff --git a/vlib/v/ast/table.v b/vlib/v/ast/table.v
+index b485007c5..4371f689a 100644
+--- a/vlib/v/ast/table.v
++++ b/vlib/v/ast/table.v
+@@ -2552,6 +2552,9 @@ pub fn (t &Table) dependent_names_in_expr(expr Expr) []string {
+ 			names << t.dependent_names_in_expr(expr.right)
+ 		}
+ 		MapInit {
++			for key in expr.keys {
++				names << t.dependent_names_in_expr(key)
++			}
+ 			for val in expr.vals {
+ 				names << t.dependent_names_in_expr(val)
+ 			}

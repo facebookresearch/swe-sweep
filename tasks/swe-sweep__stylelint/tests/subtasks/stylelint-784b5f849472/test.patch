@@ -1,0 +1,75 @@
+diff --git a/lib/rules/selector-not-notation/__tests__/index.mjs b/lib/rules/selector-not-notation/__tests__/index.mjs
+index 9769c38d9..c95eb90cf 100644
+--- a/lib/rules/selector-not-notation/__tests__/index.mjs
++++ b/lib/rules/selector-not-notation/__tests__/index.mjs
+@@ -1,3 +1,5 @@
++import { stripIndent } from 'common-tags';
++
+ import rule from '../index.mjs';
+ const { messages, ruleName } = rule;
+ 
+@@ -28,6 +30,16 @@ testRule({
+ 		{
+ 			code: ':not([title]) {}',
+ 		},
++		{
++			code: stripIndent`
++				/* stylelint-disable-next-line selector-not-notation */
++				:not(a, div), /* stylelint-disable-next-line selector-not-notation */
++				:not(a, div),
++				/* stylelint-disable-next-line selector-not-notation */
++				:not(a, div)
++				{}
++			`,
++		},
+ 	],
+ 
+ 	reject: [
+@@ -140,6 +152,47 @@ testRule({
+ 			endLine: 1,
+ 			endColumn: 12,
+ 		},
++		{
++			code: stripIndent`
++				/* a comment */
++				:not(a, div), /* a comment */
++				:not(a, div),
++				/* a comment */
++				:not(a, div)
++				{}
++			`,
++			fixed: stripIndent`
++				/* a comment */
++				:not(a):not(div), /* a comment */
++				:not(a):not(div),
++				/* a comment */
++				:not(a):not(div)
++				{}
++			`,
++			warnings: [
++				{
++					message: messages.expected('simple'),
++					line: 2,
++					column: 1,
++					endLine: 2,
++					endColumn: 13,
++				},
++				{
++					message: messages.expected('simple'),
++					line: 3,
++					column: 1,
++					endLine: 3,
++					endColumn: 13,
++				},
++				{
++					message: messages.expected('simple'),
++					line: 5,
++					column: 1,
++					endLine: 5,
++					endColumn: 13,
++				},
++			],
++		},
+ 	],
+ });
+ 

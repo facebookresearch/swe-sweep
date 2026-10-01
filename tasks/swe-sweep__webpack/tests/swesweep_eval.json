@@ -1,0 +1,423 @@
+{
+  "build_jobs": 4,
+  "container_repo": "/webpack",
+  "evaluation": {
+    "suite": "reproduction",
+    "visible_timeout": 14400
+  },
+  "upstream_image": "pandora-maxbug-webpack:5.60.0",
+  "n_base_passing": 59062,
+  "n_base_test_ignore": 187,
+  "oracle_digest": "e875230d05a6e7c97e88ed5858e68e1a2d2b365aa2c894ba322f28aef5961d9e",
+  "oracle_pristine_paths": [],
+  "upstream_commit": "9f7399e15e6172900e0591deb5a57a45769d8205",
+  "reproduction": {
+    "jobs_env": "SWESWEEP_BUILD_JOBS",
+    "needs_build": false,
+    "suite": {
+      "fixture_roots": [
+        {
+          "case_segment": 3,
+          "drivers": [
+            "test/ConfigTestCases.basictest.js"
+          ],
+          "pattern": "test/configCases/"
+        },
+        {
+          "case_segment": 3,
+          "drivers": [
+            "test/WatchTestCases.longtest.js"
+          ],
+          "pattern": "test/watchCases/"
+        },
+        {
+          "case_segment": 3,
+          "drivers": [
+            "test/HotTestCasesNode.test.js"
+          ],
+          "pattern": "test/hotCases/"
+        },
+        {
+          "case_segment": 3,
+          "drivers": [
+            "test/TestCasesNormal.basictest.js"
+          ],
+          "pattern": "test/cases/"
+        },
+        {
+          "case_segment": 2,
+          "drivers": [
+            "test/StatsTestCases.basictest.js"
+          ],
+          "pattern": "test/statsCases/"
+        }
+      ],
+      "type": "jest-fixture"
+    },
+    "test_timeout": 1200
+  },
+  "schema": 2,
+  "subtasks": [
+    {
+      "f2p": [
+        "ConfigTestCases resolve unsafe-cache-proxy unsafe-cache-proxy should compile"
+      ],
+      "id": "webpack-02010e8e6f52",
+      "target_files": [
+        "lib/ResolverFactory.js",
+        "lib/util/cleverMerge.js"
+      ]
+    },
+    {
+      "f2p": [
+        "ConfigTestCases graph conditional-reexport conditional-reexport should compile"
+      ],
+      "id": "webpack-047193e6ece1",
+      "target_files": [
+        "lib/dependencies/HarmonyExportImportedSpecifierDependency.js"
+      ]
+    },
+    {
+      "f2p": [
+        "MultiCompiler should compute the common outputPath by path segments"
+      ],
+      "id": "webpack-0bdc1691622d",
+      "target_files": [
+        "lib/MultiCompiler.js"
+      ]
+    },
+    {
+      "f2p": [
+        "ConfigTestCases parsing issue-14545 issue-14545 should compile"
+      ],
+      "id": "webpack-115ecd8ec143",
+      "target_files": [
+        "lib/dependencies/CommonJsImportsParserPlugin.js",
+        "lib/dependencies/CommonJsRequireContextDependency.js",
+        "lib/dependencies/ContextDependency.js",
+        "lib/dependencies/ContextDependencyTemplateAsRequireCall.js"
+      ]
+    },
+    {
+      "f2p": [
+        "ConfigTestCases json proto exported tests should preserves `__proto__` properties"
+      ],
+      "id": "webpack-129ac9b39e25",
+      "target_files": [
+        "lib/json/JsonGenerator.js"
+      ]
+    },
+    {
+      "f2p": [
+        "ConfigTestCases clean lib-manifest-plugin lib-manifest-plugin should compile"
+      ],
+      "id": "webpack-27c513b4d56b",
+      "target_files": [
+        "lib/LibManifestPlugin.js"
+      ]
+    },
+    {
+      "f2p": [
+        "ConfigTestCases entry issue-13637 issue-13637 should compile"
+      ],
+      "id": "webpack-28af084e5d73",
+      "target_files": [
+        "lib/RuntimePlugin.js"
+      ]
+    },
+    {
+      "f2p": [
+        "ConfigTestCases asset-modules resource-from-data-uri exported tests should compile with correct filename"
+      ],
+      "id": "webpack-28bbd884e0c3",
+      "target_files": [
+        "lib/TemplatedPathPlugin.js"
+      ]
+    },
+    {
+      "f2p": [
+        "ConfigTestCases container 0-container-full exported tests should load the component from container",
+        "ConfigTestCases container 1-container-full exported tests should load the component from container"
+      ],
+      "id": "webpack-2ac92c7709bf",
+      "target_files": [
+        "lib/container/ContainerEntryModule.js"
+      ]
+    },
+    {
+      "f2p": [
+        "ConfigTestCases side-effects side-effects-unsorted-modules exported tests should not contain side-effect-free modules"
+      ],
+      "id": "webpack-2f4aa1e03c49",
+      "target_files": [
+        "lib/optimize/SideEffectsFlagPlugin.js"
+      ]
+    },
+    {
+      "f2p": [
+        "FileSystemInfo symlinks should work with symlinks with errors #1"
+      ],
+      "id": "webpack-30f5ce08140d",
+      "target_files": [
+        "lib/util/fs.js"
+      ]
+    },
+    {
+      "f2p": [
+        "ConfigTestCases source-map resource-path exported tests should not include layer or type in absoluteResourcePath"
+      ],
+      "id": "webpack-3749a3d8bddc",
+      "target_files": [
+        "lib/ModuleFilenameHelpers.js"
+      ]
+    },
+    {
+      "f2p": [
+        "ConfigTestCases parsing issue-14720 exported tests should generate a chunk for a full require dependencies in require.ensure"
+      ],
+      "id": "webpack-3e0b86542327",
+      "target_files": [
+        "lib/dependencies/CommonJsImportsParserPlugin.js",
+        "lib/dependencies/URLPlugin.js"
+      ]
+    },
+    {
+      "f2p": [
+        "TestCases normal mjs namespace-object-lazy exported tests should resolve the promise returned by the imported dynamic commonjs",
+        "TestCases normal mjs non-mjs-namespace-object-lazy exported tests should resolve the promise returned by the imported dynamic commonjs"
+      ],
+      "id": "webpack-3e7f9e2fe138",
+      "target_files": [
+        "lib/ContextModule.js"
+      ]
+    },
+    {
+      "f2p": [
+        "ConfigTestCases custom-hash-function debug-hash debug-hash should compile"
+      ],
+      "id": "webpack-4589d4e63954",
+      "target_files": [
+        "lib/util/createHash.js"
+      ]
+    },
+    {
+      "f2p": [
+        "WatchTestCases cache changing-module-id exported tests 1 should compile the next step"
+      ],
+      "id": "webpack-56ecb578d868",
+      "target_files": [
+        "lib/Compilation.js"
+      ]
+    },
+    {
+      "f2p": [
+        "TestCases normal runtime issue-15518 exported tests should compile and run"
+      ],
+      "id": "webpack-5caf75de2164",
+      "target_files": [
+        "lib/ContextModule.js"
+      ]
+    },
+    {
+      "f2p": [
+        "FileSystemInfo unsupported directory entries should hash a context containing an unsupported entry"
+      ],
+      "id": "webpack-5daf41f402d5",
+      "target_files": [
+        "lib/FileSystemInfo.js"
+      ]
+    },
+    {
+      "f2p": [
+        "ConfigTestCases devtools eval-nosources-source-map exported tests should not include sourcesContent if noSources option is used"
+      ],
+      "id": "webpack-63e7f8ddd505",
+      "target_files": [
+        "lib/EvalSourceMapDevToolPlugin.js"
+      ]
+    },
+    {
+      "f2p": [
+        "ConfigTestCases clean link link should compile"
+      ],
+      "id": "webpack-6528acbe512c",
+      "target_files": [
+        "lib/CleanPlugin.js",
+        "lib/util/fs.js",
+        "types.d.ts"
+      ]
+    },
+    {
+      "f2p": [
+        "WatchTestCases plugins profiling-plugin exported tests 0 should compile the next step"
+      ],
+      "id": "webpack-66c9eb8764f3",
+      "target_files": [
+        "lib/debug/ProfilingPlugin.js"
+      ]
+    },
+    {
+      "f2p": [
+        "ConfigTestCases sharing consume-module exported tests should not instantiate multiple singletons even if a higher version exists"
+      ],
+      "id": "webpack-68a6d3235a84",
+      "target_files": [
+        "lib/sharing/ConsumeSharedModule.js",
+        "lib/sharing/ConsumeSharedRuntimeModule.js"
+      ]
+    },
+    {
+      "f2p": [
+        "JavascriptParser expression evaluation should eval `${a}${b}` === `${a}b`"
+      ],
+      "id": "webpack-70c54f7c0d4f",
+      "target_files": [
+        "lib/javascript/JavascriptParser.js"
+      ]
+    },
+    {
+      "f2p": [
+        "HotTestCases node runtime import-after-download exported tests should download the missing update chunk on import"
+      ],
+      "id": "webpack-7e51e4f05157",
+      "target_files": [
+        "lib/hmr/HotModuleReplacement.runtime.js",
+        "lib/hmr/JavascriptHotModuleReplacement.runtime.js",
+        "lib/web/JsonpChunkLoadingRuntimeModule.js"
+      ]
+    },
+    {
+      "f2p": [
+        "ConfigTestCases asset-modules data-url exported tests should generate various data-url types"
+      ],
+      "id": "webpack-88861b002a41",
+      "target_files": [
+        "lib/asset/AssetGenerator.js"
+      ]
+    },
+    {
+      "f2p": [
+        "TestCases normal parsing issue-14610 exported tests should keep parentheses when replacing"
+      ],
+      "id": "webpack-901ea5e67618",
+      "target_files": [
+        "lib/dependencies/CommonJsFullRequireDependency.js"
+      ]
+    },
+    {
+      "f2p": [
+        "TestCases normal parsing harmony-export-import-specifier-asi harmony-export-import-specifier-asi should load the compiled tests"
+      ],
+      "id": "webpack-a1bab7cb8efb",
+      "target_files": [
+        "lib/dependencies/HarmonyExportDependencyParserPlugin.js",
+        "lib/javascript/JavascriptParser.js",
+        "types.d.ts"
+      ]
+    },
+    {
+      "f2p": [
+        "ConfigTestCases web node-source-global exported tests should disallow rename global"
+      ],
+      "id": "webpack-a46fabedb751",
+      "target_files": [
+        "lib/NodeStuffPlugin.js"
+      ]
+    },
+    {
+      "f2p": [
+        "TestCases normal errors import-module-cycle import-module-cycle should compile",
+        "TestCases normal errors import-module-cycle import-module-cycle should load the compiled tests",
+        "TestCases normal errors import-module-cycle-multiple import-module-cycle-multiple should compile",
+        "TestCases normal errors import-module-cycle-multiple import-module-cycle-multiple should load the compiled tests"
+      ],
+      "id": "webpack-a7d8b3cc6f4c",
+      "target_files": [
+        "lib/Compilation.js",
+        "lib/dependencies/LoaderPlugin.js",
+        "types.d.ts"
+      ]
+    },
+    {
+      "f2p": [
+        "TestCases normal parsing evaluate-nullish exported tests should evaluate nullish coalescing"
+      ],
+      "id": "webpack-a9b45d78631c",
+      "target_files": [
+        "lib/javascript/JavascriptParser.js"
+      ]
+    },
+    {
+      "f2p": [
+        "HotTestCases node lazy-compilation unrelated exported tests should compile to lazy imported module"
+      ],
+      "id": "webpack-e5a3f591c29f",
+      "target_files": [
+        "lib/hmr/LazyCompilationPlugin.js"
+      ]
+    },
+    {
+      "f2p": [
+        "StatsTestCases should print correct stats for dynamic-chunk-name-error"
+      ],
+      "id": "webpack-e8266b526948",
+      "target_files": [
+        "lib/buildChunkGraph.js"
+      ]
+    },
+    {
+      "f2p": [
+        "Stats should the results of hasWarnings() be affected by ignoreWarnings"
+      ],
+      "id": "webpack-e9a48f9afbbb",
+      "target_files": [
+        "lib/Stats.js"
+      ]
+    },
+    {
+      "f2p": [
+        "SemVer satisfies ~1 should be satisfied by 1.0.1 (normal)",
+        "SemVer satisfies ~1 should be satisfied by 1.0.1 (runtime)",
+        "SemVer satisfies ~1 should be satisfied by 1.1 (normal)",
+        "SemVer satisfies ~1 should be satisfied by 1.1 (runtime)",
+        "SemVer satisfies ~1 should be satisfied by 1.1.1 (normal)",
+        "SemVer satisfies ~1 should be satisfied by 1.1.1 (runtime)",
+        "SemVer satisfies ~1 should be satisfied by 1.2 (normal)",
+        "SemVer satisfies ~1 should be satisfied by 1.2 (runtime)",
+        "SemVer satisfies ~1 should be satisfied by 1.2.1 (normal)",
+        "SemVer satisfies ~1 should be satisfied by 1.2.1 (runtime)",
+        "SemVer satisfies ~1 should be satisfied by 1.3.0 (normal)",
+        "SemVer satisfies ~1 should be satisfied by 1.3.0 (runtime)",
+        "SemVer satisfies ~2 should be satisfied by 2.0.0 (normal)",
+        "SemVer satisfies ~2 should be satisfied by 2.0.0 (runtime)",
+        "SemVer satisfies ~2 should be satisfied by 2.0.1 (normal)",
+        "SemVer satisfies ~2 should be satisfied by 2.0.1 (runtime)",
+        "SemVer satisfies ~2 should be satisfied by 2.1.0 (normal)",
+        "SemVer satisfies ~2 should be satisfied by 2.1.0 (runtime)",
+        "SemVer satisfies ~2 should be satisfied by 2.1.1 (normal)",
+        "SemVer satisfies ~2 should be satisfied by 2.1.1 (runtime)",
+        "SemVer satisfies ~2 should be satisfied by 2.1.2 (normal)",
+        "SemVer satisfies ~2 should be satisfied by 2.1.2 (runtime)",
+        "SemVer satisfies ~2 should be satisfied by 2.2.0 (normal)",
+        "SemVer satisfies ~2 should be satisfied by 2.2.0 (runtime)",
+        "SemVer satisfies ~2 should be satisfied by 2.3.0 (normal)",
+        "SemVer satisfies ~2 should be satisfied by 2.3.0 (runtime)"
+      ],
+      "id": "webpack-eba9c59ba75f",
+      "target_files": [
+        "lib/util/semver.js"
+      ]
+    },
+    {
+      "f2p": [
+        "ConfigTestCases library issue-18932 issue-18932 should compile"
+      ],
+      "id": "webpack-fa6bc2ba8a54",
+      "target_files": [
+        "lib/library/AssignLibraryPlugin.js"
+      ]
+    }
+  ],
+  "task": "webpack",
+  "version": "5.60.0"
+}

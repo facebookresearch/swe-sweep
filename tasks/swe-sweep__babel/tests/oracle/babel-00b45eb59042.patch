@@ -1,0 +1,13 @@
+diff --git a/packages/babel-parser/src/plugins/typescript.js b/packages/babel-parser/src/plugins/typescript.js
+index 8970a6e4cf..95f8e61d02 100644
+--- a/packages/babel-parser/src/plugins/typescript.js
++++ b/packages/babel-parser/src/plugins/typescript.js
+@@ -930,7 +930,7 @@ export default (superClass: Class<Parser>): Class<Parser> =>
+         node.extends = this.tsParseHeritageClause();
+       }
+       const body: N.TSInterfaceBody = this.startNode();
+-      body.body = this.tsParseObjectTypeMembers();
++      body.body = this.tsInType(this.tsParseObjectTypeMembers.bind(this));
+       node.body = this.finishNode(body, "TSInterfaceBody");
+       return this.finishNode(node, "TSInterfaceDeclaration");
+     }

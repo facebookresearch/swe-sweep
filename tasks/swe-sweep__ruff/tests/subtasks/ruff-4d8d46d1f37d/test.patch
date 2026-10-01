@@ -1,0 +1,55 @@
+diff --git a/crates/ruff_linter/resources/test/fixtures/flake8_annotations/annotation_presence.py b/crates/ruff_linter/resources/test/fixtures/flake8_annotations/annotation_presence.py
+index 4ef4e2220b..edad5b2d8b 100644
+--- a/crates/ruff_linter/resources/test/fixtures/flake8_annotations/annotation_presence.py
++++ b/crates/ruff_linter/resources/test/fixtures/flake8_annotations/annotation_presence.py
+@@ -164,3 +164,9 @@ class Foo:
+ class Class:
+     def __init__(self):
+         print(f"{self.attr=}")
++
++
++# Regression test for: https://github.com/astral-sh/ruff/issues/14695
++# A quoted annotation containing a nested string with an escape sequence
++# should not cause a stack overflow.
++def quoted_escape(x: "'in\x74'"): pass
+diff --git a/crates/ruff_linter/src/rules/flake8_annotations/snapshots/ruff_linter__rules__flake8_annotations__tests__defaults.snap b/crates/ruff_linter/src/rules/flake8_annotations/snapshots/ruff_linter__rules__flake8_annotations__tests__defaults.snap
+index d3837de..95176fe 100644
+--- a/crates/ruff_linter/src/rules/flake8_annotations/snapshots/ruff_linter__rules__flake8_annotations__tests__defaults.snap
++++ b/crates/ruff_linter/src/rules/flake8_annotations/snapshots/ruff_linter__rules__flake8_annotations__tests__defaults.snap
+@@ -1,5 +1,6 @@
+ ---
+ source: crates/ruff_linter/src/rules/flake8_annotations/mod.rs
++assertion_line: 36
+ ---
+ annotation_presence.py:5:5: ANN201 [*] Missing return type annotation for public function `foo`
+   |
+@@ -298,3 +299,29 @@ annotation_presence.py:165:9: ANN204 [*] Missing return type annotation for spec
+ 165     |-    def __init__(self):
+     165 |+    def __init__(self) -> None:
+ 166 166 |         print(f"{self.attr=}")
++167 167 | 
++168 168 | 
++
++annotation_presence.py:172:5: ANN201 [*] Missing return type annotation for public function `quoted_escape`
++    |
++170 | # A quoted annotation containing a nested string with an escape sequence
++171 | # should not cause a stack overflow.
++172 | def quoted_escape(x: "'in\x74'"): pass
++    |     ^^^^^^^^^^^^^ ANN201
++    |
++    = help: Add return type annotation: `None`
++
++ℹ Unsafe fix
++169 169 | # Regression test for: https://github.com/astral-sh/ruff/issues/14695
++170 170 | # A quoted annotation containing a nested string with an escape sequence
++171 171 | # should not cause a stack overflow.
++172     |-def quoted_escape(x: "'in\x74'"): pass
++    172 |+def quoted_escape(x: "'in\x74'") -> None: pass
++
++annotation_presence.py:172:22: ANN401 Dynamically typed expressions (typing.Any) are disallowed in `x`
++    |
++170 | # A quoted annotation containing a nested string with an escape sequence
++171 | # should not cause a stack overflow.
++172 | def quoted_escape(x: "'in\x74'"): pass
++    |                      ^^^^^^^^^^ ANN401
++    |

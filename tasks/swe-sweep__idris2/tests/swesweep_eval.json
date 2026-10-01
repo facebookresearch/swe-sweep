@@ -1,0 +1,151 @@
+{
+  "build_jobs": 4,
+  "container_repo": "/idris2",
+  "evaluation": {
+    "suite": "reproduction",
+    "test_dirs": [
+      "tests"
+    ],
+    "visible_timeout": 14400
+  },
+  "upstream_image": "pandora-maxbug-idris2:0.5.1",
+  "n_base_passing": 469,
+  "n_base_test_ignore": 0,
+  "oracle_digest": "acd1d450c58d81cd90f080b3caacc526d9cf6a3d953a98d159277648b1100626",
+  "oracle_pristine_paths": [],
+  "upstream_commit": "9f7399e15e6172900e0591deb5a57a45769d8205",
+  "reproduction": {
+    "build_cmd": "idris2-build",
+    "build_timeout": 5400,
+    "suite": {
+      "type": "idris-golden"
+    },
+    "test_timeout": 900
+  },
+  "schema": 2,
+  "subtasks": [
+    {
+      "f2p": [
+        "idris2/literals001"
+      ],
+      "id": "idris2-0d7ffe071f6b",
+      "target_files": [
+        "src/Parser/Lexer/Source.idr"
+      ]
+    },
+    {
+      "f2p": [
+        "idris2/interactive039"
+      ],
+      "id": "idris2-11730dfbdc3f",
+      "target_files": [
+        "src/Idris/IDEMode/CaseSplit.idr"
+      ]
+    },
+    {
+      "f2p": [
+        "idris2/rewrite001"
+      ],
+      "id": "idris2-1ec026dc50f8",
+      "target_files": [
+        "src/TTImp/Elab/Rewrite.idr"
+      ]
+    },
+    {
+      "f2p": [
+        "idris2/reflection021"
+      ],
+      "id": "idris2-281ac7612668",
+      "target_files": [
+        "src/TTImp/Unelab.idr"
+      ]
+    },
+    {
+      "f2p": [
+        "prelude/double001"
+      ],
+      "id": "idris2-51730060a982",
+      "target_files": [
+        "libs/prelude/Prelude/Types.idr",
+        "src/Compiler/Scheme/Common.idr"
+      ]
+    },
+    {
+      "f2p": [
+        "idris2/linear017"
+      ],
+      "id": "idris2-61bf0817f1ac",
+      "target_files": [
+        "src/TTImp/ProcessDef.idr"
+      ]
+    },
+    {
+      "f2p": [
+        "cli/optional001"
+      ],
+      "id": "idris2-6b68719aa437",
+      "target_files": [
+        "src/Idris/CommandLine.idr"
+      ]
+    },
+    {
+      "f2p": [
+        "idris2/perf011"
+      ],
+      "id": "idris2-7567e7d63aef",
+      "target_files": [
+        "src/Core/Unify.idr"
+      ]
+    },
+    {
+      "f2p": [
+        "idris2/record012"
+      ],
+      "id": "idris2-7e09b9dc9ee9",
+      "target_files": [
+        "src/TTImp/ProcessRecord.idr"
+      ]
+    },
+    {
+      "f2p": [
+        "ttimp/record004"
+      ],
+      "id": "idris2-a41295ed50f4",
+      "target_files": [
+        "src/TTImp/ProcessRecord.idr"
+      ]
+    },
+    {
+      "f2p": [
+        "idris2/record010"
+      ],
+      "id": "idris2-b0303d615d6c",
+      "target_files": [
+        "src/TTImp/BindImplicits.idr",
+        "src/TTImp/TTImp.idr",
+        "src/TTImp/Utils.idr"
+      ]
+    },
+    {
+      "f2p": [
+        "idris2/reflection013"
+      ],
+      "id": "idris2-c9b970f02279",
+      "target_files": [
+        "src/Idris/Syntax.idr",
+        "src/TTImp/Reflect.idr"
+      ]
+    },
+    {
+      "f2p": [
+        "idris2/pkg011"
+      ],
+      "id": "idris2-dc892df4229c",
+      "target_files": [
+        "src/Core/Directory.idr"
+      ]
+    }
+  ],
+  "task": "idris2",
+  "version": "0.5.1"
+}

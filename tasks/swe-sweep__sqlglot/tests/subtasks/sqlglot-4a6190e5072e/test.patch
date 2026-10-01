@@ -1,0 +1,15 @@
+diff --git a/tests/dialects/test_bigquery.py b/tests/dialects/test_bigquery.py
+index 78f3dd8923..120713e35c 100644
+--- a/tests/dialects/test_bigquery.py
++++ b/tests/dialects/test_bigquery.py
+@@ -234,6 +234,10 @@ class TestBigQuery(Validator):
+         self.validate_identity(
+             "CREATE OR REPLACE VIEW test (tenant_id OPTIONS (description='Test description on table creation')) AS SELECT 1 AS tenant_id, 1 AS customer_id",
+         )
++        self.validate_identity(
++            '''SELECT b"\\x0a$'x'00"''',
++            """SELECT b'\\x0a$\\'x\\'00'""",
++        )
+         self.validate_identity(
+             "SELECT * FROM `proj.dataset.INFORMATION_SCHEMA.SOME_VIEW`",
+             "SELECT * FROM `proj.dataset.INFORMATION_SCHEMA.SOME_VIEW` AS `proj.dataset.INFORMATION_SCHEMA.SOME_VIEW`",

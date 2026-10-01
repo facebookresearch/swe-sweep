@@ -1,0 +1,34 @@
+diff --git a/mypy/stubutil.py b/mypy/stubutil.py
+index cbb3d2f77..fecd9b29d 100644
+--- a/mypy/stubutil.py
++++ b/mypy/stubutil.py
+@@ -17,7 +17,16 @@ import mypy.options
+ from mypy.modulefinder import ModuleNotFoundReason
+ from mypy.moduleinspect import InspectError, ModuleInspect
+ from mypy.stubdoc import ArgSig, FunctionSig
+-from mypy.types import AnyType, NoneType, Type, TypeList, TypeStrVisitor, UnboundType, UnionType
++from mypy.types import (
++    AnyType,
++    NoneType,
++    Type,
++    TypeList,
++    TypeStrVisitor,
++    UnboundType,
++    UnionType,
++    UnpackType,
++)
+ 
+ # Modules that may fail when imported, or that may have side effects (fully qualified).
+ NOT_IMPORTABLE_MODULES = ()
+@@ -287,6 +296,11 @@ class AnnotationPrinter(TypeStrVisitor):
+     def visit_union_type(self, t: UnionType) -> str:
+         return " | ".join([item.accept(self) for item in t.items])
+ 
++    def visit_unpack_type(self, t: UnpackType) -> str:
++        if self.options.python_version >= (3, 11):
++            return f"*{t.type.accept(self)}"
++        return super().visit_unpack_type(t)
++
+     def args_str(self, args: Iterable[Type]) -> str:
+         """Convert an array of arguments to strings and join the results with commas.
+ 

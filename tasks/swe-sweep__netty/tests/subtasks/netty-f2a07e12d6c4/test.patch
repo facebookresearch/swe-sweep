@@ -1,0 +1,87 @@
+diff --git a/codec-http/src/test/java/io/netty/handler/codec/http/HttpRequestDecoderTest.java b/codec-http/src/test/java/io/netty/handler/codec/http/HttpRequestDecoderTest.java
+index 4572063..0b36304 100644
+--- a/codec-http/src/test/java/io/netty/handler/codec/http/HttpRequestDecoderTest.java
++++ b/codec-http/src/test/java/io/netty/handler/codec/http/HttpRequestDecoderTest.java
+@@ -16,10 +16,13 @@
+ package io.netty.handler.codec.http;
+ 
+ import io.netty.buffer.Unpooled;
++import io.netty.channel.ChannelHandlerContext;
++import io.netty.channel.ChannelInboundHandlerAdapter;
+ import io.netty.channel.embedded.EmbeddedChannel;
+ import io.netty.handler.codec.TooLongFrameException;
+ import io.netty.util.AsciiString;
+ import io.netty.util.CharsetUtil;
++import io.netty.util.ReferenceCountUtil;
+ import org.junit.Test;
+ 
+ import java.util.List;
+@@ -320,4 +323,41 @@ public class HttpRequestDecoderTest {
+         assertTrue(request.decoderResult().cause() instanceof TooLongFrameException);
+         assertFalse(channel.finish());
+     }
++
++    @Test
++    public void reentrantClose() {
++        String requestStr = "GET / HTTP/1.1\r\n" +
++                "Host: example.com\r\n" +
++                "Content-Length: 0\r\n" +
++                "\r\n" +
++                "GET / HTTP/1.1\r\n" +
++                "Host: example.com\r\n" +
++                "Content-Length: 0\r\n" +
++                "\r\n";
++        EmbeddedChannel channel = new EmbeddedChannel(new HttpRequestDecoder(), new ChannelInboundHandlerAdapter() {
++            private int i;
++
++            @Override
++            public void channelRead(ChannelHandlerContext ctx, Object msg) {
++                if (i == 0) {
++                    assertThat(msg, is(instanceOf(HttpRequest.class)));
++                } else if (i == 1) {
++                    assertThat(msg, is(instanceOf(LastHttpContent.class)));
++                } else if (i == 2) {
++                    assertThat(msg, is(instanceOf(HttpRequest.class)));
++                } else if (i == 3) {
++                    assertThat(msg, is(instanceOf(LastHttpContent.class)));
++                }
++                ReferenceCountUtil.release(msg);
++
++                if (++i == 1) {
++                    // first request
++                    ctx.close();
++                }
++            }
++        });
++
++        assertFalse(channel.writeInbound(Unpooled.copiedBuffer(requestStr, CharsetUtil.US_ASCII)));
++        assertFalse(channel.finish());
++    }
+ }
+diff --git a/handler/src/test/java/io/netty/handler/flush/FlushConsolidationHandlerTest.java b/handler/src/test/java/io/netty/handler/flush/FlushConsolidationHandlerTest.java
+index 05eb80c..a6bee98 100644
+--- a/handler/src/test/java/io/netty/handler/flush/FlushConsolidationHandlerTest.java
++++ b/handler/src/test/java/io/netty/handler/flush/FlushConsolidationHandlerTest.java
+@@ -34,9 +34,10 @@ public class FlushConsolidationHandlerTest {
+         final AtomicInteger flushCount = new AtomicInteger();
+         EmbeddedChannel channel = newChannel(flushCount,  true);
+         // Flushes should not go through immediately, as they're scheduled as an async task
+-        channel.flush();
++        // To ensure we not run the async task directly we will call trigger the flush() via the pipeline.
++        channel.pipeline().flush();
+         assertEquals(0, flushCount.get());
+-        channel.flush();
++        channel.pipeline().flush();
+         assertEquals(0, flushCount.get());
+         // Trigger the execution of the async task
+         channel.runPendingTasks();
+@@ -50,7 +51,8 @@ public class FlushConsolidationHandlerTest {
+         EmbeddedChannel channel = newChannel(flushCount, true);
+         // After a given threshold, the async task should be bypassed and a flush should be triggered immediately
+         for (int i = 0; i < EXPLICIT_FLUSH_AFTER_FLUSHES; i++) {
+-            channel.flush();
++            // To ensure we not run the async task directly we will call trigger the flush() via the pipeline.
++            channel.pipeline().flush();
+         }
+         assertEquals(1, flushCount.get());
+         assertFalse(channel.finish());

@@ -1,0 +1,53 @@
+diff --git a/codec/src/test/java/io/netty/handler/codec/compression/Lz4FrameDecoderTest.java b/codec/src/test/java/io/netty/handler/codec/compression/Lz4FrameDecoderTest.java
+index ec6b4ed6f5..86140fd3ca 100644
+--- a/codec/src/test/java/io/netty/handler/codec/compression/Lz4FrameDecoderTest.java
++++ b/codec/src/test/java/io/netty/handler/codec/compression/Lz4FrameDecoderTest.java
+@@ -46,6 +46,48 @@ public class Lz4FrameDecoderTest extends AbstractDecoderTest {
+         channel = new EmbeddedChannel(new Lz4FrameDecoder(true));
+     }
+ 
++    @Test
++    public void testRejectsCompressedDataBeyondDeclaredLength() {
++        expected.expect(DecompressionException.class);
++
++        final EmbeddedChannel decoder = new EmbeddedChannel(new Lz4FrameDecoder(false));
++        final ByteBuf input = decoder.alloc().buffer();
++        input.writeLong(MAGIC_NUMBER);
++        input.writeByte(BLOCK_TYPE_COMPRESSED);
++        input.writeIntLE(1);
++        input.writeIntLE(8);
++        input.writeIntLE(0);
++        input.writeByte(0x80);
++        input.writeZero(8);
++
++        try {
++            decoder.writeInbound(input);
++        } finally {
++            decoder.finishAndReleaseAll();
++        }
++    }
++
++    @Test
++    public void testRejectsDecompressedLengthMismatch() {
++        expected.expect(DecompressionException.class);
++
++        final EmbeddedChannel decoder = new EmbeddedChannel(new Lz4FrameDecoder(false));
++        final ByteBuf input = decoder.alloc().buffer();
++        input.writeLong(MAGIC_NUMBER);
++        input.writeByte(BLOCK_TYPE_COMPRESSED);
++        input.writeIntLE(2);
++        input.writeIntLE(8);
++        input.writeIntLE(0);
++        input.writeByte(0x10);
++        input.writeByte(0);
++
++        try {
++            decoder.writeInbound(input);
++        } finally {
++            decoder.finishAndReleaseAll();
++        }
++    }
++
+     @Test
+     public void testUnexpectedBlockIdentifier() throws Exception {
+         expected.expect(DecompressionException.class);

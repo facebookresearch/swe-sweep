@@ -1,0 +1,56 @@
+diff --git a/worktree.go b/worktree.go
+index 595dceaa..f9c01af2 100644
+--- a/worktree.go
++++ b/worktree.go
+@@ -368,7 +368,7 @@ func (w *Worktree) resetIndex(t *object.Tree, dirs []string) error {
+ }
+ 
+ func (w *Worktree) resetWorktree(t *object.Tree) error {
+-	changes, err := w.diffStagingWithWorktree(true)
++	changes, err := w.diffStagingWithWorktree(true, false)
+ 	if err != nil {
+ 		return err
+ 	}
+@@ -420,7 +420,7 @@ func (w *Worktree) checkoutChange(ch merkletrie.Change, t *object.Tree, idx *ind
+ }
+ 
+ func (w *Worktree) containsUnstagedChanges() (bool, error) {
+-	ch, err := w.diffStagingWithWorktree(false)
++	ch, err := w.diffStagingWithWorktree(false, true)
+ 	if err != nil {
+ 		return false, err
+ 	}
+diff --git a/worktree_status.go b/worktree_status.go
+index 61bb6f75..73010875 100644
+--- a/worktree_status.go
++++ b/worktree_status.go
+@@ -74,7 +74,7 @@ func (w *Worktree) status(commit plumbing.Hash) (Status, error) {
+ 		}
+ 	}
+ 
+-	right, err := w.diffStagingWithWorktree(false)
++	right, err := w.diffStagingWithWorktree(false, true)
+ 	if err != nil {
+ 		return nil, err
+ 	}
+@@ -113,7 +113,7 @@ func nameFromAction(ch *merkletrie.Change) string {
+ 	return name
+ }
+ 
+-func (w *Worktree) diffStagingWithWorktree(reverse bool) (merkletrie.Changes, error) {
++func (w *Worktree) diffStagingWithWorktree(reverse, excludeIgnoredChanges bool) (merkletrie.Changes, error) {
+ 	idx, err := w.r.Storer.Index()
+ 	if err != nil {
+ 		return nil, err
+@@ -138,7 +138,10 @@ func (w *Worktree) diffStagingWithWorktree(reverse bool) (merkletrie.Changes, er
+ 		return nil, err
+ 	}
+ 
+-	return w.excludeIgnoredChanges(c), nil
++	if excludeIgnoredChanges {
++		return w.excludeIgnoredChanges(c), nil
++	}
++	return c, nil
+ }
+ 
+ func (w *Worktree) excludeIgnoredChanges(changes merkletrie.Changes) merkletrie.Changes {

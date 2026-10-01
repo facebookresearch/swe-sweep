@@ -1,0 +1,65 @@
+diff --git a/tests/cmdline/cmd_module_atexit.py b/tests/cmdline/cmd_module_atexit.py
+new file mode 100644
+index 000000000..100bc1127
+--- /dev/null
++++ b/tests/cmdline/cmd_module_atexit.py
+@@ -0,0 +1,16 @@
++# cmdline: -m cmdline.cmd_module_atexit
++#
++# Test running as a module and using sys.atexit.
++
++import sys
++
++if not hasattr(sys, "atexit"):
++    print("SKIP")
++    raise SystemExit
++
++# Verify we ran as a module.
++print(sys.argv)
++
++sys.atexit(lambda: print("done"))
++
++print("start")
+diff --git a/tests/cmdline/cmd_module_atexit.py.exp b/tests/cmdline/cmd_module_atexit.py.exp
+new file mode 100644
+index 000000000..2a0f756b1
+--- /dev/null
++++ b/tests/cmdline/cmd_module_atexit.py.exp
+@@ -0,0 +1,3 @@
++['cmdline.cmd_module_atexit', 'cmdline/cmd_module_atexit.py']
++start
++done
+diff --git a/tests/cmdline/cmd_module_atexit_exc.py b/tests/cmdline/cmd_module_atexit_exc.py
+new file mode 100644
+index 000000000..88940a774
+--- /dev/null
++++ b/tests/cmdline/cmd_module_atexit_exc.py
+@@ -0,0 +1,19 @@
++# cmdline: -m cmdline.cmd_module_atexit_exc
++#
++# Test running as a module and using sys.atexit, with script completion via sys.exit.
++
++import sys
++
++if not hasattr(sys, "atexit"):
++    print("SKIP")
++    raise SystemExit
++
++# Verify we ran as a module.
++print(sys.argv)
++
++sys.atexit(lambda: print("done"))
++
++print("start")
++
++# This will raise SystemExit to finish the script, and atexit should still be run.
++sys.exit(0)
+diff --git a/tests/cmdline/cmd_module_atexit_exc.py.exp b/tests/cmdline/cmd_module_atexit_exc.py.exp
+new file mode 100644
+index 000000000..6320d9d2d
+--- /dev/null
++++ b/tests/cmdline/cmd_module_atexit_exc.py.exp
+@@ -0,0 +1,3 @@
++['cmdline.cmd_module_atexit_exc', 'cmdline/cmd_module_atexit_exc.py']
++start
++done

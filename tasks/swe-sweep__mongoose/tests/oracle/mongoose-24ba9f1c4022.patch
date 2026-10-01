@@ -1,0 +1,46 @@
+diff --git a/lib/utils.js b/lib/utils.js
+index 2aa7546..224be21 100644
+--- a/lib/utils.js
++++ b/lib/utils.js
+@@ -30,6 +30,9 @@ exports.isMongooseDocumentArray = isMongooseDocumentArray.isMongooseDocumentArra
+ exports.registerMongooseArray = isMongooseArray.registerMongooseArray;
+ exports.registerMongooseDocumentArray = isMongooseDocumentArray.registerMongooseDocumentArray;
+ 
++const oneSpaceRE = /\s/;
++const manySpaceRE = /\s+/;
++
+ /**
+  * Produces a collection name from model `name`. By default, just returns
+  * the model name
+@@ -581,8 +584,8 @@ exports.populate = function populate(path, select, model, match, options, subPop
+   function makeSingles(arr) {
+     const ret = [];
+     arr.forEach(function(obj) {
+-      if (/[\s]/.test(obj.path)) {
+-        const paths = obj.path.split(' ');
++      if (oneSpaceRE.test(obj.path)) {
++        const paths = obj.path.split(manySpaceRE);
+         paths.forEach(function(p) {
+           const copy = Object.assign({}, obj);
+           copy.path = p;
+@@ -601,9 +604,9 @@ function _populateObj(obj) {
+   if (Array.isArray(obj.populate)) {
+     const ret = [];
+     obj.populate.forEach(function(obj) {
+-      if (/[\s]/.test(obj.path)) {
++      if (oneSpaceRE.test(obj.path)) {
+         const copy = Object.assign({}, obj);
+-        const paths = copy.path.split(' ');
++        const paths = copy.path.split(manySpaceRE);
+         paths.forEach(function(p) {
+           copy.path = p;
+           ret.push(exports.populate(copy)[0]);
+@@ -618,7 +621,7 @@ function _populateObj(obj) {
+   }
+ 
+   const ret = [];
+-  const paths = obj.path.split(' ');
++  const paths = oneSpaceRE.test(obj.path) ? obj.path.split(manySpaceRE) : [obj.path];
+   if (obj.options != null) {
+     obj.options = exports.clone(obj.options);
+   }

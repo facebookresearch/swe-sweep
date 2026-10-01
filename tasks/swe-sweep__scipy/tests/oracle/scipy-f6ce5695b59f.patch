@@ -1,0 +1,28 @@
+diff --git a/scipy/stats/morestats.py b/scipy/stats/morestats.py
+index 064b31c..b576cfa 100644
+--- a/scipy/stats/morestats.py
++++ b/scipy/stats/morestats.py
+@@ -3235,8 +3235,11 @@ def circvar(samples, high=2*pi, low=0, axis=None):
+     samples, ang = _circfuncs_common(samples, high, low)
+     S = sin(ang).mean(axis=axis)
+     C = cos(ang).mean(axis=axis)
+-    R = hypot(S, C)
+-    return ((high - low)/2.0/pi)**2 * 2 * log(1/R)
++    # hypot can go slightly above 1 due to rounding errors
++    with np.errstate(invalid='ignore'):
++        R = np.minimum(1, hypot(S, C))
++
++    return ((high - low)/2.0/pi)**2 * -2 * log(R)
+ 
+ 
+ def circstd(samples, high=2*pi, low=0, axis=None):
+@@ -3277,5 +3280,8 @@ def circstd(samples, high=2*pi, low=0, axis=None):
+     samples, ang = _circfuncs_common(samples, high, low)
+     S = sin(ang).mean(axis=axis)
+     C = cos(ang).mean(axis=axis)
+-    R = hypot(S, C)
++    # hypot can go slightly above 1 due to rounding errors
++    with np.errstate(invalid='ignore'):
++        R = np.minimum(1, hypot(S, C))
++
+     return ((high - low)/2.0/pi) * sqrt(-2*log(R))

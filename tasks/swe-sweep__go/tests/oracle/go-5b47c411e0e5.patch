@@ -1,0 +1,36 @@
+diff --git a/src/go/printer/nodes.go b/src/go/printer/nodes.go
+--- a/src/go/printer/nodes.go
++++ b/src/go/printer/nodes.go
+@@ -928,15 +928,24 @@
+ 	case *ast.CallExpr:
+ 		if len(x.Args) > 1 {
+ 			depth++
+ 		}
+-		var wasIndented bool
+-		if _, ok := x.Fun.(*ast.FuncType); ok {
+-			// conversions to literal function types require parentheses around the type
+-			p.print(token.LPAREN)
+-			wasIndented = p.possibleSelectorExpr(x.Fun, token.HighestPrec, depth)
+-			p.print(token.RPAREN)
+-		} else {
+-			wasIndented = p.possibleSelectorExpr(x.Fun, token.HighestPrec, depth)
++
++		// Conversions to literal function types or <-chan
++		// types require parentheses around the type.
++		paren := false
++		switch t := x.Fun.(type) {
++		case *ast.FuncType:
++			paren = true
++		case *ast.ChanType:
++			paren = t.Dir == ast.RECV
+ 		}
++		if paren {
++			p.print(token.LPAREN)
++		}
++		wasIndented := p.possibleSelectorExpr(x.Fun, token.HighestPrec, depth)
++		if paren {
++			p.print(token.RPAREN)
++		}
++
+ 		p.print(x.Lparen, token.LPAREN)
+ 		if x.Ellipsis.IsValid() {

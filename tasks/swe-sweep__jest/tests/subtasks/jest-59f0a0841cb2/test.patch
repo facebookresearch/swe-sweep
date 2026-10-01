@@ -1,0 +1,25 @@
+diff --git a/packages/jest-mock/src/__tests__/index.test.ts b/packages/jest-mock/src/__tests__/index.test.ts
+index 4d13455410..39146edd7e 100644
+--- a/packages/jest-mock/src/__tests__/index.test.ts
++++ b/packages/jest-mock/src/__tests__/index.test.ts
+@@ -213,6 +213,20 @@ describe('moduleMocker', () => {
+       expect(mock.enumGetter).toBeDefined();
+     });
+ 
++    it('handles custom toString of transpiled modules', () => {
++      const foo = Object.defineProperties(
++        {foo: 'bar'},
++        {
++          __esModule: {value: true},
++          [Symbol.toStringTag]: {value: 'Module'},
++        },
++      );
++      const mock = moduleMocker.generateFromMetadata(
++        moduleMocker.getMetadata(foo),
++      );
++      expect(mock.foo).toBeDefined();
++    });
++
+     it('mocks ES2015 non-enumerable methods', () => {
+       class ClassFoo {
+         foo() {}

@@ -1,0 +1,14 @@
+diff --git a/lib/pure/marshal.nim b/lib/pure/marshal.nim
+index 5785605c6..f9b3d3e4c 100644
+--- a/lib/pure/marshal.nim
++++ b/lib/pure/marshal.nim
+@@ -210,7 +210,8 @@ proc loadAny(p: var JsonParser, a: Any, t: var Table[BiggestInt, pointer]) =
+       setPointer(a, nil)
+       next(p)
+     of jsonInt:
+-      setPointer(a, t.getOrDefault(p.getInt))
++      var raw = t.getOrDefault(p.getInt)
++      setPointer(a, addr raw)
+       next(p)
+     of jsonArrayStart:
+       next(p)

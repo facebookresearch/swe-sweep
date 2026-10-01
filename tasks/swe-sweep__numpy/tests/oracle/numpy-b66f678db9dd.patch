@@ -1,0 +1,24 @@
+diff --git a/numpy/core/src/umath/ufunc_object.c b/numpy/core/src/umath/ufunc_object.c
+index c57199c79bfd..591fbd7ada14 100644
+--- a/numpy/core/src/umath/ufunc_object.c
++++ b/numpy/core/src/umath/ufunc_object.c
+@@ -2422,11 +2422,15 @@
+     }
+
+     /*
+      * Figure out the number of iteration dimensions, which
+-     * is the broadcast result of all the input non-core
+-     * dimensions.
++     * is the broadcast result of all the non-core dimensions.
++     * (We do allow outputs to broadcast inputs currently, if they are given.
++     * This is in line with what normal ufuncs do.)
+      */
+     broadcast_ndim = 0;
+-    for (i = 0; i < nin; ++i) {
++    for (i = 0; i < nop; ++i) {
++        if (op[i] == NULL) {
++            continue;
++        }
+         int n = PyArray_NDIM(op[i]) - core_num_dims[i];
+         if (n > broadcast_ndim) {
+             broadcast_ndim = n;

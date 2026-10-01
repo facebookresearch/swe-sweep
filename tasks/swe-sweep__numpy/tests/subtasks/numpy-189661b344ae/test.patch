@@ -1,0 +1,53 @@
+diff --git a/numpy/core/tests/test_dtype.py b/numpy/core/tests/test_dtype.py
+index 27fbb10..375d7fb 100644
+--- a/numpy/core/tests/test_dtype.py
++++ b/numpy/core/tests/test_dtype.py
+@@ -728,3 +728,48 @@ def test_dtypes_are_true():
+ def test_invalid_dtype_string():
+     # test for gh-10440
+     assert_raises(TypeError, np.dtype, 'f8,i8,[f8,i8]')
++
++
++class TestFromDTypeAttribute(object):
++    def test_simple(self):
++        class dt:
++            dtype = "f8"
++
++        assert np.dtype(dt) == np.float64
++        assert np.dtype(dt()) == np.float64
++
++    def test_recursion(self):
++        class dt:
++            pass
++
++        dt.dtype = dt
++        with pytest.raises(RecursionError):
++            np.dtype(dt)
++
++        dt_instance = dt()
++        dt_instance.dtype = dt
++        with pytest.raises(RecursionError):
++            np.dtype(dt_instance)
++
++    def test_void_subtype(self):
++        class dt(np.void):
++            # This code path is fully untested before, so it is unclear
++            # what this should be useful for. Note that if np.void is used
++            # numpy will think we are deallocating a base type [1.17, 2019-02].
++            dtype = np.dtype("f,f")
++            pass
++
++        np.dtype(dt)
++        np.dtype(dt(1))
++
++    def test_void_subtype_recursion(self):
++        class dt(np.void):
++            pass
++
++        dt.dtype = dt
++
++        with pytest.raises(RecursionError):
++            np.dtype(dt)
++
++        with pytest.raises(RecursionError):
++            np.dtype(dt(1))

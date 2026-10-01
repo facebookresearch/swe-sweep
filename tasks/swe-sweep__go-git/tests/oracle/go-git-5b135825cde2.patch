@@ -1,0 +1,19 @@
+diff --git a/plumbing/format/gitignore/dir.go b/plumbing/format/gitignore/dir.go
+index bb786557..bf6a1c12 100644
+--- a/plumbing/format/gitignore/dir.go
++++ b/plumbing/format/gitignore/dir.go
+@@ -25,6 +25,14 @@ const (
+ 
+ // readIgnoreFile reads a specific git ignore file.
+ func readIgnoreFile(fs billy.Filesystem, path []string, ignoreFile string) (ps []Pattern, err error) {
++
++	if strings.HasPrefix(ignoreFile, "~") {
++		home, err := os.UserHomeDir()
++		if err == nil {
++			ignoreFile = strings.Replace(ignoreFile, "~", home, 1)
++		}
++	}
++
+ 	f, err := fs.Open(fs.Join(append(path, ignoreFile)...))
+ 	if err == nil {
+ 		defer f.Close()

@@ -1,0 +1,40 @@
+diff --git a/tests/ui/manual_flatten.rs b/tests/ui/manual_flatten.rs
+index 97f35c36e..f1a0053ef 100644
+--- a/tests/ui/manual_flatten.rs
++++ b/tests/ui/manual_flatten.rs
+@@ -123,6 +123,13 @@ fn main() {
+         println!("{}", n);
+     }
+ 
++    // Using nested `Some` pattern should not trigger the lint
++    for n in vec![Some((1, Some(2)))] {
++        if let Some((_, Some(n))) = n {
++            println!("{}", n);
++        }
++    }
++
+     run_unformatted_tests();
+ }
+ 
+diff --git a/tests/ui/manual_flatten.stderr b/tests/ui/manual_flatten.stderr
+index 5ab256580..9a846fe17 100644
+--- a/tests/ui/manual_flatten.stderr
++++ b/tests/ui/manual_flatten.stderr
+@@ -178,7 +178,7 @@ LL | |         }
+    | |_________^
+ 
+ error: unnecessary `if let` since only the `Some` variant of the iterator element is used
+-  --> tests/ui/manual_flatten.rs:132:5
++  --> tests/ui/manual_flatten.rs:139:5
+    |
+ LL | /     for n in vec![
+ LL | |
+@@ -189,7 +189,7 @@ LL | |     }
+    | |_____^
+    |
+ help: remove the `if let` statement in the for loop and then...
+-  --> tests/ui/manual_flatten.rs:139:9
++  --> tests/ui/manual_flatten.rs:146:9
+    |
+ LL | /         if let Some(n) = n {
+ LL | |             println!("{:?}", n);

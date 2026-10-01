@@ -1,0 +1,19 @@
+diff --git a/src/planner/binder/query_node/bind_select_node.cpp b/src/planner/binder/query_node/bind_select_node.cpp
+--- a/src/planner/binder/query_node/bind_select_node.cpp
++++ b/src/planner/binder/query_node/bind_select_node.cpp
+@@ -414,5 +414,8 @@ unique_ptr<BoundQueryNode> Binder::BindSelectNode(SelectNode &statement, unique_ptr<BoundTableRef> from_table) {
+ 	if (!group_expressions.empty()) {
+ 		// the statement has a GROUP BY clause, bind it
+ 		unbound_groups.resize(group_expressions.size());
+ 		GroupBinder group_binder(*this, context, statement, result->group_index, alias_map, info.alias_map);
++		// Allow NULL constants in GROUP BY to maintain their SQLNULL type
++		auto prev_can_contain_nulls = this->can_contain_nulls;
++		this->can_contain_nulls = true;
+ 		for (idx_t i = 0; i < group_expressions.size(); i++) {
+@@ -453,5 +456,6 @@ unique_ptr<BoundQueryNode> Binder::BindSelectNode(SelectNode &statement, unique_ptr<BoundTableRef> from_table) {
+ 			ExpressionBinder::QualifyColumnNames(*this, unbound_groups[i]);
+ 			info.map[*unbound_groups[i]] = i;
+ 		}
++		this->can_contain_nulls = prev_can_contain_nulls;
+ 	}
+ 	result->groups.grouping_sets = std::move(statement.groups.grouping_sets);

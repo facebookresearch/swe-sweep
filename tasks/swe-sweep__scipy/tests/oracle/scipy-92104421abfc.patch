@@ -1,0 +1,66 @@
+diff --git a/scipy/sparse/linalg/interface.py b/scipy/sparse/linalg/interface.py
+index 9f1ed2abd1..540b28e1f9 100644
+--- a/scipy/sparse/linalg/interface.py
++++ b/scipy/sparse/linalg/interface.py
+@@ -449,10 +449,11 @@ class LinearOperator(object):
+ 
+     def _adjoint(self):
+         """Default implementation of _adjoint; defers to rmatvec."""
+-        shape = (self.shape[1], self.shape[0])
+-        return _CustomLinearOperator(shape, matvec=self.rmatvec,
+-                                     rmatvec=self.matvec,
+-                                     dtype=self.dtype)
++        return _AdjointLinearOperator(self)
++
++    def _transpose(self):
++        """ Default implementation of _transpose; defers to rmatvec + conj"""
++        return _TransposedLinearOperator(self)
+ 
+ 
+ class _CustomLinearOperator(LinearOperator):
+@@ -491,6 +492,37 @@ class _CustomLinearOperator(LinearOperator):
+                                      dtype=self.dtype)
+ 
+ 
++class _AdjointLinearOperator(LinearOperator):
++    """Adjoint of arbitrary Linear Operator"""
++    def __init__(self, A):
++        shape = (A.shape[1], A.shape[0])
++        super(_AdjointLinearOperator, self).__init__(dtype=A.dtype, shape=shape)
++        self.A = A
++        self.args = (A,)
++
++    def _matvec(self, x):
++        return self.A._rmatvec(x)
++
++    def _rmatvec(self, x):
++        return self.A._matvec(x)
++
++
++class _TransposedLinearOperator(LinearOperator):
++    """Transposition of arbitrary Linear Operator"""
++    def __init__(self, A):
++        shape = (A.shape[1], A.shape[0])
++        super(_TransposedLinearOperator, self).__init__(dtype=A.dtype, shape=shape)
++        self.A = A
++        self.args = (A,)
++
++    def _matvec(self, x):
++        # NB. np.conj works also on sparse matrices
++        return np.conj(self.A._rmatvec(np.conj(x)))
++
++    def _rmatvec(self, x):
++        return np.conj(self.A._matvec(np.conj(x)))
++
++
+ def _get_dtype(operators, dtypes=None):
+     if dtypes is None:
+         dtypes = []
+@@ -622,7 +654,6 @@ class MatrixLinearOperator(LinearOperator):
+             self.__adj = _AdjointMatrixOperator(self)
+         return self.__adj
+ 
+-
+ class _AdjointMatrixOperator(MatrixLinearOperator):
+     def __init__(self, adjoint):
+         self.A = adjoint.A.T.conj()

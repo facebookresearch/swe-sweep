@@ -1,0 +1,13 @@
+diff --git a/crates/ruff_linter/src/rules/pylint/rules/len_test.rs b/crates/ruff_linter/src/rules/pylint/rules/len_test.rs
+index 5303483912..003bdc85b1 100644
+--- a/crates/ruff_linter/src/rules/pylint/rules/len_test.rs
++++ b/crates/ruff_linter/src/rules/pylint/rules/len_test.rs
+@@ -186,6 +186,8 @@
+                 | "hex"
+                 | "memoryview"
+                 | "oct"
++                | "ascii"
++                | "sorted"
+         )
+     });
+ }

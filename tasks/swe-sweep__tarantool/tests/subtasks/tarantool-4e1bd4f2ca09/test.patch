@@ -1,0 +1,60 @@
+diff --git a/test/box-luatest/graceful_shutdown_test.lua b/test/box-luatest/graceful_shutdown_test.lua
+index 67564866b2..db263e4c8e 100644
+--- a/test/box-luatest/graceful_shutdown_test.lua
++++ b/test/box-luatest/graceful_shutdown_test.lua
+@@ -506,3 +506,21 @@ g.test_graceful_shutdown_not_supported_by_client = function()
+     t.assert_equals(tostring(err), 'Peer closed')
+     conn:close()
+ end
++
++-- Checks that if the net.box callback, which processes box.shutdown event, is
++-- garbage collected while the remote isn't, such partially garbage collected
++-- connection won't block shutdown (gh-7225).
++g.test_net_box_callback_garbage_collected = function()
++    g.server:exec(function()
++        box.ctl.set_on_shutdown_timeout(9000)
++    end)
++    local conn = net.connect(g.server.net_box_uri)
++    t.assert_is_not(conn._callback, nil)
++    -- Simulate a situation when the 'conn' reference was lost, the garbage
++    -- collector collected 'conn._callback', but hasn't collected the 'conn'
++    -- object yet.
++    conn._callback = nil
++    collectgarbage('collect')
++    g.server:stop()
++    conn:close()
++end
+diff --git a/test/box-luatest/net_box_test.lua b/test/box-luatest/net_box_test.lua
+index 319fe39e26..427242cae2 100644
+--- a/test/box-luatest/net_box_test.lua
++++ b/test/box-luatest/net_box_test.lua
+@@ -1,3 +1,4 @@
++local fiber = require('fiber')
+ local msgpack = require('msgpack')
+ local net = require('net.box')
+ local server = require('test.luatest_helpers.server')
+@@ -314,3 +315,24 @@ g.test_box_error = function()
+         c.unprepare, c, "asd")
+     c:close()
+ end
++
++g.test_gc = function()
++    local c = net.connect(g.server.net_box_uri)
++    t.assert(c:eval('return true'))
++    local weak_refs = setmetatable({
++        conn = c,
++        callback = c._callback,
++        transport = c._transport,
++    }, {__mode = 'v'})
++    t.assert(weak_refs.conn)
++    t.assert(weak_refs.callback)
++    t.assert(weak_refs.transport)
++    c = nil -- luacheck: no unused
++    fiber.yield()
++    collectgarbage('collect')
++    fiber.yield()
++    collectgarbage('collect')
++    t.assert_not(weak_refs.conn)
++    t.assert_not(weak_refs.callback)
++    t.assert_not(weak_refs.transport)
++end

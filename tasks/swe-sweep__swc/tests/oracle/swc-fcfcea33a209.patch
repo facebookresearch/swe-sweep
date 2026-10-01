@@ -1,0 +1,13 @@
+diff --git a/crates/swc_ecma_codegen/src/typescript.rs b/crates/swc_ecma_codegen/src/typescript.rs
+index 9ed7bf4f3b..d9f510c611 100644
+--- a/crates/swc_ecma_codegen/src/typescript.rs
++++ b/crates/swc_ecma_codegen/src/typescript.rs
+@@ -505,7 +505,7 @@ where
+                 }
+                 TruePlusMinus::Plus => {
+                     punct!("+");
+-                    punct!("/");
++                    punct!("?");
+                 }
+                 TruePlusMinus::Minus => {
+                     punct!("-");

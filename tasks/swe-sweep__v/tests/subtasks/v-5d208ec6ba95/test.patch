@@ -1,0 +1,31 @@
+diff --git a/vlib/v/checker/tests/map_index_or_block_type_mismatch_err.out b/vlib/v/checker/tests/map_index_or_block_type_mismatch_err.out
+new file mode 100644
+index 000000000..2f00a1758
+--- /dev/null
++++ b/vlib/v/checker/tests/map_index_or_block_type_mismatch_err.out
+@@ -0,0 +1,13 @@
++vlib/v/checker/tests/map_index_or_block_type_mismatch_err.vv:4:20: error: `or` block must provide a value of type `int`, not `none`
++    2 | fn index_got_none_from_or_block() {
++    3 |     m := map[string]int{}
++    4 |     _ = m['key'] or { none }
++      |                       ~~~~
++    5 |     _ = m['key'] or { ?int(none) }
++    6 | }
++vlib/v/checker/tests/map_index_or_block_type_mismatch_err.vv:5:21: error: `or` block must provide a value of type `int`, not `?int`
++    3 |     m := map[string]int{}
++    4 |     _ = m['key'] or { none }
++    5 |     _ = m['key'] or { ?int(none) }
++      |                        ~~~~~~~~~
++    6 | }
+diff --git a/vlib/v/checker/tests/map_index_or_block_type_mismatch_err.vv b/vlib/v/checker/tests/map_index_or_block_type_mismatch_err.vv
+new file mode 100644
+index 000000000..5419e4a9a
+--- /dev/null
++++ b/vlib/v/checker/tests/map_index_or_block_type_mismatch_err.vv
+@@ -0,0 +1,6 @@
++// for issue 20390
++fn index_got_none_from_or_block() {
++	m := map[string]int{}
++	_ = m['key'] or { none }
++	_ = m['key'] or { ?int(none) }
++}

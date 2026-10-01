@@ -1,0 +1,95 @@
+diff --git a/src/path.rs b/src/path.rs
+index a2b42241..31a80e59 100644
+--- a/src/path.rs
++++ b/src/path.rs
+@@ -499,22 +499,32 @@ pub mod parsing {
+             }
+         }
+ 
+-        fn parse_helper(input: ParseStream, expr_style: bool) -> Result<Self> {
+-            Ok(Path {
++        pub(crate) fn parse_helper(input: ParseStream, expr_style: bool) -> Result<Self> {
++            let mut path = Path {
+                 leading_colon: input.parse()?,
+                 segments: {
+                     let mut segments = Punctuated::new();
+                     let value = PathSegment::parse_helper(input, expr_style)?;
+                     segments.push_value(value);
+-                    while input.peek(Token![::]) {
+-                        let punct: Token![::] = input.parse()?;
+-                        segments.push_punct(punct);
+-                        let value = PathSegment::parse_helper(input, expr_style)?;
+-                        segments.push_value(value);
+-                    }
+                     segments
+                 },
+-            })
++            };
++            Path::parse_rest(input, &mut path, expr_style)?;
++            Ok(path)
++        }
++
++        pub(crate) fn parse_rest(
++            input: ParseStream,
++            path: &mut Self,
++            expr_style: bool,
++        ) -> Result<()> {
++            while input.peek(Token![::]) {
++                let punct: Token![::] = input.parse()?;
++                path.segments.push_punct(punct);
++                let value = PathSegment::parse_helper(input, expr_style)?;
++                path.segments.push_value(value);
++            }
++            Ok(())
+         }
+     }
+ 
+diff --git a/src/ty.rs b/src/ty.rs
+index 6e493e05..eacae3b5 100644
+--- a/src/ty.rs
++++ b/src/ty.rs
+@@ -342,11 +342,41 @@ pub mod parsing {
+     }
+ 
+     fn ambig_ty(input: ParseStream, allow_plus: bool) -> Result<Type> {
+-        if input.peek(token::Group) && !input.peek2(Token![::]) && !input.peek2(Token![<]) {
+-            return input.parse().map(Type::Group);
++        let begin = input.fork();
++
++        if input.peek(token::Group) {
++            let mut group: TypeGroup = input.parse()?;
++            if input.peek(Token![::]) && input.peek3(Ident::peek_any) {
++                if let Type::Path(mut ty) = *group.elem {
++                    Path::parse_rest(input, &mut ty.path, false)?;
++                    return Ok(Type::Path(ty));
++                } else {
++                    return Ok(Type::Path(TypePath {
++                        qself: Some(QSelf {
++                            lt_token: Token![<](group.group_token.span),
++                            position: 0,
++                            as_token: None,
++                            gt_token: Token![>](group.group_token.span),
++                            ty: group.elem,
++                        }),
++                        path: Path::parse_helper(input, false)?,
++                    }));
++                }
++            } else if input.peek(Token![<]) || input.peek(Token![::]) && input.peek3(Token![<]) {
++                if let Type::Path(mut ty) = *group.elem {
++                    let arguments = &mut ty.path.segments.last_mut().unwrap().arguments;
++                    if let PathArguments::None = arguments {
++                        *arguments = PathArguments::AngleBracketed(input.parse()?);
++                        Path::parse_rest(input, &mut ty.path, false)?;
++                        return Ok(Type::Path(ty));
++                    } else {
++                        group.elem = Box::new(Type::Path(ty));
++                    }
++                }
++            }
++            return Ok(Type::Group(group));
+         }
+ 
+-        let begin = input.fork();
+         let mut lifetimes = None::<BoundLifetimes>;
+         let mut lookahead = input.lookahead1();
+         if lookahead.peek(Token![for]) {

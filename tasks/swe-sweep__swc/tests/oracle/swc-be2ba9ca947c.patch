@@ -1,0 +1,13 @@
+diff --git a/crates/swc_css_minifier/src/compress/keyframes.rs b/crates/swc_css_minifier/src/compress/keyframes.rs
+index 952c28de3e..4e0d2759ca 100644
+--- a/crates/swc_css_minifier/src/compress/keyframes.rs
++++ b/crates/swc_css_minifier/src/compress/keyframes.rs
+@@ -16,7 +16,7 @@ impl VisitMut for CompressKeyframes {
+             Some(AtRulePrelude::KeyframesPrelude(KeyframesName::Str(string)))
+                 if !matches!(
+                     &*string.value.to_lowercase(),
+-                    "initial" | "inherit" | "unset" | "revert" | "default"
++                    "initial" | "inherit" | "unset" | "revert" | "default" | "none"
+                 ) =>
+             {
+                 at_rule.prelude = Some(AtRulePrelude::KeyframesPrelude(

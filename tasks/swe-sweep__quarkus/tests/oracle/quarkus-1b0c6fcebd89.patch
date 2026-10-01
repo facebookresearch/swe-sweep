@@ -1,0 +1,78 @@
+diff --git a/independent-projects/bootstrap/app-model/src/main/java/io/quarkus/bootstrap/workspace/ArtifactSources.java b/independent-projects/bootstrap/app-model/src/main/java/io/quarkus/bootstrap/workspace/ArtifactSources.java
+index 518898d0cb5..41d2fb902c1 100644
+--- a/independent-projects/bootstrap/app-model/src/main/java/io/quarkus/bootstrap/workspace/ArtifactSources.java
++++ b/independent-projects/bootstrap/app-model/src/main/java/io/quarkus/bootstrap/workspace/ArtifactSources.java
+@@ -45,18 +45,8 @@ public interface ArtifactSources {
+         final Collection<SourceDir> sourceDirs = getSourceDirs();
+         final Collection<SourceDir> resourceDirs = getResourceDirs();
+         final List<PathTree> trees = new ArrayList<>(sourceDirs.size() + resourceDirs.size());
+-        for (SourceDir src : sourceDirs) {
+-            final PathTree outputTree = src.getOutputTree();
+-            if (outputTree != null && !outputTree.isEmpty() && !trees.contains(outputTree)) {
+-                trees.add(outputTree);
+-            }
+-        }
+-        for (SourceDir src : resourceDirs) {
+-            final PathTree outputTree = src.getOutputTree();
+-            if (outputTree != null && !outputTree.isEmpty() && !trees.contains(outputTree)) {
+-                trees.add(outputTree);
+-            }
+-        }
++        collectOutputs(sourceDirs, trees);
++        collectOutputs(resourceDirs, trees);
+         if (trees.isEmpty()) {
+             return EmptyPathTree.getInstance();
+         }
+@@ -64,4 +54,13 @@ public interface ArtifactSources {
+         }
+         return new MultiRootPathTree(trees.toArray(new PathTree[0]));
+     }
++
++    private static void collectOutputs(Collection<SourceDir> sourceDirs, List<PathTree> trees) {
++        for (SourceDir src : sourceDirs) {
++            final PathTree outputTree = src.getOutputTree();
++            if (outputTree != null && !trees.contains(outputTree) && !outputTree.isEmpty()) {
++                trees.add(outputTree);
++            }
++        }
++    }
+ }
+diff --git a/independent-projects/bootstrap/app-model/src/main/java/io/quarkus/paths/DirectoryPathTree.java b/independent-projects/bootstrap/app-model/src/main/java/io/quarkus/paths/DirectoryPathTree.java
+index 617254765e1..d76b9647cc2 100644
+--- a/independent-projects/bootstrap/app-model/src/main/java/io/quarkus/paths/DirectoryPathTree.java
++++ b/independent-projects/bootstrap/app-model/src/main/java/io/quarkus/paths/DirectoryPathTree.java
+@@ -1,6 +1,7 @@
+ package io.quarkus.paths;
+ 
+ import java.io.IOException;
++import java.io.UncheckedIOException;
+ import java.io.Serializable;
+ import java.nio.file.FileSystem;
+ import java.nio.file.FileSystems;
+@@ -12,6 +13,7 @@ import java.util.Objects;
+ import java.util.function.Consumer;
+ import java.util.function.Function;
+ import java.util.regex.Pattern;
++import java.util.stream.Stream;
+ 
+ public class DirectoryPathTree extends PathTreeWithManifest implements OpenPathTree, Serializable {
+ 
+@@ -161,6 +163,18 @@ public class DirectoryPathTree extends PathTreeWithManifest implements OpenPathTr
+         return true;
+     }
+ 
++    @Override
++    public boolean isEmpty() {
++        if (Files.exists(dir)) {
++            try (Stream<Path> stream = Files.list(dir)) {
++                return stream.findAny().isEmpty();
++            } catch (IOException e) {
++                throw new UncheckedIOException("Failed to list content of " + dir, e);
++            }
++        }
++        return true;
++    }
++
+     @Override
+     public void close() throws IOException {
+     }

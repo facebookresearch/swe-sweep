@@ -1,0 +1,24 @@
+diff --git a/numpy/lib/tests/test_function_base.py b/numpy/lib/tests/test_function_base.py
+index 56081b4f06d5..277843222b6a 100644
+--- a/numpy/lib/tests/test_function_base.py
++++ b/numpy/lib/tests/test_function_base.py
+@@ -4,6 +4,7 @@ import operator
+ import warnings
+ import sys
+ import decimal
++from fractions import Fraction
+ import pytest
+ 
+ import numpy as np
+@@ -366,6 +367,11 @@ class TestAverage(object):
+         w /= w.sum()
+         assert_almost_equal(a.mean(0), average(a, weights=w))
+ 
++    def test_average_class_without_dtype(self):
++        # see gh-21988
++        a = np.array([Fraction(1, 5), Fraction(3, 5)])
++        assert_equal(np.average(a), Fraction(2, 5))
++
+ class TestSelect(object):
+     choices = [np.array([1, 2, 3]),
+                np.array([4, 5, 6]),

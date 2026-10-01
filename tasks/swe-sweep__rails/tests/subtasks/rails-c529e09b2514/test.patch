@@ -1,0 +1,46 @@
+diff --git a/activesupport/test/core_ext/date_time_ext_test.rb b/activesupport/test/core_ext/date_time_ext_test.rb
+index b008cd69d86..ef329ff2b68 100644
+--- a/activesupport/test/core_ext/date_time_ext_test.rb
++++ b/activesupport/test/core_ext/date_time_ext_test.rb
+@@ -202,6 +202,18 @@ class DateTimeExtCalculationsTest < ActiveSupport::TestCase
+     assert_equal DateTime.civil(2012, 10, 29, 13, 15, 10), DateTime.civil(2012, 9, 28, 1, 15, 10).advance(days: 1.5, months: 1)
+   end
+ 
++  def test_advance_does_not_mutate_options
++    options = { weeks: 1, days: 2 }
++    DateTime.civil(2024, 1, 1).advance(options)
++    assert_equal({ weeks: 1, days: 2 }, options)
++  end
++
++  def test_advance_with_frozen_options
++    assert_nothing_raised do
++      DateTime.civil(2024, 1, 1).advance({ weeks: 1, days: 2 }.freeze)
++    end
++  end
++
+   def test_advanced_processes_first_the_date_deltas_and_then_the_time_deltas
+     # If the time deltas were processed first, the following datetimes would be advanced to 2010/04/01 instead.
+     assert_equal DateTime.civil(2010, 3, 29), DateTime.civil(2010, 2, 28, 23, 59, 59).advance(months: 1, seconds: 1)
+diff --git a/activesupport/test/core_ext/time_ext_test.rb b/activesupport/test/core_ext/time_ext_test.rb
+index 1165e16f2e0..3d9cab4b325 100644
+--- a/activesupport/test/core_ext/time_ext_test.rb
++++ b/activesupport/test/core_ext/time_ext_test.rb
+@@ -664,6 +664,18 @@ class TimeExtCalculationsTest < ActiveSupport::TestCase
+     assert_equal t, t.advance(months: 0)
+   end
+ 
++  def test_advance_does_not_mutate_options
++    options = { weeks: 1, days: 2 }
++    Time.new(2024, 1, 1).advance(options)
++    assert_equal({ weeks: 1, days: 2 }, options)
++  end
++
++  def test_advance_with_frozen_options
++    assert_nothing_raised do
++      Time.new(2024, 1, 1).advance({ weeks: 1, days: 2 }.freeze)
++    end
++  end
++
+   def test_advance_gregorian_proleptic
+     assert_equal Time.local(1582, 10, 14, 15, 15, 10), Time.local(1582, 10, 15, 15, 15, 10).advance(days: -1)
+     assert_equal Time.local(1582, 10, 15, 15, 15, 10), Time.local(1582, 10, 14, 15, 15, 10).advance(days: 1)

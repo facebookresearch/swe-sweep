@@ -1,0 +1,18 @@
+diff --git a/src/flag/flag.go b/src/flag/flag.go
+index 9abf8d769e..f6b38908f6 100644
+--- a/src/flag/flag.go
++++ b/src/flag/flag.go
+@@ -550,9 +550,11 @@ func UnquoteUsage(flag *Flag) (name string, usage string) {
+ 	}
+ 	// No explicit name, so use type if we can find one.
+ 	name = "value"
+-	switch flag.Value.(type) {
++	switch fv := flag.Value.(type) {
+ 	case boolFlag:
+-		name = ""
++		if fv.IsBoolFlag() {
++			name = ""
++		}
+ 	case *durationValue:
+ 		name = "duration"
+ 	case *float64Value:

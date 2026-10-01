@@ -1,0 +1,30 @@
+diff --git a/test-data/unit/check-typeddict.test b/test-data/unit/check-typeddict.test
+index 47c8a71ba..cae90d56c 100644
+--- a/test-data/unit/check-typeddict.test
++++ b/test-data/unit/check-typeddict.test
+@@ -3720,20 +3720,24 @@
+ [typing fixtures/typing-typeddict.pyi]
+ 
+ [case testTypedDictReadOnlyMutateMethods]
+-from typing import ReadOnly, TypedDict
++from typing import ReadOnly, NotRequired, TypedDict
+ 
+ class TP(TypedDict):
+     key: ReadOnly[str]
++    optional_key: ReadOnly[NotRequired[str]]
+     other: ReadOnly[int]
+     mutable: bool
+ 
+ x: TP
+ reveal_type(x.pop("key"))  # E: Key "key" of TypedDict "TP" cannot be deleted \
+                            # N: Revealed type is "builtins.str"
++reveal_type(x.pop("optional_key"))  # E: Key "optional_key" of TypedDict "TP" cannot be deleted \
++                                    # N: Revealed type is "builtins.str"
+ 
+ x.update({"key": "abc", "other": 1, "mutable": True})  # E: ReadOnly TypedDict keys ("key", "other") TypedDict are mutated
+ x.setdefault("key", "abc")  # E: ReadOnly TypedDict key "key" TypedDict is mutated
++x.setdefault("optional_key", "foo")  # E: ReadOnly TypedDict key "optional_key" TypedDict is mutated
+ x.setdefault("other", 1)  # E: ReadOnly TypedDict key "other" TypedDict is mutated
+ x.setdefault("mutable", False)  # ok
+ [builtins fixtures/dict.pyi]
+ [typing fixtures/typing-typeddict.pyi]

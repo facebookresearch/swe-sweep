@@ -1,0 +1,16 @@
+diff --git a/MathlibTest/GRewrite.lean b/MathlibTest/GRewrite.lean
+index f7d73252fe..fc186ef0c9 100644
+--- a/MathlibTest/GRewrite.lean
++++ b/MathlibTest/GRewrite.lean
+@@ -340,3 +340,11 @@ example (h : b ≈ a) : f a ≤ f b := by
+   grw [h]
+ 
+ end AntiSymmRelTest
++
++-- Test that `grw` works even in the presence of metadata.
++example (a b : Nat) (h : Nat → no_index (a ≤ b)) : a ≤ b := by
++  grw [h]
++  exact 0
++
++example (a b : Nat) (h : Nat → no_index (a ≤ b)) : a ≤ b := by
++  grw [h 0]

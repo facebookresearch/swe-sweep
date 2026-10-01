@@ -1,0 +1,63 @@
+diff --git a/tests/FSharp.Compiler.ComponentTests/Language/CopyAndUpdateTests.fs b/tests/FSharp.Compiler.ComponentTests/Language/CopyAndUpdateTests.fs
+index 1e29223eed..b579c8b018 100644
+--- a/tests/FSharp.Compiler.ComponentTests/Language/CopyAndUpdateTests.fs
++++ b/tests/FSharp.Compiler.ComponentTests/Language/CopyAndUpdateTests.fs
+@@ -480,3 +480,56 @@ if actual <> expected then
+     |> withLangVersion80
+     |> compileExeAndRun
+     |> verifyOutput "once"
+\ No newline at end of file
++
++[<Fact>]
++let ``N-Nested copy-and-update works when the starting expression is not a simple identifier``() =
++    FSharp """
++module CopyAndUpdateTests
++type SubSubTest = {
++    Z: int
++}
++
++type SubTest = {
++    Y: SubSubTest
++}
++
++type Test = {
++    X: SubTest
++}
++
++let getTest () =
++    { X = { Y = { Z = 0 } } }
++
++[<EntryPoint>]
++let main argv =
++    let a = {
++         getTest () with
++            X.Y.Z = 1 
++    }
++    printfn "%i" a.X.Y.Z |> ignore
++    0
++    """
++    |> typecheck
++    |> shouldSucceed
++    |> verifyOutput "1"
++
++[<Fact>]
++let ``N-Nested, anonymous copy-and-update works when the starting expression is not a simple identifier``() =
++    FSharp """
++module CopyAndUpdateTests
++
++let getTest () =
++    {| X = {| Y = {| Z = 0 |} |} |}
++
++[<EntryPoint>]
++let main argv =
++    let a = {|
++         getTest () with
++            X.Y.Z = 1 
++    |}
++    printfn "%i" a.X.Y.Z |> ignore
++    0
++    """
++    |> typecheck
++    |> shouldSucceed
++    |> verifyOutput "1"
+\ No newline at end of file

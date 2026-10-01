@@ -1,0 +1,26 @@
+diff --git a/pandas/core/arrays/datetimes.py b/pandas/core/arrays/datetimes.py
+index 9c262fa37d..8ac1f54059 100644
+--- a/pandas/core/arrays/datetimes.py
++++ b/pandas/core/arrays/datetimes.py
+@@ -37,7 +37,10 @@ from pandas._libs.tslibs import (
+     to_offset,
+     tzconversion,
+ )
+-from pandas.errors import PerformanceWarning
++from pandas.errors import (
++    OutOfBoundsDatetime,
++    PerformanceWarning,
++)
+ 
+ from pandas.core.dtypes.cast import astype_dt64_to_dt64tz
+ from pandas.core.dtypes.common import (
+@@ -2190,6 +2193,9 @@ def objects_to_datetime64ns(
+             return values.view("i8"), tz_parsed
+         except (ValueError, TypeError):
+             raise err
++    except OverflowError as err:
++        # Exception is raised when a part of date is greater than 32 bit signed int
++        raise OutOfBoundsDatetime("Out of bounds nanosecond timestamp") from err
+ 
+     if tz_parsed is not None:
+         # We can take a shortcut since the datetime64 numpy array

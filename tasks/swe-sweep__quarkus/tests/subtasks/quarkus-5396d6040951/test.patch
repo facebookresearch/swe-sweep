@@ -1,0 +1,168 @@
+diff --git a/extensions/spring-data-jpa/deployment/src/test/java/io/quarkus/spring/data/deployment/multiple_pu/MultiplePersistenceUnitConfigTest.java b/extensions/spring-data-jpa/deployment/src/test/java/io/quarkus/spring/data/deployment/multiple_pu/MultiplePersistenceUnitConfigTest.java
+index 03bdfddb810..5c9a54bd7a9 100644
+--- a/extensions/spring-data-jpa/deployment/src/test/java/io/quarkus/spring/data/deployment/multiple_pu/MultiplePersistenceUnitConfigTest.java
++++ b/extensions/spring-data-jpa/deployment/src/test/java/io/quarkus/spring/data/deployment/multiple_pu/MultiplePersistenceUnitConfigTest.java
+@@ -1,9 +1,20 @@
+ package io.quarkus.spring.data.deployment.multiple_pu;
+ 
++import static org.assertj.core.api.Assertions.assertThat;
++
++import java.util.function.Supplier;
++
++import jakarta.inject.Inject;
++
+ import org.hamcrest.Matchers;
++import org.junit.jupiter.api.BeforeEach;
+ import org.junit.jupiter.api.Test;
+ import org.junit.jupiter.api.extension.RegisterExtension;
++import org.springframework.data.domain.PageRequest;
++import org.springframework.data.domain.Pageable;
++import org.springframework.data.domain.Sort;
+ 
++import io.quarkus.narayana.jta.QuarkusTransaction;
+ import io.quarkus.spring.data.deployment.multiple_pu.first.FirstEntity;
+ import io.quarkus.spring.data.deployment.multiple_pu.first.FirstEntityRepository;
+ import io.quarkus.spring.data.deployment.multiple_pu.second.SecondEntity;
+@@ -21,6 +32,17 @@ public class MultiplePersistenceUnitConfigTest {
+                             PanacheTestResource.class)
+                     .addAsResource("application-multiple-persistence-units.properties", "application.properties"));
+ 
++    @Inject
++    private FirstEntityRepository repository1;
++    @Inject
++    private SecondEntityRepository repository2;
++
++    @BeforeEach
++    void beforeEach() {
++        repository1.deleteAll();
++        repository2.deleteAll();
++    }
++
+     @Test
+     public void panacheOperations() {
+         /**
+@@ -35,4 +57,64 @@ public class MultiplePersistenceUnitConfigTest {
+         RestAssured.when().get("/persistence-unit/second/name-1").then().body(Matchers.is("1"));
+         RestAssured.when().get("/persistence-unit/second/name-2").then().body(Matchers.is("2"));
+     }
++
++    @Test
++    public void entityLifecycle() {
++        var detached = repository2.save(new SecondEntity());
++        assertThat(detached.id).isNotNull();
++        assertThat(inTx(repository2::count)).isEqualTo(1);
++
++        detached.name = "name";
++        repository2.save(detached);
++        assertThat(inTx(repository2::count)).isEqualTo(1);
++
++        inTx(() -> {
++            var lazyRef = repository2.getOne(detached.id);
++            assertThat(lazyRef.name).isEqualTo(detached.name);
++            return null;
++        });
++
++        repository2.deleteByName("otherThan" + detached.name);
++        assertThat(inTx(() -> repository2.findById(detached.id))).isPresent();
++
++        repository2.deleteByName(detached.name);
++        assertThat(inTx(() -> repository2.findById(detached.id))).isEmpty();
++    }
++
++    @Test
++    void pagedQueries() {
++        var newEntity = new SecondEntity();
++        newEntity.name = "name";
++        var detached = repository2.save(newEntity);
++
++        Pageable pageable = PageRequest.of(0, 10, Sort.Direction.DESC, "id");
++
++        var page = inTx(() -> repository2.findByName(detached.name, pageable));
++        assertThat(page.getContent()).extracting(e -> e.id).containsExactly(detached.id);
++
++        var pageIndexParam = inTx(() -> repository2.findByNameQueryIndexed(detached.name, pageable));
++        assertThat(pageIndexParam.getContent()).extracting(e -> e.id).containsExactly(detached.id);
++
++        var pageNamedParam = inTx(() -> repository2.findByNameQueryNamed(detached.name, pageable));
++        assertThat(pageNamedParam.getContent()).extracting(e -> e.id).containsExactly(detached.id);
++    }
++
++    @Test
++    void cascading() {
++        var newParent = new SecondEntity();
++        newParent.name = "parent";
++        var newChild = new SecondEntity();
++        newChild.name = "child";
++        newParent.child = newChild;
++        var detachedParent = repository2.save(newParent);
++
++        assertThat(inTx(repository2::count)).isEqualTo(2);
++
++        repository2.deleteByName(detachedParent.name);
++        assertThat(inTx(repository2::count)).isZero();
++    }
++
++    private <T> T inTx(Supplier<T> action) {
++        return QuarkusTransaction.requiringNew().call(action::get);
++    }
+ }
+diff --git a/extensions/spring-data-jpa/deployment/src/test/java/io/quarkus/spring/data/deployment/multiple_pu/second/SecondEntity.java b/extensions/spring-data-jpa/deployment/src/test/java/io/quarkus/spring/data/deployment/multiple_pu/second/SecondEntity.java
+index c0753077f8a..9bc0ce353c4 100644
+--- a/extensions/spring-data-jpa/deployment/src/test/java/io/quarkus/spring/data/deployment/multiple_pu/second/SecondEntity.java
++++ b/extensions/spring-data-jpa/deployment/src/test/java/io/quarkus/spring/data/deployment/multiple_pu/second/SecondEntity.java
+@@ -1,8 +1,6 @@
+ package io.quarkus.spring.data.deployment.multiple_pu.second;
+ 
+-import jakarta.persistence.Entity;
+-import jakarta.persistence.GeneratedValue;
+-import jakarta.persistence.Id;
++import jakarta.persistence.*;
+ 
+ @Entity
+ public class SecondEntity {
+@@ -12,4 +10,7 @@ public class SecondEntity {
+     public Long id;
+ 
+     public String name;
++
++    @OneToOne(cascade = CascadeType.ALL)
++    public SecondEntity child;
+ }
+diff --git a/extensions/spring-data-jpa/deployment/src/test/java/io/quarkus/spring/data/deployment/multiple_pu/second/SecondEntityRepository.java b/extensions/spring-data-jpa/deployment/src/test/java/io/quarkus/spring/data/deployment/multiple_pu/second/SecondEntityRepository.java
+index d35fbaab877..f0ddfd7d4bf 100644
+--- a/extensions/spring-data-jpa/deployment/src/test/java/io/quarkus/spring/data/deployment/multiple_pu/second/SecondEntityRepository.java
++++ b/extensions/spring-data-jpa/deployment/src/test/java/io/quarkus/spring/data/deployment/multiple_pu/second/SecondEntityRepository.java
+@@ -1,5 +1,11 @@
+ package io.quarkus.spring.data.deployment.multiple_pu.second;
+ 
++import java.util.Optional;
++
++import org.springframework.data.domain.Page;
++import org.springframework.data.domain.Pageable;
++import org.springframework.data.jpa.repository.Query;
++import org.springframework.data.repository.query.Param;
+ import org.springframework.stereotype.Repository;
+ 
+ @Repository
+@@ -8,4 +14,21 @@ public interface SecondEntityRepository extends org.springframework.data.reposit
+     SecondEntity save(SecondEntity entity);
+ 
+     long count();
++
++    Optional<SecondEntity> findById(Long id);
++
++    SecondEntity getOne(Long id);
++
++    void deleteAll();
++
++    void deleteByName(String name);
++
++    Page<SecondEntity> findByName(String name, Pageable pageable);
++
++    @Query(value = "SELECT se FROM SecondEntity se WHERE name=?1", countQuery = "SELECT COUNT(*) FROM SecondEntity se WHERE name=?1")
++    Page<SecondEntity> findByNameQueryIndexed(String name, Pageable pageable);
++
++    @Query(value = "SELECT se FROM SecondEntity se WHERE name=:name", countQuery = "SELECT COUNT(*) FROM SecondEntity se WHERE name=:name")
++    Page<SecondEntity> findByNameQueryNamed(@Param("name") String name, Pageable pageable);
++
+ }

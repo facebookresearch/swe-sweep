@@ -1,0 +1,13 @@
+diff --git a/pkg/analyzer/lib/src/error/best_practices_verifier.dart b/pkg/analyzer/lib/src/error/best_practices_verifier.dart
+--- a/pkg/analyzer/lib/src/error/best_practices_verifier.dart
++++ b/pkg/analyzer/lib/src/error/best_practices_verifier.dart
+@@ -1745,6 +1745,9 @@ class BestPracticesVerifier extends RecursiveAstVisitor<void> {
+     if (target is ClassDeclaration) {
+       return kinds.contains(TargetKind.classType) ||
+           kinds.contains(TargetKind.type);
++    } else if (target is ClassTypeAlias) {
++      return kinds.contains(TargetKind.classType) ||
++          kinds.contains(TargetKind.type);
+     } else if (target is Directive) {
+       return (target.parent as CompilationUnit).directives.first == target &&
+           kinds.contains(TargetKind.library);

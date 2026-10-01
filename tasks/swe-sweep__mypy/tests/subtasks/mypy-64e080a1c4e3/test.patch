@@ -1,0 +1,25 @@
+diff --git a/test-data/unit/check-errorcodes.test b/test-data/unit/check-errorcodes.test
+index 06c5753db..b1009f8fe 100644
+--- a/test-data/unit/check-errorcodes.test
++++ b/test-data/unit/check-errorcodes.test
+@@ -105,6 +105,20 @@ x              # type: ignore[name-defined]                # E: Unused "type: ig
+ # flags: --warn-unused-ignores
+ "x" # type: ignore[name-defined] # E: Unused "type: ignore" comment  [unused-ignore]
+ 
++[case testErrorCodeWarnUnusedIgnores9_SloppyFormattingNotEmptyBrackets]
++# flags: --warn-unused-ignores
++1 + "ok" + "ok".foo # type: ignore[  operator,attr-defined]
++1 + "ok" + "ok".foo # type: ignore[  ,operator,attr-defined]
++1 + "ok" + "ok".foo # type: ignore[  operator,attr-defined,]
++1 + "ok" + "ok".foo # type: ignore[  operator,attr-defined,,]
++
++[case testErrorCodeWarnUnusedIgnores10_SloppyFormattingEmptyBrackets]
++# flags: --warn-unused-ignores
++1+1 # type: ignore    # E: Unused "type: ignore" comment  [unused-ignore]
++1+1 # type: ignore[]  # E: Unused "type: ignore" comment  [unused-ignore]
++1+1 # type: ignore[ ] # E: Unused "type: ignore" comment  [unused-ignore]
++1+1 # type: ignore[,,, ] # E: Unused "type: ignore" comment  [unused-ignore]
++
+ [case testErrorCodeMissingWhenRequired]
+ # flags: --enable-error-code ignore-without-code
+ "x" # type: ignore # E: "type: ignore" comment without error code  [ignore-without-code]

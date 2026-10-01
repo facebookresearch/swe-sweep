@@ -1,0 +1,9 @@
+diff --git a/scipy/special/_logsumexp.py b/scipy/special/_logsumexp.py
+--- a/scipy/special/_logsumexp.py
++++ b/scipy/special/_logsumexp.py
+@@ -101,3 +101,4 @@
+-    a_max = np.amax(a, axis=axis, keepdims=True)
++    initial_value = -np.inf if np.size(a) == 0 else None
++    a_max = np.amax(a, axis=axis, keepdims=True, initial=initial_value)
+ 
+     if a_max.ndim > 0:

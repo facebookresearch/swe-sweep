@@ -1,0 +1,63 @@
+diff --git a/core/trino-main/src/main/java/io/trino/metadata/MetadataListing.java b/core/trino-main/src/main/java/io/trino/metadata/MetadataListing.java
+index 57804742f10..a4851aa5b27 100644
+--- a/core/trino-main/src/main/java/io/trino/metadata/MetadataListing.java
++++ b/core/trino-main/src/main/java/io/trino/metadata/MetadataListing.java
+@@ -98,6 +98,10 @@ public final class MetadataListing
+         Set<SchemaTableName> tableNames = metadata.listTables(session, prefix).stream()
+                 .map(QualifiedObjectName::asSchemaTableName)
+                 .collect(toImmutableSet());
++
++        // Table listing operation only involves getting table names, but not any metadata. So redirected tables are not
++        // handled any differently. The target table or catalog are not involved. Thus the following filter is only called
++        // for the source catalog on source table names.
+         return accessControl.filterTables(session.toSecurityContext(), prefix.getCatalogName(), tableNames);
+     }
+ 
+@@ -185,7 +189,8 @@ public final class MetadataListing
+                 boolean redirectionSucceeded = false;
+ 
+                 try {
+-                    // Handle redirection before filterColumns check
++                    // For redirected tables, column listing requires special handling, because the column metadata is unavailable
++                    // at the source table, and needs to be fetched from the target table.
+                     RedirectionAwareTableHandle redirection = metadata.getRedirectionAwareTableHandle(session, originalTableName);
+                     targetTableName = redirection.getRedirectedTableName();
+ 
+@@ -213,7 +218,7 @@ public final class MetadataListing
+ 
+             Set<String> allowedColumns = accessControl.filterColumns(
+                     session.toSecurityContext(),
+-                    // Use redirected table name for applying column filters
++                    // Use redirected table name for applying column filters, since the source does not know the column metadata
+                     targetTableName.orElse(originalTableName).asCatalogSchemaTableName(),
+                     columns.stream()
+                             .map(ColumnMetadata::getName)
+diff --git a/core/trino-main/src/main/java/io/trino/metadata/MetadataManager.java b/core/trino-main/src/main/java/io/trino/metadata/MetadataManager.java
+index 894677c4eb1..9ec47556334 100644
+--- a/core/trino-main/src/main/java/io/trino/metadata/MetadataManager.java
++++ b/core/trino-main/src/main/java/io/trino/metadata/MetadataManager.java
+@@ -653,7 +653,11 @@ public final class MetadataManager
+             return true;
+         }
+ 
+-        return getTableHandle(session, name).isPresent();
++        // If the table is not redirected, table handle existence is checked.
++        // If the table is redirected, the target table handle is retrieved. If it does not exist, an
++        // exception is thrown. This behavior is currently inconsistent with the unfiltered case of table listing.
++        // TODO: the behavior may change with a different way to resolve relation names. https://github.com/trinodb/trino/issues/9400
++        return getRedirectionAwareTableHandle(session, name).getTableHandle().isPresent();
+     }
+ 
+     @Override
+@@ -1432,6 +1436,11 @@ public final class MetadataManager
+         requireNonNull(session, "session is null");
+         requireNonNull(originalTableName, "originalTableName is null");
+ 
++        if (originalTableName.getCatalogName().isEmpty() || originalTableName.getSchemaName().isEmpty() || originalTableName.getObjectName().isEmpty()) {
++            // table cannot exist
++            return originalTableName;
++        }
++
+         QualifiedObjectName tableName = originalTableName;
+         Set<QualifiedObjectName> visitedTableNames = new LinkedHashSet<>();
+         visitedTableNames.add(tableName);

@@ -1,0 +1,100 @@
+diff --git a/src/black/brackets.py b/src/black/brackets.py
+index 85dac6ed..3020cc0d 100644
+--- a/src/black/brackets.py
++++ b/src/black/brackets.py
+@@ -127,6 +127,13 @@ class BracketTracker:
+         self.maybe_increment_lambda_arguments(leaf)
+         self.maybe_increment_for_loop_variable(leaf)
+ 
++    def any_open_for_or_lambda(self) -> bool:
++        """Return True if there is an open for or lambda expression on the line.
++
++        See maybe_increment_for_loop_variable and maybe_increment_lambda_arguments
++        for details."""
++        return bool(self._for_loop_depths or self._lambda_argument_depths)
++
+     def any_open_brackets(self) -> bool:
+         """Return True if there is an yet unmatched open bracket on the line."""
+         return bool(self.bracket_match)
+diff --git a/src/black/linegen.py b/src/black/linegen.py
+index 30cfff3e..e2c961d7 100644
+--- a/src/black/linegen.py
++++ b/src/black/linegen.py
+@@ -861,8 +861,6 @@ def _maybe_split_omitting_optional_parens(
+         # it's not an import (optional parens are the only thing we can split on
+         # in this case; attempting a split without them is a waste of time)
+         and not line.is_import
+-        # there are no standalone comments in the body
+-        and not rhs.body.contains_standalone_comments(0)
+         # and we can actually remove the parens
+         and can_omit_invisible_parens(rhs, mode.line_length)
+     ):
+@@ -1181,7 +1179,7 @@ def standalone_comment_split(
+     line: Line, features: Collection[Feature], mode: Mode
+ ) -> Iterator[Line]:
+     """Split standalone comments from the rest of the line."""
+-    if not line.contains_standalone_comments(0):
++    if not line.contains_standalone_comments():
+         raise CannotSplit("Line does not have any standalone comments")
+ 
+     current_line = Line(
+diff --git a/src/black/lines.py b/src/black/lines.py
+index 23c1a93d..f0cf25ba 100644
+--- a/src/black/lines.py
++++ b/src/black/lines.py
+@@ -1,6 +1,5 @@
+ import itertools
+ import math
+-import sys
+ from dataclasses import dataclass, field
+ from typing import (
+     Callable,
+@@ -103,7 +102,10 @@ class Line:
+         Raises ValueError when any `leaf` is appended after a standalone comment
+         or when a standalone comment is not the first leaf on the line.
+         """
+-        if self.bracket_tracker.depth == 0:
++        if (
++            self.bracket_tracker.depth == 0
++            or self.bracket_tracker.any_open_for_or_lambda()
++        ):
+             if self.is_comment:
+                 raise ValueError("cannot append to standalone comments")
+ 
+@@ -233,10 +235,10 @@ class Line:
+             leaf.fmt_pass_converted_first_leaf
+         )
+ 
+-    def contains_standalone_comments(self, depth_limit: int = sys.maxsize) -> bool:
++    def contains_standalone_comments(self) -> bool:
+         """If so, needs to be split before emitting."""
+         for leaf in self.leaves:
+-            if leaf.type == STANDALONE_COMMENT and leaf.bracket_depth <= depth_limit:
++            if leaf.type == STANDALONE_COMMENT:
+                 return True
+ 
+         return False
+@@ -982,6 +984,23 @@ def can_omit_invisible_parens(
+     are too long.
+     """
+     line = rhs.body
++
++    # We need optional parens in order to split standalone comments to their own lines
++    # if there are no nested parens around the standalone comments
++    closing_bracket: Optional[Leaf] = None
++    for leaf in reversed(line.leaves):
++        if closing_bracket and leaf is closing_bracket.opening_bracket:
++            closing_bracket = None
++        if leaf.type == STANDALONE_COMMENT and not closing_bracket:
++            return False
++        if (
++            not closing_bracket
++            and leaf.type in CLOSING_BRACKETS
++            and leaf.opening_bracket in line.leaves
++            and leaf.value
++        ):
++            closing_bracket = leaf
++
+     bt = line.bracket_tracker
+     if not bt.delimiters:
+         # Without delimiters the optional parentheses are useless.

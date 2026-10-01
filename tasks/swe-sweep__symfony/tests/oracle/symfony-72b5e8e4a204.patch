@@ -1,0 +1,63 @@
+diff --git a/src/Symfony/Component/Routing/Loader/Configurator/RouteConfigurator.php b/src/Symfony/Component/Routing/Loader/Configurator/RouteConfigurator.php
+index d9d441da19a..26a2e3857e0 100644
+--- a/src/Symfony/Component/Routing/Loader/Configurator/RouteConfigurator.php
++++ b/src/Symfony/Component/Routing/Loader/Configurator/RouteConfigurator.php
+@@ -42,7 +42,14 @@ class RouteConfigurator
+      */
+     final public function host(string|array $host): static
+     {
++        $previousRoutes = clone $this->route;
+         $this->addHost($this->route, $host);
++        foreach ($previousRoutes as $name => $route) {
++            if (!$this->route->get($name)) {
++                $this->collection->remove($name);
++            }
++        }
++        $this->collection->addCollection($this->route);
+ 
+         return $this;
+     }
+diff --git a/src/Symfony/Component/Routing/Loader/XmlFileLoader.php b/src/Symfony/Component/Routing/Loader/XmlFileLoader.php
+index 2518161ae0c..1e3e3283dca 100644
+--- a/src/Symfony/Component/Routing/Loader/XmlFileLoader.php
++++ b/src/Symfony/Component/Routing/Loader/XmlFileLoader.php
+@@ -135,7 +135,7 @@ class XmlFileLoader extends FileLoader
+             throw new \InvalidArgumentException(sprintf('The <route> element in file "%s" must not have both a "path" attribute and <path> child nodes.', $path));
+         }
+ 
+-        $routes = $this->createLocalizedRoute($collection, $id, $paths ?: $node->getAttribute('path'));
++        $routes = $this->createLocalizedRoute(new RouteCollection(), $id, $paths ?: $node->getAttribute('path'));
+         $routes->addDefaults($defaults);
+         $routes->addRequirements($requirements);
+         $routes->addOptions($options);
+@@ -146,6 +146,8 @@ class XmlFileLoader extends FileLoader
+         if (null !== $hosts) {
+             $this->addHost($routes, $hosts);
+         }
++
++        $collection->addCollection($routes);
+     }
+ 
+     /**
+diff --git a/src/Symfony/Component/Routing/Loader/YamlFileLoader.php b/src/Symfony/Component/Routing/Loader/YamlFileLoader.php
+index 9605e9a8772..09beb7cd547 100644
+--- a/src/Symfony/Component/Routing/Loader/YamlFileLoader.php
++++ b/src/Symfony/Component/Routing/Loader/YamlFileLoader.php
+@@ -157,7 +157,7 @@ class YamlFileLoader extends FileLoader
+             $defaults['_stateless'] = $config['stateless'];
+         }
+ 
+-        $routes = $this->createLocalizedRoute($collection, $name, $config['path']);
++        $routes = $this->createLocalizedRoute(new RouteCollection(), $name, $config['path']);
+         $routes->addDefaults($defaults);
+         $routes->addRequirements($requirements);
+         $routes->addOptions($options);
+@@ -168,6 +168,8 @@ class YamlFileLoader extends FileLoader
+         if (isset($config['host'])) {
+             $this->addHost($routes, $config['host']);
+         }
++
++        $collection->addCollection($routes);
+     }
+ 
+     /**

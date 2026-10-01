@@ -1,0 +1,18 @@
+diff --git a/tests/template/tobjectdeclfield.nim b/tests/template/tobjectdeclfield.nim
+new file mode 100644
+index 000000000..201f076ca
+--- /dev/null
++++ b/tests/template/tobjectdeclfield.nim
+@@ -0,0 +1,12 @@
++var x = 0
++
++block:
++  type Foo = object
++    x: float # ok
++
++template main() =
++  block:
++    type Foo = object
++      x: float # Error: cannot use symbol of kind 'var' as a 'field'
++
++main()

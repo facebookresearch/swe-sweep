@@ -1,0 +1,38 @@
+diff --git a/vlib/v/slow_tests/inout/dump_array_of_ref.out b/vlib/v/slow_tests/inout/dump_array_of_ref.out
+new file mode 100644
+index 000000000..cfec8e262
+--- /dev/null
++++ b/vlib/v/slow_tests/inout/dump_array_of_ref.out
+@@ -0,0 +1,10 @@
++[vlib/v/slow_tests/inout/dump_array_of_ref.vv:6] parents: &[Balise{
++    a: 11
++}, Balise{
++    a: 22
++}]
++[vlib/v/slow_tests/inout/dump_array_of_ref.vv:10] stack: [&Balise{
++    a: 10
++}, &Balise{
++    a: 20
++}]
+diff --git a/vlib/v/slow_tests/inout/dump_array_of_ref.vv b/vlib/v/slow_tests/inout/dump_array_of_ref.vv
+new file mode 100644
+index 000000000..986558a09
+--- /dev/null
++++ b/vlib/v/slow_tests/inout/dump_array_of_ref.vv
+@@ -0,0 +1,16 @@
++struct Balise {
++	a int
++}
++
++fn escape_tag(mut parents []Balise) {
++	dump(parents)
++	mut stack := []&Balise{}
++	stack << &Balise{10}
++	stack << &Balise{20}
++	dump(stack)
++}
++
++fn main() {
++	mut bal := [Balise{11}, Balise{22}]
++	escape_tag(mut bal)
++}

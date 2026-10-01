@@ -1,0 +1,42 @@
+diff --git a/compiler/pragmas.nim b/compiler/pragmas.nim
+index c724aa025..972f3def9 100644
+--- a/compiler/pragmas.nim
++++ b/compiler/pragmas.nim
+@@ -882,6 +882,7 @@ proc singlePragma(c: PContext, sym: PSym, n: PNode, i: var int,
+ 
+     # number of pragmas increase/decrease with user pragma expansion
+     inc c.instCounter
++    defer: dec c.instCounter
+     if c.instCounter > 100:
+       globalError(c.config, it.info, "recursive dependency: " & userPragma.name.s)
+ 
+@@ -891,7 +892,6 @@ proc singlePragma(c: PContext, sym: PSym, n: PNode, i: var int,
+     pragma(c, sym, userPragma.ast, validPragmas, isStatement)
+     n.sons[i..i] = userPragma.ast.sons # expand user pragma with its content
+     i.inc(userPragma.ast.len - 1) # inc by -1 is ok, user pragmas was empty
+-    dec c.instCounter
+   else:
+     let k = whichKeyword(ident)
+     if k in validPragmas:
+diff --git a/compiler/seminst.nim b/compiler/seminst.nim
+index 37f081dbc..84ae9a26f 100644
+--- a/compiler/seminst.nim
++++ b/compiler/seminst.nim
+@@ -345,7 +345,8 @@ proc generateInstance(c: PContext, fn: PSym, pt: TypeMapping,
+   # generates an instantiated proc
+   if c.instCounter > 50:
+     globalError(c.config, info, "generic instantiation too nested")
+-  inc(c.instCounter)
++  inc c.instCounter
++  defer: dec c.instCounter
+   # careful! we copy the whole AST including the possibly nil body!
+   var n = copyTree(fn.ast)
+   # NOTE: for access of private fields within generics from a different module
+@@ -439,7 +440,6 @@ proc generateInstance(c: PContext, fn: PSym, pt: TypeMapping,
+   popOwner(c)
+   c.currentScope = oldScope
+   discard c.friendModules.pop()
+-  dec(c.instCounter)
+   c.matchedConcept = oldMatchedConcept
+   if result.kind == skMethod: finishMethod(c, result)
+ 

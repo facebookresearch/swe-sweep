@@ -1,0 +1,16 @@
+diff --git a/pandas/tests/io/test_common.py b/pandas/tests/io/test_common.py
+index 43a5a33a0f..b458f3351c 100644
+--- a/pandas/tests/io/test_common.py
++++ b/pandas/tests/io/test_common.py
+@@ -555,9 +555,8 @@ def test_encoding_errors(encoding_errors, format):
+     bad_encoding = b"\xe4"
+ 
+     if format == "csv":
+-        return
+-        content = bad_encoding + b"\n" + bad_encoding
+-        reader = pd.read_csv
++        content = b"," + bad_encoding + b"\n" + bad_encoding * 2 + b"," + bad_encoding
++        reader = partial(pd.read_csv, index_col=0)
+     else:
+         content = (
+             b'{"'

@@ -1,0 +1,157 @@
+{
+  "build_jobs": 4,
+  "container_repo": "/isomorphic-git",
+  "evaluation": {
+    "suite": "reproduction",
+    "visible_timeout": 14400
+  },
+  "upstream_image": "pandora-maxbug-isomorphic-git:v1.9.0",
+  "n_base_passing": 329,
+  "n_base_test_ignore": 8,
+  "oracle_digest": "6c7670059d682af2dd57fb1acde27d3b3d9112dd5584ded71dda1d165f924c68",
+  "oracle_pristine_paths": [],
+  "upstream_commit": "9f7399e15e6172900e0591deb5a57a45769d8205",
+  "reproduction": {
+    "needs_build": false,
+    "setup_cmd": "GIT_HTTP_MOCK_SERVER_PORT=8888 GIT_HTTP_MOCK_SERVER_ROOT=__tests__/__fixtures__ nohup npx --no-install git-http-mock-server > /tmp/git-http-mock-server.log 2>&1 & sleep 5",
+    "suite": {
+      "type": "jest"
+    },
+    "test_timeout": 900
+  },
+  "schema": 2,
+  "subtasks": [
+    {
+      "f2p": [
+        "statusMatrix with symlink statusMatrix with symlink targeting ignored directory"
+      ],
+      "id": "isomorphic-git-0067a35caead",
+      "target_files": [
+        "src/models/GitWalkerFs.js"
+      ]
+    },
+    {
+      "f2p": [
+        "commit updates HEAD in detached HEAD state"
+      ],
+      "id": "isomorphic-git-457232d7a193",
+      "target_files": [
+        "src/commands/commit.js"
+      ]
+    },
+    {
+      "f2p": [
+        "deleteBranch deletes the branch when an identically named tag exists"
+      ],
+      "id": "isomorphic-git-4e5a6c705c13",
+      "target_files": [
+        "src/commands/deleteBranch.js"
+      ]
+    },
+    {
+      "f2p": [
+        "merge merge preserves nested directory structure when combining unrelated changes",
+        "merge merge two branches where ours adds a new file and theirs deletes a file",
+        "merge merge two branches where ours deletes a file and theirs adds a new file"
+      ],
+      "id": "isomorphic-git-4ff85d4fea01",
+      "target_files": [
+        "src/utils/mergeTree.js"
+      ]
+    },
+    {
+      "f2p": [
+        "walk throws when HEAD points to a missing non-branch ref",
+        "walk throws when TREE is given a ref that does not exist",
+        "walk throws when TREE is given a ref with a trailing newline"
+      ],
+      "id": "isomorphic-git-50d5f852a852",
+      "target_files": [
+        "src/managers/GitRefManager.js",
+        "src/models/GitWalkerRepo.js"
+      ]
+    },
+    {
+      "f2p": [
+        "status status of a file changed twice within a second"
+      ],
+      "id": "isomorphic-git-61b26ea8eeae",
+      "target_files": [
+        "src/utils/compareStats.js"
+      ]
+    },
+    {
+      "f2p": [
+        "renameBranch rename current branch"
+      ],
+      "id": "isomorphic-git-6b02b757da13",
+      "target_files": [
+        "src/commands/renameBranch.js"
+      ]
+    },
+    {
+      "f2p": [
+        "log includes commits that only change a file mode"
+      ],
+      "id": "isomorphic-git-708126f8ccb8",
+      "target_files": [
+        "src/commands/log.js",
+        "src/utils/resolveFilepath.js"
+      ]
+    },
+    {
+      "f2p": [
+        "expandOid expand short oid from packfile and loose"
+      ],
+      "id": "isomorphic-git-74184a8be4fb",
+      "target_files": [
+        "src/storage/expandOid.js"
+      ]
+    },
+    {
+      "f2p": [
+        "readObject from packfile wrapped"
+      ],
+      "id": "isomorphic-git-a56f49e997f2",
+      "target_files": [
+        "src/storage/readObject.js"
+      ]
+    },
+    {
+      "f2p": [
+        "add ignored file that is already tracked",
+        "add tracked file inside an ignored folder",
+        "status tracked file that matches a .gitignore rule"
+      ],
+      "id": "isomorphic-git-a5a311645956",
+      "target_files": [
+        "src/api/add.js",
+        "src/api/status.js"
+      ]
+    },
+    {
+      "f2p": [
+        "GitTree entry-name validation rejects \".\"",
+        "GitTree entry-name validation rejects \"..\"",
+        "GitTree entry-name validation rejects \".git\"",
+        "GitTree entry-name validation rejects \".git\" case-insensitively (\".GIT\")",
+        "GitTree entry-name validation rejects \".git.\" and \".git \" (trailing dot/space)"
+      ],
+      "id": "isomorphic-git-dae687eefe73",
+      "target_files": [
+        "src/models/GitTree.js"
+      ]
+    },
+    {
+      "f2p": [
+        "GitConfig insert new value new subsection with dots in key"
+      ],
+      "id": "isomorphic-git-f5a400d7eaa1",
+      "target_files": [
+        "src/models/GitConfig.js"
+      ]
+    }
+  ],
+  "task": "isomorphic-git",
+  "version": "v1.9.0"
+}

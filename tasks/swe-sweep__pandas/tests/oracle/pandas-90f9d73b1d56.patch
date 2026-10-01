@@ -1,0 +1,13 @@
+diff --git a/pandas/core/arrays/sparse/array.py b/pandas/core/arrays/sparse/array.py
+index 7d2285fba9..c15a196dc6 100644
+--- a/pandas/core/arrays/sparse/array.py
++++ b/pandas/core/arrays/sparse/array.py
+@@ -1569,7 +1569,7 @@ class SparseArray(OpsMixin, PandasObject, ExtensionArray):
+             raise ValueError(f"axis(={axis}) out of bounds")
+ 
+         if not self._null_fill_value:
+-            return SparseArray(self.to_dense()).cumsum()
++            return SparseArray(self.to_dense(), fill_value=np.nan).cumsum()
+ 
+         return SparseArray(
+             self.sp_values.cumsum(),

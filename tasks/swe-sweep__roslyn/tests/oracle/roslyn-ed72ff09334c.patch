@@ -1,0 +1,13 @@
+diff --git a/src/Compilers/CSharp/Portable/FlowAnalysis/NullableWalker.cs b/src/Compilers/CSharp/Portable/FlowAnalysis/NullableWalker.cs
+index 6b3ffbdfbf1..8bfc6c26164 100644
+--- a/src/Compilers/CSharp/Portable/FlowAnalysis/NullableWalker.cs
++++ b/src/Compilers/CSharp/Portable/FlowAnalysis/NullableWalker.cs
+@@ -8353,7 +8353,7 @@ namespace Microsoft.CodeAnalysis.CSharp
+             }
+ 
+             var type = parameter.TypeWithAnnotations;
+-            if (expanded && parameter.Ordinal == parametersOpt.Length - 1)
++            if (expanded && (object)parameter == parametersOpt[^1])
+             {
+                 if (!paramsIterationType.HasType)
+                 {

@@ -1,0 +1,33 @@
+diff --git a/Zend/tests/type_declarations/callable_001.phpt b/Zend/tests/type_declarations/callable/callable_001.phpt
+similarity index 100%
+rename from Zend/tests/type_declarations/callable_001.phpt
+rename to Zend/tests/type_declarations/callable/callable_001.phpt
+diff --git a/Zend/tests/type_declarations/callable_002.phpt b/Zend/tests/type_declarations/callable/callable_002.phpt
+similarity index 100%
+rename from Zend/tests/type_declarations/callable_002.phpt
+rename to Zend/tests/type_declarations/callable/callable_002.phpt
+diff --git a/Zend/tests/type_declarations/callable_003.phpt b/Zend/tests/type_declarations/callable/callable_003.phpt
+similarity index 100%
+rename from Zend/tests/type_declarations/callable_003.phpt
+rename to Zend/tests/type_declarations/callable/callable_003.phpt
+diff --git a/Zend/tests/type_declarations/callable/callable_variance_closure.phpt b/Zend/tests/type_declarations/callable/callable_variance_closure.phpt
+new file mode 100644
+index 00000000000..d3d0a77fd9a
+--- /dev/null
++++ b/Zend/tests/type_declarations/callable/callable_variance_closure.phpt
+@@ -0,0 +1,15 @@
++--TEST--
++Closure should be covariant with callable
++--FILE--
++<?php
++
++class A {
++    public function foo(Closure $c): callable {}
++}
++class B extends A {
++    public function foo(callable $c): Closure {}
++}
++?>
++OK
++--EXPECT--
++OK

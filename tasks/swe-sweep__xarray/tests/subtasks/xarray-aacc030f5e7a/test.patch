@@ -1,0 +1,26 @@
+diff --git a/xarray/tests/test_duck_array_ops.py b/xarray/tests/test_duck_array_ops.py
+index 0771e003..1f4ef2ac 100644
+--- a/xarray/tests/test_duck_array_ops.py
++++ b/xarray/tests/test_duck_array_ops.py
+@@ -335,6 +335,19 @@ def test_cftime_datetime_mean():
+     da_2d = DataArray(times.values.reshape(2, 2))
+     result = da_2d.mean()
+     assert_equal(result, expected)
+ 
+ 
++@pytest.mark.parametrize("dask", [False, True])
++def test_mean_over_long_spanning_datetime64(dask) -> None:
++    if dask and not has_dask:
++        pytest.skip("requires dask")
++    array = np.array(["1678-01-01", "NaT", "2260-01-01"], dtype="datetime64[ns]")
++    da = DataArray(array, dims=["time"])
++    if dask:
++        da = da.chunk({"time": 2})
++    expected = DataArray(np.array("1969-01-01", dtype="datetime64[ns]"))
++    result = da.mean()
++    assert_equal(result, expected)
++
++
+ @requires_cftime
+ def test_cftime_datetime_mean_long_time_period():
+     import cftime

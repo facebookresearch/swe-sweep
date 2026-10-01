@@ -1,0 +1,22 @@
+diff --git a/codec-http2/src/test/java/io/netty/handler/codec/http2/Http2MultiplexCodecTest.java b/codec-http2/src/test/java/io/netty/handler/codec/http2/Http2MultiplexCodecTest.java
+index ecdcdcf7c8..bec5cd964e 100644
+--- a/codec-http2/src/test/java/io/netty/handler/codec/http2/Http2MultiplexCodecTest.java
++++ b/codec-http2/src/test/java/io/netty/handler/codec/http2/Http2MultiplexCodecTest.java
+@@ -170,6 +170,17 @@ public class Http2MultiplexCodecTest {
+         verifyFramesMultiplexedToCorrectChannel(inboundStream, inboundHandler, 2);
+     }
+ 
++    @Test
++    public void unhandledHttp2FramesShouldBePropagated() {
++        ByteBuf content = UnpooledByteBufAllocator.DEFAULT.buffer(8).writeLong(0);
++        Http2PingFrame decodedFrame = new DefaultHttp2PingFrame(content);
++
++        codec.onHttp2Frame(decodedFrame);
++        Http2PingFrame receivedPing = parentChannel.readInbound();
++        assertSame(receivedPing, decodedFrame);
++        assertTrue(receivedPing.release());
++    }
++
+     @Test
+     public void channelReadShouldRespectAutoRead() {
+         LastInboundHandler inboundHandler = streamActiveAndWriteHeaders(inboundStream);

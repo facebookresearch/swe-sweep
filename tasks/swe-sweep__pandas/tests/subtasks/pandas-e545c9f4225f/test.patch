@@ -1,0 +1,19 @@
+diff --git a/pandas/tests/io/parser/test_header.py b/pandas/tests/io/parser/test_header.py
+index 3fc23525df..4ded70db8b 100644
+--- a/pandas/tests/io/parser/test_header.py
++++ b/pandas/tests/io/parser/test_header.py
+@@ -585,3 +585,14 @@ def test_read_csv_multiindex_columns(all_parsers):
+     tm.assert_frame_equal(df1, expected.iloc[:1])
+     df2 = parser.read_csv(StringIO(s2), header=[0, 1])
+     tm.assert_frame_equal(df2, expected)
++
++
++def test_header_missing_rows(all_parsers):
++    # GH#47400
++    parser = all_parsers
++    data = """a,b
++1,2
++"""
++    msg = r"Passed header=\[0,1,2\], len of 3, but only 2 lines in file"
++    with pytest.raises(ValueError, match=msg):
++        parser.read_csv(StringIO(data), header=[0, 1, 2])

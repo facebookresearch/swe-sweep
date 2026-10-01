@@ -1,0 +1,22 @@
+diff --git a/lib/matplotlib/tests/test_collections.py b/lib/matplotlib/tests/test_collections.py
+index 9c9b4e6430..46122b8b1e 100644
+--- a/lib/matplotlib/tests/test_collections.py
++++ b/lib/matplotlib/tests/test_collections.py
+@@ -529,6 +529,17 @@ def test_lslw_bcast():
+     assert (col.get_linewidths() == [1, 2, 3]).all()
+ 
+ 
++@pytest.mark.parametrize('ls', ['', ' ', 'none'])
++def test_scatter_empty_linestyle_pdf(ls):
++    # Regression test: '', ' ', and 'none' are documented "draw nothing"
++    # linestyle aliases but were not recognized by _get_dash_pattern, causing
++    # savefig to PDF to crash with "zero-size array to reduction operation maximum".
++    plt.switch_backend('pdf')
++    fig, ax = plt.subplots()
++    ax.scatter([0, 1], [0, 1], ls=ls)
++    fig.savefig(io.BytesIO())
++
++
+ @pytest.mark.style('default')
+ def test_capstyle():
+     col = mcollections.PathCollection([], capstyle='round')

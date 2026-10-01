@@ -1,0 +1,14 @@
+diff --git a/vlib/v/tests/array_of_sumtype_append_array_of_sumtype_test.v b/vlib/v/tests/array_of_sumtype_append_array_of_sumtype_test.v
+new file mode 100644
+index 000000000..b72e7e5fb
+--- /dev/null
++++ b/vlib/v/tests/array_of_sumtype_append_array_of_sumtype_test.v
+@@ -0,0 +1,8 @@
++type IntStr = int | string
++
++fn test_array_of_sumtype_append_array_of_sumtype() {
++	mut a := [IntStr(1), 2, 'a']
++	a << [3, 4, 'dsafa']
++	println(a)
++	assert '${a}' == "[IntStr(1), IntStr(2), IntStr('a'), IntStr(3), IntStr(4), IntStr('dsafa')]"
++}

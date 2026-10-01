@@ -1,0 +1,145 @@
+diff --git a/pkg/analyzer/test/src/diagnostics/super_in_extension_test.dart b/pkg/analyzer/test/src/diagnostics/super_in_extension_test.dart
+index 1e7f6243ab9..b0fb84bd45f 100644
+--- a/pkg/analyzer/test/src/diagnostics/super_in_extension_test.dart
++++ b/pkg/analyzer/test/src/diagnostics/super_in_extension_test.dart
+@@ -2,6 +2,7 @@
+ // for details. All rights reserved. Use of this source code is governed by a
+ // BSD-style license that can be found in the LICENSE file.
+ 
++import 'package:analyzer/src/dart/error/syntactic_errors.dart';
+ import 'package:analyzer/src/error/codes.dart';
+ import 'package:test_reflective_loader/test_reflective_loader.dart';
+ 
+@@ -77,6 +78,29 @@ extension E on int {
+     ]);
+   }
+ 
++  test_methodInvocation_field_instance_late() async {
++    await assertErrorsInCode('''
++extension E on int {
++  late final v = super.foo();
++}
++''', [
++      error(ParserErrorCode.EXTENSION_DECLARES_INSTANCE_FIELD, 34, 1),
++      error(CompileTimeErrorCode.SUPER_IN_EXTENSION, 38, 5),
++    ]);
++  }
++
++  test_methodInvocation_method_instance() async {
++    await assertErrorsInCode('''
++extension E on int {
++  void foo() {
++    super.foo();
++  }
++}
++''', [
++      error(CompileTimeErrorCode.SUPER_IN_EXTENSION, 40, 5),
++    ]);
++  }
++
+   test_prefixOperator_inGetter() async {
+     await assertErrorsInCode('''
+ class C {
+diff --git a/pkg/analyzer/test/src/diagnostics/super_in_invalid_context_test.dart b/pkg/analyzer/test/src/diagnostics/super_in_invalid_context_test.dart
+index a424550bb2b..b60411c223c 100644
+--- a/pkg/analyzer/test/src/diagnostics/super_in_invalid_context_test.dart
++++ b/pkg/analyzer/test/src/diagnostics/super_in_invalid_context_test.dart
+@@ -122,34 +122,6 @@ class C extends S {
+     ]);
+   }
+ 
+-  test_extension_field_static() async {
+-    await assertErrorsInCode('''
+-class A {
+-  int get foo => 0;
+-}
+-
+-extension E on int {
+-  static var f = super.foo;
+-}
+-''', [
+-      error(CompileTimeErrorCode.SUPER_IN_INVALID_CONTEXT, 71, 5),
+-    ]);
+-  }
+-
+-  test_extension_field_static_late() async {
+-    await assertErrorsInCode('''
+-class A {
+-  int get foo => 0;
+-}
+-
+-extension E on int {
+-  static late var f = super.foo;
+-}
+-''', [
+-      error(CompileTimeErrorCode.SUPER_IN_INVALID_CONTEXT, 76, 5),
+-    ]);
+-  }
+-
+   test_factoryConstructor() async {
+     await assertErrorsInCode(r'''
+ class A {
+@@ -180,6 +152,28 @@ class B extends A {
+     ]);
+   }
+ 
++  test_methodInvocation_extension_field_static() async {
++    await assertErrorsInCode('''
++extension E on int {
++  static final v = super.foo();
++}
++''', [
++      error(CompileTimeErrorCode.SUPER_IN_INVALID_CONTEXT, 40, 5),
++    ]);
++  }
++
++  test_methodInvocation_extension_method_static() async {
++    await assertErrorsInCode('''
++extension E on int {
++  static void foo() {
++    super.foo();
++  }
++}
++''', [
++      error(CompileTimeErrorCode.SUPER_IN_INVALID_CONTEXT, 47, 5),
++    ]);
++  }
++
+   test_mixin_field_instance() async {
+     await assertErrorsInCode('''
+ class A {
+@@ -234,6 +228,34 @@ mixin M on A {
+     ]);
+   }
+ 
++  test_propertyAccess_extension_field_static() async {
++    await assertErrorsInCode('''
++class A {
++  int get foo => 0;
++}
++
++extension E on int {
++  static var f = super.foo;
++}
++''', [
++      error(CompileTimeErrorCode.SUPER_IN_INVALID_CONTEXT, 71, 5),
++    ]);
++  }
++
++  test_propertyAccess_extension_field_static_late() async {
++    await assertErrorsInCode('''
++class A {
++  int get foo => 0;
++}
++
++extension E on int {
++  static late var f = super.foo;
++}
++''', [
++      error(CompileTimeErrorCode.SUPER_IN_INVALID_CONTEXT, 76, 5),
++    ]);
++  }
++
+   test_staticMethod() async {
+     await assertErrorsInCode(r'''
+ class A {

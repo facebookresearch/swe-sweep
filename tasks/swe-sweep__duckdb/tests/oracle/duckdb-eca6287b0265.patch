@@ -1,0 +1,50 @@
+diff --git a/src/planner/binder/expression/bind_lambda.cpp b/src/planner/binder/expression/bind_lambda.cpp
+index 2907889a98..7dd9b73733 100644
+--- a/src/planner/binder/expression/bind_lambda.cpp
++++ b/src/planner/binder/expression/bind_lambda.cpp
+@@ -65,11 +65,18 @@ void ExtractParameters(LambdaExpression &expr, vector<string> &column_names, vec
+ BindResult ExpressionBinder::BindExpression(LambdaExpression &expr, idx_t depth, const LogicalType &list_child_type,
+                                             optional_ptr<bind_lambda_function_t> bind_lambda_function) {
+ 
+-	// this is for binding JSON
++	// This is not a lambda expression, but the JSON arrow operator.
+ 	if (!bind_lambda_function) {
+-		auto lhs_expr = expr.lhs->Copy();
+-		OperatorExpression arrow_expr(ExpressionType::ARROW, std::move(lhs_expr), expr.expr->Copy());
+-		return BindExpression(arrow_expr, depth);
++		OperatorExpression arrow_expr(ExpressionType::ARROW, std::move(expr.lhs), std::move(expr.expr));
++		auto bind_result = BindExpression(arrow_expr, depth);
++
++		// The arrow_expr now contains bound nodes. We move these into the original expression.
++		if (bind_result.HasError()) {
++			D_ASSERT(arrow_expr.children.size() == 2);
++			expr.lhs = std::move(arrow_expr.children[0]);
++			expr.expr = std::move(arrow_expr.children[1]);
++		}
++		return bind_result;
+ 	}
+ 
+ 	// extract and verify lambda parameters to create dummy columns
+diff --git a/src/planner/binder/expression/bind_operator_expression.cpp b/src/planner/binder/expression/bind_operator_expression.cpp
+index 4aaac887f5..3ac3f7881c 100644
+--- a/src/planner/binder/expression/bind_operator_expression.cpp
++++ b/src/planner/binder/expression/bind_operator_expression.cpp
+@@ -88,7 +88,9 @@ BindResult ExpressionBinder::BindExpression(OperatorExpression &op, idx_t depth)
+ 	if (op.type == ExpressionType::GROUPING_FUNCTION) {
+ 		return BindGroupingFunction(op, depth);
+ 	}
+-	// bind the children of the operator expression
++
++	// Bind the children of the operator expression. We already create bound expressions.
++	// Only those children that trigger an error are not yet bound.
+ 	ErrorData error;
+ 	for (idx_t i = 0; i < op.children.size(); i++) {
+ 		BindChild(op.children[i], depth, error);
+@@ -96,6 +98,7 @@ BindResult ExpressionBinder::BindExpression(OperatorExpression &op, idx_t depth)
+ 	if (error.HasError()) {
+ 		return BindResult(std::move(error));
+ 	}
++
+ 	// all children bound successfully
+ 	string function_name;
+ 	switch (op.type) {

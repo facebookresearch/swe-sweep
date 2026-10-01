@@ -1,0 +1,26 @@
+diff --git a/dask/dataframe/core.py b/dask/dataframe/core.py
+index e64359485..a85d4216a 100644
+--- a/dask/dataframe/core.py
++++ b/dask/dataframe/core.py
+@@ -2865,10 +2865,10 @@ Dask Name: {name}, {layers}""".format(
+     def round(self, decimals=0):
+         return elemwise(M.round, self, decimals)
+ 
+-    @derived_from(pd.DataFrame)
++    @derived_from(pd.Series)
+     def to_timestamp(self, freq=None, how="start", axis=0):
+         df = elemwise(M.to_timestamp, self, freq, how, axis)
+-        df.divisions = tuple(pd.Index(self.divisions).to_timestamp())
++        df.divisions = tuple(pd.Index(self.divisions).to_timestamp(freq=freq, how=how))
+         return df
+ 
+     def quantile(self, q=0.5, method="default"):
+@@ -3938,7 +3938,7 @@ Dask Name: {name}, {layers}""".format(
+     @derived_from(pd.DataFrame)
+     def to_timestamp(self, freq=None, how="start", axis=0):
+         df = elemwise(M.to_timestamp, self, freq, how, axis)
+-        df.divisions = tuple(pd.Index(self.divisions).to_timestamp())
++        df.divisions = tuple(pd.Index(self.divisions).to_timestamp(how=how, freq=freq))
+         return df
+ 
+     @derived_from(pd.DataFrame, version="0.25.0")

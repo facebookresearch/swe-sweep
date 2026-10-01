@@ -1,0 +1,24 @@
+diff --git a/tests/lean/run/def1.lean b/tests/lean/run/def1.lean
+index 1eb4a18323..7f9d30dc92 100644
+--- a/tests/lean/run/def1.lean
++++ b/tests/lean/run/def1.lean
+@@ -1,4 +1,4 @@
+-
++set_option linter.unusedVariables false
+ 
+ inductive BV : Nat → Type
+ | nil  : BV 0
+diff --git a/tests/lean/run/issue10792.lean b/tests/lean/run/issue10792.lean
+new file mode 100644
+index 0000000000..a680955527
+--- /dev/null
++++ b/tests/lean/run/issue10792.lean
+@@ -0,0 +1,8 @@
++inductive Vec (α : Type) : Nat → Type where
++  | nil : Vec α 0
++  | cons (x : α) (xs : Vec α n) : Vec α (n.succ)
++
++-- set_option trace.Meta.Match.match true
++
++def test : Vec Unit 100000000000 → Nat
++  | Vec.cons () _ => 1

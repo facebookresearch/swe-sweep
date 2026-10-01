@@ -1,0 +1,37 @@
+diff --git a/compiler/test/compilable/imports/test24280b.i b/compiler/test/compilable/imports/test24280b.i
+new file mode 100644
+index 0000000000..bdabef8134
+--- /dev/null
++++ b/compiler/test/compilable/imports/test24280b.i
+@@ -0,0 +1,19 @@
++struct S;
++
++struct timespec
++{
++    int s;
++};
++
++typedef struct timespec Clock;
++
++Clock now()
++{
++    Clock result;
++    return result;
++}
++
++struct S
++{
++    Clock clock;
++};
+diff --git a/compiler/test/compilable/test24280.i b/compiler/test/compilable/test24280.i
+new file mode 100644
+index 0000000000..e761c4b93c
+--- /dev/null
++++ b/compiler/test/compilable/test24280.i
+@@ -0,0 +1,6 @@
++// EXTRA_SOURCES: imports/test24280b.i
++
++struct timespec
++{
++    int s;
++};

@@ -1,0 +1,67 @@
+diff --git a/vlib/v/checker/tests/cast_expr_T_type_err.out b/vlib/v/checker/tests/cast_expr_T_type_err.out
+new file mode 100644
+index 000000000..cd035030e
+--- /dev/null
++++ b/vlib/v/checker/tests/cast_expr_T_type_err.out
+@@ -0,0 +1,13 @@
++vlib/v/checker/tests/cast_expr_T_type_err.vv:4:9: error: unknown type `A`
++    2 | 
++    3 | fn main() {
++    4 |     _ = A(0)
++      |         ~~~~
++    5 |     _ = &A(0)
++    6 | }
++vlib/v/checker/tests/cast_expr_T_type_err.vv:5:9: error: unknown type `A`
++    3 | fn main() {
++    4 |     _ = A(0)
++    5 |     _ = &A(0)
++      |         ~~~~~
++    6 | }
+diff --git a/vlib/v/checker/tests/cast_expr_T_type_err.vv b/vlib/v/checker/tests/cast_expr_T_type_err.vv
+new file mode 100644
+index 000000000..667e3caaa
+--- /dev/null
++++ b/vlib/v/checker/tests/cast_expr_T_type_err.vv
+@@ -0,0 +1,6 @@
++module main
++
++fn main() {
++    _ = A(0)
++    _ = &A(0)
++}
+diff --git a/vlib/v/checker/tests/globals/cast_expr_T_type_err.out b/vlib/v/checker/tests/globals/cast_expr_T_type_err.out
+new file mode 100644
+index 000000000..1ddaafab2
+--- /dev/null
++++ b/vlib/v/checker/tests/globals/cast_expr_T_type_err.out
+@@ -0,0 +1,14 @@
++vlib/v/checker/tests/globals/cast_expr_T_type_err.vv:4:7: error: unknown type `A`
++    2 | 
++    3 | __global (
++    4 |     fo = A(0)
++      |          ~~~~
++    5 |     fo1 = &A(0)
++    6 | )
++vlib/v/checker/tests/globals/cast_expr_T_type_err.vv:5:8: error: unknown type `A`
++    3 | __global (
++    4 |     fo = A(0)
++    5 |     fo1 = &A(0)
++      |           ~~~~~
++    6 | )
++    7 |
+diff --git a/vlib/v/checker/tests/globals/cast_expr_T_type_err.vv b/vlib/v/checker/tests/globals/cast_expr_T_type_err.vv
+new file mode 100644
+index 000000000..f4fc2a371
+--- /dev/null
++++ b/vlib/v/checker/tests/globals/cast_expr_T_type_err.vv
+@@ -0,0 +1,10 @@
++module main
++
++__global (
++	fo = A(0)
++	fo1 = &A(0)
++)
++
++fn main() {
++
++}

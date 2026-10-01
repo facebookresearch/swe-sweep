@@ -1,0 +1,56 @@
+diff --git a/vlib/v/checker/tests/array_delete_imut_err.out b/vlib/v/checker/tests/array_delete_imut_err.out
+new file mode 100644
+index 000000000..28ebcb790
+--- /dev/null
++++ b/vlib/v/checker/tests/array_delete_imut_err.out
+@@ -0,0 +1,7 @@
++vlib/v/checker/tests/array_delete_imut_err.vv:5:2: error: `a` is immutable, declare it with `mut` to make it mutable
++    3 |     println(a)
++    4 | 
++    5 |     a.delete(1)
++      |     ^
++    6 |     println(a)
++    7 | }
+diff --git a/vlib/v/checker/tests/array_delete_imut_err.vv b/vlib/v/checker/tests/array_delete_imut_err.vv
+new file mode 100644
+index 000000000..0c71fb56e
+--- /dev/null
++++ b/vlib/v/checker/tests/array_delete_imut_err.vv
+@@ -0,0 +1,7 @@
++fn main() {
++	a := [1, 2, 3, 4]
++	println(a)
++
++	a.delete(1)
++	println(a)
++}
+diff --git a/vlib/v/checker/tests/array_delete_print_err.out b/vlib/v/checker/tests/array_delete_print_err.out
+index 94b39565f..be932c5d8 100644
+--- a/vlib/v/checker/tests/array_delete_print_err.out
++++ b/vlib/v/checker/tests/array_delete_print_err.out
+@@ -1,12 +1,12 @@
+ vlib/v/checker/tests/array_delete_print_err.vv:3:2: error: `println` can not print void expressions
+     1 | fn main() {
+-    2 |     a := []string{}
++    2 |     mut a := []string{}
+     3 |     println(a.delete(0))
+       |     ~~~~~~~~~~~~~~~~~~~~
+     4 |     println('${a.delete(0)}')
+     5 | }
+ vlib/v/checker/tests/array_delete_print_err.vv:4:15: error: expression does not return a value
+-    2 |     a := []string{}
++    2 |     mut a := []string{}
+     3 |     println(a.delete(0))
+     4 |     println('${a.delete(0)}')
+       |                  ~~~~~~~~~
+diff --git a/vlib/v/checker/tests/array_delete_print_err.vv b/vlib/v/checker/tests/array_delete_print_err.vv
+index 79268cdeb..7d85eae09 100644
+--- a/vlib/v/checker/tests/array_delete_print_err.vv
++++ b/vlib/v/checker/tests/array_delete_print_err.vv
+@@ -1,5 +1,5 @@
+ fn main() {
+-	a := []string{}
++	mut a := []string{}
+ 	println(a.delete(0))
+ 	println('${a.delete(0)}')
+ }

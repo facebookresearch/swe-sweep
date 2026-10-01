@@ -1,0 +1,26 @@
+diff --git a/tests/concepts/tconcepts.nim b/tests/concepts/tconcepts.nim
+index acdff6f24..ea3ddc401 100644
+--- a/tests/concepts/tconcepts.nim
++++ b/tests/concepts/tconcepts.nim
+@@ -31,6 +31,7 @@ e
+ 20
+ 10
+ 5
++9
+ '''
+ """
+ 
+@@ -438,3 +439,13 @@ import mvarconcept
+ block tvar:
+   # bug #2346, bug #2404
+   echo randomInt(5)
++
++block tcomment:
++  type
++    Foo = concept
++      ## Some comment
++      proc bar(x: Self)
++
++  proc bar(x: int) = echo x
++  proc foo(x: Foo) = x.bar
++  foo(9)

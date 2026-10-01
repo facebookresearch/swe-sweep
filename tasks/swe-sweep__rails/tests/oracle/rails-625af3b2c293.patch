@@ -1,0 +1,13 @@
+diff --git a/activerecord/lib/active_record/fixture_set/table_row.rb b/activerecord/lib/active_record/fixture_set/table_row.rb
+index c594ef1a371..a020050d5b0 100644
+--- a/activerecord/lib/active_record/fixture_set/table_row.rb
++++ b/activerecord/lib/active_record/fixture_set/table_row.rb
+@@ -112,7 +112,7 @@ module ActiveRecord
+         def interpolate_label
+           # interpolate the fixture label
+           @row.each do |key, value|
+-            @row[key] = value.gsub("$LABEL", @label.to_s) if value.is_a?(String)
++            @row[key] = value.gsub("$LABEL") { @label.to_s } if value.is_a?(String)
+           end
+         end
+ 

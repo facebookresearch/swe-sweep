@@ -1,0 +1,102 @@
+diff --git a/test/configCases/side-effects/side-effects-unsorted-modules/index.js b/test/configCases/side-effects/side-effects-unsorted-modules/index.js
+new file mode 100644
+index 000000000..b1a42ca27
+--- /dev/null
++++ b/test/configCases/side-effects/side-effects-unsorted-modules/index.js
+@@ -0,0 +1,9 @@
++import { b } from "dep";
++
++b.c();
++
++import { modules } from "dep/trackModules.js";
++
++it("should not contain side-effect-free modules", () => {
++	expect(modules).toEqual(["c"]);
++});
+diff --git a/test/configCases/side-effects/side-effects-unsorted-modules/node_modules/dep/a.js b/test/configCases/side-effects/side-effects-unsorted-modules/node_modules/dep/a.js
+new file mode 100644
+index 000000000..dbcb94803
+--- /dev/null
++++ b/test/configCases/side-effects/side-effects-unsorted-modules/node_modules/dep/a.js
+@@ -0,0 +1,3 @@
++import { track } from "./trackModules.js";
++track("a");
++export * as b from "./b.js";
+diff --git a/test/configCases/side-effects/side-effects-unsorted-modules/node_modules/dep/b.js b/test/configCases/side-effects/side-effects-unsorted-modules/node_modules/dep/b.js
+new file mode 100644
+index 000000000..4f79dddc4
+--- /dev/null
++++ b/test/configCases/side-effects/side-effects-unsorted-modules/node_modules/dep/b.js
+@@ -0,0 +1,3 @@
++import { track } from "./trackModules.js";
++track("b");
++export * from "./c.js";
+diff --git a/test/configCases/side-effects/side-effects-unsorted-modules/node_modules/dep/c.js b/test/configCases/side-effects/side-effects-unsorted-modules/node_modules/dep/c.js
+new file mode 100644
+index 000000000..48e53b352
+--- /dev/null
++++ b/test/configCases/side-effects/side-effects-unsorted-modules/node_modules/dep/c.js
+@@ -0,0 +1,3 @@
++import { track } from "./trackModules.js";
++track("c");
++export function c() {}
+diff --git a/test/configCases/side-effects/side-effects-unsorted-modules/node_modules/dep/index.js b/test/configCases/side-effects/side-effects-unsorted-modules/node_modules/dep/index.js
+new file mode 100644
+index 000000000..bec05fc50
+--- /dev/null
++++ b/test/configCases/side-effects/side-effects-unsorted-modules/node_modules/dep/index.js
+@@ -0,0 +1,3 @@
++import { track } from "./trackModules.js";
++track("index");
++export * from "./a.js"
+diff --git a/test/configCases/side-effects/side-effects-unsorted-modules/node_modules/dep/package.json b/test/configCases/side-effects/side-effects-unsorted-modules/node_modules/dep/package.json
+new file mode 100644
+index 000000000..644d902d8
+--- /dev/null
++++ b/test/configCases/side-effects/side-effects-unsorted-modules/node_modules/dep/package.json
+@@ -0,0 +1,6 @@
++{
++  "name": "dep",
++  "version": "1.0.0",
++  "type": "module",
++  "sideEffects": false
++}
+diff --git a/test/configCases/side-effects/side-effects-unsorted-modules/node_modules/dep/trackModules.js b/test/configCases/side-effects/side-effects-unsorted-modules/node_modules/dep/trackModules.js
+new file mode 100644
+index 000000000..99f5f10b0
+--- /dev/null
++++ b/test/configCases/side-effects/side-effects-unsorted-modules/node_modules/dep/trackModules.js
+@@ -0,0 +1,4 @@
++export const modules = [];
++export function track(name) {
++	modules.push(name);
++}
+diff --git a/test/configCases/side-effects/side-effects-unsorted-modules/webpack.config.js b/test/configCases/side-effects/side-effects-unsorted-modules/webpack.config.js
+new file mode 100644
+index 000000000..a51f5975d
+--- /dev/null
++++ b/test/configCases/side-effects/side-effects-unsorted-modules/webpack.config.js
+@@ -0,0 +1,23 @@
++/** @type {import("../../../../").Configuration} */
++
++class ReorderModulesPlugin {
++	constructor() {}
++
++	apply(compiler) {
++		compiler.hooks.compilation.tap("ReorderModulesPlugin", compilation => {
++			compilation.hooks.seal.tap("ReorderModulesPlugin", () => {
++				const sortedModules = Array.from(compilation.modules).sort((a, _b) =>
++					a.request.includes("b.js") ? -1 : 1
++				);
++				compilation.modules = new Set(sortedModules);
++			});
++		});
++	}
++}
++
++module.exports = {
++	plugins: [new ReorderModulesPlugin()],
++	optimization: {
++		sideEffects: true
++	}
++};

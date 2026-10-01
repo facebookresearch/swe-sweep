@@ -1,0 +1,12 @@
+diff --git a/activerecord/lib/active_record/migration/command_recorder.rb b/activerecord/lib/active_record/migration/command_recorder.rb
+index 8029d8e4229..e1d1f5fcd51 100644
+--- a/activerecord/lib/active_record/migration/command_recorder.rb
++++ b/activerecord/lib/active_record/migration/command_recorder.rb
+@@ -314,6 +314,7 @@ module ActiveRecord
+           from_table, to_table = args
+ 
+           to_table ||= options.delete(:to_table)
++          options[:if_not_exists] = options.delete(:if_exists) if options.key?(:if_exists)
+ 
+           raise ActiveRecord::IrreversibleMigration, "remove_foreign_key is only reversible if given a second table" if to_table.nil?
+ 

@@ -1,0 +1,16 @@
+diff --git a/clause/expression_test.go b/clause/expression_test.go
+index aaede61..b997bf1 100644
+--- a/clause/expression_test.go
++++ b/clause/expression_test.go
+@@ -199,6 +199,11 @@ func TestExpression(t *testing.T) {
+ 		},
+ 		ExpectedVars: []interface{}{"a", "b"},
+ 		Result:       "`column-name` NOT IN (?,?)",
++	}, {
++		Expressions: []clause.Expression{
++			clause.Eq{Column: column, Value: []string{}},
++		},
++		Result: "`column-name` IN (NULL)",
+ 	}, {
+ 		Expressions: []clause.Expression{
+ 			clause.Eq{Column: clause.Expr{SQL: "SUM(?)", Vars: []interface{}{clause.Column{Name: "id"}}}, Value: 100},

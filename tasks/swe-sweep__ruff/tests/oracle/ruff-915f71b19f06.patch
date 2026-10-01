@@ -1,0 +1,120 @@
+diff --git a/crates/ruff_linter/src/rules/flake8_pyi/rules/non_self_return_type.rs b/crates/ruff_linter/src/rules/flake8_pyi/rules/non_self_return_type.rs
+index db9fa5dc93..d8c79dacc8 100644
+--- a/crates/ruff_linter/src/rules/flake8_pyi/rules/non_self_return_type.rs
++++ b/crates/ruff_linter/src/rules/flake8_pyi/rules/non_self_return_type.rs
+@@ -126,7 +126,7 @@ pub(crate) fn non_self_return_type(
+     };
+ 
+     // PEP 673 forbids the use of `typing(_extensions).Self` in metaclasses.
+-    if analyze::class::is_metaclass(class_def, semantic) {
++    if analyze::class::is_metaclass(class_def, semantic).into() {
+         return;
+     }
+ 
+diff --git a/crates/ruff_linter/src/rules/pep8_naming/rules/invalid_first_argument_name.rs b/crates/ruff_linter/src/rules/pep8_naming/rules/invalid_first_argument_name.rs
+index 80ec742472..731ba2ef5c 100644
+--- a/crates/ruff_linter/src/rules/pep8_naming/rules/invalid_first_argument_name.rs
++++ b/crates/ruff_linter/src/rules/pep8_naming/rules/invalid_first_argument_name.rs
+@@ -5,7 +5,7 @@ use ruff_macros::{derive_message_formats, ViolationMetadata};
+ use ruff_python_ast as ast;
+ use ruff_python_ast::ParameterWithDefault;
+ use ruff_python_codegen::Stylist;
+-use ruff_python_semantic::analyze::class::is_metaclass;
++use ruff_python_semantic::analyze::class::{is_metaclass, IsMetaclass};
+ use ruff_python_semantic::analyze::function_type;
+ use ruff_python_semantic::{Scope, ScopeKind, SemanticModel};
+ use ruff_text_size::Ranged;
+@@ -212,13 +212,11 @@ pub(crate) fn invalid_first_argument_name(
+         function_type::FunctionType::Function | function_type::FunctionType::StaticMethod => {
+             return;
+         }
+-        function_type::FunctionType::Method => {
+-            if is_metaclass(parent, semantic) {
+-                FunctionType::ClassMethod
+-            } else {
+-                FunctionType::Method
+-            }
+-        }
++        function_type::FunctionType::Method => match is_metaclass(parent, semantic) {
++            IsMetaclass::Yes => FunctionType::ClassMethod,
++            IsMetaclass::No => FunctionType::Method,
++            IsMetaclass::Maybe => return,
++        },
+         function_type::FunctionType::ClassMethod => FunctionType::ClassMethod,
+     };
+     if !checker.enabled(function_type.rule()) {
+diff --git a/crates/ruff_python_semantic/src/analyze/class.rs b/crates/ruff_python_semantic/src/analyze/class.rs
+index eac8de4605..e4419031d0 100644
+--- a/crates/ruff_python_semantic/src/analyze/class.rs
++++ b/crates/ruff_python_semantic/src/analyze/class.rs
+@@ -12,7 +12,7 @@ pub fn any_qualified_base_class(
+     semantic: &SemanticModel,
+     func: &dyn Fn(QualifiedName) -> bool,
+ ) -> bool {
+-    any_base_class(class_def, semantic, &|expr| {
++    any_base_class(class_def, semantic, &mut |expr| {
+         semantic
+             .resolve_qualified_name(map_subscript(expr))
+             .is_some_and(func)
+@@ -23,12 +23,12 @@ pub fn any_qualified_base_class(
+ pub fn any_base_class(
+     class_def: &ast::StmtClassDef,
+     semantic: &SemanticModel,
+-    func: &dyn Fn(&Expr) -> bool,
++    func: &mut dyn FnMut(&Expr) -> bool,
+ ) -> bool {
+     fn inner(
+         class_def: &ast::StmtClassDef,
+         semantic: &SemanticModel,
+-        func: &dyn Fn(&Expr) -> bool,
++        func: &mut dyn FnMut(&Expr) -> bool,
+         seen: &mut FxHashSet<BindingId>,
+     ) -> bool {
+         class_def.bases().iter().any(|expr| {
+@@ -121,12 +121,30 @@ pub fn is_enumeration(class_def: &ast::StmtClassDef, semantic: &SemanticModel) -
+     })
+ }
+ 
+-/// Returns `true` if the given class is a metaclass.
+-pub fn is_metaclass(class_def: &ast::StmtClassDef, semantic: &SemanticModel) -> bool {
+-    any_base_class(class_def, semantic, &|expr| match expr {
++/// Whether or not a class is a metaclass. Constructed by [`is_metaclass`].
++#[derive(Debug, PartialEq, Eq, Clone, Copy)]
++pub enum IsMetaclass {
++    Yes,
++    No,
++    Maybe,
++}
++
++impl From<IsMetaclass> for bool {
++    fn from(value: IsMetaclass) -> Self {
++        matches!(value, IsMetaclass::Yes)
++    }
++}
++
++/// Returns `IsMetaclass::Yes` if the given class is definitely a metaclass,
++/// `IsMetaclass::No` if it's definitely *not* a metaclass, and
++/// `IsMetaclass::Maybe` otherwise.
++pub fn is_metaclass(class_def: &ast::StmtClassDef, semantic: &SemanticModel) -> IsMetaclass {
++    let mut maybe = false;
++    let is_base_class = any_base_class(class_def, semantic, &mut |expr| match expr {
+         Expr::Call(ast::ExprCall {
+             func, arguments, ..
+         }) => {
++            maybe = true;
+             // Ex) `class Foo(type(Protocol)): ...`
+             arguments.len() == 1 && semantic.match_builtin_expr(func.as_ref(), "type")
+         }
+@@ -144,5 +162,11 @@ pub fn is_metaclass(class_def: &ast::StmtClassDef, semantic: &SemanticModel) ->
+                         | ["enum", "EnumMeta" | "EnumType"]
+                 )
+             }),
+-    })
++    });
++
++    match (is_base_class, maybe) {
++        (true, true) => IsMetaclass::Maybe,
++        (true, false) => IsMetaclass::Yes,
++        (false, _) => IsMetaclass::No,
++    }
+ }

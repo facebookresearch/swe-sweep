@@ -1,0 +1,13 @@
+diff --git a/packages/mui-base/src/SliderUnstyled/SliderUnstyled.js b/packages/mui-base/src/SliderUnstyled/SliderUnstyled.js
+index 4b95dd5e83..8621404c0e 100644
+--- a/packages/mui-base/src/SliderUnstyled/SliderUnstyled.js
++++ b/packages/mui-base/src/SliderUnstyled/SliderUnstyled.js
+@@ -175,7 +175,7 @@ const SliderUnstyled = React.forwardRef(function SliderUnstyled(props, ref) {
+         }
+ 
+         return (
+-          <React.Fragment key={mark.value}>
++          <React.Fragment key={index}>
+             <Mark
+               data-index={index}
+               {...markProps}

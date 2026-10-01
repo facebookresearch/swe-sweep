@@ -1,0 +1,23 @@
+diff --git a/assert/assertions_test.go b/assert/assertions_test.go
+index bdab184..b5193a5 100644
+--- a/assert/assertions_test.go
++++ b/assert/assertions_test.go
+@@ -15,6 +15,7 @@ import (
+ 	"strings"
+ 	"testing"
+ 	"time"
++	"unsafe"
+ )
+ 
+ var (
+@@ -2558,3 +2559,10 @@ func TestErrorAs(t *testing.T) {
+ 		})
+ 	}
+ }
++
++func TestIsNil(t *testing.T) {
++	var n unsafe.Pointer = nil
++	if !isNil(n) {
++		t.Fatal("fail")
++	}
++}

@@ -1,0 +1,52 @@
+diff --git a/tests/ui/eta.fixed b/tests/ui/eta.fixed
+index 0ba631fda..c93b83f53 100644
+--- a/tests/ui/eta.fixed
++++ b/tests/ui/eta.fixed
+@@ -543,3 +543,21 @@ mod issue_13073 {
+         //~^ redundant_closure
+     }
+ }
++
++fn issue_14789() {
++    _ = Some(1u8).map(
++        #[expect(clippy::redundant_closure)]
++        |a| foo(a),
++    );
++
++    _ = Some("foo").map(
++        #[expect(clippy::redundant_closure_for_method_calls)]
++        |s| s.to_owned(),
++    );
++
++    let _: Vec<u8> = None.map_or_else(
++        #[expect(clippy::redundant_closure)]
++        || vec![],
++        std::convert::identity,
++    );
++}
+diff --git a/tests/ui/eta.rs b/tests/ui/eta.rs
+index 4d8b29d45..273c8b21f 100644
+--- a/tests/ui/eta.rs
++++ b/tests/ui/eta.rs
+@@ -543,3 +543,21 @@ mod issue_13073 {
+         //~^ redundant_closure
+     }
+ }
++
++fn issue_14789() {
++    _ = Some(1u8).map(
++        #[expect(clippy::redundant_closure)]
++        |a| foo(a),
++    );
++
++    _ = Some("foo").map(
++        #[expect(clippy::redundant_closure_for_method_calls)]
++        |s| s.to_owned(),
++    );
++
++    let _: Vec<u8> = None.map_or_else(
++        #[expect(clippy::redundant_closure)]
++        || vec![],
++        std::convert::identity,
++    );
++}

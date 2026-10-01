@@ -1,0 +1,15 @@
+diff --git a/tests/pragmas/tcustom_pragma.nim b/tests/pragmas/tcustom_pragma.nim
+index 9ffa9a33d..11a6df813 100644
+--- a/tests/pragmas/tcustom_pragma.nim
++++ b/tests/pragmas/tcustom_pragma.nim
+@@ -416,3 +416,10 @@ when false:
+ 
+   # left-to-right priority/override order for getCustomPragmaVal
+   assert bb.getCustomPragmaVal(hehe) == (key: "hi", val: "hu", haha: "he")
++
++block: # https://forum.nim-lang.org/t/12522, backticks
++  template `mypragma`() {.pragma.}
++  # Error: invalid pragma: `mypragma`
++  type Test = object
++    field {.`mypragma`.}: int
++  doAssert Test().field.hasCustomPragma(mypragma)

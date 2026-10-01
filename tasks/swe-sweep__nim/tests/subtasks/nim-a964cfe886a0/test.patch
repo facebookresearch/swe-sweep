@@ -1,0 +1,15 @@
+diff --git a/tests/generics/tnestedtemplate.nim b/tests/generics/tnestedtemplate.nim
+new file mode 100644
+index 000000000..22d0a2d3c
+--- /dev/null
++++ b/tests/generics/tnestedtemplate.nim
+@@ -0,0 +1,9 @@
++block: # issue #13979
++  var s: seq[int]
++  proc filterScanline[T](input: openArray[T]) =
++    template currPix: untyped = input[i]
++    for i in 0..<input.len:
++      s.add currPix
++  let pix = [1, 2, 3]
++  filterScanline(pix)
++  doAssert s == @[1, 2, 3]

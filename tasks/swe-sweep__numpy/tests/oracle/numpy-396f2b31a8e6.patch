@@ -1,0 +1,15 @@
+diff --git a/numpy/core/src/multiarray/item_selection.c b/numpy/core/src/multiarray/item_selection.c
+index 8052e24e424..b279ffc2f1b 100644
+--- a/numpy/core/src/multiarray/item_selection.c
++++ b/numpy/core/src/multiarray/item_selection.c
+@@ -444,6 +444,10 @@ PyArray_PutMask(PyArrayObject *self, PyObject* values0, PyObject* mask0)
+                         "be an array");
+         return NULL;
+     }
++
++    if (PyArray_FailUnlessWriteable(self, "putmask: output array") < 0) {
++        return NULL;
++    }
+     if (!PyArray_ISCONTIGUOUS(self)) {
+         PyArrayObject *obj;
+ 

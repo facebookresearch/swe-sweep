@@ -1,0 +1,13 @@
+diff --git a/packages/@aws-cdk/aws-elasticloadbalancingv2/lib/alb/application-listener-rule.ts b/packages/@aws-cdk/aws-elasticloadbalancingv2/lib/alb/application-listener-rule.ts
+index 7a3bb91cb3..e71ccbd5c7 100644
+--- a/packages/@aws-cdk/aws-elasticloadbalancingv2/lib/alb/application-listener-rule.ts
++++ b/packages/@aws-cdk/aws-elasticloadbalancingv2/lib/alb/application-listener-rule.ts
+@@ -229,7 +229,7 @@ export class ApplicationListenerRule extends CoreConstruct {
+       throw new Error(`'${providedActions}' specified together, specify only one`);
+     }
+ 
+-    if (props.priority <= 0) {
++    if (!cdk.Token.isUnresolved(props.priority) && props.priority <= 0) {
+       throw new Error('Priority must have value greater than or equal to 1');
+     }
+ 

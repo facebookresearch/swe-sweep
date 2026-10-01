@@ -1,0 +1,15 @@
+diff --git a/lib/queryhelpers.js b/lib/queryhelpers.js
+index dfc98e49e..62a8cb5b1 100644
+--- a/lib/queryhelpers.js
++++ b/lib/queryhelpers.js
+@@ -232,7 +232,9 @@ exports.applyPaths = function applyPaths(fields, schema) {
+     schema.eachPath(function(path, type) {
+       if (prefix) path = prefix + '.' + path;
+       if (type.$isSchemaMap || path.endsWith('.$*')) {
+-        if (type.options && type.options.select === false) {
++        const plusPath = '+' + path;
++        const hasPlusPath = fields && plusPath in fields;
++        if (type.options && type.options.select === false && !hasPlusPath) {
+           excluded.push(path);
+         }
+         return;

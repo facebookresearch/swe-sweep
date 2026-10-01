@@ -1,0 +1,41 @@
+diff --git a/tests/format/css/custom-properties/17806.css b/tests/format/css/custom-properties/17806.css
+new file mode 100644
+index 000000000..4c2ffe029
+--- /dev/null
++++ b/tests/format/css/custom-properties/17806.css
+@@ -0,0 +1,3 @@
++:root {
++  --l: , #000;
++}
+diff --git a/tests/format/css/custom-properties/__snapshots__/format.test.js.snap b/tests/format/css/custom-properties/__snapshots__/format.test.js.snap
+new file mode 100644
+index 000000000..1096697a9
+--- /dev/null
++++ b/tests/format/css/custom-properties/__snapshots__/format.test.js.snap
+@@ -0,0 +1,19 @@
++// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
++
++exports[`17806.css format 1`] = `
++====================================options=====================================
++parsers: ["css", "scss", "less"]
++printWidth: 80
++                                                                                | printWidth
++=====================================input======================================
++:root {
++  --l: , #000;
++}
++
++=====================================output=====================================
++:root {
++  --l: , #000;
++}
++
++================================================================================
++`;
+diff --git a/tests/format/css/custom-properties/format.test.js b/tests/format/css/custom-properties/format.test.js
+new file mode 100644
+index 000000000..19d2938f3
+--- /dev/null
++++ b/tests/format/css/custom-properties/format.test.js
+@@ -0,0 +1 @@
++runFormatTest(import.meta, ["css", "scss", "less"]);

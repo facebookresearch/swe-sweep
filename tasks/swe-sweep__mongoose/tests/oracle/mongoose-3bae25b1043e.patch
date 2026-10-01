@@ -1,0 +1,13 @@
+diff --git a/lib/helpers/schema/getIndexes.js b/lib/helpers/schema/getIndexes.js
+index 706439d32..90cbf7d6e 100644
+--- a/lib/helpers/schema/getIndexes.js
++++ b/lib/helpers/schema/getIndexes.js
+@@ -72,7 +72,7 @@ module.exports = function getIndexes(schema) {
+       if (index !== false && index !== null && index !== undefined) {
+         const field = {};
+         const isObject = helperIsObject(index);
+-        const options = isObject ? index : {};
++        const options = isObject ? { ...index } : {};
+         const type = typeof index === 'string' ? index :
+           isObject ? index.type :
+             false;

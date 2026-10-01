@@ -1,0 +1,62 @@
+diff --git a/src/black/linegen.py b/src/black/linegen.py
+index 7bd018d3..6bd2e5cf 100644
+--- a/src/black/linegen.py
++++ b/src/black/linegen.py
+@@ -42,6 +42,7 @@ from black.nodes import (
+     is_atom_with_invisible_parens,
+     is_docstring,
+     is_empty_tuple,
++    is_generator,
+     is_lpar_token,
+     is_multiline_string,
+     is_name_token,
+@@ -48,6 +49,7 @@ from black.nodes import (
+     is_rpar_token,
+     is_stub_body,
+     is_stub_suite,
++    is_tuple_containing_star,
+     is_tuple_containing_walrus,
+     is_vararg,
+     is_walrus_assignment,
+@@ -1355,6 +1357,8 @@ def maybe_make_parens_invisible_in_atom(
+             and max_delimiter_priority_in_atom(node) >= COMMA_PRIORITY
+         )
+         or is_tuple_containing_walrus(node)
++        or is_tuple_containing_star(node)
++        or is_generator(node)
+     ):
+         return False
+ 
+diff --git a/src/black/nodes.py b/src/black/nodes.py
+index 927b9ee6..f3688cd4 100644
+--- a/src/black/nodes.py
++++ b/src/black/nodes.py
+@@ -573,6 +573,28 @@ def is_tuple_containing_walrus(node: LN) -> bool:
+     return any(child.type == syms.namedexpr_test for child in gexp.children)
+ 
+ 
++def is_tuple_containing_star(node: LN) -> bool:
++    """Return True if `node` holds a tuple that contains a star operator."""
++    if node.type != syms.atom:
++        return False
++    gexp = unwrap_singleton_parenthesis(node)
++    if gexp is None or gexp.type != syms.testlist_gexp:
++        return False
++
++    return any(child.type == syms.star_expr for child in gexp.children)
++
++
++def is_generator(node: LN) -> bool:
++    """Return True if `node` holds a generator."""
++    if node.type != syms.atom:
++        return False
++    gexp = unwrap_singleton_parenthesis(node)
++    if gexp is None or gexp.type != syms.testlist_gexp:
++        return False
++
++    return any(child.type == syms.old_comp_for for child in gexp.children)
++
++
+ def is_one_sequence_between(
+     opening: Leaf,
+     closing: Leaf,

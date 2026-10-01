@@ -1,0 +1,24 @@
+diff --git a/compiler/semstmts.nim b/compiler/semstmts.nim
+index 4607e85..26e6ef1 100644
+--- a/compiler/semstmts.nim
++++ b/compiler/semstmts.nim
+@@ -2046,9 +2046,18 @@ proc semProcAux(c: PContext, n: PNode, kind: TSymKind,
+         if s.kind notin {skMacro, skTemplate} and s.magic == mNone: paramsTypeCheck(c, s.typ)
+ 
+         maybeAddResult(c, s, n)
+         # semantic checking also needed with importc in case used in VM
++
++        let isInlineIterator = isInlineIterator(s.typ)
+         s.ast[bodyPos] = hloBody(c, semProcBody(c, n[bodyPos]))
+         # unfortunately we cannot skip this step when in 'system.compiles'
+         # context as it may even be evaluated in 'system.compiles':
++
++        if isInlineIterator and s.typ.callConv == ccClosure:
++          # iterators without explicit callconvs are lifted to closure,
++          # we need to add a result symbol for them
++          maybeAddResult(c, s, n)
++
++ 
+         trackProc(c, s, s.ast[bodyPos])
+       else:
+         if (s.typ[0] != nil and s.kind != skIterator):

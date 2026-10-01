@@ -1,0 +1,439 @@
+{
+  "build_jobs": 4,
+  "container_repo": "/cvc5",
+  "evaluation": {
+    "suite": "reproduction",
+    "visible_timeout": 7200
+  },
+  "upstream_image": "pandora-maxbug-cvc5:1.0.5",
+  "n_base_passing": 0,
+  "n_base_test_ignore": 1,
+  "oracle_digest": "d4d5840e1bdf9f0c4877d54613a8cef9916e7b07fa18d5e2ad06f4756cd805bf",
+  "oracle_pristine_paths": [],
+  "upstream_commit": "9f7399e15e6172900e0591deb5a57a45769d8205",
+  "reproduction": {
+    "build_cmd": "cmake --build /build -j $SWESWEEP_BUILD_JOBS --target cvc5",
+    "build_timeout": 5400,
+    "jobs_env": "SWESWEEP_BUILD_JOBS",
+    "suite": {
+      "all_args": [
+        "-L",
+        "regress0|unit"
+      ],
+      "all_target": "build-tests",
+      "build_dir": "/build",
+      "corpora": [
+        {
+          "dir": "test/regress/cli",
+          "exts": [
+            ".smt2",
+            ".sy",
+            ".p"
+          ],
+          "prefix": "",
+          "strip_ext": false,
+          "target": "cvc5"
+        },
+        {
+          "dir": "test/regress",
+          "exts": [
+            ".smt2",
+            ".sy",
+            ".p"
+          ],
+          "prefix": "",
+          "strip_ext": false,
+          "target": "cvc5"
+        },
+        {
+          "dir": "test/unit",
+          "exts": [
+            ".cpp"
+          ],
+          "prefix": "unit/",
+          "strip_ext": true,
+          "target": "{stem}"
+        }
+      ],
+      "type": "ctest-path"
+    },
+    "test_timeout": 1800
+  },
+  "schema": 2,
+  "subtasks": [
+    {
+      "f2p": [
+        "regress0/seq/proj-issue604-reg-closure.smt2"
+      ],
+      "id": "cvc5-0190fa8ae7ec",
+      "target_files": [
+        "src/theory/strings/term_registry.cpp"
+      ]
+    },
+    {
+      "f2p": [
+        "regress1/arith/issue9126-nb-alloc.smt2"
+      ],
+      "id": "cvc5-024cc837ea11",
+      "target_files": [
+        "src/theory/arith/arith_rewriter.cpp",
+        "src/theory/arith/rewriter/addition.cpp",
+        "src/theory/arith/rewriter/addition.h"
+      ]
+    },
+    {
+      "f2p": [
+        "regress1/issue9573-lr-rewrite.smt2"
+      ],
+      "id": "cvc5-11eabe28d431",
+      "target_files": [
+        "src/preprocessing/passes/learned_rewrite.cpp",
+        "src/preprocessing/passes/non_clausal_simp.cpp"
+      ]
+    },
+    {
+      "f2p": [
+        "regress0/datatypes/proj-issue578-clash-pf.smt2"
+      ],
+      "id": "cvc5-1337df3bc465",
+      "target_files": [
+        "src/theory/datatypes/infer_proof_cons.cpp"
+      ]
+    },
+    {
+      "f2p": [
+        "regress0/seq/proj-issue559-unit-inj.smt2"
+      ],
+      "id": "cvc5-15ce999a65bb",
+      "target_files": [
+        "src/theory/strings/base_solver.cpp"
+      ]
+    },
+    {
+      "f2p": [
+        "regress0/sets/proj-issue583.smt2",
+        "regress1/sets/proj-issue610.smt2"
+      ],
+      "id": "cvc5-169d417c6b41",
+      "target_files": [
+        "src/theory/sets/solver_state.cpp",
+        "src/theory/sets/theory_sets_private.cpp"
+      ]
+    },
+    {
+      "f2p": [
+        "regress1/datatypes/nested-rec-array-aa.smt2"
+      ],
+      "id": "cvc5-18943577ecec",
+      "target_files": [
+        "src/theory/arrays/theory_arrays_rewriter.cpp",
+        "src/theory/arrays/theory_arrays_type_rules.cpp"
+      ]
+    },
+    {
+      "f2p": [
+        "regress0/seq/proj-issue586-nth-update-no-fact-2.smt2",
+        "regress0/seq/proj-issue586-nth-update-no-fact.smt2"
+      ],
+      "id": "cvc5-308a909279a9",
+      "target_files": [
+        "src/theory/strings/array_core_solver.cpp",
+        "src/theory/strings/array_core_solver.h"
+      ]
+    },
+    {
+      "f2p": [
+        "regress1/nl/issue9472-2-cmv.smt2"
+      ],
+      "id": "cvc5-3489f19d0af7",
+      "target_files": [
+        "src/theory/arith/nl/nl_model.cpp",
+        "src/theory/arith/nl/nl_model.h",
+        "src/theory/arith/nl/nonlinear_extension.cpp",
+        "src/theory/arith/theory_arith.cpp"
+      ]
+    },
+    {
+      "f2p": [
+        "regress0/push-pop/issue11934-ho-uf.smt2"
+      ],
+      "id": "cvc5-39fc8377f26f",
+      "target_files": [
+        "src/theory/theory_model.cpp"
+      ]
+    },
+    {
+      "f2p": [
+        "regress0/strings/issue9784.smt2"
+      ],
+      "id": "cvc5-3d08a22f361b",
+      "target_files": [
+        "src/theory/strings/sequences_rewriter.cpp"
+      ]
+    },
+    {
+      "f2p": [
+        "regress0/sets/bug_setfold_union.smt2"
+      ],
+      "id": "cvc5-50f4bf9c8c66",
+      "target_files": [
+        "src/theory/sets/theory_sets_rewriter.cpp",
+        "src/theory/sets/theory_sets_rewriter.h"
+      ]
+    },
+    {
+      "f2p": [
+        "regress0/fmf/proj-issue622-fmf-dt-u-orig.smt2",
+        "regress0/fmf/proj-issue622-fmf-dt-u.smt2"
+      ],
+      "id": "cvc5-647ecea6ab0d",
+      "target_files": [
+        "src/expr/dtype.cpp",
+        "src/theory/theory_model_builder.cpp"
+      ]
+    },
+    {
+      "f2p": [
+        "regress1/interpolant-unk-570.smt2"
+      ],
+      "id": "cvc5-6f19e69efd06",
+      "target_files": [
+        "src/theory/quantifiers/sygus/ce_guided_single_inv.cpp"
+      ]
+    },
+    {
+      "f2p": [
+        "regress0/quantifiers/issue9602-rewrite-pow-type.smt2"
+      ],
+      "id": "cvc5-6f88c8072d5a",
+      "target_files": [
+        "src/theory/arith/arith_rewriter.cpp"
+      ]
+    },
+    {
+      "f2p": [
+        "regress1/nl/proj-issue530.smt2"
+      ],
+      "id": "cvc5-726a3ded06b0",
+      "target_files": [
+        "src/theory/arith/nl/transcendental/proof_checker.cpp",
+        "src/theory/arith/nl/transcendental/sine_solver.cpp"
+      ]
+    },
+    {
+      "f2p": [
+        "regress0/fmf/issue12528-fmf-mbqi-trust-unknown.smt2"
+      ],
+      "id": "cvc5-8c19798c9c2d",
+      "target_files": [
+        "src/theory/quantifiers/fmf/model_engine.cpp"
+      ]
+    },
+    {
+      "f2p": [
+        "regress0/datatypes/yoni-cyclic.smt2"
+      ],
+      "id": "cvc5-8d2b297c1bbc",
+      "target_files": [
+        "src/theory/datatypes/theory_datatypes.cpp"
+      ]
+    },
+    {
+      "f2p": [
+        "regress1/quantifiers/proj-issue546-ee-rep.smt2"
+      ],
+      "id": "cvc5-8fd2c025e245",
+      "target_files": [
+        "src/theory/quantifiers/equality_query.cpp"
+      ]
+    },
+    {
+      "f2p": [
+        "regress0/nl/proj-issue552-narith-cee.smt2"
+      ],
+      "id": "cvc5-92a35b3a1356",
+      "target_files": [
+        "src/theory/arith/nl/ext_theory_callback.cpp"
+      ]
+    },
+    {
+      "f2p": [
+        "regress1/quantifiers/issue9545-mini-agg.smt2"
+      ],
+      "id": "cvc5-9abdf24fe930",
+      "target_files": [
+        "src/theory/quantifiers/quantifiers_rewriter.cpp",
+        "src/theory/substitutions.cpp"
+      ]
+    },
+    {
+      "f2p": [
+        "regress0/parser/issue10093.smt2"
+      ],
+      "id": "cvc5-9c7602939dee",
+      "target_files": [
+        "src/theory/strings/theory_strings_type_rules.cpp"
+      ]
+    },
+    {
+      "f2p": [
+        "regress1/strings/proj-issue585-cbqi-t-cons.smt2"
+      ],
+      "id": "cvc5-a6fa2c8060f2",
+      "target_files": [
+        "src/theory/arith/linear/theory_arith_private.cpp"
+      ]
+    },
+    {
+      "f2p": [
+        "regress0/quantifiers/ari-syqi.smt2"
+      ],
+      "id": "cvc5-a874c6f84e37",
+      "target_files": [
+        "src/theory/quantifiers/ematching/inst_match_generator_simple.cpp",
+        "src/theory/quantifiers/instantiate.cpp",
+        "src/theory/quantifiers/quant_conflict_find.cpp"
+      ]
+    },
+    {
+      "f2p": [
+        "regress0/arrays/proj-issue545-array-nconst.smt2",
+        "regress0/arrays/proj-issue563.smt2"
+      ],
+      "id": "cvc5-a92827dd3f89",
+      "target_files": [
+        "src/theory/arrays/theory_arrays_rewriter.cpp",
+        "src/theory/uf/function_const.cpp"
+      ]
+    },
+    {
+      "f2p": [
+        "regress0/quantifiers/proj-issue608-mbqi-cegqi.smt2"
+      ],
+      "id": "cvc5-aa2797db1fd7",
+      "target_files": [
+        "src/theory/quantifiers/inst_strategy_mbqi.cpp"
+      ]
+    },
+    {
+      "f2p": [
+        "regress0/nl/proj-issue637-rr-type.smt2"
+      ],
+      "id": "cvc5-c443eedc46d1",
+      "target_files": [
+        "src/theory/arith/arith_rewriter.cpp"
+      ]
+    },
+    {
+      "f2p": [
+        "regress1/nl/issue9611-lrew.smt2"
+      ],
+      "id": "cvc5-c6c6ba5bd904",
+      "target_files": [
+        "src/preprocessing/passes/learned_rewrite.cpp"
+      ]
+    },
+    {
+      "f2p": [
+        "regress0/parser/issue10489.smt2"
+      ],
+      "id": "cvc5-cb7581ed4265",
+      "target_files": [
+        "src/api/cpp/cvc5.cpp"
+      ]
+    },
+    {
+      "f2p": [
+        "regress0/arith/issue9643.smt2"
+      ],
+      "id": "cvc5-d440f0779a99",
+      "target_files": [
+        "src/theory/arith/arith_rewriter.cpp"
+      ]
+    },
+    {
+      "f2p": [
+        "regress0/seq/issue9696-unit-type-cmi.smt2"
+      ],
+      "id": "cvc5-d73f0189501b",
+      "target_files": [
+        "src/theory/strings/base_solver.cpp",
+        "src/theory/strings/theory_strings.cpp"
+      ]
+    },
+    {
+      "f2p": [
+        "regress0/proofs/proj-issue589.smt2",
+        "regress1/proj-issue542.smt2"
+      ],
+      "id": "cvc5-d9746c57e9f2",
+      "target_files": [
+        "src/smt/proof_manager.cpp",
+        "src/smt/solver_engine.cpp",
+        "src/theory/difficulty_manager.cpp",
+        "src/theory/difficulty_manager.h",
+        "src/theory/relevance_manager.cpp",
+        "src/theory/relevance_manager.h",
+        "src/theory/theory_engine.cpp",
+        "src/theory/theory_engine.h"
+      ]
+    },
+    {
+      "f2p": [
+        "regress0/int-to-bv/proj-issue601.smt2"
+      ],
+      "id": "cvc5-e1ed9a524e71",
+      "target_files": [
+        "src/preprocessing/passes/int_to_bv.cpp"
+      ]
+    },
+    {
+      "f2p": [
+        "regress0/proofs/proj-issue554.smt2"
+      ],
+      "id": "cvc5-ee122a56fa79",
+      "target_files": [
+        "src/prop/prop_engine.cpp"
+      ]
+    },
+    {
+      "f2p": [
+        "regress0/ff/proj-issue704.smt2"
+      ],
+      "id": "cvc5-f0994ce1b268",
+      "target_files": [
+        "src/theory/ff/theory_ff_rewriter.cpp"
+      ]
+    },
+    {
+      "f2p": [
+        "regress0/strings/issue11710-numeric-max.smt2"
+      ],
+      "id": "cvc5-f218e48e2ada",
+      "target_files": [
+        "src/theory/strings/sequences_rewriter.cpp"
+      ]
+    },
+    {
+      "f2p": [
+        "regress0/bv/int_to_bv_10080_ite.smt2"
+      ],
+      "id": "cvc5-f313728ce254",
+      "target_files": [
+        "src/preprocessing/passes/int_to_bv.cpp"
+      ]
+    },
+    {
+      "f2p": [
+        "regress0/proofs/issue9669-clause-level-opt-incremental.smt2"
+      ],
+      "id": "cvc5-ffc998069294",
+      "target_files": [
+        "src/prop/sat_proof_manager.cpp",
+        "src/prop/sat_proof_manager.h"
+      ]
+    }
+  ],
+  "task": "cvc5",
+  "version": "1.0.5"
+}

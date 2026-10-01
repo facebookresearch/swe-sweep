@@ -1,0 +1,13 @@
+diff --git a/src/os/stat_unix.go b/src/os/stat_unix.go
+index 486a16413e..9a1f21211c 100644
+--- a/src/os/stat_unix.go
++++ b/src/os/stat_unix.go
+@@ -19,7 +19,7 @@ func (f *File) Stat() (FileInfo, error) {
+ 	var fs fileStat
+ 	err := f.pfd.Fstat(&fs.sys)
+ 	if err != nil {
+-		return nil, &PathError{Op: "stat", Path: f.name, Err: err}
++		return nil, f.wrapErr("stat", err)
+ 	}
+ 	fillFileStatFromSys(&fs, f.name)
+ 	return &fs, nil

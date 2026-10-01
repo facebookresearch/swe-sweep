@@ -1,0 +1,140 @@
+diff --git a/codec-http/src/test/java/io/netty/handler/codec/http/HttpChunkedInputTest.java b/codec-http/src/test/java/io/netty/handler/codec/http/HttpChunkedInputTest.java
+index d57261e4b9..402f852f5b 100644
+--- a/codec-http/src/test/java/io/netty/handler/codec/http/HttpChunkedInputTest.java
++++ b/codec-http/src/test/java/io/netty/handler/codec/http/HttpChunkedInputTest.java
+@@ -18,5 +18,6 @@ package io.netty.handler.codec.http;
+ import io.netty.buffer.ByteBuf;
+ import io.netty.buffer.ByteBufAllocator;
++import io.netty.buffer.Unpooled;
+ import io.netty.channel.ChannelHandlerContext;
+ import io.netty.channel.embedded.EmbeddedChannel;
+ import io.netty.handler.stream.ChunkedFile;
+@@ -25,6 +26,7 @@ import io.netty.handler.stream.ChunkedNioFile;
+ import io.netty.handler.stream.ChunkedNioStream;
+ import io.netty.handler.stream.ChunkedStream;
+ import io.netty.handler.stream.ChunkedWriteHandler;
++import io.netty.channel.ChannelFuture;
+ import org.junit.Test;
+ 
+ import java.io.ByteArrayInputStream;
+@@ -120,6 +122,70 @@ public class HttpChunkedInputTest {
+         assertNull(input.readChunk(ByteBufAllocator.DEFAULT));
+     }
+ 
++    @Test
++    public void testCloseReleasesUnsentLastHttpContent() throws Exception {
++        TestChunkedInput chunkedInput = new TestChunkedInput(false, false);
++        LastHttpContent lastHttpContent = new DefaultLastHttpContent(Unpooled.buffer(1).writeByte(1));
++        HttpChunkedInput input = new HttpChunkedInput(chunkedInput, lastHttpContent);
++        EmbeddedChannel channel = new EmbeddedChannel(new ChunkedWriteHandler());
++
++        try {
++            ChannelFuture writeFuture = channel.writeAndFlush(input);
++            assertFalse(writeFuture.isDone());
++
++            assertFalse(channel.finish());
++            assertTrue(chunkedInput.closed);
++            assertFalse(writeFuture.isSuccess());
++            assertEquals(0, lastHttpContent.refCnt());
++
++            input.close();
++            assertEquals(0, lastHttpContent.refCnt());
++        } finally {
++            channel.finishAndReleaseAll();
++        }
++    }
++
++    @Test
++    public void testCloseDoesNotReleaseSentLastHttpContent() throws Exception {
++        LastHttpContent lastHttpContent = new DefaultLastHttpContent(Unpooled.buffer(1).writeByte(1));
++        HttpChunkedInput input = new HttpChunkedInput(new TestChunkedInput(true, false), lastHttpContent);
++        EmbeddedChannel channel = new EmbeddedChannel(new ChunkedWriteHandler());
++
++        try {
++            assertTrue(channel.writeOutbound(input));
++            assertSame(lastHttpContent, channel.readOutbound());
++            assertNull(channel.readOutbound());
++            assertEquals(1, lastHttpContent.refCnt());
++
++            input.close();
++            input.close();
++            assertEquals(1, lastHttpContent.refCnt());
++        } finally {
++            lastHttpContent.release();
++            channel.finishAndReleaseAll();
++        }
++    }
++
++    @Test
++    public void testCloseReleasesUnsentLastHttpContentWhenInputCloseThrows() throws Exception {
++        LastHttpContent lastHttpContent = new DefaultLastHttpContent(Unpooled.buffer(1).writeByte(1));
++        HttpChunkedInput input = new HttpChunkedInput(new TestChunkedInput(false, true), lastHttpContent);
++
++        try {
++            input.close();
++            fail("Expected IOException");
++        } catch (IOException expected) {
++            // expected
++        }
++        assertEquals(0, lastHttpContent.refCnt());
++        try {
++            input.close();
++            fail("Expected IOException");
++        } catch (IOException expected) {
++            // expected
++        }
++        assertEquals(0, lastHttpContent.refCnt());
++    }
+     private static void check(ChunkedInput<?>... inputs) {
+         EmbeddedChannel ch = new EmbeddedChannel(new ChunkedWriteHandler());
+ 
+@@ -159,4 +225,49 @@ public class HttpChunkedInputTest {
+         assertSame("Last chunk must be LastHttpContent.EMPTY_LAST_CONTENT",
+                 LastHttpContent.EMPTY_LAST_CONTENT, lastHttpContent);
+     }
++
++    private static final class TestChunkedInput implements ChunkedInput<ByteBuf> {
++        private final boolean endOfInput;
++        private final boolean failOnClose;
++        private boolean closed;
++
++        TestChunkedInput(boolean endOfInput, boolean failOnClose) {
++            this.endOfInput = endOfInput;
++            this.failOnClose = failOnClose;
++        }
++
++        @Override
++        public boolean isEndOfInput() {
++            return endOfInput;
++        }
++
++        @Override
++        public void close() throws Exception {
++            closed = true;
++            if (failOnClose) {
++                throw new IOException("close failed");
++            }
++        }
++
++        @Deprecated
++        @Override
++        public ByteBuf readChunk(ChannelHandlerContext ctx) {
++            return null;
++        }
++
++        @Override
++        public ByteBuf readChunk(ByteBufAllocator allocator) {
++            return null;
++        }
++
++        @Override
++        public long length() {
++            return 0;
++        }
++
++        @Override
++        public long progress() {
++            return 0;
++        }
++    }
+ }

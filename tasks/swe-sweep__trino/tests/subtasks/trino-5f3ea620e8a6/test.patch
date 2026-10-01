@@ -1,0 +1,65 @@
+diff --git a/core/trino-main/src/test/java/io/trino/server/TestQueryResource.java b/core/trino-main/src/test/java/io/trino/server/TestQueryResource.java
+index ca39ba4518d..9e0ffd0d58b 100644
+--- a/core/trino-main/src/test/java/io/trino/server/TestQueryResource.java
++++ b/core/trino-main/src/test/java/io/trino/server/TestQueryResource.java
+@@ -84,6 +84,40 @@ public class TestQueryResource
+         closeAll(server, client);
+     }
+ 
++    @Test
++    public void testIdempotentResults()
++    {
++        String sql = "SELECT * FROM tpch.tiny.lineitem";
++
++        Request request = preparePost()
++                .setHeader(TRINO_HEADERS.requestUser(), "user")
++                .setUri(uriBuilderFrom(server.getBaseUrl().resolve("/v1/statement")).build())
++                .setBodyGenerator(createStaticBodyGenerator(sql, UTF_8))
++                .build();
++
++        QueryResults queryResults = client.execute(request, createJsonResponseHandler(jsonCodec(QueryResults.class)));
++        URI uri = queryResults.getNextUri();
++        while (uri != null) {
++            QueryResults attempt1 = client.execute(
++                    prepareGet()
++                            .setHeader(TRINO_HEADERS.requestUser(), "user")
++                            .setUri(uri)
++                            .build(),
++                    createJsonResponseHandler(jsonCodec(QueryResults.class)));
++
++            QueryResults attempt2 = client.execute(
++                    prepareGet()
++                            .setHeader(TRINO_HEADERS.requestUser(), "user")
++                            .setUri(uri)
++                            .build(),
++                    createJsonResponseHandler(jsonCodec(QueryResults.class)));
++
++            assertEquals(attempt2.getData(), attempt1.getData());
++
++            uri = attempt1.getNextUri();
++        }
++    }
++
+     @Test
+     public void testGetQueryInfos()
+     {
+diff --git a/core/trino-main/src/test/java/io/trino/server/protocol/TestQueryResultRows.java b/core/trino-main/src/test/java/io/trino/server/protocol/TestQueryResultRows.java
+index 76ed99ebe7a..7bc1a93cdce 100644
+--- a/core/trino-main/src/test/java/io/trino/server/protocol/TestQueryResultRows.java
++++ b/core/trino-main/src/test/java/io/trino/server/protocol/TestQueryResultRows.java
+@@ -90,7 +90,6 @@ public class TestQueryResultRows
+         assertThat((Iterable<? extends List<Object>>) rows).as("rows").isNotEmpty();
+         assertThat(getAllValues(rows)).hasSize(1).containsOnly(ImmutableList.of(true));
+         assertThat(rows.getColumns().orElseThrow()).containsOnly(column);
+-        assertThat(rows.iterator().hasNext()).isFalse();
+     }
+ 
+     @Test
+@@ -110,7 +109,6 @@ public class TestQueryResultRows
+ 
+         assertThat(getAllValues(rows)).containsExactly(ImmutableList.of(value));
+         assertThat(rows.getColumns().orElseThrow()).containsOnly(column);
+-        assertThat(rows.iterator()).isExhausted();
+     }
+ 
+     @Test

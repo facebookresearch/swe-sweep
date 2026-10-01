@@ -1,0 +1,80 @@
+diff --git a/activerecord/test/cases/associations/has_one_associations_test.rb b/activerecord/test/cases/associations/has_one_associations_test.rb
+index fbc75c75502..0da12625c05 100644
+--- a/activerecord/test/cases/associations/has_one_associations_test.rb
++++ b/activerecord/test/cases/associations/has_one_associations_test.rb
+@@ -19,5 +19,7 @@
+ require "models/membership"
+ require "models/parrot"
++require "models/room"
++require "models/user"
+ 
+ class HasOneAssociationsTest < ActiveRecord::TestCase
+   self.use_transactional_tests = false unless supports_savepoints?
+@@ -772,6 +774,28 @@ class HasOneAssociationsTest < ActiveRecord::TestCase
+     assert_no_queries { new_club.save }
+   end
+ 
++  def test_has_one_double_belongs_to_destroys_both_from_either_end
++    landlord = User.create!
++    tenant = User.create!
++    room = Room.create!(landlord: landlord, tenant: tenant)
++
++    landlord.destroy!
++
++    assert_predicate(room, :destroyed?)
++    assert_predicate(landlord, :destroyed?)
++    assert_predicate(tenant, :destroyed?)
++
++    landlord = User.create!
++    tenant = User.create!
++    room = Room.create!(landlord: landlord, tenant: tenant)
++
++    tenant.destroy!
++
++    assert_predicate(room, :destroyed?)
++    assert_predicate(tenant, :destroyed?)
++    assert_predicate(landlord, :destroyed?)
++  end
++
+   class SpecialBook < ActiveRecord::Base
+     self.table_name = "books"
+     belongs_to :author, class_name: "SpecialAuthor"
+diff --git a/activerecord/test/models/room.rb b/activerecord/test/models/room.rb
+index cd934418d70..7589ddeda71 100644
+--- a/activerecord/test/models/room.rb
++++ b/activerecord/test/models/room.rb
+@@ -3,4 +3,7 @@
+ class Room < ActiveRecord::Base
+   belongs_to :user
+   belongs_to :owner, class_name: "User"
++
++  belongs_to :landlord, class_name: "User", dependent: :destroy, inverse_of: :let_room
++  belongs_to :tenant, class_name: "User", dependent: :destroy, inverse_of: :rented_room
+ end
+diff --git a/activerecord/test/models/user.rb b/activerecord/test/models/user.rb
+index 9e61ea8b091..c83d82cb34e 100644
+--- a/activerecord/test/models/user.rb
++++ b/activerecord/test/models/user.rb
+@@ -15,6 +15,9 @@ class User < ActiveRecord::Base
+   has_one :family_tree, -> { where(token: nil) }, foreign_key: "member_id"
+   has_one :family, through: :family_tree
+   has_many :family_members, through: :family, source: :members
++
++  has_one :let_room, class_name: "Room", foreign_key: "landlord_id", dependent: :destroy
++  has_one :rented_room, class_name: "Room", foreign_key: "tenant_id", dependent: :destroy
+ end
+ 
+ class UserWithNotification < User
+diff --git a/activerecord/test/schema/schema.rb b/activerecord/test/schema/schema.rb
+index ef9bba24f2e..22eb90e06b0 100644
+--- a/activerecord/test/schema/schema.rb
++++ b/activerecord/test/schema/schema.rb
+@@ -929,6 +929,8 @@ ActiveRecord::Schema.define do
+   create_table :rooms, force: true do |t|
+     t.references :user
+     t.references :owner
++    t.references :landlord
++    t.references :tenant
+   end
+ 
+   disable_referential_integrity do

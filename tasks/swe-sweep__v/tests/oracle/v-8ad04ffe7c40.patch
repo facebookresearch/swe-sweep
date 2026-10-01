@@ -1,0 +1,29 @@
+diff --git a/vlib/v/parser/comptime.v b/vlib/v/parser/comptime.v
+index 548c7c944..f145be405 100644
+--- a/vlib/v/parser/comptime.v
++++ b/vlib/v/parser/comptime.v
+@@ -265,8 +265,8 @@ fn (mut p Parser) comptime_for() ast.ComptimeFor {
+ 	var_pos := p.tok.pos()
+ 	val_var := p.check_name()
+ 	p.check(.key_in)
+ 	mut typ_pos := p.tok.pos()
+ 	lang := p.parse_language()
+-	typ := p.parse_any_type(lang, false, false)
++	typ := p.parse_any_type(lang, false, true)
+ 	typ_pos = typ_pos.extend(p.prev_tok.pos())
+ 	p.check(.dot)
+diff --git a/vlib/v/parser/parse_type.v b/vlib/v/parser/parse_type.v
+index 19618b6..4508ef8 100644
+--- a/vlib/v/parser/parse_type.v
++++ b/vlib/v/parser/parse_type.v
+@@ -510,6 +510,10 @@ pub fn (mut p Parser) parse_any_type(language ast.Language, is_ptr bool, check_d
+ 		for p.peek_tok.kind == .dot {
+ 			mod_pos = mod_pos.extend(p.tok.pos())
+ 			mod_last_part = p.tok.lit
++			if p.tok.lit[0].is_capital() {
++				// it's a type name, should break loop
++				break
++			}
+ 			mod += '.${mod_last_part}'
+ 			p.next()
+ 			p.check(.dot)

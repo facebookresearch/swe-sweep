@@ -1,0 +1,16 @@
+diff --git a/tests/dialects/test_sqlite.py b/tests/dialects/test_sqlite.py
+index c3db50b7a2..79d1b6a634 100644
+--- a/tests/dialects/test_sqlite.py
++++ b/tests/dialects/test_sqlite.py
+@@ -106,6 +106,10 @@ class TestSQLite(Validator):
+         self.validate_identity(
+             "SELECT * FROM station WHERE city IS NOT ''",
+             "SELECT * FROM station WHERE NOT city IS ''",
+         )
++        self.validate_identity("SELECT * FROM t WHERE NULL IS y")
++        self.validate_identity(
++            "SELECT * FROM t WHERE NULL IS NOT y", "SELECT * FROM t WHERE NOT NULL IS y"
++        )
+ 
+     def test_strftime(self):
+         self.validate_identity("SELECT STRFTIME('%Y/%m/%d', 'now')")

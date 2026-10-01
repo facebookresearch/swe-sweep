@@ -1,0 +1,16 @@
+diff --git a/pkg/analysis_server/lib/src/services/correction/dart/abstract_producer.dart b/pkg/analysis_server/lib/src/services/correction/dart/abstract_producer.dart
+index cd8943ae5a0..56f89486841 100644
+--- a/pkg/analysis_server/lib/src/services/correction/dart/abstract_producer.dart
++++ b/pkg/analysis_server/lib/src/services/correction/dart/abstract_producer.dart
+@@ -45,8 +45,9 @@ abstract class CorrectionProducer extends SingleCorrectionProducer {
+       return true;
+     }
+     // field initializer cannot reference "this"
+-    if (node.thisOrAncestorOfType<FieldDeclaration>() != null) {
+-      return true;
++    final fieldDeclaration = node.thisOrAncestorOfType<FieldDeclaration>();
++    if (fieldDeclaration != null) {
++      return fieldDeclaration.isStatic || !fieldDeclaration.fields.isLate;
+     }
+     // static method
+     var method = node.thisOrAncestorOfType<MethodDeclaration>();

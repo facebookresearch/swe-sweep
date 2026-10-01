@@ -1,0 +1,28 @@
+diff --git a/compiler/src/dmd/parse.d b/compiler/src/dmd/parse.d
+index 2400d84eb3..582bb6b04e 100644
+--- a/compiler/src/dmd/parse.d
++++ b/compiler/src/dmd/parse.d
+@@ -5720,6 +5720,8 @@ LagainStc:
+                         s = null;
+                     else if (token.value == TOK.leftCurly)
+                         s = parseStatement(ParseStatementFlags.curly | ParseStatementFlags.scope_);
++                    else if (flags & ParseStatementFlags.curlyScope)
++                        s = parseStatement(ParseStatementFlags.semiOk | ParseStatementFlags.curlyScope);
+                     else
+                         s = parseStatement(ParseStatementFlags.semiOk);
+                     s = new AST.LabelStatement(loc, ident, s);
+diff --git a/compiler/src/dmd/statement.d b/compiler/src/dmd/statement.d
+index 91a802ecdd..712cbf7f01 100644
+--- a/compiler/src/dmd/statement.d
++++ b/compiler/src/dmd/statement.d
+@@ -323,6 +323,10 @@ extern (C++) abstract class Statement : ASTNode
+             override void visit(DefaultStatement s)
+             {
+             }
++
++            override void visit(LabelStatement s)
++            {
++            }
+         }
+ 
+         scope HasCode hc = new HasCode();

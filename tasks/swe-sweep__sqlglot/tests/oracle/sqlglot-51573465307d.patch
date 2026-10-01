@@ -1,0 +1,26 @@
+diff --git a/sqlglot/dialects/snowflake.py b/sqlglot/dialects/snowflake.py
+index b3275b539f..4d9e00fe57 100644
+--- a/sqlglot/dialects/snowflake.py
++++ b/sqlglot/dialects/snowflake.py
+@@ -362,6 +362,11 @@ class Snowflake(Dialect):
+         "ff6": "%f",
+     }
+ 
++    DATE_PART_MAPPING = {
++        **Dialect.DATE_PART_MAPPING,
++        "ISOWEEK": "WEEKISO",
++    }
++
+     def quote_identifier(self, expression: E, identify: bool = True) -> E:
+         # This disables quoting DUAL in SELECT ... FROM DUAL, because Snowflake treats an
+         # unquoted DUAL keyword in a special way and does not map it to a user-defined table
+@@ -911,6 +916,8 @@ class Snowflake(Dialect):
+             exp.DayOfYear: rename_func("DAYOFYEAR"),
+             exp.Explode: rename_func("FLATTEN"),
+-            exp.Extract: rename_func("DATE_PART"),
++            exp.Extract: lambda self, e: self.func(
++                "DATE_PART", map_date_part(e.this, self.dialect), e.expression
++            ),
+             exp.FromTimeZone: lambda self, e: self.func(
+                 "CONVERT_TIMEZONE", e.args.get("zone"), "'UTC'", e.this
+             ),

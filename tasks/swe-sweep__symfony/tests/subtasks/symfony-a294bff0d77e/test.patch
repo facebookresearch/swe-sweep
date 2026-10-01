@@ -1,0 +1,34 @@
+diff --git a/src/Symfony/Component/DependencyInjection/Tests/Compiler/CheckTypeDeclarationsPassTest.php b/src/Symfony/Component/DependencyInjection/Tests/Compiler/CheckTypeDeclarationsPassTest.php
+index 52611f8d193..3b4d71b0f24 100644
+--- a/src/Symfony/Component/DependencyInjection/Tests/Compiler/CheckTypeDeclarationsPassTest.php
++++ b/src/Symfony/Component/DependencyInjection/Tests/Compiler/CheckTypeDeclarationsPassTest.php
+@@ -1023,6 +1023,18 @@ class CheckTypeDeclarationsPassTest extends TestCase
+ 
+         $this->addToAssertionCount(1);
+     }
++
++    public function testCheckTypeDeclarationsSkipsSubsequentNamedArguments()
++    {
++        $container = new ContainerBuilder();
++        $container->register('service', ServiceWithTwoInts::class)
++            ->setArguments(['a' => 1, 'b' => []]);
++
++        $this->expectException(InvalidParameterTypeException::class);
++        $this->expectExceptionMessage('argument 2 of "Symfony\Component\DependencyInjection\Tests\Compiler\ServiceWithTwoInts::__construct()" accepts "int", "array" passed');
++
++        (new CheckTypeDeclarationsPass(true))->process($container);
++    }
+ }
+ 
+ class CallableClass
+@@ -1038,3 +1050,10 @@ class StaticCallableClass
+     {
+     }
+ }
++
++class ServiceWithTwoInts
++{
++    public function __construct(int $a, int $b)
++    {
++    }
++}

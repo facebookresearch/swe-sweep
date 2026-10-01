@@ -1,0 +1,48 @@
+diff --git a/lib/matplotlib/tests/test_patheffects.py b/lib/matplotlib/tests/test_patheffects.py
+index 34462fa0d1..d0f4fabf4b 100644
+--- a/lib/matplotlib/tests/test_patheffects.py
++++ b/lib/matplotlib/tests/test_patheffects.py
+@@ -136,7 +136,8 @@ def test_collection():
+                        'edgecolor': 'blue'})
+ 
+ 
+-@image_comparison(['tickedstroke'], remove_text=True, extensions=['png'])
++@image_comparison(['tickedstroke'], remove_text=True, extensions=['png'],
++                  tol=0.22)  # Increased tolerance due to fixed clipping.
+ def test_tickedstroke():
+     fig, (ax1, ax2, ax3) = plt.subplots(1, 3, figsize=(12, 4))
+     path = Path.unit_circle()
+diff --git a/lib/matplotlib/tests/test_simplification.py b/lib/matplotlib/tests/test_simplification.py
+index 07287618f2..952e890ce6 100644
+--- a/lib/matplotlib/tests/test_simplification.py
++++ b/lib/matplotlib/tests/test_simplification.py
+@@ -47,6 +47,29 @@ def test_diamond():
+     ax.set_ylim(-0.6, 0.6)
+ 
+ 
++def test_clipping_out_of_bounds():
++    # Should work on a Path *without* codes.
++    path = Path([(0, 0), (1, 2), (2, 1)])
++    simplified = path.cleaned(clip=(10, 10, 20, 20))
++    assert_array_equal(simplified.vertices, [(0, 0)])
++    assert simplified.codes == [Path.STOP]
++
++    # Should work on a Path *with* codes, and no curves.
++    path = Path([(0, 0), (1, 2), (2, 1)],
++                [Path.MOVETO, Path.LINETO, Path.LINETO])
++    simplified = path.cleaned(clip=(10, 10, 20, 20))
++    assert_array_equal(simplified.vertices, [(0, 0)])
++    assert simplified.codes == [Path.STOP]
++
++    # A Path with curves does not do any clipping yet.
++    path = Path([(0, 0), (1, 2), (2, 3)],
++                [Path.MOVETO, Path.CURVE3, Path.CURVE3])
++    simplified = path.cleaned()
++    simplified_clipped = path.cleaned(clip=(10, 10, 20, 20))
++    assert_array_equal(simplified.vertices, simplified_clipped.vertices)
++    assert_array_equal(simplified.codes, simplified_clipped.codes)
++
++
+ def test_noise():
+     np.random.seed(0)
+     x = np.random.uniform(size=50000) * 50

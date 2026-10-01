@@ -1,0 +1,21 @@
+diff --git a/src/encoding/gob/encoder_test.go b/src/encoding/gob/encoder_test.go
+index 6934841b3a..484be43c47 100644
+--- a/src/encoding/gob/encoder_test.go
++++ b/src/encoding/gob/encoder_test.go
+@@ -1152,3 +1152,16 @@ func TestDecodeErrorMultipleTypes(t *testing.T) {
+ 		t.Errorf("decode: expected duplicate type error, got %s", err.Error())
+ 	}
+ }
++
++func TestDecoderOverflow(t *testing.T) {
++	// Issue 55337.
++	dec := NewDecoder(bytes.NewReader([]byte{
++		0x12, 0xff, 0xff, 0x2, 0x2, 0x20, 0x0, 0xf8, 0x7f, 0xff, 0xff, 0xff,
++		0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0x20, 0x20, 0x20, 0x20, 0x20,
++	}))
++	var r interface{}
++	err := dec.Decode(r)
++	if err == nil {
++		t.Fatalf("expected an error")
++	}
++}

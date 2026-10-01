@@ -1,0 +1,52 @@
+diff --git a/pandas/tests/series/accessors/test_dt_accessor.py b/pandas/tests/series/accessors/test_dt_accessor.py
+index 61a22dad5d..eb7e1d4268 100644
+--- a/pandas/tests/series/accessors/test_dt_accessor.py
++++ b/pandas/tests/series/accessors/test_dt_accessor.py
+@@ -691,6 +691,19 @@ class TestSeriesDatetimeValues:
+         )
+         tm.assert_frame_equal(result, expected_frame)
+ 
++    def test_hour_index(self):
++        dt_series = Series(
++            date_range(start="2021-01-01", periods=5, freq="h"),
++            index=[2, 6, 7, 8, 11],
++            dtype="category",
++        )
++        result = dt_series.dt.hour
++        expected = Series(
++            [0, 1, 2, 3, 4],
++            index=[2, 6, 7, 8, 11],
++        )
++        tm.assert_series_equal(result, expected)
++
+ 
+ class TestSeriesPeriodValuesDtAccessor:
+     @pytest.mark.parametrize(
+diff --git a/pandas/tests/series/methods/test_tz_localize.py b/pandas/tests/series/methods/test_tz_localize.py
+index 4d7f26076e..a32c1fb8df 100644
+--- a/pandas/tests/series/methods/test_tz_localize.py
++++ b/pandas/tests/series/methods/test_tz_localize.py
+@@ -41,6 +41,23 @@ class TestTZLocalize:
+         result = ser.dt.tz_localize("US/Central", ambiguous=[False])
+         tm.assert_series_equal(result, expected1)
+ 
++    def test_series_tz_localize_matching_index(self):
++        # Matching the index of the result with that of the original series
++        # GH 43080
++        dt_series = Series(
++            date_range(start="2021-01-01T02:00:00", periods=5, freq="1D"),
++            index=[2, 6, 7, 8, 11],
++            dtype="category",
++        )
++        result = dt_series.dt.tz_localize("Europe/Berlin")
++        expected = Series(
++            date_range(
++                start="2021-01-01T02:00:00", periods=5, freq="1D", tz="Europe/Berlin"
++            ),
++            index=[2, 6, 7, 8, 11],
++        )
++        tm.assert_series_equal(result, expected)
++
+     @pytest.mark.parametrize("tz", ["Europe/Warsaw", "dateutil/Europe/Warsaw"])
+     @pytest.mark.parametrize(
+         "method, exp",

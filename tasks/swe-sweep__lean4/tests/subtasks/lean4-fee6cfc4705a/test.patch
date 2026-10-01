@@ -1,0 +1,34 @@
+diff --git a/tests/lean/run/4636.lean b/tests/lean/run/4636.lean
+new file mode 100644
+index 0000000000..fc5bfdceb6
+--- /dev/null
++++ b/tests/lean/run/4636.lean
+@@ -0,0 +1,28 @@
++theorem foo : True := trivial
++
++@[deprecated] def Foo.foo : Nat := 3
++
++set_option warningAsError true
++set_option linter.all true
++open Foo
++
++/--
++-/
++#guard_msgs in
++example : True := foo -- Should not produce warning
++
++/--
++error: `Foo.foo` has been deprecated
++-/
++#guard_msgs in
++example : Nat := Foo.foo
++
++namespace Foo
++
++/--
++error: `Foo.foo` has been deprecated
++-/
++#guard_msgs in
++example : Nat := foo
++
++end Foo

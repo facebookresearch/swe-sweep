@@ -1,0 +1,65 @@
+diff --git a/src/Lean/PrettyPrinter/Delaborator/Options.lean b/src/Lean/PrettyPrinter/Delaborator/Options.lean
+index a73b03e47a..5044151553 100644
+--- a/src/Lean/PrettyPrinter/Delaborator/Options.lean
++++ b/src/Lean/PrettyPrinter/Delaborator/Options.lean
+@@ -80,7 +80,7 @@ register_builtin_option pp.numericTypes : Bool := {
+   descr    := "(pretty printer) display types of numeric literals"
+ }
+ register_builtin_option pp.instantiateMVars : Bool := {
+-  defValue := false -- TODO: default to true?
++  defValue := true
+   group    := "pp"
+   descr    := "(pretty printer) instantiate mvars before delaborating"
+ }
+diff --git a/src/Lean/Server/FileWorker/WidgetRequests.lean b/src/Lean/Server/FileWorker/WidgetRequests.lean
+index e2c39b5535..fc18bb35d6 100644
+--- a/src/Lean/Server/FileWorker/WidgetRequests.lean
++++ b/src/Lean/Server/FileWorker/WidgetRequests.lean
+@@ -50,7 +50,7 @@ def makePopup : WithRpcRef InfoWithCtx → RequestM (RequestTask InfoPopup)
+   | ⟨i⟩ => RequestM.asTask do
+     i.ctx.runMetaM i.info.lctx do
+       let type? ← match (← i.info.type?) with
+-        | some type => some <$> (ppExprTagged =<< instantiateMVars type)
++        | some type => some <$> ppExprTagged type
+         | none => pure none
+       let exprExplicit? ← match i.info with
+         | Elab.Info.ofTermInfo ti =>
+diff --git a/src/Lean/Util/PPExt.lean b/src/Lean/Util/PPExt.lean
+index 9991cd7ac1..fa32137b7c 100644
+--- a/src/Lean/Util/PPExt.lean
++++ b/src/Lean/Util/PPExt.lean
+@@ -69,8 +69,8 @@ builtin_initialize ppExt : EnvExtension PPFns ←
+   registerEnvExtension ppFnsRef.get
+ 
+ def ppExprWithInfos (ctx : PPContext) (e : Expr) : IO FormatWithInfos := do
+-  let e := instantiateMVarsCore ctx.mctx e |>.1
+   if pp.raw.get ctx.opts then
++    let e := instantiateMVarsCore ctx.mctx e |>.1
+     return format (toString e)
+   else
+     try
+diff --git a/src/Lean/Widget/InteractiveCode.lean b/src/Lean/Widget/InteractiveCode.lean
+index 2d5ed0f977..f57e62f89a 100644
+--- a/src/Lean/Widget/InteractiveCode.lean
++++ b/src/Lean/Widget/InteractiveCode.lean
+@@ -76,7 +76,7 @@ where
+ 
+ def ppExprTagged (e : Expr) (explicit : Bool := false) : MetaM CodeWithInfos := do
+   if pp.raw.get (← getOptions) then
+-    return .text (toString e)
++    return .text (toString (← instantiateMVars e))
+   let delab := open PrettyPrinter.Delaborator in
+     if explicit then
+       withOptionAtCurrPos pp.tagAppFns.name true do
+@@ -86,6 +86,11 @@ def ppExprTagged (e : Expr) (explicit : Bool := false) : MetaM CodeWithInfos :=
+     else
+       withOptionAtCurrPos pp.proofs.name true do
+         delab
++  let mut e := e
++  -- When hovering over a metavariable, we want to see its value, even if `pp.instantiateMVars` is false.
++  if explicit && e.isMVar then
++    if let some e' ← getExprMVarAssignment? e.mvarId! then
++      e := e'
+   let ⟨fmt, infos⟩ ← PrettyPrinter.ppExprWithInfos e (delab := delab)
+   let tt := TaggedText.prettyTagged fmt
+   let ctx := {

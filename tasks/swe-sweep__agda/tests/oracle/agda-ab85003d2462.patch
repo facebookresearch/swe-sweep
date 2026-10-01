@@ -1,0 +1,45 @@
+diff --git a/src/full/Agda/TypeChecking/InstanceArguments.hs b/src/full/Agda/TypeChecking/InstanceArguments.hs
+--- a/src/full/Agda/TypeChecking/InstanceArguments.hs
++++ b/src/full/Agda/TypeChecking/InstanceArguments.hs
+@@ -3,6 +3,7 @@
+ module Agda.TypeChecking.InstanceArguments
+   ( findInstance
+   , isInstanceConstraint
++  , solveAwakeInstanceConstraints
+   , shouldPostponeInstanceSearch
+   , postponeInstanceConstraints
+   ) where
+@@ -559,7 +560,11 @@ wakeupInstanceConstraints :: TCM ()
+ wakeupInstanceConstraints =
+   unlessM shouldPostponeInstanceSearch $ do
+     wakeConstraints (wakeUpWhen_ isInstanceProblemConstraint)
+-    solveSomeAwakeConstraints isInstanceProblemConstraint False
++    solveAwakeInstanceConstraints
++
++solveAwakeInstanceConstraints :: TCM ()
++solveAwakeInstanceConstraints =
++  solveSomeAwakeConstraints isInstanceProblemConstraint False
+ 
+ postponeInstanceConstraints :: TCM a -> TCM a
+ postponeInstanceConstraints m =
+diff --git a/src/full/Agda/TypeChecking/Rules/Term.hs b/src/full/Agda/TypeChecking/Rules/Term.hs
+index 225cbf8370..887b31fdcd 100644
+--- a/src/full/Agda/TypeChecking/Rules/Term.hs
++++ b/src/full/Agda/TypeChecking/Rules/Term.hs
+@@ -41,6 +41,7 @@ import Agda.TypeChecking.Datatypes
+ import Agda.TypeChecking.EtaContract
+ import Agda.TypeChecking.Generalize
+ import Agda.TypeChecking.Implicit
++import Agda.TypeChecking.InstanceArguments (solveAwakeInstanceConstraints)
+ import Agda.TypeChecking.Irrelevance
+ import Agda.TypeChecking.IApplyConfluence
+ import Agda.TypeChecking.Level
+@@ -1581,6 +1582,8 @@ inferExprForWith (Arg info e) = verboseBracket "tc.with.infer" 20 "inferExprForW
+             Nothing -> return (v, t)
+             Just{}  -> do
+               (args, t1) <- implicitArgs (-1) notVisible t
++              -- #6868: trigger instance search if we inserted any instance arguments
++              when (any isInstance args) $ solveAwakeInstanceConstraints
+               return (v `apply` args, t1)
+         _ -> return (v, t)
+ 

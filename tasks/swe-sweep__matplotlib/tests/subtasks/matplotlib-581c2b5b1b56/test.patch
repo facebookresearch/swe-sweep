@@ -1,0 +1,31 @@
+diff --git a/lib/matplotlib/tests/test_colorbar.py b/lib/matplotlib/tests/test_colorbar.py
+index bbd1e9c..ba3dc69 100644
+--- a/lib/matplotlib/tests/test_colorbar.py
++++ b/lib/matplotlib/tests/test_colorbar.py
+@@ -625,6 +625,26 @@ def test_colorbar_int(clim):
+     assert (im.norm.vmin, im.norm.vmax) == clim
+ 
+ 
++def test_colorbar_single_ax_panchor_false():
++    # Note that this differs from the tests above with panchor=False because
++    # there use_gridspec is actually ineffective: passing *ax* as lists always
++    # disables use_gridspec.
++    ax = plt.subplot(111, anchor='N')
++    plt.imshow([[0, 1]])
++    plt.colorbar(panchor=False)
++    assert ax.get_anchor() == 'N'
++
++
++@pytest.mark.parametrize('constrained', [False, True],
++                         ids=['standard', 'constrained'])
++def test_colorbar_single_ax_panchor_east(constrained):
++    fig = plt.figure(constrained_layout=constrained)
++    ax = fig.add_subplot(111, anchor='N')
++    plt.imshow([[0, 1]])
++    plt.colorbar(panchor='E')
++    assert ax.get_anchor() == 'E'
++
++
+ def test_anchored_cbar_position_using_specgrid():
+     data = np.arange(1200).reshape(30, 40)
+     levels = [0, 200, 400, 600, 800, 1000, 1200]

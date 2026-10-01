@@ -1,0 +1,58 @@
+diff --git a/crates/ruff_linter/resources/test/fixtures/flake8_comprehensions/C420.py b/crates/ruff_linter/resources/test/fixtures/flake8_comprehensions/C420.py
+index 8f971d2bf1..03a6f44628 100644
+--- a/crates/ruff_linter/resources/test/fixtures/flake8_comprehensions/C420.py
++++ b/crates/ruff_linter/resources/test/fixtures/flake8_comprehensions/C420.py
+@@ -90,3 +90,14 @@ def func():
+ 
+ def func():
+     {(a, b): a + b for (a, b) in [(1, 2), (3, 4)]}  # OK
++
++# https://github.com/astral-sh/ruff/issues/18764
++{ # 1
++a # 2
++: # 3
++None # 4
++for # 5
++a # 6
++in # 7
++iterable # 8
++} # 9
+diff --git a/crates/ruff_linter/src/rules/flake8_comprehensions/snapshots/ruff_linter__rules__flake8_comprehensions__tests__C420_C420.py.snap b/crates/ruff_linter/src/rules/flake8_comprehensions/snapshots/ruff_linter__rules__flake8_comprehensions__tests__C420_C420.py.snap
+index 2a45889f36..0914f762bf 100644
+--- a/crates/ruff_linter/src/rules/flake8_comprehensions/snapshots/ruff_linter__rules__flake8_comprehensions__tests__C420_C420.py.snap
++++ b/crates/ruff_linter/src/rules/flake8_comprehensions/snapshots/ruff_linter__rules__flake8_comprehensions__tests__C420_C420.py.snap
+@@ -202,3 +202,34 @@ C420.py:59:6: C420 [*] Unnecessary dict comprehension for iterable; use `dict.fr
+ 60 60 | 
+ 61 61 | 
+ 62 62 | # Non-violation cases: RUF025
++
++C420.py:95:1: C420 [*] Unnecessary dict comprehension for iterable; use `dict.fromkeys` instead
++    |
++ 94 |   # https://github.com/astral-sh/ruff/issues/18764
++ 95 | / { # 1
++ 96 | | a # 2
++ 97 | | : # 3
++ 98 | | None # 4
++ 99 | | for # 5
++100 | | a # 6
++101 | | in # 7
++102 | | iterable # 8
++103 | | } # 9
++    | |_^ C420
++    |
++    = help: Replace with `dict.fromkeys(iterable, value)`)
++
++ℹ Unsafe fix
++92 92 |     {(a, b): a + b for (a, b) in [(1, 2), (3, 4)]}  # OK
++93 93 | 
++94 94 | # https://github.com/astral-sh/ruff/issues/18764
++95    |-{ # 1
++96    |-a # 2
++97    |-: # 3
++98    |-None # 4
++99    |-for # 5
++100    |-a # 6
++101    |-in # 7
++102    |-iterable # 8
++103    |-} # 9
++   95 |+dict.fromkeys(iterable) # 9

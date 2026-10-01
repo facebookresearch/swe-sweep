@@ -1,0 +1,82 @@
+diff --git a/tests/format/html/front-matter/__snapshots__/format.test.js.snap b/tests/format/html/front-matter/__snapshots__/format.test.js.snap
+index 1387c1c95..36488d2ae 100644
+--- a/tests/format/html/front-matter/__snapshots__/format.test.js.snap
++++ b/tests/format/html/front-matter/__snapshots__/format.test.js.snap
+@@ -116,3 +116,25 @@ Test <a href="https://prettier.io">abc</a>.
+ 
+ ================================================================================
+ `;
++
++exports[`unicode.html format 1`] = `
++====================================options=====================================
++parsers: ["html"]
++printWidth: 80
++                                                                                | printWidth
++=====================================input======================================
++---
++title: "ABC 漢字 🇯🇵"
++---
++
++<!-- this is a comment -->
++
++=====================================output=====================================
++---
++title: "ABC 漢字 🇯🇵"
++---
++
++<!-- this is a comment -->
++
++================================================================================
++`;
+diff --git a/tests/format/html/front-matter/unicode.html b/tests/format/html/front-matter/unicode.html
+new file mode 100644
+index 000000000..015484718
+--- /dev/null
++++ b/tests/format/html/front-matter/unicode.html
+@@ -0,0 +1,5 @@
++---
++title: "ABC 漢字 🇯🇵"
++---
++
++<!-- this is a comment -->
+diff --git a/tests/format/markdown/front-matter/__snapshots__/format.test.js.snap b/tests/format/markdown/front-matter/__snapshots__/format.test.js.snap
+index 7434355e8..48af5cff3 100644
+--- a/tests/format/markdown/front-matter/__snapshots__/format.test.js.snap
++++ b/tests/format/markdown/front-matter/__snapshots__/format.test.js.snap
+@@ -79,3 +79,25 @@ text
+ 
+ ================================================================================
+ `;
++
++exports[`unicode.md format 1`] = `
++====================================options=====================================
++parsers: ["markdown"]
++printWidth: 80
++                                                                                | printWidth
++=====================================input======================================
++---
++title: "ABC 漢字 🇯🇵"
++---
++
++## Retrospective
++
++=====================================output=====================================
++---
++title: "ABC 漢字 🇯🇵"
++---
++
++## Retrospective
++
++================================================================================
++`;
+diff --git a/tests/format/markdown/front-matter/unicode.md b/tests/format/markdown/front-matter/unicode.md
+new file mode 100644
+index 000000000..058b9f2f3
+--- /dev/null
++++ b/tests/format/markdown/front-matter/unicode.md
+@@ -0,0 +1,5 @@
++---
++title: "ABC 漢字 🇯🇵"
++---
++
++## Retrospective

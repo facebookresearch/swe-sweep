@@ -1,0 +1,24 @@
+diff --git a/src/Symfony/Component/DependencyInjection/Compiler/PriorityTaggedServiceTrait.php b/src/Symfony/Component/DependencyInjection/Compiler/PriorityTaggedServiceTrait.php
+index 7017862..647f84e 100644
+--- a/src/Symfony/Component/DependencyInjection/Compiler/PriorityTaggedServiceTrait.php
++++ b/src/Symfony/Component/DependencyInjection/Compiler/PriorityTaggedServiceTrait.php
+@@ -60,6 +60,7 @@ trait PriorityTaggedServiceTrait
+ 
+             $defaultPriority = null;
+             $defaultIndex = null;
++            $indexes = [];
+             $definition = $container->getDefinition($serviceId);
+             $class = $definition->getClass();
+             $class = $container->getParameterBag()->resolveValue($class) ?: null;
+@@ -87,6 +88,11 @@ trait PriorityTaggedServiceTrait
+                 }
+                 $index ??= $defaultIndex ??= $serviceId;
+ 
++                if (isset($indexes[$index])) {
++                    continue;
++                }
++                $indexes[$index] = true;
++
+                 $services[] = [$priority, ++$i, $index, $serviceId, $class];
+             }
+         }

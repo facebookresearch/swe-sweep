@@ -1,0 +1,29 @@
+diff --git a/numpy/lib/function_base.py b/numpy/lib/function_base.py
+index af890183eae4..15e24a0d9394 100644
+--- a/numpy/lib/function_base.py
++++ b/numpy/lib/function_base.py
+@@ -355,7 +355,8 @@ def average(a, axis=None, weights=None, returned=False):
+ 
+     if weights is None:
+         avg = a.mean(axis)
+-        scl = avg.dtype.type(a.size/avg.size)
++        avg_as_array = np.asanyarray(avg)
++        scl = avg_as_array.dtype.type(a.size/avg_as_array.size)
+     else:
+         wgt = np.asanyarray(weights)
+ 
+@@ -388,11 +389,11 @@ def average(a, axis=None, weights=None, returned=False):
+             raise ZeroDivisionError(
+                 "Weights sum to zero, can't be normalized")
+ 
+-        avg = np.multiply(a, wgt, dtype=result_dtype).sum(axis)/scl
++        avg = avg_as_array = np.multiply(a, wgt, dtype=result_dtype).sum(axis)/scl
+ 
+     if returned:
+-        if scl.shape != avg.shape:
+-            scl = np.broadcast_to(scl, avg.shape).copy()
++        if scl.shape != avg_as_array.shape:
++            scl = np.broadcast_to(scl, avg_as_array.shape).copy()
+         return avg, scl
+     else:
+         return avg

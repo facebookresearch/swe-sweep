@@ -1,0 +1,524 @@
+{
+  "build_jobs": 4,
+  "container_repo": "/ruff",
+  "evaluation": {
+    "suite": "reproduction",
+    "visible_timeout": 14400
+  },
+  "upstream_image": "pandora-maxbug-ruff:0.8.1",
+  "n_base_passing": 519,
+  "n_base_test_ignore": 1,
+  "oracle_digest": "9ad389bc636535eb51813909f097702d72261f7b8624ba55bd71e9d5b1aad45e",
+  "oracle_pristine_paths": [],
+  "upstream_commit": "9f7399e15e6172900e0591deb5a57a45769d8205",
+  "reproduction": {
+    "needs_build": false,
+    "suite": {
+      "groups": [
+        {
+          "crate": "ruff_linter",
+          "module": "rules::{group}::",
+          "prefix": "crates/ruff_linter/resources/test/fixtures"
+        },
+        {
+          "crate": "ruff_linter",
+          "module": "rules::{group}::",
+          "prefix": "crates/ruff_linter/src/rules"
+        }
+      ],
+      "type": "cargo-snapshot"
+    },
+    "test_timeout": 3600
+  },
+  "schema": 2,
+  "subtasks": [
+    {
+      "f2p": [
+        "rules::flake8_bugbear::tests::rules::rule_unreliablecallablecheck_path_new_b004_py_expects"
+      ],
+      "id": "ruff-0504e1e44cdb",
+      "target_files": [
+        "crates/ruff_linter/src/rules/flake8_bugbear/rules/unreliable_callable_check.rs"
+      ]
+    },
+    {
+      "f2p": [
+        "rules::pylint::tests::rules::rule_sysexitalias_path_new_sys_exit_alias_13_py_expects",
+        "rules::pylint::tests::rules::rule_sysexitalias_path_new_sys_exit_alias_14_py_expects",
+        "rules::pylint::tests::rules::rule_sysexitalias_path_new_sys_exit_alias_16_py_expects"
+      ],
+      "id": "ruff-05fea8d1c81f",
+      "target_files": [
+        "crates/ruff_linter/src/checkers/ast/analyze/expression.rs",
+        "crates/ruff_linter/src/rules/pylint/rules/sys_exit_alias.rs"
+      ]
+    },
+    {
+      "f2p": [
+        "rules::pylint::tests::preview_rules::rule_invalidenvvardefault_path_new_invalid_envvar_default_py_expects"
+      ],
+      "id": "ruff-07e9fea8c745",
+      "target_files": [
+        "crates/ruff_python_semantic/src/analyze/type_inference.rs"
+      ]
+    },
+    {
+      "f2p": [
+        "rules::pyupgrade::tests::rules::rule_fstring_path_new_up032_0_py_expects"
+      ],
+      "id": "ruff-0bfa934ea6e8",
+      "target_files": [
+        "crates/ruff_linter/src/rules/pyupgrade/rules/f_strings.rs"
+      ]
+    },
+    {
+      "f2p": [
+        "rules::pycodestyle::tests::rules::rule_invalidescapesequence_path_new_w605_1_py_expects"
+      ],
+      "id": "ruff-0c13e6596cc8",
+      "target_files": [
+        "crates/ruff_linter/src/rules/pycodestyle/rules/invalid_escape_sequence.rs"
+      ]
+    },
+    {
+      "f2p": [
+        "rules::pyupgrade::tests::rules::rule_unnecessaryfutureimport_path_new_up010_py_expects"
+      ],
+      "id": "ruff-144d449d8145",
+      "target_files": [
+        "crates/ruff_linter/src/rules/pyupgrade/rules/unnecessary_future_import.rs"
+      ]
+    },
+    {
+      "f2p": [
+        "rules::flake8_comprehensions::tests::rules::rule_unnecessarydictcomprehensionforiterable_path_new_c420_3_py_expects"
+      ],
+      "id": "ruff-1844e669a7bd",
+      "target_files": [
+        "crates/ruff_linter/src/rules/flake8_comprehensions/rules/unnecessary_dict_comprehension_for_iterable.rs"
+      ]
+    },
+    {
+      "f2p": [
+        "rules::flake8_errmsg::tests::defaults"
+      ],
+      "id": "ruff-1f0d467ad726",
+      "target_files": [
+        "crates/ruff_linter/src/rules/flake8_errmsg/rules/string_in_exception.rs"
+      ]
+    },
+    {
+      "f2p": [
+        "rules::pyflakes::tests::f401_preview_local_init_import::rule_unusedimport_path_new_f401_33_init_py_expects"
+      ],
+      "id": "ruff-1f3bd21d856b",
+      "target_files": [
+        "crates/ruff_linter/src/rules/pyflakes/rules/unused_import.rs"
+      ]
+    },
+    {
+      "f2p": [
+        "rules::pyflakes::tests::rules::rule_undefinedname_path_new_f821_32_pyi_expects"
+      ],
+      "id": "ruff-2432697b130c",
+      "target_files": [
+        "crates/ruff_linter/src/checkers/ast/mod.rs"
+      ]
+    },
+    {
+      "f2p": [
+        "rules::pylint::tests::rules::rule_literalmembership_path_new_literal_membership_py_expects"
+      ],
+      "id": "ruff-34fa8ad1a0c2",
+      "target_files": [
+        "crates/ruff_linter/src/rules/pylint/rules/literal_membership.rs"
+      ]
+    },
+    {
+      "f2p": [
+        "rules::pyupgrade::tests::rules::rule_openalias_path_new_up020_py_expects"
+      ],
+      "id": "ruff-441843bf59eb",
+      "target_files": [
+        "crates/ruff_linter/src/rules/pyupgrade/rules/open_alias.rs"
+      ]
+    },
+    {
+      "f2p": [
+        "rules::pyupgrade::tests::rules::rule_convertnamedtuplefunctionaltoclass_path_new_up014_py_expects",
+        "rules::pyupgrade::tests::rules::rule_converttypeddictfunctionaltoclass_path_new_up013_py_expects"
+      ],
+      "id": "ruff-4590bfaab81b",
+      "target_files": [
+        "crates/ruff_linter/src/rules/pyupgrade/rules/convert_named_tuple_functional_to_class.rs",
+        "crates/ruff_linter/src/rules/pyupgrade/rules/convert_typed_dict_functional_to_class.rs"
+      ]
+    },
+    {
+      "f2p": [
+        "rules::pylint::tests::rules::rule_importprivatename_path_new_import_private_name_submodule_main_py_expects"
+      ],
+      "id": "ruff-4631b93c1a5b",
+      "target_files": [
+        "crates/ruff_linter/src/rules/pylint/rules/import_private_name.rs"
+      ]
+    },
+    {
+      "f2p": [
+        "rules::pyupgrade::tests::rules::rule_supercallwithparameters_path_new_up008_py_expects"
+      ],
+      "id": "ruff-48efa33b2864",
+      "target_files": [
+        "crates/ruff_linter/src/rules/pyupgrade/rules/super_call_with_parameters.rs"
+      ]
+    },
+    {
+      "f2p": [
+        "rules::flake8_bandit::tests::rules::rule_hardcodedsqlexpression_path_new_s608_py_expects"
+      ],
+      "id": "ruff-4c52e04606d0",
+      "target_files": [
+        "crates/ruff_linter/src/rules/flake8_bandit/rules/hardcoded_sql_expression.rs"
+      ]
+    },
+    {
+      "f2p": [
+        "__process_level_failure__"
+      ],
+      "id": "ruff-4d8d46d1f37d",
+      "target_files": [
+        "crates/ruff_linter/src/rules/ruff/typing.rs"
+      ]
+    },
+    {
+      "f2p": [
+        "rules::pylint::tests::too_many_public_methods"
+      ],
+      "id": "ruff-50bb75d46721",
+      "target_files": [
+        "crates/ruff_linter/src/rules/pylint/rules/too_many_public_methods.rs"
+      ]
+    },
+    {
+      "f2p": [
+        "rules::pylint::tests::rules::rule_loadbeforeglobaldeclaration_path_new_load_before_global_declaration_py_expects"
+      ],
+      "id": "ruff-55aa528edb4a",
+      "target_files": [
+        "crates/ruff_linter/src/checkers/ast/mod.rs",
+        "crates/ruff_python_semantic/src/model.rs"
+      ]
+    },
+    {
+      "f2p": [
+        "rules::flake8_pie::tests::rules::rule_unnecessaryspread_path_new_pie800_py_expects"
+      ],
+      "id": "ruff-5b1c0da5ff75",
+      "target_files": [
+        "crates/ruff_linter/src/rules/flake8_pie/rules/unnecessary_spread.rs"
+      ]
+    },
+    {
+      "f2p": [
+        "rules::flake8_comprehensions::tests::rules::rule_unnecessarydictcomprehensionforiterable_path_new_c420_py_expects"
+      ],
+      "id": "ruff-6e8d4769b959",
+      "target_files": [
+        "crates/ruff_linter/src/rules/flake8_comprehensions/rules/unnecessary_dict_comprehension_for_iterable.rs"
+      ]
+    },
+    {
+      "f2p": [
+        "rules::flake8_bandit::tests::rules::rule_unsafeyamlload_path_new_s506_py_expects"
+      ],
+      "id": "ruff-786b07112233",
+      "target_files": [
+        "crates/ruff_linter/src/rules/flake8_bandit/rules/unsafe_yaml_load.rs"
+      ]
+    },
+    {
+      "f2p": [
+        "rules::pyupgrade::tests::rules::rule_formatliterals_path_new_up030_0_py_expects"
+      ],
+      "id": "ruff-7a064cc3c268",
+      "target_files": [
+        "crates/ruff_linter/src/rules/pyupgrade/rules/format_literals.rs"
+      ]
+    },
+    {
+      "f2p": [
+        "rules::flake8_bugbear::tests::extend_immutable_calls_arg_default"
+      ],
+      "id": "ruff-7d2c508b19f9",
+      "target_files": [
+        "crates/ruff_python_stdlib/src/typing.rs"
+      ]
+    },
+    {
+      "f2p": [
+        "rules::pylint::tests::rules::rule_nestedminmax_path_new_nested_min_max_py_expects"
+      ],
+      "id": "ruff-8033d92e0f27",
+      "target_files": [
+        "crates/ruff_linter/src/rules/pylint/rules/nested_min_max.rs"
+      ]
+    },
+    {
+      "f2p": [
+        "rules::flake8_comprehensions::tests::rules::rule_unnecessarydictcomprehensionforiterable_path_new_c420_1_py_expects"
+      ],
+      "id": "ruff-813587abb11f",
+      "target_files": [
+        "crates/ruff_linter/src/rules/flake8_comprehensions/rules/unnecessary_dict_comprehension_for_iterable.rs"
+      ]
+    },
+    {
+      "f2p": [
+        "rules::flake8_bandit::tests::rules::rule_execbuiltin_path_new_s102_py_expects",
+        "rules::flake8_use_pathlib::tests::rules::path_new_import_from_py_expects"
+      ],
+      "id": "ruff-8b8714fca9d6",
+      "target_files": [
+        "crates/ruff_linter/src/rules/flake8_bandit/rules/exec_used.rs",
+        "crates/ruff_linter/src/rules/flake8_use_pathlib/rules/replaceable_by_pathlib.rs"
+      ]
+    },
+    {
+      "f2p": [
+        "rules::pylint::tests::rules::rule_duplicatebases_path_new_duplicate_bases_py_expects"
+      ],
+      "id": "ruff-8f6308864d95",
+      "target_files": [
+        "crates/ruff_linter/src/rules/pylint/rules/duplicate_bases.rs"
+      ]
+    },
+    {
+      "f2p": [
+        "rules::flake8_pytest_style::tests::test_pytest_style::rule_pytestunittestraisesassertion_path_new_pt027_1_py_settings_default_pt027_1_expects"
+      ],
+      "id": "ruff-90093b3c21e8",
+      "target_files": [
+        "crates/ruff_linter/src/checkers/ast/analyze/bindings.rs",
+        "crates/ruff_linter/src/checkers/ast/analyze/expression.rs",
+        "crates/ruff_linter/src/rules/flake8_pytest_style/rules/assertion.rs"
+      ]
+    },
+    {
+      "f2p": [
+        "rules::pep8_naming::tests::rules::rule_invalidfirstargumentnameforclassmethod_path_new_n804_py_expects"
+      ],
+      "id": "ruff-915f71b19f06",
+      "target_files": [
+        "crates/ruff_linter/src/rules/flake8_pyi/rules/non_self_return_type.rs",
+        "crates/ruff_linter/src/rules/pep8_naming/rules/invalid_first_argument_name.rs",
+        "crates/ruff_python_semantic/src/analyze/class.rs"
+      ]
+    },
+    {
+      "f2p": [
+        "rules::flake8_type_checking::tests::type_alias_rules_pre_py310::rule_quotedtypealias_path_new_tc008_union_syntax_pre_py310_py_expects"
+      ],
+      "id": "ruff-9369a0749ae1",
+      "target_files": [
+        "crates/ruff_linter/src/rules/flake8_type_checking/rules/type_alias_quotes.rs"
+      ]
+    },
+    {
+      "f2p": [
+        "rules::pylint::tests::rules::rule_unspecifiedencoding_path_new_unspecified_encoding_py_expects"
+      ],
+      "id": "ruff-9853d7219c58",
+      "target_files": [
+        "crates/ruff_linter/src/rules/pylint/rules/unspecified_encoding.rs"
+      ]
+    },
+    {
+      "f2p": [
+        "rules::pydocstyle::tests::rules::rule_blanklineafterlastsection_path_new_sections_py_expects",
+        "rules::pydocstyle::tests::rules::rule_capitalizesectionname_path_new_sections_py_expects"
+      ],
+      "id": "ruff-a6e745e522ad",
+      "target_files": [
+        "crates/ruff_linter/src/docstrings/sections.rs"
+      ]
+    },
+    {
+      "f2p": [
+        "rules::pycodestyle::tests::blank_lines::rule_blanklinebetweenmethods_path_new_e30_py_expects"
+      ],
+      "id": "ruff-a806f1ac3af3",
+      "target_files": [
+        "crates/ruff_linter/src/rules/pycodestyle/rules/blank_lines.rs"
+      ]
+    },
+    {
+      "f2p": [
+        "rules::pandas_vet::tests::contents::r_import_polars_as_pl_x_pl_dataframe_x_drop_a_inplace_true_pd002_pass_polars_expects",
+        "rules::pandas_vet::tests::contents::r_x_dataframe_x_drop_a_inplace_true_pd002_pass_no_import_expects"
+      ],
+      "id": "ruff-adcfc6db04ba",
+      "target_files": [
+        "crates/ruff_linter/src/rules/pandas_vet/rules/inplace_argument.rs"
+      ]
+    },
+    {
+      "f2p": [
+        "rules::pylint::tests::rules::rule_lentest_path_new_len_as_condition_py_expects"
+      ],
+      "id": "ruff-b4113a1bbc1b",
+      "target_files": [
+        "crates/ruff_linter/src/rules/pylint/rules/len_test.rs"
+      ]
+    },
+    {
+      "f2p": [
+        "rules::eradicate::tests::rules::rule_commentedoutcode_path_new_era001_py_expects"
+      ],
+      "id": "ruff-b70dfb57a43b",
+      "target_files": [
+        "crates/ruff_linter/src/rules/eradicate/rules/commented_out_code.rs"
+      ]
+    },
+    {
+      "f2p": [
+        "rules::refurb::tests::rules::rule_bitcount_path_new_furb161_py_expects"
+      ],
+      "id": "ruff-c750379e2bc5",
+      "target_files": [
+        "crates/ruff_linter/src/rules/refurb/rules/bit_count.rs"
+      ]
+    },
+    {
+      "f2p": [
+        "rules::pylint::tests::rules::rule_badstringformattype_path_new_bad_string_format_type_py_expects"
+      ],
+      "id": "ruff-cc68a9a6f346",
+      "target_files": [
+        "crates/ruff_linter/src/rules/pylint/rules/bad_string_format_type.rs"
+      ]
+    },
+    {
+      "f2p": [
+        "rules::flake8_bugbear::tests::rules::rule_loopiteratormutation_path_new_b909_py_expects"
+      ],
+      "id": "ruff-d07e933e6434",
+      "target_files": [
+        "crates/ruff_linter/src/rules/flake8_bugbear/rules/loop_iterator_mutation.rs"
+      ]
+    },
+    {
+      "f2p": [
+        "rules::flake8_django::tests::rules::rule_djangonullablemodelstringfield_path_new_dj001_py_expects"
+      ],
+      "id": "ruff-d6d6f90e47e0",
+      "target_files": [
+        "crates/ruff_linter/src/rules/flake8_django/rules/nullable_model_string_field.rs"
+      ]
+    },
+    {
+      "f2p": [
+        "rules::flake8_django::tests::rules::rule_djangomodelwithoutdunderstr_path_new_dj008_py_expects"
+      ],
+      "id": "ruff-d860f68dbad5",
+      "target_files": [
+        "crates/ruff_linter/src/rules/flake8_django/rules/model_without_dunder_str.rs"
+      ]
+    },
+    {
+      "f2p": [
+        "rules::flake8_bandit::tests::rules::rule_startprocesswithpartialpath_path_new_s607_py_expects"
+      ],
+      "id": "ruff-dbb303c34e30",
+      "target_files": [
+        "crates/ruff_linter/src/rules/flake8_bandit/rules/shell_injection.rs"
+      ]
+    },
+    {
+      "f2p": [
+        "rules::fastapi::tests::rules::rule_fastapinonannotateddependency_path_new_fast002_py_expects",
+        "rules::fastapi::tests::rules_py38::rule_fastapinonannotateddependency_path_new_fast002_py_expects"
+      ],
+      "id": "ruff-dbd6cc89170c",
+      "target_files": [
+        "crates/ruff_linter/src/rules/fastapi/rules/fastapi_non_annotated_dependency.rs"
+      ]
+    },
+    {
+      "f2p": [
+        "rules::pyupgrade::tests::rules::rule_unnecessarybuiltinimport_path_new_up029_2_py_expects"
+      ],
+      "id": "ruff-dd5c35f0388b",
+      "target_files": [
+        "crates/ruff_linter/src/checkers/ast/analyze/statement.rs",
+        "crates/ruff_linter/src/rules/pyupgrade/rules/unnecessary_builtin_import.rs"
+      ]
+    },
+    {
+      "f2p": [
+        "rules::refurb::tests::rules::rule_reimplementedoperator_path_new_furb118_py_expects"
+      ],
+      "id": "ruff-e0bc6071852a",
+      "target_files": [
+        "crates/ruff_linter/src/rules/refurb/rules/reimplemented_operator.rs"
+      ]
+    },
+    {
+      "f2p": [
+        "rules::flake8_comprehensions::tests::rules::rule_unnecessarymap_path_new_c417_py_expects"
+      ],
+      "id": "ruff-e2f544610c6c",
+      "target_files": [
+        "crates/ruff_linter/src/rules/flake8_comprehensions/rules/unnecessary_map.rs"
+      ]
+    },
+    {
+      "f2p": [
+        "rules::flake8_pyi::tests::rules::rule_stringorbytestoolong_path_new_pyi053_pyi_expects"
+      ],
+      "id": "ruff-e8728f98a565",
+      "target_files": [
+        "crates/ruff_linter/src/rules/flake8_pyi/rules/string_or_bytes_too_long.rs"
+      ]
+    },
+    {
+      "f2p": [
+        "rules::flake8_pyi::tests::rules::rule_nonselfreturntype_path_new_pyi034_py_expects"
+      ],
+      "id": "ruff-eb6ffe5107d0",
+      "target_files": [
+        "crates/ruff_linter/src/rules/flake8_pyi/rules/non_self_return_type.rs"
+      ]
+    },
+    {
+      "f2p": [
+        "rules::flake8_comprehensions::tests::preview_rules::rule_unnecessaryliteralwithintuplecall_path_new_c409_py_expects",
+        "rules::flake8_comprehensions::tests::rules::rule_unnecessaryliteralwithintuplecall_path_new_c409_py_expects"
+      ],
+      "id": "ruff-f27b81c26ceb",
+      "target_files": [
+        "crates/ruff_linter/src/rules/flake8_comprehensions/rules/unnecessary_literal_within_tuple_call.rs"
+      ]
+    },
+    {
+      "f2p": [
+        "rules::isort::tests::required_import::path_new_docstring_followed_by_continuation_py_expects",
+        "rules::isort::tests::required_import_with_alias::path_new_docstring_followed_by_continuation_py_expects"
+      ],
+      "id": "ruff-f44d9a201889",
+      "target_files": [
+        "crates/ruff_linter/src/importer/insertion.rs"
+      ]
+    },
+    {
+      "f2p": [
+        "rules::pyflakes::tests::gh_issue_17196_regression_test"
+      ],
+      "id": "ruff-f763a7644be9",
+      "target_files": [
+        "crates/ruff_linter/src/checkers/ast/mod.rs"
+      ]
+    }
+  ],
+  "task": "ruff",
+  "version": "0.8.1"
+}

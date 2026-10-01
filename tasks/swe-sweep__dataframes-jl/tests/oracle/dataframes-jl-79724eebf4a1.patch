@@ -1,0 +1,14 @@
+diff --git a/src/dataframe/dataframe.jl b/src/dataframe/dataframe.jl
+--- a/src/dataframe/dataframe.jl
++++ b/src/dataframe/dataframe.jl
+@@ -985,6 +985,10 @@ function _delete!_helper(df::DataFrame, drop)
+     cols = _columns(df)
+     isempty(cols) && return df
+ 
++    if any(c -> c === drop || Base.mightalias(c, drop), cols)
++        drop = copy(drop)
++    end
++
+     n = nrow(df)
+     col1 = cols[1]
+     deleteat!(col1, drop)

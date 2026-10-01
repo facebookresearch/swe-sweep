@@ -1,0 +1,17 @@
+diff --git a/pandas/tests/indexes/test_indexing.py b/pandas/tests/indexes/test_indexing.py
+index f7cffe48d1..9acdd52178 100644
+--- a/pandas/tests/indexes/test_indexing.py
++++ b/pandas/tests/indexes/test_indexing.py
+@@ -272,3 +272,12 @@ def test_maybe_cast_slice_bound_kind_deprecated(index):
+     with tm.assert_produces_warning(FutureWarning):
+         # pass as positional
+         index._maybe_cast_slice_bound(index[0], "left", "loc")
++
++
++def test_get_indexer_non_unique_nans_in_object_dtype_target(nulls_fixture):
++    idx = Index([1.0, 2.0])
++    target = Index([1, nulls_fixture], dtype="object")
++
++    result_idx, result_missing = idx.get_indexer_non_unique(target)
++    tm.assert_numpy_array_equal(result_idx, np.array([0, -1], dtype=np.intp))
++    tm.assert_numpy_array_equal(result_missing, np.array([1], dtype=np.intp))

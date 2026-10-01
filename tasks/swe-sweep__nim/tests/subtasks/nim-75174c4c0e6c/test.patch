@@ -1,0 +1,25 @@
+diff --git a/tests/converter/mdontleak.nim b/tests/converter/mdontleak.nim
+new file mode 100644
+index 000000000..e55c3f87c
+--- /dev/null
++++ b/tests/converter/mdontleak.nim
+@@ -0,0 +1,3 @@
++
++converter toBool(x: uint32): bool = x != 0
++# Note: This convertes is not exported!
+diff --git a/tests/converter/tdontleak.nim b/tests/converter/tdontleak.nim
+new file mode 100644
+index 000000000..4965fa90a
+--- /dev/null
++++ b/tests/converter/tdontleak.nim
+@@ -0,0 +1,10 @@
++discard """
++  output: '''5'''
++joinable: false
++"""
++
++import mdontleak
++# bug #19213
++
++let a = 5'u32
++echo a

@@ -1,0 +1,37 @@
+diff --git a/packages/mui-material/src/MobileStepper/MobileStepper.test.js b/packages/mui-material/src/MobileStepper/MobileStepper.test.js
+index 1e1cf73e14..fc124bd985 100644
+--- a/packages/mui-material/src/MobileStepper/MobileStepper.test.js
++++ b/packages/mui-material/src/MobileStepper/MobileStepper.test.js
+@@ -1,6 +1,6 @@
+ import * as React from 'react';
+ import { expect } from 'chai';
+-import { createRenderer, describeConformance, screen } from 'test/utils';
++import { createRenderer, describeConformance, fireEvent, screen } from 'test/utils';
+ import Paper, { paperClasses } from '@mui/material/Paper';
+ import Button from '@mui/material/Button';
+ import MobileStepper, { mobileStepperClasses as classes } from '@mui/material/MobileStepper';
+@@ -111,4 +111,24 @@ describe('<MobileStepper />', () => {
+     rerender(<MobileStepper {...defaultProps} variant="progress" steps={3} activeStep={2} />);
+     expect(screen.getByRole('progressbar').getAttribute('aria-valuenow')).to.equal('100');
+   });
++
++  it('should set value correctly when steps is set to 1', () => {
++    const { getByRole } = render(<MobileStepper {...defaultProps} variant="progress" steps={1} />);
++    const progressBar = screen.getByRole('progressbar');
++    expect(progressBar.getAttribute('aria-valuenow')).to.equal('100');
++    fireEvent.click(getByRole('button', { name: 'next' }));
++    expect(progressBar.getAttribute('aria-valuenow')).to.equal('100');
++    fireEvent.click(getByRole('button', { name: 'back' }));
++    expect(progressBar.getAttribute('aria-valuenow')).to.equal('100');
++  });
++
++  it('should set value correctly when steps is updated between 1 & 2', () => {
++    const { rerender } = render(<MobileStepper {...defaultProps} variant="progress" steps={1} />);
++    const progressBar = screen.getByRole('progressbar');
++    expect(progressBar.getAttribute('aria-valuenow')).to.equal('100');
++    rerender(<MobileStepper {...defaultProps} variant="progress" steps={2} />);
++    expect(progressBar.getAttribute('aria-valuenow')).to.equal('0');
++    rerender(<MobileStepper {...defaultProps} variant="progress" steps={1} />);
++    expect(progressBar.getAttribute('aria-valuenow')).to.equal('100');
++  });
+ });

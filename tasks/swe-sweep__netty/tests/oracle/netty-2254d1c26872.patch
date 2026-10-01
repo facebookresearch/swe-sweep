@@ -1,0 +1,13 @@
+diff --git a/codec-http2/src/main/java/io/netty/handler/codec/http2/DefaultHttp2FrameWriter.java b/codec-http2/src/main/java/io/netty/handler/codec/http2/DefaultHttp2FrameWriter.java
+index 9b608921c2..8540e0c2ed 100644
+--- a/codec-http2/src/main/java/io/netty/handler/codec/http2/DefaultHttp2FrameWriter.java
++++ b/codec-http2/src/main/java/io/netty/handler/codec/http2/DefaultHttp2FrameWriter.java
+@@ -595,7 +595,7 @@ public class DefaultHttp2FrameWriter implements Http2FrameWriter, Http2FrameSize
+ 
+                 payloadLength = fragmentReadableBytes + padding;
+                 if (headerBlock.isReadable()) {
+-                    ctx.write(buf.retain(), promiseAggregator.newPromise());
++                    ctx.write(buf.retainedSlice(), promiseAggregator.newPromise());
+                 } else {
+                     // The frame header is different for the last frame, so re-allocate and release the old buffer
+                     flags = flags.endOfHeaders(true);

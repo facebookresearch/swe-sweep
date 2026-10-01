@@ -1,0 +1,47 @@
+diff --git a/vlib/v/fmt/tests/types_expected.vv b/vlib/v/fmt/tests/types_expected.vv
+index b90e5be8e..80c601352 100644
+--- a/vlib/v/fmt/tests/types_expected.vv
++++ b/vlib/v/fmt/tests/types_expected.vv
+@@ -5,6 +5,20 @@ pub type PublicBar = Bar | Foo | FooBar
+ type Uint = u16 | u32 | u64 | u8 // This should stay on the same line
+ type Float = f32 | f64
+ 
++// Callback represents all the possible callbacks
++pub type Callback = ConnectedCallback // connected callback
++	| DisconnectedCallback // disconnected callback
++	| LoggedOffCallback // logged off callback
++	| LoggedOnCallback // logged on callback
++
++struct ConnectedCallback {}
++
++struct DisconnectedCallback {}
++
++struct LoggedOnCallback {}
++
++struct LoggedOffCallback {}
++
+ // Alias type
+ type MyInt = int
+ 
+diff --git a/vlib/v/fmt/tests/types_input.vv b/vlib/v/fmt/tests/types_input.vv
+index b90e5be8e..97028fe5f 100644
+--- a/vlib/v/fmt/tests/types_input.vv
++++ b/vlib/v/fmt/tests/types_input.vv
+@@ -5,6 +5,17 @@ pub type PublicBar = Bar | Foo | FooBar
+ type Uint = u16 | u32 | u64 | u8 // This should stay on the same line
+ type Float = f32 | f64
+ 
++// Callback represents all the possible callbacks
++pub type Callback = ConnectedCallback 	// connected callback
++	| LoggedOnCallback // logged on callback
++	| DisconnectedCallback 	// disconnected callback
++	| LoggedOffCallback // logged off callback
++
++struct ConnectedCallback{}
++struct DisconnectedCallback{}
++struct LoggedOnCallback{}
++struct LoggedOffCallback{}
++
+ // Alias type
+ type MyInt = int
+ 

@@ -1,0 +1,12 @@
+diff --git a/packages/mui-base/src/AutocompleteUnstyled/useAutocomplete.js b/packages/mui-base/src/AutocompleteUnstyled/useAutocomplete.js
+index 235c201b88..4a6074fbad 100644
+--- a/packages/mui-base/src/AutocompleteUnstyled/useAutocomplete.js
++++ b/packages/mui-base/src/AutocompleteUnstyled/useAutocomplete.js
+@@ -1095,6 +1095,7 @@ export default function useAutocomplete(props) {
+       autoCapitalize: 'none',
+       spellCheck: 'false',
+       role: 'combobox',
++      disabled: disabledProp,
+     }),
+     getClearProps: () => ({
+       tabIndex: -1,

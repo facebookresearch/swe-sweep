@@ -1,0 +1,35 @@
+diff --git a/cpp/src/parquet/metadata.cc b/cpp/src/parquet/metadata.cc
+index 139793219d..fe16f5b76b 100644
+--- a/cpp/src/parquet/metadata.cc
++++ b/cpp/src/parquet/metadata.cc
+@@ -97,7 +97,7 @@ static std::shared_ptr<Statistics> MakeTypedColumnStats(
+         descr, metadata.statistics.min_value, metadata.statistics.max_value,
+         metadata.num_values - metadata.statistics.null_count,
+         metadata.statistics.null_count, metadata.statistics.distinct_count,
+-        metadata.statistics.__isset.max_value || metadata.statistics.__isset.min_value,
++        metadata.statistics.__isset.max_value && metadata.statistics.__isset.min_value,
+         metadata.statistics.__isset.null_count,
+         metadata.statistics.__isset.distinct_count);
+   }
+@@ -106,7 +106,7 @@ static std::shared_ptr<Statistics> MakeTypedColumnStats(
+       descr, metadata.statistics.min, metadata.statistics.max,
+       metadata.num_values - metadata.statistics.null_count,
+       metadata.statistics.null_count, metadata.statistics.distinct_count,
+-      metadata.statistics.__isset.max || metadata.statistics.__isset.min,
++      metadata.statistics.__isset.max && metadata.statistics.__isset.min,
+       metadata.statistics.__isset.null_count, metadata.statistics.__isset.distinct_count);
+ }
+ 
+diff --git a/cpp/src/parquet/statistics.h b/cpp/src/parquet/statistics.h
+index 0d6ea9898f..c5da44a7b6 100644
+--- a/cpp/src/parquet/statistics.h
++++ b/cpp/src/parquet/statistics.h
+@@ -246,7 +246,7 @@ class PARQUET_EXPORT Statistics {
+   /// \brief The number of non-null values in the column
+   virtual int64_t num_values() const = 0;
+ 
+-  /// \brief Return true if the min and max statistics are set. Obtain
++  /// \brief Return true if both min and max statistics are set. Obtain
+   /// with TypedStatistics<T>::min and max
+   virtual bool HasMinMax() const = 0;
+ 

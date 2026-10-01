@@ -1,0 +1,102 @@
+diff --git a/activerecord/test/cases/reflection_test.rb b/activerecord/test/cases/reflection_test.rb
+index 6bc3443165c..31efe56f1f5 100644
+--- a/activerecord/test/cases/reflection_test.rb
++++ b/activerecord/test/cases/reflection_test.rb
+@@ -27,6 +27,7 @@ require "models/cake_designer"
+ require "models/drink_designer"
+ require "models/recipe"
+ require "models/user_with_invalid_relation"
++require "models/hardback"
+ 
+ class ReflectionTest < ActiveRecord::TestCase
+   include ActiveRecord::Reflection
+@@ -324,7 +325,7 @@ class ReflectionTest < ActiveRecord::TestCase
+     assert_equal 2, hotel.chefs.count
+   end
+ 
+-  def test_scope_chain_does_not_interfere_with_hmt_with_polymorphic_case_and_sti
++  def test_scope_chain_does_not_interfere_with_hmt_with_polymorphic_case_and_subclass_source
+     hotel = Hotel.create!
+     hotel.mocktail_designers << MocktailDesigner.create!
+ 
+@@ -341,6 +342,20 @@ class ReflectionTest < ActiveRecord::TestCase
+     assert_equal 0, hotel.chef_lists.count
+   end
+ 
++  def test_scope_chain_does_not_interfere_with_hmt_with_polymorphic_and_subclass_source_2
++    author = Author.create!(name: "John Doe")
++    hardback = BestHardback.create!
++    author.best_hardbacks << hardback
++
++    assert_equal [hardback], author.best_hardbacks
++    assert_equal [hardback], author.reload.best_hardbacks
++
++    author.best_hardbacks = []
++
++    assert_empty author.best_hardbacks
++    assert_empty author.reload.best_hardbacks
++  end
++
+   def test_scope_chain_of_polymorphic_association_does_not_leak_into_other_hmt_associations
+     hotel = Hotel.create!
+     department = hotel.departments.create!
+diff --git a/activerecord/test/models/author.rb b/activerecord/test/models/author.rb
+index 4f423162468..d657c754187 100644
+--- a/activerecord/test/models/author.rb
++++ b/activerecord/test/models/author.rb
+@@ -168,6 +168,7 @@ class Author < ActiveRecord::Base
+   has_many :tags_with_primary_key, through: :posts
+ 
+   has_many :books
++  has_many :best_hardbacks, through: :books, source: :format_record, source_type: "BestHardback"
+   has_many :published_books, class_name: "PublishedBook"
+   has_many :unpublished_books, -> { where(status: [:proposed, :written]) }, class_name: "Book"
+   has_many :subscriptions,        through: :books
+diff --git a/activerecord/test/models/book.rb b/activerecord/test/models/book.rb
+index e376c0e7d95..d775392471c 100644
+--- a/activerecord/test/models/book.rb
++++ b/activerecord/test/models/book.rb
+@@ -2,6 +2,7 @@
+ 
+ class Book < ActiveRecord::Base
+   belongs_to :author
++  belongs_to :format_record, polymorphic: true
+ 
+   has_many :citations, foreign_key: "book1_id", inverse_of: :book
+   has_many :references, -> { distinct }, through: :citations, source: :reference_of
+diff --git a/activerecord/test/models/hardback.rb b/activerecord/test/models/hardback.rb
+new file mode 100644
+index 00000000000..76e4d07deb0
+--- /dev/null
++++ b/activerecord/test/models/hardback.rb
+@@ -0,0 +1,7 @@
++# frozen_string_literal: true
++
++class Hardback < ActiveRecord::Base
++end
++
++class BestHardback < Hardback
++end
+diff --git a/activerecord/test/schema/schema.rb b/activerecord/test/schema/schema.rb
+index ff69895636e..60f87eeb880 100644
+--- a/activerecord/test/schema/schema.rb
++++ b/activerecord/test/schema/schema.rb
+@@ -125,6 +125,8 @@ ActiveRecord::Schema.define do
+     default_zero = { default: 0 }
+     t.references :author
+     t.string :format
++    t.integer :format_record_id
++    t.string :format_record_type
+     t.column :name, :string
+     t.column :status, :integer, **default_zero
+     t.column :last_read, :integer, **default_zero
+@@ -165,6 +167,9 @@ ActiveRecord::Schema.define do
+     t.datetime :updated_at
+   end
+ 
++  create_table :hardbacks, force: true do |t|
++  end
++
+   create_table :booleans, force: true do |t|
+     t.boolean :value
+     t.boolean :has_fun, null: false, default: false

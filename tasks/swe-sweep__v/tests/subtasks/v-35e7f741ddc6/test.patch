@@ -1,0 +1,40 @@
+diff --git a/vlib/v/gen/c/testdata/string_escapes_and_quoting_issue_25304_1.out b/vlib/v/gen/c/testdata/string_escapes_and_quoting_issue_25304_1.out
+new file mode 100644
+index 000000000..60b5fd27b
+--- /dev/null
++++ b/vlib/v/gen/c/testdata/string_escapes_and_quoting_issue_25304_1.out
+@@ -0,0 +1,2 @@
++start
++done
+diff --git a/vlib/v/gen/c/testdata/string_escapes_and_quoting_issue_25304_1.vv b/vlib/v/gen/c/testdata/string_escapes_and_quoting_issue_25304_1.vv
+new file mode 100644
+index 000000000..97e8c2cd1
+--- /dev/null
++++ b/vlib/v/gen/c/testdata/string_escapes_and_quoting_issue_25304_1.vv
+@@ -0,0 +1,6 @@
++println('start')
++b := 'Hello world!\u004azz\u005cXYZ'
++a := 'zzz\u005c${')}}));builtin__println(b);//'}QWE'
++_ := a
++_ := b
++println('done')
+diff --git a/vlib/v/gen/c/testdata/string_escapes_and_quoting_issue_25304_2.out b/vlib/v/gen/c/testdata/string_escapes_and_quoting_issue_25304_2.out
+new file mode 100644
+index 000000000..60b5fd27b
+--- /dev/null
++++ b/vlib/v/gen/c/testdata/string_escapes_and_quoting_issue_25304_2.out
+@@ -0,0 +1,2 @@
++start
++done
+diff --git a/vlib/v/gen/c/testdata/string_escapes_and_quoting_issue_25304_2.vv b/vlib/v/gen/c/testdata/string_escapes_and_quoting_issue_25304_2.vv
+new file mode 100644
+index 000000000..f8a2db4ce
+--- /dev/null
++++ b/vlib/v/gen/c/testdata/string_escapes_and_quoting_issue_25304_2.vv
+@@ -0,0 +1,6 @@
++println('start')
++b := 'Hello world!'
++c := '\u005c${')}}));builtin__println(b);//'}'
++_ := b
++_ := c
++println('done')

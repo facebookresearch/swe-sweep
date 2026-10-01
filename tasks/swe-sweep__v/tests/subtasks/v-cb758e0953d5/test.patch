@@ -1,0 +1,15 @@
+diff --git a/vlib/v/fmt/tests/fn_with_end_comments_keep.vv b/vlib/v/fmt/tests/fn_with_end_comments_keep.vv
+new file mode 100644
+index 000000000..da8ca512c
+--- /dev/null
++++ b/vlib/v/fmt/tests/fn_with_end_comments_keep.vv
+@@ -0,0 +1,9 @@
++fn (c Color) is_blue() bool {
++	return c == .blue
++} // method of enum
++
++fn (c Color) show_int() int {
++	return int(c)
++} // method of enum
++
++fn main() {}

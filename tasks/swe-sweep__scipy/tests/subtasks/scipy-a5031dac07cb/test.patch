@@ -1,0 +1,22 @@
+diff --git a/scipy/stats/tests/test_distributions.py b/scipy/stats/tests/test_distributions.py
+index 868f51c01d..322cb1dd1d 100644
+--- a/scipy/stats/tests/test_distributions.py
++++ b/scipy/stats/tests/test_distributions.py
+@@ -1548,6 +1548,17 @@ class TestGamma(object):
+         logpdf = stats.gamma.logpdf(0, 1)
+         assert_almost_equal(logpdf, 0)
+ 
++def test_pdf_overflow_gh19616():
++    # Confirm that gh19616 (intermediate over/underflows in PDF) is resolved
++    # Reference value from R GeneralizedHyperbolic library
++    # library(GeneralizedHyperbolic)
++    # options(digits=16)
++    # jitter = 1e-3
++    # dnig(1, a=2**0.5 / jitter**2, b=1 / jitter**2)
++    jitter = 1e-3
++    Z = stats.norminvgauss(2**0.5 / jitter**2, 1 / jitter**2, loc=0, scale=1)
++    assert_allclose(Z.pdf(1.0), 282.0948446666433)
++
+ 
+ class TestChi2(object):
+     # regression tests after precision improvements, ticket:1041, not verified

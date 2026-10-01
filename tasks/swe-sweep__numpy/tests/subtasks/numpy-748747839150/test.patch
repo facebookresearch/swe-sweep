@@ -1,0 +1,13 @@
+diff --git a/numpy/ma/tests/test_regression.py b/numpy/ma/tests/test_regression.py
+index 54f1bda7db7..b83873a5a18 100644
+--- a/numpy/ma/tests/test_regression.py
++++ b/numpy/ma/tests/test_regression.py
+@@ -83,4 +83,8 @@ class TestRegression(object):
+         # Check that the above no longer changes a.shape to (1, 2)
+         assert_(a.mask.shape == (2,))
+         assert_(b.shape == (2, 2))
+         assert_(b.mask.shape == (2, 2))
++
++    def test_masked_array_tostring_fortran(self):
++        ma = np.ma.arange(4).reshape((2,2))
++        assert_array_equal(ma.tostring(order='F'), ma.T.tostring())

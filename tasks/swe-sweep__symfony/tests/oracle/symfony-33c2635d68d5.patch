@@ -1,0 +1,12 @@
+diff --git a/src/Symfony/Component/Mime/Header/PathHeader.php b/src/Symfony/Component/Mime/Header/PathHeader.php
+index 63eb30af01b..4b0b7d39556 100644
+--- a/src/Symfony/Component/Mime/Header/PathHeader.php
++++ b/src/Symfony/Component/Mime/Header/PathHeader.php
+@@ -57,6 +57,6 @@ final class PathHeader extends AbstractHeader
+ 
+     public function getBodyAsString(): string
+     {
+-        return '<'.$this->address->toString().'>';
++        return '<'.$this->address->getEncodedAddress().'>';
+     }
+ }

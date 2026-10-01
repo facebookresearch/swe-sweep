@@ -1,0 +1,12 @@
+diff --git a/mypy/checker.py b/mypy/checker.py
+index 33705c98e..d13b927b2 100644
+--- a/mypy/checker.py
++++ b/mypy/checker.py
+@@ -1482,6 +1482,7 @@ class TypeChecker(NodeVisitor[None], TypeCheckerSharedApi, SplittingVisitor):
+                         "Consider using the upper bound "
+                         f"{format_type(typ.ret_type.upper_bound, self.options)} instead",
+                         context=typ.ret_type,
++                        code=TYPE_VAR,
+                     )
+ 
+     def check_default_args(self, item: FuncItem, body_is_trivial: bool) -> None:

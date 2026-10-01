@@ -1,0 +1,235 @@
+diff --git a/src/H5A.c b/src/H5A.c
+index 9402432..2b0eb3a 100644
+--- a/src/H5A.c
++++ b/src/H5A.c
+@@ -790,7 +790,8 @@ done:
+     Up to 'buf_size' characters are stored in 'buf' followed by a '\0' string
+     terminator.  If the name of the attribute is longer than 'buf_size'-1,
+     the string terminator is stored in the last position of the buffer to
+-    properly terminate the string.
++    properly terminate the string.  If 'buf' is non-NULL but 'buf_size' is 0,
++    treat the call as length being queried.
+ --------------------------------------------------------------------------*/
+ ssize_t
+ H5Aget_name(hid_t attr_id, size_t buf_size, char *buf)
+@@ -801,6 +802,10 @@ H5Aget_name(hid_t attr_id, size_t buf_size, char *buf)
+     FUNC_ENTER_API((-1))
+     H5TRACE3("Zs", "iz*s", attr_id, buf_size, buf);
+ 
++    /* If buffer size is zero, treat as length query and do not write, even a '\0' */
++    if (buf && buf_size == 0)
++        buf = NULL;
++
+     /* check arguments */
+     if (NULL == (my_attr = (H5A_t *)H5I_object_verify(attr_id, H5I_ATTR)))
+         HGOTO_ERROR(H5E_ARGS, H5E_BADTYPE, (-1), "not an attribute")
+@@ -843,6 +848,10 @@ H5Aget_name_by_idx(hid_t loc_id, const char *obj_name, H5_index_t idx_type, H5_i
+     FUNC_ENTER_API(FAIL)
+     H5TRACE8("Zs", "i*sIiIohxzi", loc_id, obj_name, idx_type, order, n, name, size, lapl_id);
+ 
++    /* If buffer size is zero, treat as length query and do not write, even a '\0' */
++    if (name && size == 0)
++        name = NULL;
++
+     /* Check args */
+     if (H5I_ATTR == H5I_get_type(loc_id))
+         HGOTO_ERROR(H5E_ARGS, H5E_BADTYPE, FAIL, "location is not valid for an attribute")
+diff --git a/src/H5F.c b/src/H5F.c
+index 28fa8af..3094288 100644
+--- a/src/H5F.c
++++ b/src/H5F.c
+@@ -989,19 +989,27 @@ done:
+  * Function:    H5Fget_name
+  *
+  * Purpose:     Gets the name of the file to which object OBJ_ID belongs.
+- *              If 'name' is non-NULL then write up to 'size' bytes into that
+- *              buffer and always return the length of the entry name.
+- *              Otherwise `size' is ignored and the function does not store
+- *              the name, just returning the number of characters required to
+- *              store the name. If an error occurs then the buffer pointed to
+- *              by 'name' (NULL or non-NULL) is unchanged and the function
+- *              returns a negative value.
++ *
++ * Description:
++ *              When 'name' is non-NULL:
++ *                - if 'size' > 0: writes up to 'size' bytes into the buffer
++ *                  (including null terminator) and returns the actual length
++ *                  of the name (excluding null terminator).
++ *                - if 'size' == 0: treats the call as length query, does not
++ *                  write anything to the buffer (not even a null terminator), and
++ *                  returns the actual length of the name (excluding null terminator).
++ *
++ *              When 'name' is NULL: does not write anything regardless of 'size'
++ *              and returns the actual length of the name (excluding null terminator).
++ *
++ *              On error, the buffer is unchanged and the function returns
++ *              a negative value.
++ *
++ * Return:      Success:    Length of the name (excluding null terminator)
++ *              Failure:    Negative
+  *
+  * Note:        This routine returns the name that was used to open the file,
+  *              not the actual name after resolving symlinks, etc.
+- *
+- * Return:      Success:    The length of the file name
+- *              Failure:    -1
+  *-------------------------------------------------------------------------
+  */
+ ssize_t
+@@ -1014,6 +1022,10 @@ H5Fget_name(hid_t obj_id, char *name /*out*/, size_t size)
+     FUNC_ENTER_API((-1))
+     H5TRACE3("Zs", "ixz", obj_id, name, size);
+ 
++    /* If name size is zero, treat as length query and do not write, even a '\0' */
++    if (name && size == 0)
++        name = NULL;
++
+     /* For file IDs, get the file object directly */
+     /* (This prevents the H5G_loc() call from returning the file pointer for
+      * the top file in a mount hierarchy)
+diff --git a/src/H5Gdeprec.c b/src/H5Gdeprec.c
+index 75e47d4..3b5cc28 100644
+--- a/src/H5Gdeprec.c
++++ b/src/H5Gdeprec.c
+@@ -996,19 +996,26 @@ done:
+  * Function:	H5Gget_objname_by_idx
+  *
+  * Purpose:     Returns the name of objects in the group by giving index.
+- *              If `name' is non-NULL then write up to `size' bytes into that
+- *              buffer and always return the length of the entry name.
+- *              Otherwise `size' is ignored and the function does not store the name,
+- *              just returning the number of characters required to store the name.
+- *              If an error occurs then the buffer pointed to by `name' (NULL or non-NULL)
+- *              is unchanged and the function returns a negative value.
+- *              If a zero is returned for the name's length, then there is no name
+- *              associated with the ID.
+  *
+- * Note:	Deprecated in favor of H5Lget_name_by_idx
++ * Description:
++ *              When 'name' is non-NULL:
++ *                - if 'size' > 0: writes up to 'size' bytes into the buffer
++ *                  (including null terminator) and returns the actual length
++ *                  of the name (excluding null terminator).
++ *                - if 'size' == 0: treats the call as length query, does not
++ *                  write anything to the buffer (not even a null terminator), and
++ *                  returns the actual length of the name (excluding null terminator).
+  *
+- * Return:	Success:        Non-negative
+- *		Failure:	Negative
++ *              When 'name' is NULL: does not write anything regardless of 'size'
++ *              and returns the actual length of the name (excluding null terminator).
++ *
++ *              On error, the buffer is unchanged and the function returns
++ *              a negative value.
++ *
++ * Return:      Success:    Length of the name (excluding null terminator)
++ *              Failure:    Negative
++ *
++ * Note:	Deprecated in favor of H5Lget_name_by_idx
+  *
+  * Programmer:	Raymond Lu
+  *	        Nov 20, 2002
+@@ -1025,6 +1032,10 @@ H5Gget_objname_by_idx(hid_t loc_id, hsize_t idx, char *name, size_t size)
+     FUNC_ENTER_API(FAIL)
+     H5TRACE4("Zs", "ih*sz", loc_id, idx, name, size);
+ 
++    /* If name size is zero, treat as length query and do not write, even a '\0' */
++    if (name && size == 0)
++        name = NULL;
++
+     /* Check args */
+     if (H5G_loc(loc_id, &loc) < 0)
+         HGOTO_ERROR(H5E_SYM, H5E_BADTYPE, FAIL, "not a location ID")
+diff --git a/src/H5I.c b/src/H5I.c
+index 75678c7..42e5aa2 100644
+--- a/src/H5I.c
++++ b/src/H5I.c
+@@ -772,19 +772,27 @@ done:
+  *
+  * Purpose:     Gets a name of an object from its ID.
+  *
+- * Return:      Success:    The length of the name
++ * Description:
++ *              When 'name' is non-NULL:
++ *                - if 'size' > 0: writes up to 'size' bytes into the buffer
++ *                  (including null terminator) and returns the actual length
++ *                  of the name (excluding null terminator).
++ *                - if 'size' == 0: treats the call as length query, does not
++ *                  write anything to the buffer (not even a null terminator), and
++ *                  returns the actual length of the name (excluding null terminator).
+  *
+- *              Failure:    -1
++ *              When 'name' is NULL: does not write anything regardless of 'size'
++ *              and returns the actual length of the name (excluding null terminator).
++ *
++ *              On error, the buffer is unchanged and the function returns
++ *              a negative value.
++ *
++ * Return:      Success:    The length of the name (excluding null terminator)
++ *              Failure:    Negative
+  *
+  * Notes:
+- *  If 'name' is non-NULL then write up to 'size' bytes into that
+- *  buffer and always return the length of the entry name.
+- *  Otherwise 'size' is ignored and the function does not store the name,
+- *  just returning the number of characters required to store the name.
+- *  If an error occurs then the buffer pointed to by 'name' (NULL or non-NULL)
+- *  is unchanged and the function returns a negative value.
+- *  If a zero is returned for the name's length, then there is no name
+- *  associated with the ID.
++ *              If a zero is returned for the name's length, then there is no name
++ *              associated with the ID.
+  *
+  *-------------------------------------------------------------------------
+  */
+@@ -797,6 +805,10 @@ H5Iget_name(hid_t id, char *name /*out*/, size_t size)
+     FUNC_ENTER_API((-1))
+     H5TRACE3("Zs", "ixz", id, name, size);
+ 
++    /* If name size is zero, treat as length query and do not write, even a '\0' */
++    if (name && size == 0)
++        name = NULL;
++
+     /* Get object location */
+     if (H5G_loc(id, &loc) < 0)
+         HGOTO_ERROR(H5E_ATOM, H5E_CANTGET, (-1), "can't retrieve object location")
+diff --git a/src/H5L.c b/src/H5L.c
+index 36ac3f4..351c301 100644
+--- a/src/H5L.c
++++ b/src/H5L.c
+@@ -1054,6 +1054,10 @@ H5Lget_name_by_idx(hid_t loc_id, const char *group_name, H5_index_t idx_type, H5
+     FUNC_ENTER_API((-1))
+     H5TRACE8("Zs", "i*sIiIohxzi", loc_id, group_name, idx_type, order, n, name, size, lapl_id);
+ 
++    /* If name size is zero, treat as length query and do not write, even a '\0' */
++    if (name && size == 0)
++        name = NULL;
++
+     /* Check arguments */
+     if (H5G_loc(loc_id, &loc))
+         HGOTO_ERROR(H5E_ARGS, H5E_BADTYPE, FAIL, "not a location")
+diff --git a/src/H5R.c b/src/H5R.c
+index c1a4128..a981a7b 100644
+--- a/src/H5R.c
++++ b/src/H5R.c
+@@ -302,6 +302,9 @@ done:
+  DESCRIPTION
+     Given a reference to some object, determine a path to the object
+     referenced in the file.
++    If 'name' is non-NULL but 'size' is 0, the call is treated as a length
++    query: nothing is written to the buffer (not even a null terminator) and
++    the length of the name (excluding the null terminator) is returned.
+  GLOBAL VARIABLES
+  COMMENTS, BUGS, ASSUMPTIONS
+     This may not be the only path to that object.
+@@ -332,6 +335,10 @@ H5Rget_name(hid_t id, H5R_type_t ref_type, const void *_ref, char *name, size_t
+     if (_ref == NULL)
+         HGOTO_ERROR(H5E_ARGS, H5E_BADVALUE, (-1), "invalid reference pointer")
+ 
++    /* If name size is zero, treat as length query and do not write, even a '\0' */
++    if (name && size == 0)
++        name = NULL;
++
+     /* Get the file pointer from the entry */
+     file = loc.oloc->file;
+ 

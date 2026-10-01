@@ -1,0 +1,12 @@
+diff --git a/src/Lean/Meta/Match/Match.lean b/src/Lean/Meta/Match/Match.lean
+index 83acec06a2..5a2be544ca 100644
+--- a/src/Lean/Meta/Match/Match.lean
++++ b/src/Lean/Meta/Match/Match.lean
+@@ -540,6 +540,7 @@ private def processConstructor (p : Problem) : MetaM (Array Problem) := do
+     return { mvarId := subgoal.mvarId, vars := newVars, alts := newAlts, examples := examples }
+ 
+ private def altsAreCtorLike (p : Problem) : MetaM Bool := withGoalOf p do
++  pure (hasCtorPattern p) <&&>
+   p.alts.allM fun alt => do match alt.patterns with
+     | .ctor .. :: _ => return true
+     | .inaccessible e :: _ => isConstructorApp e

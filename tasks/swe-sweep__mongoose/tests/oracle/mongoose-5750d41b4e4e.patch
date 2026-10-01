@@ -1,0 +1,193 @@
+diff --git a/lib/document.js b/lib/document.js
+index 81d51a2ce..0918d26fb 100644
+--- a/lib/document.js
++++ b/lib/document.js
+@@ -2684,7 +2684,7 @@ function _getPathsToValidate(doc, pathsToValidate, pathsToSkip) {
+ 
+     // Optimization: if primitive path with no validators, or array of primitives
+     // with no validators, skip validating this path entirely.
+-    if (!_pathType.caster && _pathType.validators.length === 0) {
++    if (!_pathType.caster && _pathType.validators.length === 0 && !_pathType.$parentSchemaDocArray) {
+       paths.delete(path);
+     } else if (_pathType.$isMongooseArray &&
+       !_pathType.$isMongooseDocumentArray && // Skip document arrays...
+@@ -2663,7 +2663,19 @@ function _getPathsToValidate(doc, pathsToValidate, pathsToSkip) {
+       continue;
+     }
+     const _pathType = doc.$__schema.path(path);
+-    if (!_pathType || !_pathType.$isSchemaMap) {
++
++    if (!_pathType) {
++      continue;
++    }
++
++    // If underneath a document array, may need to re-validate the parent
++    // array re: gh-6818. Do this _after_ adding subpaths, because
++    // we don't want to add every array subpath.
++    if (_pathType.$parentSchemaDocArray && typeof _pathType.$parentSchemaDocArray.path === 'string') {
++      paths.add(_pathType.$parentSchemaDocArray.path);
++    }
++
++    if (!_pathType.$isSchemaMap) {
+       continue;
+     }
+ 
+@@ -3318,14 +3330,7 @@ Document.prototype.$__reset = function reset() {
+     if (this.isModified(fullPathWithIndexes) || isParentInit(fullPathWithIndexes)) {
+       subdoc.$__reset();
+       if (subdoc.$isDocumentArrayElement) {
+-        if (!resetArrays.has(subdoc.parentArray())) {
+-          const array = subdoc.parentArray();
+-          this.$__.activePaths.clearPath(fullPathWithIndexes.replace(/\.\d+$/, '').slice(-subdoc.$basePath - 1));
+-          array[arrayAtomicsBackupSymbol] = array[arrayAtomicsSymbol];
+-          array[arrayAtomicsSymbol] = {};
+-
+-          resetArrays.add(array);
+-        }
++        resetArrays.add(subdoc.parentArray());
+       } else {
+         if (subdoc.$parent() === this) {
+           this.$__.activePaths.clearPath(subdoc.$basePath);
+@@ -3338,6 +3343,12 @@ Document.prototype.$__reset = function reset() {
+     }
+   }
+ 
++  for (const array of resetArrays) {
++    this.$__.activePaths.clearPath(array.$path());
++    array[arrayAtomicsBackupSymbol] = array[arrayAtomicsSymbol];
++    array[arrayAtomicsSymbol] = {};
++  }
++
+   function isParentInit(path) {
+     path = path.indexOf('.') === -1 ? [path] : path.split('.');
+     let cur = '';
+diff --git a/lib/helpers/populate/getModelsMapForPopulate.js b/lib/helpers/populate/getModelsMapForPopulate.js
+index 314661ff2..dd70d4362 100644
+--- a/lib/helpers/populate/getModelsMapForPopulate.js
++++ b/lib/helpers/populate/getModelsMapForPopulate.js
+@@ -64,7 +64,7 @@ module.exports = function getModelsMapForPopulate(model, docs, options) {
+         schema.options.refPath == null) {
+       continue;
+     }
+-    const isUnderneathDocArray = schema && schema.$isUnderneathDocArray;
++    const isUnderneathDocArray = schema && schema.$parentSchemaDocArray;
+     if (isUnderneathDocArray && get(options, 'options.sort') != null) {
+       return new MongooseError('Cannot populate with `sort` on path ' + options.path +
+         ' because it is a subproperty of a document array');
+diff --git a/lib/helpers/populate/getSchemaTypes.js b/lib/helpers/populate/getSchemaTypes.js
+index 0534f0152..8cbbcafa8 100644
+--- a/lib/helpers/populate/getSchemaTypes.js
++++ b/lib/helpers/populate/getSchemaTypes.js
+@@ -101,8 +101,8 @@ module.exports = function getSchemaTypes(model, schema, doc, path) {
+               nestedPath.concat(parts.slice(0, p))
+             );
+             if (ret) {
+-              ret.$isUnderneathDocArray = ret.$isUnderneathDocArray ||
+-                !foundschema.schema.$isSingleNested;
++              ret.$parentSchemaDocArray = ret.$parentSchemaDocArray ||
++                (foundschema.schema.$isSingleNested ? null : foundschema);
+             }
+             return ret;
+           }
+@@ -117,10 +117,10 @@ module.exports = function getSchemaTypes(model, schema, doc, path) {
+                 nestedPath.concat(parts.slice(0, p))
+               );
+               if (_ret != null) {
+-                _ret.$isUnderneathDocArray = _ret.$isUnderneathDocArray ||
+-                  !foundschema.schema.$isSingleNested;
+-                if (_ret.$isUnderneathDocArray) {
+-                  ret.$isUnderneathDocArray = true;
++                _ret.$parentSchemaDocArray = _ret.$parentSchemaDocArray ||
++                  (foundschema.schema.$isSingleNested ? null : foundschema);
++                if (_ret.$parentSchemaDocArray) {
++                  ret.$parentSchemaDocArray = _ret.$parentSchemaDocArray;
+                 }
+                 ret.push(_ret);
+               }
+@@ -135,8 +135,8 @@ module.exports = function getSchemaTypes(model, schema, doc, path) {
+             );
+ 
+             if (ret) {
+-              ret.$isUnderneathDocArray = ret.$isUnderneathDocArray ||
+-                !foundschema.schema.$isSingleNested;
++              ret.$parentSchemaDocArray = ret.$parentSchemaDocArray ||
++                (foundschema.schema.$isSingleNested ? null : foundschema);
+             }
+             return ret;
+           }
+@@ -188,10 +188,6 @@ module.exports = function getSchemaTypes(model, schema, doc, path) {
+             nestedPath.concat(parts.slice(0, p))
+           );
+ 
+-          if (ret) {
+-            ret.$isUnderneathDocArray = ret.$isUnderneathDocArray ||
+-              !model.schema.$isSingleNested;
+-          }
+           return ret;
+         }
+       }
+@@ -212,8 +208,8 @@ module.exports = function getSchemaTypes(model, schema, doc, path) {
+           );
+ 
+           if (ret != null) {
+-            ret.$isUnderneathDocArray = ret.$isUnderneathDocArray ||
+-              !schema.$isSingleNested;
++            ret.$parentSchemaDocArray = ret.$parentSchemaDocArray ||
++              (schema.$isSingleNested ? null : schema);
+             return ret;
+           }
+         }
+diff --git a/lib/schema.js b/lib/schema.js
+index 0269d1bc0..eb3f79fee 100644
+--- a/lib/schema.js
++++ b/lib/schema.js
+@@ -1131,22 +1131,22 @@ Schema.prototype.path = function(path, obj) {
+     for (const key of Object.keys(schemaType.schema.paths)) {
+       const _schemaType = schemaType.schema.paths[key];
+       this.subpaths[path + '.' + key] = _schemaType;
+-      if (typeof _schemaType === 'object' && _schemaType != null) {
+-        _schemaType.$isUnderneathDocArray = true;
++      if (typeof _schemaType === 'object' && _schemaType != null && _schemaType.$parentSchemaDocArray == null) {
++        _schemaType.$parentSchemaDocArray = schemaType;
+       }
+     }
+     for (const key of Object.keys(schemaType.schema.subpaths)) {
+       const _schemaType = schemaType.schema.subpaths[key];
+       this.subpaths[path + '.' + key] = _schemaType;
+-      if (typeof _schemaType === 'object' && _schemaType != null) {
+-        _schemaType.$isUnderneathDocArray = true;
++      if (typeof _schemaType === 'object' && _schemaType != null && _schemaType.$parentSchemaDocArray == null) {
++        _schemaType.$parentSchemaDocArray = schemaType;
+       }
+     }
+     for (const key of Object.keys(schemaType.schema.singleNestedPaths)) {
+       const _schemaType = schemaType.schema.singleNestedPaths[key];
+       this.subpaths[path + '.' + key] = _schemaType;
+-      if (typeof _schemaType === 'object' && _schemaType != null) {
+-        _schemaType.$isUnderneathDocArray = true;
++      if (typeof _schemaType === 'object' && _schemaType != null && _schemaType.$parentSchemaDocArray == null) {
++        _schemaType.$parentSchemaDocArray = schemaType;
+       }
+     }
+   }
+@@ -2556,16 +2556,16 @@ Schema.prototype._getSchema = function(path) {
+                 // comments.$.comments.$.title
+                 ret = search(parts.slice(p + 1), foundschema.schema);
+                 if (ret) {
+-                  ret.$isUnderneathDocArray = ret.$isUnderneathDocArray ||
+-                    !foundschema.schema.$isSingleNested;
++                  ret.$parentSchemaDocArray = ret.$parentSchemaDocArray ||
++                    (foundschema.schema.$isSingleNested ? null : foundschema);
+                 }
+                 return ret;
+               }
+               // this is the last path of the selector
+               ret = search(parts.slice(p), foundschema.schema);
+               if (ret) {
+-                ret.$isUnderneathDocArray = ret.$isUnderneathDocArray ||
+-                  !foundschema.schema.$isSingleNested;
++                ret.$parentSchemaDocArray = ret.$parentSchemaDocArray ||
++                  (foundschema.schema.$isSingleNested ? null : foundschema);
+               }
+               return ret;
+             }

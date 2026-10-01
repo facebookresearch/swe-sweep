@@ -1,0 +1,12 @@
+diff --git a/pandas/core/indexes/accessors.py b/pandas/core/indexes/accessors.py
+index 516c63e0e3..b8f4b5f9d3 100644
+--- a/pandas/core/indexes/accessors.py
++++ b/pandas/core/indexes/accessors.py
+@@ -492,6 +492,7 @@ class CombinedDatetimelikeProperties(
+                 name=orig.name,
+                 copy=False,
+                 dtype=orig._values.categories.dtype,
++                index=orig.index,
+             )
+ 
+         if is_datetime64_dtype(data.dtype):

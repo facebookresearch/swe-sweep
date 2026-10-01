@@ -1,0 +1,14 @@
+diff --git a/sklearn/linear_model/tests/test_coordinate_descent.py b/sklearn/linear_model/tests/test_coordinate_descent.py
+index aeeb5d1582..a3b35f40a8 100644
+--- a/sklearn/linear_model/tests/test_coordinate_descent.py
++++ b/sklearn/linear_model/tests/test_coordinate_descent.py
+@@ -712,3 +712,9 @@ def test_enet_float_precision():
+             assert_array_almost_equal(intercept[np.float32],
+                                       intercept[np.float64],
+                                       decimal=4)
++
++
++def test_coef_shape_not_zero():
++    est_no_intercept = Lasso(fit_intercept=False)
++    est_no_intercept.fit(np.c_[np.ones(3)], np.ones(3))
++    assert est_no_intercept.coef_.shape == (1,)

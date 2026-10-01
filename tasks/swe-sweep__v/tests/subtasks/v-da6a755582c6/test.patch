@@ -1,0 +1,26 @@
+diff --git a/vlib/v/fmt/tests/struct_init_with_update_expr_comment_keep.vv b/vlib/v/fmt/tests/struct_init_with_update_expr_comment_keep.vv
+new file mode 100644
+index 000000000..d052332bd
+--- /dev/null
++++ b/vlib/v/fmt/tests/struct_init_with_update_expr_comment_keep.vv
+@@ -0,0 +1,20 @@
++module main
++
++struct MyStruct {
++	a int
++	b int
++}
++
++fn x() {
++	k := MyStruct{}
++	_ := MyStruct{
++		...k // same line comment
++		// keep comment here
++	}
++
++	_ := MyStruct{
++		...k // same line comment
++		// keep comment here
++		b: 100
++	}
++}

@@ -1,0 +1,47 @@
+diff --git a/crates/ruff_linter/resources/test/fixtures/flake8_comprehensions/C420_1.py b/crates/ruff_linter/resources/test/fixtures/flake8_comprehensions/C420_1.py
+new file mode 100644
+index 0000000000..550b6d9c2e
+--- /dev/null
++++ b/crates/ruff_linter/resources/test/fixtures/flake8_comprehensions/C420_1.py
+@@ -0,0 +1,7 @@
++{x: NotImplemented for x in "XY"}
++
++
++# Builtin bindings are placed at top of file, but should not count as
++# an "expression defined within the comprehension". So the above
++# should trigger C420
++# See https://github.com/astral-sh/ruff/issues/15830
+diff --git a/crates/ruff_linter/src/rules/flake8_comprehensions/mod.rs b/crates/ruff_linter/src/rules/flake8_comprehensions/mod.rs
+index 440dbc183f..2ef6e2746e 100644
+--- a/crates/ruff_linter/src/rules/flake8_comprehensions/mod.rs
++++ b/crates/ruff_linter/src/rules/flake8_comprehensions/mod.rs
+@@ -22,6 +22,7 @@ mod tests {
+     #[test_case(Rule::UnnecessaryComprehensionInCall, Path::new("C419.py"))]
+     #[test_case(Rule::UnnecessaryComprehensionInCall, Path::new("C419_2.py"))]
+     #[test_case(Rule::UnnecessaryDictComprehensionForIterable, Path::new("C420.py"))]
++    #[test_case(Rule::UnnecessaryDictComprehensionForIterable, Path::new("C420_1.py"))]
+     #[test_case(Rule::UnnecessaryDoubleCastOrProcess, Path::new("C414.py"))]
+     #[test_case(Rule::UnnecessaryGeneratorDict, Path::new("C402.py"))]
+     #[test_case(Rule::UnnecessaryGeneratorList, Path::new("C400.py"))]
+diff --git a/crates/ruff_linter/src/rules/flake8_comprehensions/snapshots/ruff_linter__rules__flake8_comprehensions__tests__C420_C420_1.py.snap b/crates/ruff_linter/src/rules/flake8_comprehensions/snapshots/ruff_linter__rules__flake8_comprehensions__tests__C420_C420_1.py.snap
+new file mode 100644
+index 0000000000..9551c10fde
+--- /dev/null
++++ b/crates/ruff_linter/src/rules/flake8_comprehensions/snapshots/ruff_linter__rules__flake8_comprehensions__tests__C420_C420_1.py.snap
+@@ -0,0 +1,16 @@
++---
++source: crates/ruff_linter/src/rules/flake8_comprehensions/mod.rs
++---
++C420_1.py:1:1: C420 [*] Unnecessary dict comprehension for iterable; use `dict.fromkeys` instead
++  |
++1 | {x: NotImplemented for x in "XY"}
++  | ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ C420
++  |
++  = help: Replace with `dict.fromkeys(iterable)`)
++
++ℹ Safe fix
++1   |-{x: NotImplemented for x in "XY"}
++  1 |+dict.fromkeys("XY", NotImplemented)
++2 2 | 
++3 3 | 
++4 4 | # Builtin bindings are placed at top of file, but should not count as

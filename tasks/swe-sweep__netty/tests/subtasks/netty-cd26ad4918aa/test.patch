@@ -1,0 +1,26 @@
+diff --git a/common/src/test/java/io/netty/util/HashedWheelTimerTest.java b/common/src/test/java/io/netty/util/HashedWheelTimerTest.java
+index e1a7bccc6e..2bf1c34819 100644
+--- a/common/src/test/java/io/netty/util/HashedWheelTimerTest.java
++++ b/common/src/test/java/io/netty/util/HashedWheelTimerTest.java
+@@ -230,6 +230,21 @@ public class HashedWheelTimerTest {
+         timer.stop();
+     }
+ 
++    @Test
++    public void testOverflow() throws InterruptedException  {
++        final HashedWheelTimer timer = new HashedWheelTimer();
++        final CountDownLatch latch = new CountDownLatch(1);
++        Timeout timeout = timer.newTimeout(new TimerTask() {
++            @Override
++            public void run(Timeout timeout) {
++                latch.countDown();
++            }
++        }, Long.MAX_VALUE, TimeUnit.MILLISECONDS);
++        assertFalse(latch.await(1, TimeUnit.SECONDS));
++        timeout.cancel();
++        timer.stop();
++    }
++
+     private static TimerTask createNoOpTimerTask() {
+         return new TimerTask() {
+             @Override

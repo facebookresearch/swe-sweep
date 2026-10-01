@@ -1,0 +1,162 @@
+{
+  "build_jobs": 4,
+  "container_repo": "/mathlib4",
+  "evaluation": {
+    "suite": {
+      "test_lib": "MathlibTest",
+      "type": "lake-module"
+    },
+    "test_dirs": [
+      "MathlibTest"
+    ],
+    "visible_timeout": 21600
+  },
+  "upstream_image": "pandora-maxbug-mathlib4:v4.24.0-rc1",
+  "n_base_passing": 1,
+  "n_base_test_ignore": 0,
+  "oracle_digest": "c82a6b4395c9927c20b6b2558632e58423f9303988b183e063ba1acaaa9da43b",
+  "oracle_pristine_paths": [],
+  "upstream_commit": "9f7399e15e6172900e0591deb5a57a45769d8205",
+  "reproduction": {
+    "jobs_env": "LEAN_NUM_THREADS",
+    "needs_build": false,
+    "suite": {
+      "test_lib": "MathlibTest",
+      "type": "lake-module"
+    },
+    "test_timeout": 5400
+  },
+  "schema": 2,
+  "subtasks": [
+    {
+      "f2p": [
+        "MathlibTest.abel"
+      ],
+      "id": "mathlib4-5a53850ed1be",
+      "target_files": [
+        "Mathlib/Tactic/Abel.lean"
+      ]
+    },
+    {
+      "f2p": [
+        "MathlibTest.Recall"
+      ],
+      "id": "mathlib4-885728452561",
+      "target_files": [
+        "Mathlib/Tactic/Recall.lean"
+      ]
+    },
+    {
+      "f2p": [
+        "MathlibTest.says_whitespace"
+      ],
+      "id": "mathlib4-9b02f7a87ffc",
+      "target_files": [
+        "Mathlib/Tactic/Says.lean"
+      ]
+    },
+    {
+      "f2p": [
+        "MathlibTest.fun_prop_dev"
+      ],
+      "id": "mathlib4-9f85a07db7f8",
+      "target_files": [
+        "Mathlib/Tactic/FunProp/Core.lean"
+      ]
+    },
+    {
+      "f2p": [
+        "MathlibTest.ring"
+      ],
+      "id": "mathlib4-b90bacd1e2a8",
+      "target_files": [
+        "Mathlib/Tactic/Ring/Common.lean"
+      ]
+    },
+    {
+      "f2p": [
+        "MathlibTest.Delab.Abs"
+      ],
+      "id": "mathlib4-bfb6a150fd0e",
+      "target_files": [
+        "Mathlib/Algebra/Order/Group/Unbundled/Abs.lean"
+      ]
+    },
+    {
+      "f2p": [
+        "MathlibTest.DefEqTransformations"
+      ],
+      "id": "mathlib4-c4fc40a9b8b0",
+      "target_files": [
+        "Mathlib/Tactic/DefEqTransformations.lean"
+      ]
+    },
+    {
+      "f2p": [
+        "MathlibTest.TacticAnalysis"
+      ],
+      "id": "mathlib4-e0c051e2a96d",
+      "target_files": [
+        "Mathlib/Tactic/TacticAnalysis.lean"
+      ]
+    },
+    {
+      "f2p": [
+        "MathlibTest.positivity"
+      ],
+      "id": "mathlib4-e63e45fb3a5f",
+      "target_files": [
+        "Mathlib/Tactic/Positivity/Basic.lean"
+      ]
+    },
+    {
+      "f2p": [
+        "MathlibTest.linarith"
+      ],
+      "id": "mathlib4-eaad32a543c7",
+      "target_files": [
+        "Mathlib/Tactic/Linarith/Preprocessing.lean"
+      ]
+    },
+    {
+      "f2p": [
+        "MathlibTest.fun_prop_dev"
+      ],
+      "id": "mathlib4-ef6e9f68568e",
+      "target_files": [
+        "Mathlib/Tactic/FunProp/Elab.lean"
+      ]
+    },
+    {
+      "f2p": [
+        "MathlibTest.GRewrite"
+      ],
+      "id": "mathlib4-f385f89c84d9",
+      "target_files": [
+        "Mathlib/Tactic/GCongr/Core.lean",
+        "Mathlib/Tactic/GRewrite/Core.lean"
+      ]
+    },
+    {
+      "f2p": [
+        "MathlibTest.fun_prop2",
+        "MathlibTest.fun_prop_dev"
+      ],
+      "id": "mathlib4-f7fa7da9d59e",
+      "target_files": [
+        "Mathlib/Tactic/FunProp/Core.lean"
+      ]
+    },
+    {
+      "f2p": [
+        "MathlibTest.DocString"
+      ],
+      "id": "mathlib4-fc2b6c38a33f",
+      "target_files": [
+        "Mathlib/Tactic/Linter/DocString.lean"
+      ]
+    }
+  ],
+  "task": "mathlib4",
+  "version": "v4.24.0-rc1"
+}

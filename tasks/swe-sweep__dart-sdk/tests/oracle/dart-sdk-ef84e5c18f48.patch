@@ -1,0 +1,16 @@
+diff --git a/pkg/analyzer/lib/src/error/imports_verifier.dart b/pkg/analyzer/lib/src/error/imports_verifier.dart
+index de715c17f69..8cb93adbdf7 100644
+--- a/pkg/analyzer/lib/src/error/imports_verifier.dart
++++ b/pkg/analyzer/lib/src/error/imports_verifier.dart
+@@ -85,7 +85,10 @@ class GatherUsedImportedElementsVisitor extends RecursiveAstVisitor<void> {
+     CompoundAssignmentExpression node,
+     Expression target,
+   ) {
+-    if (target is PrefixedIdentifier) {
++    if (target is IndexExpression) {
++      _recordIfExtensionMember(node.readElement);
++      _recordIfExtensionMember(node.writeElement);
++    } else if (target is PrefixedIdentifier) {
+       _visitIdentifier(target.identifier, node.readElement);
+       _visitIdentifier(target.identifier, node.writeElement);
+     } else if (target is PropertyAccess) {

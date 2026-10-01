@@ -1,0 +1,51 @@
+diff --git a/src/box/journal.h b/src/box/journal.h
+index 8572457791..7d3e525f8f 100644
+--- a/src/box/journal.h
++++ b/src/box/journal.h
+@@ -101,6 +101,11 @@ struct journal_entry {
+ 	 * Approximate size of this request when encoded.
+ 	 */
+ 	size_t approx_len;
++	/**
++	 * Set to true when execution of a batch that contains this
++	 * journal entry is completed.
++	 */
++	bool is_complete;
+ 	/**
+ 	 * The number of rows in the request.
+ 	 */
+@@ -128,6 +133,7 @@ journal_entry_create(struct journal_entry *entry, size_t n_rows,
+ 	entry->n_rows		= n_rows;
+ 	entry->res		= JOURNAL_ENTRY_ERR_UNKNOWN;
+ 	entry->flags		= 0;
++	entry->is_complete = false;
+ }
+ 
+ /**
+@@ -244,6 +250,8 @@ journal_async_complete(struct journal_entry *entry)
+ {
+ 	assert(entry->write_async_cb != NULL);
+ 
++	entry->is_complete = true;
++
+ 	journal_queue_on_complete(entry);
+ 
+ 	entry->write_async_cb(entry);
+diff --git a/src/box/wal.c b/src/box/wal.c
+index 57742632e7..c50fc4f9b4 100644
+--- a/src/box/wal.c
++++ b/src/box/wal.c
+@@ -1309,9 +1309,10 @@ wal_write(struct journal *journal, struct journal_entry *entry)
+ 	if (wal_write_async(journal, entry) != 0)
+ 		return -1;
+ 
+-	bool cancellable = fiber_set_cancellable(false);
+-	fiber_yield();
+-	fiber_set_cancellable(cancellable);
++	assert(!entry->is_complete);
++	do {
++		fiber_yield();
++	} while (!entry->is_complete);
+ 
+ 	return 0;
+ }

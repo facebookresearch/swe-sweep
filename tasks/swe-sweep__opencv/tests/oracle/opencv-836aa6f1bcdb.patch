@@ -1,0 +1,13 @@
+diff --git a/modules/core/src/matrix_expressions.cpp b/modules/core/src/matrix_expressions.cpp
+index ea431336f0..5ac1fafbd6 100644
+--- a/modules/core/src/matrix_expressions.cpp
++++ b/modules/core/src/matrix_expressions.cpp
+@@ -1257,7 +1257,7 @@ int MatExpr::type() const
+     if( isInitializer(*this) )
+         return a.type();
+     if( isCmp(*this) )
+-        return CV_8U;
++        return CV_MAKETYPE(CV_8U, a.channels());
+     return op ? op->type(*this) : -1;
+ }
+ 

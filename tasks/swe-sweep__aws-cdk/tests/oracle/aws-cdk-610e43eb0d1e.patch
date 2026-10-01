@@ -1,0 +1,13 @@
+diff --git a/packages/@aws-cdk/aws-iam/lib/saml-provider.ts b/packages/@aws-cdk/aws-iam/lib/saml-provider.ts
+index 33712adb60..5b2709ce6f 100644
+--- a/packages/@aws-cdk/aws-iam/lib/saml-provider.ts
++++ b/packages/@aws-cdk/aws-iam/lib/saml-provider.ts
+@@ -91,7 +91,7 @@ export class SamlProvider extends Resource implements ISamlProvider {
+     }
+ 
+     const samlProvider = new CfnSAMLProvider(this, 'Resource', {
+-      name: this.physicalName,
++      name: props.name,
+       samlMetadataDocument: props.metadataDocument.xml,
+     });
+ 

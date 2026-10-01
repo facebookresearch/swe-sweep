@@ -1,0 +1,13 @@
+diff --git a/lib/matplotlib/axis.py b/lib/matplotlib/axis.py
+index 0ace31916c..77bd34df69 100644
+--- a/lib/matplotlib/axis.py
++++ b/lib/matplotlib/axis.py
+@@ -129,7 +129,7 @@ class Tick(martist.Artist):
+         if labelcolor is None:
+             labelcolor = mpl.rcParams[f"{name}.labelcolor"]
+ 
+-        if labelcolor == 'inherit':
++        if cbook._str_equal(labelcolor, 'inherit'):
+             # inherit from tick color
+             labelcolor = mpl.rcParams[f"{name}.color"]
+ 

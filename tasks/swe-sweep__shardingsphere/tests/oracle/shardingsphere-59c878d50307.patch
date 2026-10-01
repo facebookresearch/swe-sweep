@@ -1,0 +1,26 @@
+diff --git a/db-protocol/postgresql/src/main/java/org/apache/shardingsphere/db/protocol/postgresql/packet/command/query/extended/bind/protocol/PostgreSQLStringBinaryProtocolValue.java b/db-protocol/postgresql/src/main/java/org/apache/shardingsphere/db/protocol/postgresql/packet/command/query/extended/bind/protocol/PostgreSQLStringBinaryProtocolValue.java
+index e7afdf42e24..56944012538 100644
+--- a/db-protocol/postgresql/src/main/java/org/apache/shardingsphere/db/protocol/postgresql/packet/command/query/extended/bind/protocol/PostgreSQLStringBinaryProtocolValue.java
++++ b/db-protocol/postgresql/src/main/java/org/apache/shardingsphere/db/protocol/postgresql/packet/command/query/extended/bind/protocol/PostgreSQLStringBinaryProtocolValue.java
+@@ -33,7 +33,7 @@ public final class PostgreSQLStringBinaryProtocolValue implements PostgreSQLBina
+     public Object read(final PostgreSQLPacketPayload payload, final int parameterValueLength) {
+         byte[] result = new byte[parameterValueLength];
+         payload.getByteBuf().readBytes(result);
+-        return new String(result);
++        return new String(result, payload.getCharset());
+     }
+     
+     @Override
+diff --git a/db-protocol/postgresql/src/main/java/org/apache/shardingsphere/db/protocol/postgresql/packet/command/query/extended/bind/protocol/PostgreSQLUnspecifiedBinaryProtocolValue.java b/db-protocol/postgresql/src/main/java/org/apache/shardingsphere/db/protocol/postgresql/packet/command/query/extended/bind/protocol/PostgreSQLUnspecifiedBinaryProtocolValue.java
+index 3e03784b873..facca060854 100644
+--- a/db-protocol/postgresql/src/main/java/org/apache/shardingsphere/db/protocol/postgresql/packet/command/query/extended/bind/protocol/PostgreSQLUnspecifiedBinaryProtocolValue.java
++++ b/db-protocol/postgresql/src/main/java/org/apache/shardingsphere/db/protocol/postgresql/packet/command/query/extended/bind/protocol/PostgreSQLUnspecifiedBinaryProtocolValue.java
+@@ -34,7 +34,7 @@ public final class PostgreSQLUnspecifiedBinaryProtocolValue implements PostgreSQ
+     public Object read(final PostgreSQLPacketPayload payload, final int parameterValueLength) {
+         byte[] bytes = new byte[parameterValueLength];
+         payload.getByteBuf().readBytes(bytes);
+-        String result = new String(bytes);
++        String result = new String(bytes, payload.getCharset());
+         return new PostgreSQLTypeUnspecifiedSQLParameter(result);
+     }
+     

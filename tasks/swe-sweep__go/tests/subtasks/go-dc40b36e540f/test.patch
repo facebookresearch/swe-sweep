@@ -1,0 +1,110 @@
+diff --git a/src/cmd/gofmt/gofmt_test.go b/src/cmd/gofmt/gofmt_test.go
+index 641e0ea415..6b80673af1 100644
+--- a/src/cmd/gofmt/gofmt_test.go
++++ b/src/cmd/gofmt/gofmt_test.go
+@@ -144,15 +144,18 @@ func TestRewrite(t *testing.T) {
+ 	match = append(match, "gofmt.go", "gofmt_test.go")
+ 
+ 	for _, in := range match {
+-		out := in // for files where input and output are identical
+-		if strings.HasSuffix(in, ".input") {
+-			out = in[:len(in)-len(".input")] + ".golden"
+-		}
+-		runTest(t, in, out)
+-		if in != out {
+-			// Check idempotence.
+-			runTest(t, out, out)
+-		}
++		name := filepath.Base(in)
++		t.Run(name, func(t *testing.T) {
++			out := in // for files where input and output are identical
++			if strings.HasSuffix(in, ".input") {
++				out = in[:len(in)-len(".input")] + ".golden"
++			}
++			runTest(t, in, out)
++			if in != out && !t.Failed() {
++				// Check idempotence.
++				runTest(t, out, out)
++			}
++		})
+ 	}
+ }
+ 
+diff --git a/src/cmd/gofmt/testdata/tabs.golden b/src/cmd/gofmt/testdata/tabs.golden
+new file mode 100644
+index 0000000000..287678cfc9
+--- /dev/null
++++ b/src/cmd/gofmt/testdata/tabs.golden
+@@ -0,0 +1,33 @@
++// Copyright 2022 The Go Authors. All rights reserved.
++// Use of this source code is governed by a BSD-style
++// license that can be found in the LICENSE file.
++
++//gofmt
++
++package main
++
++var _ = []struct {
++	S       string
++	Integer int
++}{
++	{
++		S:       "Hello World",
++		Integer: 42,
++	},
++	{
++		S:       "\t",
++		Integer: 42,
++	},
++	{
++		S:       "	", // an actual <tab>
++		Integer: 42,
++	},
++	{
++		S:       `	`, // an actual <tab>
++		Integer: 42,
++	},
++	{
++		S:       "\u0009",
++		Integer: 42,
++	},
++}
+diff --git a/src/cmd/gofmt/testdata/tabs.input b/src/cmd/gofmt/testdata/tabs.input
+new file mode 100644
+index 0000000000..635be797c9
+--- /dev/null
++++ b/src/cmd/gofmt/testdata/tabs.input
+@@ -0,0 +1,33 @@
++// Copyright 2022 The Go Authors. All rights reserved.
++// Use of this source code is governed by a BSD-style
++// license that can be found in the LICENSE file.
++
++//gofmt
++
++package main
++
++var _ = []struct{
++	S       string
++	Integer int
++}{
++	{
++		S: "Hello World",
++		Integer: 42,
++	},
++	{
++		S: "\t",
++		Integer: 42,
++	},
++	{
++		S: "	", // an actual <tab>
++		Integer: 42,
++	},
++	{
++		S: `	`, // an actual <tab>
++		Integer: 42,
++	},
++	{
++		S: "\u0009",
++		Integer: 42,
++	},
++}

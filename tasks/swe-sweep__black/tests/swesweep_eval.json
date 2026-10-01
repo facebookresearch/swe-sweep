@@ -1,0 +1,263 @@
+{
+  "build_jobs": 4,
+  "container_repo": "/black",
+  "evaluation": {
+    "suite": {
+      "paths": [
+        "tests"
+      ],
+      "target_suite": {
+        "corpora": [
+          [
+            "^tests/data/jupyter/.*$",
+            "tests/test_ipynb.py"
+          ],
+          [
+            "^tests/data/(miscellaneous|include_exclude_tests|project_metadata|fast|.*gitignore.*)/.*$",
+            "tests/test_black.py"
+          ],
+          [
+            "^tests/data/.*\\.(py|pyi|ipynb)$",
+            "tests/test_format.py"
+          ]
+        ],
+        "type": "pytest-corpus"
+      },
+      "type": "pytest-eval"
+    },
+    "test_dirs": [
+      "tests/data"
+    ],
+    "visible_timeout": 7200
+  },
+  "upstream_image": "pandora-maxbug-black:23.3.0",
+  "n_base_passing": 325,
+  "n_base_test_ignore": 3,
+  "oracle_digest": "0ed5bd19abb5a57c08ac72af7711e5fe867ee3887fbd9b865417913fc5c8df0c",
+  "oracle_pristine_paths": [],
+  "upstream_commit": "9f7399e15e6172900e0591deb5a57a45769d8205",
+  "reproduction": {
+    "needs_build": false,
+    "suite": {
+      "corpora": [
+        [
+          "^tests/data/jupyter/.*$",
+          "tests/test_ipynb.py"
+        ],
+        [
+          "^tests/data/(miscellaneous|include_exclude_tests|project_metadata|fast|.*gitignore.*)/.*$",
+          "tests/test_black.py"
+        ],
+        [
+          "^tests/data/.*\\.(py|pyi|ipynb)$",
+          "tests/test_format.py"
+        ]
+      ],
+      "type": "pytest-corpus"
+    },
+    "test_timeout": 900
+  },
+  "schema": 2,
+  "subtasks": [
+    {
+      "f2p": [
+        "tests.test_format::test_preview_format[long_strings]"
+      ],
+      "id": "black-00975fca8369",
+      "target_files": [
+        "src/black/trans.py"
+      ]
+    },
+    {
+      "f2p": [
+        "tests.test_black.TestFileCollection::test_get_sources_with_stdin_filename_and_force_exclude_and_symlink"
+      ],
+      "id": "black-0790cdc9bdfd",
+      "target_files": [
+        "src/black/__init__.py"
+      ]
+    },
+    {
+      "f2p": [
+        "tests.test_black.TestCaching::test_cache_empty_file"
+      ],
+      "id": "black-330457f79d99",
+      "target_files": [
+        "src/black/cache.py"
+      ]
+    },
+    {
+      "f2p": [
+        "tests.test_format::test_simple_format[comments_in_blocks]"
+      ],
+      "id": "black-35fa17d21b3d",
+      "target_files": [
+        "src/black/brackets.py",
+        "src/black/linegen.py",
+        "src/black/lines.py"
+      ]
+    },
+    {
+      "f2p": [
+        "tests.test_format::test_preview_format[cantfit]"
+      ],
+      "id": "black-384c66e4283c",
+      "target_files": [
+        "src/black/parsing.py"
+      ]
+    },
+    {
+      "f2p": [
+        "tests.test_format::test_python_310[pep_572_py310]"
+      ],
+      "id": "black-39c245f3ad53",
+      "target_files": [
+        "src/black/linegen.py"
+      ]
+    },
+    {
+      "f2p": [
+        "tests.test_format::test_python_39[remove_with_brackets]"
+      ],
+      "id": "black-4062a6e5785d",
+      "target_files": [
+        "src/black/linegen.py",
+        "src/black/nodes.py"
+      ]
+    },
+    {
+      "f2p": [
+        "tests.test_format::test_simple_format[remove_await_parens]"
+      ],
+      "id": "black-5fd01d23a9dc",
+      "target_files": [
+        "src/black/linegen.py"
+      ]
+    },
+    {
+      "f2p": [
+        "tests.test_black.BlackTestCase::test_get_features_used"
+      ],
+      "id": "black-6b2d6098c667",
+      "target_files": [
+        "src/black/__init__.py"
+      ]
+    },
+    {
+      "f2p": [
+        "tests.test_format::test_simple_format[multiline_consecutive_open_parentheses_ignore]"
+      ],
+      "id": "black-743500d76d9d",
+      "target_files": [
+        "src/black/linegen.py",
+        "src/black/lines.py",
+        "src/black/nodes.py"
+      ]
+    },
+    {
+      "f2p": [
+        "tests.test_format::test_simple_format[comments2]"
+      ],
+      "id": "black-7897a439add5",
+      "target_files": [
+        "src/black/parsing.py"
+      ]
+    },
+    {
+      "f2p": [
+        "tests.test_black.BlackTestCase::test_read_pyproject_toml_from_stdin"
+      ],
+      "id": "black-7a471c6142b7",
+      "target_files": [
+        "src/black/__init__.py",
+        "src/black/files.py"
+      ]
+    },
+    {
+      "f2p": [
+        "tests.test_format::test_preview_format[comments7]"
+      ],
+      "id": "black-986e6c1fcc62",
+      "target_files": [
+        "src/black/trans.py"
+      ]
+    },
+    {
+      "f2p": [
+        "tests.test_format::test_python_39[remove_with_brackets]"
+      ],
+      "id": "black-9af47986869d",
+      "target_files": [
+        "src/black/linegen.py",
+        "src/black/nodes.py"
+      ]
+    },
+    {
+      "f2p": [
+        "tests.test_format::test_preview_format[long_strings__regression]"
+      ],
+      "id": "black-9e32ead3efd5",
+      "target_files": [
+        "src/black/trans.py"
+      ]
+    },
+    {
+      "f2p": [
+        "tests.test_format::test_simple_format[bytes_docstring]"
+      ],
+      "id": "black-a87f4ce6750d",
+      "target_files": [
+        "src/black/nodes.py"
+      ]
+    },
+    {
+      "f2p": [
+        "tests.test_ipynb::test_cell_magic_with_empty_lines[  \\n\\t\\n%%timeit -n4 \\t \\nx=2  \\n\\r\\n-%%timeit -n4\\nx = 2]",
+        "tests.test_ipynb::test_cell_magic_with_empty_lines[  \\t\\n\\n%%capture \\nx=2 \\n%config \\n\\n%env\\n\\t  \\n \\n\\n-%%capture\\nx = 2\\n%config\\n\\n%env]",
+        "tests.test_ipynb::test_cell_magic_with_empty_lines[\\n\\n\\n%time \\n\\n-%time]"
+      ],
+      "id": "black-b24125bb506e",
+      "target_files": [
+        "src/black/handle_ipynb_magics.py"
+      ]
+    },
+    {
+      "f2p": [
+        "tests.test_format::test_simple_format[pep_604]"
+      ],
+      "id": "black-b357eb22b2f8",
+      "target_files": [
+        "src/black/linegen.py"
+      ]
+    },
+    {
+      "f2p": [
+        "tests.test_blackd.BlackDTestCase::test_single_character"
+      ],
+      "id": "black-b705b4ae28dc",
+      "target_files": [
+        "src/blackd/__init__.py"
+      ]
+    },
+    {
+      "f2p": [
+        "tests.test_format::test_simple_format[ignore_pyi]"
+      ],
+      "id": "black-ba127f170b3b",
+      "target_files": [
+        "src/black/nodes.py"
+      ]
+    },
+    {
+      "f2p": [
+        "tests.test_format::test_simple_format[docstring]"
+      ],
+      "id": "black-cd742ed64ac3",
+      "target_files": [
+        "src/black/linegen.py"
+      ]
+    }
+  ],
+  "task": "black",
+  "version": "23.3.0"
+}

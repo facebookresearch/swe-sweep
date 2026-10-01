@@ -1,0 +1,34 @@
+diff --git a/crates/swc_ecma_codegen/src/typescript.rs b/crates/swc_ecma_codegen/src/typescript.rs
+index 20326dd303..bb133378ed 100644
+--- a/crates/swc_ecma_codegen/src/typescript.rs
++++ b/crates/swc_ecma_codegen/src/typescript.rs
+@@ -935,7 +935,13 @@ where
+         keyword!("get");
+         space!();
+ 
+-        emit!(n.key);
++        if n.computed {
++            punct!("[");
++            emit!(n.key);
++            punct!("]");
++        } else {
++            emit!(n.key)
++        }
+ 
+         punct!("(");
+         punct!(")");
+@@ -953,7 +959,13 @@ where
+         keyword!("set");
+         space!();
+ 
+-        emit!(n.key);
++        if n.computed {
++            punct!("[");
++            emit!(n.key);
++            punct!("]");
++        } else {
++            emit!(n.key)
++        }
+ 
+         punct!("(");
+         emit!(n.param);

@@ -1,0 +1,42 @@
+diff --git a/vlib/v/checker/checker.v b/vlib/v/checker/checker.v
+index 378d36241..1c01ff357 100644
+--- a/vlib/v/checker/checker.v
++++ b/vlib/v/checker/checker.v
+@@ -3650,6 +3650,7 @@ fn (mut c Checker) smartcast(mut expr ast.Expr, cur_type ast.Type, to_type_ ast.
+ 			mut smartcasts := []ast.Type{}
+ 			mut is_already_casted := false
+ 			mut orig_type := 0
++			mut is_inherited := false
+ 			if mut expr.obj is ast.Var {
+ 				is_mut = expr.obj.is_mut
+ 				smartcasts << expr.obj.smartcasts
+@@ -3657,6 +3658,7 @@ fn (mut c Checker) smartcast(mut expr ast.Expr, cur_type ast.Type, to_type_ ast.
+ 				if orig_type == 0 {
+ 					orig_type = expr.obj.typ
+ 				}
++				is_inherited = expr.obj.is_inherited
+ 			}
+ 			// smartcast either if the value is immutable or if the mut argument is explicitly given
+ 			if (!is_mut || expr.is_mut) && !is_already_casted {
+@@ -3667,6 +3669,7 @@ fn (mut c Checker) smartcast(mut expr ast.Expr, cur_type ast.Type, to_type_ ast.
+ 					pos: expr.pos
+ 					is_used: true
+ 					is_mut: expr.is_mut
++					is_inherited: is_inherited
+ 					smartcasts: smartcasts
+ 					orig_type: orig_type
+ 				})
+diff --git a/vlib/v/gen/c/cgen.v b/vlib/v/gen/c/cgen.v
+index e7d6d487e..5efb4f036 100644
+--- a/vlib/v/gen/c/cgen.v
++++ b/vlib/v/gen/c/cgen.v
+@@ -4348,6 +4348,9 @@ fn (mut g Gen) ident(node ast.Ident) {
+ 						} else {
+ 							mut is_ptr := false
+ 							if i == 0 {
++								if node.obj.is_inherited {
++									g.write(closure_ctx + '->')
++								}
+ 								g.write(name)
+ 								if node.obj.orig_type.is_ptr() {
+ 									is_ptr = true

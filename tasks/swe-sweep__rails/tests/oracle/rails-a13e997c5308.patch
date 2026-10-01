@@ -1,0 +1,14 @@
+diff --git a/activejob/lib/active_job/exceptions.rb b/activejob/lib/active_job/exceptions.rb
+index 3dccd1a2423..64330246839 100644
+--- a/activejob/lib/active_job/exceptions.rb
++++ b/activejob/lib/active_job/exceptions.rb
+@@ -157,7 +157,8 @@ module ActiveJob
+     #  end
+     def retry_job(options = {})
+       instrument :enqueue_retry, options.slice(:error, :wait) do
+-        enqueue options
++        job = dup
++        job.enqueue options
+       end
+     end
+ 

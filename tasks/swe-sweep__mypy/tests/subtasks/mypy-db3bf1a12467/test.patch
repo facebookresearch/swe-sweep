@@ -1,0 +1,30 @@
+diff --git a/mypy/test/teststubtest.py b/mypy/test/teststubtest.py
+index ada69fc6e..d03fc253a 100644
+--- a/mypy/test/teststubtest.py
++++ b/mypy/test/teststubtest.py
+@@ -1061,6 +1061,25 @@ class StubtestUnit(unittest.TestCase):
+             """,
+             error=None,
+         )
++        yield Case(
++            stub="""
++            class spam:
++                @property
++                def eggs(self) -> int: ...
++                @eggs.deleter
++                def eggs(self) -> None: ...
++            """,
++            runtime="""
++            class spam:
++                @property
++                def eggs(self):
++                    return 42
++                @eggs.deleter
++                def eggs(self):
++                    print("eggs")
++            """,
++            error=None,
++        )
+ 
+     @collect_cases
+     def test_cached_property(self) -> Iterator[Case]:

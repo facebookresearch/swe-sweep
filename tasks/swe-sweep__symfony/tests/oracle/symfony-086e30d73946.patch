@@ -1,0 +1,12 @@
+diff --git a/src/Symfony/Component/Finder/Iterator/FileTypeFilterIterator.php b/src/Symfony/Component/Finder/Iterator/FileTypeFilterIterator.php
+index 21303781eb0..67dfc03f166 100644
+--- a/src/Symfony/Component/Finder/Iterator/FileTypeFilterIterator.php
++++ b/src/Symfony/Component/Finder/Iterator/FileTypeFilterIterator.php
+@@ -48,6 +48,6 @@ class FileTypeFilterIterator extends \FilterIterator
+             return false;
+         }
+ 
+-        return true;
++        return !$fileinfo->isLink() || $fileinfo->isFile() || $fileinfo->isDir();
+     }
+ }

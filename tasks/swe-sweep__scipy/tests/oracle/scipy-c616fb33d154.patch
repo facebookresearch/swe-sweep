@@ -1,0 +1,16 @@
+diff --git a/scipy/sparse/csr.py b/scipy/sparse/csr.py
+index 948d615f08..3ae7dee7ab 100644
+--- a/scipy/sparse/csr.py
++++ b/scipy/sparse/csr.py
+@@ -321,10 +321,7 @@ class csr_matrix(_cs_matrix, IndexMixin):
+         return self._major_index_fancy(row)._get_submatrix(minor=col)
+ 
+     def _get_arrayXslice(self, row, col):
+-        if col.step not in (1, None):
+-            col = np.arange(*col.indices(self.shape[1]))
+-            return self._get_arrayXarray(row, col)
+-        return self._major_index_fancy(row)._get_submatrix(minor=col)
++        return self._major_index_fancy(row)._minor_slice(col)
+ 
+ 
+ def isspmatrix_csr(x):

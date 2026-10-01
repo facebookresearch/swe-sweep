@@ -1,0 +1,89 @@
+{
+  "build_jobs": 4,
+  "container_repo": "/dataframes",
+  "evaluation": {
+    "suite": "julia-eval",
+    "visible_timeout": 5400
+  },
+  "upstream_image": "pandora-maxbug-dataframes-jl:1.1.0",
+  "n_base_passing": 406,
+  "n_base_test_ignore": 6,
+  "oracle_digest": "9600669dc6361241c467f9a6799fff362115f989093b88b97af722179dc9cab7",
+  "oracle_pristine_paths": [],
+  "upstream_commit": "9f7399e15e6172900e0591deb5a57a45769d8205",
+  "reproduction": {
+    "needs_build": false,
+    "suite": "julia",
+    "test_timeout": 2400
+  },
+  "schema": 2,
+  "subtasks": [
+    {
+      "f2p": [
+        "delete!"
+      ],
+      "id": "dataframes-jl-79724eebf4a1",
+      "target_files": [
+        "src/dataframe/dataframe.jl"
+      ]
+    },
+    {
+      "f2p": [
+        "empty unstack"
+      ],
+      "id": "dataframes-jl-ac1ef348c552",
+      "target_files": [
+        "src/abstractdataframe/reshape.jl"
+      ]
+    },
+    {
+      "f2p": [
+        "vectors of pairs with non-specific type are accepted"
+      ],
+      "id": "dataframes-jl-afb576dc8df3",
+      "target_files": [
+        "src/abstractdataframe/selection.jl",
+        "src/groupeddataframe/splitapplycombine.jl"
+      ]
+    },
+    {
+      "f2p": [
+        "merge"
+      ],
+      "id": "dataframes-jl-ba15cfae1d01",
+      "target_files": [
+        "src/other/index.jl"
+      ]
+    },
+    {
+      "f2p": [
+        "variable_eltype in stack tests"
+      ],
+      "id": "dataframes-jl-c436479e532f",
+      "target_files": [
+        "src/abstractdataframe/reshape.jl"
+      ]
+    },
+    {
+      "f2p": [
+        "correct handling of functors"
+      ],
+      "id": "dataframes-jl-dca0caa1f1c9",
+      "target_files": [
+        "src/other/utils.jl"
+      ]
+    },
+    {
+      "f2p": [
+        "flatten multiple columns",
+        "flatten single column"
+      ],
+      "id": "dataframes-jl-e65db219aac4",
+      "target_files": [
+        "src/abstractdataframe/abstractdataframe.jl"
+      ]
+    }
+  ],
+  "task": "dataframes-jl",
+  "version": "1.1.0"
+}

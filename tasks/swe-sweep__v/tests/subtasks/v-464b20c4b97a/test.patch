@@ -1,0 +1,23 @@
+diff --git a/vlib/v/tests/anon_fn_direct_call_with_option_test.v b/vlib/v/tests/anon_fn_direct_call_with_option_test.v
+new file mode 100644
+index 000000000..d0e6d1572
+--- /dev/null
++++ b/vlib/v/tests/anon_fn_direct_call_with_option_test.v
+@@ -0,0 +1,17 @@
++fn test_anon_fn_direct_call_with_option() {
++	z := true
++	a := fn [z] () ?int {
++		match z {
++			true { return 1 }
++			else { return none }
++		}
++	}()
++	b := a or {
++		println('failed')
++		return
++	}
++
++	println('b: ${b}')
++	println(a)
++	assert b == 1
++}

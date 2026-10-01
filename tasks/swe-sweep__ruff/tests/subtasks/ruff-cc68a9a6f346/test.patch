@@ -1,0 +1,11 @@
+diff --git a/crates/ruff_linter/resources/test/fixtures/pylint/bad_string_format_type.py b/crates/ruff_linter/resources/test/fixtures/pylint/bad_string_format_type.py
+index 785ecaf659..61dfe779f0 100644
+--- a/crates/ruff_linter/resources/test/fixtures/pylint/bad_string_format_type.py
++++ b/crates/ruff_linter/resources/test/fixtures/pylint/bad_string_format_type.py
+@@ -63,3 +63,6 @@ r'\%03o' % (ord(c),)
+ "%c" % ("x",)
+ "%c" % "x"
+ "%c" % "œ"
++
++# bool is acceptable as int/float/character.
++"%d %c %f" % (True, True, True)

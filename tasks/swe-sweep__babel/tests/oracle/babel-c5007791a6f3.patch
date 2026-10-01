@@ -1,0 +1,24 @@
+diff --git a/packages/babel-parser/src/tokenizer/index.js b/packages/babel-parser/src/tokenizer/index.js
+index 2b6cc06..07c8389 100644
+--- a/packages/babel-parser/src/tokenizer/index.js
++++ b/packages/babel-parser/src/tokenizer/index.js
+@@ -980,6 +980,19 @@ export default class Tokenizer extends LocationParser {
+     }
+     if (octal && this.state.pos == start + 1) octal = false; // number === 0
+ 
++    // disallow numeric separators in legacy octal likes
++    if (this.hasPlugin("numericSeparator") && octal) {
++      const underscorePos = this.input
++        .slice(start, this.state.pos)
++        .indexOf("_");
++      if (underscorePos !== -1) {
++        this.raise(
++          start + underscorePos,
++          "Numeric separator can not be used after leading 0",
++        );
++      }
++    }
++
+     let next = this.input.charCodeAt(this.state.pos);
+     if (next === charCodes.dot && !octal) {
+       ++this.state.pos;

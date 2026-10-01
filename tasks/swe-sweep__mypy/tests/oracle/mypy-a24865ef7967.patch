@@ -1,0 +1,50 @@
+diff --git a/mypy/checker.py b/mypy/checker.py
+index 8b7d52077..fafc85765 100644
+--- a/mypy/checker.py
++++ b/mypy/checker.py
+@@ -4793,7 +4793,9 @@ class TypeChecker(NodeVisitor[None], CheckerPluginInterface):
+         # If this is asserting some isinstance check, bind that type in the following code
+         true_map, else_map = self.find_isinstance_check(s.expr)
+         if s.msg is not None:
+-            self.expr_checker.analyze_cond_branch(else_map, s.msg, None)
++            self.expr_checker.analyze_cond_branch(
++                else_map, s.msg, None, suppress_unreachable_errors=False
++            )
+         self.push_type_map(true_map)
+ 
+     def visit_raise_stmt(self, s: RaiseStmt) -> None:
+diff --git a/mypy/checkexpr.py b/mypy/checkexpr.py
+index adb65a126..a00d866d5 100644
+--- a/mypy/checkexpr.py
++++ b/mypy/checkexpr.py
+@@ -4249,11 +4249,7 @@ class ExpressionChecker(ExpressionVisitor[Type]):
+         ):
+             self.msg.unreachable_right_operand(e.op, e.right)
+ 
+-        # If right_map is None then we know mypy considers the right branch
+-        # to be unreachable and therefore any errors found in the right branch
+-        # should be suppressed.
+-        with self.msg.filter_errors(filter_errors=right_map is None):
+-            right_type = self.analyze_cond_branch(right_map, e.right, expanded_left_type)
++        right_type = self.analyze_cond_branch(right_map, e.right, expanded_left_type)
+ 
+         if left_map is None and right_map is None:
+             return UninhabitedType()
+@@ -5851,12 +5847,15 @@ class ExpressionChecker(ExpressionVisitor[Type]):
+         node: Expression,
+         context: Type | None,
+         allow_none_return: bool = False,
++        suppress_unreachable_errors: bool = True,
+     ) -> Type:
+         with self.chk.binder.frame_context(can_skip=True, fall_through=0):
+             if map is None:
+                 # We still need to type check node, in case we want to
+-                # process it for isinstance checks later
+-                self.accept(node, type_context=context, allow_none_return=allow_none_return)
++                # process it for isinstance checks later. Since the branch was
++                # determined to be unreachable, any errors should be suppressed.
++                with self.msg.filter_errors(filter_errors=suppress_unreachable_errors):
++                    self.accept(node, type_context=context, allow_none_return=allow_none_return)
+                 return UninhabitedType()
+             self.chk.push_type_map(map)
+             return self.accept(node, type_context=context, allow_none_return=allow_none_return)

@@ -1,0 +1,15 @@
+diff --git a/src/full/Agda/TypeChecking/Quote.hs b/src/full/Agda/TypeChecking/Quote.hs
+index 8b9cc03601..df812c6b6e 100644
+--- a/src/full/Agda/TypeChecking/Quote.hs
++++ b/src/full/Agda/TypeChecking/Quote.hs
+@@ -179,8 +179,8 @@ quotingKit = do
+       quoteSort PiSort{} = pure unsupportedSort
+       quoteSort FunSort{} = pure unsupportedSort
+       quoteSort UnivSort{}   = pure unsupportedSort
+-      quoteSort (MetaS x es) = quoteTerm $ MetaV x es
+-      quoteSort (DefS d es)  = quoteTerm $ Def d es
++      quoteSort (MetaS x es) = pure unsupportedSort
++      quoteSort (DefS d es)  = pure unsupportedSort
+       quoteSort (DummyS s)   =__IMPOSSIBLE_VERBOSE__ s
+ 
+       quoteType :: Type -> ReduceM Term

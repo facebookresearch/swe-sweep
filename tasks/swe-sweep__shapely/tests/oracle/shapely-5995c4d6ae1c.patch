@@ -1,0 +1,87 @@
+diff --git a/shapely/geometry/base.py b/shapely/geometry/base.py
+index fda912b3..694a11ed 100644
+--- a/shapely/geometry/base.py
++++ b/shapely/geometry/base.py
+@@ -197,6 +197,23 @@ class BaseGeometry(shapely.Geometry):
+     def __xor__(self, other):
+         return self.symmetric_difference(other)
+ 
++    def __eq__(self, other):
++        if not isinstance(other, BaseGeometry):
++            return NotImplemented
++        # equal_nan=False is the default, but not yet available for older numpy
++        # TODO updated once we require numpy >= 1.19
++        return type(other) == type(self) and np.array_equal(
++            self.coords, other.coords  # , equal_nan=False
++        )
++
++    def __ne__(self, other):
++        if not isinstance(other, BaseGeometry):
++            return NotImplemented
++        return not self.__eq__(other)
++
++    def __hash__(self):
++        return super().__hash__()
++
+     # Coordinate access
+     # -----------------
+ 
+@@ -917,6 +934,18 @@ class BaseMultipartGeometry(BaseGeometry):
+     def __bool__(self):
+         return self.is_empty is False
+ 
++    def __eq__(self, other):
++        if not isinstance(other, BaseGeometry):
++            return NotImplemented
++        return (
++            type(other) == type(self)
++            and len(self.geoms) == len(other.geoms)
++            and all(a == b for a, b in zip(self.geoms, other.geoms))
++        )
++
++    def __hash__(self):
++        return super().__hash__()
++
+     def svg(self, scale_factor=1.0, color=None):
+         """Returns a group of SVG elements for the multipart geometry.
+ 
+diff --git a/shapely/geometry/polygon.py b/shapely/geometry/polygon.py
+index 9e0abcec..efec427c 100644
+--- a/shapely/geometry/polygon.py
++++ b/shapely/geometry/polygon.py
+@@ -257,6 +257,35 @@ class Polygon(BaseGeometry):
+             "Component rings have coordinate sequences, but the polygon does not"
+         )
+ 
++    def __eq__(self, other):
++        if not isinstance(other, BaseGeometry):
++            return NotImplemented
++        if not isinstance(other, Polygon):
++            return False
++        check_empty = (self.is_empty, other.is_empty)
++        if all(check_empty):
++            return True
++        elif any(check_empty):
++            return False
++        my_coords = [self.exterior.coords] + [
++            interior.coords for interior in self.interiors
++        ]
++        other_coords = [other.exterior.coords] + [
++            interior.coords for interior in other.interiors
++        ]
++        if not len(my_coords) == len(other_coords):
++            return False
++        # equal_nan=False is the default, but not yet available for older numpy
++        return np.all(
++            [
++                np.array_equal(left, right)  # , equal_nan=False)
++                for left, right in zip(my_coords, other_coords)
++            ]
++        )
++
++    def __hash__(self):
++        return super().__hash__()
++
+     @property
+     def __geo_interface__(self):
+         if self.exterior == LinearRing():

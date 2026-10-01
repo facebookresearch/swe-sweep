@@ -1,0 +1,15 @@
+diff --git a/src/Compilers/CSharp/Portable/Compilation/MemberSemanticModel.cs b/src/Compilers/CSharp/Portable/Compilation/MemberSemanticModel.cs
+index 017ef8b8991..1f64dc824fd 100644
+--- a/src/Compilers/CSharp/Portable/Compilation/MemberSemanticModel.cs
++++ b/src/Compilers/CSharp/Portable/Compilation/MemberSemanticModel.cs
+@@ -1035,8 +1035,8 @@ namespace Microsoft.CodeAnalysis.CSharp
+ 
+         public override DeconstructionInfo GetDeconstructionInfo(AssignmentExpressionSyntax node)
+         {
+-            var boundDeconstruction = GetUpperBoundNode(node) as BoundDeconstructionAssignmentOperator;
+-            if (boundDeconstruction is null)
++            var lowerNode = GetLowerBoundNode(node);
++            if (lowerNode is not BoundDeconstructionAssignmentOperator boundDeconstruction)
+             {
+                 return default;
+             }

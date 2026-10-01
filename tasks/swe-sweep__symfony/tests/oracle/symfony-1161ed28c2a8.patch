@@ -1,0 +1,13 @@
+diff --git a/src/Symfony/Component/DependencyInjection/Compiler/AutowirePass.php b/src/Symfony/Component/DependencyInjection/Compiler/AutowirePass.php
+index e5a30aeef86..82967556728 100644
+--- a/src/Symfony/Component/DependencyInjection/Compiler/AutowirePass.php
++++ b/src/Symfony/Component/DependencyInjection/Compiler/AutowirePass.php
+@@ -711,7 +711,7 @@ class AutowirePass extends AbstractRecursivePass
+     private function getCombinedAlias(string $type, string $name = null): ?string
+     {
+         if (str_contains($type, '&')) {
+-            $types = explode('&', $type);
++            $types = explode('&', trim($type, '()'));
+         } elseif (str_contains($type, '|')) {
+             $types = explode('|', $type);
+         } else {

@@ -1,0 +1,44 @@
+diff --git a/lib/rules/function-calc-no-unspaced-operator/index.mjs b/lib/rules/function-calc-no-unspaced-operator/index.mjs
+index 357c0b1a3..74ca6b0c7 100644
+--- a/lib/rules/function-calc-no-unspaced-operator/index.mjs
++++ b/lib/rules/function-calc-no-unspaced-operator/index.mjs
+@@ -50,6 +50,7 @@ const meta = {
+ };
+ 
+ const OPERATORS = new Set(['+', '-']);
++const MULTIPLICATIVE_OPERATORS = new Set(['*', '/']);
+ const OPERATOR_REGEX = /[+-]/;
+ 
+ const MATH_FUNCS_REGEX_SOURCE = [...mathFunctions].join('|');
+@@ -556,15 +557,24 @@ function parseOperation(container, cursor) {
+ 	}
+ 
+ 	// If we have not consumed any operands, we are not in an operation
+-	// Do error recovery by consuming until the next comma or semicolon
+-	// If no comma or semicolon is found, consume until the end of the container
++	// Do error recovery by consuming until the next boundary: a comma, a semicolon
++	// or a multiplicative operator (`*` or `/`)
++	// If no boundary is found, consume until the end of the container
+ 	if (!firstOperand || !secondOperand) {
+ 		while (currentNode) {
+-			if (
+-				isTokenNode(currentNode) &&
+-				(isTokenComma(currentNode.value) || isTokenSemicolon(currentNode.value))
+-			) {
+-				return [undefined, cursor];
++			if (isTokenNode(currentNode)) {
++				if (isTokenComma(currentNode.value) || isTokenSemicolon(currentNode.value)) {
++					return [undefined, cursor];
++				}
++
++				// Multiplicative operators don't require surrounding whitespace, but the
++				// operation after them must still be checked for unspaced `+` or `-`.
++				if (
++					isTokenDelim(currentNode.value) &&
++					MULTIPLICATIVE_OPERATORS.has(currentNode.value[4].value)
++				) {
++					return [undefined, cursor];
++				}
+ 			}
+ 
+ 			currentNode = container.value[++cursor];

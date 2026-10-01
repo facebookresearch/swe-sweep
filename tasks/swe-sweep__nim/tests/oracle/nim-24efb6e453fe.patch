@@ -1,0 +1,17 @@
+diff --git a/compiler/ccgstmts.nim b/compiler/ccgstmts.nim
+index 8e45f94cd..e40f8067b 100644
+--- a/compiler/ccgstmts.nim
++++ b/compiler/ccgstmts.nim
+@@ -770,11 +770,7 @@ proc genRaiseStmt(p: BProc, t: PNode) =
+   else:
+     finallyActions(p)
+     genLineDir(p, t)
+-    # reraise the last exception:
+-    if p.config.exc == excCpp:
+-      line(p, cpsStmts, ~"throw;$n")
+-    else:
+-      linefmt(p, cpsStmts, "#reraiseException();$n", [])
++    linefmt(p, cpsStmts, "#reraiseException();$n", [])
+   let gotoInstr = raiseInstr(p)
+   if gotoInstr != nil:
+     line(p, cpsStmts, gotoInstr)

@@ -1,0 +1,64 @@
+diff --git a/tests/stdlib/trst.nim b/tests/stdlib/trst.nim
+index c32ed1762..c9024ded8 100644
+--- a/tests/stdlib/trst.nim
++++ b/tests/stdlib/trst.nim
+@@ -63,6 +63,45 @@ proc toAst(input: string,
+ suite "RST parsing":
++  test "Standalone punctuation is not parsed as heading overlines":
++    check(dedent"""
++        Paragraph
++
++        !""".toAst ==
++      dedent"""
++        rnInner
++          rnParagraph
++            rnLeaf  'Paragraph'
++          rnParagraph
++            rnLeaf  '!'
++      """)
++
++    check(dedent"""
++        Paragraph1
++
++        ...
++
++        Paragraph2""".toAst ==
++      dedent"""
++        rnInner
++          rnParagraph
++            rnLeaf  'Paragraph1'
++          rnParagraph
++            rnLeaf  '...'
++          rnParagraph
++            rnLeaf  'Paragraph2'
++      """)
++
++    check(dedent"""
++        ---
++        Paragraph""".toAst ==
++      dedent"""
++        rnInner
++          rnLeaf  '---'
++          rnLeaf  ' '
++          rnLeaf  'Paragraph'
++      """)
++
+   test "option list has priority over definition list":
+     check(dedent"""
+         --defusages
+                       file
+         -o            set
+diff --git a/tests/stdlib/trstgen.nim b/tests/stdlib/trstgen.nim
+index 8c07b35f0..dae4ea1cf 100644
+--- a/tests/stdlib/trstgen.nim
++++ b/tests/stdlib/trstgen.nim
+@@ -553,8 +553,8 @@ context2
+ This is too short to be a transition:
+ 
+ ---
+-
+ context2
++---
+ """
+     var error2 = new string
+     let output2 = input2.toHtml(error=error2)

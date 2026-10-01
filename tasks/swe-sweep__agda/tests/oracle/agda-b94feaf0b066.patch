@@ -1,0 +1,14 @@
+diff --git a/src/full/Agda/TypeChecking/Rules/LHS/Implicit.hs b/src/full/Agda/TypeChecking/Rules/LHS/Implicit.hs
+index 374f54ffb5..f47fcb713d 100644
+--- a/src/full/Agda/TypeChecking/Rules/LHS/Implicit.hs
++++ b/src/full/Agda/TypeChecking/Rules/LHS/Implicit.hs
+@@ -90,7 +90,8 @@ insertImplicitPatternsT exh            ps a = do
+       let ps0@(~(p1 : ps1)) = hs ++ ps
+       reduce a >>= piOrPath >>= \case
+         -- If @a@ is a function (or path) type, continue inserting after @p1@.
+-        Left (_, b) -> (p1 :) <$> insertImplicitPatternsT exh ps1 (absBody b)
++        Left (dom, cod) -> underAbstraction dom cod $ \b ->
++          (p1 :) <$> insertImplicitPatternsT exh ps1 b
+         -- Otherwise, we are done.
+         Right{}     -> return ps0
+   where

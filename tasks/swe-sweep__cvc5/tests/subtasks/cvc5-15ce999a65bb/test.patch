@@ -1,0 +1,25 @@
+diff --git a/test/regress/cli/CMakeLists.txt b/test/regress/cli/CMakeLists.txt
+index d2b53fa5d9..d172e276f5 100644
+--- a/test/regress/cli/CMakeLists.txt
++++ b/test/regress/cli/CMakeLists.txt
+@@ -1353,6 +1353,7 @@ set(regress_0_tests
+   regress0/seq/proj-issue384-subtypes.smt2
+   regress0/seq/proj-issue384-2-subtypes.smt2
+   regress0/seq/proj-issue427-subtypes-value.smt2
++  regress0/seq/proj-issue559-unit-inj.smt2
+   regress0/seq/quant_len_trigger.smt2
+   regress0/seq/query0-subtype-skel.smt2
+   regress0/seq/query1-subtype.smt2
+diff --git a/test/regress/cli/regress0/seq/proj-issue559-unit-inj.smt2 b/test/regress/cli/regress0/seq/proj-issue559-unit-inj.smt2
+new file mode 100644
+index 0000000000..600808a778
+--- /dev/null
++++ b/test/regress/cli/regress0/seq/proj-issue559-unit-inj.smt2
+@@ -0,0 +1,7 @@
++(set-logic ALL)
++(set-info :status unsat)
++(declare-const x String)
++(declare-const x8 (Seq String))
++(assert (ite (seq.prefixof (seq.unit x) x8) false true))
++(assert (seq.suffixof (seq.unit true) (seq.unit (seq.prefixof (seq.unit x8) (seq.unit (seq.unit x))))))
++(check-sat)

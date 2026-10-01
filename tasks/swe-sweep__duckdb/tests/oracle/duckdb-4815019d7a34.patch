@@ -1,0 +1,25 @@
+diff --git a/src/execution/physical_plan/plan_filter.cpp b/src/execution/physical_plan/plan_filter.cpp
+index 292fe1bc84..796e4aeb38 100644
+--- a/src/execution/physical_plan/plan_filter.cpp
++++ b/src/execution/physical_plan/plan_filter.cpp
+@@ -14,7 +14,6 @@ unique_ptr<PhysicalOperator> PhysicalPlanGenerator::CreatePlan(LogicalFilter &op) {
+ 	unique_ptr<PhysicalOperator> plan = CreatePlan(*op.children[0]);
+ 	if (!op.expressions.empty()) {
+-		D_ASSERT(plan->types.size() > 0);
+ 		// create a filter if there is anything to filter
+ 		auto filter = make_uniq<PhysicalFilter>(plan->types, std::move(op.expressions), op.estimated_cardinality);
+ 		filter->children.push_back(std::move(plan));
+ 		plan = std::move(filter);
+diff --git a/src/planner/binder/query_node/plan_select_node.cpp b/src/planner/binder/query_node/plan_select_node.cpp
+index 46e5d2e127..dec7212626 100644
+--- a/src/planner/binder/query_node/plan_select_node.cpp
++++ b/src/planner/binder/query_node/plan_select_node.cpp
+@@ -30,7 +30,7 @@ unique_ptr<LogicalOperator> Binder::CreatePlan(BoundSelectNode &statement) {
+ 		root = PlanFilter(std::move(statement.where_clause), std::move(root));
+ 	}
+ 
+-	if (!statement.aggregates.empty() || !statement.groups.group_expressions.empty()) {
++	if (!statement.aggregates.empty() || !statement.groups.group_expressions.empty() || statement.having) {
+ 		if (!statement.groups.group_expressions.empty()) {
+ 			// visit the groups
+ 			for (auto &group : statement.groups.group_expressions) {

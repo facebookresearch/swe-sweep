@@ -1,0 +1,45 @@
+diff --git a/mypy/checker.py b/mypy/checker.py
+index 2a11e6b..5f393ba 100644
+--- a/mypy/checker.py
++++ b/mypy/checker.py
+@@ -310,6 +310,8 @@ class TypeChecker(NodeVisitor[None], CheckerPluginInterface):
+     # Avoid accessing this directly, but prefer the lookup_type(),
+     # has_type() etc. helpers instead.
+     _type_maps: list[dict[Expression, Type]]
++    # Fake concrete type used when checking variance
++    _variance_dummy_type: Instance | None
+ 
+     # Helper for managing conditional types
+     binder: ConditionalTypeBinder
+@@ -429,6 +431,7 @@ class TypeChecker(NodeVisitor[None], CheckerPluginInterface):
+             self, self.msg, self.plugin, per_line_checking_time_ns
+         )
+         self.pattern_checker = PatternChecker(self, self.msg, self.plugin, options)
++        self._variance_dummy_type = None
+ 
+     @property
+     def type_context(self) -> list[Type | None]:
+@@ -2653,17 +2656,19 @@ class TypeChecker(NodeVisitor[None], CheckerPluginInterface):
+         info = defn.info
+         object_type = Instance(info.mro[-1], [])
+         tvars = info.defn.type_vars
++        if self._variance_dummy_type is None:
++            _, dummy_info = self.make_fake_typeinfo("<dummy>", "Dummy", "Dummy", [])
++            self._variance_dummy_type = Instance(dummy_info, [])
++        dummy = self._variance_dummy_type
+         for i, tvar in enumerate(tvars):
+             if not isinstance(tvar, TypeVarType):
+                 # Variance of TypeVarTuple and ParamSpec is underspecified by PEPs.
+                 continue
+             up_args: list[Type] = [
+-                object_type if i == j else AnyType(TypeOfAny.special_form)
+-                for j, _ in enumerate(tvars)
++                object_type if i == j else dummy.copy_modified() for j, _ in enumerate(tvars)
+             ]
+             down_args: list[Type] = [
+-                UninhabitedType() if i == j else AnyType(TypeOfAny.special_form)
+-                for j, _ in enumerate(tvars)
++                UninhabitedType() if i == j else dummy.copy_modified() for j, _ in enumerate(tvars)
+             ]
+             up, down = Instance(info, up_args), Instance(info, down_args)
+             # TODO: add advanced variance checks for recursive protocols

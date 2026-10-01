@@ -1,0 +1,30 @@
+diff --git a/internal/compiler/compiler.go b/internal/compiler/compiler.go
+index c00ffc5..e4d7b8b 100644
+--- a/internal/compiler/compiler.go
++++ b/internal/compiler/compiler.go
+@@ -130,10 +130,21 @@ func Compile(resolved *resolver.ResolvedProgram) (compiledProg *Program, err err
+ 			pattern = append(pattern, c.finish())
+ 		}
+ 		var body []Opcode
+-		if len(action.Stmts) > 0 {
+-			c := compiler{resolved: resolved, program: p, indexes: indexes}
+-			c.stmts(action.Stmts)
+-			body = c.finish()
++		switch {
++		case action.Stmts == nil:
++			// No action block, interpreter will treat this as '{ print $0 }'
++		case len(action.Stmts) == 0:
++			// Empty action block (a bare '{}') should have at least one
++			// opcode, otherwise interpreter will treat it as no action, which
++			// would be evaluated as '{ print $0 }'.
++			c := compiler{resolved: resolved, program: p, indexes: indexes}
++			c.add(Nop)
++			body = c.finish()
++		default:
++			// Regular body such as `{ print $1 }`
++			c := compiler{resolved: resolved, program: p, indexes: indexes}
++			c.stmts(action.Stmts)
++			body = c.finish()
+ 		}
+ 		p.Actions = append(p.Actions, Action{
+ 			Pattern: pattern,

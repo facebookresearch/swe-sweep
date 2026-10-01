@@ -1,0 +1,13 @@
+diff --git a/src/projections/moll.cpp b/src/projections/moll.cpp
+index 87b383368..f8b52a5ff 100644
+--- a/src/projections/moll.cpp
++++ b/src/projections/moll.cpp
+@@ -10,7 +10,7 @@ PROJ_HEAD(moll, "Mollweide") "\n\tPCyl, Sph";
+ PROJ_HEAD(wag4, "Wagner IV") "\n\tPCyl, Sph";
+ PROJ_HEAD(wag5, "Wagner V") "\n\tPCyl, Sph";
+ 
+-#define MAX_ITER    10
++#define MAX_ITER    30
+ #define LOOP_TOL    1e-7
+ 
+ namespace { // anonymous namespace

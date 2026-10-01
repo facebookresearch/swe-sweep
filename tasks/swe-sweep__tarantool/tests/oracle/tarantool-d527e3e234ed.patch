@@ -1,0 +1,21 @@
+diff --git a/src/box/memtx_tx.c b/src/box/memtx_tx.c
+index 74814cf..f9612f3 100644
+--- a/src/box/memtx_tx.c
++++ b/src/box/memtx_tx.c
+@@ -1311,6 +1311,16 @@ memtx_tx_story_gc_step()
+ 						  MEMTX_TX_STORY_TRACK_GAP);
+ 			/* The story is used for gap tracking. */
+ 			return;
++		} else if (i > 0 && story->link[i].newer_story != NULL &&
++			   story->link[i].newer_story->add_stmt != NULL) {
++			/*
++			 * We need to retain the story since the newer story
++			 * can get rolled back (this is maintained by delete
++			 * statement list in case of primary index).
++			 */
++			memtx_tx_story_set_status(story,
++						  MEMTX_TX_STORY_USED);
++			return;
+ 		}
+ 	}
+ 

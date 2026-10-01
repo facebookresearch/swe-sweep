@@ -1,0 +1,21 @@
+diff --git a/src/zones/fixedOffsetZone.js b/src/zones/fixedOffsetZone.js
+index b1ab4ab1..bc46e24a 100644
+--- a/src/zones/fixedOffsetZone.js
++++ b/src/zones/fixedOffsetZone.js
+@@ -49,6 +49,8 @@ export default class FixedOffsetZone extends Zone {
+     super();
+     /** @private **/
+     this.fixed = offset;
++    /** @private **/
++    this.valid = Number.isInteger(offset);
+   }
+ 
+   /** @override **/
+@@ -88,6 +90,6 @@ export default class FixedOffsetZone extends Zone {
+ 
+   /** @override **/
+   get isValid() {
+-    return true;
++    return this.valid;
+   }
+ }

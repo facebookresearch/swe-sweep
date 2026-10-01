@@ -1,0 +1,22 @@
+diff --git a/naming/src/test/java/com/alibaba/nacos/naming/core/InstanceOperatorClientImplTest.java b/naming/src/test/java/com/alibaba/nacos/naming/core/InstanceOperatorClientImplTest.java
+index c2628c180..4b38eb681 100644
+--- a/naming/src/test/java/com/alibaba/nacos/naming/core/InstanceOperatorClientImplTest.java
++++ b/naming/src/test/java/com/alibaba/nacos/naming/core/InstanceOperatorClientImplTest.java
+@@ -164,6 +164,17 @@ class InstanceOperatorClientImplTest {
+         Mockito.verify(metadataOperateService).updateInstanceMetadata(Mockito.any(), Mockito.any(), Mockito.any());
+     }
+     
++    @Test
++    void testUpdateInstanceWithNullValue() throws NacosException {
++        Instance instance = new Instance();
++        instance.setServiceName("C");
++        instance.getMetadata().put("nullValue", null);
++        instanceOperatorClient.updateInstance("A", Constants.DEFAULT_GROUP, "C", instance);
++        
++        Mockito.verify(metadataOperateService).updateInstanceMetadata(Mockito.any(), Mockito.any(),
++                Mockito.argThat(argument -> argument.getExtendData().isEmpty()));
++    }
++    
+     @Test
+     void testPatchInstance() throws NacosException {
+         Instance instance = new Instance();

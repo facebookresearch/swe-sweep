@@ -1,0 +1,18 @@
+diff --git a/crates/ruff_linter/src/rules/pylint/rules/bad_string_format_type.rs b/crates/ruff_linter/src/rules/pylint/rules/bad_string_format_type.rs
+index 3822b76b7a..d69e28ecf8 100644
+--- a/crates/ruff_linter/src/rules/pylint/rules/bad_string_format_type.rs
++++ b/crates/ruff_linter/src/rules/pylint/rules/bad_string_format_type.rs
+@@ -63,11 +63,11 @@ impl FormatType {
+                 self,
+                 FormatType::Unknown | FormatType::String | FormatType::Repr
+             ),
+-            PythonType::Number(NumberLike::Complex | NumberLike::Bool) => matches!(
++            PythonType::Number(NumberLike::Complex) => matches!(
+                 self,
+                 FormatType::Unknown | FormatType::String | FormatType::Repr
+             ),
+-            PythonType::Number(NumberLike::Integer) => matches!(
++            PythonType::Number(NumberLike::Integer | NumberLike::Bool) => matches!(
+                 self,
+                 FormatType::Unknown
+                     | FormatType::String

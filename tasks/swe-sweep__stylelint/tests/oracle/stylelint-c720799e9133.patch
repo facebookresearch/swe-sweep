@@ -1,0 +1,16 @@
+diff --git a/lib/rules/lightness-notation/index.mjs b/lib/rules/lightness-notation/index.mjs
+index fc593bd72..8a56200ec 100644
+--- a/lib/rules/lightness-notation/index.mjs
++++ b/lib/rules/lightness-notation/index.mjs
+@@ -155,7 +155,10 @@ function roundToNumberOfDigits(num, value) {
+  * @param {import('postcss-value-parser').FunctionNode} node
+  */
+ function findLightness({ nodes }) {
+-	return nodes.find(({ type }) => type === 'word' || type === 'function');
++	const args = nodes.filter(({ type }) => type === 'word' || type === 'function');
++	const isRelativeColor = args[0]?.value.toLowerCase() === 'from';
++
++	return isRelativeColor ? args[2] : args[0];
+ }
+ 
+ rule.ruleName = ruleName;

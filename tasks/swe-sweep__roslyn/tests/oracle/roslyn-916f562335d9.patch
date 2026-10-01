@@ -1,0 +1,48 @@
+diff --git a/src/Compilers/CSharp/Portable/Binder/Semantics/Operators/UnaryOperatorOverloadResolution.cs b/src/Compilers/CSharp/Portable/Binder/Semantics/Operators/UnaryOperatorOverloadResolution.cs
+index a7cf81e4a06..f3ad4ddc80a 100644
+--- a/src/Compilers/CSharp/Portable/Binder/Semantics/Operators/UnaryOperatorOverloadResolution.cs
++++ b/src/Compilers/CSharp/Portable/Binder/Semantics/Operators/UnaryOperatorOverloadResolution.cs
+@@ -256,10 +256,10 @@ namespace Microsoft.CodeAnalysis.CSharp
+                 }
+ 
+                 var xExtension = x.OriginalDefinition.ContainingType;
+-                var xGroupingKey = ((SourceNamedTypeSymbol)xExtension).ExtensionGroupingName;
++                var xGroupingKey = xExtension.ExtensionGroupingName;
+                 Debug.Assert(xGroupingKey is not null);
+                 var yExtension = y.OriginalDefinition.ContainingType;
+-                var yGroupingKey = ((SourceNamedTypeSymbol)yExtension).ExtensionGroupingName;
++                var yGroupingKey = yExtension.ExtensionGroupingName;
+ 
+                 if (!xGroupingKey.Equals(yGroupingKey))
+                 {
+@@ -288,7 +288,7 @@ namespace Microsoft.CodeAnalysis.CSharp
+                 int result = typeComparer.GetHashCode(op.OriginalDefinition.ContainingType.ContainingType);
+ 
+                 var extension = op.OriginalDefinition.ContainingType;
+-                var groupingKey = ((SourceNamedTypeSymbol)extension).ExtensionGroupingName;
++                var groupingKey = extension.ExtensionGroupingName;
+                 Debug.Assert(groupingKey is not null);
+                 result = Hash.Combine(result, groupingKey.GetHashCode());
+ 
+diff --git a/src/Compilers/CSharp/Portable/Symbols/Source/SourceMemberContainerSymbol.cs b/src/Compilers/CSharp/Portable/Symbols/Source/SourceMemberContainerSymbol.cs
+index 1153d70637c..9e869d2fd32 100644
+--- a/src/Compilers/CSharp/Portable/Symbols/Source/SourceMemberContainerSymbol.cs
++++ b/src/Compilers/CSharp/Portable/Symbols/Source/SourceMemberContainerSymbol.cs
+@@ -2356,7 +2356,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
+                 method2 is SourceExtensionImplementationMethodSymbol { UnderlyingMethod: var underlying2 } &&
+                 underlying1.IsStatic == underlying2.IsStatic &&
+                 ((object)underlying1.ContainingType == underlying2.ContainingType ||
+-                ((SourceNamedTypeSymbol)underlying1.ContainingType).ExtensionGroupingName == ((SourceNamedTypeSymbol)underlying2.ContainingType).ExtensionGroupingName) &&
++                underlying1.ContainingType.ExtensionGroupingName == underlying2.ContainingType.ExtensionGroupingName) &&
+                 diagnostics.DiagnosticBag?.AsEnumerableWithoutResolution().Any(
+                     static (d, arg) =>
+                         (d.Code is (int)ErrorCode.ERR_OverloadRefKind or (int)ErrorCode.ERR_MemberAlreadyExists or
+@@ -2554,7 +2554,7 @@ namespace Microsoft.CodeAnalysis.CSharp.Symbols
+ 
+             void checkMemberNameConflictsInExtensions(BindingDiagnosticBag diagnostics)
+             {
+-                IEnumerable<IGrouping<string, NamedTypeSymbol>> extensionsByReceiverType = GetTypeMembers("").Where(static t => t.IsExtension).GroupBy(static t => ((SourceNamedTypeSymbol)t).ExtensionGroupingName!);
++                IEnumerable<IGrouping<string, NamedTypeSymbol>> extensionsByReceiverType = GetTypeMembers("").Where(static t => t.IsExtension).GroupBy(static t => t.ExtensionGroupingName!);
+ 
+                 foreach (var grouping in extensionsByReceiverType)
+                 {

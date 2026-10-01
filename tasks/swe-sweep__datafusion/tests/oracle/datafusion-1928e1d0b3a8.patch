@@ -1,0 +1,72 @@
+diff --git a/datafusion/sql/src/expr/mod.rs b/datafusion/sql/src/expr/mod.rs
+index c2e4822f76..b1de4e95fd 100644
+--- a/datafusion/sql/src/expr/mod.rs
++++ b/datafusion/sql/src/expr/mod.rs
+@@ -1593,4 +1593,32 @@ mod tests {
+ 
+         assert!(matches!(expr, Expr::Alias(_)));
+     }
++
++    #[test]
++    fn test_parse_numbers_with_underscores() {
++        use datafusion_common::ScalarValue::*;
++
++        let context_provider = TestContextProvider::new();
++        let sql_to_rel = SqlToRel::new(&context_provider);
++
++        // (input, positive result, negative result)
++        let test_cases = [
++            ("1_000", Int64(Some(1000)), Int64(Some(-1000))),
++            ("100_000", Int64(Some(100000)), Int64(Some(-100000))),
++            ("1_2_3_4", Int64(Some(1234)), Int64(Some(-1234))),
++            ("0_0", Int64(Some(0)), Int64(Some(-0))),
++            ("1_23.4_56", Float64(Some(123.456)), Float64(Some(-123.456))),
++        ];
++
++        for (literal, out_positive, out_negative) in test_cases {
++            assert_eq!(
++                sql_to_rel.parse_sql_number(literal, false).unwrap(),
++                Expr::Literal(out_positive, None)
++            );
++            assert_eq!(
++                sql_to_rel.parse_sql_number(literal, true).unwrap(),
++                Expr::Literal(out_negative, None)
++            );
++        }
++    }
+ }
+diff --git a/datafusion/sql/src/expr/value.rs b/datafusion/sql/src/expr/value.rs
+index 13a47f545c..1307e917e4 100644
+--- a/datafusion/sql/src/expr/value.rs
++++ b/datafusion/sql/src/expr/value.rs
+@@ -74,10 +74,27 @@ impl<S: ContextProvider> SqlToRel<'_, S> {
+         unsigned_number: &str,
+         negative: bool,
+     ) -> Result<Expr> {
+-        let signed_number: Cow<str> = if negative {
+-            Cow::Owned(format!("-{unsigned_number}"))
+-        } else {
++        // remove underscores, since the Rust parser used here does not support them
++        let signed_number = if !negative && !unsigned_number.contains('_') {
+             Cow::Borrowed(unsigned_number)
++        } else {
++            let mut signed_number =
++                String::with_capacity(unsigned_number.len() + usize::from(negative));
++            if negative {
++                signed_number.push('-');
++            }
++            unsigned_number.bytes().for_each(|b| {
++                if b != b'_' {
++                    signed_number.push(b as char);
++                }
++            });
++            Cow::Owned(signed_number)
++        };
++
++        let unsigned_number = if negative {
++            &signed_number[1..]
++        } else {
++            &signed_number
+         };
+ 
+         // Try to parse as i64 first, then u64 if negative is false, then decimal or f64

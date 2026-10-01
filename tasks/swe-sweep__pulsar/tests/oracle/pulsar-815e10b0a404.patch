@@ -1,0 +1,22 @@
+diff --git a/pulsar-common/src/main/java/org/apache/pulsar/common/protocol/Commands.java b/pulsar-common/src/main/java/org/apache/pulsar/common/protocol/Commands.java
+index 95fca7f431b..0ebb2705d3a 100644
+--- a/pulsar-common/src/main/java/org/apache/pulsar/common/protocol/Commands.java
++++ b/pulsar-common/src/main/java/org/apache/pulsar/common/protocol/Commands.java
+@@ -30,6 +30,7 @@ import io.netty.util.concurrent.FastThreadLocal;
+ import java.io.IOException;
+ import java.nio.charset.StandardCharsets;
+ import java.util.ArrayList;
++import java.util.Base64;
+ import java.util.Collections;
+ import java.util.List;
+ import java.util.Map;
+@@ -1900,6 +1901,9 @@ public class Commands {
+             if (metadata.hasOrderingKey()) {
+                 return metadata.getOrderingKey();
+             } else if (metadata.hasPartitionKey()) {
++                if (metadata.isPartitionKeyB64Encoded()) {
++                    return Base64.getDecoder().decode(metadata.getPartitionKey());
++                }
+                 return metadata.getPartitionKey().getBytes(StandardCharsets.UTF_8);
+             }
+         } catch (Throwable t) {

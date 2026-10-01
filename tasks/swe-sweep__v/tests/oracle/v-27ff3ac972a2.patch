@@ -1,0 +1,13 @@
+diff --git a/vlib/v/checker/checker.v b/vlib/v/checker/checker.v
+index 73fce3405..7cdf77cee 100644
+--- a/vlib/v/checker/checker.v
++++ b/vlib/v/checker/checker.v
+@@ -4002,6 +4002,7 @@ fn (mut c Checker) index_expr(mut node ast.IndexExpr) ast.Type {
+ 		else {}
+ 	}
+-	if typ_sym.kind !in [.array, .array_fixed, .string, .map] && !typ.is_ptr()
++	if typ_sym.kind !in [.array, .array_fixed, .string, .map]
++		&& (!typ.is_ptr() || typ_sym.kind in [.sum_type, .interface_])
+ 		&& typ !in [ast.byteptr_type, ast.charptr_type] && !typ.has_flag(.variadic) {
+ 		c.error('type `${typ_sym.name}` does not support indexing', node.pos)
+ 	}

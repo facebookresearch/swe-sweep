@@ -1,0 +1,19 @@
+diff --git a/test/sql/copy/parquet/copy_ninf_stats.test b/test/sql/copy/parquet/copy_ninf_stats.test
+new file mode 100644
+index 0000000000..773afc07ca
+--- /dev/null
++++ b/test/sql/copy/parquet/copy_ninf_stats.test
+@@ -0,0 +1,13 @@
++# name: test/sql/copy/parquet/copy_ninf_stats.test
++# description: Negative infinity stats
++# group: [parquet]
++
++require parquet
++
++statement ok
++copy (select '-infinity'::double ninf) to '__TEST_DIR__/ninf.parquet';
++
++query II
++SELECT stats_min, stats_max FROM parquet_metadata('__TEST_DIR__/ninf.parquet')
++----
++NULL	NULL

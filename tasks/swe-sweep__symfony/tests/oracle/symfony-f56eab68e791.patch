@@ -1,0 +1,61 @@
+diff --git a/src/Symfony/Component/HttpKernel/HttpCache/CacheWasLockedException.php b/src/Symfony/Component/HttpKernel/HttpCache/CacheWasLockedException.php
+new file mode 100644
+index 00000000000..f13946ad71a
+--- /dev/null
++++ b/src/Symfony/Component/HttpKernel/HttpCache/CacheWasLockedException.php
+@@ -0,0 +1,19 @@
++<?php
++
++/*
++ * This file is part of the Symfony package.
++ *
++ * (c) Fabien Potencier <fabien@symfony.com>
++ *
++ * For the full copyright and license information, please view the LICENSE
++ * file that was distributed with this source code.
++ */
++
++namespace Symfony\Component\HttpKernel\HttpCache;
++
++/**
++ * @internal
++ */
++class CacheWasLockedException extends \Exception
++{
++}
+diff --git a/src/Symfony/Component/HttpKernel/HttpCache/HttpCache.php b/src/Symfony/Component/HttpKernel/HttpCache/HttpCache.php
+index 3b484e5c3e1..bce0e99b5ec 100644
+--- a/src/Symfony/Component/HttpKernel/HttpCache/HttpCache.php
++++ b/src/Symfony/Component/HttpKernel/HttpCache/HttpCache.php
+@@ -219,7 +219,13 @@ class HttpCache implements HttpKernelInterface, TerminableInterface
+             $this->record($request, 'reload');
+             $response = $this->fetch($request, $catch);
+         } else {
+-            $response = $this->lookup($request, $catch);
++            $response = null;
++            do {
++                try {
++                    $response = $this->lookup($request, $catch);
++                } catch (CacheWasLockedException) {
++                }
++            } while (null === $response);
+         }
+ 
+         $this->restoreResponseBody($request, $response);
+@@ -576,15 +582,7 @@ class HttpCache implements HttpKernelInterface, TerminableInterface
+ 
+         // wait for the lock to be released
+         if ($this->waitForLock($request)) {
+-            // replace the current entry with the fresh one
+-            $new = $this->lookup($request);
+-            $entry->headers = $new->headers;
+-            $entry->setContent($new->getContent());
+-            $entry->setStatusCode($new->getStatusCode());
+-            $entry->setProtocolVersion($new->getProtocolVersion());
+-            foreach ($new->headers->getCookies() as $cookie) {
+-                $entry->headers->setCookie($cookie);
+-            }
++            throw new CacheWasLockedException(); // unwind back to handle(), try again
+         } else {
+             // backend is slow as hell, send a 503 response (to avoid the dog pile effect)
+             $entry->setStatusCode(503);

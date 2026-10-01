@@ -1,0 +1,13 @@
+diff --git a/compiler/src/dmd/compiler.d b/compiler/src/dmd/compiler.d
+index a0a1732047..84c2c6c9c6 100644
+--- a/compiler/src/dmd/compiler.d
++++ b/compiler/src/dmd/compiler.d
+@@ -142,7 +142,7 @@ extern (C++) struct Compiler
+      */
+     extern(C++) static bool onImport(Module m)
+     {
+-        if (includeImports)
++        if (includeImports && m.filetype == FileType.d)
+         {
+             if (includeImportedModuleCheck(ModuleComponentRange(
+                 m.md ? m.md.packages : [], m.ident, m.isPackageFile)))

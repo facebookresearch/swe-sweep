@@ -1,0 +1,143 @@
+{
+  "build_jobs": 4,
+  "container_repo": "/tokio",
+  "evaluation": {
+    "suite": "reproduction",
+    "visible_timeout": 14400
+  },
+  "upstream_image": "pandora-maxbug-tokio:1.33.0",
+  "n_base_passing": 0,
+  "n_base_test_ignore": 1,
+  "oracle_digest": "c631dbff21c2064a813b3d8dbbce3e3e8297d08ced2e4310229b9cfb0c87a50c",
+  "oracle_pristine_paths": [],
+  "upstream_commit": "9f7399e15e6172900e0591deb5a57a45769d8205",
+  "reproduction": {
+    "needs_build": false,
+    "suite": {
+      "cargo_args": {
+        "*": [
+          "--all-features"
+        ],
+        "tokio": [
+          "--features",
+          "full"
+        ]
+      },
+      "type": "cargo"
+    },
+    "test_timeout": 900
+  },
+  "schema": 2,
+  "subtasks": [
+    {
+      "f2p": [
+        "time_delay_queue::wake_after_remove_last"
+      ],
+      "id": "tokio-2b6ad5dad2ed",
+      "target_files": [
+        "tokio-util/src/time/delay_queue.rs"
+      ]
+    },
+    {
+      "f2p": [
+        "time_delay_queue::wake_after_clear"
+      ],
+      "id": "tokio-2be615ee964c",
+      "target_files": [
+        "tokio-util/src/time/delay_queue.rs"
+      ]
+    },
+    {
+      "f2p": [
+        "io_chain::empty_read_does_not_skip_first"
+      ],
+      "id": "tokio-31f4c3861d7c",
+      "target_files": [
+        "tokio/src/io/util/chain.rs"
+      ]
+    },
+    {
+      "f2p": [
+        "fs_file::empty_read"
+      ],
+      "id": "tokio-3abde857735e",
+      "target_files": [
+        "tokio/src/fs/file.rs"
+      ]
+    },
+    {
+      "f2p": [
+        "stream_map_while::map_while_does_not_poll_after_closure_returns_none"
+      ],
+      "id": "tokio-437cb4b92ee3",
+      "target_files": [
+        "tokio-stream/src/stream_ext/map_while.rs"
+      ]
+    },
+    {
+      "f2p": [
+        "__process_level_failure__"
+      ],
+      "id": "tokio-44e3e9089fa1",
+      "target_files": [
+        "tokio/src/runtime/builder.rs"
+      ]
+    },
+    {
+      "f2p": [
+        "io_async_fd::driver_shutdown_then_clear_readiness"
+      ],
+      "id": "tokio-622ef15fe3c2",
+      "target_files": [
+        "tokio/src/runtime/io/scheduled_io.rs"
+      ]
+    },
+    {
+      "f2p": [
+        "fs_file_join_error::file_ops_survive_join_error"
+      ],
+      "id": "tokio-7049148728eb",
+      "target_files": [
+        "tokio/src/fs/file.rs"
+      ]
+    },
+    {
+      "f2p": [
+        "time_delay_queue::reset_to_past_wakes_pending_queue"
+      ],
+      "id": "tokio-8b261ea507a2",
+      "target_files": [
+        "tokio-util/src/time/delay_queue.rs"
+      ]
+    },
+    {
+      "f2p": [
+        "io_stream_reader::test_stream_reader_does_not_poll_after_eof"
+      ],
+      "id": "tokio-aad835b94b8f",
+      "target_files": [
+        "tokio-util/src/io/stream_reader.rs"
+      ]
+    },
+    {
+      "f2p": [
+        "time_interval::interval_doesnt_panic_max_duration_when_polling"
+      ],
+      "id": "tokio-c5392e4a0e9b",
+      "target_files": [
+        "tokio/src/time/interval.rs"
+      ]
+    },
+    {
+      "f2p": [
+        "rt_threaded::wake_deferred_tasks_before_block_in_place"
+      ],
+      "id": "tokio-eb63b70d00c6",
+      "target_files": [
+        "tokio/src/runtime/scheduler/multi_thread/worker.rs"
+      ]
+    }
+  ],
+  "task": "tokio",
+  "version": "1.33.0"
+}

@@ -1,0 +1,14 @@
+diff --git a/independent-projects/arc/runtime/src/main/java/io/quarkus/arc/impl/RequestContext.java b/independent-projects/arc/runtime/src/main/java/io/quarkus/arc/impl/RequestContext.java
+index 76266300760..0e81d5b5865 100644
+--- a/independent-projects/arc/runtime/src/main/java/io/quarkus/arc/impl/RequestContext.java
++++ b/independent-projects/arc/runtime/src/main/java/io/quarkus/arc/impl/RequestContext.java
+@@ -112,7 +112,8 @@ class RequestContext implements ManagedContext {
+ 
+     @Override
+     public boolean isActive() {
+-        return currentContext.get() != null;
++        RequestContextState requestContextState = currentContext.get();
++        return requestContextState == null ? false : requestContextState.isValid();
+     }
+ 
+     @Override

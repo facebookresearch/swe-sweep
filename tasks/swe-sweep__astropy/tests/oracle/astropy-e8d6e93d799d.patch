@@ -1,0 +1,13 @@
+diff --git a/astropy/io/fits/convenience.py b/astropy/io/fits/convenience.py
+index 9276506..d06a344 100644
+--- a/astropy/io/fits/convenience.py
++++ b/astropy/io/fits/convenience.py
+@@ -548,7 +548,7 @@ def table_to_hdu(table, character_as_bytes=False):
+             # TODO: Determine a schema for handling non-integer masked columns
+             # with non-default fill values in FITS (if at all possible).
+             int_formats = ("B", "I", "J", "K")
+-            if not (col.format in int_formats or col.format.p_format in int_formats):
++            if not (col.format.format in int_formats or col.format.p_format in int_formats):
+                 continue
+ 
+             fill_value = tarray[col.name].fill_value

@@ -1,0 +1,13 @@
+diff --git a/mypy/messages.py b/mypy/messages.py
+index 25c4ed68c..2e07d7f63 100644
+--- a/mypy/messages.py
++++ b/mypy/messages.py
+@@ -2439,7 +2439,7 @@ class MessageBuilder:
+         error_cnt = 0
+         notes: list[str] = []
+         for i, (lhs_t, rhs_t) in enumerate(zip(lhs_types, rhs_types)):
+-            if not is_subtype(lhs_t, rhs_t):
++            if not is_subtype(rhs_t, lhs_t):
+                 if error_cnt < 3:
+                     notes.append(
+                         "Expression tuple item {} has type {}; {} expected; ".format(

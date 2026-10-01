@@ -1,0 +1,235 @@
+{
+  "build_jobs": 4,
+  "container_repo": "/dask",
+  "evaluation": {
+    "paths": "dask",
+    "visible_timeout": 7200
+  },
+  "upstream_image": "pandora-maxbug-dask:2.28.0",
+  "n_base_passing": 6573,
+  "n_base_test_ignore": 857,
+  "oracle_digest": "830d74c40fef3ce165322f5a5600933e131ebbe2f2802873c99e06ba8638c63c",
+  "oracle_pristine_paths": [],
+  "upstream_commit": "9f7399e15e6172900e0591deb5a57a45769d8205",
+  "reproduction": {
+    "needs_build": false,
+    "suite": "pytest",
+    "test_timeout": 1800
+  },
+  "schema": 2,
+  "subtasks": [
+    {
+      "f2p": [
+        "dask.dataframe.tests.test_dataframe::test_to_timestamp"
+      ],
+      "id": "dask-02a3f61deb1a",
+      "target_files": [
+        "dask/dataframe/core.py"
+      ]
+    },
+    {
+      "f2p": [
+        "dask.dataframe.tests.test_multi::test_merge_asof_on_left_right"
+      ],
+      "id": "dask-06f6ebd1fee9",
+      "target_files": [
+        "dask/dataframe/multi.py"
+      ]
+    },
+    {
+      "f2p": [
+        "dask.dataframe.tests.test_dataframe::test_assign_pandas_series"
+      ],
+      "id": "dask-0bad80132dd1",
+      "target_files": [
+        "dask/dataframe/core.py"
+      ]
+    },
+    {
+      "f2p": [
+        "dask.array.tests.test_reductions::test_arg_reductions[amax-argmax]",
+        "dask.array.tests.test_reductions::test_arg_reductions[amin-argmin]",
+        "dask.array.tests.test_reductions::test_arg_reductions[nanmax-nanargmax]",
+        "dask.array.tests.test_reductions::test_arg_reductions[nanmin-nanargmin]"
+      ],
+      "id": "dask-16aa6bc375ee",
+      "target_files": [
+        "dask/array/reductions.py"
+      ]
+    },
+    {
+      "f2p": [
+        "dask.dataframe.tests.test_dataframe::test_repartition_freq_day"
+      ],
+      "id": "dask-285f5168fe3e",
+      "target_files": [
+        "dask/dataframe/core.py"
+      ]
+    },
+    {
+      "f2p": [
+        "dask.dataframe.tests.test_shuffle::test_set_index_datetime_precision[us]"
+      ],
+      "id": "dask-3f504327d103",
+      "target_files": [
+        "dask/array/percentile.py"
+      ]
+    },
+    {
+      "f2p": [
+        "dask.tests.test_delayed::test_delayed_with_dataclass"
+      ],
+      "id": "dask-43271a5baaa2",
+      "target_files": [
+        "dask/delayed.py"
+      ]
+    },
+    {
+      "f2p": [
+        "dask.dataframe.io.tests.test_csv::test_header_int"
+      ],
+      "id": "dask-45cfc4318132",
+      "target_files": [
+        "dask/dataframe/io/csv.py"
+      ]
+    },
+    {
+      "f2p": [
+        "dask.dataframe.tests.test_dataframe::test_join_series"
+      ],
+      "id": "dask-7862ce2b2862",
+      "target_files": [
+        "dask/dataframe/core.py"
+      ]
+    },
+    {
+      "f2p": [
+        "dask.array.tests.test_overlap::test_map_overlap_trim_using_drop_axis_and_different_depths[1]",
+        "dask.array.tests.test_overlap::test_map_overlap_trim_using_drop_axis_and_different_depths[drop_axis0]",
+        "dask.array.tests.test_overlap::test_map_overlap_trim_using_drop_axis_and_different_depths[drop_axis1]",
+        "dask.array.tests.test_overlap::test_map_overlap_trim_using_drop_axis_and_different_depths[drop_axis3]",
+        "dask.array.tests.test_overlap::test_map_overlap_trim_using_drop_axis_and_different_depths[drop_axis5]"
+      ],
+      "id": "dask-7e670ecf9369",
+      "target_files": [
+        "dask/array/overlap.py"
+      ]
+    },
+    {
+      "f2p": [
+        "dask.array.tests.test_creation::test_eye"
+      ],
+      "id": "dask-8db2bd3ef60c",
+      "target_files": [
+        "dask/array/creation.py"
+      ]
+    },
+    {
+      "f2p": [
+        "dask.dataframe.tests.test_dataframe::test_dataframe_groupby_cumprod_agg_empty_partitions",
+        "dask.dataframe.tests.test_dataframe::test_dataframe_groupby_cumsum_agg_empty_partitions"
+      ],
+      "id": "dask-985aba56e4e1",
+      "target_files": [
+        "dask/dataframe/core.py",
+        "dask/dataframe/methods.py"
+      ]
+    },
+    {
+      "f2p": [
+        "dask.dataframe.tests.test_dataframe::test_drop_columns[columns1]"
+      ],
+      "id": "dask-ae43ac0c22a6",
+      "target_files": [
+        "dask/dataframe/core.py"
+      ]
+    },
+    {
+      "f2p": [
+        "dask.array.tests.test_array_core::test_slicing_with_object_dtype"
+      ],
+      "id": "dask-b61b0b20aebc",
+      "target_files": [
+        "dask/array/utils.py"
+      ]
+    },
+    {
+      "f2p": [
+        "dask.dataframe.tests.test_utils_dataframe::test_make_meta"
+      ],
+      "id": "dask-bff8434f634e",
+      "target_files": [
+        "dask/dataframe/utils.py"
+      ]
+    },
+    {
+      "f2p": [
+        "dask.array.tests.test_array_core::test_map_blocks_unique_name_chunks_dtype",
+        "dask.array.tests.test_array_core::test_map_blocks_unique_name_drop_axis",
+        "dask.array.tests.test_array_core::test_map_blocks_unique_name_new_axis"
+      ],
+      "id": "dask-cf16376ba701",
+      "target_files": [
+        "dask/array/core.py"
+      ]
+    },
+    {
+      "f2p": [
+        "dask.array.tests.test_reductions::test_reductions_1D_nans[x0-c8]",
+        "dask.array.tests.test_reductions::test_reductions_1D_nans[x0-f4]"
+      ],
+      "id": "dask-d36bf55087ab",
+      "target_files": [
+        "dask/array/reductions.py"
+      ]
+    },
+    {
+      "f2p": [
+        "dask.array.tests.test_creation::test_eye"
+      ],
+      "id": "dask-d778632c33e7",
+      "target_files": [
+        "dask/array/creation.py"
+      ]
+    },
+    {
+      "f2p": [
+        "dask.dataframe.tests.test_dataframe::test_memory_usage_index[False]",
+        "dask.dataframe.tests.test_dataframe::test_memory_usage_index[True]",
+        "dask.dataframe.tests.test_dataframe::test_memory_usage_series[False-False]",
+        "dask.dataframe.tests.test_dataframe::test_memory_usage_series[False-True]",
+        "dask.dataframe.tests.test_dataframe::test_memory_usage_series[True-False]",
+        "dask.dataframe.tests.test_dataframe::test_memory_usage_series[True-True]"
+      ],
+      "id": "dask-e0b2d7b3c6b2",
+      "target_files": [
+        "dask/dataframe/core.py"
+      ]
+    },
+    {
+      "f2p": [
+        "dask.dataframe.tests.test_reshape::test_pivot_table[count-values1]",
+        "dask.dataframe.tests.test_reshape::test_pivot_table[count-values2]",
+        "dask.dataframe.tests.test_reshape::test_pivot_table[mean-values1]",
+        "dask.dataframe.tests.test_reshape::test_pivot_table[mean-values2]",
+        "dask.dataframe.tests.test_reshape::test_pivot_table[sum-values1]",
+        "dask.dataframe.tests.test_reshape::test_pivot_table[sum-values2]"
+      ],
+      "id": "dask-efb2292d8d23",
+      "target_files": [
+        "dask/dataframe/methods.py"
+      ]
+    },
+    {
+      "f2p": [
+        "dask.dataframe.tests.test_dataframe::test_repartition_datetime_tz_index"
+      ],
+      "id": "dask-efc655d6db0b",
+      "target_files": [
+        "dask/dataframe/core.py"
+      ]
+    }
+  ],
+  "task": "dask",
+  "version": "2.28.0"
+}

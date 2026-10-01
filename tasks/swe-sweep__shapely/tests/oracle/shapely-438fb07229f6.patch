@@ -1,0 +1,14 @@
+diff --git a/shapely/geometry/point.py b/shapely/geometry/point.py
+index ccdd5c64..1816b67e 100644
+--- a/shapely/geometry/point.py
++++ b/shapely/geometry/point.py
+@@ -97,7 +97,8 @@ class Point(BaseGeometry):
+ 
+     @property
+     def __geo_interface__(self):
+-        return {"type": "Point", "coordinates": self.coords[0]}
++        coords = self.coords
++        return {"type": "Point", "coordinates": coords[0] if len(coords) > 0 else ()}
+ 
+     def svg(self, scale_factor=1.0, fill_color=None, opacity=None):
+         """Returns SVG circle element for the Point geometry.

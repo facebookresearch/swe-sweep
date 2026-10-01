@@ -1,0 +1,26 @@
+diff --git a/packages/jest-matcher-utils/src/deepCyclicCopyReplaceable.ts b/packages/jest-matcher-utils/src/deepCyclicCopyReplaceable.ts
+index 8c7c520c21..82cc0249a2 100644
+--- a/packages/jest-matcher-utils/src/deepCyclicCopyReplaceable.ts
++++ b/packages/jest-matcher-utils/src/deepCyclicCopyReplaceable.ts
+@@ -57,9 +57,18 @@ export default function deepCyclicCopyReplaceable<T>(
+ 
+ function deepCyclicCopyObject<T>(object: T, cycles: WeakMap<any, unknown>): T {
+   const newObject = Object.create(Object.getPrototypeOf(object));
+-  const descriptors: {
+-    [x: string]: PropertyDescriptor;
+-  } = Object.getOwnPropertyDescriptors(object);
++  let descriptors: Record<string, PropertyDescriptor> = {};
++  let obj = object;
++  do {
++    descriptors = Object.assign(
++      {},
++      Object.getOwnPropertyDescriptors(obj),
++      descriptors,
++    );
++  } while (
++    (obj = Object.getPrototypeOf(obj)) &&
++    obj !== Object.getPrototypeOf({})
++  );
+ 
+   cycles.set(object, newObject);
+ 

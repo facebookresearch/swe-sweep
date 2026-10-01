@@ -1,0 +1,13 @@
+diff --git a/src/Symfony/Component/OptionsResolver/OptionsResolver.php b/src/Symfony/Component/OptionsResolver/OptionsResolver.php
+index da7553cfb20..9b9fe43cce4 100644
+--- a/src/Symfony/Component/OptionsResolver/OptionsResolver.php
++++ b/src/Symfony/Component/OptionsResolver/OptionsResolver.php
+@@ -803,7 +803,7 @@ class OptionsResolver implements Options
+ 
+         foreach ((array) $optionNames as $option) {
+             unset($this->defined[$option], $this->defaults[$option], $this->required[$option], $this->resolved[$option]);
+-            unset($this->lazy[$option], $this->normalizers[$option], $this->allowedTypes[$option], $this->allowedValues[$option], $this->info[$option]);
++            unset($this->lazy[$option], $this->normalizers[$option], $this->allowedTypes[$option], $this->allowedValues[$option], $this->info[$option], $this->deprecated[$option]);
+         }
+ 
+         return $this;

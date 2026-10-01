@@ -1,0 +1,42 @@
+diff --git a/tests/FSharp.Compiler.ComponentTests/Conformance/BasicGrammarElements/StaticLet/RecordOptimizerRegression.fs b/tests/FSharp.Compiler.ComponentTests/Conformance/BasicGrammarElements/StaticLet/RecordOptimizerRegression.fs
+new file mode 100644
+index 0000000000..1ecbe38c6f
+--- /dev/null
++++ b/tests/FSharp.Compiler.ComponentTests/Conformance/BasicGrammarElements/StaticLet/RecordOptimizerRegression.fs
+@@ -0,0 +1,14 @@
++module Test
++
++// https://github.com/dotnet/fsharp/issues/18165
++
++type FooBar =
++    { xyz : string }
++    static let staticLet = 1
++
++let doThing (foo : FooBar) =
++    let bar = { foo with xyz = foo.xyz }
++    let baz = { bar with xyz = bar.xyz }
++    printf "%O" baz
++
++doThing { xyz = "" }
+\ No newline at end of file
+diff --git a/tests/FSharp.Compiler.ComponentTests/Conformance/BasicGrammarElements/StaticLet/StaticLetInUnionsAndRecords.fs b/tests/FSharp.Compiler.ComponentTests/Conformance/BasicGrammarElements/StaticLet/StaticLetInUnionsAndRecords.fs
+index 17c7c03c80..5ce43b8db7 100644
+--- a/tests/FSharp.Compiler.ComponentTests/Conformance/BasicGrammarElements/StaticLet/StaticLetInUnionsAndRecords.fs
++++ b/tests/FSharp.Compiler.ComponentTests/Conformance/BasicGrammarElements/StaticLet/StaticLetInUnionsAndRecords.fs
+@@ -95,6 +95,16 @@ init R 2
+ 1
+ 2"""
+ 
++[<Theory; Directory(__SOURCE_DIRECTORY__, Includes=[|"RecordOptimizerRegression.fs"|])>]
++let ``Static let - record optimizer regression`` compilation =
++    compilation
++    |> withOptimize
++    |> verifyCompileAndRun
++    |> shouldSucceed
++    |> withStdOutContains """{ xyz = "" }"""
++
++
++
+ [<Theory; Directory(__SOURCE_DIRECTORY__, Includes=[|"LowercaseDuTest.fs"|])>]
+ let ``Static let - lowercase DU`` compilation =
+     compilation

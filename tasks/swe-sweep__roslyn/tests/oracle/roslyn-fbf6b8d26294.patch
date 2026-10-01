@@ -1,0 +1,118 @@
+diff --git a/src/Compilers/CSharp/Portable/FlowAnalysis/AbstractFlowPass.cs b/src/Compilers/CSharp/Portable/FlowAnalysis/AbstractFlowPass.cs
+index 698eff8fabb..8fd311a6eaf 100644
+--- a/src/Compilers/CSharp/Portable/FlowAnalysis/AbstractFlowPass.cs
++++ b/src/Compilers/CSharp/Portable/FlowAnalysis/AbstractFlowPass.cs
+@@ -623,7 +623,7 @@ namespace Microsoft.CodeAnalysis.CSharp
+         /// Visit a boolean condition expression.
+         /// </summary>
+         /// <param name="node"></param>
+-        protected void VisitCondition(BoundExpression node)
++        protected virtual void VisitCondition(BoundExpression node)
+         {
+             Visit(node);
+             AdjustConditionalState(node);
+diff --git a/src/Compilers/CSharp/Portable/FlowAnalysis/DefiniteAssignment.cs b/src/Compilers/CSharp/Portable/FlowAnalysis/DefiniteAssignment.cs
+index 6640b2cdb33..8c2cff1da0f 100644
+--- a/src/Compilers/CSharp/Portable/FlowAnalysis/DefiniteAssignment.cs
++++ b/src/Compilers/CSharp/Portable/FlowAnalysis/DefiniteAssignment.cs
+@@ -2355,6 +2355,38 @@ namespace Microsoft.CodeAnalysis.CSharp
+             return result;
+         }
+ 
++        protected sealed override void VisitCondition(BoundExpression node)
++        {
++            // Debug instrumentation wraps conditions in a sequence that stores the result in a branch discriminator
++            // (see DebugInfoInjector.AddConditionSequencePoint). Preserve the original condition's true/false
++            // assignment states through that wrapper.
++            if (DebugInfoInjector.TryGetConditionalBranchDiscriminatorCondition(node, out BoundExpression condition, out BoundLocal target))
++            {
++                Debug.Assert(target.LocalSymbol.Type is not null);
++
++                if (target.LocalSymbol.Type.SpecialType == SpecialType.System_Boolean)
++                {
++                    VisitLvalue(target);
++                    base.VisitCondition(condition);
++
++                    Debug.Assert(IsConditionalState);
++                    var whenTrue = StateWhenTrue.Clone();
++                    var whenFalse = StateWhenFalse.Clone();
++
++                    Unsplit();
++                    Assign(target, condition);
++
++                    Meet(ref whenTrue, ref State);
++                    Meet(ref whenFalse, ref State);
++
++                    SetConditionalState(whenTrue, whenFalse);
++                    return;
++                }
++            }
++
++            base.VisitCondition(node);
++        }
++
+         public override BoundNode VisitLocalId(BoundLocalId node)
+             => null;
+ 
+diff --git a/src/Compilers/CSharp/Portable/Lowering/Instrumentation/DebugInfoInjector_SequencePoints.cs b/src/Compilers/CSharp/Portable/Lowering/Instrumentation/DebugInfoInjector_SequencePoints.cs
+index bed18cb6964..7d1177b69a0 100644
+--- a/src/Compilers/CSharp/Portable/Lowering/Instrumentation/DebugInfoInjector_SequencePoints.cs
++++ b/src/Compilers/CSharp/Portable/Lowering/Instrumentation/DebugInfoInjector_SequencePoints.cs
+@@ -4,6 +4,7 @@
+ 
+ using System.Collections.Immutable;
+ using System.Diagnostics;
++using System.Diagnostics.CodeAnalysis;
+ using Microsoft.CodeAnalysis.CSharp.Syntax;
+ using Microsoft.CodeAnalysis.Text;
+ using Roslyn.Utilities;
+@@ -187,12 +188,48 @@ namespace Microsoft.CodeAnalysis.CSharp
+                 new BoundSequencePointExpression(syntax: null!, expression: factory.Local(local), type: condition.Type) :
+                 condition;
+ 
+-            return new BoundSequence(
++            var sequence = new BoundSequence(
+                 condition.Syntax,
+                 ImmutableArray.Create(local),
+                 ImmutableArray.Create<BoundExpression>(factory.AssignmentExpression(factory.Local(local), condition)),
+                 valueExpression,
+                 condition.Type);
++
++            Debug.Assert(condition.ConstantValueOpt != null ||
++                (TryGetConditionalBranchDiscriminatorCondition(sequence, out var roundtripCondition, out var roundtripTarget) &&
++                 ReferenceEquals(roundtripCondition, condition) &&
++                 ReferenceEquals(roundtripTarget.LocalSymbol, local)));
++
++            return sequence;
++        }
++
++        /// <summary>
++        /// Detects the sequence produced by <see cref="AddConditionSequencePoint"/> wrapping a non-constant condition
++        /// in a <see cref="SynthesizedLocalKind.ConditionalBranchDiscriminator"/> local, returning the original condition
++        /// and the assignment target local.
++        /// </summary>
++        internal static bool TryGetConditionalBranchDiscriminatorCondition(
++            BoundExpression node,
++            [NotNullWhen(returnValue: true)] out BoundExpression? condition,
++            [NotNullWhen(returnValue: true)] out BoundLocal? target)
++        {
++            if (node is BoundSequence
++                {
++                    Locals: [{ SynthesizedKind: SynthesizedLocalKind.ConditionalBranchDiscriminator } local],
++                    SideEffects: [BoundAssignmentOperator { IsRef: false, Left: BoundLocal { LocalSymbol: var assignedLocal } left, Right: var conditionValue }],
++                    Value: BoundSequencePointExpression { Expression: BoundLocal { LocalSymbol: var valueLocal } },
++                } &&
++                ReferenceEquals(local, assignedLocal) &&
++                ReferenceEquals(local, valueLocal))
++            {
++                condition = conditionValue;
++                target = left;
++                return true;
++            }
++
++            condition = null;
++            target = null;
++            return false;
+         }
+     }
+ }

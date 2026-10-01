@@ -1,0 +1,20 @@
+diff --git a/networkx/algorithms/tests/test_clique.py b/networkx/algorithms/tests/test_clique.py
+index 3bee21098..118b3093c 100644
+--- a/networkx/algorithms/tests/test_clique.py
++++ b/networkx/algorithms/tests/test_clique.py
+@@ -66,6 +66,15 @@ class TestCliques:
+         with pytest.raises(ValueError):
+             list(nx.find_cliques_recursive(self.G, [2, 6, 4, 1]))
+ 
++    def test_find_cliques_directed(self):
++        G = nx.path_graph(4, create_using=nx.DiGraph)
++        msg = "not implemented for directed"
++        with pytest.raises(nx.NetworkXNotImplemented, match=msg):
++            list(nx.find_cliques(G))
++
++        with pytest.raises(nx.NetworkXNotImplemented, match=msg):
++            list(nx.find_cliques_recursive(G))
++
+     def test_clique_number(self):
+         G = self.G
+         assert nx.graph_clique_number(G) == 4

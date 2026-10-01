@@ -1,0 +1,13 @@
+diff --git a/cpp/src/arrow/result.h b/cpp/src/arrow/result.h
+index 30e632c700..6786d2b3fc 100644
+--- a/cpp/src/arrow/result.h
++++ b/cpp/src/arrow/result.h
+@@ -371,7 +371,7 @@ class [[nodiscard]] Result : public util::EqualityComparable<Result<T>> {
+     if (ok()) {
+       return MoveValueUnsafe();
+     }
+-    return generate_alternative();
++    return std::forward<G>(generate_alternative)();
+   }
+ 
+   /// Apply a function to the internally stored value to produce a new result or propagate

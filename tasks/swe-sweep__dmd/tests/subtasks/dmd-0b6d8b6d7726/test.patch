@@ -1,0 +1,59 @@
+diff --git a/compiler/test/runnable/gdb22905.d b/compiler/test/runnable/gdb22905.d
+new file mode 100644
+index 0000000000..842f61414b
+--- /dev/null
++++ b/compiler/test/runnable/gdb22905.d
+@@ -0,0 +1,20 @@
++/*
++EXTRA_SOURCES: imports/gdb22905b.d imports/gdb22905c.d
++REQUIRED_ARGS: -g
++GDB_SCRIPT:
++---
++b gdb22905c.d:6
++commands
++bt
++cont
++end
++run
++---
++GDB_MATCH: _D7imports9gdb22905b5funcBFZv .. at runnable/imports/gdb22905b.d:7
++*/
++import imports.gdb22905b;
++
++void main()
++{
++    funcB();
++}
+diff --git a/compiler/test/runnable/imports/gdb22905b.d b/compiler/test/runnable/imports/gdb22905b.d
+new file mode 100644
+index 0000000000..77cd118966
+--- /dev/null
++++ b/compiler/test/runnable/imports/gdb22905b.d
+@@ -0,0 +1,8 @@
++module imports.gdb22905b;
++import imports.gdb22905c;
++
++pragma(inline, false)
++void funcB()
++{
++    funcC(0);
++}
+diff --git a/compiler/test/runnable/imports/gdb22905c.d b/compiler/test/runnable/imports/gdb22905c.d
+new file mode 100644
+index 0000000000..eb26308659
+--- /dev/null
++++ b/compiler/test/runnable/imports/gdb22905c.d
+@@ -0,0 +1,13 @@
++module imports.gdb22905c;
++
++pragma(inline, false)
++void funcC(T)(T param, void delegate() dg = null)
++{
++    return;
++}
++
++struct S
++{
++    void function() f;
++    void *ptr;
++}

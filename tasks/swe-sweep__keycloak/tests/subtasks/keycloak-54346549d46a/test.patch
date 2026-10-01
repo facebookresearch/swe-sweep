@@ -1,0 +1,257 @@
+diff --git a/crypto/default/src/test/java/org/keycloak/crypto/def/test/BCCertificateUtilsProviderTest.java b/crypto/default/src/test/java/org/keycloak/crypto/def/test/BCCertificateUtilsProviderTest.java
+new file mode 100644
+index 0000000000..9d8fd719ad
+--- /dev/null
++++ b/crypto/default/src/test/java/org/keycloak/crypto/def/test/BCCertificateUtilsProviderTest.java
+@@ -0,0 +1,77 @@
++/*
++ * Copyright 2026 Red Hat, Inc. and/or its affiliates
++ *  and other contributors as indicated by the @author tags.
++ *
++ *  Licensed under the Apache License, Version 2.0 (the "License");
++ *  you may not use this file except in compliance with the License.
++ *  You may obtain a copy of the License at
++ *
++ *  http://www.apache.org/licenses/LICENSE-2.0
++ *
++ *  Unless required by applicable law or agreed to in writing, software
++ *  distributed under the License is distributed on an "AS IS" BASIS,
++ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++ *
++ *  See the License for the specific language governing permissions and
++ *  limitations under the License.
++ *
++ */
++
++package org.keycloak.crypto.def.test;
++
++import java.security.KeyPair;
++import java.security.cert.X509Certificate;
++
++import org.keycloak.common.util.CertificateUtils;
++import org.keycloak.common.util.KeyUtils;
++import org.keycloak.rule.CryptoInitRule;
++
++import org.bouncycastle.asn1.ASN1Encodable;
++import org.bouncycastle.asn1.ASN1String;
++import org.bouncycastle.asn1.x500.style.BCStyle;
++import org.bouncycastle.cert.jcajce.JcaX509CertificateHolder;
++import org.junit.Assert;
++import org.junit.ClassRule;
++import org.junit.Test;
++
++/**
++ * Regression test for https://github.com/keycloak/keycloak/issues/50177 - the subject used to build the
++ * certificate must not be parsed as an RFC2253 DN string, since values such as client IDs may contain
++ * characters (e.g. '=', ',') that are not valid there.
++ */
++public class BCCertificateUtilsProviderTest {
++
++    @ClassRule
++    public static CryptoInitRule cryptoInitRule = new CryptoInitRule();
++
++    @Test
++    public void testV1SelfSignedCertificateWithSpecialCharactersInSubject() {
++        String subject = "https://example.com/?action=sso_id";
++        KeyPair keyPair = KeyUtils.generateRsaKeyPair(2048);
++
++        X509Certificate certificate = CertificateUtils.generateV1SelfSignedCertificate(keyPair, subject);
++
++        Assert.assertEquals(subject, extractCN(certificate));
++    }
++
++    @Test
++    public void testV3CertificateWithSpecialCharactersInSubject() throws Exception {
++        String subject = "https://example.com/?action=sso_id";
++        KeyPair caKeyPair = KeyUtils.generateRsaKeyPair(2048);
++        X509Certificate caCert = CertificateUtils.generateV1SelfSignedCertificate(caKeyPair, "ca");
++
++        KeyPair keyPair = KeyUtils.generateRsaKeyPair(2048);
++        X509Certificate certificate = CertificateUtils.generateV3Certificate(keyPair, caKeyPair.getPrivate(), caCert, subject);
++
++        Assert.assertEquals(subject, extractCN(certificate));
++    }
++
++    private static String extractCN(X509Certificate certificate) {
++        try {
++            ASN1Encodable value = new JcaX509CertificateHolder(certificate).getSubject().getRDNs(BCStyle.CN)[0].getFirst().getValue();
++            return ((ASN1String) value).getString();
++        } catch (Exception e) {
++            throw new RuntimeException(e);
++        }
++    }
++}
+diff --git a/crypto/elytron/src/test/java/org/keycloak/crypto/elytron/test/ElytronCertificateUtilsProviderTest.java b/crypto/elytron/src/test/java/org/keycloak/crypto/elytron/test/ElytronCertificateUtilsProviderTest.java
+new file mode 100644
+index 0000000000..b77642a507
+--- /dev/null
++++ b/crypto/elytron/src/test/java/org/keycloak/crypto/elytron/test/ElytronCertificateUtilsProviderTest.java
+@@ -0,0 +1,85 @@
++/*
++ * Copyright 2026 Red Hat, Inc. and/or its affiliates
++ *  and other contributors as indicated by the @author tags.
++ *
++ *  Licensed under the Apache License, Version 2.0 (the "License");
++ *  you may not use this file except in compliance with the License.
++ *  You may obtain a copy of the License at
++ *
++ *  http://www.apache.org/licenses/LICENSE-2.0
++ *
++ *  Unless required by applicable law or agreed to in writing, software
++ *  distributed under the License is distributed on an "AS IS" BASIS,
++ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++ *
++ *  See the License for the specific language governing permissions and
++ *  limitations under the License.
++ *
++ */
++
++package org.keycloak.crypto.elytron.test;
++
++import java.security.KeyPair;
++import java.security.KeyPairGenerator;
++import java.security.cert.X509Certificate;
++import javax.naming.ldap.LdapName;
++import javax.security.auth.x500.X500Principal;
++
++import org.keycloak.crypto.elytron.ElytronCertificateUtilsProvider;
++
++import org.junit.Assert;
++import org.junit.Test;
++
++/**
++ * Regression test for https://github.com/keycloak/keycloak/issues/50177 - the subject used to build a
++ * certificate (e.g. a client ID) must not be parsed as an RFC 2253 DN string, since it may contain
++ * reserved characters (e.g. '=', ',', '+', '"').
++ */
++public class ElytronCertificateUtilsProviderTest {
++
++    private final ElytronCertificateUtilsProvider provider = new ElytronCertificateUtilsProvider();
++
++    @Test
++    public void testV1SelfSignedCertificateWithQueryStringSubject() throws Exception {
++        assertSubjectRoundTrips("https://example.com/?action=sso_id");
++    }
++
++    @Test
++    public void testV1SelfSignedCertificateWithCommaInSubject() throws Exception {
++        assertSubjectRoundTrips("client,id");
++    }
++
++    @Test
++    public void testV1SelfSignedCertificateWithPlusAndQuoteInSubject() throws Exception {
++        assertSubjectRoundTrips("client+id\"with\"quotes");
++    }
++
++    @Test
++    public void testV3CertificateWithQueryStringSubject() throws Exception {
++        String subject = "https://example.com/?action=sso_id";
++        KeyPair caKeyPair = generateRsaKeyPair();
++        X509Certificate caCert = provider.generateV1SelfSignedCertificate(caKeyPair, "ca");
++
++        X509Certificate certificate = provider.generateV3Certificate(generateRsaKeyPair(), caKeyPair.getPrivate(), caCert, subject);
++
++        Assert.assertEquals(subject, extractCN(certificate));
++    }
++
++    private void assertSubjectRoundTrips(String subject) throws Exception {
++        X509Certificate certificate = provider.generateV1SelfSignedCertificate(generateRsaKeyPair(), subject);
++
++        Assert.assertEquals(subject, extractCN(certificate));
++    }
++
++    private static KeyPair generateRsaKeyPair() throws Exception {
++        KeyPairGenerator generator = KeyPairGenerator.getInstance("RSA");
++        generator.initialize(2048);
++        return generator.generateKeyPair();
++    }
++
++    private static String extractCN(X509Certificate certificate) throws Exception {
++        X500Principal principal = certificate.getSubjectX500Principal();
++        LdapName ldapName = new LdapName(principal.getName());
++        return (String) ldapName.getRdn(0).toAttributes().get("CN").get();
++    }
++}
+diff --git a/crypto/fips1402/src/test/java/org/keycloak/crypto/fips/test/BCFIPSCertificateUtilsProviderTest.java b/crypto/fips1402/src/test/java/org/keycloak/crypto/fips/test/BCFIPSCertificateUtilsProviderTest.java
+new file mode 100644
+index 0000000000..908f902072
+--- /dev/null
++++ b/crypto/fips1402/src/test/java/org/keycloak/crypto/fips/test/BCFIPSCertificateUtilsProviderTest.java
+@@ -0,0 +1,77 @@
++/*
++ * Copyright 2026 Red Hat, Inc. and/or its affiliates
++ *  and other contributors as indicated by the @author tags.
++ *
++ *  Licensed under the Apache License, Version 2.0 (the "License");
++ *  you may not use this file except in compliance with the License.
++ *  You may obtain a copy of the License at
++ *
++ *  http://www.apache.org/licenses/LICENSE-2.0
++ *
++ *  Unless required by applicable law or agreed to in writing, software
++ *  distributed under the License is distributed on an "AS IS" BASIS,
++ *  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++ *
++ *  See the License for the specific language governing permissions and
++ *  limitations under the License.
++ *
++ */
++
++package org.keycloak.crypto.fips.test;
++
++import java.security.KeyPair;
++import java.security.cert.X509Certificate;
++
++import org.keycloak.common.util.CertificateUtils;
++import org.keycloak.common.util.KeyUtils;
++import org.keycloak.rule.CryptoInitRule;
++
++import org.bouncycastle.asn1.ASN1Encodable;
++import org.bouncycastle.asn1.ASN1String;
++import org.bouncycastle.asn1.x500.style.BCStyle;
++import org.bouncycastle.cert.jcajce.JcaX509CertificateHolder;
++import org.junit.Assert;
++import org.junit.ClassRule;
++import org.junit.Test;
++
++/**
++ * Regression test for https://github.com/keycloak/keycloak/issues/50177 - the subject used to build the
++ * certificate must not be parsed as an RFC2253 DN string, since values such as client IDs may contain
++ * characters (e.g. '=', ',') that are not valid there.
++ */
++public class BCFIPSCertificateUtilsProviderTest {
++
++    @ClassRule
++    public static CryptoInitRule cryptoInitRule = new CryptoInitRule();
++
++    @Test
++    public void testV1SelfSignedCertificateWithSpecialCharactersInSubject() {
++        String subject = "https://example.com/?action=sso_id";
++        KeyPair keyPair = KeyUtils.generateRsaKeyPair(2048);
++
++        X509Certificate certificate = CertificateUtils.generateV1SelfSignedCertificate(keyPair, subject);
++
++        Assert.assertEquals(subject, extractCN(certificate));
++    }
++
++    @Test
++    public void testV3CertificateWithSpecialCharactersInSubject() throws Exception {
++        String subject = "https://example.com/?action=sso_id";
++        KeyPair caKeyPair = KeyUtils.generateRsaKeyPair(2048);
++        X509Certificate caCert = CertificateUtils.generateV1SelfSignedCertificate(caKeyPair, "ca");
++
++        KeyPair keyPair = KeyUtils.generateRsaKeyPair(2048);
++        X509Certificate certificate = CertificateUtils.generateV3Certificate(keyPair, caKeyPair.getPrivate(), caCert, subject);
++
++        Assert.assertEquals(subject, extractCN(certificate));
++    }
++
++    private static String extractCN(X509Certificate certificate) {
++        try {
++            ASN1Encodable value = new JcaX509CertificateHolder(certificate).getSubject().getRDNs(BCStyle.CN)[0].getFirst().getValue();
++            return ((ASN1String) value).getString();
++        } catch (Exception e) {
++            throw new RuntimeException(e);
++        }
++    }
++}

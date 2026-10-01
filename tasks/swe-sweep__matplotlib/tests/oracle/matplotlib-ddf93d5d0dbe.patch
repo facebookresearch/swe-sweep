@@ -1,0 +1,13 @@
+diff --git a/lib/matplotlib/ticker.py b/lib/matplotlib/ticker.py
+index 2314790924..4eb9a2e66c 100644
+--- a/lib/matplotlib/ticker.py
++++ b/lib/matplotlib/ticker.py
+@@ -510,7 +510,7 @@ class ScalarFormatter(Formatter):
+         will be formatted as ``0, 2, 4, 6, 8`` plus an offset ``+1e5``, which
+         is written to the edge of the axis.
+         """
+-        if val in [True, False]:
++        if isinstance(val, bool):
+             self.offset = 0
+             self._useOffset = val
+         else:

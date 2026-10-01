@@ -1,0 +1,12 @@
+diff --git a/src/storage/table/list_column_data.cpp b/src/storage/table/list_column_data.cpp
+index b805497a59..418a4bd464 100644
+--- a/src/storage/table/list_column_data.cpp
++++ b/src/storage/table/list_column_data.cpp
+@@ -303,6 +303,7 @@ void ListColumnData::FetchRow(TransactionData transaction, ColumnFetchState &sta
+ }
+ 
+ void ListColumnData::CommitDropColumn() {
++	ColumnData::CommitDropColumn();
+ 	validity.CommitDropColumn();
+ 	child_column->CommitDropColumn();
+ }

@@ -1,0 +1,13 @@
+diff --git a/src/context/context.go b/src/context/context.go
+index 30adfe987d..763d4f777f 100644
+--- a/src/context/context.go
++++ b/src/context/context.go
+@@ -547,6 +547,8 @@ func stringify(v interface{}) string {
+ 		return s.String()
+ 	case string:
+ 		return s
++	case nil:
++		return "<nil>"
+ 	}
+ 	return "<not Stringer>"
+ }

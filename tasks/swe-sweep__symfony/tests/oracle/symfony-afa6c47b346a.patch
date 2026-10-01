@@ -1,0 +1,19 @@
+diff --git a/src/Symfony/Component/HttpClient/CurlHttpClient.php b/src/Symfony/Component/HttpClient/CurlHttpClient.php
+index bbaa4de..45ddae0 100644
+--- a/src/Symfony/Component/HttpClient/CurlHttpClient.php
++++ b/src/Symfony/Component/HttpClient/CurlHttpClient.php
+@@ -179,10 +179,10 @@ final class CurlHttpClient implements HttpClientInterface, LoggerAwareInterface,
+                 $this->multi->reset();
+             }
+ 
+-            foreach ($options['resolve'] as $host => $ip) {
+-                $resolve[] = null === $ip ? "-$host:$port" : "$host:$port:$ip";
+-                $this->multi->dnsCache->hostnames[$host] = $ip;
+-                $this->multi->dnsCache->removals["-$host:$port"] = "-$host:$port";
++            foreach ($options['resolve'] as $resolveHost => $ip) {
++                $resolve[] = null === $ip ? "-$resolveHost:$port" : "$resolveHost:$port:$ip";
++                $this->multi->dnsCache->hostnames[$resolveHost] = $ip;
++                $this->multi->dnsCache->removals["-$resolveHost:$port"] = "-$resolveHost:$port";
+             }
+ 
+             $curlopts[\CURLOPT_RESOLVE] = $resolve;

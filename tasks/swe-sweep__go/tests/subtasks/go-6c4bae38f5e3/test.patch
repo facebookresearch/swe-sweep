@@ -1,0 +1,66 @@
+diff --git a/src/go/build/build_test.go b/src/go/build/build_test.go
+index 6cd7f9b589..36bcae179e 100644
+--- a/src/go/build/build_test.go
++++ b/src/go/build/build_test.go
+@@ -731,3 +731,39 @@ func TestCgoImportsIgnored(t *testing.T) {
+ 		}
+ 	}
+ }
++
++// Issue #52053. Check that if there is a file x_GOOS_GOARCH.go that both
++// GOOS and GOARCH show up in the Package.AllTags field. We test both the
++// case where the file matches and where the file does not match.
++// The latter case used to fail, incorrectly omitting GOOS.
++func TestAllTags(t *testing.T) {
++	ctxt := Default
++	ctxt.GOARCH = "arm"
++	ctxt.GOOS = "netbsd"
++	p, err := ctxt.ImportDir("testdata/alltags", 0)
++	if err != nil {
++		t.Fatal(err)
++	}
++	want := []string{"arm", "netbsd"}
++	if !reflect.DeepEqual(p.AllTags, want) {
++		t.Errorf("AllTags = %v, want %v", p.AllTags, want)
++	}
++	wantFiles := []string{"alltags.go", "x_netbsd_arm.go"}
++	if !reflect.DeepEqual(p.GoFiles, wantFiles) {
++		t.Errorf("GoFiles = %v, want %v", p.GoFiles, wantFiles)
++	}
++
++	ctxt.GOARCH = "amd64"
++	ctxt.GOOS = "linux"
++	p, err = ctxt.ImportDir("testdata/alltags", 0)
++	if err != nil {
++		t.Fatal(err)
++	}
++	if !reflect.DeepEqual(p.AllTags, want) {
++		t.Errorf("AllTags = %v, want %v", p.AllTags, want)
++	}
++	wantFiles = []string{"alltags.go"}
++	if !reflect.DeepEqual(p.GoFiles, wantFiles) {
++		t.Errorf("GoFiles = %v, want %v", p.GoFiles, wantFiles)
++	}
++}
+diff --git a/src/go/build/testdata/alltags/alltags.go b/src/go/build/testdata/alltags/alltags.go
+new file mode 100644
+index 0000000000..5d308550d1
+--- /dev/null
++++ b/src/go/build/testdata/alltags/alltags.go
+@@ -0,0 +1,5 @@
++// Copyright 2022 The Go Authors. All rights reserved.
++// Use of this source code is governed by a BSD-style
++// license that can be found in the LICENSE file.
++
++package alltags
+diff --git a/src/go/build/testdata/alltags/x_netbsd_arm.go b/src/go/build/testdata/alltags/x_netbsd_arm.go
+new file mode 100644
+index 0000000000..5d308550d1
+--- /dev/null
++++ b/src/go/build/testdata/alltags/x_netbsd_arm.go
+@@ -0,0 +1,5 @@
++// Copyright 2022 The Go Authors. All rights reserved.
++// Use of this source code is governed by a BSD-style
++// license that can be found in the LICENSE file.
++
++package alltags

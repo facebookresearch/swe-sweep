@@ -1,0 +1,23 @@
+diff --git a/src/Symfony/Component/DependencyInjection/Loader/PhpFileLoader.php b/src/Symfony/Component/DependencyInjection/Loader/PhpFileLoader.php
+index f01cf39d7cd..fb6cc81f7ca 100644
+--- a/src/Symfony/Component/DependencyInjection/Loader/PhpFileLoader.php
++++ b/src/Symfony/Component/DependencyInjection/Loader/PhpFileLoader.php
+@@ -57,6 +57,9 @@ class PhpFileLoader extends FileLoader
+             return include $path;
+         }, $this, ProtectedPhpFileLoader::class);
+ 
++        $instanceof = $this->instanceof;
++        $this->instanceof = [];
++
+         try {
+             $callback = $load($path, $this->env);
+ 
+@@ -64,7 +67,7 @@ class PhpFileLoader extends FileLoader
+                 $this->executeCallback($callback, new ContainerConfigurator($this->container, $this, $this->instanceof, $path, $resource, $this->env), $path);
+             }
+         } finally {
+-            $this->instanceof = [];
++            $this->instanceof = $instanceof;
+             $this->registerAliasesForSinglyImplementedInterfaces();
+         }
+ 

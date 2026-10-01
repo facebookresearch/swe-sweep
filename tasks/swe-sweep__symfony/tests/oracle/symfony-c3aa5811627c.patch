@@ -1,0 +1,21 @@
+diff --git a/src/Symfony/Component/DependencyInjection/Dumper/PhpDumper.php b/src/Symfony/Component/DependencyInjection/Dumper/PhpDumper.php
+index e565612e698..e54366a6a12 100644
+--- a/src/Symfony/Component/DependencyInjection/Dumper/PhpDumper.php
++++ b/src/Symfony/Component/DependencyInjection/Dumper/PhpDumper.php
+@@ -1844,7 +1844,15 @@ EOF;
+ 
+                     $returnedType = '';
+                     if ($value instanceof TypedReference) {
+-                        $returnedType = sprintf(': %s\%s', ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE >= $value->getInvalidBehavior() ? '' : '?', str_replace(['|', '&'], ['|\\', '&\\'], $value->getType()));
++                        $type = $value->getType();
++                        $nullable = ContainerInterface::EXCEPTION_ON_INVALID_REFERENCE >= $value->getInvalidBehavior() ? '' : '?';
++
++                        if ('?' === ($type[0] ?? '')) {
++                            $type = substr($type, 1);
++                            $nullable = '?';
++                        }
++
++                        $returnedType = sprintf(': %s\%s', $nullable, str_replace(['|', '&'], ['|\\', '&\\'], $type));
+                     }
+ 
+                     $attribute = '';

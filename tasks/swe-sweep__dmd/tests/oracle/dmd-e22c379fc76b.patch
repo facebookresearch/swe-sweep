@@ -1,0 +1,12 @@
+diff --git a/compiler/src/dmd/todt.d b/compiler/src/dmd/todt.d
+index 717f2652ed..0a7f79a870 100644
+--- a/compiler/src/dmd/todt.d
++++ b/compiler/src/dmd/todt.d
+@@ -504,7 +504,6 @@ extern (C++) void Expression_toDt(Expression e, ref DtBuilder dtb)
+         //printf("SymOffExp.toDt('%s')\n", e.var.toChars());
+         assert(e.var);
+         if (!(e.var.isDataseg() || e.var.isCodeseg()) ||
+-            e.var.needThis() ||
+             e.var.isThreadlocal())
+         {
+             return nonConstExpError(e);

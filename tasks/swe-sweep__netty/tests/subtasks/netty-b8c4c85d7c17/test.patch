@@ -1,0 +1,44 @@
+diff --git a/codec-http2/src/test/java/io/netty/handler/codec/http2/Http2MultiplexCodecTest.java b/codec-http2/src/test/java/io/netty/handler/codec/http2/Http2MultiplexCodecTest.java
+index bec5cd964e..4778729cd9 100644
+--- a/codec-http2/src/test/java/io/netty/handler/codec/http2/Http2MultiplexCodecTest.java
++++ b/codec-http2/src/test/java/io/netty/handler/codec/http2/Http2MultiplexCodecTest.java
+@@ -31,6 +31,7 @@ import io.netty.util.AsciiString;
+ import io.netty.util.AttributeKey;
+ 
+ import java.net.InetSocketAddress;
++import java.util.concurrent.atomic.AtomicBoolean;
+ 
+ import org.junit.After;
+ import org.junit.Before;
+@@ -420,6 +421,31 @@ public class Http2MultiplexCodecTest {
+         assertEquals("true,false", inboundHandler.writabilityStates());
+     }
+ 
++    @Test
++    public void channelClosedWhenInactiveFired() {
++        LastInboundHandler inboundHandler = streamActiveAndWriteHeaders(inboundStream);
++        Http2StreamChannel childChannel = (Http2StreamChannel) inboundHandler.channel();
++
++        final AtomicBoolean channelOpen = new AtomicBoolean(false);
++        final AtomicBoolean channelActive = new AtomicBoolean(false);
++        assertTrue(childChannel.isOpen());
++        assertTrue(childChannel.isActive());
++
++        childChannel.pipeline().addLast(new ChannelInboundHandlerAdapter() {
++            @Override
++            public void channelInactive(ChannelHandlerContext ctx) throws Exception {
++                channelOpen.set(ctx.channel().isOpen());
++                channelActive.set(ctx.channel().isActive());
++
++                super.channelInactive(ctx);
++            }
++        });
++
++        childChannel.close().syncUninterruptibly();
++        assertFalse(channelOpen.get());
++        assertFalse(channelActive.get());
++    }
++
+     @Ignore("not supported anymore atm")
+     @Test
+     public void cancellingWritesBeforeFlush() {

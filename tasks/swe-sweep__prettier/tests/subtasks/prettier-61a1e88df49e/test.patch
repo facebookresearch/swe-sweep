@@ -1,0 +1,47 @@
+diff --git a/tests/format/scss/include/__snapshots__/format.test.js.snap b/tests/format/scss/include/__snapshots__/format.test.js.snap
+new file mode 100644
+index 000000000..7272e1228
+--- /dev/null
++++ b/tests/format/scss/include/__snapshots__/format.test.js.snap
+@@ -0,0 +1,23 @@
++// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
++
++exports[`include.scss format 1`] = `
++====================================options=====================================
++parsers: ["scss"]
++printWidth: 80
++                                                                                | printWidth
++=====================================input======================================
++h1 {
++  @include foo   ('A');
++  @include bar('A (B)');
++  @include baz   ('A (B)');
++}
++
++=====================================output=====================================
++h1 {
++  @include foo("A");
++  @include bar("A (B)");
++  @include baz("A (B)");
++}
++
++================================================================================
++`;
+diff --git a/tests/format/scss/include/format.test.js b/tests/format/scss/include/format.test.js
+new file mode 100644
+index 000000000..88aa93e6a
+--- /dev/null
++++ b/tests/format/scss/include/format.test.js
+@@ -0,0 +1 @@
++runFormatTest(import.meta, ["scss"]);
+diff --git a/tests/format/scss/include/include.scss b/tests/format/scss/include/include.scss
+new file mode 100644
+index 000000000..2db96e3b2
+--- /dev/null
++++ b/tests/format/scss/include/include.scss
+@@ -0,0 +1,5 @@
++h1 {
++  @include foo   ('A');
++  @include bar('A (B)');
++  @include baz   ('A (B)');
++}

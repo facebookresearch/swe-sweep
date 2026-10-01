@@ -1,0 +1,50 @@
+diff --git a/pandas/core/arrays/categorical.py b/pandas/core/arrays/categorical.py
+index 543b018c07..c0fc172139 100644
+--- a/pandas/core/arrays/categorical.py
++++ b/pandas/core/arrays/categorical.py
+@@ -52,6 +52,7 @@ from pandas.util._decorators import (
+     cache_readonly,
+     deprecate_kwarg,
+ )
++from pandas.util._exceptions import find_stack_level
+ from pandas.util._validators import validate_bool_kwarg
+ 
+ from pandas.core.dtypes.cast import (
+@@ -1116,10 +1117,10 @@ class Categorical(NDArrayBackedExtensionArray, PandasObject, ObjectStringArrayMi
+             warn(
+                 "The `inplace` parameter in pandas.Categorical."
+                 "reorder_categories is deprecated and will be removed in "
+-                "a future version. Removing unused categories will always "
++                "a future version. Reordering categories will always "
+                 "return a new Categorical object.",
+                 FutureWarning,
+-                stacklevel=2,
++                stacklevel=find_stack_level(),
+             )
+         else:
+             inplace = False
+diff --git a/pandas/core/internals/blocks.py b/pandas/core/internals/blocks.py
+index 02326e4709..0f4e7fa59a 100644
+--- a/pandas/core/internals/blocks.py
++++ b/pandas/core/internals/blocks.py
+@@ -336,7 +336,6 @@ class Block(PandasObject):
+     def shape(self) -> Shape:
+         return self.values.shape
+ 
+-    @final
+     @cache_readonly
+     def dtype(self) -> DtypeObj:
+         return self.values.dtype
+@@ -1881,6 +1880,12 @@ class CategoricalBlock(ExtensionBlock):
+     # this Block type is kept for backwards-compatibility
+     __slots__ = ()
+ 
++    # GH#43232, GH#43334 self.values.dtype can be changed inplace until 2.0,
++    #  so this cannot be cached
++    @property
++    def dtype(self) -> DtypeObj:
++        return self.values.dtype
++
+ 
+ # -----------------------------------------------------------------
+ # Constructor Helpers

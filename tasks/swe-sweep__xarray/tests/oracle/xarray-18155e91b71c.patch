@@ -1,0 +1,41 @@
+diff --git a/xarray/conventions.py b/xarray/conventions.py
+index ebe95b62..102ef003 100644
+--- a/xarray/conventions.py
++++ b/xarray/conventions.py
+@@ -7,7 +7,7 @@ import pandas as pd
+ from .coding import strings, times, variables
+ from .coding.variables import SerializationWarning, pop_to
+ from .core import duck_array_ops, indexing
+-from .core.common import contains_cftime_datetimes
++from .core.common import _contains_datetime_like_objects, contains_cftime_datetimes
+ from .core.pycompat import is_duck_dask_array
+ from .core.variable import IndexVariable, Variable, as_variable
+ 
+@@ -340,6 +340,11 @@ def decode_cf_variable(
+         A variable holding the decoded equivalent of var.
+     """
+     var = as_variable(var)
++
++    # Ensure datetime-like Variables are passed through unmodified (GH 6453)
++    if _contains_datetime_like_objects(var):
++        return var
++
+     original_dtype = var.dtype
+ 
+     if decode_timedelta is None:
+diff --git a/xarray/core/common.py b/xarray/core/common.py
+index 817b6316..3db9b1cf 100644
+--- a/xarray/core/common.py
++++ b/xarray/core/common.py
+@@ -1862,7 +1862,10 @@ def _contains_cftime_datetimes(array) -> bool:
+ 
+ def contains_cftime_datetimes(var) -> bool:
+     """Check if an xarray.Variable contains cftime.datetime objects"""
+-    return _contains_cftime_datetimes(var.data)
++    if var.dtype == np.dtype("O") and var.size > 0:
++        return _contains_cftime_datetimes(var.data)
++    else:
++        return False
+ 
+ 
+ def _contains_datetime_like_objects(var) -> bool:

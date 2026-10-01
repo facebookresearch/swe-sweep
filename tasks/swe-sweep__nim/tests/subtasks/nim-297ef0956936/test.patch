@@ -1,0 +1,15 @@
+diff --git a/tests/generics/t21760.nim b/tests/generics/t21760.nim
+new file mode 100644
+index 000000000..5343279bb
+--- /dev/null
++++ b/tests/generics/t21760.nim
+@@ -0,0 +1,8 @@
++import std/tables
++
++type Url = object
++
++proc myInit(_: type[Url], params = default(Table[string, string])): Url =
++  discard
++
++discard myInit(Url)
+\ No newline at end of file

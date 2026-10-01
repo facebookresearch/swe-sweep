@@ -1,0 +1,14 @@
+diff --git a/sklearn/tests/test_dummy.py b/sklearn/tests/test_dummy.py
+index 9cbb6f77d7..61f8c2e419 100644
+--- a/sklearn/tests/test_dummy.py
++++ b/sklearn/tests/test_dummy.py
+@@ -425,6 +425,9 @@ def test_constant_strategy_regressor():
+     reg.fit(X, y)
+     assert_array_equal(reg.predict(X), [43] * len(X))
+ 
++    # non-regression test for #22478
++    assert not isinstance(reg.constant, np.ndarray)
++
+ 
+ def test_constant_strategy_multioutput_regressor():
+ 

@@ -1,0 +1,12 @@
+diff --git a/vlib/v/fmt/fmt.v b/vlib/v/fmt/fmt.v
+index 4d5d59cce..32925545e 100644
+--- a/vlib/v/fmt/fmt.v
++++ b/vlib/v/fmt/fmt.v
+@@ -1721,6 +1721,7 @@ pub fn (mut f Fmt) fn_type_decl(node ast.FnTypeDecl) {
+ 			if s.starts_with('&') {
+ 				s = s[1..]
+ 			}
++			s = s.trim_left('shared ')
+ 		}
+ 		is_last_arg := i == fn_info.params.len - 1
+ 		should_add_type := true || is_last_arg

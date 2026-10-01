@@ -1,0 +1,888 @@
+diff --git a/independent-projects/resteasy-reactive/server/vertx/src/test/java/org/jboss/resteasy/reactive/server/vertx/test/cache/CacheOnClassAndMethodsImplementationTest.java b/independent-projects/resteasy-reactive/server/vertx/src/test/java/org/jboss/resteasy/reactive/server/vertx/test/cache/CacheOnClassAndMethodsImplementationTest.java
+new file mode 100644
+index 00000000000..034de1d33ae
+--- /dev/null
++++ b/independent-projects/resteasy-reactive/server/vertx/src/test/java/org/jboss/resteasy/reactive/server/vertx/test/cache/CacheOnClassAndMethodsImplementationTest.java
+@@ -0,0 +1,84 @@
++package org.jboss.resteasy.reactive.server.vertx.test.cache;
++
++import static org.hamcrest.CoreMatchers.equalTo;
++
++import java.util.function.Consumer;
++import java.util.function.Supplier;
++
++import jakarta.ws.rs.GET;
++import jakarta.ws.rs.Path;
++
++import org.jboss.resteasy.reactive.Cache;
++import org.jboss.resteasy.reactive.server.processor.ResteasyReactiveDeploymentManager;
++import org.jboss.resteasy.reactive.server.processor.scanning.CacheControlScanner;
++import org.jboss.resteasy.reactive.server.vertx.test.framework.ResteasyReactiveUnitTest;
++import org.jboss.shrinkwrap.api.ShrinkWrap;
++import org.jboss.shrinkwrap.api.spec.JavaArchive;
++import org.junit.jupiter.api.Test;
++import org.junit.jupiter.api.extension.RegisterExtension;
++
++import io.restassured.RestAssured;
++
++public class CacheOnClassAndMethodsImplementationTest {
++
++    @RegisterExtension
++    static ResteasyReactiveUnitTest test = new ResteasyReactiveUnitTest()
++            .addScanCustomizer(new Consumer<ResteasyReactiveDeploymentManager.ScanStep>() {
++                @Override
++                public void accept(ResteasyReactiveDeploymentManager.ScanStep scanStep) {
++                    scanStep.addMethodScanner(new CacheControlScanner());
++                }
++            })
++            .setArchiveProducer(new Supplier<>() {
++                @Override
++                public JavaArchive get() {
++                    return ShrinkWrap.create(JavaArchive.class)
++                            .addClasses(ResourceWithCache.class);
++                }
++            });
++
++    @Test
++    public void testWith() {
++        RestAssured.get("/test/with")
++                .then()
++                .statusCode(200)
++                .body(equalTo("with"))
++                .header("Cache-Control", "no-store");
++    }
++
++    @Test
++    public void testWithout() {
++        RestAssured.get("/test/without")
++                .then()
++                .statusCode(200)
++                .body(equalTo("without"))
++                .header("Cache-Control", "no-cache, no-transform, proxy-revalidate, s-maxage=100");
++    }
++
++    @Path("test")
++    public interface IResourceWithCache {
++
++        @Path("with")
++        @GET
++        String with();
++
++        @Path("without")
++        @GET
++        String without();
++    }
++
++    @Cache(sMaxAge = 100, noTransform = true, proxyRevalidate = true, noCache = true)
++    public static class ResourceWithCache implements IResourceWithCache {
++
++        @Override
++        @Cache(noStore = true)
++        public String with() {
++            return "with";
++        }
++
++        @Override
++        public String without() {
++            return "without";
++        }
++    }
++}
+diff --git a/independent-projects/resteasy-reactive/server/vertx/src/test/java/org/jboss/resteasy/reactive/server/vertx/test/cache/CacheOnClassAndMethodsInterfaceTest.java b/independent-projects/resteasy-reactive/server/vertx/src/test/java/org/jboss/resteasy/reactive/server/vertx/test/cache/CacheOnClassAndMethodsInterfaceTest.java
+new file mode 100644
+index 00000000000..4838a764477
+--- /dev/null
++++ b/independent-projects/resteasy-reactive/server/vertx/src/test/java/org/jboss/resteasy/reactive/server/vertx/test/cache/CacheOnClassAndMethodsInterfaceTest.java
+@@ -0,0 +1,84 @@
++package org.jboss.resteasy.reactive.server.vertx.test.cache;
++
++import static org.hamcrest.CoreMatchers.equalTo;
++
++import java.util.function.Consumer;
++import java.util.function.Supplier;
++
++import jakarta.ws.rs.GET;
++import jakarta.ws.rs.Path;
++
++import org.jboss.resteasy.reactive.Cache;
++import org.jboss.resteasy.reactive.server.processor.ResteasyReactiveDeploymentManager;
++import org.jboss.resteasy.reactive.server.processor.scanning.CacheControlScanner;
++import org.jboss.resteasy.reactive.server.vertx.test.framework.ResteasyReactiveUnitTest;
++import org.jboss.shrinkwrap.api.ShrinkWrap;
++import org.jboss.shrinkwrap.api.spec.JavaArchive;
++import org.junit.jupiter.api.Test;
++import org.junit.jupiter.api.extension.RegisterExtension;
++
++import io.restassured.RestAssured;
++
++public class CacheOnClassAndMethodsInterfaceTest {
++
++    @RegisterExtension
++    static ResteasyReactiveUnitTest test = new ResteasyReactiveUnitTest()
++            .addScanCustomizer(new Consumer<ResteasyReactiveDeploymentManager.ScanStep>() {
++                @Override
++                public void accept(ResteasyReactiveDeploymentManager.ScanStep scanStep) {
++                    scanStep.addMethodScanner(new CacheControlScanner());
++                }
++            })
++            .setArchiveProducer(new Supplier<>() {
++                @Override
++                public JavaArchive get() {
++                    return ShrinkWrap.create(JavaArchive.class)
++                            .addClasses(ResourceWithCache.class);
++                }
++            });
++
++    @Test
++    public void testWith() {
++        RestAssured.get("/test/with")
++                .then()
++                .statusCode(200)
++                .body(equalTo("with"))
++                .header("Cache-Control", "no-store");
++    }
++
++    @Test
++    public void testWithout() {
++        RestAssured.get("/test/without")
++                .then()
++                .statusCode(200)
++                .body(equalTo("without"))
++                .header("Cache-Control", "no-cache, no-transform, proxy-revalidate, s-maxage=100");
++    }
++
++    @Path("test")
++    @Cache(sMaxAge = 100, noTransform = true, proxyRevalidate = true, noCache = true)
++    public interface IResourceWithCache {
++
++        @Path("with")
++        @Cache(noStore = true)
++        @GET
++        String with();
++
++        @Path("without")
++        @GET
++        String without();
++    }
++
++    public static class ResourceWithCache implements IResourceWithCache {
++
++        @Override
++        public String with() {
++            return "with";
++        }
++
++        @Override
++        public String without() {
++            return "without";
++        }
++    }
++}
+diff --git a/independent-projects/resteasy-reactive/server/vertx/src/test/java/org/jboss/resteasy/reactive/server/vertx/test/cache/CacheOnMethodsImplementationTest.java b/independent-projects/resteasy-reactive/server/vertx/src/test/java/org/jboss/resteasy/reactive/server/vertx/test/cache/CacheOnMethodsImplementationTest.java
+new file mode 100644
+index 00000000000..58ee751ffe0
+--- /dev/null
++++ b/independent-projects/resteasy-reactive/server/vertx/src/test/java/org/jboss/resteasy/reactive/server/vertx/test/cache/CacheOnMethodsImplementationTest.java
+@@ -0,0 +1,84 @@
++package org.jboss.resteasy.reactive.server.vertx.test.cache;
++
++import static org.hamcrest.CoreMatchers.equalTo;
++import static org.hamcrest.Matchers.nullValue;
++
++import java.util.function.Consumer;
++import java.util.function.Supplier;
++
++import jakarta.ws.rs.GET;
++import jakarta.ws.rs.Path;
++
++import org.jboss.resteasy.reactive.Cache;
++import org.jboss.resteasy.reactive.server.processor.ResteasyReactiveDeploymentManager;
++import org.jboss.resteasy.reactive.server.processor.scanning.CacheControlScanner;
++import org.jboss.resteasy.reactive.server.vertx.test.framework.ResteasyReactiveUnitTest;
++import org.jboss.shrinkwrap.api.ShrinkWrap;
++import org.jboss.shrinkwrap.api.spec.JavaArchive;
++import org.junit.jupiter.api.Test;
++import org.junit.jupiter.api.extension.RegisterExtension;
++
++import io.restassured.RestAssured;
++
++public class CacheOnMethodsImplementationTest {
++
++    @RegisterExtension
++    static ResteasyReactiveUnitTest test = new ResteasyReactiveUnitTest()
++            .addScanCustomizer(new Consumer<ResteasyReactiveDeploymentManager.ScanStep>() {
++                @Override
++                public void accept(ResteasyReactiveDeploymentManager.ScanStep scanStep) {
++                    scanStep.addMethodScanner(new CacheControlScanner());
++                }
++            })
++            .setArchiveProducer(new Supplier<>() {
++                @Override
++                public JavaArchive get() {
++                    return ShrinkWrap.create(JavaArchive.class)
++                            .addClasses(IResourceWithCache.class, ResourceWithCache.class);
++                }
++            });
++
++    @Test
++    public void testWith() {
++        RestAssured.get("/test/with")
++                .then()
++                .statusCode(200)
++                .body(equalTo("with"))
++                .header("Cache-Control", "must-revalidate, no-store, max-age=100, private");
++    }
++
++    @Test
++    public void testWithout() {
++        RestAssured.get("/test/without")
++                .then()
++                .statusCode(200)
++                .body(equalTo("without"))
++                .header("Cache-Control", nullValue());
++    }
++
++    @Path("test")
++    public interface IResourceWithCache {
++
++        @Path("with")
++        @GET
++        String with();
++
++        @Path("without")
++        @GET
++        String without();
++    }
++
++    public static class ResourceWithCache implements IResourceWithCache {
++
++        @Override
++        @Cache(maxAge = 100, noStore = true, mustRevalidate = true, isPrivate = true)
++        public String with() {
++            return "with";
++        }
++
++        @Override
++        public String without() {
++            return "without";
++        }
++    }
++}
+diff --git a/independent-projects/resteasy-reactive/server/vertx/src/test/java/org/jboss/resteasy/reactive/server/vertx/test/cache/CacheOnMethodsInterfaceTest.java b/independent-projects/resteasy-reactive/server/vertx/src/test/java/org/jboss/resteasy/reactive/server/vertx/test/cache/CacheOnMethodsInterfaceTest.java
+new file mode 100644
+index 00000000000..d5dcaf574ee
+--- /dev/null
++++ b/independent-projects/resteasy-reactive/server/vertx/src/test/java/org/jboss/resteasy/reactive/server/vertx/test/cache/CacheOnMethodsInterfaceTest.java
+@@ -0,0 +1,84 @@
++package org.jboss.resteasy.reactive.server.vertx.test.cache;
++
++import static org.hamcrest.CoreMatchers.equalTo;
++import static org.hamcrest.Matchers.nullValue;
++
++import java.util.function.Consumer;
++import java.util.function.Supplier;
++
++import jakarta.ws.rs.GET;
++import jakarta.ws.rs.Path;
++
++import org.jboss.resteasy.reactive.Cache;
++import org.jboss.resteasy.reactive.server.processor.ResteasyReactiveDeploymentManager;
++import org.jboss.resteasy.reactive.server.processor.scanning.CacheControlScanner;
++import org.jboss.resteasy.reactive.server.vertx.test.framework.ResteasyReactiveUnitTest;
++import org.jboss.shrinkwrap.api.ShrinkWrap;
++import org.jboss.shrinkwrap.api.spec.JavaArchive;
++import org.junit.jupiter.api.Test;
++import org.junit.jupiter.api.extension.RegisterExtension;
++
++import io.restassured.RestAssured;
++
++public class CacheOnMethodsInterfaceTest {
++
++    @RegisterExtension
++    static ResteasyReactiveUnitTest test = new ResteasyReactiveUnitTest()
++            .addScanCustomizer(new Consumer<ResteasyReactiveDeploymentManager.ScanStep>() {
++                @Override
++                public void accept(ResteasyReactiveDeploymentManager.ScanStep scanStep) {
++                    scanStep.addMethodScanner(new CacheControlScanner());
++                }
++            })
++            .setArchiveProducer(new Supplier<>() {
++                @Override
++                public JavaArchive get() {
++                    return ShrinkWrap.create(JavaArchive.class)
++                            .addClasses(IResourceWithCache.class, ResourceWithCache.class);
++                }
++            });
++
++    @Test
++    public void testWith() {
++        RestAssured.get("/test/with")
++                .then()
++                .statusCode(200)
++                .body(equalTo("with"))
++                .header("Cache-Control", "must-revalidate, no-store, max-age=100, private");
++    }
++
++    @Test
++    public void testWithout() {
++        RestAssured.get("/test/without")
++                .then()
++                .statusCode(200)
++                .body(equalTo("without"))
++                .header("Cache-Control", nullValue());
++    }
++
++    @Path("test")
++    public interface IResourceWithCache {
++
++        @Path("with")
++        @GET
++        @Cache(maxAge = 100, noStore = true, mustRevalidate = true, isPrivate = true)
++        String with();
++
++        @Path("without")
++        @GET
++        String without();
++    }
++
++    public static class ResourceWithCache implements IResourceWithCache {
++
++        @Override
++        public String with() {
++            return "with";
++        }
++
++        @Override
++        public String without() {
++            return "without";
++        }
++    }
++}
+diff --git a/independent-projects/resteasy-reactive/server/vertx/src/test/java/org/jboss/resteasy/reactive/server/vertx/test/cache/ImplementationOverridingInterfaceTest.java b/independent-projects/resteasy-reactive/server/vertx/src/test/java/org/jboss/resteasy/reactive/server/vertx/test/cache/ImplementationOverridingInterfaceTest.java
+new file mode 100644
+index 00000000000..9e091ee7ca5
+--- /dev/null
++++ b/independent-projects/resteasy-reactive/server/vertx/src/test/java/org/jboss/resteasy/reactive/server/vertx/test/cache/ImplementationOverridingInterfaceTest.java
+@@ -0,0 +1,124 @@
++package org.jboss.resteasy.reactive.server.vertx.test.cache;
++
++import static org.hamcrest.CoreMatchers.equalTo;
++
++import java.util.function.Consumer;
++import java.util.function.Supplier;
++
++import jakarta.ws.rs.GET;
++import jakarta.ws.rs.Path;
++
++import org.jboss.resteasy.reactive.Cache;
++import org.jboss.resteasy.reactive.server.processor.ResteasyReactiveDeploymentManager;
++import org.jboss.resteasy.reactive.server.processor.scanning.CacheControlScanner;
++import org.jboss.resteasy.reactive.server.vertx.test.framework.ResteasyReactiveUnitTest;
++import org.jboss.shrinkwrap.api.ShrinkWrap;
++import org.jboss.shrinkwrap.api.spec.JavaArchive;
++import org.junit.jupiter.api.Test;
++import org.junit.jupiter.api.extension.RegisterExtension;
++
++import io.restassured.RestAssured;
++
++public class ImplementationOverridingInterfaceTest {
++
++    @RegisterExtension
++    static ResteasyReactiveUnitTest test = new ResteasyReactiveUnitTest()
++            .addScanCustomizer(new Consumer<ResteasyReactiveDeploymentManager.ScanStep>() {
++                @Override
++                public void accept(ResteasyReactiveDeploymentManager.ScanStep scanStep) {
++                    scanStep.addMethodScanner(new CacheControlScanner());
++                }
++            })
++            .setArchiveProducer(new Supplier<>() {
++                @Override
++                public JavaArchive get() {
++                    return ShrinkWrap.create(JavaArchive.class)
++                            .addClasses(IResourceWithCache.class, ResourceWithCache.class);
++                }
++            });
++
++    @Test
++    public void testWith() {
++        // expect method annotation on implementation to override class annotation on interface
++        RestAssured.get("/test/with")
++                .then()
++                .statusCode(200)
++                .body(equalTo("with"))
++                .header("Cache-Control", "no-store, max-age=100, private");
++    }
++
++    @Test
++    public void testWithout() {
++        // expect class annotation on interface
++        RestAssured.get("/test/without")
++                .then()
++                .statusCode(200)
++                .body(equalTo("without"))
++                .header("Cache-Control", "no-cache");
++    }
++
++    @Test
++    public void testOverridden() {
++        // expect method annotation on implementation to override method/class annotations on interface
++        RestAssured.get("/test/overridden")
++                .then()
++                .statusCode(200)
++                .body(equalTo("overridden"))
++                .header("Cache-Control", "max-age=50");
++    }
++
++    @Test
++    public void testUnoverridden() {
++        // expect method annotation on default implementation in interface
++        RestAssured.get("/test/unoverridden")
++                .then()
++                .statusCode(200)
++                .body(equalTo("unoverridden"))
++                .header("Cache-Control", "no-store");
++    }
++
++    @Path("test")
++    @Cache(noCache = true)
++    public interface IResourceWithCache {
++
++        @Path("with")
++        @GET
++        String with();
++
++        @Path("overridden")
++        @GET
++        @Cache(maxAge = 100, noStore = true, mustRevalidate = true, isPrivate = true)
++        String overridden();
++
++        @Path("without")
++        @GET
++        String without();
++
++        @Path("unoverridden")
++        @GET
++        @Cache(noStore = true)
++        default String unoverridden() {
++            return "unoverridden";
++        }
++    }
++
++    public static class ResourceWithCache implements IResourceWithCache {
++
++        @Override
++        @Cache(maxAge = 100, noStore = true, isPrivate = true)
++        public String with() {
++            return "with";
++        }
++
++        @Override
++        @Cache(maxAge = 50)
++        public String overridden() {
++            return "overridden";
++        }
++
++        @Override
++        public String without() {
++            return "without";
++        }
++    }
++}
+diff --git a/independent-projects/resteasy-reactive/server/vertx/src/test/java/org/jboss/resteasy/reactive/server/vertx/test/cache/NoCacheOnClassAndMethodsImplementationTest.java b/independent-projects/resteasy-reactive/server/vertx/src/test/java/org/jboss/resteasy/reactive/server/vertx/test/cache/NoCacheOnClassAndMethodsImplementationTest.java
+new file mode 100644
+index 00000000000..80c4fba5818
+--- /dev/null
++++ b/independent-projects/resteasy-reactive/server/vertx/src/test/java/org/jboss/resteasy/reactive/server/vertx/test/cache/NoCacheOnClassAndMethodsImplementationTest.java
+@@ -0,0 +1,84 @@
++package org.jboss.resteasy.reactive.server.vertx.test.cache;
++
++import static org.hamcrest.CoreMatchers.equalTo;
++
++import java.util.function.Consumer;
++import java.util.function.Supplier;
++
++import jakarta.ws.rs.GET;
++import jakarta.ws.rs.Path;
++
++import org.jboss.resteasy.reactive.NoCache;
++import org.jboss.resteasy.reactive.server.processor.ResteasyReactiveDeploymentManager;
++import org.jboss.resteasy.reactive.server.processor.scanning.CacheControlScanner;
++import org.jboss.resteasy.reactive.server.vertx.test.framework.ResteasyReactiveUnitTest;
++import org.jboss.shrinkwrap.api.ShrinkWrap;
++import org.jboss.shrinkwrap.api.spec.JavaArchive;
++import org.junit.jupiter.api.Test;
++import org.junit.jupiter.api.extension.RegisterExtension;
++
++import io.restassured.RestAssured;
++
++public class NoCacheOnClassAndMethodsImplementationTest {
++
++    @RegisterExtension
++    static ResteasyReactiveUnitTest test = new ResteasyReactiveUnitTest()
++            .addScanCustomizer(new Consumer<ResteasyReactiveDeploymentManager.ScanStep>() {
++                @Override
++                public void accept(ResteasyReactiveDeploymentManager.ScanStep scanStep) {
++                    scanStep.addMethodScanner(new CacheControlScanner());
++                }
++            })
++            .setArchiveProducer(new Supplier<>() {
++                @Override
++                public JavaArchive get() {
++                    return ShrinkWrap.create(JavaArchive.class)
++                            .addClasses(IResourceWithNoCache.class, ResourceWithNoCache.class);
++                }
++            });
++
++    @Test
++    public void testWith() {
++        RestAssured.get("/test/with")
++                .then()
++                .statusCode(200)
++                .body(equalTo("with"))
++                .header("Cache-Control", "no-cache=\"f1\", no-cache=\"f2\"");
++    }
++
++    @Test
++    public void testWithout() {
++        RestAssured.get("/test/without")
++                .then()
++                .statusCode(200)
++                .body(equalTo("without"))
++                .header("Cache-Control", "no-cache=\"f1\"");
++    }
++
++    @Path("test")
++    public interface IResourceWithNoCache {
++
++        @Path("with")
++        @GET
++        String with();
++
++        @Path("without")
++        @GET
++        String without();
++    }
++
++    @NoCache(fields = "f1")
++    public static class ResourceWithNoCache implements IResourceWithNoCache {
++
++        @Override
++        @NoCache(fields = { "f1", "f2" })
++        public String with() {
++            return "with";
++        }
++
++        @Override
++        public String without() {
++            return "without";
++        }
++    }
++}
+diff --git a/independent-projects/resteasy-reactive/server/vertx/src/test/java/org/jboss/resteasy/reactive/server/vertx/test/cache/NoCacheOnClassAndMethodsInterfaceTest.java b/independent-projects/resteasy-reactive/server/vertx/src/test/java/org/jboss/resteasy/reactive/server/vertx/test/cache/NoCacheOnClassAndMethodsInterfaceTest.java
+new file mode 100644
+index 00000000000..7070ce972a6
+--- /dev/null
++++ b/independent-projects/resteasy-reactive/server/vertx/src/test/java/org/jboss/resteasy/reactive/server/vertx/test/cache/NoCacheOnClassAndMethodsInterfaceTest.java
+@@ -0,0 +1,84 @@
++package org.jboss.resteasy.reactive.server.vertx.test.cache;
++
++import static org.hamcrest.CoreMatchers.equalTo;
++
++import java.util.function.Consumer;
++import java.util.function.Supplier;
++
++import jakarta.ws.rs.GET;
++import jakarta.ws.rs.Path;
++
++import org.jboss.resteasy.reactive.NoCache;
++import org.jboss.resteasy.reactive.server.processor.ResteasyReactiveDeploymentManager;
++import org.jboss.resteasy.reactive.server.processor.scanning.CacheControlScanner;
++import org.jboss.resteasy.reactive.server.vertx.test.framework.ResteasyReactiveUnitTest;
++import org.jboss.shrinkwrap.api.ShrinkWrap;
++import org.jboss.shrinkwrap.api.spec.JavaArchive;
++import org.junit.jupiter.api.Test;
++import org.junit.jupiter.api.extension.RegisterExtension;
++
++import io.restassured.RestAssured;
++
++public class NoCacheOnClassAndMethodsInterfaceTest {
++
++    @RegisterExtension
++    static ResteasyReactiveUnitTest test = new ResteasyReactiveUnitTest()
++            .addScanCustomizer(new Consumer<ResteasyReactiveDeploymentManager.ScanStep>() {
++                @Override
++                public void accept(ResteasyReactiveDeploymentManager.ScanStep scanStep) {
++                    scanStep.addMethodScanner(new CacheControlScanner());
++                }
++            })
++            .setArchiveProducer(new Supplier<>() {
++                @Override
++                public JavaArchive get() {
++                    return ShrinkWrap.create(JavaArchive.class)
++                            .addClasses(IResourceWithNoCache.class, ResourceWithNoCache.class);
++                }
++            });
++
++    @Test
++    public void testWith() {
++        RestAssured.get("/test/with")
++                .then()
++                .statusCode(200)
++                .body(equalTo("with"))
++                .header("Cache-Control", "no-cache=\"f1\", no-cache=\"f2\"");
++    }
++
++    @Test
++    public void testWithout() {
++        RestAssured.get("/test/without")
++                .then()
++                .statusCode(200)
++                .body(equalTo("without"))
++                .header("Cache-Control", "no-cache=\"f1\"");
++    }
++
++    @NoCache(fields = "f1")
++    @Path("test")
++    public interface IResourceWithNoCache {
++
++        @Path("with")
++        @GET
++        @NoCache(fields = { "f1", "f2" })
++        String with();
++
++        @Path("without")
++        @GET
++        String without();
++    }
++
++    public static class ResourceWithNoCache implements IResourceWithNoCache {
++
++        @Override
++        public String with() {
++            return "with";
++        }
++
++        @Override
++        public String without() {
++            return "without";
++        }
++    }
++}
+diff --git a/independent-projects/resteasy-reactive/server/vertx/src/test/java/org/jboss/resteasy/reactive/server/vertx/test/cache/NoCacheOnMethodsImplementationTest.java b/independent-projects/resteasy-reactive/server/vertx/src/test/java/org/jboss/resteasy/reactive/server/vertx/test/cache/NoCacheOnMethodsImplementationTest.java
+new file mode 100644
+index 00000000000..24b5893ab77
+--- /dev/null
++++ b/independent-projects/resteasy-reactive/server/vertx/src/test/java/org/jboss/resteasy/reactive/server/vertx/test/cache/NoCacheOnMethodsImplementationTest.java
+@@ -0,0 +1,103 @@
++package org.jboss.resteasy.reactive.server.vertx.test.cache;
++
++import static org.hamcrest.CoreMatchers.equalTo;
++import static org.hamcrest.Matchers.nullValue;
++
++import java.util.function.Consumer;
++import java.util.function.Supplier;
++
++import jakarta.ws.rs.GET;
++import jakarta.ws.rs.Path;
++
++import org.jboss.resteasy.reactive.NoCache;
++import org.jboss.resteasy.reactive.server.processor.ResteasyReactiveDeploymentManager;
++import org.jboss.resteasy.reactive.server.processor.scanning.CacheControlScanner;
++import org.jboss.resteasy.reactive.server.vertx.test.framework.ResteasyReactiveUnitTest;
++import org.jboss.shrinkwrap.api.ShrinkWrap;
++import org.jboss.shrinkwrap.api.spec.JavaArchive;
++import org.junit.jupiter.api.Test;
++import org.junit.jupiter.api.extension.RegisterExtension;
++
++import io.restassured.RestAssured;
++
++public class NoCacheOnMethodsImplementationTest {
++
++    @RegisterExtension
++    static ResteasyReactiveUnitTest test = new ResteasyReactiveUnitTest()
++            .addScanCustomizer(new Consumer<ResteasyReactiveDeploymentManager.ScanStep>() {
++                @Override
++                public void accept(ResteasyReactiveDeploymentManager.ScanStep scanStep) {
++                    scanStep.addMethodScanner(new CacheControlScanner());
++                }
++            })
++            .setArchiveProducer(new Supplier<>() {
++                @Override
++                public JavaArchive get() {
++                    return ShrinkWrap.create(JavaArchive.class)
++                            .addClasses(IResourceWithNoCache.class, ResourceWithNoCache.class);
++                }
++            });
++
++    @Test
++    public void testWithFields() {
++        RestAssured.get("/test/withFields")
++                .then()
++                .statusCode(200)
++                .body(equalTo("withFields"))
++                .header("Cache-Control", "no-cache=\"f1\", no-cache=\"f2\"");
++    }
++
++    @Test
++    public void testWithoutFields() {
++        RestAssured.get("/test/withoutFields")
++                .then()
++                .statusCode(200)
++                .body(equalTo("withoutFields"))
++                .header("Cache-Control", "no-cache");
++    }
++
++    @Test
++    public void testWithoutAnnotation() {
++        RestAssured.get("/test/withoutAnnotation")
++                .then()
++                .statusCode(200)
++                .body(equalTo("withoutAnnotation"))
++                .header("Cache-Control", nullValue());
++    }
++
++    @Path("test")
++    public interface IResourceWithNoCache {
++
++        @Path("withFields")
++        @GET
++        String withFields();
++
++        @Path("withoutFields")
++        @GET
++        String withoutFields();
++
++        @Path("withoutAnnotation")
++        @GET
++        String withoutAnnotation();
++    }
++
++    public static class ResourceWithNoCache implements IResourceWithNoCache {
++
++        @Override
++        @NoCache(fields = { "f1", "f2" })
++        public String withFields() {
++            return "withFields";
++        }
++
++        @Override
++        @NoCache
++        public String withoutFields() {
++            return "withoutFields";
++        }
++
++        @Override
++        public String withoutAnnotation() {
++            return "withoutAnnotation";
++        }
++    }
++}
+diff --git a/independent-projects/resteasy-reactive/server/vertx/src/test/java/org/jboss/resteasy/reactive/server/vertx/test/cache/NoCacheOnMethodsInterfaceTest.java b/independent-projects/resteasy-reactive/server/vertx/src/test/java/org/jboss/resteasy/reactive/server/vertx/test/cache/NoCacheOnMethodsInterfaceTest.java
+new file mode 100644
+index 00000000000..8e507a700eb
+--- /dev/null
++++ b/independent-projects/resteasy-reactive/server/vertx/src/test/java/org/jboss/resteasy/reactive/server/vertx/test/cache/NoCacheOnMethodsInterfaceTest.java
+@@ -0,0 +1,103 @@
++package org.jboss.resteasy.reactive.server.vertx.test.cache;
++
++import static org.hamcrest.CoreMatchers.equalTo;
++import static org.hamcrest.Matchers.nullValue;
++
++import java.util.function.Consumer;
++import java.util.function.Supplier;
++
++import jakarta.ws.rs.GET;
++import jakarta.ws.rs.Path;
++
++import org.jboss.resteasy.reactive.NoCache;
++import org.jboss.resteasy.reactive.server.processor.ResteasyReactiveDeploymentManager;
++import org.jboss.resteasy.reactive.server.processor.scanning.CacheControlScanner;
++import org.jboss.resteasy.reactive.server.vertx.test.framework.ResteasyReactiveUnitTest;
++import org.jboss.shrinkwrap.api.ShrinkWrap;
++import org.jboss.shrinkwrap.api.spec.JavaArchive;
++import org.junit.jupiter.api.Test;
++import org.junit.jupiter.api.extension.RegisterExtension;
++
++import io.restassured.RestAssured;
++
++public class NoCacheOnMethodsInterfaceTest {
++
++    @RegisterExtension
++    static ResteasyReactiveUnitTest test = new ResteasyReactiveUnitTest()
++            .addScanCustomizer(new Consumer<ResteasyReactiveDeploymentManager.ScanStep>() {
++                @Override
++                public void accept(ResteasyReactiveDeploymentManager.ScanStep scanStep) {
++                    scanStep.addMethodScanner(new CacheControlScanner());
++                }
++            })
++            .setArchiveProducer(new Supplier<>() {
++                @Override
++                public JavaArchive get() {
++                    return ShrinkWrap.create(JavaArchive.class)
++                            .addClasses(IResourceWithNoCache.class, ResourceWithNoCache.class);
++                }
++            });
++
++    @Test
++    public void testWithFields() {
++        RestAssured.get("/test/withFields")
++                .then()
++                .statusCode(200)
++                .body(equalTo("withFields"))
++                .header("Cache-Control", "no-cache=\"f1\", no-cache=\"f2\"");
++    }
++
++    @Test
++    public void testWithoutFields() {
++        RestAssured.get("/test/withoutFields")
++                .then()
++                .statusCode(200)
++                .body(equalTo("withoutFields"))
++                .header("Cache-Control", "no-cache");
++    }
++
++    @Test
++    public void testWithoutAnnotation() {
++        RestAssured.get("/test/withoutAnnotation")
++                .then()
++                .statusCode(200)
++                .body(equalTo("withoutAnnotation"))
++                .header("Cache-Control", nullValue());
++    }
++
++    @Path("test")
++    public interface IResourceWithNoCache {
++
++        @Path("withFields")
++        @GET
++        @NoCache(fields = { "f1", "f2" })
++        String withFields();
++
++        @Path("withoutFields")
++        @GET
++        @NoCache
++        String withoutFields();
++
++        @Path("withoutAnnotation")
++        @GET
++        String withoutAnnotation();
++    }
++
++    public static class ResourceWithNoCache implements IResourceWithNoCache {
++
++        @Override
++        public String withFields() {
++            return "withFields";
++        }
++
++        @Override
++        public String withoutFields() {
++            return "withoutFields";
++        }
++
++        @Override
++        public String withoutAnnotation() {
++            return "withoutAnnotation";
++        }
++    }
++}

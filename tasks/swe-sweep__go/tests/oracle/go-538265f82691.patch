@@ -1,0 +1,31 @@
+diff --git a/src/net/dnsclient.go b/src/net/dnsclient.go
+index 3c1a12995a..a779c37e53 100644
+--- a/src/net/dnsclient.go
++++ b/src/net/dnsclient.go
+@@ -76,6 +76,11 @@ func equalASCIIName(x, y dnsmessage.Name) bool {
+ // (currently restricted to hostname-compatible "preferred name" LDH labels and
+ // SRV-like "underscore labels"; see golang.org/issue/12421).
+ func isDomainName(s string) bool {
++	// The root domain name is valid. See golang.org/issue/45715.
++	if s == "." {
++		return true
++	}
++
+ 	// See RFC 1035, RFC 3696.
+ 	// Presentation format has dots before every label except the first, and the
+ 	// terminal empty label is optional here because we assume fully-qualified
+diff --git a/src/net/lookup.go b/src/net/lookup.go
+index e10c71ae75..ff4ddbeb82 100644
+--- a/src/net/lookup.go
++++ b/src/net/lookup.go
+@@ -558,9 +558,7 @@ func (r *Resolver) LookupMX(ctx context.Context, name string) ([]*MX, error) {
+ 		if mx == nil {
+ 			continue
+ 		}
+-		// Bypass the hostname validity check for targets which contain only a dot,
+-		// as this is used to represent a 'Null' MX record.
+-		if mx.Host != "." && !isDomainName(mx.Host) {
++		if !isDomainName(mx.Host) {
+ 			continue
+ 		}
+ 		filteredMX = append(filteredMX, mx)

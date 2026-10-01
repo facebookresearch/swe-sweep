@@ -1,0 +1,62 @@
+diff --git a/src/Compilers/CSharp/Portable/Binder/Binder_Flags.cs b/src/Compilers/CSharp/Portable/Binder/Binder_Flags.cs
+index 14a7dfea500..01577f0c37d 100644
+--- a/src/Compilers/CSharp/Portable/Binder/Binder_Flags.cs
++++ b/src/Compilers/CSharp/Portable/Binder/Binder_Flags.cs
+@@ -97,7 +97,7 @@ namespace Microsoft.CodeAnalysis.CSharp
+             // In C# 12 and below, we keep the (spec violating) behavior that iterator bodies inherit the safe/unsafe context
+             // from their containing scope. Since there are errors for unsafe constructs directly in iterators,
+             // this inherited unsafe context can be observed only in nested non-iterator local functions.
+-            var withoutUnsafe = isIteratorBody && this.Compilation.IsFeatureEnabled(MessageID.IDS_FeatureRefUnsafeInIteratorAsync);
++            var withoutUnsafe = IsIteratorBodyWithSafeContext(this.Compilation, isIteratorBody);
+ 
+             if (this.Flags.Includes(BinderFlags.UnsafeRegion))
+             {
+@@ -114,6 +114,11 @@ namespace Microsoft.CodeAnalysis.CSharp
+                 : this;
+         }
+ 
++        internal static bool IsIteratorBodyWithSafeContext(CSharpCompilation compilation, bool isIteratorBody)
++        {
++            return isIteratorBody && compilation.IsFeatureEnabled(MessageID.IDS_FeatureRefUnsafeInIteratorAsync);
++        }
++
+         internal Binder WithCheckedOrUncheckedRegion(bool @checked)
+         {
+             Debug.Assert(!this.Flags.Includes(BinderFlags.UncheckedRegion | BinderFlags.CheckedRegion));
+diff --git a/src/Compilers/CSharp/Portable/Binder/RefSafetyAnalysis.cs b/src/Compilers/CSharp/Portable/Binder/RefSafetyAnalysis.cs
+index 281ff928646..ef767db1999 100644
+--- a/src/Compilers/CSharp/Portable/Binder/RefSafetyAnalysis.cs
++++ b/src/Compilers/CSharp/Portable/Binder/RefSafetyAnalysis.cs
+@@ -21,7 +21,7 @@ namespace Microsoft.CodeAnalysis.CSharp
+             var visitor = new RefSafetyAnalysis(
+                 compilation,
+                 symbol,
+-                inUnsafeRegion: InUnsafeMethod(symbol),
++                inUnsafeRegion: InUnsafeContext(compilation, symbol),
+                 useUpdatedEscapeRules: symbol.ContainingModule.UseUpdatedEscapeRules,
+                 diagnostics);
+             try
+@@ -34,8 +34,13 @@ namespace Microsoft.CodeAnalysis.CSharp
+             }
+         }
+ 
+-        private static bool InUnsafeMethod(Symbol symbol)
++        private static bool InUnsafeContext(CSharpCompilation compilation, Symbol symbol)
+         {
++            if (Binder.IsIteratorBodyWithSafeContext(compilation, isIteratorBody: symbol is MethodSymbol { IsIterator: true }))
++            {
++                return false;
++            }
++
+             if (symbol is SourceMemberMethodSymbol { IsUnsafe: true })
+             {
+                 return true;
+@@ -352,7 +357,7 @@ namespace Microsoft.CodeAnalysis.CSharp
+         public override BoundNode? VisitLocalFunctionStatement(BoundLocalFunctionStatement node)
+         {
+             var localFunction = (LocalFunctionSymbol)node.Symbol;
+-            var analysis = new RefSafetyAnalysis(_compilation, localFunction, _inUnsafeRegion || localFunction.IsUnsafe, _useUpdatedEscapeRules, _diagnostics);
++            var analysis = new RefSafetyAnalysis(_compilation, localFunction, !Binder.IsIteratorBodyWithSafeContext(_compilation, isIteratorBody: localFunction.IsIterator) && (_inUnsafeRegion || localFunction.IsUnsafe), _useUpdatedEscapeRules, _diagnostics);
+             analysis.Visit(node.BlockBody);
+             analysis.Visit(node.ExpressionBody);
+             return null;

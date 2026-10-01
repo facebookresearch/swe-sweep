@@ -1,0 +1,25 @@
+diff --git a/test/regress/cli/CMakeLists.txt b/test/regress/cli/CMakeLists.txt
+index 0c551b2bbc..2cbc86aec2 100644
+--- a/test/regress/cli/CMakeLists.txt
++++ b/test/regress/cli/CMakeLists.txt
+@@ -1352,6 +1352,7 @@ set(regress_0_tests
+   regress0/seq/proj-issue384-subtypes.smt2
+   regress0/seq/proj-issue384-2-subtypes.smt2
+   regress0/seq/proj-issue427-subtypes-value.smt2
++  regress0/seq/proj-issue604-reg-closure.smt2
+   regress0/seq/quant_len_trigger.smt2
+   regress0/seq/query0-subtype-skel.smt2
+   regress0/seq/query1-subtype.smt2
+diff --git a/test/regress/cli/regress0/seq/proj-issue604-reg-closure.smt2 b/test/regress/cli/regress0/seq/proj-issue604-reg-closure.smt2
+new file mode 100644
+index 0000000000..9dce6e4049
+--- /dev/null
++++ b/test/regress/cli/regress0/seq/proj-issue604-reg-closure.smt2
+@@ -0,0 +1,7 @@
++; EXPECT: unsat
++(set-logic ALL)
++(set-option :sets-ext true)
++(set-option :strings-eager-reg false)
++(assert (forall ((x Int)) (or (> 0 x) (> x 4))))
++(assert (set.subset (set.comprehension ((_x1 Real)) false (seq.unit false)) (set.insert (set.choose (set.comprehension ((_x1 Real)) false (seq.unit (= _x1 0.0)))) (set.comprehension ((_x1 Real)) false (seq.unit false)))))
++(check-sat)

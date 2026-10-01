@@ -1,0 +1,71 @@
+diff --git a/modules/openapi-generator/src/test/java/org/openapitools/codegen/java/JavaClientCodegenTest.java b/modules/openapi-generator/src/test/java/org/openapitools/codegen/java/JavaClientCodegenTest.java
+index de42f49f0ba..a4b1a0d0b78 100644
+--- a/modules/openapi-generator/src/test/java/org/openapitools/codegen/java/JavaClientCodegenTest.java
++++ b/modules/openapi-generator/src/test/java/org/openapitools/codegen/java/JavaClientCodegenTest.java
+@@ -941,6 +941,39 @@ public class JavaClientCodegenTest {
+         Assert.assertEquals(security.get(0).isBasicBearer, Boolean.TRUE);
+     }
+ 
++    @Test
++    public void testVertXAuthInfoWithHyphenSeparatedSecurityScheme() throws Exception {
++        Map<String, Object> properties = new HashMap<>();
++        properties.put(CodegenConstants.API_PACKAGE, "xyz.abcdef.api");
++
++        File output = Files.createTempDirectory("test").toFile();
++        output.deleteOnExit();
++
++        final CodegenConfigurator configurator = new CodegenConfigurator()
++            .setGeneratorName("java")
++            .setLibrary(JavaClientCodegen.VERTX)
++            .setAdditionalProperties(properties)
++            .setInputSpec("src/test/resources/3_0/ping-with-hyphen-separated-security-scheme.yaml")
++            .setOutputDir(output.getAbsolutePath().replace("\\", "/"));
++
++        final ClientOptInput clientOptInput = configurator.toClientOptInput();
++        DefaultGenerator generator = new DefaultGenerator();
++        List<File> files = generator.opts(clientOptInput).generate();
++
++        // Test that hyphen-separated security scheme names does not
++        // break the Java VertX client code generation
++        validateJavaSourceFiles(files);
++
++        // Test that the name was correctly transformed to camelCase
++        // starting with an uppercase letter
++        TestUtils.assertFileContains(
++            Paths.get(output + "/src/main/java/xyz/abcdef/ApiClient.java"),
++                "public static class AuthInfo {",
++                "public void addHyphenatedNameTestAuthentication(String bearerToken) {",
++                "public static AuthInfo forHyphenatedNameTestAuthentication(String bearerToken) {"
++            );
++    }
++
+     private CodegenProperty codegenPropertyWithArrayOfIntegerValues() {
+         CodegenProperty array = new CodegenProperty();
+         final CodegenProperty items = new CodegenProperty();
+diff --git a/modules/openapi-generator/src/test/resources/3_0/ping-with-hyphen-separated-security-scheme.yaml b/modules/openapi-generator/src/test/resources/3_0/ping-with-hyphen-separated-security-scheme.yaml
+new file mode 100644
+index 00000000000..e2fcc9f41cd
+--- /dev/null
++++ b/modules/openapi-generator/src/test/resources/3_0/ping-with-hyphen-separated-security-scheme.yaml
+@@ -0,0 +1,21 @@
++openapi: 3.0.1
++info:
++  title: ping test
++  version: '1.0'
++servers:
++  - url: 'http://localhost:8080/'
++paths:
++  /ping:
++    get:
++      operationId: pingGet
++      responses:
++        '201':
++          description: OK
++components:
++  securitySchemes:
++    hyphenated-name-test:
++      scheme: bearer
++      bearerFormat: token
++      type: http
++security:
++  - hyphenated-name-test: []

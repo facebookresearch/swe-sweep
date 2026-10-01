@@ -1,0 +1,41 @@
+diff --git a/activejob/test/cases/logging_test.rb b/activejob/test/cases/logging_test.rb
+index ae70bfa..6b1e047 100644
+--- a/activejob/test/cases/logging_test.rb
++++ b/activejob/test/cases/logging_test.rb
+@@ -276,6 +276,16 @@ def test_enqueue_retry_logging_on_retry_job
+     assert_match(/Retrying RescueJob in 0 seconds\./, @logger.messages)
+   end
+ 
++  def test_retry_different_queue_logging
++    perform_enqueued_jobs do
++      perform_enqueued_jobs do
++        RetryJob.perform_later("HeavyError", 2)
++        assert_match(/Performed RetryJob \(Job ID: .*?\) from .+\(default\) in .*ms/, @logger.messages)
++      end
++      assert_match(/Performed RetryJob \(Job ID: .*?\) from .+\(low\) in .*ms/, @logger.messages)
++    end
++  end
++
+   def test_retry_stopped_logging
+     perform_enqueued_jobs do
+       RetryJob.perform_later "CustomCatchError", 6
+diff --git a/activejob/test/jobs/retry_job.rb b/activejob/test/jobs/retry_job.rb
+index 8d8c93f..d73752c 100644
+--- a/activejob/test/jobs/retry_job.rb
++++ b/activejob/test/jobs/retry_job.rb
+@@ -18,6 +18,7 @@ class FirstDiscardableErrorOfTwo < StandardError; end
+ class SecondDiscardableErrorOfTwo < StandardError; end
+ class CustomDiscardableError < StandardError; end
+ class UnlimitedRetryError < StandardError; end
++class HeavyError < StandardError; end
+ 
+ class RetryJob < ActiveJob::Base
+   retry_on DefaultsError
+@@ -31,6 +32,7 @@ class RetryJob < ActiveJob::Base
+   retry_on(CustomCatchError) { |job, error| JobBuffer.add("Dealt with a job that failed to retry in a custom way after #{job.arguments.second} attempts. Message: #{error.message}") }
+   retry_on(ActiveJob::DeserializationError) { |job, error| JobBuffer.add("Raised #{error.class} for the #{job.executions} time") }
+   retry_on UnlimitedRetryError, attempts: :unlimited
++  retry_on HeavyError, queue: :low
+ 
+   discard_on DiscardableError
+   discard_on FirstDiscardableErrorOfTwo, SecondDiscardableErrorOfTwo

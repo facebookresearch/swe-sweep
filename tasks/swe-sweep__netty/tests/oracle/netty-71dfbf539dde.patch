@@ -1,0 +1,17 @@
+diff --git a/codec-http/src/main/java/io/netty/handler/codec/http/multipart/HttpPostRequestEncoder.java b/codec-http/src/main/java/io/netty/handler/codec/http/multipart/HttpPostRequestEncoder.java
+index 236b6acd51..c2815c9d41 100755
+--- a/codec-http/src/main/java/io/netty/handler/codec/http/multipart/HttpPostRequestEncoder.java
++++ b/codec-http/src/main/java/io/netty/handler/codec/http/multipart/HttpPostRequestEncoder.java
+@@ -977,7 +977,11 @@ public class HttpPostRequestEncoder implements ChunkedInput<HttpContent> {
+         if (buffer.capacity() == 0) {
+             currentData = null;
+             if (currentBuffer == null) {
+-                currentBuffer = delimiter;
++                if (delimiter == null) {
++                    return null;
++                } else {
++                    currentBuffer = delimiter;
++                }
+             } else {
+                 if (delimiter != null) {
+                     currentBuffer = wrappedBuffer(currentBuffer, delimiter);

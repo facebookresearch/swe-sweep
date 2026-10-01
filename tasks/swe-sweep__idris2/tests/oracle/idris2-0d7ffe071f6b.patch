@@ -1,0 +1,17 @@
+diff --git a/src/Parser/Lexer/Source.idr b/src/Parser/Lexer/Source.idr
+index a963fb5b3..bc4c3d60c 100644
+--- a/src/Parser/Lexer/Source.idr
++++ b/src/Parser/Lexer/Source.idr
+@@ -119,10 +119,11 @@ mutual
+   toEndComment : (k : Nat) -> Recognise (k /= 0)
+   toEndComment Z = empty
+   toEndComment (S k)
+-               = some (pred (\c => c /= '-' && c /= '{' && c /= '"'))
++               = some (pred (\c => c /= '-' && c /= '{' && c /= '"' && c /= '\''))
+                         <+> toEndComment (S k)
+              <|> is '{' <+> singleBrace k
+              <|> is '-' <+> singleDash k
++             <|> (charLit <|> pred (== '\'')) <+> toEndComment (S k)
+              <|> stringLit <+> toEndComment (S k)
+ 
+   ||| After reading a single brace, we may either finish reading an

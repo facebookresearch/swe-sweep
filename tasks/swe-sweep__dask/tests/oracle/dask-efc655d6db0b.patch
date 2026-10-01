@@ -1,0 +1,26 @@
+diff --git a/dask/dataframe/core.py b/dask/dataframe/core.py
+index d51d87884..19d095971 100644
+--- a/dask/dataframe/core.py
++++ b/dask/dataframe/core.py
+@@ -5958,9 +5958,9 @@ def repartition_npartitions(df, npartitions):
+         original_divisions = divisions = pd.Series(df.divisions)
+         if df.known_divisions and (
+-            np.issubdtype(divisions.dtype, np.datetime64)
+-            or np.issubdtype(divisions.dtype, np.number)
++            is_datetime64_any_dtype(divisions.dtype)
++            or is_numeric_dtype(divisions.dtype)
+         ):
+-            if np.issubdtype(divisions.dtype, np.datetime64):
++            if is_datetime64_any_dtype(divisions.dtype):
+                 divisions = divisions.values.astype("float64")
+ 
+             if is_series_like(divisions):
+@@ -5973,7 +5973,7 @@ def repartition_npartitions(df, npartitions):
+                 xp=np.linspace(0, n, n),
+                 fp=divisions,
+             )
+-            if np.issubdtype(original_divisions.dtype, np.datetime64):
++            if is_datetime64_any_dtype(original_divisions.dtype):
+                 divisions = methods.tolist(
+                     pd.Series(divisions).astype(original_divisions.dtype)
+                 )

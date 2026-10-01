@@ -1,0 +1,50 @@
+diff --git a/compiler/src/dmd/e2ir.d b/compiler/src/dmd/e2ir.d
+index fd6d545e47..01e9c78b9d 100644
+--- a/compiler/src/dmd/e2ir.d
++++ b/compiler/src/dmd/e2ir.d
+@@ -799,6 +799,18 @@ elem* toElem(Expression e, IRState *irs)
+         }
+         if (Expression ex = isExpression(e.obj))
+         {
++            if (auto ev = ex.isVarExp())
++            {
++                if (auto em = ev.var.isEnumMember())
++                    ex = em.value;
++            }
++            if (auto ecr = ex.isClassReferenceExp())
++            {
++                Type t = ecr.type;
++                elem* result = getTypeInfo(ecr, t, irs);
++                return el_bin(OPadd, result.Ety, result, el_long(TYsize_t, t.vtinfo.offset));
++            }
++
+             auto tc = ex.type.toBasetype().isTypeClass();
+             assert(tc);
+             // generate **classptr to get the classinfo
+diff --git a/compiler/src/dmd/printast.d b/compiler/src/dmd/printast.d
+index 9975c9c1f1..00a5457863 100644
+--- a/compiler/src/dmd/printast.d
++++ b/compiler/src/dmd/printast.d
+@@ -14,6 +14,7 @@ module dmd.printast;
+ import core.stdc.stdio;
+ 
+ import dmd.expression;
++import dmd.ctfeexpr;
+ import dmd.tokens;
+ import dmd.visitor;
+ import dmd.hdrgen;
+@@ -210,6 +211,14 @@ extern (C++) final class PrintASTVisitor : Visitor
+         printf(".init: %s\n", e.initializer ? e.initializer.toChars() : "");
+     }
+ 
++    override void visit(ClassReferenceExp e)
++    {
++        visit(cast(Expression)e);
++        printIndent(indent + 2);
++        printf(".value: %s\n", e.value ? e.value.toChars() : "");
++        printAST(e.value, indent + 2);
++    }
++
+     static void printIndent(int indent)
+     {
+         foreach (i; 0 .. indent)

@@ -1,0 +1,13 @@
+diff --git a/modules/imgproc/src/pyramids.cpp b/modules/imgproc/src/pyramids.cpp
+index 4f7732925c..0261dd4de3 100644
+--- a/modules/imgproc/src/pyramids.cpp
++++ b/modules/imgproc/src/pyramids.cpp
+@@ -963,7 +963,7 @@ pyrUp_( const Mat& _src, Mat& _dst, int)
+ 
+                 if (dsize.width > ssize.width*2)
+                 {
+-                    row[(_dst.cols-1) + x] = row[dx + cn];
++                    row[(_dst.cols-1) * cn + x] = row[dx + cn];
+                 }
+             }
+ 

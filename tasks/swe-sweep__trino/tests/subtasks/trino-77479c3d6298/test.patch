@@ -1,0 +1,21 @@
+diff --git a/core/trino-parser/src/test/java/io/trino/sql/parser/TestSqlParser.java b/core/trino-parser/src/test/java/io/trino/sql/parser/TestSqlParser.java
+index 3d2114dc6bb..51ded75b5d0 100644
+--- a/core/trino-parser/src/test/java/io/trino/sql/parser/TestSqlParser.java
++++ b/core/trino-parser/src/test/java/io/trino/sql/parser/TestSqlParser.java
+@@ -2663,6 +2663,16 @@ public class TestSqlParser
+                         table(QualifiedName.of("foo")))));
+     }
+ 
++    @Test
++    public void testPrepareDropView()
++    {
++        assertStatement("PREPARE statement1 FROM DROP VIEW IF EXISTS \"catalog-test\".\"test\".\"foo\"",
++                new Prepare(identifier("statement1"),
++                        new DropView(QualifiedName.of("catalog-test", "test", "foo"), true)));
++        assertStatementIsInvalid("PREPARE statement1 FROM DROP VIEW IF EXISTS catalog-test.test.foo")
++                .withMessage("line 1:52: mismatched input '-'. Expecting: '.', <EOF>");
++    }
++
+     @Test
+     public void testPrepareWithParameters()
+     {

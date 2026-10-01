@@ -1,0 +1,21 @@
+diff --git a/src/main/java/io/reactivex/internal/operators/flowable/FlowableConcatMap.java b/src/main/java/io/reactivex/internal/operators/flowable/FlowableConcatMap.java
+index 2dc316d1e..f3dc0c58b 100644
+--- a/src/main/java/io/reactivex/internal/operators/flowable/FlowableConcatMap.java
++++ b/src/main/java/io/reactivex/internal/operators/flowable/FlowableConcatMap.java
+@@ -520,10 +520,13 @@ public final class FlowableConcatMap<T, R> extends AbstractFlowableWithUpstream<
+                                     vr = supplier.call();
+                                 } catch (Throwable e) {
+                                     Exceptions.throwIfFatal(e);
+-                                    upstream.cancel();
+                                     errors.addThrowable(e);
+-                                    downstream.onError(errors.terminate());
+-                                    return;
++                                    if (!veryEnd) {
++                                        upstream.cancel();
++                                        downstream.onError(errors.terminate());
++                                        return;
++                                    }
++                                    vr = null;
+                                 }
+ 
+                                 if (vr == null) {

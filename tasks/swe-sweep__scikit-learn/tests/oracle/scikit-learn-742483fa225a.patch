@@ -1,0 +1,13 @@
+diff --git a/sklearn/kernel_approximation.py b/sklearn/kernel_approximation.py
+index d131f8ab0a..cdefb72690 100644
+--- a/sklearn/kernel_approximation.py
++++ b/sklearn/kernel_approximation.py
+@@ -480,7 +480,7 @@ class Nystroem(TransformerMixin, BaseEstimator):
+         S = np.maximum(S, 1e-12)
+         self.normalization_ = np.dot(U * 1. / np.sqrt(S), V)
+         self.components_ = basis
+-        self.component_indices_ = inds
++        self.component_indices_ = basis_inds
+         return self
+ 
+     def transform(self, X):

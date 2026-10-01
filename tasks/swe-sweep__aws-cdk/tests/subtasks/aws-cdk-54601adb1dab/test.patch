@@ -1,0 +1,19 @@
+diff --git a/packages/@aws-cdk/aws-iam/test/principals.test.ts b/packages/@aws-cdk/aws-iam/test/principals.test.ts
+index ed23d7eb0c..c2495b2975 100644
+--- a/packages/@aws-cdk/aws-iam/test/principals.test.ts
++++ b/packages/@aws-cdk/aws-iam/test/principals.test.ts
+@@ -166,3 +166,13 @@ test('SAML principal', () => {
+     },
+   });
+ });
++
++test('PrincipalWithConditions inherits principalAccount from AccountPrincipal ', () => {
++  // GIVEN
++  const accountPrincipal = new iam.AccountPrincipal('123456789012');
++  const principalWithConditions = accountPrincipal.withConditions({ StringEquals: { hairColor: 'blond' } });
++
++  // THEN
++  expect(accountPrincipal.principalAccount).toStrictEqual('123456789012');
++  expect(principalWithConditions.principalAccount).toStrictEqual('123456789012');
++});
+\ No newline at end of file

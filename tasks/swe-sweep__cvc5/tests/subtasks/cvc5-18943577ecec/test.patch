@@ -1,0 +1,27 @@
+diff --git a/test/regress/cli/CMakeLists.txt b/test/regress/cli/CMakeLists.txt
+index eebef3db09..19aa08117e 100644
+--- a/test/regress/cli/CMakeLists.txt
++++ b/test/regress/cli/CMakeLists.txt
+@@ -2069,6 +2069,7 @@ set(regress_1_tests
+   regress1/datatypes/issue8124-real-int-cg.smt2
+   regress1/datatypes/issue-variant-dt-zero.smt2
+   regress1/datatypes/manos-model.smt2
++  regress1/datatypes/nested-rec-array-aa.smt2
+   regress1/datatypes/non-simple-rec.smt2
+   regress1/datatypes/non-simple-rec-mut-unsat.smt2
+   regress1/datatypes/non-simple-rec-param.smt2
+diff --git a/test/regress/cli/regress1/datatypes/nested-rec-array-aa.smt2 b/test/regress/cli/regress1/datatypes/nested-rec-array-aa.smt2
+new file mode 100644
+index 0000000000..aafd02d04d
+--- /dev/null
++++ b/test/regress/cli/regress1/datatypes/nested-rec-array-aa.smt2
+@@ -0,0 +1,9 @@
++(set-logic ALL)
++(set-info :status unsat)
++(set-option :dt-nested-rec true)
++(declare-datatypes ((A 0)) (((v1) (v2) (v3 (value (Array A A)) ) ) ))
++(define-fun term_array () (Array A A) ((as const (Array A A)) v1))
++(define-fun term_a_array_updated () (Array A A) (store term_array v2 v2))
++(define-fun assertion () Bool (= term_a_array_updated term_array))
++(assert assertion)
++(check-sat)

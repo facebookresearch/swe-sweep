@@ -1,0 +1,29 @@
+diff --git a/src/language-js/needs-parens.js b/src/language-js/needs-parens.js
+index ba7307542..3f8990317 100644
+--- a/src/language-js/needs-parens.js
++++ b/src/language-js/needs-parens.js
+@@ -718,7 +718,7 @@ function needsParens(path, options) {
+       if (
+         typeof node.value === "string" &&
+         parent.type === "ExpressionStatement" &&
+-        !parent.directive
++        typeof parent.directive !== "string"
+       ) {
+         // To avoid becoming a directive
+         const grandParent = path.grandparent;
+diff --git a/src/language-js/print/literal.js b/src/language-js/print/literal.js
+index 0147d7e05..25fd9c35b 100644
+--- a/src/language-js/print/literal.js
++++ b/src/language-js/print/literal.js
+@@ -55,7 +55,10 @@ function isDirective(path) {
+   }
+ 
+   const { parent } = path;
+-  return parent.type === "ExpressionStatement" && parent.directive;
++  return (
++    parent.type === "ExpressionStatement" &&
++    typeof parent.directive === "string"
++  );
+ }
+ 
+ function printBigInt(raw) {

@@ -1,0 +1,87 @@
+diff --git a/pint/testsuite/test_pint_eval.py b/pint/testsuite/test_pint_eval.py
+index bed8105..b5b94f0 100644
+--- a/pint/testsuite/test_pint_eval.py
++++ b/pint/testsuite/test_pint_eval.py
+@@ -1,14 +1,18 @@
+ from pint.compat import tokenizer
+ from pint.pint_eval import build_eval_tree
++from pint.util import string_preprocessor
+ 
+ 
+ class TestPintEval:
+-    def _test_one(self, input_text, parsed):
++    def _test_one(self, input_text, parsed, preprocess=False):
++        if preprocess:
++            input_text = string_preprocessor(input_text)
+         assert build_eval_tree(tokenizer(input_text)).to_string() == parsed
+ 
+     def test_build_eval_tree(self):
+         self._test_one("3", "3")
+         self._test_one("1 + 2", "(1 + 2)")
++        self._test_one("1 - 2", "(1 - 2)")
+         # order of operations
+         self._test_one("2 * 3 + 4", "((2 * 3) + 4)")
+         # parentheses
+@@ -64,3 +67,55 @@ class TestPintEval:
+         # units should behave like numbers, so we don't need a bunch of extra tests for them
+         # implicit op, then addition
+         self._test_one("3 kg + 5", "((3 kg) + 5)")
++
++    def test_preprocessed_eval_tree(self):
++        self._test_one("3", "3", preprocess=True)
++        self._test_one("1 + 2", "(1 + 2)", preprocess=True)
++        self._test_one("1 - 2", "(1 - 2)", preprocess=True)
++        # order of operations
++        self._test_one("2 * 3 + 4", "((2 * 3) + 4)", preprocess=True)
++        # parentheses
++        self._test_one("2 * (3 + 4)", "(2 * (3 + 4))", preprocess=True)
++        # more order of operations
++        self._test_one(
++            "1 + 2 * 3 ** (4 + 3 / 5)",
++            "(1 + (2 * (3 ** (4 + (3 / 5)))))",
++            preprocess=True,
++        )
++        # nested parentheses at beginning
++        self._test_one("1 * ((3 + 4) * 5)", "(1 * ((3 + 4) * 5))", preprocess=True)
++        # nested parentheses at end
++        self._test_one("1 * (5 * (3 + 4))", "(1 * (5 * (3 + 4)))", preprocess=True)
++        # nested parentheses in middle
++        self._test_one(
++            "1 * (5 * (3 + 4) / 6)", "(1 * ((5 * (3 + 4)) / 6))", preprocess=True
++        )
++        # unary
++        self._test_one("-1", "(- 1)", preprocess=True)
++        # unary
++        self._test_one("3 * -1", "(3 * (- 1))", preprocess=True)
++        # double unary
++        self._test_one("3 * --1", "(3 * (- (- 1)))", preprocess=True)
++        # parenthetical unary
++        self._test_one("3 * -(2 + 4)", "(3 * (- (2 + 4)))", preprocess=True)
++        # parenthetical unary
++        self._test_one("3 * -((2 + 4))", "(3 * (- (2 + 4)))", preprocess=True)
++        # implicit op
++        self._test_one("3 4", "(3 * 4)", preprocess=True)
++        # implicit op, then parentheses
++        self._test_one("3 (2 + 4)", "(3 * (2 + 4))", preprocess=True)
++        # parentheses, then implicit
++        self._test_one("(3 ** 4 ) 5", "((3 ** 4) * 5)", preprocess=True)
++        # implicit op, then exponentiation
++        self._test_one("3 4 ** 5", "(3 * (4 ** 5))", preprocess=True)
++        # implicit op, then addition
++        self._test_one("3 4 + 5", "((3 * 4) + 5)", preprocess=True)
++        # power followed by implicit
++        self._test_one("3 ** 4 5", "((3 ** 4) * 5)", preprocess=True)
++        # implicit with parentheses
++        self._test_one("3 (4 ** 5)", "(3 * (4 ** 5))", preprocess=True)
++        # exponent with e
++        self._test_one("3e-1", "3e-1", preprocess=True)
++        # multiple units with exponents
++        self._test_one("kg ** 1 * s ** 2", "((kg ** 1) * (s ** 2))", preprocess=True)
++        # multiple units with neg exponents
++        self._test_one(
++            "kg ** -1 * s ** -2", "((kg ** (- 1)) * (s ** (- 2)))", preprocess=True
++        )
++        # multiple units with neg exponents
++        self._test_one("kg^-1 * s^-2", "((kg ** (- 1)) * (s ** (- 2)))", preprocess=True)
++        # nested power
++        self._test_one("3 kg + 5", "((3 * kg) + 5)", preprocess=True)

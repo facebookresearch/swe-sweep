@@ -1,0 +1,15 @@
+diff --git a/astropy/units/core.py b/astropy/units/core.py
+index d963e8365b..9e00ef4df5 100644
+--- a/astropy/units/core.py
++++ b/astropy/units/core.py
+@@ -1713,7 +1713,9 @@ class UnitBase:
+             max_depth=1,
+             include_prefix_units=include_prefix_units,
+         )
+-        results = {x.bases[0] for x in results if len(x.bases) == 1}
++        results = {
++            x.bases[0] for x in results if len(x.bases) == 1 and x.powers[0] == 1
++        }
+         return self.EquivalentUnitsList(results)
+ 
+     def is_unity(self):

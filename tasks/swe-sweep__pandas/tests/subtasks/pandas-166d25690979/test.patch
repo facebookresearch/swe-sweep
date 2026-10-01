@@ -1,0 +1,52 @@
+diff --git a/pandas/tests/frame/methods/test_astype.py b/pandas/tests/frame/methods/test_astype.py
+index 9f1f953cec..e5e07761fd 100644
+--- a/pandas/tests/frame/methods/test_astype.py
++++ b/pandas/tests/frame/methods/test_astype.py
+@@ -261,6 +261,26 @@ class TestAstype:
+         expected = concat([a1_str, b, a2_str], axis=1)
+         tm.assert_frame_equal(result, expected)
+ 
++    def test_astype_duplicate_col_series_arg(self):
++        # GH#44417
++        vals = np.random.randn(3, 4)
++        df = DataFrame(vals, columns=["A", "B", "C", "A"])
++        dtypes = df.dtypes
++        dtypes.iloc[0] = str
++        dtypes.iloc[2] = "Float64"
++
++        result = df.astype(dtypes)
++        expected = DataFrame(
++            {
++                0: vals[:, 0].astype(str),
++                1: vals[:, 1],
++                2: pd.array(vals[:, 2], dtype="Float64"),
++                3: vals[:, 3],
++            }
++        )
++        expected.columns = df.columns
++        tm.assert_frame_equal(result, expected)
++
+     @pytest.mark.parametrize(
+         "dtype",
+         [
+diff --git a/pandas/tests/groupby/test_groupby.py b/pandas/tests/groupby/test_groupby.py
+index 203d8abb46..f632da9616 100644
+--- a/pandas/tests/groupby/test_groupby.py
++++ b/pandas/tests/groupby/test_groupby.py
+@@ -2031,6 +2031,16 @@ def test_empty_groupby(columns, keys, values, method, op, request, using_array_m
+     tm.assert_equal(result, expected)
+ 
+ 
++def test_empty_groupby_apply_nonunique_columns():
++    # GH#44417
++    df = DataFrame(np.random.randn(0, 4))
++    df[3] = df[3].astype(np.int64)
++    df.columns = [0, 1, 2, 0]
++    gb = df.groupby(df[1])
++    res = gb.apply(lambda x: x)
++    assert (res.dtypes == df.dtypes).all()
++
++
+ def test_tuple_as_grouping():
+     # https://github.com/pandas-dev/pandas/issues/18314
+     df = DataFrame(

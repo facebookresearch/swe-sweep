@@ -1,0 +1,22 @@
+diff --git a/tests/dialects/test_oracle.py b/tests/dialects/test_oracle.py
+index bcbe8e523e..fc1002ce0b 100644
+--- a/tests/dialects/test_oracle.py
++++ b/tests/dialects/test_oracle.py
+@@ -654,3 +654,17 @@ CONNECT BY PRIOR employee_id = manager_id AND LEVEL <= 4"""
+             "'W'",
+         ):
+             self.validate_identity(f"TRUNC(x, {unit})")
++
++    def test_merge_builder_alias(self):
++        merge_stmt = exp.merge(
++            "WHEN MATCHED THEN UPDATE SET my_table.col1 = source_table.col1",
++            "WHEN NOT MATCHED THEN INSERT (my_table.id, my_table.col1) VALUES (source_table.id, source_table.col1)",
++            into="my_table",
++            using="(SELECT * FROM something) source_table",
++            on="my_table.id = source_table.id",
++            dialect="oracle",
++        )
++        self.assertEqual(
++            merge_stmt.sql("oracle"),
++            "MERGE INTO my_table USING (SELECT * FROM something) source_table ON my_table.id = source_table.id WHEN MATCHED THEN UPDATE SET my_table.col1 = source_table.col1 WHEN NOT MATCHED THEN INSERT (my_table.id, my_table.col1) VALUES (source_table.id, source_table.col1)",
++        )

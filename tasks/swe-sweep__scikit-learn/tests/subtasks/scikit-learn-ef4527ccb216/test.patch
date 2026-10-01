@@ -1,0 +1,23 @@
+diff --git a/sklearn/metrics/tests/test_ranking.py b/sklearn/metrics/tests/test_ranking.py
+--- a/sklearn/metrics/tests/test_ranking.py
++++ b/sklearn/metrics/tests/test_ranking.py
+@@ -1,5 +1,6 @@
+ from __future__ import division, print_function
+ 
++import pytest
+ import numpy as np
+ from itertools import product
+ import warnings
+@@ -978,3 +979,12 @@ def test_ranking_loss_ties_handling():
+     assert_almost_equal(label_ranking_loss([[1, 0, 0]], [[0.25, 0.5, 0.5]]), 1)
+     assert_almost_equal(label_ranking_loss([[1, 0, 1]], [[0.25, 0.5, 0.5]]), 1)
+     assert_almost_equal(label_ranking_loss([[1, 1, 0]], [[0.25, 0.5, 0.5]]), 1)
++
++
++def test_label_ranking_avg_precision_score_should_allow_csr_matrix_for_y_true_input():
++    # Test that label_ranking_avg_precision_score accept sparse y_true.
++    # Non-regression test for #22575
++    y_true = csr_matrix([[1, 0, 0], [0, 0, 1]])
++    y_score = np.array([[0.5, 0.9, 0.6], [0, 0, 1]])
++    result = label_ranking_average_precision_score(y_true, y_score)
++    assert result == pytest.approx(2 / 3)

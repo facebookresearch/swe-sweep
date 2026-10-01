@@ -1,0 +1,92 @@
+diff --git a/src/net/http/internal/chunked_test.go b/src/net/http/internal/chunked_test.go
+index af79711781..312f1734a6 100644
+--- a/src/net/http/internal/chunked_test.go
++++ b/src/net/http/internal/chunked_test.go
+@@ -210,3 +210,30 @@ func TestChunkReadPartial(t *testing.T) {
+ 	}
+ 
+ }
++
++func TestChunkInvalidInputs(t *testing.T) {
++	for _, test := range []struct {
++		name string
++		b    string
++	}{{
++		name: "bare LF in chunk size",
++		b:    "1\na\r\n0\r\n",
++	}, {
++		name: "extra LF in chunk size",
++		b:    "1\r\r\na\r\n0\r\n",
++	}, {
++		name: "bare LF in chunk data",
++		b:    "1\r\na\n0\r\n",
++	}, {
++		name: "bare LF in chunk extension",
++		b:    "1;\na\r\n0\r\n",
++	}} {
++		t.Run(test.name, func(t *testing.T) {
++			r := NewChunkedReader(strings.NewReader(test.b))
++			got, err := io.ReadAll(r)
++			if err == nil {
++				t.Fatalf("unexpectedly parsed invalid chunked data:\n%q", got)
++			}
++		})
++	}
++}
+diff --git a/src/net/http/serve_test.go b/src/net/http/serve_test.go
+index 89fcbd1329..915055fddd 100644
+--- a/src/net/http/serve_test.go
++++ b/src/net/http/serve_test.go
+@@ -6609,3 +6609,52 @@ func testQuerySemicolon(t *testing.T, query string, wantX string, allowSemicolons, expectWarning bool) {
+ 		}
+ 	}
+ }
++
++func TestInvalidChunkedBodies(t *testing.T) {
++	for _, test := range []struct {
++		name string
++		b    string
++	}{{
++		name: "bare LF in chunk size",
++		b:    "1\na\r\n0\r\n\r\n",
++	}, {
++		name: "bare LF at body end",
++		b:    "1\r\na\r\n0\r\n\n",
++	}} {
++		t.Run(test.name, func(t *testing.T) {
++			reqc := make(chan error)
++			ts := newClientServerTest(t, h1Mode, HandlerFunc(func(w ResponseWriter, r *Request) {
++				got, err := io.ReadAll(r.Body)
++				if err == nil {
++					t.Logf("read body: %q", got)
++				}
++				reqc <- err
++			})).ts
++
++			serverURL, err := url.Parse(ts.URL)
++			if err != nil {
++				t.Fatal(err)
++			}
++
++			conn, err := net.Dial("tcp", serverURL.Host)
++			if err != nil {
++				t.Fatal(err)
++			}
++
++			if _, err := conn.Write([]byte(
++				"POST / HTTP/1.1\r\n" +
++					"Host: localhost\r\n" +
++					"Transfer-Encoding: chunked\r\n" +
++					"Connection: close\r\n" +
++					"\r\n" +
++					test.b)); err != nil {
++				t.Fatal(err)
++			}
++			conn.(*net.TCPConn).CloseWrite()
++
++			if err := <-reqc; err == nil {
++				t.Errorf("server handler: io.ReadAll(r.Body) succeeded, want error")
++			}
++		})
++	}
++}

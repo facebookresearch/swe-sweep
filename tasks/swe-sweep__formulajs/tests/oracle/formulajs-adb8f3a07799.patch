@@ -1,0 +1,13 @@
+diff --git a/src/lookup-reference.js b/src/lookup-reference.js
+index b394d7d..a9343b6 100644
+--- a/src/lookup-reference.js
++++ b/src/lookup-reference.js
+@@ -193,7 +193,7 @@ export function LOOKUP(lookup_value, array, result_array) {
+  * @returns
+  */
+ export function MATCH(lookup_value, lookup_array, match_type) {
+-  if (!lookup_value || !lookup_array) {
++  if ((!lookup_value && lookup_value !== 0) || !lookup_array) {
+     return error.na
+   }
+ 

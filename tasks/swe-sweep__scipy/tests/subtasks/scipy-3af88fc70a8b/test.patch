@@ -1,0 +1,31 @@
+diff --git a/scipy/optimize/tests/test_zeros.py b/scipy/optimize/tests/test_zeros.py
+index e16cd921b3..3fabf9723d 100644
+--- a/scipy/optimize/tests/test_zeros.py
++++ b/scipy/optimize/tests/test_zeros.py
+@@ -706,3 +706,26 @@ def test_gh9551_raise_error_if_disp_true():
+         result = zeros.newton(f, 1.0, f_p)
+     root = zeros.newton(f, complex(10.0, 10.0), f_p)
+     assert_allclose(root, complex(0.0, 1.0))
++
++
++def test_gh13407():
++    # gh-13407 reported that the message produced by `scipy.optimize.toms748`
++    # when `rtol < eps` is incorrect, and also that toms748 is unusual in
++    # accepting `rtol` as low as eps while other solvers raise at 4*eps. Check
++    # that the error message has been corrected and that `rtol=eps` can produce
++    # a lower function value than `rtol=4*eps`.
++    def f(x):
++        return x**3 - 2*x - 5
++
++    xtol = 1e-300
++    eps = np.finfo(float).eps
++    x1 = zeros.toms748(f, 1e-10, 1e10, xtol=xtol, rtol=1*eps)
++    f1 = f(x1)
++    x4 = zeros.toms748(f, 1e-10, 1e10, xtol=xtol, rtol=4*eps)
++    f4 = f(x4)
++    assert f1 < f4
++
++    # using old-style syntax to get exactly the same message
++    message = r"rtol too small \(%g < %g\)" % (eps/2, eps)
++    with pytest.raises(ValueError, match=message):
++        zeros.toms748(f, 1e-10, 1e10, xtol=xtol, rtol=eps/2)

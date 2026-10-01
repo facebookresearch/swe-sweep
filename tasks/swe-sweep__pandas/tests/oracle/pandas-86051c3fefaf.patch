@@ -1,0 +1,13 @@
+diff --git a/pandas/core/base.py b/pandas/core/base.py
+index 84bc6cb161..74e119a42c 100644
+--- a/pandas/core/base.py
++++ b/pandas/core/base.py
+@@ -541,7 +541,7 @@ class IndexOpsMixin(OpsMixin):
+         if copy or na_value is not lib.no_default:
+             result = result.copy()
+             if na_value is not lib.no_default:
+-                result[self.isna()] = na_value
++                result[np.asanyarray(self.isna())] = na_value
+         return result
+ 
+     @property

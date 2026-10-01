@@ -1,0 +1,26 @@
+diff --git a/test/sql/explain/explain_execute.test b/test/sql/explain/explain_execute.test
+new file mode 100644
+index 0000000000..1b1df1ff8e
+--- /dev/null
++++ b/test/sql/explain/explain_execute.test
+@@ -0,0 +1,20 @@
++# name: test/sql/explain/explain_execute.test
++# description: Test explain
++# group: [explain]
++
++statement ok
++PRAGMA enable_verification
++
++statement ok
++CREATE TABLE integers(i INTEGER, j INTEGER)
++
++statement ok
++INSERT INTO integers VALUES (1, 1), (2, 2), (3, 3), (NULL, NULL)
++
++statement ok
++PREPARE query AS SELECT * FROM integers
++
++query II
++EXPLAIN EXECUTE query
++----
++physical_plan	<REGEX>:.*SEQ_SCAN.*

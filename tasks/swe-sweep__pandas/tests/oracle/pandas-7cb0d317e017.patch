@@ -1,0 +1,14 @@
+diff --git a/pandas/core/groupby/groupby.py b/pandas/core/groupby/groupby.py
+index a5b19c6295..42363b9f1d 100644
+--- a/pandas/core/groupby/groupby.py
++++ b/pandas/core/groupby/groupby.py
+@@ -3271,6 +3271,9 @@ class GroupBy(BaseGroupBy[NDFrameT]):
+         0    red  0
+         """
+         from pandas.core.reshape.concat import concat
++        if self._selected_obj.empty:
++            # GH48459 prevent ValueError when object is empty
++            return self._selected_obj
+ 
+         if weights is not None:
+             weights = Series(weights, index=self._selected_obj.index)

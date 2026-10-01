@@ -1,0 +1,25 @@
+diff --git a/test/unit/test_indexing.py b/test/unit/test_indexing.py
+index ddc2c7fa0..c95e69193 100644
+--- a/test/unit/test_indexing.py
++++ b/test/unit/test_indexing.py
+@@ -3,7 +3,7 @@
+ import unittest, random, warnings
+ import numpy as np
+ 
+-from tinygrad import Tensor, dtypes, Device, TinyJit
++from tinygrad import Tensor, dtypes, Device, TinyJit, Variable
+ from tinygrad.device import is_dtype_supported
+ from tinygrad.helpers import all_same, prod
+ from test.helpers import slow
+@@ -699,6 +699,11 @@ class TestIndexing(unittest.TestCase):
+     i, j = indices
+     numpy_testing_assert_equal_helper(x[i:j], x[0:1])
+ 
++  def test_variable_with_tensor_index(self):
++    t = Tensor.arange(12).reshape(3, 4)
++    v = Variable("v", 0, 2).bind(1)
++    numpy_testing_assert_equal_helper(t[v, Tensor([0, 1, 2])], t[1, Tensor([0, 1, 2])])
++
+   @unittest.skipUnless(is_dtype_supported(dtypes.int64), "tensor indexing uses int64 internally")
+   def test_ellipsis_tensor(self):
+     x = Tensor.arange(0, 9).reshape(3, 3)

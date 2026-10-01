@@ -1,0 +1,13 @@
+diff --git a/codec-http/src/test/java/io/netty/handler/codec/http/websocketx/extensions/compression/PerMessageDeflateClientExtensionHandshakerTest.java b/codec-http/src/test/java/io/netty/handler/codec/http/websocketx/extensions/compression/PerMessageDeflateClientExtensionHandshakerTest.java
+index d1456012e5..90d1692531 100644
+--- a/codec-http/src/test/java/io/netty/handler/codec/http/websocketx/extensions/compression/PerMessageDeflateClientExtensionHandshakerTest.java
++++ b/codec-http/src/test/java/io/netty/handler/codec/http/websocketx/extensions/compression/PerMessageDeflateClientExtensionHandshakerTest.java
+@@ -90,7 +90,7 @@ public class PerMessageDeflateClientExtensionHandshakerTest {
+ 
+         parameters = new HashMap<String, String>();
+         parameters.put(CLIENT_MAX_WINDOW, "12");
+-        parameters.put(SERVER_MAX_WINDOW, "10");
++        parameters.put(SERVER_MAX_WINDOW, "8");
+         parameters.put(CLIENT_NO_CONTEXT, null);
+         parameters.put(SERVER_NO_CONTEXT, null);
+ 

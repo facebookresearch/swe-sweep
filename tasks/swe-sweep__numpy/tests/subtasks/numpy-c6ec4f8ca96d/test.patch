@@ -1,0 +1,15 @@
+diff --git a/numpy/lib/tests/test_format.py b/numpy/lib/tests/test_format.py
+index fd227595a529..c7869c58243c 100644
+--- a/numpy/lib/tests/test_format.py
++++ b/numpy/lib/tests/test_format.py
+@@ -852,3 +852,10 @@ def test_large_archive():
+         new_a = np.load(f)["arr"]
+ 
+     assert_(a.shape == new_a.shape)
++
++
++def test_empty_npz():
++    # Test for gh-9989
++    fname = os.path.join(tempdir, "nothing.npz")
++    np.savez(fname)
++    np.load(fname)

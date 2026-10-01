@@ -1,0 +1,15 @@
+diff --git a/plumbing/format/gitignore/dir.go b/plumbing/format/gitignore/dir.go
+index aca5d0db..92df5a3d 100644
+--- a/plumbing/format/gitignore/dir.go
++++ b/plumbing/format/gitignore/dir.go
+@@ -64,6 +64,10 @@ func ReadPatterns(fs billy.Filesystem, path []string) (ps []Pattern, err error)
+ 
+ 	for _, fi := range fis {
+ 		if fi.IsDir() && fi.Name() != gitDir {
++			if NewMatcher(ps).Match(append(path, fi.Name()), true) {
++				continue
++			}
++
+ 			var subps []Pattern
+ 			subps, err = ReadPatterns(fs, append(path, fi.Name()))
+ 			if err != nil {

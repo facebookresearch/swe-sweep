@@ -1,0 +1,75 @@
+diff --git a/test/configCases/resolve/unsafe-cache-proxy/a/1.js b/test/configCases/resolve/unsafe-cache-proxy/a/1.js
+new file mode 100644
+index 000000000..bd816eaba
+--- /dev/null
++++ b/test/configCases/resolve/unsafe-cache-proxy/a/1.js
+@@ -0,0 +1 @@
++module.exports = 1;
+diff --git a/test/configCases/resolve/unsafe-cache-proxy/b/2.js b/test/configCases/resolve/unsafe-cache-proxy/b/2.js
+new file mode 100644
+index 000000000..4bbffde10
+--- /dev/null
++++ b/test/configCases/resolve/unsafe-cache-proxy/b/2.js
+@@ -0,0 +1 @@
++module.exports = 2;
+diff --git a/test/configCases/resolve/unsafe-cache-proxy/index.js b/test/configCases/resolve/unsafe-cache-proxy/index.js
+new file mode 100644
+index 000000000..b64161dbe
+--- /dev/null
++++ b/test/configCases/resolve/unsafe-cache-proxy/index.js
+@@ -0,0 +1,6 @@
++it("should resolve both alternatives", () => {
++	const one = require("_/1");
++	const two = require("_/2");
++	expect(one).toBe(1);
++	expect(two).toBe(2);
++});
+diff --git a/test/configCases/resolve/unsafe-cache-proxy/webpack.config.js b/test/configCases/resolve/unsafe-cache-proxy/webpack.config.js
+new file mode 100644
+index 000000000..b701fc1a3
+--- /dev/null
++++ b/test/configCases/resolve/unsafe-cache-proxy/webpack.config.js
+@@ -0,0 +1,43 @@
++const path = require("path");
++
++let getCounter = 0;
++let setConter = 0;
++
++const unsafeCache = new Proxy(
++	{},
++	{
++		get(target, key, receiver) {
++			getCounter += 1;
++
++			return Reflect.get(target, key, receiver);
++		},
++		set(target, key, value, receiver) {
++			setConter += 1;
++
++			return Reflect.set(target, key, value, receiver);
++		}
++	}
++);
++
++/** @type {import("../../../../").Configuration} */
++module.exports = {
++	plugins: [
++		{
++			apply(compiler) {
++				compiler.hooks.done.tap("TestPlugin", () => {
++					if (getCounter === 0 || setConter === 0) {
++						throw new Error(
++							"resolve.unsafeCache doesn't work with the `Proxy`"
++						);
++					}
++				});
++			}
++		}
++	],
++	resolve: {
++		alias: {
++			_: [path.resolve(__dirname, "a"), path.resolve(__dirname, "b")]
++		},
++		unsafeCache
++	}
++};

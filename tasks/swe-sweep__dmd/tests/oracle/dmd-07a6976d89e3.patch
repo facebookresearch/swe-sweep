@@ -1,0 +1,13 @@
+diff --git a/compiler/src/dmd/cparse.d b/compiler/src/dmd/cparse.d
+index 70de6af0da..e02ff43097 100644
+--- a/compiler/src/dmd/cparse.d
++++ b/compiler/src/dmd/cparse.d
+@@ -5813,7 +5813,7 @@ final class CParser(AST) : Parser!AST
+                 if (len == 1)   // stack is now empty
+                     packalign.setDefault();
+                 else
+-                    packalign = (*this.packs)[len - 1];
++                    packalign = (*this.packs)[len - 2];
+                 return closingParen();
+             }
+             while (n.value == TOK.comma)        // #pragma pack ( pop ,

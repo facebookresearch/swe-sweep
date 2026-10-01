@@ -1,0 +1,13 @@
+diff --git a/packages/react-router/lib/dom/lib.tsx b/packages/react-router/lib/dom/lib.tsx
+index 6e01cb158..47e66196e 100644
+--- a/packages/react-router/lib/dom/lib.tsx
++++ b/packages/react-router/lib/dom/lib.tsx
+@@ -1690,7 +1690,7 @@ export const NavLink = React.forwardRef<HTMLAnchorElement, NavLinkProps>(
+       (nextLocationPathname === toPathname ||
+         (!end &&
+           nextLocationPathname.startsWith(toPathname) &&
+-          nextLocationPathname.charAt(toPathname.length) === "/"));
++          nextLocationPathname.charAt(endSlashPosition) === "/"));
+ 
+     let renderProps = {
+       isActive,

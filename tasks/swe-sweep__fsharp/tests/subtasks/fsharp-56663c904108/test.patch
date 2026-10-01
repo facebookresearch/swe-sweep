@@ -1,0 +1,82 @@
+diff --git a/tests/FSharp.Compiler.ComponentTests/Language/Nullness/NullableReferenceTypesTests.fs b/tests/FSharp.Compiler.ComponentTests/Language/Nullness/NullableReferenceTypesTests.fs
+index 7dbe3527fb..85b872d01a 100644
+--- a/tests/FSharp.Compiler.ComponentTests/Language/Nullness/NullableReferenceTypesTests.fs
++++ b/tests/FSharp.Compiler.ComponentTests/Language/Nullness/NullableReferenceTypesTests.fs
+@@ -1003,7 +1003,45 @@ looseFunc(maybeTuple2) |> ignore
+               Error 3261, Line 29, Col 12, Line 29, Col 19, "Nullness warning: The type 'MyDu | null' supports 'null' but a non-null type is expected."
+               Error 3261, Line 30, Col 12, Line 30, Col 21, "Nullness warning: The type 'MyRecord | null' supports 'null' but a non-null type is expected."
+               Error 43, Line 40, Col 36, Line 40, Col 40, "The type 'Maybe<int * int>' does not have 'null' as a proper value"]
+-                
++    
++    
++[<Fact>]
++let ``Nullness support for flexible types`` () =
++    FSharp """module MyLibrary
++open System
++let dispose (x: IDisposable | null) : unit =
++    match x with
++    | null -> ()
++    | d -> d.Dispose()
++
++let useThing (thing: #IDisposable) =
++    try
++        printfn "%O" thing
++    finally
++        dispose thing // Warning used to be here, should not warn! """
++    |> asLibrary
++    |> typeCheckWithStrictNullness
++    |> shouldSucceed
++
++[<Fact>]
++let ``Nullness support for flexible types - opposite`` () =
++    FSharp """module MyLibrary
++open System
++let dispose (x: IDisposable) : unit =
++    x.Dispose()
++
++let useThing (thing: #IDisposable | null) =
++    try
++        printfn "%O" thing
++    finally
++        dispose thing // Warning should be here, because 'thing' can be null!        
++        """
++    |> asLibrary
++    |> typeCheckWithStrictNullness
++    |> shouldFail
++    |> withDiagnostics [Error 3261, Line 10, Col 17, Line 10, Col 22, "Nullness warning: The types 'IDisposable' and ''a | null' do not have compatible nullability."]
++
++
+ [<Fact>]
+ let ``Static member on Record with null arg`` () =
+     FSharp """module MyLibrary
+diff --git a/tests/FSharp.Compiler.ComponentTests/Signatures/SeqTests.fs b/tests/FSharp.Compiler.ComponentTests/Signatures/SeqTests.fs
+index 10a0d0b3a2..fdca603578 100644
+--- a/tests/FSharp.Compiler.ComponentTests/Signatures/SeqTests.fs
++++ b/tests/FSharp.Compiler.ComponentTests/Signatures/SeqTests.fs
+@@ -2,6 +2,8 @@
+ 
+ open Xunit
+ open Signatures.TestHelpers
++open FSharp.Test
++open FSharp.Test.Compiler
+ 
+ [<Fact>]
+ let ``int seq`` () =
+@@ -14,3 +16,17 @@ let ``tuple seq`` () =
+     assertSingleSignatureBinding
+         "let s = seq { yield (1, 'b', 2.) }"
+         "val s: (int * char * float) seq"
++
++[<Fact>]
++let ``seq transpose`` () =
++    let encodeFs =
++        FsSource """module Program
++let transpose (source: seq<#seq<'T>>) =
++    source |> Seq.collect Seq.indexed |> Seq.groupBy fst |> Seq.map (snd >> (Seq.map snd))"""
++
++    Fsi """module Program
++val transpose: source: seq<'Collection> -> seq<seq<'T>> when 'Collection :> seq<'T>""" 
++    |> withAdditionalSourceFile encodeFs
++    |> withLangVersionPreview
++    |> compile
++    |> shouldSucceed

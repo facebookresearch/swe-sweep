@@ -1,0 +1,44 @@
+diff --git a/activemodel/lib/active_model/type/helpers/mutable.rb b/activemodel/lib/active_model/type/helpers/mutable.rb
+index 1cbea644c4a..d548776970f 100644
+--- a/activemodel/lib/active_model/type/helpers/mutable.rb
++++ b/activemodel/lib/active_model/type/helpers/mutable.rb
+@@ -4,6 +4,10 @@ module ActiveModel
+   module Type
+     module Helpers # :nodoc: all
+       module Mutable
++        def immutable_value(value)
++          value.deep_dup.freeze
++        end
++
+         def cast(value)
+           deserialize(serialize(value))
+         end
+diff --git a/activemodel/lib/active_model/type/value.rb b/activemodel/lib/active_model/type/value.rb
+index 880f74a99bf..1e3bb107835 100644
+--- a/activemodel/lib/active_model/type/value.rb
++++ b/activemodel/lib/active_model/type/value.rb
+@@ -129,6 +129,10 @@ module ActiveModel
+       def assert_valid_value(_)
+       end
+ 
++      def immutable_value(value) # :nodoc:
++        value
++      end
++
+       private
+         # Convenience method for types which do not need separate type casting
+         # behavior for user and database inputs. Called by Value#cast for
+diff --git a/activerecord/lib/active_record/relation/predicate_builder.rb b/activerecord/lib/active_record/relation/predicate_builder.rb
+index 1a1091556ef..34a68bdd02b 100644
+--- a/activerecord/lib/active_record/relation/predicate_builder.rb
++++ b/activerecord/lib/active_record/relation/predicate_builder.rb
+@@ -65,7 +65,8 @@ module ActiveRecord
+     end
+ 
+     def build_bind_attribute(column_name, value)
+-      Relation::QueryAttribute.new(column_name, value, table.type(column_name))
++      type = table.type(column_name)
++      Relation::QueryAttribute.new(column_name, type.immutable_value(value), type)
+     end
+ 
+     def resolve_arel_attribute(table_name, column_name, &block)

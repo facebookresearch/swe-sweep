@@ -1,0 +1,38 @@
+diff --git a/src/Compilers/CSharp/Portable/Binder/Binder_Patterns.cs b/src/Compilers/CSharp/Portable/Binder/Binder_Patterns.cs
+index 586699c0f2a..777c0fbe526 100644
+--- a/src/Compilers/CSharp/Portable/Binder/Binder_Patterns.cs
++++ b/src/Compilers/CSharp/Portable/Binder/Binder_Patterns.cs
+@@ -398,7 +398,7 @@ namespace Microsoft.CodeAnalysis.CSharp
+ 
+             indexerAccess = BindElementAccessCore(node, receiverPlaceholder, analyzedArguments, diagnostics).MakeCompilerGenerated();
+             indexerAccess = CheckValue(indexerAccess, BindValueKind.RValue, diagnostics);
+-            Debug.Assert(indexerAccess is BoundIndexerAccess or BoundImplicitIndexerAccess or BoundArrayAccess or BoundBadExpression or BoundDynamicIndexerAccess);
++            Debug.Assert(indexerAccess is BoundIndexerAccess or BoundImplicitIndexerAccess or BoundArrayAccess or BoundBadExpression or BoundDynamicIndexerAccess or BoundPointerElementAccess);
+             analyzedArguments.Free();
+ 
+             if (!systemIndexType.HasUseSiteError)
+diff --git a/src/Compilers/CSharp/Portable/Binder/Binder_Statements.cs b/src/Compilers/CSharp/Portable/Binder/Binder_Statements.cs
+index 976d7e9c53f..6d4de9d1380 100644
+--- a/src/Compilers/CSharp/Portable/Binder/Binder_Statements.cs
++++ b/src/Compilers/CSharp/Portable/Binder/Binder_Statements.cs
+@@ -1756,6 +1756,7 @@ namespace Microsoft.CodeAnalysis.CSharp
+                 BoundArrayAccess => null,
+                 BoundDynamicIndexerAccess => null,
+                 BoundBadExpression => null,
++                BoundPointerElementAccess => null,
+                 _ => throw ExceptionUtilities.UnexpectedValue(e.Kind)
+             };
+         }
+diff --git a/src/Compilers/CSharp/Portable/BoundTree/BoundListPattern.cs b/src/Compilers/CSharp/Portable/BoundTree/BoundListPattern.cs
+index bcb74273f8b..0c913cafc25 100644
+--- a/src/Compilers/CSharp/Portable/BoundTree/BoundListPattern.cs
++++ b/src/Compilers/CSharp/Portable/BoundTree/BoundListPattern.cs
+@@ -18,7 +18,7 @@ namespace Microsoft.CodeAnalysis.CSharp
+         private partial void Validate()
+         {
+             Debug.Assert(LengthAccess is null or BoundPropertyAccess or BoundBadExpression);
+-            Debug.Assert(IndexerAccess is null or BoundIndexerAccess or BoundImplicitIndexerAccess or BoundArrayAccess or BoundBadExpression or BoundDynamicIndexerAccess);
++            Debug.Assert(IndexerAccess is null or BoundIndexerAccess or BoundImplicitIndexerAccess or BoundArrayAccess or BoundBadExpression or BoundDynamicIndexerAccess or BoundPointerElementAccess);
+             Debug.Assert(Binder.GetIndexerOrImplicitIndexerSymbol(IndexerAccess) is var _);
+             Debug.Assert(NarrowedType.Equals(InputType.StrippedType(), TypeCompareKind.AllIgnoreOptions));
+         }

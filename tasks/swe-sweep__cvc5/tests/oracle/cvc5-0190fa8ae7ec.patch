@@ -1,0 +1,19 @@
+diff --git a/src/theory/strings/term_registry.cpp b/src/theory/strings/term_registry.cpp
+index cda50cce87..930fe4a6de 100644
+--- a/src/theory/strings/term_registry.cpp
++++ b/src/theory/strings/term_registry.cpp
+@@ -249,7 +249,13 @@ void TermRegistry::registerSubterms(Node n)
+     if (d_registeredTerms.find(cur) == d_registeredTerms.end())
+     {
+       registerTermInternal(cur);
+-      visit.insert(visit.end(), cur.begin(), cur.end());
++      // only traverse beneath operators belonging to strings
++      if (theory::kindToTheoryId(cur.getKind())==THEORY_STRINGS)
++      {
++        // strings does not have any closure kinds
++        Assert (!cur.isClosure());
++        visit.insert(visit.end(), cur.begin(), cur.end());
++      }
+     }
+   } while (!visit.empty());
+ }

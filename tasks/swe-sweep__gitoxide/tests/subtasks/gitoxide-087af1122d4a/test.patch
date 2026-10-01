@@ -1,0 +1,27 @@
+diff --git a/gix-url/tests/url/parse/http.rs b/gix-url/tests/url/parse/http.rs
+index 10dd80155..a374bb5d6 100644
+--- a/gix-url/tests/url/parse/http.rs
++++ b/gix-url/tests/url/parse/http.rs
+@@ -31,6 +31,22 @@ fn username_and_password() -> crate::Result {
+     )
+ }
+ 
++#[test]
++fn colon_in_username_roundtrips() -> crate::Result {
++    assert_url_roundtrip(
++        "http://a%3Ab@example.com/",
++        url(Scheme::Http, "a:b", "example.com", None, b"/"),
++    )
++}
++
++#[test]
++fn colon_in_password_roundtrips() -> crate::Result {
++    assert_url_roundtrip(
++        "http://user:a:b@example.com/",
++        url_with_pass(Scheme::Http, "user", "a:b", "example.com", None, b"/"),
++    )
++}
++
+ #[test]
+ fn username_and_password_and_port() -> crate::Result {
+     assert_url_roundtrip(

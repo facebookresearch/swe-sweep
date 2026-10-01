@@ -1,0 +1,13 @@
+diff --git a/sqlglot/transforms.py b/sqlglot/transforms.py
+index 639c0c19b2..1063bbe33a 100644
+--- a/sqlglot/transforms.py
++++ b/sqlglot/transforms.py
+@@ -624,7 +624,7 @@ def eliminate_semi_and_anti_joins(expression: exp.Expression) -> exp.Expression:
+ def eliminate_semi_and_anti_joins(expression: exp.Expression) -> exp.Expression:
+     """Convert SEMI and ANTI joins into equivalent forms that use EXIST instead."""
+     if isinstance(expression, exp.Select):
+-        for join in expression.args.get("joins") or []:
++        for join in list(expression.args.get("joins") or []):
+             on = join.args.get("on")
+             if on and join.kind in ("SEMI", "ANTI"):
+                 subquery = exp.select("1").from_(join.this).where(on)

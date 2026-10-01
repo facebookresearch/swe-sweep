@@ -1,0 +1,13 @@
+diff --git a/vlib/toml/checker/checker.v b/vlib/toml/checker/checker.v
+index 15ae7ec67..8c3de263e 100644
+--- a/vlib/toml/checker/checker.v
++++ b/vlib/toml/checker/checker.v
+@@ -491,7 +491,7 @@ fn (c &Checker) check_quoted_escapes(q ast.Quoted) ! {
+ 							}
+ 						}
+ 					}
+-					if next_ch in [`\t`, `\n`, ` `] {
++					if next_ch in [`\t`, `\r`, `\n`, ` `] {
+ 						s.next()
+ 						continue
+ 					}

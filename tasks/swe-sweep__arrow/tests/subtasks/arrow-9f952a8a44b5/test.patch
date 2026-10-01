@@ -1,0 +1,80 @@
+diff --git a/cpp/src/arrow/compute/kernels/scalar_string_test.cc b/cpp/src/arrow/compute/kernels/scalar_string_test.cc
+index 4581e6377a..ff14f5e7a5 100644
+--- a/cpp/src/arrow/compute/kernels/scalar_string_test.cc
++++ b/cpp/src/arrow/compute/kernels/scalar_string_test.cc
+@@ -2091,6 +2091,14 @@ TYPED_TEST(TestStringKernels, SliceCodeunitsPosPos) {
+   options_step_neg.stop = 0;
+   this->CheckUnary("utf8_slice_codeunits", R"(["", "𝑓", "𝑓ö", "𝑓öõ", "𝑓öõḍ","𝑓öõḍš"])",
+                    this->type(), R"(["", "", "ö", "õ", "ḍö", "šõ"])", &options_step_neg);
++
++  constexpr auto max = std::numeric_limits<int64_t>::max();
++  SliceOptions options_max_step{1, max, 2};
++  this->CheckUnary("utf8_slice_codeunits", R"(["", "𝑓", "𝑓ö", "𝑓öõ", "𝑓öõḍ", "𝑓öõḍš"])",
++                   this->type(), R"(["", "", "ö", "ö", "öḍ", "öḍ"])", &options_max_step);
++  SliceOptions options_max_step_neg{1, max, -2};
++  this->CheckUnary("utf8_slice_codeunits", R"(["", "𝑓", "𝑓ö", "𝑓öõ", "𝑓öõḍ", "𝑓öõḍš"])",
++                   this->type(), R"(["", "", "", "", "", ""])", &options_max_step_neg);
+ }
+ 
+ TYPED_TEST(TestStringKernels, SliceCodeunitsPosNeg) {
+@@ -2107,6 +2115,15 @@ TYPED_TEST(TestStringKernels, SliceCodeunitsPosNeg) {
+   this->CheckUnary("utf8_slice_codeunits", R"(["", "𝑓", "𝑓ö", "𝑓öõ", "𝑓öõḍ","𝑓öõḍš"])",
+                    this->type(), R"(["", "𝑓", "ö", "õ𝑓", "ḍö", "ḍö"])",
+                    &options_step_neg);
++
++  constexpr auto min = std::numeric_limits<int64_t>::min();
++  SliceOptions options_min_step{2, min, 2};
++  this->CheckUnary("utf8_slice_codeunits", R"(["", "𝑓", "𝑓ö", "𝑓öõ", "𝑓öõḍ", "𝑓öõḍš"])",
++                   this->type(), R"(["", "", "", "", "", ""])", &options_min_step);
++  SliceOptions options_min_step_neg{2, min, -2};
++  this->CheckUnary("utf8_slice_codeunits", R"(["", "𝑓", "𝑓ö", "𝑓öõ", "𝑓öõḍ", "𝑓öõḍš"])",
++                   this->type(), R"(["", "𝑓", "ö", "õ𝑓", "õ𝑓", "õ𝑓"])",
++                   &options_min_step_neg);
+ }
+ 
+ TYPED_TEST(TestStringKernels, SliceCodeunitsNegNeg) {
+@@ -2123,6 +2140,15 @@ TYPED_TEST(TestStringKernels, SliceCodeunitsNegNeg) {
+   this->CheckUnary("utf8_slice_codeunits", R"(["", "𝑓", "𝑓ö", "𝑓öõ", "𝑓öõḍ", "𝑓öõḍš"])",
+                    this->type(), R"(["", "𝑓", "ö", "õ𝑓", "ḍö", "šõ"])",
+                    &options_step_neg);
++
++  constexpr auto min = std::numeric_limits<int64_t>::min();
++  SliceOptions options_min_step{-2, min, 2};
++  this->CheckUnary("utf8_slice_codeunits", R"(["", "𝑓", "𝑓ö", "𝑓öõ", "𝑓öõḍ", "𝑓öõḍš"])",
++                   this->type(), R"(["", "", "", "", "", ""])", &options_min_step);
++  SliceOptions options_min_step_neg{-2, min, -2};
++  this->CheckUnary("utf8_slice_codeunits", R"(["", "𝑓", "𝑓ö", "𝑓öõ", "𝑓öõḍ", "𝑓öõḍš"])",
++                   this->type(), R"(["", "", "𝑓", "ö", "õ𝑓", "ḍö"])",
++                   &options_min_step_neg);
+ }
+ 
+ TYPED_TEST(TestStringKernels, SliceCodeunitsNegPos) {
+@@ -2138,6 +2164,15 @@ TYPED_TEST(TestStringKernels, SliceCodeunitsNegPos) {
+   options_step_neg.stop = 0;
+   this->CheckUnary("utf8_slice_codeunits", R"(["", "𝑓", "𝑓ö", "𝑓öõ", "𝑓öõḍ", "𝑓öõḍš"])",
+                    this->type(), R"(["", "", "ö", "õ", "ḍö", "šõ"])", &options_step_neg);
++
++  constexpr auto max = std::numeric_limits<int64_t>::max();
++  SliceOptions options_max_step{-3, max, 2};
++  this->CheckUnary("utf8_slice_codeunits", R"(["", "𝑓", "𝑓ö", "𝑓öõ", "𝑓öõḍ", "𝑓öõḍš"])",
++                   this->type(), R"(["", "𝑓", "𝑓", "𝑓õ", "öḍ", "õš"])",
++                   &options_max_step);
++  SliceOptions options_max_step_neg{-3, max, -2};
++  this->CheckUnary("utf8_slice_codeunits", R"(["", "𝑓", "𝑓ö", "𝑓öõ", "𝑓öõḍ", "𝑓öõḍš"])",
++                   this->type(), R"(["", "", "", "", "", ""])", &options_max_step_neg);
+ }
+ 
+ #endif  // ARROW_WITH_UTF8PROC
+diff --git a/python/pyarrow/tests/test_compute.py b/python/pyarrow/tests/test_compute.py
+index 865fecc7b2..e47e5d3f3e 100644
+--- a/python/pyarrow/tests/test_compute.py
++++ b/python/pyarrow/tests/test_compute.py
+@@ -537,7 +537,7 @@ def test_trim():
+ def test_slice_compatibility():
+     arr = pa.array(["", "𝑓", "𝑓ö", "𝑓öõ", "𝑓öõḍ", "𝑓öõḍš"])
+     for start in range(-6, 6):
+-        for stop in range(-6, 6):
++        for stop in itertools.chain(range(-6, 6), [None]):
+             for step in [-3, -2, -1, 1, 2, 3]:
+                 expected = pa.array([k.as_py()[start:stop:step]
+                                      for k in arr])

@@ -1,0 +1,52 @@
+diff --git a/tests/Main.idr b/tests/Main.idr
+--- a/tests/Main.idr
++++ b/tests/Main.idr
+@@ -204,2 +204,3 @@
+        "reflection001", "reflection002", "reflection003", "reflection004",
++       "reflection021",
+        "reflection005", "reflection006", "reflection007", "reflection008",
+diff --git a/tests/idris2/reflection021/QuoteSearch.idr b/tests/idris2/reflection021/QuoteSearch.idr
+new file mode 100644
+index 000000000..241b42f1f
+--- /dev/null
++++ b/tests/idris2/reflection021/QuoteSearch.idr
+@@ -0,0 +1,22 @@
++module QuoteSearch
++
++import Language.Reflection
++
++%language ElabReflection
++
++x : Elab Nat
++x = check `(%search)
++
++defy : Elab ()
++defy = do
++    let fc = EmptyFC
++
++    val <- quote !x
++    logTerm "" 0 "Quoted term:" val
++
++    declare [
++        IClaim fc MW Private [] (MkTy fc fc (UN (Basic "y")) (IVar fc (UN (Basic "Nat")))),
++        IDef fc (UN (Basic "y")) [PatClause fc (IVar fc (UN (Basic "y"))) (IApp fc (IApp fc (IVar fc (UN (Basic "+"))) val) val)]
++    ]
++
++%runElab defy
+diff --git a/tests/idris2/reflection021/expected b/tests/idris2/reflection021/expected
+new file mode 100644
+index 000000000..8954b1550
+--- /dev/null
++++ b/tests/idris2/reflection021/expected
+@@ -0,0 +1,2 @@
++1/1: Building QuoteSearch (QuoteSearch.idr)
++LOG 0: Quoted term:: %search
+diff --git a/tests/idris2/reflection021/run b/tests/idris2/reflection021/run
+new file mode 100755
+index 000000000..ce510e716
+--- /dev/null
++++ b/tests/idris2/reflection021/run
+@@ -0,0 +1,3 @@
++rm -rf build
++
++$1 --no-color --console-width 0 --no-banner --check QuoteSearch.idr

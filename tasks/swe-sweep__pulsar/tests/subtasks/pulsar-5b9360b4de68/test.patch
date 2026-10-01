@@ -1,0 +1,64 @@
+diff --git a/pulsar-client/src/test/java/org/apache/pulsar/client/api/MessageIdTest.java b/pulsar-client/src/test/java/org/apache/pulsar/client/api/MessageIdTest.java
+index e5377ad9848..257342ef320 100644
+--- a/pulsar-client/src/test/java/org/apache/pulsar/client/api/MessageIdTest.java
++++ b/pulsar-client/src/test/java/org/apache/pulsar/client/api/MessageIdTest.java
+@@ -25,7 +25,6 @@ import org.apache.pulsar.client.impl.MessageIdImpl;
+ import org.testng.annotations.Test;
+ 
+ public class MessageIdTest {
+-
+     @Test
+     public void messageIdTest() {
+         MessageId mId = new MessageIdImpl(1, 2, 3);
+diff --git a/pulsar-client/src/test/java/org/apache/pulsar/client/impl/BatchMessageIdImplTest.java b/pulsar-client/src/test/java/org/apache/pulsar/client/impl/BatchMessageIdImplTest.java
+index d10b3da81ff..6bf9cd94348 100644
+--- a/pulsar-client/src/test/java/org/apache/pulsar/client/impl/BatchMessageIdImplTest.java
++++ b/pulsar-client/src/test/java/org/apache/pulsar/client/impl/BatchMessageIdImplTest.java
+@@ -22,14 +22,13 @@ import static org.testng.Assert.assertEquals;
+ import static org.testng.Assert.assertNotEquals;
+ import static org.testng.Assert.assertTrue;
+ import static org.testng.Assert.fail;
+-
+ import com.fasterxml.jackson.core.JsonProcessingException;
+ import com.fasterxml.jackson.databind.ObjectWriter;
++import java.io.IOException;
++import java.util.Collections;
+ import org.apache.pulsar.common.util.ObjectMapperFactory;
+ import org.testng.annotations.Test;
+ 
+-import java.io.IOException;
+-
+ public class BatchMessageIdImplTest {
+ 
+     @Test
+@@ -74,6 +73,30 @@ public class BatchMessageIdImplTest {
+         assertEquals(msgId, batchMsgId4);
+     }
+ 
++    @Test
++    public void notEqualsMultiTest() {
++        BatchMessageIdImpl batchMsgId = new BatchMessageIdImpl(0, 0, 0, 0);
++        MessageIdImpl msgId = new MessageIdImpl(0, 0, 0);
++        MultiMessageIdImpl multiMsgId = new MultiMessageIdImpl(Collections.singletonMap("topic", msgId));
++
++        assertNotEquals(msgId, multiMsgId);
++        assertNotEquals(multiMsgId, msgId);
++        assertNotEquals(batchMsgId, multiMsgId);
++        assertNotEquals(multiMsgId, batchMsgId);
++    }
++
++    @Test
++    public void compareToUnbatchedTest() {
++        MessageIdImpl msgId = new MessageIdImpl(1, 2, 3);
++        BatchMessageIdImpl batchMsgId = new BatchMessageIdImpl(1, 2, 3, 0);
++        assertEquals(msgId.compareTo(batchMsgId), -1);
++        assertEquals(batchMsgId.compareTo(msgId), 1);
++
++        batchMsgId = new BatchMessageIdImpl(1, 2, 3, -1);
++        assertEquals(msgId.compareTo(batchMsgId), 0);
++        assertEquals(batchMsgId.compareTo(msgId), 0);
++    }
++
+     @Test
+     public void equalsUnbatchedTest() {
+         BatchMessageIdImpl batchMsgId1 = new BatchMessageIdImpl(0, 0, 0, -1);

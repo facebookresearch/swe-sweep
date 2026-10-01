@@ -1,0 +1,17 @@
+diff --git a/activesupport/lib/active_support/callbacks.rb b/activesupport/lib/active_support/callbacks.rb
+index 71d89f5eb5d..ea3c3ccba22 100644
+--- a/activesupport/lib/active_support/callbacks.rb
++++ b/activesupport/lib/active_support/callbacks.rb
+@@ -498,9 +498,10 @@ module ActiveSupport
+           when Conditionals::Value
+             ProcCall.new(filter)
+           when ::Proc
+-            if filter.arity > 1
++            case filter.arity
++            when 2
+               InstanceExec2.new(filter)
+-            elsif filter.arity > 0
++            when 1, -2
+               InstanceExec1.new(filter)
+             else
+               InstanceExec0.new(filter)

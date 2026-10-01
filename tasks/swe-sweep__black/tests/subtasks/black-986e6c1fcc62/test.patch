@@ -1,0 +1,39 @@
+diff --git a/tests/data/preview/comments7.py b/tests/data/preview/comments7.py
+index 8b122401..0655de99 100644
+--- a/tests/data/preview/comments7.py
++++ b/tests/data/preview/comments7.py
+@@ -131,6 +131,18 @@ class C:
+ 
+ square = Square(4) # type: Optional[Square]
+ 
++# Regression test for https://github.com/psf/black/issues/3756.
++[
++    (
++        "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"  # aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
++    ),
++]
++[
++    (  # aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
++        "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"  # aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
++    ),
++]
++
+ # output
+ 
+ from .config import (
+@@ -282,3 +294,15 @@ class C:
+ 
+ 
+ square = Square(4)  # type: Optional[Square]
++
++# Regression test for https://github.com/psf/black/issues/3756.
++[
++    (  # aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
++        "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
++    ),
++]
++[
++    (  # aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
++        "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"  # aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa
++    ),
++]

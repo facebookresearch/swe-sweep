@@ -1,0 +1,38 @@
+diff --git a/src/Idris/Syntax.idr b/src/Idris/Syntax.idr
+index 95520c520..a7be956b4 100644
+--- a/src/Idris/Syntax.idr
++++ b/src/Idris/Syntax.idr
+@@ -711,11 +711,6 @@ parameters {0 nm : Type} (toName : nm -> Name)
+         = "let " ++ showCount rig ++ showPTermPrec d n ++ " : " ++ showPTermPrec d ty ++ " = "
+                  ++ showPTermPrec d val ++ concatMap showAlt alts ++
+                  " in " ++ showPTermPrec d sc
+-      where
+-        showAlt : PClause' nm -> String
+-        showAlt (MkPatClause _ lhs rhs _) = " | " ++ showPTerm lhs ++ " => " ++ showPTerm rhs ++ ";"
+-        showAlt (MkWithClause _ lhs rhs prf flags _) = " | <<with alts not possible>>"
+-        showAlt (MkImpossible _ lhs) = " | " ++ showPTerm lhs ++ " impossible;"
+   showPTermPrec _ (PCase _ tm cs)
+         = "case " ++ showPTerm tm ++ " of { " ++
+             showSep " ; " (map showCase cs) ++ " }"
+diff --git a/src/TTImp/Reflect.idr b/src/TTImp/Reflect.idr
+index f842bd907..237941724 100644
+--- a/src/TTImp/Reflect.idr
++++ b/src/TTImp/Reflect.idr
+@@ -609,7 +609,7 @@ mutual
+     reflect fc defs lhs env (IUnquote tfc t)
+         = throw (InternalError "Can't reflect an unquote: escapes should be lifted out")
+     reflect fc defs lhs env (IRunElab tfc t)
+-        = throw (InternalError "Can't reflect a %runelab")
++        = throw (InternalError "Can't reflect a %runElab")
+     reflect fc defs lhs env (IPrimVal tfc t)
+         = do fc' <- reflect fc defs lhs env tfc
+              t' <- reflect fc defs lhs env t
+@@ -633,7 +633,7 @@ mutual
+         = do fc' <- reflect fc defs lhs env tfc
+              ns' <- reflect fc defs lhs env ns
+              t' <- reflect fc defs lhs env t
+-             appCon fc defs (reflectionttimp "WithUnambigNames") [fc', ns', t']
++             appCon fc defs (reflectionttimp "IWithUnambigNames") [fc', ns', t']
+ 
+   export
+   Reflect IFieldUpdate where

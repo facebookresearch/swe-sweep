@@ -1,0 +1,33 @@
+diff --git a/tests/compiler/samplelib.nim b/tests/compiler/samplelib.nim
+new file mode 100644
+index 000000000..c70971722
+--- /dev/null
++++ b/tests/compiler/samplelib.nim
+@@ -0,0 +1,2 @@
++# Sample library used by tcmdlineclib.nim
++proc test(): int {.cdecl, exportc, dynlib.} = 123
+diff --git a/tests/compiler/tcmdlineclib.nim b/tests/compiler/tcmdlineclib.nim
+new file mode 100644
+index 000000000..c06d6f103
+--- /dev/null
++++ b/tests/compiler/tcmdlineclib.nim
+@@ -0,0 +1,3 @@
++proc test(): int {.importc, cdecl.}
++
++doAssert test() == 123
+diff --git a/tests/compiler/tcmdlineclib.nims b/tests/compiler/tcmdlineclib.nims
+new file mode 100644
+index 000000000..f7899d92e
+--- /dev/null
++++ b/tests/compiler/tcmdlineclib.nims
+@@ -0,0 +1,10 @@
++import os
++
++selfExec "c --app:lib " & (projectDir() / "samplelib.nim")
++switch("clibdir", projectDir())
++--clib:samplelib
++
++# Make test executable can load sample shared library.
++# `-rpath` option doesn't work and ignored on Windows.
++# But the dll file in same directory as executable file is loaded.
++switch("passL", "-Wl,-rpath," & projectDir())

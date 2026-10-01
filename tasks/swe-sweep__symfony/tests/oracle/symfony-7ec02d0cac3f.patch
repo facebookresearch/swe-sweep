@@ -1,0 +1,69 @@
+diff --git a/src/Symfony/Component/VarDumper/Cloner/Internal/NoDefault.php b/src/Symfony/Component/VarDumper/Cloner/Internal/NoDefault.php
+new file mode 100644
+index 00000000000..ed9db9884c5
+--- /dev/null
++++ b/src/Symfony/Component/VarDumper/Cloner/Internal/NoDefault.php
+@@ -0,0 +1,25 @@
++<?php
++
++/*
++ * This file is part of the Symfony package.
++ *
++ * (c) Fabien Potencier <fabien@symfony.com>
++ *
++ * For the full copyright and license information, please view the LICENSE
++ * file that was distributed with this source code.
++ */
++
++namespace Symfony\Component\VarDumper\Cloner\Internal;
++
++/**
++ * Flags a typed property that has no default value.
++ *
++ * This dummy object is used to distinguish a property with a default value of null
++ * from a property that is uninitialized by default.
++ *
++ * @internal
++ */
++enum NoDefault
++{
++    case NoDefault;
++}
+diff --git a/src/Symfony/Component/VarDumper/Cloner/Stub.php b/src/Symfony/Component/VarDumper/Cloner/Stub.php
+index 0c2a4b9d0a5..a377d2b92d2 100644
+--- a/src/Symfony/Component/VarDumper/Cloner/Stub.php
++++ b/src/Symfony/Component/VarDumper/Cloner/Stub.php
+@@ -11,6 +11,8 @@
+ 
+ namespace Symfony\Component\VarDumper\Cloner;
+ 
++use Symfony\Component\VarDumper\Cloner\Internal\NoDefault;
++
+ /**
+  * Represents the main properties of a PHP variable.
+  *
+@@ -50,15 +52,20 @@ class Stub
+         $properties = [];
+ 
+         if (!isset(self::$defaultProperties[$c = static::class])) {
+-            self::$defaultProperties[$c] = get_class_vars($c);
++            $reflection = new \ReflectionClass($c);
++            self::$defaultProperties[$c] = [];
+ 
+-            foreach ((new \ReflectionClass($c))->getStaticProperties() as $k => $v) {
+-                unset(self::$defaultProperties[$c][$k]);
++            foreach ($reflection->getProperties() as $p) {
++                if ($p->isStatic()) {
++                    continue;
++                }
++
++                self::$defaultProperties[$c][$p->name] = $p->hasDefaultValue() ? $p->getDefaultValue() : ($p->hasType() ? NoDefault::NoDefault : null);
+             }
+         }
+ 
+         foreach (self::$defaultProperties[$c] as $k => $v) {
+-            if ($this->$k !== $v) {
++            if (NoDefault::NoDefault === $v || $this->$k !== $v) {
+                 $properties[] = $k;
+             }
+         }

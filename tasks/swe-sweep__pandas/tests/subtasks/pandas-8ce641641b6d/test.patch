@@ -1,0 +1,29 @@
+diff --git a/pandas/tests/indexes/datetimes/test_asof.py b/pandas/tests/indexes/datetimes/test_asof.py
+index 0000000000..1111111111 100644
+--- a/pandas/tests/indexes/datetimes/test_asof.py
++++ b/pandas/tests/indexes/datetimes/test_asof.py
+@@ -1,4 +1,5 @@
+ from pandas import (
++    DatetimeIndex,
+     Index,
+     Timestamp,
+     date_range,
+@@ -11,3 +12,18 @@ class TestAsOf:
+         result = index.asof("2010-02")
+         assert result == expected
+         assert not isinstance(result, Index)
++
++    def test_asof_datetime_string(self):
++        # GH#50946
++
++        dti = date_range("2021-08-05", "2021-08-10", freq="1D")
++
++        key = "2021-08-09"
++        res = dti.asof(key)
++        exp = dti[4]
++        assert res == exp
++
++        # add a non-midnight time caused a bug
++        dti2 = DatetimeIndex(list(dti) + ["2021-08-11 00:00:01"])
++        res = dti2.asof(key)
++        assert res == exp

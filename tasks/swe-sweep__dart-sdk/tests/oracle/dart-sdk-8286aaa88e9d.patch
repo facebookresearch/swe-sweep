@@ -1,0 +1,16 @@
+diff --git a/pkg/analyzer/lib/src/dart/resolver/function_reference_resolver.dart b/pkg/analyzer/lib/src/dart/resolver/function_reference_resolver.dart
+index 207171d21cf..a68a0614c77 100644
+--- a/pkg/analyzer/lib/src/dart/resolver/function_reference_resolver.dart
++++ b/pkg/analyzer/lib/src/dart/resolver/function_reference_resolver.dart
+@@ -416,7 +416,10 @@ class FunctionReferenceResolver {
+     }
+ 
+     function.prefix.staticElement = prefixElement;
+-    function.prefix.staticType = prefixElement.referenceType;
++    function.prefix.staticType = prefixElement is PromotableElement
++        ? _resolver.localVariableTypeProvider
++            .getType(function.prefix, isRead: true)
++        : prefixElement.referenceType;
+     var functionName = function.identifier.name;
+ 
+     if (prefixElement is PrefixElement) {

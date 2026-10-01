@@ -1,0 +1,13 @@
+diff --git a/worktree_status.go b/worktree_status.go
+index 6e72db97..7870d138 100644
+--- a/worktree_status.go
++++ b/worktree_status.go
+@@ -349,6 +349,8 @@ func (w *Worktree) doAdd(path string, ignorePattern []gitignore.Pattern) (plumbi
+ 	var h plumbing.Hash
+ 	var added bool
+ 
++	path = filepath.Clean(path)
++
+ 	fi, err := w.Filesystem.Lstat(path)
+ 	if err != nil || !fi.IsDir() {
+ 		added, h, err = w.doAddFile(idx, s, path, ignorePattern)

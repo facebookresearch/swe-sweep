@@ -1,0 +1,31 @@
+diff --git a/lib/utils/beforeBlockString.mjs b/lib/utils/beforeBlockString.mjs
+index 1f8a461c3..2be7b29b7 100644
+--- a/lib/utils/beforeBlockString.mjs
++++ b/lib/utils/beforeBlockString.mjs
+@@ -8,21 +8,21 @@ import { isAtRule, isRule } from './typeGuards.mjs';
+ export default function beforeBlockString(statement, { noRawBefore } = { noRawBefore: false }) {
+ 	let result = '';
+ 
+-	const before = statement.raws.before || '';
++	const raws = statement.raws;
+ 
+ 	if (!noRawBefore) {
+-		result += before;
++		result += raws.before || '';
+ 	}
+ 
+ 	if (isRule(statement)) {
+-		result += statement.selector;
++		result += raws.selector?.raw ?? statement.selector;
+ 	} else if (isAtRule(statement)) {
+-		result += `@${statement.name}${statement.raws.afterName || ''}${statement.params}`;
++		result += `@${statement.name}${raws.afterName || ''}${raws.params?.raw ?? statement.params}`;
+ 	} else {
+ 		return '';
+ 	}
+ 
+-	result += statement.raws.between || '';
++	result += raws.between || '';
+ 
+ 	return result;
+ }

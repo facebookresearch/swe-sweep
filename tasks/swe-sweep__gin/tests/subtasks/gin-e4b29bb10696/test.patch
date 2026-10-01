@@ -1,0 +1,20 @@
+diff --git a/errors_test.go b/errors_test.go
+index 72a3699..91ae9c9 100644
+--- a/errors_test.go
++++ b/errors_test.go
+@@ -125,4 +125,15 @@ func TestErrorUnwrap(t *testing.T) {
+ 	assert.True(t, errors.Is(err, innerErr))
+ 	var testErr TestErr
+ 	assert.True(t, errors.As(err, &testErr))
++
++	// Test non-pointer usage of gin.Error
++	errNonPointer := Error{
++		Err:  innerErr,
++		Type: ErrorTypeAny,
++	}
++	wrappedErr := fmt.Errorf("wrapped: %w", errNonPointer)
++	// Check that 'errors.Is()' and 'errors.As()' behave as expected for non-pointer usage
++	assert.True(t, errors.Is(wrappedErr, innerErr))
++	var testErrNonPointer TestErr
++	assert.True(t, errors.As(wrappedErr, &testErrNonPointer))
+ }

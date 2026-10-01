@@ -1,0 +1,36 @@
+diff --git a/tests/basics/string_fstring.py b/tests/basics/string_fstring.py
+index 7e8a97fd3..8907a5c47 100644
+--- a/tests/basics/string_fstring.py
++++ b/tests/basics/string_fstring.py
+@@ -56,3 +56,8 @@ try:
+ except (ValueError, SyntaxError):
+     # MicroPython incorrectly raises ValueError here.
+     print('SyntaxError')
++
++# Allow literal tuples
++print(f"a {1,} b")
++print(f"a {x,y,} b")
++print(f"a {x,1} b")
+diff --git a/tests/basics/string_fstring_debug.py b/tests/basics/string_fstring_debug.py
+index 76a448ca0..95abd4d6d 100644
+--- a/tests/basics/string_fstring_debug.py
++++ b/tests/basics/string_fstring_debug.py
+@@ -21,3 +21,7 @@ print(f"a {x=:08x} b {y} c")
+ 
+ print(f'a {f() + g("foo") + h()=} b')
+ print(f'a {f() + g("foo") + h()=:08x} b')
++
++print(f"a {1,=} b")
++print(f"a {x,y,=} b")
++print(f"a {x,1=} b")
+diff --git a/tests/basics/string_fstring_debug.py.exp b/tests/basics/string_fstring_debug.py.exp
+index 563030f40..f0309e1c9 100644
+--- a/tests/basics/string_fstring_debug.py.exp
++++ b/tests/basics/string_fstring_debug.py.exp
+@@ -4,3 +4,6 @@ a x=1 b 2 c
+ a x=00000001 b 2 c
+ a f() + g("foo") + h()=15 b
+ a f() + g("foo") + h()=0000000f b
++a 1,=(1,) b
++a x,y,=(1, 2) b
++a x,1=(1, 1) b

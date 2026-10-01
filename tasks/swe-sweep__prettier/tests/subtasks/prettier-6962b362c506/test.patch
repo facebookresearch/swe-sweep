@@ -1,0 +1,47 @@
+diff --git a/tests/format/less/variable-selector/variable-selector.less b/tests/format/less/variable-selector/variable-selector.less
+deleted file mode 100644
+index 0536fbe04..000000000
+--- a/tests/format/less/variable-selector/variable-selector.less
++++ /dev/null
+@@ -1 +0,0 @@
+-@{selector}{}
+diff --git a/tests/format/less/variable-selector/__snapshots__/format.test.js.snap b/tests/format/less/variables/__snapshots__/format.test.js.snap
+similarity index 82%
+rename from tests/format/less/variable-selector/__snapshots__/format.test.js.snap
+rename to tests/format/less/variables/__snapshots__/format.test.js.snap
+index 34cf223b5..b8feb7522 100644
+--- a/tests/format/less/variable-selector/__snapshots__/format.test.js.snap
++++ b/tests/format/less/variables/__snapshots__/format.test.js.snap
+@@ -1,14 +1,18 @@
+ // Jest Snapshot v1, https://goo.gl/fbAQLP
+ 
+-exports[`variable-selector.less format 1`] = `
++exports[`variables.less format 1`] = `
+ ====================================options=====================================
+ parsers: ["less"]
+ printWidth: 80
+                                                                                 | printWidth
+ =====================================input======================================
++@fooBackground:rgba(255, 255, 255, 1);
++
+ @{selector}{}
+ 
+ =====================================output=====================================
++@fooBackground: rgba(255, 255, 255, 1);
++
+ @{selector} {
+ }
+ 
+diff --git a/tests/format/less/variable-selector/format.test.js b/tests/format/less/variables/format.test.js
+similarity index 100%
+rename from tests/format/less/variable-selector/format.test.js
+rename to tests/format/less/variables/format.test.js
+diff --git a/tests/format/less/variables/variables.less b/tests/format/less/variables/variables.less
+new file mode 100644
+index 000000000..2963df941
+--- /dev/null
++++ b/tests/format/less/variables/variables.less
+@@ -0,0 +1,3 @@
++@fooBackground:rgba(255, 255, 255, 1);
++
++@{selector}{}

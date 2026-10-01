@@ -1,0 +1,13 @@
+diff --git a/compiler/injectdestructors.nim b/compiler/injectdestructors.nim
+index 56ca8f605..3275c1abc 100644
+--- a/compiler/injectdestructors.nim
++++ b/compiler/injectdestructors.nim
+@@ -1016,7 +1016,7 @@ proc p(n: PNode; c: var Con; s: var Scope; mode: ProcessMode; tmpFlags = {sfSing
+ 
+ proc sameLocation*(a, b: PNode): bool =
+   proc sameConstant(a, b: PNode): bool =
+-    a.kind in nkLiterals and a.intVal == b.intVal
++    a.kind in nkLiterals and b.kind in nkLiterals and a.intVal == b.intVal
+ 
+   const nkEndPoint = {nkSym, nkDotExpr, nkCheckedFieldExpr, nkBracketExpr}
+   if a.kind in nkEndPoint and b.kind in nkEndPoint:

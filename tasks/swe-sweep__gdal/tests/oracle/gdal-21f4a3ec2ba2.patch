@@ -1,0 +1,13 @@
+diff --git a/ogr/ogrsf_frmts/mitab/mitab_feature.cpp b/ogr/ogrsf_frmts/mitab/mitab_feature.cpp
+index b5a5f272fd..5d42a318fc 100644
+--- a/ogr/ogrsf_frmts/mitab/mitab_feature.cpp
++++ b/ogr/ogrsf_frmts/mitab/mitab_feature.cpp
+@@ -5713,7 +5713,7 @@ int TABText::WriteGeometryToMAPFile(TABMAPFile *poMapFile,
+     GInt32 nCoordBlockPtr = poCoordBlock->GetCurAddress();
+ 
+     // This string was escaped before 20050714
+-    CPLString oTmpString(m_pszString);
++    CPLString oTmpString(m_pszString ? m_pszString : "");
+     if (!poMapFile->GetEncoding().empty())
+     {
+         oTmpString.Recode(CPL_ENC_UTF8, poMapFile->GetEncoding());

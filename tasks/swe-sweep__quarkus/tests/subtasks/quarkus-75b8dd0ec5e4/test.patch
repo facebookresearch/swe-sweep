@@ -1,0 +1,96 @@
+diff --git a/extensions/undertow/deployment/src/test/java/io/quarkus/undertow/test/sessioncontext/ObservingBean.java b/extensions/undertow/deployment/src/test/java/io/quarkus/undertow/test/sessioncontext/ObservingBean.java
+new file mode 100644
+index 00000000000..971e8ecf1ad
+--- /dev/null
++++ b/extensions/undertow/deployment/src/test/java/io/quarkus/undertow/test/sessioncontext/ObservingBean.java
+@@ -0,0 +1,46 @@
++package io.quarkus.undertow.test.sessioncontext;
++
++import jakarta.enterprise.context.ApplicationScoped;
++import jakarta.enterprise.context.BeforeDestroyed;
++import jakarta.enterprise.context.Destroyed;
++import jakarta.enterprise.context.Initialized;
++import jakarta.enterprise.context.SessionScoped;
++import jakarta.enterprise.event.Observes;
++
++@ApplicationScoped
++public class ObservingBean {
++
++    int timesInitObserved = 0;
++    int timesBeforeDestroyedObserved = 0;
++    int timesDestroyedObserved = 0;
++
++    public int getTimesInitObserved() {
++        return timesInitObserved;
++    }
++
++    public int getTimesBeforeDestroyedObserved() {
++        return timesBeforeDestroyedObserved;
++    }
++
++    public int getTimesDestroyedObserved() {
++        return timesDestroyedObserved;
++    }
++
++    public void observeInit(@Observes @Initialized(SessionScoped.class) Object event) {
++        timesInitObserved++;
++    }
++
++    public void observeBeforeDestroyed(@Observes @BeforeDestroyed(SessionScoped.class) Object event) {
++        timesBeforeDestroyedObserved++;
++    }
++
++    public void observeDestroyed(@Observes @Destroyed(SessionScoped.class) Object event) {
++        timesDestroyedObserved++;
++    }
++
++    public void resetState() {
++        this.timesInitObserved = 0;
++        this.timesBeforeDestroyedObserved = 0;
++        this.timesDestroyedObserved = 0;
++    }
++}
+diff --git a/extensions/undertow/deployment/src/test/java/io/quarkus/undertow/test/sessioncontext/SessionContextTestCase.java b/extensions/undertow/deployment/src/test/java/io/quarkus/undertow/test/sessioncontext/SessionContextTestCase.java
+index 949133763a8..acc52ce3e54 100644
+--- a/extensions/undertow/deployment/src/test/java/io/quarkus/undertow/test/sessioncontext/SessionContextTestCase.java
++++ b/extensions/undertow/deployment/src/test/java/io/quarkus/undertow/test/sessioncontext/SessionContextTestCase.java
+@@ -5,9 +5,11 @@ import static io.restassured.RestAssured.when;
+ import static org.hamcrest.Matchers.is;
+ import static org.junit.jupiter.api.Assertions.assertNotEquals;
+ 
++import org.junit.jupiter.api.Assertions;
+ import org.junit.jupiter.api.Test;
+ import org.junit.jupiter.api.extension.RegisterExtension;
+ 
++import io.quarkus.arc.Arc;
+ import io.quarkus.test.QuarkusUnitTest;
+ import io.restassured.response.Response;
+ 
+@@ -15,7 +17,7 @@ public class SessionContextTestCase {
+ 
+     @RegisterExtension
+     static QuarkusUnitTest runner = new QuarkusUnitTest()
+-            .withApplicationRoot((jar) -> jar.addClasses(TestServlet.class, Foo.class));
++            .withApplicationRoot((jar) -> jar.addClasses(TestServlet.class, Foo.class, ObservingBean.class));
+ 
+     @Test
+     public void testServlet() {
+@@ -30,4 +32,18 @@ public class SessionContextTestCase {
+         response.then().statusCode(200).body(is("count=1"));
+     }
+ 
++    @Test
++    public void testContextEvents() {
++        ObservingBean observingBean = Arc.container().select(ObservingBean.class).get();
++
++        // make sure we start with zero events to keep this test method independent
++        observingBean.resetState();
++
++        // following request creates a session and also destroys it by enforcing invalidation
++        when().get("/foo?destroy=true").then().statusCode(200);
++        Assertions.assertEquals(1, observingBean.getTimesInitObserved());
++        Assertions.assertEquals(1, observingBean.getTimesBeforeDestroyedObserved());
++        Assertions.assertEquals(1, observingBean.getTimesDestroyedObserved());
++    }
++
+ }

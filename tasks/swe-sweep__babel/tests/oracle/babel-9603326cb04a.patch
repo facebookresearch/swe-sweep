@@ -1,0 +1,94 @@
+diff --git a/packages/babel-parser/src/parser/expression.js b/packages/babel-parser/src/parser/expression.js
+index 48dd82d..98e4149 100644
+--- a/packages/babel-parser/src/parser/expression.js
++++ b/packages/babel-parser/src/parser/expression.js
+@@ -51,6 +51,7 @@ export default class ExpressionParser extends LValParser {
+   checkPropClash(
+     prop: N.ObjectMember,
+     propHash: { [key: string]: boolean },
++    refExpressionErrors?: { doubleProto: number },
+   ): void {
+     if (prop.computed || prop.kind) return;
+ 
+@@ -60,7 +61,15 @@ export default class ExpressionParser extends LValParser {
+ 
+     if (name === "__proto__") {
+       if (propHash.proto) {
+-        this.raise(key.start, "Redefinition of __proto__ property");
++        if (refExpressionErrors) {
++          // Store the first redefinition's position, otherwise ignore because
++          // we are parsing ambiguous pattern
++          if (refExpressionErrors.doubleProto === -1) {
++            refExpressionErrors.doubleProto = key.start;
++          }
++        } else {
++          this.raise(key.start, "Redefinition of __proto__ property");
++        }
+       }
+       propHash.proto = true;
+     }
+@@ -1263,6 +1272,9 @@ export default class ExpressionParser extends LValParser {
+   ): T {
+     let decorators = [];
+     const propHash: any = Object.create(null);
++    const refExpressionErrors = refShorthandDefaultPos
++      ? { doubleProto: -1 }
++      : undefined;
+     let first = true;
+     const node = this.startNode();
+ 
+@@ -1386,7 +1398,7 @@ export default class ExpressionParser extends LValParser {
+         refShorthandDefaultPos,
+         containsEsc,
+       );
+-      this.checkPropClash(prop, propHash);
++      this.checkPropClash(prop, propHash, refExpressionErrors);
+ 
+       if (prop.shorthand) {
+         this.addExtra(prop, "shorthand", true);
+@@ -1395,6 +1407,18 @@ export default class ExpressionParser extends LValParser {
+       node.properties.push(prop);
+     }
+ 
++    if (
++      refExpressionErrors &&
++      refExpressionErrors.doubleProto !== -1 &&
++      !this.match(tt.eq) &&
++      !this.state.maybeInArrowParameters
++    ) {
++      this.raise(
++        refExpressionErrors.doubleProto,
++        "Redefinition of __proto__ property",
++      );
++    }
++
+     if (firstRestLocation !== null) {
+       this.unexpected(
+         firstRestLocation,
+diff --git a/packages/babel-parser/src/plugins/estree.js b/packages/babel-parser/src/plugins/estree.js
+index 3da593f..cdd11d9 100644
+--- a/packages/babel-parser/src/plugins/estree.js
++++ b/packages/babel-parser/src/plugins/estree.js
+@@ -127,6 +127,7 @@ export default (superClass: Class<Parser>): Class<Parser> =>
+     checkPropClash(
+       prop: N.ObjectMember,
+       propHash: { [key: string]: boolean },
++      refExpressionErrors?: { doubleProto: number },
+     ): void {
+       if (prop.computed || !isSimpleProperty(prop)) return;
+ 
+@@ -136,7 +137,13 @@ export default (superClass: Class<Parser>): Class<Parser> =>
+ 
+       if (name === "__proto__") {
+         if (propHash.proto) {
+-          this.raise(key.start, "Redefinition of __proto__ property");
++          if (refExpressionErrors) {
++            if (refExpressionErrors.doubleProto === -1) {
++              refExpressionErrors.doubleProto = key.start;
++            }
++          } else {
++            this.raise(key.start, "Redefinition of __proto__ property");
++          }
+         }
+         propHash.proto = true;
+       }

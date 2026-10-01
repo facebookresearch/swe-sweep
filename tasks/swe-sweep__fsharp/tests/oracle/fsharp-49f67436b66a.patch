@@ -1,0 +1,14 @@
+diff --git a/src/Compiler/SyntaxTree/XmlDoc.fs b/src/Compiler/SyntaxTree/XmlDoc.fs
+index a366a69a8a..d4c4cada57 100644
+--- a/src/Compiler/SyntaxTree/XmlDoc.fs
++++ b/src/Compiler/SyntaxTree/XmlDoc.fs
+@@ -139,7 +139,8 @@ type XmlDocCollector() =
+             let xmlDocBlock =
+                 struct (savedLines.Count - currentGrabPointCommentsCount, savedLines.Count - 1, false)
+ 
+-            savedGrabPoints.Add(pos, xmlDocBlock)
++            // silently override duplicate grab points (which happen only when preceded by nonsensical line directives)
++            savedGrabPoints[pos] <- xmlDocBlock
+             currentGrabPointCommentsCount <- 0
+             delayedGrabPoint <- ValueNone
+ 

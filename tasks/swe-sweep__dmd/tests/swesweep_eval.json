@@ -1,0 +1,1077 @@
+{
+  "build_jobs": 4,
+  "container_repo": "/dmd",
+  "evaluation": {
+    "suite": "reproduction",
+    "test_dirs": [
+      "compiler/test"
+    ],
+    "visible_timeout": 3600
+  },
+  "upstream_image": "pandora-maxbug-dmd:2.101.0",
+  "n_base_passing": 0,
+  "n_base_test_ignore": 1,
+  "oracle_digest": "bc5f01dfb1a1f0c1105045e48e7a5f2f8ec04070c17c4cc79a3d3c9792a6d00d",
+  "oracle_pristine_paths": [],
+  "upstream_commit": "9f7399e15e6172900e0591deb5a57a45769d8205",
+  "reproduction": {
+    "build_cmd": "dmd-build",
+    "build_timeout": 3600,
+    "jobs_env": "SWESWEEP_BUILD_JOBS",
+    "suite": {
+      "type": "dmd-testsuite"
+    },
+    "test_timeout": 900
+  },
+  "schema": 2,
+  "subtasks": [
+    {
+      "f2p": [
+        "compiler/test/fail_compilation/fail109.d"
+      ],
+      "id": "dmd-03da4e7c91f6",
+      "target_files": [
+        "compiler/src/dmd/dsymbolsem.d"
+      ]
+    },
+    {
+      "f2p": [
+        "compiler/test/compilable/test8717.d"
+      ],
+      "id": "dmd-043b9a2dafca",
+      "target_files": [
+        "compiler/src/dmd/constfold.d"
+      ]
+    },
+    {
+      "f2p": [
+        "compiler/test/runnable/profilegc_stdout.d"
+      ],
+      "id": "dmd-04e77c0e06ba",
+      "target_files": [
+        "druntime/src/rt/profilegc.d"
+      ]
+    },
+    {
+      "f2p": [
+        "compiler/test/compilable/test24017.d"
+      ],
+      "id": "dmd-0700d2efe7cf",
+      "target_files": [
+        "compiler/src/dmd/expressionsem.d"
+      ]
+    },
+    {
+      "f2p": [
+        "compiler/test/compilable/test24762.d"
+      ],
+      "id": "dmd-072c746daeb1",
+      "target_files": [
+        "compiler/src/dmd/traits.d"
+      ]
+    },
+    {
+      "f2p": [
+        "compiler/test/compilable/test24733.c"
+      ],
+      "id": "dmd-07a6976d89e3",
+      "target_files": [
+        "compiler/src/dmd/cparse.d"
+      ]
+    },
+    {
+      "f2p": [
+        "compiler/test/compilable/traits.d"
+      ],
+      "id": "dmd-091ccd1048a7",
+      "target_files": [
+        "compiler/src/dmd/traits.d"
+      ]
+    },
+    {
+      "f2p": [
+        "compiler/test/compilable/test22739.d"
+      ],
+      "id": "dmd-0aea7412ccf2",
+      "target_files": [
+        "compiler/src/dmd/cppmangle.d"
+      ]
+    },
+    {
+      "f2p": [
+        "compiler/test/runnable/dbitfields.d"
+      ],
+      "id": "dmd-0b0058c17bc0",
+      "target_files": [
+        "compiler/src/dmd/e2ir.d"
+      ]
+    },
+    {
+      "f2p": [
+        "compiler/test/runnable/gdb22905.d"
+      ],
+      "id": "dmd-0b6d8b6d7726",
+      "target_files": [
+        "compiler/src/dmd/expressionsem.d"
+      ]
+    },
+    {
+      "f2p": [
+        "compiler/test/fail_compilation/test24065.d"
+      ],
+      "id": "dmd-10ea1a13638b",
+      "target_files": [
+        "compiler/src/dmd/traits.d"
+      ]
+    },
+    {
+      "f2p": [
+        "compiler/test/compilable/test23705.d"
+      ],
+      "id": "dmd-12fec44cc219",
+      "target_files": [
+        "compiler/src/dmd/backend/cgcod.d"
+      ]
+    },
+    {
+      "f2p": [
+        "compiler/test/compilable/test23651.d"
+      ],
+      "id": "dmd-147a2259821d",
+      "target_files": [
+        "compiler/src/dmd/dsymbolsem.d",
+        "compiler/src/dmd/dtemplate.d"
+      ]
+    },
+    {
+      "f2p": [
+        "compiler/test/compilable/test23586.d"
+      ],
+      "id": "dmd-14f89df74402",
+      "target_files": [
+        "compiler/src/dmd/parse.d",
+        "compiler/src/dmd/statement.d"
+      ]
+    },
+    {
+      "f2p": [
+        "compiler/test/compilable/test23617.d"
+      ],
+      "id": "dmd-15d0fff06944",
+      "target_files": [
+        "compiler/src/dmd/typesem.d"
+      ]
+    },
+    {
+      "f2p": [
+        "compiler/test/fail_compilation/test14496.d"
+      ],
+      "id": "dmd-19b2176224fd",
+      "target_files": [
+        "compiler/src/dmd/dsymbolsem.d",
+        "compiler/src/dmd/frontend.h",
+        "compiler/src/dmd/mtype.d",
+        "compiler/src/dmd/mtype.h"
+      ]
+    },
+    {
+      "f2p": [
+        "compiler/test/fail_compilation/test23982.d"
+      ],
+      "id": "dmd-1bd6a78b18cf",
+      "target_files": [
+        "compiler/src/dmd/escape.d"
+      ]
+    },
+    {
+      "f2p": [
+        "compiler/test/compilable/test23857.d"
+      ],
+      "id": "dmd-1d7619e57c82",
+      "target_files": [
+        "compiler/src/dmd/backend/go.d",
+        "compiler/src/dmd/backend/inliner.d"
+      ]
+    },
+    {
+      "f2p": [
+        "compiler/test/fail_compilation/lexer23465.d"
+      ],
+      "id": "dmd-1ed1a6384c1f",
+      "target_files": [
+        "compiler/src/dmd/lexer.d"
+      ]
+    },
+    {
+      "f2p": [
+        "compiler/test/fail_compilation/fail22366.d"
+      ],
+      "id": "dmd-20b71b1eba85",
+      "target_files": [
+        "compiler/src/dmd/expressionsem.d",
+        "druntime/src/core/demangle.d"
+      ]
+    },
+    {
+      "f2p": [
+        "compiler/test/compilable/test21039.d"
+      ],
+      "id": "dmd-24aeffec4b82",
+      "target_files": [
+        "compiler/src/dmd/dinterpret.d"
+      ]
+    },
+    {
+      "f2p": [
+        "compiler/test/compilable/issue22854.d",
+        "compiler/test/runnable/issue22854.d"
+      ],
+      "id": "dmd-261ceeb51105",
+      "target_files": [
+        "compiler/src/dmd/cond.d"
+      ]
+    },
+    {
+      "f2p": [
+        "compiler/test/compilable/vcg-ast.d"
+      ],
+      "id": "dmd-26b0619f82ac",
+      "target_files": [
+        "compiler/src/dmd/hdrgen.d"
+      ]
+    },
+    {
+      "f2p": [
+        "compiler/test/compilable/test15712.d"
+      ],
+      "id": "dmd-272a1dea2e98",
+      "target_files": [
+        "compiler/src/dmd/parse.d"
+      ]
+    },
+    {
+      "f2p": [
+        "compiler/test/compilable/nogc.d",
+        "compiler/test/fail_compilation/vector_cast.d"
+      ],
+      "id": "dmd-283e68a5bafe",
+      "target_files": [
+        "compiler/src/dmd/dcast.d",
+        "compiler/src/dmd/expressionsem.d"
+      ]
+    },
+    {
+      "f2p": [
+        "compiler/test/compilable/test22709.d",
+        "compiler/test/runnable_cxx/cpp_dtor.d"
+      ],
+      "id": "dmd-2dc76a553405",
+      "target_files": [
+        "compiler/src/dmd/dsymbolsem.d"
+      ]
+    },
+    {
+      "f2p": [
+        "compiler/test/compilable/issue22975.d"
+      ],
+      "id": "dmd-2e5ea20d449b",
+      "target_files": [
+        "compiler/src/dmd/func.d"
+      ]
+    },
+    {
+      "f2p": [
+        "compiler/test/compilable/test24171.sh"
+      ],
+      "id": "dmd-2f3fb941f31d",
+      "target_files": [
+        "compiler/src/dmd/doc.d"
+      ]
+    },
+    {
+      "f2p": [
+        "compiler/test/compilable/shared.d"
+      ],
+      "id": "dmd-2f65f3496340",
+      "target_files": [
+        "compiler/src/dmd/expressionsem.d"
+      ]
+    },
+    {
+      "f2p": [
+        "compiler/test/compilable/test21179.d"
+      ],
+      "id": "dmd-2f7c7e4c72e4",
+      "target_files": [
+        "compiler/src/dmd/typesem.d"
+      ]
+    },
+    {
+      "f2p": [
+        "compiler/test/runnable/funclit.d"
+      ],
+      "id": "dmd-34ed9454982e",
+      "target_files": [
+        "compiler/src/dmd/parse.d"
+      ]
+    },
+    {
+      "f2p": [
+        "compiler/test/compilable/noreturn1.d"
+      ],
+      "id": "dmd-36024aea259f",
+      "target_files": [
+        "compiler/src/dmd/dcast.d",
+        "compiler/src/dmd/expressionsem.d"
+      ]
+    },
+    {
+      "f2p": [
+        "compiler/test/fail_compilation/test23905.d"
+      ],
+      "id": "dmd-37baf1b1d11c",
+      "target_files": [
+        "compiler/src/dmd/denum.d"
+      ]
+    },
+    {
+      "f2p": [
+        "compiler/test/runnable/complex3.d"
+      ],
+      "id": "dmd-38d7c1d81316",
+      "target_files": [
+        "compiler/src/dmd/glue.d"
+      ]
+    },
+    {
+      "f2p": [
+        "compiler/test/runnable/test21772.d"
+      ],
+      "id": "dmd-3b7a672b125d",
+      "target_files": [
+        "compiler/src/dmd/constfold.d",
+        "compiler/src/dmd/ctfeexpr.d",
+        "compiler/src/dmd/e2ir.d",
+        "compiler/src/dmd/expression.d",
+        "compiler/src/dmd/expression.h",
+        "compiler/src/dmd/frontend.h"
+      ]
+    },
+    {
+      "f2p": [
+        "compiler/test/runnable/test20811.d"
+      ],
+      "id": "dmd-3c96d738cc14",
+      "target_files": [
+        "compiler/src/dmd/dinterpret.d"
+      ]
+    },
+    {
+      "f2p": [
+        "compiler/test/runnable/test23402.d"
+      ],
+      "id": "dmd-3dcac9ec0e77",
+      "target_files": [
+        "compiler/src/dmd/expressionsem.d"
+      ]
+    },
+    {
+      "f2p": [
+        "compiler/test/compilable/test23986.d"
+      ],
+      "id": "dmd-3e0bb3d6004f",
+      "target_files": [
+        "compiler/src/dmd/escape.d"
+      ]
+    },
+    {
+      "f2p": [
+        "compiler/test/compilable/test23866.i"
+      ],
+      "id": "dmd-3f6cb23e4a27",
+      "target_files": [
+        "compiler/src/dmd/cparse.d"
+      ]
+    },
+    {
+      "f2p": [
+        "compiler/test/fail_compilation/ice23781.d"
+      ],
+      "id": "dmd-4e4c570f3a4f",
+      "target_files": [
+        "compiler/src/dmd/dinterpret.d"
+      ]
+    },
+    {
+      "f2p": [
+        "compiler/test/fail_compilation/fail22039.d"
+      ],
+      "id": "dmd-538d90226647",
+      "target_files": [
+        "compiler/src/dmd/expressionsem.d"
+      ]
+    },
+    {
+      "f2p": [
+        "compiler/test/fail_compilation/b23686.d"
+      ],
+      "id": "dmd-575a34e03ac2",
+      "target_files": [
+        "compiler/src/dmd/dtemplate.d"
+      ]
+    },
+    {
+      "f2p": [
+        "compiler/test/runnable/test23514.d"
+      ],
+      "id": "dmd-57768773f12c",
+      "target_files": [
+        "compiler/src/dmd/e2ir.d"
+      ]
+    },
+    {
+      "f2p": [
+        "compiler/test/compilable/test23407.i"
+      ],
+      "id": "dmd-5b8c10dd53e5",
+      "target_files": [
+        "compiler/src/dmd/cparse.d"
+      ]
+    },
+    {
+      "f2p": [
+        "compiler/test/compilable/ctests2.c"
+      ],
+      "id": "dmd-5dfc2f365751",
+      "target_files": [
+        "compiler/src/dmd/expressionsem.d"
+      ]
+    },
+    {
+      "f2p": [
+        "compiler/test/compilable/test22626.d"
+      ],
+      "id": "dmd-5e6188eabcb2",
+      "target_files": [
+        "compiler/src/dmd/expressionsem.d"
+      ]
+    },
+    {
+      "f2p": [
+        "compiler/test/compilable/test23662.d"
+      ],
+      "id": "dmd-611a4f067d57",
+      "target_files": [
+        "compiler/src/dmd/cparse.d"
+      ]
+    },
+    {
+      "f2p": [
+        "compiler/test/runnable/test22489.d"
+      ],
+      "id": "dmd-61ed625fd10f",
+      "target_files": [
+        "compiler/src/dmd/backend/cgelem.d"
+      ]
+    },
+    {
+      "f2p": [
+        "compiler/test/runnable/xtestenum.d"
+      ],
+      "id": "dmd-63fbc9fc1cd7",
+      "target_files": [
+        "compiler/src/dmd/enumsem.d"
+      ]
+    },
+    {
+      "f2p": [
+        "compiler/test/fail_compilation/retscope6.d"
+      ],
+      "id": "dmd-69b1844e9e86",
+      "target_files": [
+        "compiler/src/dmd/escape.d"
+      ]
+    },
+    {
+      "f2p": [
+        "compiler/test/runnable/testinvariant.d"
+      ],
+      "id": "dmd-6cceb285df84",
+      "target_files": [
+        "compiler/src/dmd/sideeffect.d"
+      ]
+    },
+    {
+      "f2p": [
+        "compiler/test/compilable/test23529.d"
+      ],
+      "id": "dmd-6ce34855439b",
+      "target_files": [
+        "compiler/src/dmd/dcast.d"
+      ]
+    },
+    {
+      "f2p": [
+        "compiler/test/compilable/issue24830.sh"
+      ],
+      "id": "dmd-6dbc0e448f5d",
+      "target_files": [
+        "compiler/src/dmd/dsymbolsem.d"
+      ]
+    },
+    {
+      "f2p": [
+        "compiler/test/compilable/test24511.d"
+      ],
+      "id": "dmd-70ca3b8ed979",
+      "target_files": [
+        "compiler/src/dmd/cparse.d"
+      ]
+    },
+    {
+      "f2p": [
+        "compiler/test/fail_compilation/ice23564.d"
+      ],
+      "id": "dmd-76033997e4fc",
+      "target_files": [
+        "compiler/src/dmd/expressionsem.d"
+      ]
+    },
+    {
+      "f2p": [
+        "compiler/test/compilable/shortened_methods.d"
+      ],
+      "id": "dmd-7bad0e56ef4c",
+      "target_files": [
+        "compiler/src/dmd/parse.d"
+      ]
+    },
+    {
+      "f2p": [
+        "compiler/test/compilable/scope.d"
+      ],
+      "id": "dmd-81d81360d08d",
+      "target_files": [
+        "compiler/src/dmd/expressionsem.d"
+      ]
+    },
+    {
+      "f2p": [
+        "compiler/test/compilable/test23497.d"
+      ],
+      "id": "dmd-82f4ed40498b",
+      "target_files": [
+        "compiler/src/dmd/escape.d"
+      ]
+    },
+    {
+      "f2p": [
+        "compiler/test/fail_compilation/fail23574.d"
+      ],
+      "id": "dmd-884501e35907",
+      "target_files": [
+        "compiler/src/dmd/optimize.d"
+      ]
+    },
+    {
+      "f2p": [
+        "compiler/test/compilable/test22760.d"
+      ],
+      "id": "dmd-88a189db45e8",
+      "target_files": [
+        "compiler/src/dmd/cppmangle.d"
+      ]
+    },
+    {
+      "f2p": [
+        "compiler/test/fail_compilation/fail24422.c"
+      ],
+      "id": "dmd-8a1a3259baed",
+      "target_files": [
+        "compiler/src/dmd/cparse.d"
+      ]
+    },
+    {
+      "f2p": [
+        "compiler/test/compilable/fix19983.c"
+      ],
+      "id": "dmd-8aca13dafb7e",
+      "target_files": [
+        "compiler/src/dmd/dscope.d",
+        "compiler/src/dmd/expressionsem.d"
+      ]
+    },
+    {
+      "f2p": [
+        "compiler/test/fail_compilation/fail23861.d"
+      ],
+      "id": "dmd-8d549390ba45",
+      "target_files": [
+        "compiler/src/dmd/expressionsem.d"
+      ]
+    },
+    {
+      "f2p": [
+        "compiler/test/runnable/test15985.d"
+      ],
+      "id": "dmd-8e7145f5b193",
+      "target_files": [
+        "compiler/src/dmd/dtemplate.d"
+      ]
+    },
+    {
+      "f2p": [
+        "compiler/test/runnable/funclit.d"
+      ],
+      "id": "dmd-8ff634d1d69b",
+      "target_files": [
+        "compiler/src/dmd/parse.d"
+      ]
+    },
+    {
+      "f2p": [
+        "compiler/test/runnable/template9.d"
+      ],
+      "id": "dmd-90b44bdcbf83",
+      "target_files": [
+        "compiler/src/dmd/dtemplate.d"
+      ]
+    },
+    {
+      "f2p": [
+        "compiler/test/runnable/mars1.d"
+      ],
+      "id": "dmd-93f5def5be14",
+      "target_files": [
+        "compiler/src/dmd/backend/cod2.d"
+      ]
+    },
+    {
+      "f2p": [
+        "compiler/test/runnable/issue22481.d"
+      ],
+      "id": "dmd-9459b45d8036",
+      "target_files": [
+        "compiler/src/dmd/inlinecost.d"
+      ]
+    },
+    {
+      "f2p": [
+        "compiler/test/fail_compilation/failattr.d"
+      ],
+      "id": "dmd-95a3cdb473c8",
+      "target_files": [
+        "compiler/src/dmd/dsymbolsem.d"
+      ]
+    },
+    {
+      "f2p": [
+        "compiler/test/fail_compilation/test24365.d"
+      ],
+      "id": "dmd-9d88a445342e",
+      "target_files": [
+        "compiler/src/dmd/dsymbolsem.d"
+      ]
+    },
+    {
+      "f2p": [
+        "compiler/test/compilable/test23589.d"
+      ],
+      "id": "dmd-a269455f64e4",
+      "target_files": [
+        "compiler/src/dmd/expression.d"
+      ]
+    },
+    {
+      "f2p": [
+        "compiler/test/compilable/test23912.d"
+      ],
+      "id": "dmd-a78241c0e195",
+      "target_files": [
+        "compiler/src/dmd/expression.d"
+      ]
+    },
+    {
+      "f2p": [
+        "compiler/test/runnable/test24590.sh"
+      ],
+      "id": "dmd-acefffca2e38",
+      "target_files": [
+        "druntime/src/rt/dmain2.d",
+        "druntime/src/rt/sections_elf_shared.d"
+      ]
+    },
+    {
+      "f2p": [
+        "compiler/test/compilable/issue23391.d"
+      ],
+      "id": "dmd-aebdd983a775",
+      "target_files": [
+        "compiler/src/dmd/constfold.d"
+      ]
+    },
+    {
+      "f2p": [
+        "compiler/test/compilable/posixbitfields.c"
+      ],
+      "id": "dmd-b251759590d5",
+      "target_files": [
+        "compiler/src/dmd/backend/cgelem.d",
+        "compiler/src/dmd/declaration.d"
+      ]
+    },
+    {
+      "f2p": [
+        "compiler/test/compilable/test20008.d"
+      ],
+      "id": "dmd-b4444d54ad08",
+      "target_files": [
+        "compiler/src/dmd/traits.d"
+      ]
+    },
+    {
+      "f2p": [
+        "compiler/test/runnable/lexer.d"
+      ],
+      "id": "dmd-b610e199056e",
+      "target_files": [
+        "compiler/src/dmd/lexer.d"
+      ]
+    },
+    {
+      "f2p": [
+        "compiler/test/compilable/test22638.d"
+      ],
+      "id": "dmd-b90bdf65766b",
+      "target_files": [
+        "compiler/src/dmd/s2ir.d"
+      ]
+    },
+    {
+      "f2p": [
+        "compiler/test/compilable/test23622.c"
+      ],
+      "id": "dmd-ba700485cd87",
+      "target_files": [
+        "compiler/src/dmd/cparse.d",
+        "compiler/src/dmd/declaration.d",
+        "compiler/src/dmd/declaration.h",
+        "compiler/src/dmd/dsymbol.d",
+        "compiler/src/dmd/frontend.h"
+      ]
+    },
+    {
+      "f2p": [
+        "compiler/test/compilable/testVRP.d"
+      ],
+      "id": "dmd-bbf3e70ba8cb",
+      "target_files": [
+        "compiler/src/dmd/intrange.d",
+        "druntime/src/core/internal/gc/impl/conservative/gc.d"
+      ]
+    },
+    {
+      "f2p": [
+        "compiler/test/compilable/testcstuff1.c"
+      ],
+      "id": "dmd-bc9fb34cd1de",
+      "target_files": [
+        "compiler/src/dmd/cparse.d"
+      ]
+    },
+    {
+      "f2p": [
+        "compiler/test/compilable/issue23597.d"
+      ],
+      "id": "dmd-bcba9f451055",
+      "target_files": [
+        "compiler/src/dmd/compiler.d"
+      ]
+    },
+    {
+      "f2p": [
+        "compiler/test/runnable/test23618.d"
+      ],
+      "id": "dmd-bf1eade1ea3c",
+      "target_files": [
+        "compiler/src/dmd/backend/cgelem.d",
+        "compiler/src/dmd/e2ir.d"
+      ]
+    },
+    {
+      "f2p": [
+        "compiler/test/compilable/b20243.d"
+      ],
+      "id": "dmd-c07f46680f7f",
+      "target_files": [
+        "compiler/src/dmd/typesem.d"
+      ]
+    },
+    {
+      "f2p": [
+        "compiler/test/compilable/traits.d"
+      ],
+      "id": "dmd-c19c952a38d4",
+      "target_files": [
+        "compiler/src/dmd/parse.d"
+      ]
+    },
+    {
+      "f2p": [
+        "compiler/test/fail_compilation/fail23151.d"
+      ],
+      "id": "dmd-c4285859f61c",
+      "target_files": [
+        "compiler/src/dmd/dsymbolsem.d"
+      ]
+    },
+    {
+      "f2p": [
+        "compiler/test/runnable/link20802.sh"
+      ],
+      "id": "dmd-c8d092c0609d",
+      "target_files": [
+        "druntime/src/core/exception.d"
+      ]
+    },
+    {
+      "f2p": [
+        "compiler/test/compilable/test23948.d"
+      ],
+      "id": "dmd-ca6f30b18358",
+      "target_files": [
+        "compiler/src/dmd/expression.d"
+      ]
+    },
+    {
+      "f2p": [
+        "compiler/test/fail_compilation/issue23947.d"
+      ],
+      "id": "dmd-cbd21d7333b8",
+      "target_files": [
+        "compiler/src/dmd/expressionsem.d"
+      ]
+    },
+    {
+      "f2p": [
+        "compiler/test/compilable/test18646.d",
+        "compiler/test/compilable/test19585.d",
+        "compiler/test/compilable/test22813.d"
+      ],
+      "id": "dmd-cca429a2f724",
+      "target_files": [
+        "compiler/src/dmd/dtemplate.d",
+        "compiler/src/dmd/frontend.h",
+        "compiler/src/dmd/template.h"
+      ]
+    },
+    {
+      "f2p": [
+        "compiler/test/fail_compilation/fail23822.d"
+      ],
+      "id": "dmd-ce2982d51376",
+      "target_files": [
+        "compiler/src/dmd/typesem.d"
+      ]
+    },
+    {
+      "f2p": [
+        "compiler/test/runnable/noreturn2.d"
+      ],
+      "id": "dmd-d58ac5d0b24b",
+      "target_files": [
+        "compiler/src/dmd/expressionsem.d"
+      ]
+    },
+    {
+      "f2p": [
+        "compiler/test/fail_compilation/test23873.d"
+      ],
+      "id": "dmd-d5ba395d2ef4",
+      "target_files": [
+        "compiler/src/dmd/dimport.d",
+        "compiler/src/dmd/dsymbolsem.d"
+      ]
+    },
+    {
+      "f2p": [
+        "compiler/test/compilable/dbitfield.d"
+      ],
+      "id": "dmd-d72288996913",
+      "target_files": [
+        "compiler/src/dmd/aggregate.d",
+        "compiler/src/dmd/declaration.d",
+        "compiler/src/dmd/dstruct.d",
+        "compiler/src/dmd/dsymbol.d"
+      ]
+    },
+    {
+      "f2p": [
+        "compiler/test/compilable/b23620.d"
+      ],
+      "id": "dmd-d747fbd9938c",
+      "target_files": [
+        "compiler/src/dmd/typesem.d"
+      ]
+    },
+    {
+      "f2p": [
+        "compiler/test/compilable/test24061.d"
+      ],
+      "id": "dmd-d7f20e594ff1",
+      "target_files": [
+        "compiler/src/dmd/semantic3.d"
+      ]
+    },
+    {
+      "f2p": [
+        "compiler/test/compilable/test24280.i"
+      ],
+      "id": "dmd-dd40bef0fb6f",
+      "target_files": [
+        "compiler/src/dmd/typesem.d"
+      ]
+    },
+    {
+      "f2p": [
+        "compiler/test/compilable/issue24409.d"
+      ],
+      "id": "dmd-df097f6bf973",
+      "target_files": [
+        "compiler/src/dmd/dinterpret.d"
+      ]
+    },
+    {
+      "f2p": [
+        "compiler/test/compilable/test23679.d"
+      ],
+      "id": "dmd-dfa967f82526",
+      "target_files": [
+        "compiler/src/dmd/toobj.d",
+        "compiler/src/dmd/typesem.d"
+      ]
+    },
+    {
+      "f2p": [
+        "compiler/test/runnable/test20520.d"
+      ],
+      "id": "dmd-e0e97c7d1d56",
+      "target_files": [
+        "compiler/src/dmd/e2ir.d",
+        "compiler/src/dmd/printast.d"
+      ]
+    },
+    {
+      "f2p": [
+        "compiler/test/compilable/test24066.d"
+      ],
+      "id": "dmd-e1fcf7111a02",
+      "target_files": [
+        "compiler/src/dmd/dclass.d"
+      ]
+    },
+    {
+      "f2p": [
+        "compiler/test/runnable/test20687.d"
+      ],
+      "id": "dmd-e22c379fc76b",
+      "target_files": [
+        "compiler/src/dmd/todt.d"
+      ]
+    },
+    {
+      "f2p": [
+        "compiler/test/fail_compilation/test23674.d"
+      ],
+      "id": "dmd-e40254b583c1",
+      "target_files": [
+        "compiler/src/dmd/expressionsem.d"
+      ]
+    },
+    {
+      "f2p": [
+        "compiler/test/runnable/ctorpowtests.d"
+      ],
+      "id": "dmd-e4dfcf8eff0d",
+      "target_files": [
+        "compiler/src/dmd/expressionsem.d"
+      ]
+    },
+    {
+      "f2p": [
+        "compiler/test/compilable/test17351.d"
+      ],
+      "id": "dmd-ec216b576610",
+      "target_files": [
+        "compiler/src/dmd/dinterpret.d"
+      ]
+    },
+    {
+      "f2p": [
+        "compiler/test/compilable/isZeroInit.d"
+      ],
+      "id": "dmd-f04b68fb8a65",
+      "target_files": [
+        "compiler/src/dmd/aggregate.d",
+        "compiler/src/dmd/dstruct.d"
+      ]
+    },
+    {
+      "f2p": [
+        "compiler/test/runnable/test21301.d"
+      ],
+      "id": "dmd-f172e1306270",
+      "target_files": [
+        "compiler/src/dmd/backend/dtype.d",
+        "compiler/src/dmd/backend/var.d"
+      ]
+    },
+    {
+      "f2p": [
+        "compiler/test/compilable/test23533.d"
+      ],
+      "id": "dmd-f1d07f93e230",
+      "target_files": [
+        "compiler/src/dmd/expressionsem.d"
+      ]
+    },
+    {
+      "f2p": [
+        "compiler/test/compilable/test23534.d"
+      ],
+      "id": "dmd-f32b1c56ef28",
+      "target_files": [
+        "compiler/src/dmd/traits.d"
+      ]
+    },
+    {
+      "f2p": [
+        "compiler/test/fail_compilation/fail23826.d"
+      ],
+      "id": "dmd-f8d52ad0b7fa",
+      "target_files": [
+        "compiler/src/dmd/typesem.d"
+      ]
+    },
+    {
+      "f2p": [
+        "compiler/test/compilable/test16213.d"
+      ],
+      "id": "dmd-fe4da51623ce",
+      "target_files": [
+        "compiler/src/dmd/dsymbol.d"
+      ]
+    },
+    {
+      "f2p": [
+        "compiler/test/fail_compilation/test23968.d"
+      ],
+      "id": "dmd-ff7834e88cf7",
+      "target_files": [
+        "compiler/src/dmd/expressionsem.d"
+      ]
+    }
+  ],
+  "task": "dmd",
+  "version": "2.101.0"
+}

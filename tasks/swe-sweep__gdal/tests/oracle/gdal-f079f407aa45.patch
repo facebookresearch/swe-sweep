@@ -1,0 +1,44 @@
+diff --git a/ogr/ogrsf_frmts/gpkg/ogrgeopackagelayer.cpp b/ogr/ogrsf_frmts/gpkg/ogrgeopackagelayer.cpp
+index 2828c5e879..b6d041fa7d 100644
+--- a/ogr/ogrsf_frmts/gpkg/ogrgeopackagelayer.cpp
++++ b/ogr/ogrsf_frmts/gpkg/ogrgeopackagelayer.cpp
+@@ -600,7 +600,7 @@ int OGRGeoPackageLayer::GetNextArrowArray(struct ArrowArrayStream *stream,
+         /*      Process Geometry if we have a column. */
+         /* --------------------------------------------------------------------
+          */
+-        if (iGeomCol >= 0 && sHelper.mapOGRGeomFieldToArrowField[0] > 0)
++        if (iGeomCol >= 0 && sHelper.mapOGRGeomFieldToArrowField[0] >= 0)
+         {
+             const int iArrowField = sHelper.mapOGRGeomFieldToArrowField[0];
+             auto psArray = out_array->children[iArrowField];
+diff --git a/ogr/ogrsf_frmts/gpkg/ogrgeopackagetablelayer.cpp b/ogr/ogrsf_frmts/gpkg/ogrgeopackagetablelayer.cpp
+index 9b5ff9a502..70ecea8a0f 100644
+--- a/ogr/ogrsf_frmts/gpkg/ogrgeopackagetablelayer.cpp
++++ b/ogr/ogrsf_frmts/gpkg/ogrgeopackagetablelayer.cpp
+@@ -6750,7 +6750,7 @@ void OGR_GPKG_FillArrowArray_Step(sqlite3_context *pContext, int /*argc*/,
+     iCol++;
+ 
+     if (!psHelper->mapOGRGeomFieldToArrowField.empty() &&
+-        psHelper->mapOGRGeomFieldToArrowField[0] > 0)
++        psHelper->mapOGRGeomFieldToArrowField[0] >= 0)
+     {
+         const int iArrowField = psHelper->mapOGRGeomFieldToArrowField[0];
+         auto psArray = psHelper->m_out_array->children[iArrowField];
+@@ -7090,7 +7090,7 @@ void OGRGeoPackageTableLayer::GetNextArrowArrayAsynchronousWorker()
+     }
+ 
+     if (!m_poFillArrowArray->psHelper->mapOGRGeomFieldToArrowField.empty() &&
+-        m_poFillArrowArray->psHelper->mapOGRGeomFieldToArrowField[0] > 0)
++        m_poFillArrowArray->psHelper->mapOGRGeomFieldToArrowField[0] >= 0)
+     {
+         osSQL += ",m.\"";
+         osSQL += SQLEscapeName(GetGeometryColumn());
+@@ -7465,7 +7465,7 @@ int OGRGeoPackageTableLayer::GetNextArrowArrayInternal(
+     osSQL += '"';
+ 
+     if (!sFillArrowArray.psHelper->mapOGRGeomFieldToArrowField.empty() &&
+-        sFillArrowArray.psHelper->mapOGRGeomFieldToArrowField[0] > 0)
++        sFillArrowArray.psHelper->mapOGRGeomFieldToArrowField[0] >= 0)
+     {
+         osSQL += ',';
+         osSQL += '"';

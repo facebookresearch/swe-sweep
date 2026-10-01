@@ -1,0 +1,105 @@
+diff --git a/vlib/v/checker/tests/match_cast_cond_not_same_range_cast_type_err.out b/vlib/v/checker/tests/match_cast_cond_not_same_range_cast_type_err.out
+new file mode 100644
+index 000000000..d13770e00
+--- /dev/null
++++ b/vlib/v/checker/tests/match_cast_cond_not_same_range_cast_type_err.out
+@@ -0,0 +1,10 @@
++vlib/v/checker/tests/match_cast_cond_not_same_range_cast_type_err.vv:7:2: error: the range type and the match condition type should match
++    5 | c := u8(3)
++    6 | match c {
++    7 |     a...b { println('1...5') }
++      |     ~~~~~
++    8 |     else { println('not 1...5') }
++    9 | }
++Details: 
++match condition type: u8
++          range type: u16
+diff --git a/vlib/v/checker/tests/match_cast_cond_not_same_range_cast_type_err.vv b/vlib/v/checker/tests/match_cast_cond_not_same_range_cast_type_err.vv
+new file mode 100644
+index 000000000..f6a9364e6
+--- /dev/null
++++ b/vlib/v/checker/tests/match_cast_cond_not_same_range_cast_type_err.vv
+@@ -0,0 +1,9 @@
++const (
++	a = u16(1)
++	b = u16(5)
++)
++c := u8(3)
++match c {
++	a...b { println('1...5') }
++	else { println('not 1...5') }
++}
+diff --git a/vlib/v/checker/tests/match_ranges_not_same_cast_err.out b/vlib/v/checker/tests/match_ranges_not_same_cast_err.out
+new file mode 100644
+index 000000000..874d0c274
+--- /dev/null
++++ b/vlib/v/checker/tests/match_ranges_not_same_cast_err.out
+@@ -0,0 +1,10 @@
++vlib/v/checker/tests/match_ranges_not_same_cast_err.vv:7:2: error: the low and high parts of a range expression, should have matching types
++    5 | c := u16(3)
++    6 | match c {
++    7 |     a...b { println('1...5') }
++      |     ~~~~~
++    8 |     else { println('not 1...5') }
++    9 | }
++Details: 
++ low part type: u16
++high part type: u8
+diff --git a/vlib/v/checker/tests/match_ranges_not_same_cast_err.vv b/vlib/v/checker/tests/match_ranges_not_same_cast_err.vv
+new file mode 100644
+index 000000000..16b98b182
+--- /dev/null
++++ b/vlib/v/checker/tests/match_ranges_not_same_cast_err.vv
+@@ -0,0 +1,9 @@
++const (
++	a = u16(1)
++	b = u8(5)
++)
++c := u16(3)
++match c {
++	a...b { println('1...5') }
++	else { println('not 1...5') }
++}
+diff --git a/vlib/v/tests/match_const_range_test.v b/vlib/v/tests/match_const_range_test.v
+index 45b193f68..b31e7802d 100644
+--- a/vlib/v/tests/match_const_range_test.v
++++ b/vlib/v/tests/match_const_range_test.v
+@@ -1,13 +1,16 @@
+ const (
+-	start        = 1
+-	start_2      = 4
+-	end          = 3
+-	end_2        = 8
++	start           = 1
++	start_2         = 4
++	end             = 3
++	end_2           = 8
+ 	//
+-	start_rune   = `a`
+-	start_2_rune = `d`
+-	end_rune     = `c`
+-	end_2_rune   = `i`
++	start_rune      = `a`
++	start_2_rune    = `d`
++	end_rune        = `c`
++	end_2_rune      = `i`
++	//
++	start_cast_expr = u16(1)
++	end_cast_expr   = u16(5)
+ )
+ 
+ fn test_match_int_const_ranges() {
+@@ -63,3 +66,13 @@ fn test_match_expr_rune_const_ranges() {
+ 	}
+ 	assert results == [1, 1, 1, 2, 2, 3, 3, 3, 3, 4, 4]
+ }
++
++fn test_match_expr_integer_cast_const_ranges() {
++	c := u16(3)
++	match c {
++		start_cast_expr...end_cast_expr {
++			assert c == u16(3)
++		}
++		else {}
++	}
++}

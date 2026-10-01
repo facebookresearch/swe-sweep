@@ -1,0 +1,50 @@
+diff --git a/src/api/api_algebraic.cpp b/src/api/api_algebraic.cpp
+index 34a16789c..88aa253fd 100644
+--- a/src/api/api_algebraic.cpp
++++ b/src/api/api_algebraic.cpp
+@@ -421,7 +421,10 @@ extern "C" {
+         Z3_TRY;
+         LOG_Z3_algebraic_get_poly(c, a);
+         RESET_ERROR_CODE();
+-        CHECK_IS_ALGEBRAIC(a, nullptr);
++        if (!Z3_is_algebraic_number(c, a)) {
++            SET_ERROR_CODE(Z3_INVALID_ARG, nullptr);
++            return nullptr;
++        }
+         algebraic_numbers::manager & _am = am(c);
+         algebraic_numbers::anum const & av = get_irrational(c, a);
+         scoped_mpz_vector coeffs(_am.qm());
+@@ -441,7 +444,10 @@ extern "C" {
+         Z3_TRY;
+         LOG_Z3_algebraic_get_i(c, a);
+         RESET_ERROR_CODE();
+-        CHECK_IS_ALGEBRAIC(a, 0);
++        if (!Z3_is_algebraic_number(c, a)) {
++            SET_ERROR_CODE(Z3_INVALID_ARG, nullptr);
++            return 0;
++        }
+         algebraic_numbers::manager & _am = am(c);
+         algebraic_numbers::anum const & av = get_irrational(c, a);
+         return _am.get_i(av);
+diff --git a/src/api/z3_algebraic.h b/src/api/z3_algebraic.h
+index ee8ee21b8..f04119f7e 100644
+--- a/src/api/z3_algebraic.h
++++ b/src/api/z3_algebraic.h
+@@ -225,7 +225,7 @@ extern "C" {
+     /**
+        \brief Return the coefficients of the defining polynomial.
+ 
+-       \pre Z3_algebraic_is_value(c, a)
++       \pre Z3_is_algebraic_number(c, a)
+ 
+        def_API('Z3_algebraic_get_poly', AST_VECTOR, (_in(CONTEXT), _in(AST)))
+     */
+@@ -234,7 +234,7 @@ extern "C" {
+     /**
+        \brief Return which root of the polynomial the algebraic number represents.
+ 
+-       \pre Z3_algebraic_is_value(c, a)
++       \pre Z3_is_algebraic_number(c, a)
+ 
+        def_API('Z3_algebraic_get_i', UINT, (_in(CONTEXT), _in(AST)))
+     */

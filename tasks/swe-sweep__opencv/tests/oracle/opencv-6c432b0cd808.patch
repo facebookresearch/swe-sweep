@@ -1,0 +1,15 @@
+diff --git a/modules/imgproc/src/lsd.cpp b/modules/imgproc/src/lsd.cpp
+index 3b5b412e25..3e424a42b9 100644
+--- a/modules/imgproc/src/lsd.cpp
++++ b/modules/imgproc/src/lsd.cpp
+@@ -1076,6 +1076,10 @@ void LineSegmentDetectorImpl::drawSegments(InputOutputArray _image, InputArray l
+     }
+ 
+     Mat _lines = lines.getMat();
++    if (_lines.empty())
++    {
++        return;
++    }
+     const int N = _lines.checkVector(4);
+ 
+     CV_Assert(_lines.depth() == CV_32F || _lines.depth() == CV_32S);

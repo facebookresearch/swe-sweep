@@ -1,0 +1,33 @@
+diff --git a/test/document.test.js b/test/document.test.js
+index 2d38adc86..df17aa9da 100644
+--- a/test/document.test.js
++++ b/test/document.test.js
+@@ -11879,6 +11879,26 @@ describe('document', function() {
+     assert.strictEqual(doc.count, 1);
+ 
+     const addedDoc = await Model.findOne({ name: 'Test' });
+     assert.strictEqual(addedDoc.count, 1);
+   });
++
++  it('can create document with document array and top-level key named `schema` (gh-12480)', async function() {
++    const AuthorSchema = new Schema({
++      fullName: { type: 'String', required: true }
++    });
++
++    const BookSchema = new Schema({
++      schema: { type: 'String', required: true },
++      title: { type: 'String', required: true },
++      authors: [AuthorSchema]
++    }, { supressReservedKeysWarning: true });
++
++    const Book = db.model('Book', BookSchema);
++
++    await Book.create({
++      schema: 'design',
++      authors: [{ fullName: 'Sourabh Bagrecha' }],
++      title: 'The power of JavaScript'
++    });
++  });
+ });
+ 
+ describe('Check if instance function that is supplied in schema option is availabe', function() {

@@ -1,0 +1,13 @@
+diff --git a/lib/elixir/lib/uri.ex b/lib/elixir/lib/uri.ex
+index 3fe731ff1..91d31521d 100644
+--- a/lib/elixir/lib/uri.ex
++++ b/lib/elixir/lib/uri.ex
+@@ -942,6 +942,8 @@ defmodule URI do
+   defp remove_dot_segments([_, :+ | tail], acc), do: remove_dot_segments(tail, acc)
+   defp remove_dot_segments([head | tail], acc), do: remove_dot_segments(tail, [head | acc])
+ 
++  defp join_reversed_segments([:/]), do: "/"
++
+   defp join_reversed_segments(segments) do
+     case Enum.reverse(segments) do
+       [:/ | tail] -> ["" | tail]

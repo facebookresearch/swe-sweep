@@ -1,0 +1,33 @@
+diff --git a/vlib/v/tests/for_select_test.v b/vlib/v/tests/for_select_test.v
+new file mode 100644
+index 000000000..55d4ab655
+--- /dev/null
++++ b/vlib/v/tests/for_select_test.v
+@@ -0,0 +1,27 @@
++import time
++
++fn test_main() {
++	ch := chan int{}
++	go do_send(ch)
++	mut a := 0
++	for select {
++		x := <-ch {
++			a += x
++			check(x)
++		}
++	} {
++	}
++	assert a == 45
++	time.sleep(500 * time.millisecond)
++}
++
++fn do_send(ch chan int) {
++	for i in 0 .. 10 {
++		ch <- i
++	}
++	ch.close()
++}
++
++fn check(a int) {
++	println(a)
++}

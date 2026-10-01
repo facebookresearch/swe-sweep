@@ -1,0 +1,44 @@
+diff --git a/compiler/ic/rodfiles.nim b/compiler/ic/rodfiles.nim
+index a52bd18b3..241fa97cb 100644
+--- a/compiler/ic/rodfiles.nim
++++ b/compiler/ic/rodfiles.nim
+@@ -34,8 +34,7 @@ from typetraits import supportsCopyMem
+ ##
+ ## Now read the bits below to understand what's missing.
+ ##
+-## Issues with the Example
+-## ```````````````````````
++## ### Issues with the Example
+ ## Missing Sections:
+ ## This is a low level API, so headers and sections need to be stored and
+ ## loaded by the user, see `storeHeader` & `loadHeader` and `storeSection` &
+diff --git a/lib/packages/docutils/rst.nim b/lib/packages/docutils/rst.nim
+index 0e66b2d0d..748e8bebf 100644
+--- a/lib/packages/docutils/rst.nim
++++ b/lib/packages/docutils/rst.nim
+@@ -1864,11 +1864,16 @@ proc countTitles(s: PRstSharedState, n: PRstNode) =
+         if s.hTitleCnt >= 2:
+           break
+ 
++proc isMarkdownCodeBlock(p: RstParser, idx: int): bool =
++  roSupportMarkdown in p.s.options and p.tok[idx].symbol == "```"
++
+ proc isAdornmentHeadline(p: RstParser, adornmentIdx: int): bool =
+   ## check that underline/overline length is enough for the heading.
+   ## No support for Unicode.
+   if p.tok[adornmentIdx].symbol in ["::", "..", "|"]:
+     return false
++  if isMarkdownCodeBlock(p, adornmentIdx):
++    return false
+   var headlineLen = 0
+   var failure = ""
+   if p.idx < adornmentIdx:  # check for underline
+@@ -1946,7 +1951,7 @@ proc findPipe(p: RstParser, start: int): bool =
+ proc whichSection(p: RstParser): RstNodeKind =
+   if currentTok(p).kind in {tkAdornment, tkPunct}:
+     # for punctuation sequences that can be both tkAdornment and tkPunct
+-    if roSupportMarkdown in p.s.options and currentTok(p).symbol == "```":
++    if isMarkdownCodeBlock(p, p.idx):
+       return rnCodeBlock
+     elif currentTok(p).symbol == "::":
+       return rnLiteralBlock

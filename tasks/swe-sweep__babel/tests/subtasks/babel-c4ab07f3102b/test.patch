@@ -1,0 +1,138 @@
+diff --git a/packages/babel-parser/test/fixtures/flow/expect-plugin/export-interface/input.js b/packages/babel-parser/test/fixtures/flow/expect-plugin/export-interface/input.js
+new file mode 100644
+index 0000000000..39df3b83f7
+--- /dev/null
++++ b/packages/babel-parser/test/fixtures/flow/expect-plugin/export-interface/input.js
+@@ -0,0 +1 @@
++export interface Foo {}
+diff --git a/packages/babel-parser/test/fixtures/flow/expect-plugin/export-interface/options.json b/packages/babel-parser/test/fixtures/flow/expect-plugin/export-interface/options.json
+new file mode 100644
+index 0000000000..3f1eb56acd
+--- /dev/null
++++ b/packages/babel-parser/test/fixtures/flow/expect-plugin/export-interface/options.json
+@@ -0,0 +1,7 @@
++{
++  "sourceType": "module",
++  "plugins": [
++    "jsx"
++  ],
++  "throws": "This experimental syntax requires enabling one of the following parser plugin(s): 'flow, typescript' (1:7)"
++}
+\ No newline at end of file
+diff --git a/packages/babel-parser/test/fixtures/flow/expect-plugin/export-type-named/input.js b/packages/babel-parser/test/fixtures/flow/expect-plugin/export-type-named/input.js
+new file mode 100644
+index 0000000000..2bece0a4af
+--- /dev/null
++++ b/packages/babel-parser/test/fixtures/flow/expect-plugin/export-type-named/input.js
+@@ -0,0 +1,2 @@
++var Foo;
++export type { Foo };
+diff --git a/packages/babel-parser/test/fixtures/flow/expect-plugin/export-type-named/options.json b/packages/babel-parser/test/fixtures/flow/expect-plugin/export-type-named/options.json
+new file mode 100644
+index 0000000000..80ced9a61c
+--- /dev/null
++++ b/packages/babel-parser/test/fixtures/flow/expect-plugin/export-type-named/options.json
+@@ -0,0 +1,7 @@
++{
++  "sourceType": "module",
++  "plugins": [
++    "jsx"
++  ],
++  "throws": "This experimental syntax requires enabling one of the following parser plugin(s): 'flow, typescript' (2:7)"
++}
+\ No newline at end of file
+diff --git a/packages/babel-parser/test/fixtures/flow/expect-plugin/export-type/input.js b/packages/babel-parser/test/fixtures/flow/expect-plugin/export-type/input.js
+new file mode 100644
+index 0000000000..191a99ee30
+--- /dev/null
++++ b/packages/babel-parser/test/fixtures/flow/expect-plugin/export-type/input.js
+@@ -0,0 +1 @@
++export type Foo = number;
+diff --git a/packages/babel-parser/test/fixtures/flow/expect-plugin/export-type/options.json b/packages/babel-parser/test/fixtures/flow/expect-plugin/export-type/options.json
+new file mode 100644
+index 0000000000..3f1eb56acd
+--- /dev/null
++++ b/packages/babel-parser/test/fixtures/flow/expect-plugin/export-type/options.json
+@@ -0,0 +1,7 @@
++{
++  "sourceType": "module",
++  "plugins": [
++    "jsx"
++  ],
++  "throws": "This experimental syntax requires enabling one of the following parser plugin(s): 'flow, typescript' (1:7)"
++}
+\ No newline at end of file
+diff --git a/packages/babel-parser/test/fixtures/flow/expect-plugin/options.json b/packages/babel-parser/test/fixtures/flow/expect-plugin/options.json
+new file mode 100644
+index 0000000000..21c10b585e
+--- /dev/null
++++ b/packages/babel-parser/test/fixtures/flow/expect-plugin/options.json
+@@ -0,0 +1,4 @@
++{
++  "sourceType": "module",
++  "plugins": ["jsx"]
++}
+diff --git a/packages/babel-parser/test/fixtures/typescript/expect-plugin/export-interface/input.js b/packages/babel-parser/test/fixtures/typescript/expect-plugin/export-interface/input.js
+new file mode 100644
+index 0000000000..39df3b83f7
+--- /dev/null
++++ b/packages/babel-parser/test/fixtures/typescript/expect-plugin/export-interface/input.js
+@@ -0,0 +1 @@
++export interface Foo {}
+diff --git a/packages/babel-parser/test/fixtures/typescript/expect-plugin/export-interface/options.json b/packages/babel-parser/test/fixtures/typescript/expect-plugin/export-interface/options.json
+new file mode 100644
+index 0000000000..6638a1d3d7
+--- /dev/null
++++ b/packages/babel-parser/test/fixtures/typescript/expect-plugin/export-interface/options.json
+@@ -0,0 +1,4 @@
++{
++  "sourceType": "module",
++  "throws": "This experimental syntax requires enabling one of the following parser plugin(s): 'flow, typescript' (1:7)"
++}
+\ No newline at end of file
+diff --git a/packages/babel-parser/test/fixtures/typescript/expect-plugin/export-type-named/input.js b/packages/babel-parser/test/fixtures/typescript/expect-plugin/export-type-named/input.js
+new file mode 100644
+index 0000000000..2bece0a4af
+--- /dev/null
++++ b/packages/babel-parser/test/fixtures/typescript/expect-plugin/export-type-named/input.js
+@@ -0,0 +1,2 @@
++var Foo;
++export type { Foo };
+diff --git a/packages/babel-parser/test/fixtures/typescript/expect-plugin/export-type-named/options.json b/packages/babel-parser/test/fixtures/typescript/expect-plugin/export-type-named/options.json
+new file mode 100644
+index 0000000000..afcf32448a
+--- /dev/null
++++ b/packages/babel-parser/test/fixtures/typescript/expect-plugin/export-type-named/options.json
+@@ -0,0 +1,4 @@
++{
++  "sourceType": "module",
++  "throws": "This experimental syntax requires enabling one of the following parser plugin(s): 'flow, typescript' (2:7)"
++}
+\ No newline at end of file
+diff --git a/packages/babel-parser/test/fixtures/typescript/expect-plugin/export-type/input.js b/packages/babel-parser/test/fixtures/typescript/expect-plugin/export-type/input.js
+new file mode 100644
+index 0000000000..191a99ee30
+--- /dev/null
++++ b/packages/babel-parser/test/fixtures/typescript/expect-plugin/export-type/input.js
+@@ -0,0 +1 @@
++export type Foo = number;
+diff --git a/packages/babel-parser/test/fixtures/typescript/expect-plugin/export-type/options.json b/packages/babel-parser/test/fixtures/typescript/expect-plugin/export-type/options.json
+new file mode 100644
+index 0000000000..6638a1d3d7
+--- /dev/null
++++ b/packages/babel-parser/test/fixtures/typescript/expect-plugin/export-type/options.json
+@@ -0,0 +1,4 @@
++{
++  "sourceType": "module",
++  "throws": "This experimental syntax requires enabling one of the following parser plugin(s): 'flow, typescript' (1:7)"
++}
+\ No newline at end of file
+diff --git a/packages/babel-parser/test/fixtures/typescript/expect-plugin/options.json b/packages/babel-parser/test/fixtures/typescript/expect-plugin/options.json
+new file mode 100644
+index 0000000000..2104ca4328
+--- /dev/null
++++ b/packages/babel-parser/test/fixtures/typescript/expect-plugin/options.json
+@@ -0,0 +1,3 @@
++{
++  "sourceType": "module"
++}

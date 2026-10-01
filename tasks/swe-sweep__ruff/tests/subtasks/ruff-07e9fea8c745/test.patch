@@ -1,0 +1,39 @@
+diff --git a/crates/ruff_linter/resources/test/fixtures/pylint/invalid_envvar_default.py b/crates/ruff_linter/resources/test/fixtures/pylint/invalid_envvar_default.py
+index 9a7e1f0efa..070df96a03 100644
+--- a/crates/ruff_linter/resources/test/fixtures/pylint/invalid_envvar_default.py
++++ b/crates/ruff_linter/resources/test/fixtures/pylint/invalid_envvar_default.py
+@@ -13,3 +13,5 @@ os.getenv("B", Z)
+ os.getenv("AA", "GOOD" if Z else "BAR")
+ os.getenv("AA", 1 if Z else "BAR")  # [invalid-envvar-default]
+ os.environ.get("TEST", 12)  # [invalid-envvar-default]
++os.environ.get("TEST", "AA" * 12)
++os.environ.get("TEST", 13 * "AA")
+diff --git a/crates/ruff_linter/src/rules/pylint/snapshots/ruff_linter__rules__pylint__tests__PLW1508_invalid_envvar_default.py.snap b/crates/ruff_linter/src/rules/pylint/snapshots/ruff_linter__rules__pylint__tests__PLW1508_invalid_envvar_default.py.snap
+index 6104e1f5c3..1b06d83baa 100644
+--- a/crates/ruff_linter/src/rules/pylint/snapshots/ruff_linter__rules__pylint__tests__PLW1508_invalid_envvar_default.py.snap
++++ b/crates/ruff_linter/src/rules/pylint/snapshots/ruff_linter__rules__pylint__tests__PLW1508_invalid_envvar_default.py.snap
+@@ -49,4 +49,5 @@ invalid_envvar_default.py:14:17: PLW1508 Invalid type for environment variable d
+ 14 | os.getenv("AA", 1 if Z else "BAR")  # [invalid-envvar-default]
+    |                 ^^^^^^^^^^^^^^^^^ PLW1508
+ 15 | os.environ.get("TEST", 12)  # [invalid-envvar-default]
++16 | os.environ.get("TEST", "AA" * 12)
+    |
+diff --git a/crates/ruff_linter/src/rules/pylint/snapshots/ruff_linter__rules__pylint__tests__preview__PLW1508_invalid_envvar_default.py.snap b/crates/ruff_linter/src/rules/pylint/snapshots/ruff_linter__rules__pylint__tests__preview__PLW1508_invalid_envvar_default.py.snap
+index ed7dd8e7be..7bc7aeaa45 100644
+--- a/crates/ruff_linter/src/rules/pylint/snapshots/ruff_linter__rules__pylint__tests__preview__PLW1508_invalid_envvar_default.py.snap
++++ b/crates/ruff_linter/src/rules/pylint/snapshots/ruff_linter__rules__pylint__tests__preview__PLW1508_invalid_envvar_default.py.snap
+@@ -49,6 +49,7 @@ invalid_envvar_default.py:14:17: PLW1508 Invalid type for environment variable d
+ 14 | os.getenv("AA", 1 if Z else "BAR")  # [invalid-envvar-default]
+    |                 ^^^^^^^^^^^^^^^^^ PLW1508
+ 15 | os.environ.get("TEST", 12)  # [invalid-envvar-default]
++16 | os.environ.get("TEST", "AA" * 12)
+    |
+ 
+ invalid_envvar_default.py:15:24: PLW1508 Invalid type for environment variable default; expected `str` or `None`
+@@ -57,4 +58,6 @@ invalid_envvar_default.py:15:24: PLW1508 Invalid type for environment variable d
+ 14 | os.getenv("AA", 1 if Z else "BAR")  # [invalid-envvar-default]
+ 15 | os.environ.get("TEST", 12)  # [invalid-envvar-default]
+    |                        ^^ PLW1508
++16 | os.environ.get("TEST", "AA" * 12)
++17 | os.environ.get("TEST", 13 * "AA")
+    |

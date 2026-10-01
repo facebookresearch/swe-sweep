@@ -1,0 +1,16 @@
+diff --git a/scipy/odr/tests/test_odr.py b/scipy/odr/tests/test_odr.py
+index aa06663433..017a3f23f2 100644
+--- a/scipy/odr/tests/test_odr.py
++++ b/scipy/odr/tests/test_odr.py
+@@ -358,3 +358,10 @@ class TestODR(object):
+         odr2 = ODR(data, model, beta0=np.array([1.]), ifixx=fix)
+         sol2 = odr2.run()
+         assert_equal(sol1.beta, sol2.beta)
++
++    def test_odr_model_default_meta(self):
++        def func(b, x):
++            return b[0] + b[1] * x
++
++        p = Model(func)
++        p.set_meta(name='Sample Model Meta', ref='ODRPACK')
++        assert_equal(p.meta, {'name': 'Sample Model Meta', 'ref': 'ODRPACK'})

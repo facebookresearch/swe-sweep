@@ -1,0 +1,24 @@
+diff --git a/vlib/v/checker/tests/fn_array_decompose_arg_mismatch_err_c.out b/vlib/v/checker/tests/fn_array_decompose_arg_mismatch_err_c.out
+new file mode 100644
+index 000000000..80a9d2001
+--- /dev/null
++++ b/vlib/v/checker/tests/fn_array_decompose_arg_mismatch_err_c.out
+@@ -0,0 +1,6 @@
++vlib/v/checker/tests/fn_array_decompose_arg_mismatch_err_c.vv:2:6: error: expected 0 arguments, but got 1
++    1 | fn main() {
++    2 |     foo(...args)
++      |         ~~~~~~~
++    3 | }
++    4 |
+diff --git a/vlib/v/checker/tests/fn_array_decompose_arg_mismatch_err_c.vv b/vlib/v/checker/tests/fn_array_decompose_arg_mismatch_err_c.vv
+new file mode 100644
+index 000000000..4e7735652
+--- /dev/null
++++ b/vlib/v/checker/tests/fn_array_decompose_arg_mismatch_err_c.vv
+@@ -0,0 +1,6 @@
++fn main() {
++	foo(...args)
++}
++
++fn foo() {
++}

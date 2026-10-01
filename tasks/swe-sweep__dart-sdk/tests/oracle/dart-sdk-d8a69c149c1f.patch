@@ -1,0 +1,26 @@
+diff --git a/pkg/analyzer/lib/src/dart/resolver/method_invocation_resolver.dart b/pkg/analyzer/lib/src/dart/resolver/method_invocation_resolver.dart
+index ef8be7e..e36565e 100644
+--- a/pkg/analyzer/lib/src/dart/resolver/method_invocation_resolver.dart
++++ b/pkg/analyzer/lib/src/dart/resolver/method_invocation_resolver.dart
+@@ -497,12 +497,15 @@ class MethodInvocationResolver with ScopeHelpers {
+           contextType: contextType,
+         );
+       } else {
+-        _setDynamicResolution(node,
+-            whyNotPromotedList: whyNotPromotedList, contextType: contextType);
+-        _resolver.nullableDereferenceVerifier.report(
+-          CompileTimeErrorCode.UNCHECKED_METHOD_INVOCATION_OF_NULLABLE_VALUE,
+-          methodName,
+-          receiverType,
++        _resolveReceiverType(
++          node: node,
++          receiver: receiver,
++          receiverType: receiverType,
++          nameNode: methodName,
++          name: methodName.name,
++          receiverErrorNode: receiver,
++          whyNotPromotedList: whyNotPromotedList,
++          contextType: contextType,
+         );
+       }
+       return;

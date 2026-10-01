@@ -1,0 +1,12 @@
+diff --git a/scipy/signal/bsplines.py b/scipy/signal/bsplines.py
+index c7ffdfd5c7..ee3e63ffed 100644
+--- a/scipy/signal/bsplines.py
++++ b/scipy/signal/bsplines.py
+@@ -145,6 +145,7 @@ def gauss_spline(x, n):
+        Methods in Computer Vision. SSVM 2007. Lecture Notes in Computer
+        Science, vol 4485. Springer, Berlin, Heidelberg
+    """
++    x = asarray(x)
+     signsq = (n + 1) / 12.0
+     return 1 / sqrt(2 * pi * signsq) * exp(-x ** 2 / 2 / signsq)
+ 

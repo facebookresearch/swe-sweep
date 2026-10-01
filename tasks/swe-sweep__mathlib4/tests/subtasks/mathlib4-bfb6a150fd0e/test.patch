@@ -1,0 +1,29 @@
+diff --git a/MathlibTest/Delab/Abs.lean b/MathlibTest/Delab/Abs.lean
+new file mode 100644
+index 0000000000..f74d2692e9
+--- /dev/null
++++ b/MathlibTest/Delab/Abs.lean
+@@ -0,0 +1,23 @@
++import Mathlib.Algebra.Order.Group.Unbundled.Abs
++
++variable {α β : Type*} [Lattice α] [Lattice β] [Group α] [AddGroup β] {a : α} {b : β}
++
++/-- info: |a|ₘ : α -/
++#guard_msgs in
++#check |a|ₘ
++
++/-- info: |b| : β -/
++#guard_msgs in
++#check |b|
++
++/-- info: |(|b|)| : β -/
++#guard_msgs in
++#check |(|b|)|
++
++/-- info: |(|a|ₘ)|ₘ : α -/
++#guard_msgs in
++#check |(|a|ₘ)|ₘ
++
++/-- info: |(-b)| : β -/
++#guard_msgs in
++#check |(-b)|

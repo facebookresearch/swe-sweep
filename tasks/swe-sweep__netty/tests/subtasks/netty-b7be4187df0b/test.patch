@@ -1,0 +1,23 @@
+diff --git a/codec/src/test/java/io/netty/handler/codec/DatagramPacketEncoderTest.java b/codec/src/test/java/io/netty/handler/codec/DatagramPacketEncoderTest.java
+index fdf1cac63f..be200bf26d 100644
+--- a/codec/src/test/java/io/netty/handler/codec/DatagramPacketEncoderTest.java
++++ b/codec/src/test/java/io/netty/handler/codec/DatagramPacketEncoderTest.java
+@@ -51,8 +51,17 @@ public class DatagramPacketEncoderTest {
+ 
+     @Test
+     public void testEncode() {
++        testEncode(false);
++    }
++
++    @Test
++    public void testEncodeWithSenderIsNull() {
++        testEncode(true);
++    }
++
++    private void testEncode(boolean senderIsNull) {
+         InetSocketAddress recipient = SocketUtils.socketAddress("127.0.0.1", 10000);
+-        InetSocketAddress sender = SocketUtils.socketAddress("127.0.0.1", 20000);
++        InetSocketAddress sender = senderIsNull ? null : SocketUtils.socketAddress("127.0.0.1", 20000);
+         assertTrue(channel.writeOutbound(
+                 new DefaultAddressedEnvelope<String, InetSocketAddress>("netty", recipient, sender)));
+         DatagramPacket packet = channel.readOutbound();

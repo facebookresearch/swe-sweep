@@ -1,0 +1,31 @@
+diff --git a/src/full/Agda/TypeChecking/Conversion.hs b/src/full/Agda/TypeChecking/Conversion.hs
+index a413a0d..8abfaae 100644
+--- a/src/full/Agda/TypeChecking/Conversion.hs
++++ b/src/full/Agda/TypeChecking/Conversion.hs
+@@ -1294,7 +1294,7 @@ leqLevel a b = catchConstraint (LevelCmp CmpLeq a b) $ do
+           sep [ prettyTCM a <+> "=<"
+               , prettyTCM b ]
+ 
+-      (a, b) <- reduce (a, b)
++      (a, b) <- normalise (a, b)
+       ((a, b), equal) <- SynEq.checkSyntacticEquality a b
+ 
+       let notok    = unlessM typeInType $ typeError $ NotLeqSort (Type a) (Type b)
+@@ -1443,7 +1443,7 @@ equalLevel a b = do
+                ]
+         ]
+ 
+-  (a, b) <- reduce (a, b)
++  (a, b) <- normalise (a, b)
+   ((a, b), equal) <- SynEq.checkSyntacticEquality a b
+   reportSDoc "tc.conv.level" 60 $
+     "checkSyntacticEquality returns" <+> prettyTCM equal
+@@ -1546,7 +1546,7 @@ equalLevel a b = do
+               List1.zipWithM_ ((===) `on` levelTm . unSingleLevel . fmap ignoreBlocking) as bs
+ 
+         -- more cases?
+-        _ | noMetas (Level a , Level b) -> notok
++        _ | noMetas (a , b) -> notok
+           | otherwise                   -> postpone
+ 
+       where

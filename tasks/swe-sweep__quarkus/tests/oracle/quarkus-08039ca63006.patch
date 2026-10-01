@@ -1,0 +1,50 @@
+diff --git a/extensions/undertow/deployment/src/main/java/io/quarkus/undertow/deployment/UndertowBuildStep.java b/extensions/undertow/deployment/src/main/java/io/quarkus/undertow/deployment/UndertowBuildStep.java
+index 415204b0d4f..98a1a8dbc3d 100644
+--- a/extensions/undertow/deployment/src/main/java/io/quarkus/undertow/deployment/UndertowBuildStep.java
++++ b/extensions/undertow/deployment/src/main/java/io/quarkus/undertow/deployment/UndertowBuildStep.java
+@@ -61,6 +61,7 @@ import org.jboss.metadata.web.spec.AnnotationsMetaData;
+ import org.jboss.metadata.web.spec.CookieConfigMetaData;
+ import org.jboss.metadata.web.spec.DispatcherType;
+ import org.jboss.metadata.web.spec.EmptyRoleSemanticType;
++import org.jboss.metadata.web.spec.ErrorPageMetaData;
+ import org.jboss.metadata.web.spec.FilterMappingMetaData;
+ import org.jboss.metadata.web.spec.FilterMetaData;
+ import org.jboss.metadata.web.spec.FiltersMetaData;
+@@ -651,6 +652,16 @@ public class UndertowBuildStep {
+             recorder.addServletContainerInitializer(deployment,
+                     (Class<? extends ServletContainerInitializer>) context.classProxy(sci.sciClass), handlesTypes);
+         }
++        if (webMetaData.getErrorPages() != null) {
++            for (ErrorPageMetaData errorPage : webMetaData.getErrorPages()) {
++                if (errorPage.getErrorCode() != null && !errorPage.getErrorCode().isBlank()) {
++                    recorder.addErrorPage(deployment, errorPage.getLocation(), Integer.parseInt(errorPage.getErrorCode()));
++                } else if (errorPage.getExceptionType() != null && !errorPage.getExceptionType().isBlank()) {
++                    recorder.addErrorPage(deployment, errorPage.getLocation(),
++                            (Class<? extends Throwable>) context.classProxy(errorPage.getExceptionType()));
++                }
++            }
++        }
+         SessionConfigMetaData sessionConfig = webMetaData.getSessionConfig();
+         if (sessionConfig != null) {
+             if (sessionConfig.getSessionTimeoutSet()) {
+diff --git a/extensions/undertow/runtime/src/main/java/io/quarkus/undertow/runtime/UndertowDeploymentRecorder.java b/extensions/undertow/runtime/src/main/java/io/quarkus/undertow/runtime/UndertowDeploymentRecorder.java
+index 082431efc6a..a0ccfe2a2d8 100644
+--- a/extensions/undertow/runtime/src/main/java/io/quarkus/undertow/runtime/UndertowDeploymentRecorder.java
++++ b/extensions/undertow/runtime/src/main/java/io/quarkus/undertow/runtime/UndertowDeploymentRecorder.java
+@@ -747,6 +747,16 @@ public class UndertowDeploymentRecorder {
+         }
+     }
+ 
++    public void addErrorPage(RuntimeValue<DeploymentInfo> deployment, String location, int errorCode) {
++        deployment.getValue().addErrorPage(new ErrorPage(location, errorCode));
++
++    }
++
++    public void addErrorPage(RuntimeValue<DeploymentInfo> deployment, String location,
++            Class<? extends Throwable> exceptionType) {
++        deployment.getValue().addErrorPage(new ErrorPage(location, exceptionType));
++    }
++
+     /**
+      * we can't have SecureRandom in the native image heap, so we need to lazy init
+      */

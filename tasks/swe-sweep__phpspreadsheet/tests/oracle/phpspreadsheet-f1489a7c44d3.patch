@@ -1,0 +1,16 @@
+diff --git a/src/PhpSpreadsheet/Cell/Cell.php b/src/PhpSpreadsheet/Cell/Cell.php
+index 0bca2fc03..74ed92681 100644
+--- a/src/PhpSpreadsheet/Cell/Cell.php
++++ b/src/PhpSpreadsheet/Cell/Cell.php
+@@ -251,9 +251,11 @@ class Cell
+     {
+         if ($this->dataType == DataType::TYPE_FORMULA) {
+             try {
++                $index = $this->getWorksheet()->getParent()->getActiveSheetIndex();
+                 $result = Calculation::getInstance(
+                     $this->getWorksheet()->getParent()
+                 )->calculateCellValue($this, $resetLog);
++                $this->getWorksheet()->getParent()->setActiveSheetIndex($index);
+                 //    We don't yet handle array returns
+                 if (is_array($result)) {
+                     while (is_array($result)) {

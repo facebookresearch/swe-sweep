@@ -1,0 +1,16 @@
+diff --git a/codec-http2/src/main/java/io/netty/handler/codec/http2/Http2StreamFrameToHttpObjectCodec.java b/codec-http2/src/main/java/io/netty/handler/codec/http2/Http2StreamFrameToHttpObjectCodec.java
+index ed38d84d8c..36a7fba1c0 100644
+--- a/codec-http2/src/main/java/io/netty/handler/codec/http2/Http2StreamFrameToHttpObjectCodec.java
++++ b/codec-http2/src/main/java/io/netty/handler/codec/http2/Http2StreamFrameToHttpObjectCodec.java
+@@ -81,9 +81,10 @@ public class Http2StreamFrameToHttpObjectCodec extends MessageToMessageCodec<Htt
+     @Override
+     protected void decode(ChannelHandlerContext ctx, Http2StreamFrame frame, List<Object> out) throws Exception {
+         if (frame instanceof Http2HeadersFrame) {
+-            int id = 0; // not really the id
+             Http2HeadersFrame headersFrame = (Http2HeadersFrame) frame;
+             Http2Headers headers = headersFrame.headers();
++            Http2FrameStream stream = headersFrame.stream();
++            int id = stream == null ? 0 : stream.id();
+ 
+             final CharSequence status = headers.status();
+ 

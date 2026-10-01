@@ -1,0 +1,18 @@
+diff --git a/sqlglot/generator.py b/sqlglot/generator.py
+index 581f4da44a..6dd4294d34 100644
+--- a/sqlglot/generator.py
++++ b/sqlglot/generator.py
+@@ -2410,10 +2410,12 @@ class Generator:
+         laterals = self.expressions(expression, key="laterals", sep="")
+ 
+         file_format = self.sql(expression, "format")
++        pattern = self.sql(expression, "pattern")
+         if file_format:
+-            pattern = self.sql(expression, "pattern")
+             pattern = f", PATTERN => {pattern}" if pattern else ""
+             file_format = f" (FILE_FORMAT => {file_format}{pattern})"
++        elif pattern:
++            file_format = f" (PATTERN => {pattern})"
+ 
+         ordinality = expression.args.get("ordinality") or ""
+         if ordinality:

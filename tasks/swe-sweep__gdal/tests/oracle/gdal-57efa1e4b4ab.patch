@@ -1,0 +1,14 @@
+diff --git a/alg/gdalwarper.cpp b/alg/gdalwarper.cpp
+index 64c393c3c8..8c9ee38b7b 100644
+--- a/alg/gdalwarper.cpp
++++ b/alg/gdalwarper.cpp
+@@ -1518,7 +1518,8 @@ void CPL_STDCALL GDALWarpResolveWorkingDataType(GDALWarpOptions *psOptions)
+                                       GDALGetRasterDataType(hDstBand));
+             }
+         }
+-        else if (psOptions->hSrcDS != nullptr)
++
++        if (psOptions->hSrcDS != nullptr)
+         {
+             GDALRasterBandH hSrcBand = GDALGetRasterBand(
+                 psOptions->hSrcDS, psOptions->panSrcBands[iBand]);

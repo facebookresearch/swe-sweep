@@ -1,0 +1,13 @@
+diff --git a/lib/rules/named-grid-areas-no-invalid/index.mjs b/lib/rules/named-grid-areas-no-invalid/index.mjs
+index b8ceaaba4..1500c75be 100644
+--- a/lib/rules/named-grid-areas-no-invalid/index.mjs
++++ b/lib/rules/named-grid-areas-no-invalid/index.mjs
+@@ -51,7 +51,7 @@ const rule = (primary) => {
+ 				}
+ 
+ 				areas.push({
+-					values: tokenValue.trim().split(' ').filter(Boolean),
++					values: tokenValue.trim().split(/\s+/).filter(Boolean),
+ 					index: sourceIndex,
+ 					endIndex: sourceEndIndex,
+ 				});

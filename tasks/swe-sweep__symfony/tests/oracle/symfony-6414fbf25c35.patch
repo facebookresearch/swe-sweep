@@ -1,0 +1,13 @@
+diff --git a/src/Symfony/Component/String/Slugger/AsciiSlugger.php b/src/Symfony/Component/String/Slugger/AsciiSlugger.php
+index d4d4e942a68..78f02ffc66e 100644
+--- a/src/Symfony/Component/String/Slugger/AsciiSlugger.php
++++ b/src/Symfony/Component/String/Slugger/AsciiSlugger.php
+@@ -84,7 +84,7 @@ class AsciiSlugger implements SluggerInterface, LocaleAwareInterface
+ 
+     public function getLocale(): string
+     {
+-        return $this->defaultLocale;
++        return $this->defaultLocale ?? '';
+     }
+ 
+     /**

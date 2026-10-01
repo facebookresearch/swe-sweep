@@ -1,0 +1,94 @@
+diff --git a/test/sql/attach/attach_dbname_quotes.test b/test/sql/attach/attach_dbname_quotes.test
+new file mode 100644
+index 0000000000..c231f06668
+--- /dev/null
++++ b/test/sql/attach/attach_dbname_quotes.test
+@@ -0,0 +1,49 @@
++# name: test/sql/attach/attach_dbname_quotes.test
++# description: Test ATTACH with a quoted database name
++# group: [attach]
++
++require noforcestorage
++
++statement ok
++ATTACH ':memory:' as "my""db";
++
++statement ok
++CREATE TABLE "my""db".tbl(i int);
++
++statement ok
++INSERT INTO "my""db".tbl VALUES (42)
++
++# use with a table name in quotes
++statement ok
++USE "my""db";
++
++query I
++SELECT * FROM tbl
++----
++42
++
++statement ok
++USE memory
++
++statement ok
++CREATE SCHEMA "my""db"."my""schema"
++
++statement ok
++CREATE TABLE "my""db"."my""schema".tbl(i int);
++
++statement ok
++INSERT INTO "my""db"."my""schema".tbl VALUES (84)
++
++statement ok
++USE "my""db"."my""schema"
++
++query I
++SELECT * FROM tbl
++----
++84
++
++statement ok
++CREATE SCHEMA """"
++
++statement ok
++USE """"
+diff --git a/test/sql/attach/attach_did_you_mean.test b/test/sql/attach/attach_did_you_mean.test
+index 26c418a4ba..967d2103e3 100644
+--- a/test/sql/attach/attach_did_you_mean.test
++++ b/test/sql/attach/attach_did_you_mean.test
+@@ -55,7 +55,7 @@ SELECT * FROM memory.hello
+ 
+ # what if we switch default database AND default schema?
+ statement ok
+-USE "db1.myschema"
++USE db1.myschema
+ 
+ statement ok
+ SELECT * FROM blablabla
+diff --git a/test/sql/attach/attach_nested_types.test b/test/sql/attach/attach_nested_types.test
+index 9b63c6e8c0..99369a286c 100644
+--- a/test/sql/attach/attach_nested_types.test
++++ b/test/sql/attach/attach_nested_types.test
+@@ -49,7 +49,7 @@ SELECT "table" FROM database.schema.table
+ {'col': {'field': 42}}
+ 
+ statement ok
+-USE "database.schema"
++USE database.schema
+ 
+ query I
+ SELECT "table" FROM "table"
+diff --git a/test/sql/attach/attach_table_info.test b/test/sql/attach/attach_table_info.test
+index d8609aab98..7f312f0d53 100644
+--- a/test/sql/attach/attach_table_info.test
++++ b/test/sql/attach/attach_table_info.test
+@@ -38,7 +38,7 @@ SELECT current_database()
+ memory
+ 
+ statement ok
+-USE "new_database.new_schema"
++USE new_database.new_schema
+ 
+ query ITTTTT nosort table_info
+ PRAGMA table_info('integers');

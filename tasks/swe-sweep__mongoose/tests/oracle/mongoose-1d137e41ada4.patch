@@ -1,0 +1,13 @@
+diff --git a/lib/helpers/populate/assignVals.js b/lib/helpers/populate/assignVals.js
+index da40f396e..92f0ebecd 100644
+--- a/lib/helpers/populate/assignVals.js
++++ b/lib/helpers/populate/assignVals.js
+@@ -253,6 +253,8 @@ function valueFilter(val, assignmentOpts, populateOptions, allIds) {
+       const _allIds = Array.isArray(allIds) ? allIds[i] : allIds;
+       if (!isPopulatedObject(subdoc) && (!populateOptions.retainNullValues || subdoc != null) && !userSpecifiedTransform) {
+         continue;
++      } else if (!populateOptions.retainNullValues && subdoc == null) {
++        continue;
+       } else if (userSpecifiedTransform) {
+         subdoc = transform(isPopulatedObject(subdoc) ? subdoc : null, _allIds);
+       }

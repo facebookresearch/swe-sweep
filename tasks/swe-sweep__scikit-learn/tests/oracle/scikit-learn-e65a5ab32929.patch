@@ -1,0 +1,18 @@
+diff --git a/sklearn/feature_extraction/_hashing.pyx b/sklearn/feature_extraction/_hashing.pyx
+index c23c6bc0bb..3a3102444a 100644
+--- a/sklearn/feature_extraction/_hashing.pyx
++++ b/sklearn/feature_extraction/_hashing.pyx
+@@ -64,7 +64,12 @@ def transform(raw_X, Py_ssize_t n_features, dtype):
+             h = murmurhash3_bytes_s32(f, 0)
+ 
+             array.resize_smart(indices, len(indices) + 1)
+-            indices[len(indices) - 1] = abs(h) % n_features
++            if h == - 2147483648:
++                # abs(-2**31) is undefined behavior because h is a `np.int32`
++                # The following is defined such that it is equal to: abs(-2**31) % n_features
++                indices[len(indices) - 1] = (2147483647 - (n_features - 1)) % n_features
++            else:
++                indices[len(indices) - 1] = abs(h) % n_features
+             value *= (h >= 0) * 2 - 1
+             values[size] = value
+             size += 1

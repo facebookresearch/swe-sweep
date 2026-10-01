@@ -1,0 +1,137 @@
+diff --git a/src/Symfony/Bundle/DebugBundle/Tests/DependencyInjection/Compiler/DumpDataCollectorPassTest.php b/src/Symfony/Bundle/DebugBundle/Tests/DependencyInjection/Compiler/DumpDataCollectorPassTest.php
+index cb85aecd319..35d406946a2 100644
+--- a/src/Symfony/Bundle/DebugBundle/Tests/DependencyInjection/Compiler/DumpDataCollectorPassTest.php
++++ b/src/Symfony/Bundle/DebugBundle/Tests/DependencyInjection/Compiler/DumpDataCollectorPassTest.php
+@@ -27,7 +27,7 @@ class DumpDataCollectorPassTest extends TestCase
+         $container = new ContainerBuilder();
+         $container->addCompilerPass(new DumpDataCollectorPass());
+ 
+-        $definition = new Definition(DumpDataCollector::class, [null, null, new Reference('.virtual_request_stack'), null]);
++        $definition = new Definition(DumpDataCollector::class, [null, null, '%kernel.charset%', new Reference('.virtual_request_stack'), null, '%kernel.runtime_mode.web%']);
+         $container->setDefinition('data_collector.dump', $definition);
+ 
+         $container->compile();
+@@ -42,7 +42,7 @@ class DumpDataCollectorPassTest extends TestCase
+         $container->register('.virtual_request_stack', RequestStack::class);
+         $container->addCompilerPass(new DumpDataCollectorPass());
+ 
+-        $definition = new Definition(DumpDataCollector::class, [null, null, null, new Reference('.virtual_request_stack')]);
++        $definition = new Definition(DumpDataCollector::class, [null, null, '%kernel.charset%', new Reference('.virtual_request_stack'), null, '%kernel.runtime_mode.web%']);
+         $container->setDefinition('data_collector.dump', $definition);
+         $container->setParameter('web_profiler.debug_toolbar.mode', WebDebugToolbarListener::ENABLED);
+ 
+@@ -57,7 +57,7 @@ class DumpDataCollectorPassTest extends TestCase
+         $container->register('request_stack', RequestStack::class);
+         $container->addCompilerPass(new DumpDataCollectorPass());
+ 
+-        $definition = new Definition(DumpDataCollector::class, [null, null, null, new Reference('.virtual_request_stack')]);
++        $definition = new Definition(DumpDataCollector::class, [null, null, '%kernel.charset%', new Reference('.virtual_request_stack'), null, '%kernel.runtime_mode.web%']);
+         $container->setDefinition('data_collector.dump', $definition);
+         $container->setParameter('web_profiler.debug_toolbar.mode', WebDebugToolbarListener::ENABLED);
+ 
+@@ -71,7 +71,7 @@ class DumpDataCollectorPassTest extends TestCase
+         $container = new ContainerBuilder();
+         $container->addCompilerPass(new DumpDataCollectorPass());
+ 
+-        $definition = new Definition(DumpDataCollector::class, [null, null, new Reference('.virtual_request_stack'), new RequestStack()]);
++        $definition = new Definition(DumpDataCollector::class, [null, null, '%kernel.charset%', new Reference('.virtual_request_stack'), null, '%kernel.runtime_mode.web%']);
+         $container->setDefinition('data_collector.dump', $definition);
+         $container->setParameter('web_profiler.debug_toolbar.mode', WebDebugToolbarListener::DISABLED);
+ 
+@@ -85,11 +85,42 @@ class DumpDataCollectorPassTest extends TestCase
+         $container = new ContainerBuilder();
+         $container->addCompilerPass(new DumpDataCollectorPass());
+ 
+-        $definition = new Definition(DumpDataCollector::class, [null, null, new Reference('.virtual_request_stack'), new RequestStack()]);
++        $definition = new Definition(DumpDataCollector::class, [null, null, '%kernel.charset%', new Reference('.virtual_request_stack'), null, '%kernel.runtime_mode.web%']);
+         $container->setDefinition('data_collector.dump', $definition);
+ 
+         $container->compile();
+ 
+         $this->assertNull($definition->getArgument(3));
+     }
++
++    public function testProcessWithRuntimeModeSet()
++    {
++        $container = new ContainerBuilder();
++        $container->setParameter('kernel.charset', 'UTF-8');
++        $container->setParameter('kernel.runtime_mode.web', false);
++        $container->addCompilerPass(new DumpDataCollectorPass());
++
++        $definition = new Definition(DumpDataCollector::class, [null, null, '%kernel.charset%', new Reference('.virtual_request_stack'), null, '%kernel.runtime_mode.web%']);
++        $container->setDefinition('data_collector.dump', $definition);
++
++        $container->compile();
++
++        $this->assertFalse($definition->getArgument(5));
++        $this->assertCount(0, $definition->getErrors());
++    }
++
++    public function testProcessWithRuntimeModeNotSet()
++    {
++        $container = new ContainerBuilder();
++        $container->setParameter('kernel.charset', 'UTF-8');
++        $container->addCompilerPass(new DumpDataCollectorPass());
++
++        $definition = new Definition(DumpDataCollector::class, [null, null, '%kernel.charset%', new Reference('.virtual_request_stack'), null, '%kernel.runtime_mode.web%']);
++        $container->setDefinition('data_collector.dump', $definition);
++
++        $container->compile();
++
++        $this->assertNull($definition->getArgument(5));
++        $this->assertCount(0, $definition->getErrors());
++    }
+ }
+diff --git a/src/Symfony/Bundle/DebugBundle/Tests/DependencyInjection/DebugExtensionTest.php b/src/Symfony/Bundle/DebugBundle/Tests/DependencyInjection/DebugExtensionTest.php
+index 51090815b9c..a76707bcbb8 100644
+--- a/src/Symfony/Bundle/DebugBundle/Tests/DependencyInjection/DebugExtensionTest.php
++++ b/src/Symfony/Bundle/DebugBundle/Tests/DependencyInjection/DebugExtensionTest.php
+@@ -13,10 +13,14 @@ namespace Symfony\Bundle\DebugBundle\Tests\DependencyInjection;
+ 
+ use PHPUnit\Framework\TestCase;
+ use Symfony\Bundle\DebugBundle\DebugBundle;
++use Symfony\Bundle\DebugBundle\DependencyInjection\Compiler\DumpDataCollectorPass;
+ use Symfony\Bundle\DebugBundle\DependencyInjection\DebugExtension;
++use Symfony\Component\Config\Loader\LoaderInterface;
+ use Symfony\Component\DependencyInjection\ContainerBuilder;
+ use Symfony\Component\DependencyInjection\ParameterBag\ParameterBag;
+ use Symfony\Component\HttpFoundation\RequestStack;
++use Symfony\Component\HttpKernel\DataCollector\DumpDataCollector;
++use Symfony\Component\HttpKernel\Kernel;
+ use Symfony\Component\VarDumper\Caster\ReflectionCaster;
+ use Symfony\Component\VarDumper\Dumper\CliDumper;
+ use Symfony\Component\VarDumper\Server\Connection;
+@@ -107,6 +111,33 @@ class DebugExtensionTest extends TestCase
+         $this->assertSame($expectedOutput, $container->findDefinition('cli_dumper_public')->getArgument(0));
+     }
+ 
++    public function testRuntimeModeIsNotSetIfParameterDoesNotExist()
++    {
++        $kernel = new class('dev', true) extends Kernel {
++            public function registerBundles(): iterable
++            {
++                return [];
++            }
++
++            public function registerContainerConfiguration(LoaderInterface $loader): void
++            {
++            }
++
++            public function getKernelParameters(): array
++            {
++                return parent::getKernelParameters();
++            }
++        };
++        $container = new ContainerBuilder();
++        $container->getParameterBag()->add($kernel->getKernelParameters());
++        $container->registerExtension(new DebugExtension());
++        $container->loadFromExtension('debug', []);
++        $container->addCompilerPass(new DumpDataCollectorPass());
++        $this->compileContainer($container);
++
++        $this->assertInstanceOf(DumpDataCollector::class, $container->get('data_collector.dump'));
++    }
++
+     private function createContainer()
+     {
+         $container = new ContainerBuilder(new ParameterBag([

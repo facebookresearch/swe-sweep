@@ -1,0 +1,113 @@
+{
+  "build_jobs": 4,
+  "container_repo": "/shapely",
+  "evaluation": {
+    "paths": "tests",
+    "test_timeout": 900,
+    "visible_timeout": 3600
+  },
+  "upstream_image": "pandora-maxbug-shapely:2.0.0",
+  "n_base_passing": 270,
+  "n_base_test_ignore": 4,
+  "oracle_digest": "985ba573516f350a234f9c4979a92001640dfd36c40952f630c6a96f3a4e67c5",
+  "oracle_pristine_paths": [],
+  "upstream_commit": "9f7399e15e6172900e0591deb5a57a45769d8205",
+  "reproduction": {
+    "build_jobs_flag": "-j",
+    "build_timeout": 1800,
+    "test_timeout": 900
+  },
+  "schema": 2,
+  "subtasks": [
+    {
+      "f2p": [
+        "shapely.tests.test_ragged_array::test_points"
+      ],
+      "id": "shapely-382d8209909e",
+      "target_files": [
+        "shapely/_ragged_array.py"
+      ]
+    },
+    {
+      "f2p": [
+        "shapely.tests.geometry.test_point.TestPoint::test_point_empty"
+      ],
+      "id": "shapely-438fb07229f6",
+      "target_files": [
+        "shapely/geometry/point.py"
+      ]
+    },
+    {
+      "f2p": [
+        "shapely.tests.geometry.test_multipolygon::test_fail_list_of_multipolygons"
+      ],
+      "id": "shapely-48bae46569e8",
+      "target_files": [
+        "shapely/geometry/multipolygon.py"
+      ]
+    },
+    {
+      "f2p": [
+        "shapely.tests.geometry.test_equality::test_equality_with_nan[left5-right5]",
+        "shapely.tests.geometry.test_equality::test_equality_with_nan_false[left2-right2]",
+        "shapely.tests.geometry.test_equality::test_equality_with_nan_false[left3-right3]",
+        "shapely.tests.geometry.test_equality::test_equality_z"
+      ],
+      "id": "shapely-5995c4d6ae1c",
+      "target_files": [
+        "shapely/geometry/base.py",
+        "shapely/geometry/polygon.py"
+      ]
+    },
+    {
+      "f2p": [
+        "tests.test_substring.SubstringTestCase::test_return_z_coord_issue1699"
+      ],
+      "id": "shapely-672c7b8b9848",
+      "target_files": [
+        "shapely/ops.py"
+      ]
+    },
+    {
+      "f2p": [
+        "shapely.tests.geometry.test_multipolygon.TestMultiPolygon::test_multipolygon"
+      ],
+      "id": "shapely-707d3db7c742",
+      "target_files": [
+        "shapely/geometry/multipolygon.py"
+      ]
+    },
+    {
+      "f2p": [
+        "shapely.tests.geometry.test_collection::test_from_numpy_array"
+      ],
+      "id": "shapely-71d8c6278232",
+      "target_files": [
+        "shapely/geometry/collection.py"
+      ]
+    },
+    {
+      "f2p": [
+        "shapely.tests.test_ragged_array::test_read_only_arrays[geom1]",
+        "shapely.tests.test_ragged_array::test_read_only_arrays[geom2]",
+        "shapely.tests.test_ragged_array::test_read_only_arrays[geom4]",
+        "shapely.tests.test_ragged_array::test_read_only_arrays[geom5]"
+      ],
+      "id": "shapely-d12d66f358b6",
+      "target_files": [
+        "shapely/_geometry_helpers.pyx"
+      ]
+    },
+    {
+      "f2p": [
+        "shapely.tests.test_io::test_to_wkt_array_with_empty_z"
+      ],
+      "id": "shapely-f87643b415ec",
+      "target_files": [
+        "src/ufuncs.c"
+      ]
+    }
+  ],
+  "task": "shapely",
+  "version": "2.0.0"
+}

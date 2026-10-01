@@ -1,0 +1,23 @@
+diff --git a/pandas/tests/io/parser/test_header.py b/pandas/tests/io/parser/test_header.py
+index f3499d222d..dc37929893 100644
+--- a/pandas/tests/io/parser/test_header.py
++++ b/pandas/tests/io/parser/test_header.py
+@@ -556,6 +556,18 @@ def test_multi_index_unnamed(all_parsers, index_col, columns):
+         tm.assert_frame_equal(result, expected)
+ 
+ 
++def test_names_longer_than_header_but_equal_with_data_rows(all_parsers):
++    # GH#38453
++    parser = all_parsers
++    data = """a, b
++1,2,3
++5,6,4
++"""
++    result = parser.read_csv(StringIO(data), header=0, names=["A", "B", "C"])
++    expected = DataFrame({"A": [1, 5], "B": [2, 6], "C": [3, 4]})
++    tm.assert_frame_equal(result, expected)
++
++
+ def test_read_csv_multiindex_columns(all_parsers):
+     # GH#6051
+     parser = all_parsers

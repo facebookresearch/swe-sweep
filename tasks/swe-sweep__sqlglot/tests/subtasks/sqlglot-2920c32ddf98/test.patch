@@ -1,0 +1,12 @@
+diff --git a/tests/dialects/test_oracle.py b/tests/dialects/test_oracle.py
+index 7ff7d8b0ec..945bf8a5fd 100644
+--- a/tests/dialects/test_oracle.py
++++ b/tests/dialects/test_oracle.py
+@@ -298,6 +298,7 @@ class TestOracle(Validator):
+             "SELECT /*+ ORDERED */*/* test */ FROM tbl",
+             "SELECT /*+ ORDERED */ * /* test */ FROM tbl",
+         )
++        self.validate_identity("TO_TIMESTAMP('foo')")
+ 
+     def test_join_marker(self):
+         self.validate_identity("SELECT e1.x, e2.x FROM e e1, e e2 WHERE e1.y (+) = e2.y")

@@ -1,0 +1,14 @@
+diff --git a/codec-http2/src/main/java/io/netty/handler/codec/http2/Http2MultiplexCodec.java b/codec-http2/src/main/java/io/netty/handler/codec/http2/Http2MultiplexCodec.java
+index ae98bfea08..aeeec3feb6 100644
+--- a/codec-http2/src/main/java/io/netty/handler/codec/http2/Http2MultiplexCodec.java
++++ b/codec-http2/src/main/java/io/netty/handler/codec/http2/Http2MultiplexCodec.java
+@@ -227,6 +227,9 @@ public class Http2MultiplexCodec extends Http2FrameCodec {
+             if (settings.initialWindowSize() != null) {
+                 initialOutboundStreamWindow = settings.initialWindowSize();
+             }
++        } else {
++            // Send any other frames down the pipeline
++            ctx.fireChannelRead(frame);
+         }
+     }
+ 

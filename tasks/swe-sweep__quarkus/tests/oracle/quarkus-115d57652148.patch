@@ -1,0 +1,276 @@
+diff --git a/extensions/security/runtime-spi/src/main/java/io/quarkus/security/spi/runtime/BlockingSecurityExecutor.java b/extensions/security/runtime-spi/src/main/java/io/quarkus/security/spi/runtime/BlockingSecurityExecutor.java
+new file mode 100644
+index 00000000000..50ed7af5839
+--- /dev/null
++++ b/extensions/security/runtime-spi/src/main/java/io/quarkus/security/spi/runtime/BlockingSecurityExecutor.java
+@@ -0,0 +1,42 @@
++package io.quarkus.security.spi.runtime;
++
++import java.util.concurrent.Executor;
++import java.util.function.Consumer;
++import java.util.function.Supplier;
++
++import io.quarkus.security.identity.AuthenticationRequestContext;
++import io.smallrye.mutiny.Uni;
++import io.smallrye.mutiny.subscription.UniEmitter;
++
++/**
++ * Blocking executor used for security purposes such {@link AuthenticationRequestContext#runBlocking(Supplier)}.
++ * Extensions may provide their own implementation if they need a single thread pool.
++ */
++public interface BlockingSecurityExecutor {
++
++    <T> Uni<T> executeBlocking(Supplier<? extends T> supplier);
++
++    static BlockingSecurityExecutor createBlockingExecutor(Supplier<Executor> executorSupplier) {
++        return new BlockingSecurityExecutor() {
++            @Override
++            public <T> Uni<T> executeBlocking(Supplier<? extends T> function) {
++                return Uni.createFrom().emitter(new Consumer<UniEmitter<? super T>>() {
++                    @Override
++                    public void accept(UniEmitter<? super T> uniEmitter) {
++                        executorSupplier.get().execute(new Runnable() {
++                            @Override
++                            public void run() {
++                                try {
++                                    uniEmitter.complete(function.get());
++                                } catch (Throwable t) {
++                                    uniEmitter.fail(t);
++                                }
++                            }
++                        });
++                    }
++                });
++            }
++        };
++    }
++
++}
+diff --git a/extensions/security/runtime/src/main/java/io/quarkus/security/runtime/IdentityProviderManagerCreator.java b/extensions/security/runtime/src/main/java/io/quarkus/security/runtime/IdentityProviderManagerCreator.java
+index b01c758d87f..31f6c48a991 100644
+--- a/extensions/security/runtime/src/main/java/io/quarkus/security/runtime/IdentityProviderManagerCreator.java
++++ b/extensions/security/runtime/src/main/java/io/quarkus/security/runtime/IdentityProviderManagerCreator.java
+@@ -1,17 +1,20 @@
+ package io.quarkus.security.runtime;
+ 
+ import java.util.concurrent.Executor;
++import java.util.function.Supplier;
+ 
+ import jakarta.enterprise.context.ApplicationScoped;
+ import jakarta.enterprise.inject.Instance;
+ import jakarta.enterprise.inject.Produces;
+ import jakarta.inject.Inject;
+ 
++import io.quarkus.arc.DefaultBean;
+ import io.quarkus.runtime.ExecutorRecorder;
+ import io.quarkus.security.identity.IdentityProvider;
+ import io.quarkus.security.identity.IdentityProviderManager;
+ import io.quarkus.security.identity.SecurityIdentityAugmentor;
+ import io.quarkus.security.identity.request.AnonymousAuthenticationRequest;
++import io.quarkus.security.spi.runtime.BlockingSecurityExecutor;
+ 
+ /**
+  * CDI bean than manages the lifecycle of the {@link io.quarkus.security.identity.IdentityProviderManager}
+@@ -25,6 +28,21 @@ public class IdentityProviderManagerCreator {
+     @Inject
+     Instance<SecurityIdentityAugmentor> augmentors;
+ 
++    @Inject
++    BlockingSecurityExecutor blockingExecutor;
++
++    @ApplicationScoped
++    @DefaultBean
++    @Produces
++    BlockingSecurityExecutor defaultBlockingExecutor() {
++        return BlockingSecurityExecutor.createBlockingExecutor(new Supplier<Executor>() {
++            @Override
++            public Executor get() {
++                return ExecutorRecorder.getCurrent();
++            }
++        });
++    }
++
+     @Produces
+     @ApplicationScoped
+     public IdentityProviderManager ipm() {
+@@ -42,13 +60,7 @@ public class IdentityProviderManagerCreator {
+         for (SecurityIdentityAugmentor i : augmentors) {
+             builder.addSecurityIdentityAugmentor(i);
+         }
+-        builder.setBlockingExecutor(new Executor() {
+-            @Override
+-            public void execute(Runnable command) {
+-                //TODO: should we be using vert.x blocking tasks here? We really should only have a single thread pool
+-                ExecutorRecorder.getCurrent().execute(command);
+-            }
+-        });
++        builder.setBlockingExecutor(blockingExecutor);
+         return builder.build();
+     }
+ 
+diff --git a/extensions/security/runtime/src/main/java/io/quarkus/security/runtime/QuarkusIdentityProviderManagerImpl.java b/extensions/security/runtime/src/main/java/io/quarkus/security/runtime/QuarkusIdentityProviderManagerImpl.java
+index c7fac23ca55..6d72b5dea2e 100644
+--- a/extensions/security/runtime/src/main/java/io/quarkus/security/runtime/QuarkusIdentityProviderManagerImpl.java
++++ b/extensions/security/runtime/src/main/java/io/quarkus/security/runtime/QuarkusIdentityProviderManagerImpl.java
+@@ -1,12 +1,13 @@
+ package io.quarkus.security.runtime;
+ 
++import static io.quarkus.security.spi.runtime.BlockingSecurityExecutor.createBlockingExecutor;
++
+ import java.util.ArrayList;
+ import java.util.Comparator;
+ import java.util.HashMap;
+ import java.util.List;
+ import java.util.Map;
+ import java.util.concurrent.Executor;
+-import java.util.function.Consumer;
+ import java.util.function.Function;
+ import java.util.function.Supplier;
+ 
+@@ -21,8 +22,8 @@ import io.quarkus.security.identity.SecurityIdentity;
+ import io.quarkus.security.identity.SecurityIdentityAugmentor;
+ import io.quarkus.security.identity.request.AnonymousAuthenticationRequest;
+ import io.quarkus.security.identity.request.AuthenticationRequest;
++import io.quarkus.security.spi.runtime.BlockingSecurityExecutor;
+ import io.smallrye.mutiny.Uni;
+-import io.smallrye.mutiny.subscription.UniEmitter;
+ 
+ /**
+  * A manager that can be used to get a specific type of identity provider.
+@@ -32,7 +33,7 @@ public class QuarkusIdentityProviderManagerImpl implements IdentityProviderManag
+ 
+     private final Map<Class<? extends AuthenticationRequest>, List<IdentityProvider>> providers;
+     private final List<SecurityIdentityAugmentor> augmenters;
+-    private final Executor blockingExecutor;
++    private final BlockingSecurityExecutor blockingExecutor;
+ 
+     private final AuthenticationRequestContext blockingRequestContext = new AuthenticationRequestContext() {
+         @Override
+@@ -48,21 +49,7 @@ public class QuarkusIdentityProviderManagerImpl implements IdentityProviderManag
+                             return Uni.createFrom().failure(t);
+                         }
+                     } else {
+-                        return Uni.createFrom().emitter(new Consumer<UniEmitter<? super SecurityIdentity>>() {
+-                            @Override
+-                            public void accept(UniEmitter<? super SecurityIdentity> uniEmitter) {
+-                                blockingExecutor.execute(new Runnable() {
+-                                    @Override
+-                                    public void run() {
+-                                        try {
+-                                            uniEmitter.complete(function.get());
+-                                        } catch (Throwable t) {
+-                                            uniEmitter.fail(t);
+-                                        }
+-                                    }
+-                                });
+-                            }
+-                        });
++                        return blockingExecutor.executeBlocking(function);
+                     }
+                 }
+             });
+@@ -199,7 +186,7 @@ public class QuarkusIdentityProviderManagerImpl implements IdentityProviderManag
+ 
+         private final Map<Class<? extends AuthenticationRequest>, List<IdentityProvider>> providers = new HashMap<>();
+         private final List<SecurityIdentityAugmentor> augmentors = new ArrayList<>();
+-        private Executor blockingExecutor;
++        private BlockingSecurityExecutor blockingExecutor;
+         private boolean built = false;
+ 
+         /**
+@@ -231,11 +218,20 @@ public class QuarkusIdentityProviderManagerImpl implements IdentityProviderManag
+          * @param blockingExecutor The executor to use for blocking tasks
+          * @return this builder
+          */
+-        public Builder setBlockingExecutor(Executor blockingExecutor) {
++        public Builder setBlockingExecutor(BlockingSecurityExecutor blockingExecutor) {
+             this.blockingExecutor = blockingExecutor;
+             return this;
+         }
+ 
++        /**
++         * @param blockingExecutor The executor to use for blocking tasks
++         * @return this builder
++         */
++        public Builder setBlockingExecutor(Executor blockingExecutor) {
++            this.blockingExecutor = createBlockingExecutor(() -> blockingExecutor);
++            return this;
++        }
++
+         /**
+          * @return a new {@link QuarkusIdentityProviderManagerImpl}
+          */
+diff --git a/extensions/vertx-http/deployment/src/main/java/io/quarkus/vertx/http/deployment/HttpSecurityProcessor.java b/extensions/vertx-http/deployment/src/main/java/io/quarkus/vertx/http/deployment/HttpSecurityProcessor.java
+index 26fe104..434738b 100644
+--- a/extensions/vertx-http/deployment/src/main/java/io/quarkus/vertx/http/deployment/HttpSecurityProcessor.java
++++ b/extensions/vertx-http/deployment/src/main/java/io/quarkus/vertx/http/deployment/HttpSecurityProcessor.java
+@@ -1,5 +1,7 @@
+ package io.quarkus.vertx.http.deployment;
+ 
++import static io.quarkus.arc.processor.DotNames.APPLICATION_SCOPED;
++
+ import java.security.Permission;
+ import java.util.HashMap;
+ import java.util.List;
+@@ -46,6 +48,7 @@
+ import io.quarkus.vertx.http.runtime.security.PermitSecurityPolicy;
+ import io.quarkus.vertx.http.runtime.security.RolesAllowedHttpSecurityPolicy;
+ import io.quarkus.vertx.http.runtime.security.SupplierImpl;
++import io.quarkus.vertx.http.runtime.security.VertxBlockingSecurityExecutor;
+ import io.vertx.core.http.ClientAuth;
+ 
+ public class HttpSecurityProcessor {
+@@ -254,6 +257,9 @@ void setupAuthenticationMechanisms(
+         }
+ 
+         if (capabilities.isPresent(Capability.SECURITY)) {
++            beanProducer
++                    .produce(AdditionalBeanBuildItem.builder().setUnremovable()
++                            .addBeanClass(VertxBlockingSecurityExecutor.class).setDefaultScope(APPLICATION_SCOPED).build());
+             beanProducer
+                     .produce(AdditionalBeanBuildItem.builder().setUnremovable().addBeanClass(HttpAuthenticator.class)
+                             .addBeanClass(HttpAuthorizer.class).build());
+diff --git a/extensions/vertx-http/runtime/src/main/java/io/quarkus/vertx/http/runtime/security/VertxBlockingSecurityExecutor.java b/extensions/vertx-http/runtime/src/main/java/io/quarkus/vertx/http/runtime/security/VertxBlockingSecurityExecutor.java
+new file mode 100644
+index 00000000000..dafbf85dc5c
+--- /dev/null
++++ b/extensions/vertx-http/runtime/src/main/java/io/quarkus/vertx/http/runtime/security/VertxBlockingSecurityExecutor.java
+@@ -0,0 +1,38 @@
++package io.quarkus.vertx.http.runtime.security;
++
++import static io.quarkus.vertx.core.runtime.context.VertxContextSafetyToggle.setContextSafe;
++import static io.smallrye.common.vertx.VertxContext.getOrCreateDuplicatedContext;
++
++import java.util.function.Supplier;
++
++import jakarta.inject.Inject;
++
++import io.quarkus.security.spi.runtime.BlockingSecurityExecutor;
++import io.smallrye.mutiny.Uni;
++import io.vertx.core.Context;
++import io.vertx.core.Handler;
++import io.vertx.core.Promise;
++import io.vertx.core.Vertx;
++
++public class VertxBlockingSecurityExecutor implements BlockingSecurityExecutor {
++
++    @Inject
++    Vertx vertx;
++
++    @Override
++    public <T> Uni<T> executeBlocking(Supplier<? extends T> supplier) {
++        Context local = getOrCreateDuplicatedContext(vertx);
++        setContextSafe(local, true);
++        return Uni
++                .createFrom()
++                .completionStage(
++                        local
++                                .executeBlocking(new Handler<Promise<T>>() {
++                                    @Override
++                                    public void handle(Promise<T> promise) {
++                                        promise.complete(supplier.get());
++                                    }
++                                })
++                                .toCompletionStage());
++    }
++}

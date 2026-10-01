@@ -1,0 +1,27 @@
+diff --git a/src/PhpSpreadsheet/Reader/Xlsx/Chart.php b/src/PhpSpreadsheet/Reader/Xlsx/Chart.php
+index 84b2e62b8..5a3439f2f 100644
+--- a/src/PhpSpreadsheet/Reader/Xlsx/Chart.php
++++ b/src/PhpSpreadsheet/Reader/Xlsx/Chart.php
+@@ -91,7 +91,21 @@ class Chart
+                                             break;
+                                         case 'valAx':
+                                             if (isset($chartDetail->title)) {
+-                                                $YaxisLabel = self::chartTitle($chartDetail->title->children($namespacesChartMeta['c']), $namespacesChartMeta);
++                                                $axisLabel = self::chartTitle($chartDetail->title->children($namespacesChartMeta['c']), $namespacesChartMeta);
++                                                $axPos = self::getAttribute($chartDetail->axPos, 'val', 'string');
++
++                                                switch ($axPos) {
++                                                    case 't':
++                                                    case 'b':
++                                                        $XaxisLabel = $axisLabel;
++
++                                                        break;
++                                                    case 'r':
++                                                    case 'l':
++                                                        $YaxisLabel = $axisLabel;
++
++                                                        break;
++                                                }
+                                             }
+ 
+                                             break;

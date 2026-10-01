@@ -1,0 +1,13 @@
+diff --git a/qutip/qobj.py b/qutip/qobj.py
+index 8d280d6b1..bf82a4a66 100644
+--- a/qutip/qobj.py
++++ b/qutip/qobj.py
+@@ -693,7 +693,7 @@ class Qobj(object):
+         """
+         POWER operation.
+         """
+-        if self.type not in ['oper', 'super']:
++        if self.shape[0] != self.shape[1]:
+             raise Exception("Raising a qobj to some power works only for " +
+                             "operators and super-operators (square matrices).")
+ 

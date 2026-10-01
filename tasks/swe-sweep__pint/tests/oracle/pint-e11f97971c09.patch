@@ -1,0 +1,19 @@
+diff --git a/pint/registry_helpers.py b/pint/registry_helpers.py
+index 622ae66..327315e 100644
+--- a/pint/registry_helpers.py
++++ b/pint/registry_helpers.py
+@@ -39,11 +39,11 @@ def _replace_units(original_units, values_by_name):
+     -------
+ 
+     """
+-    q = 1
++    q = UnitsContainer({})
+     for arg_name, exponent in original_units.items():
+-        q = q * values_by_name[arg_name] ** exponent
++        q *= getattr(values_by_name[arg_name], "_units", UnitsContainer({})) ** exponent
+ 
+-    return getattr(q, "_units", UnitsContainer({}))
++    return q
+ 
+ 
+ def _to_units_container(a, registry=None):

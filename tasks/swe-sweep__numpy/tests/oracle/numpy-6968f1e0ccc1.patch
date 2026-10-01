@@ -1,0 +1,75 @@
+diff --git a/benchmarks/benchmarks/bench_shape_base.py b/benchmarks/benchmarks/bench_shape_base.py
+index 0c7dc4e728e..375c43dcfe5 100644
+--- a/benchmarks/benchmarks/bench_shape_base.py
++++ b/benchmarks/benchmarks/bench_shape_base.py
+@@ -87,3 +87,21 @@ class Block3D(Benchmark):
+     def time_no_lists(self, n):
+         np.block(1)
+         np.block(np.eye(3 * n))
++
++
++class Kron(Benchmark):
++    """Benchmarks for Kronecker product of two arrays"""
++
++    def setup(self):
++        self.large_arr = np.random.random((10,) * 4)
++        self.large_mat = np.mat(np.random.random((100, 100)))
++        self.scalar = 7
++
++    def time_arr_kron(self):
++        np.kron(self.large_arr, self.large_arr)
++
++    def time_scalar_kron(self):
++        np.kron(self.large_arr, self.scalar)
++
++    def time_mat_kron(self):
++        np.kron(self.large_mat, self.large_mat)
+diff --git a/numpy/lib/shape_base.py b/numpy/lib/shape_base.py
+index b600b70f687..581da05984b 100644
+--- a/numpy/lib/shape_base.py
++++ b/numpy/lib/shape_base.py
+@@ -1040,25 +1040,33 @@ def kron(a, b):
+     b = asanyarray(b)
+     a = array(a, copy=False, subok=True, ndmin=b.ndim)
+     ndb, nda = b.ndim, a.ndim
++    nd = max(ndb, nda)
++
+     if (nda == 0 or ndb == 0):
+         return _nx.multiply(a, b)
++
+     as_ = a.shape
+     bs = b.shape
+     if not a.flags.contiguous:
+         a = reshape(a, as_)
+     if not b.flags.contiguous:
+         b = reshape(b, bs)
+-    nd = ndb
+-    if (ndb != nda):
+-        if (ndb > nda):
+-            as_ = (1,)*(ndb-nda) + as_
+-        else:
+-            bs = (1,)*(nda-ndb) + bs
+-            nd = nda
+-    result = outer(a, b).reshape(as_+bs)
+-    axis = nd-1
+-    for _ in range(nd):
+-        result = concatenate(result, axis=axis)
++
++    # Equalise the shapes by prepending smaller one with 1s
++    as_ = (1,)*max(0, ndb-nda) + as_
++    bs = (1,)*max(0, nda-ndb) + bs
++
++    # Compute the product
++    a_arr = _nx.asarray(a).reshape(a.size, 1)
++    b_arr = _nx.asarray(b).reshape(1, b.size)
++    result = a_arr * b_arr
++
++    # Reshape back
++    result = result.reshape(as_+bs)
++    transposer = _nx.arange(nd*2).reshape([2, nd]).ravel(order='f')
++    result = result.transpose(transposer)
++    result = result.reshape(_nx.multiply(as_, bs))
++
+     wrapper = get_array_prepare(a, b)
+     if wrapper is not None:
+         result = wrapper(result)

@@ -1,0 +1,286 @@
+diff --git a/packages/babel-parser/test/fixtures/experimental/bigint/decimal-as-property-name/input.js b/packages/babel-parser/test/fixtures/experimental/bigint/decimal-as-property-name/input.js
+new file mode 100644
+index 0000000000..f6c9c2b0d0
+--- /dev/null
++++ b/packages/babel-parser/test/fixtures/experimental/bigint/decimal-as-property-name/input.js
+@@ -0,0 +1 @@
++({ 0n: 0 });
+diff --git a/packages/babel-parser/test/fixtures/experimental/bigint/decimal-as-property-name/output.json b/packages/babel-parser/test/fixtures/experimental/bigint/decimal-as-property-name/output.json
+new file mode 100644
+index 0000000000..0e89977f19
+--- /dev/null
++++ b/packages/babel-parser/test/fixtures/experimental/bigint/decimal-as-property-name/output.json
+@@ -0,0 +1,129 @@
++{
++  "type": "File",
++  "start": 0,
++  "end": 12,
++  "loc": {
++    "start": {
++      "line": 1,
++      "column": 0
++    },
++    "end": {
++      "line": 1,
++      "column": 12
++    }
++  },
++  "program": {
++    "type": "Program",
++    "start": 0,
++    "end": 12,
++    "loc": {
++      "start": {
++        "line": 1,
++        "column": 0
++      },
++      "end": {
++        "line": 1,
++        "column": 12
++      }
++    },
++    "sourceType": "script",
++    "interpreter": null,
++    "body": [
++      {
++        "type": "ExpressionStatement",
++        "start": 0,
++        "end": 12,
++        "loc": {
++          "start": {
++            "line": 1,
++            "column": 0
++          },
++          "end": {
++            "line": 1,
++            "column": 12
++          }
++        },
++        "expression": {
++          "type": "ObjectExpression",
++          "start": 1,
++          "end": 10,
++          "loc": {
++            "start": {
++              "line": 1,
++              "column": 1
++            },
++            "end": {
++              "line": 1,
++              "column": 10
++            }
++          },
++          "properties": [
++            {
++              "type": "ObjectProperty",
++              "start": 3,
++              "end": 8,
++              "loc": {
++                "start": {
++                  "line": 1,
++                  "column": 3
++                },
++                "end": {
++                  "line": 1,
++                  "column": 8
++                }
++              },
++              "method": false,
++              "key": {
++                "type": "BigIntLiteral",
++                "start": 3,
++                "end": 5,
++                "loc": {
++                  "start": {
++                    "line": 1,
++                    "column": 3
++                  },
++                  "end": {
++                    "line": 1,
++                    "column": 5
++                  }
++                },
++                "extra": {
++                  "rawValue": "0",
++                  "raw": "0n"
++                },
++                "value": "0"
++              },
++              "computed": false,
++              "shorthand": false,
++              "value": {
++                "type": "NumericLiteral",
++                "start": 7,
++                "end": 8,
++                "loc": {
++                  "start": {
++                    "line": 1,
++                    "column": 7
++                  },
++                  "end": {
++                    "line": 1,
++                    "column": 8
++                  }
++                },
++                "extra": {
++                  "rawValue": 0,
++                  "raw": "0"
++                },
++                "value": 0
++              }
++            }
++          ],
++          "extra": {
++            "parenthesized": true,
++            "parenStart": 0
++          }
++        }
++      }
++    ],
++    "directives": []
++  }
++}
+\ No newline at end of file
+diff --git a/packages/babel-parser/test/fixtures/experimental/bigint/hex-as-property-name/input.js b/packages/babel-parser/test/fixtures/experimental/bigint/hex-as-property-name/input.js
+new file mode 100644
+index 0000000000..537fddf64f
+--- /dev/null
++++ b/packages/babel-parser/test/fixtures/experimental/bigint/hex-as-property-name/input.js
+@@ -0,0 +1 @@
++({ 0xbeefban: 0 });
+diff --git a/packages/babel-parser/test/fixtures/experimental/bigint/hex-as-property-name/output.json b/packages/babel-parser/test/fixtures/experimental/bigint/hex-as-property-name/output.json
+new file mode 100644
+index 0000000000..6f4825b89b
+--- /dev/null
++++ b/packages/babel-parser/test/fixtures/experimental/bigint/hex-as-property-name/output.json
+@@ -0,0 +1,129 @@
++{
++  "type": "File",
++  "start": 0,
++  "end": 19,
++  "loc": {
++    "start": {
++      "line": 1,
++      "column": 0
++    },
++    "end": {
++      "line": 1,
++      "column": 19
++    }
++  },
++  "program": {
++    "type": "Program",
++    "start": 0,
++    "end": 19,
++    "loc": {
++      "start": {
++        "line": 1,
++        "column": 0
++      },
++      "end": {
++        "line": 1,
++        "column": 19
++      }
++    },
++    "sourceType": "script",
++    "interpreter": null,
++    "body": [
++      {
++        "type": "ExpressionStatement",
++        "start": 0,
++        "end": 19,
++        "loc": {
++          "start": {
++            "line": 1,
++            "column": 0
++          },
++          "end": {
++            "line": 1,
++            "column": 19
++          }
++        },
++        "expression": {
++          "type": "ObjectExpression",
++          "start": 1,
++          "end": 17,
++          "loc": {
++            "start": {
++              "line": 1,
++              "column": 1
++            },
++            "end": {
++              "line": 1,
++              "column": 17
++            }
++          },
++          "properties": [
++            {
++              "type": "ObjectProperty",
++              "start": 3,
++              "end": 15,
++              "loc": {
++                "start": {
++                  "line": 1,
++                  "column": 3
++                },
++                "end": {
++                  "line": 1,
++                  "column": 15
++                }
++              },
++              "method": false,
++              "key": {
++                "type": "BigIntLiteral",
++                "start": 3,
++                "end": 12,
++                "loc": {
++                  "start": {
++                    "line": 1,
++                    "column": 3
++                  },
++                  "end": {
++                    "line": 1,
++                    "column": 12
++                  }
++                },
++                "extra": {
++                  "rawValue": "0xbeefba",
++                  "raw": "0xbeefban"
++                },
++                "value": "0xbeefba"
++              },
++              "computed": false,
++              "shorthand": false,
++              "value": {
++                "type": "NumericLiteral",
++                "start": 14,
++                "end": 15,
++                "loc": {
++                  "start": {
++                    "line": 1,
++                    "column": 14
++                  },
++                  "end": {
++                    "line": 1,
++                    "column": 15
++                  }
++                },
++                "extra": {
++                  "rawValue": 0,
++                  "raw": "0"
++                },
++                "value": 0
++              }
++            }
++          ],
++          "extra": {
++            "parenthesized": true,
++            "parenStart": 0
++          }
++        }
++      }
++    ],
++    "directives": []
++  }
++}
+\ No newline at end of file

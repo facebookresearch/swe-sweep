@@ -1,0 +1,719 @@
+{
+  "build_jobs": 4,
+  "container_repo": "/clippy",
+  "evaluation": {
+    "suite": "reproduction",
+    "visible_timeout": 14400
+  },
+  "upstream_image": "pandora-maxbug-clippy:rust-1.88.0",
+  "n_base_passing": 0,
+  "n_base_test_ignore": 1,
+  "oracle_digest": "acede8cfea87ca5f495d1fd93e5ec68746eb4dd488724006de983d210f87c18c",
+  "oracle_pristine_paths": [],
+  "upstream_commit": "9f7399e15e6172900e0591deb5a57a45769d8205",
+  "reproduction": {
+    "needs_build": false,
+    "suite": "clippy-ui",
+    "test_timeout": 1800
+  },
+  "schema": 2,
+  "subtasks": [
+    {
+      "f2p": [
+        "manual_flatten"
+      ],
+      "id": "clippy-0042521ce0a7",
+      "target_files": [
+        "clippy_lints/src/loops/manual_flatten.rs"
+      ]
+    },
+    {
+      "f2p": [
+        "manual_div_ceil"
+      ],
+      "id": "clippy-0308395dacc7",
+      "target_files": [
+        "clippy_lints/src/manual_div_ceil.rs"
+      ]
+    },
+    {
+      "f2p": [
+        "unnecessary_to_owned"
+      ],
+      "id": "clippy-04fff30e0f86",
+      "target_files": [
+        "clippy_lints/src/methods/unnecessary_to_owned.rs"
+      ]
+    },
+    {
+      "f2p": [
+        "allow_attributes"
+      ],
+      "id": "clippy-0ce80046fdc3",
+      "target_files": [
+        "clippy_utils/src/check_proc_macro.rs"
+      ]
+    },
+    {
+      "f2p": [
+        "semicolon_outside_block"
+      ],
+      "id": "clippy-10c54c3176f9",
+      "target_files": [
+        "clippy_lints/src/semicolon_block.rs"
+      ]
+    },
+    {
+      "f2p": [
+        "search_is_some",
+        "search_is_some_fixable_some"
+      ],
+      "id": "clippy-10c7a59eecd2",
+      "target_files": [
+        "clippy_utils/src/sugg.rs"
+      ]
+    },
+    {
+      "f2p": [
+        "non_zero_suggestions"
+      ],
+      "id": "clippy-1222ab668d6c",
+      "target_files": [
+        "clippy_lints/src/non_zero_suggestions.rs"
+      ]
+    },
+    {
+      "f2p": [
+        "implicit_hasher"
+      ],
+      "id": "clippy-2045b5c63e59",
+      "target_files": [
+        "clippy_lints/src/implicit_hasher.rs"
+      ]
+    },
+    {
+      "f2p": [
+        "manual_abs_diff"
+      ],
+      "id": "clippy-23f44da0bbc6",
+      "target_files": [
+        "clippy_lints/src/manual_abs_diff.rs"
+      ]
+    },
+    {
+      "f2p": [
+        "non_canonical_partial_ord_impl"
+      ],
+      "id": "clippy-243dc8283dc4",
+      "target_files": [
+        "clippy_lints/src/non_canonical_impls.rs"
+      ]
+    },
+    {
+      "f2p": [
+        "manual_assert"
+      ],
+      "id": "clippy-248a5cd8c057",
+      "target_files": [
+        "clippy_lints/src/manual_assert.rs"
+      ]
+    },
+    {
+      "f2p": [
+        "transmute_ptr_to_ref"
+      ],
+      "id": "clippy-272a26db1fae",
+      "target_files": [
+        "clippy_lints/src/transmute/transmute_ptr_to_ref.rs"
+      ]
+    },
+    {
+      "f2p": [
+        "mem_replace"
+      ],
+      "id": "clippy-2a45248bd056",
+      "target_files": [
+        "clippy_lints/src/mem_replace.rs"
+      ]
+    },
+    {
+      "f2p": [
+        "approx_const"
+      ],
+      "id": "clippy-2bd6b9f2b335",
+      "target_files": [
+        "clippy_lints/src/approx_const.rs"
+      ]
+    },
+    {
+      "f2p": [
+        "int_plus_one"
+      ],
+      "id": "clippy-2f095708fd8e",
+      "target_files": [
+        "clippy_lints/src/int_plus_one.rs"
+      ]
+    },
+    {
+      "f2p": [
+        "manual_unwrap_or_default"
+      ],
+      "id": "clippy-31a6f7218843",
+      "target_files": [
+        "clippy_lints/src/matches/manual_unwrap_or.rs"
+      ]
+    },
+    {
+      "f2p": [
+        "empty_loop_intrinsic"
+      ],
+      "id": "clippy-35fe8b3c67a9",
+      "target_files": [
+        "clippy_lints/src/loops/empty_loop.rs"
+      ]
+    },
+    {
+      "f2p": [
+        "branches_sharing_code/shared_at_bottom",
+        "branches_sharing_code/shared_at_top",
+        "branches_sharing_code/shared_at_top_and_bottom"
+      ],
+      "id": "clippy-36368dd5ca65",
+      "target_files": [
+        "clippy_lints/src/copies.rs"
+      ]
+    },
+    {
+      "f2p": [
+        "semicolon_inside_block"
+      ],
+      "id": "clippy-388514055559",
+      "target_files": [
+        "clippy_lints/src/semicolon_block.rs"
+      ]
+    },
+    {
+      "f2p": [
+        "unwrap_expect_used"
+      ],
+      "id": "clippy-3a73ebf92a8d",
+      "target_files": [
+        "clippy_lints/src/methods/mod.rs"
+      ]
+    },
+    {
+      "f2p": [
+        "doc/needless_doctest_main"
+      ],
+      "id": "clippy-3ab7126550f4",
+      "target_files": [
+        "clippy_lints/src/doc/needless_doctest_main.rs"
+      ]
+    },
+    {
+      "f2p": [
+        "neg_multiply"
+      ],
+      "id": "clippy-3cbb3786ea0f",
+      "target_files": [
+        "clippy_lints/src/neg_multiply.rs"
+      ]
+    },
+    {
+      "f2p": [
+        "bind_instead_of_map"
+      ],
+      "id": "clippy-42b6deb3dfab",
+      "target_files": [
+        "clippy_lints/src/methods/bind_instead_of_map.rs"
+      ]
+    },
+    {
+      "f2p": [
+        "unnecessary_semicolon"
+      ],
+      "id": "clippy-4ae9019d293f",
+      "target_files": [
+        "clippy_lints/src/unnecessary_semicolon.rs"
+      ]
+    },
+    {
+      "f2p": [
+        "unused_unit"
+      ],
+      "id": "clippy-4b3cf17d1e4a",
+      "target_files": [
+        "clippy_lints/src/unused_unit.rs"
+      ]
+    },
+    {
+      "f2p": [
+        "while_let_on_iterator"
+      ],
+      "id": "clippy-4e0c94488b70",
+      "target_files": [
+        "clippy_lints/src/loops/while_let_on_iterator.rs"
+      ]
+    },
+    {
+      "f2p": [
+        "eta"
+      ],
+      "id": "clippy-4e4415ab37ea",
+      "target_files": [
+        "clippy_lints/src/eta_reduction.rs"
+      ]
+    },
+    {
+      "f2p": [
+        "manual_slice_fill"
+      ],
+      "id": "clippy-50a9dfa371cf",
+      "target_files": [
+        "clippy_lints/src/loops/manual_slice_fill.rs",
+        "clippy_utils/src/ty/mod.rs"
+      ]
+    },
+    {
+      "f2p": [
+        "undocumented_unsafe_blocks/fail/Cargo"
+      ],
+      "id": "clippy-53e68f555b38",
+      "target_files": [
+        "clippy_lints/src/undocumented_unsafe_blocks.rs"
+      ]
+    },
+    {
+      "f2p": [
+        "borrow_as_ptr"
+      ],
+      "id": "clippy-550ec2651534",
+      "target_files": [
+        "clippy_lints/src/casts/borrow_as_ptr.rs"
+      ]
+    },
+    {
+      "f2p": [
+        "ptr_as_ptr"
+      ],
+      "id": "clippy-558b30366f21",
+      "target_files": [
+        "clippy_lints/src/casts/ptr_as_ptr.rs"
+      ]
+    },
+    {
+      "f2p": [
+        "manual_is_ascii_check"
+      ],
+      "id": "clippy-57dcfe3b6970",
+      "target_files": [
+        "clippy_lints/src/manual_is_ascii_check.rs"
+      ]
+    },
+    {
+      "f2p": [
+        "unit_arg",
+        "unit_arg_fixable"
+      ],
+      "id": "clippy-59047ddf1530",
+      "target_files": [
+        "clippy_lints/src/default.rs",
+        "clippy_lints/src/unit_types/unit_arg.rs",
+        "clippy_utils/src/lib.rs"
+      ]
+    },
+    {
+      "f2p": [
+        "disallowed_script_idents"
+      ],
+      "id": "clippy-5ddafb748735",
+      "target_files": [
+        "clippy_lints/src/disallowed_script_idents.rs"
+      ]
+    },
+    {
+      "f2p": [
+        "identity_op"
+      ],
+      "id": "clippy-6b1999a2d140",
+      "target_files": [
+        "clippy_lints/src/operators/identity_op.rs"
+      ]
+    },
+    {
+      "f2p": [
+        "excessive_precision"
+      ],
+      "id": "clippy-6ccd910a30b9",
+      "target_files": [
+        "clippy_lints/src/float_literal.rs"
+      ]
+    },
+    {
+      "f2p": [
+        "match_single_binding"
+      ],
+      "id": "clippy-71f61f80c32c",
+      "target_files": [
+        "clippy_lints/src/matches/match_single_binding.rs"
+      ]
+    },
+    {
+      "f2p": [
+        "dbg_macro/dbg_macro"
+      ],
+      "id": "clippy-7291e655409a",
+      "target_files": [
+        "clippy_lints/src/dbg_macro.rs"
+      ]
+    },
+    {
+      "f2p": [
+        "checked_unwrap/simple_conditionals"
+      ],
+      "id": "clippy-77b64a869dcf",
+      "target_files": [
+        "clippy_lints/src/unwrap.rs"
+      ]
+    },
+    {
+      "f2p": [
+        "question_mark"
+      ],
+      "id": "clippy-79aa5546a9f6",
+      "target_files": [
+        "clippy_utils/src/lib.rs"
+      ]
+    },
+    {
+      "f2p": [
+        "empty_line_after/outer_attribute"
+      ],
+      "id": "clippy-7d88489abaa8",
+      "target_files": [
+        "clippy_lints/src/empty_line_after.rs"
+      ]
+    },
+    {
+      "f2p": [
+        "unnecessary_safety_comment"
+      ],
+      "id": "clippy-7d9978e04c5f",
+      "target_files": [
+        "clippy_lints/src/undocumented_unsafe_blocks.rs"
+      ]
+    },
+    {
+      "f2p": [
+        "multiple_unsafe_ops_per_block"
+      ],
+      "id": "clippy-7e389435bfac",
+      "target_files": [
+        "clippy_lints/src/multiple_unsafe_ops_per_block.rs"
+      ]
+    },
+    {
+      "f2p": [
+        "exhaustive_items"
+      ],
+      "id": "clippy-873a50753544",
+      "target_files": [
+        "clippy_lints/src/exhaustive_items.rs"
+      ]
+    },
+    {
+      "f2p": [
+        "bit_masks"
+      ],
+      "id": "clippy-87df88ba3817",
+      "target_files": [
+        "clippy_lints/src/operators/bit_mask.rs"
+      ]
+    },
+    {
+      "f2p": [
+        "cmp_null"
+      ],
+      "id": "clippy-89c2a2de6b97",
+      "target_files": [
+        "clippy_lints/src/ptr.rs"
+      ]
+    },
+    {
+      "f2p": [
+        "crashes/missing_const_for_fn_14774"
+      ],
+      "id": "clippy-91af43591a1b",
+      "target_files": [
+        "clippy_lints/src/missing_const_for_fn.rs"
+      ]
+    },
+    {
+      "f2p": [
+        "crashes/ice-16950"
+      ],
+      "id": "clippy-951baaa50ddb",
+      "target_files": [
+        "clippy_utils/src/consts.rs"
+      ]
+    },
+    {
+      "f2p": [
+        "as_underscore_unfixable"
+      ],
+      "id": "clippy-9aa21fcf8884",
+      "target_files": [
+        "clippy_lints/src/casts/as_underscore.rs"
+      ]
+    },
+    {
+      "f2p": [
+        "needless_match"
+      ],
+      "id": "clippy-a22dd62fe43a",
+      "target_files": [
+        "clippy_lints/src/matches/needless_match.rs"
+      ]
+    },
+    {
+      "f2p": [
+        "or_then_unwrap"
+      ],
+      "id": "clippy-a3df9db35475",
+      "target_files": [
+        "clippy_lints/src/methods/or_then_unwrap.rs"
+      ]
+    },
+    {
+      "f2p": [
+        "assertions_on_result_states"
+      ],
+      "id": "clippy-a42d6f5bb5bf",
+      "target_files": [
+        "clippy_lints/src/assertions_on_result_states.rs"
+      ]
+    },
+    {
+      "f2p": [
+        "manual_let_else_match"
+      ],
+      "id": "clippy-a67839541cf1",
+      "target_files": [
+        "clippy_lints/src/manual_let_else.rs"
+      ]
+    },
+    {
+      "f2p": [
+        "nonstandard_macro_braces/conf_nonstandard_macro_braces"
+      ],
+      "id": "clippy-abd0fb4eac03",
+      "target_files": [
+        "clippy_lints/src/nonstandard_macro_braces.rs"
+      ]
+    },
+    {
+      "f2p": [
+        "from_str_radix_10"
+      ],
+      "id": "clippy-acc7acff0937",
+      "target_files": [
+        "clippy_lints/src/from_str_radix_10.rs"
+      ]
+    },
+    {
+      "f2p": [
+        "print_literal",
+        "write_literal"
+      ],
+      "id": "clippy-b0ebc258597e",
+      "target_files": [
+        "clippy_lints/src/write.rs"
+      ]
+    },
+    {
+      "f2p": [
+        "crashes/ice-14935"
+      ],
+      "id": "clippy-b3d9744c3682",
+      "target_files": [
+        "clippy_utils/src/ty/mod.rs"
+      ]
+    },
+    {
+      "f2p": [
+        "needless_return"
+      ],
+      "id": "clippy-b5466b7e84f2",
+      "target_files": [
+        "clippy_lints/src/panic_unimplemented.rs",
+        "clippy_lints/src/returns.rs"
+      ]
+    },
+    {
+      "f2p": [
+        "wildcard_enum_match_arm"
+      ],
+      "id": "clippy-b86cd1c1e9ac",
+      "target_files": [
+        "clippy_lints/src/matches/match_wild_enum.rs"
+      ]
+    },
+    {
+      "f2p": [
+        "match_as_ref"
+      ],
+      "id": "clippy-b8a93b319560",
+      "target_files": [
+        "clippy_lints/src/manual_option_as_slice.rs",
+        "clippy_utils/src/lib.rs"
+      ]
+    },
+    {
+      "f2p": [
+        "option_map_unit_fn_fixable"
+      ],
+      "id": "clippy-b9ae1a450fec",
+      "target_files": [
+        "clippy_lints/src/map_unit_fn.rs"
+      ]
+    },
+    {
+      "f2p": [
+        "bool_comparison"
+      ],
+      "id": "clippy-ba3fa46493f5",
+      "target_files": [
+        "clippy_lints/src/needless_bool.rs"
+      ]
+    },
+    {
+      "f2p": [
+        "filter_map_bool_then"
+      ],
+      "id": "clippy-c249e52fbe51",
+      "target_files": [
+        "clippy_lints/src/methods/filter_map_bool_then.rs"
+      ]
+    },
+    {
+      "f2p": [
+        "obfuscated_if_else"
+      ],
+      "id": "clippy-d4504a35ff94",
+      "target_files": [
+        "clippy_lints/src/methods/obfuscated_if_else.rs"
+      ]
+    },
+    {
+      "f2p": [
+        "infinite_loops"
+      ],
+      "id": "clippy-d7a2bd2fc862",
+      "target_files": [
+        "clippy_lints/src/loops/infinite_loop.rs"
+      ]
+    },
+    {
+      "f2p": [
+        "disallowed_names"
+      ],
+      "id": "clippy-dbf2ca5ecbe5",
+      "target_files": [
+        "clippy_lints/src/disallowed_names.rs"
+      ]
+    },
+    {
+      "f2p": [
+        "zombie_processes"
+      ],
+      "id": "clippy-e2f49f3ef344",
+      "target_files": [
+        "clippy_lints/src/zombie_processes.rs"
+      ]
+    },
+    {
+      "f2p": [
+        "manual_dangling_ptr"
+      ],
+      "id": "clippy-e534b60b1ef4",
+      "target_files": [
+        "clippy_lints/src/casts/manual_dangling_ptr.rs"
+      ]
+    },
+    {
+      "f2p": [
+        "no_effect"
+      ],
+      "id": "clippy-e8bac3d07a4e",
+      "target_files": [
+        "clippy_lints/src/no_effect.rs"
+      ]
+    },
+    {
+      "f2p": [
+        "borrow_deref_ref"
+      ],
+      "id": "clippy-eb0b5e19f320",
+      "target_files": [
+        "clippy_lints/src/borrow_deref_ref.rs"
+      ]
+    },
+    {
+      "f2p": [
+        "crashes/ice-15666",
+        "elidable_lifetime_names"
+      ],
+      "id": "clippy-f8e60764685a",
+      "target_files": [
+        "clippy_lints/src/lifetimes.rs"
+      ]
+    },
+    {
+      "f2p": [
+        "four_forward_slashes"
+      ],
+      "id": "clippy-f8f9f69cd4cc",
+      "target_files": [
+        "clippy_lints/src/four_forward_slashes.rs"
+      ]
+    },
+    {
+      "f2p": [
+        "match_ref_pats"
+      ],
+      "id": "clippy-fb74b2a807a2",
+      "target_files": [
+        "clippy_lints/src/matches/match_ref_pats.rs"
+      ]
+    },
+    {
+      "f2p": [
+        "manual_swap_auto_fix"
+      ],
+      "id": "clippy-fea706a39569",
+      "target_files": [
+        "clippy_lints/src/swap.rs"
+      ]
+    },
+    {
+      "f2p": [
+        "useless_conversion"
+      ],
+      "id": "clippy-fea9d837d1f1",
+      "target_files": [
+        "clippy_lints/src/useless_conversion.rs"
+      ]
+    },
+    {
+      "f2p": [
+        "cast_size"
+      ],
+      "id": "clippy-ff8bd1213b75",
+      "target_files": [
+        "clippy_lints/src/casts/cast_possible_truncation.rs"
+      ]
+    }
+  ],
+  "task": "clippy",
+  "version": "rust-1.88.0"
+}

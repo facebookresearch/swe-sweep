@@ -1,0 +1,52 @@
+diff --git a/clippy_lints/src/manual_option_as_slice.rs b/clippy_lints/src/manual_option_as_slice.rs
+index 922db174e..b036e78cd 100644
+--- a/clippy_lints/src/manual_option_as_slice.rs
++++ b/clippy_lints/src/manual_option_as_slice.rs
+@@ -1,7 +1,7 @@
+ use clippy_config::Conf;
+ use clippy_utils::diagnostics::{span_lint, span_lint_and_sugg};
+ use clippy_utils::msrvs::Msrv;
+-use clippy_utils::{is_none_arm, msrvs, peel_hir_expr_refs, sym};
++use clippy_utils::{is_none_pattern, msrvs, peel_hir_expr_refs, sym};
+ use rustc_errors::Applicability;
+ use rustc_hir::def::{DefKind, Res};
+ use rustc_hir::{Arm, Expr, ExprKind, LangItem, Pat, PatKind, QPath, is_range_literal};
+@@ -60,8 +60,8 @@ impl LateLintPass<'_> for ManualOptionAsSlice {
+         }
+         match expr.kind {
+             ExprKind::Match(scrutinee, [arm1, arm2], _) => {
+-                if is_none_arm(cx, arm2) && check_arms(cx, arm2, arm1)
+-                    || is_none_arm(cx, arm1) && check_arms(cx, arm1, arm2)
++                if is_none_pattern(cx, arm2.pat) && check_arms(cx, arm2, arm1)
++                    || is_none_pattern(cx, arm1.pat) && check_arms(cx, arm1, arm2)
+                 {
+                     check_as_ref(cx, scrutinee, span, self.msrv);
+                 }
+diff --git a/clippy_utils/src/lib.rs b/clippy_utils/src/lib.rs
+index 5223cd872..3e48397fb 100644
+--- a/clippy_utils/src/lib.rs
++++ b/clippy_utils/src/lib.rs
+@@ -329,13 +329,17 @@ pub fn is_wild(pat: &Pat<'_>) -> bool {
+     matches!(pat.kind, PatKind::Wild)
+ }
+ 
+-// Checks if arm has the form `None => None`
+-pub fn is_none_arm(cx: &LateContext<'_>, arm: &Arm<'_>) -> bool {
+-    matches!(
+-        arm.pat.kind,
++/// Checks if the `pat` is `None`.
++pub fn is_none_pattern(cx: &LateContext<'_>, pat: &Pat<'_>) -> bool {
++    matches!(pat.kind,
+         PatKind::Expr(PatExpr { kind: PatExprKind::Path(qpath), .. })
+-            if is_res_lang_ctor(cx, cx.qpath_res(qpath, arm.pat.hir_id), OptionNone)
+-    )
++            if is_res_lang_ctor(cx, cx.qpath_res(qpath, pat.hir_id), OptionNone))
++}
++
++/// Checks if `arm` has the form `None => None`.
++pub fn is_none_arm(cx: &LateContext<'_>, arm: &Arm<'_>) -> bool {
++    is_none_pattern(cx, arm.pat)
++        && matches!(peel_blocks(arm.body).kind, ExprKind::Path(qpath) if is_res_lang_ctor(cx, cx.qpath_res(&qpath, arm.body.hir_id), OptionNone))
+ }
+ 
+ /// Checks if the given `QPath` belongs to a type alias.

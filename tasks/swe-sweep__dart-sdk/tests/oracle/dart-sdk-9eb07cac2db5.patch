@@ -1,0 +1,18 @@
+diff --git a/pkg/analyzer/lib/src/dart/resolver/resolution_visitor.dart b/pkg/analyzer/lib/src/dart/resolver/resolution_visitor.dart
+index abe9aaa170e..616212f209d 100644
+--- a/pkg/analyzer/lib/src/dart/resolver/resolution_visitor.dart
++++ b/pkg/analyzer/lib/src/dart/resolver/resolution_visitor.dart
+@@ -438,6 +438,13 @@ class ResolutionVisitor extends RecursiveAstVisitor<void> {
+           nameOffset: nameOffset,
+           parameterKind: node.kind,
+         )..constantInitializer = node.defaultValue;
++      } else if (node.parameter is SuperFormalParameter) {
++        // Only for recovery, this should not happen in valid code.
++        element = DefaultSuperFormalParameterElementImpl(
++          name: name,
++          nameOffset: nameOffset,
++          parameterKind: node.kind,
++        )..constantInitializer = node.defaultValue;
+       } else {
+         element = DefaultParameterElementImpl(
+           name: name,

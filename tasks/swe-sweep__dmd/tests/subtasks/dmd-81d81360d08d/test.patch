@@ -1,0 +1,17 @@
+diff --git a/compiler/test/compilable/scope.d b/compiler/test/compilable/scope.d
+index 95c784627f..44f54f7468 100644
+--- a/compiler/test/compilable/scope.d
++++ b/compiler/test/compilable/scope.d
+@@ -253,3 +253,12 @@ void main21209()
+     testForeach(cs);
+     testForeach(fs);
+ }
++
++struct S23669
++{
++    string[] a;
++    @safe void reserve() scope
++    {
++        a.length += 1;
++    }
++}

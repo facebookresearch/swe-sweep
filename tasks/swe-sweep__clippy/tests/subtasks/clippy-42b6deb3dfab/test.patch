@@ -1,0 +1,51 @@
+diff --git a/tests/ui/bind_instead_of_map.fixed b/tests/ui/bind_instead_of_map.fixed
+index a1c4cb5a4..b1c83970a 100644
+--- a/tests/ui/bind_instead_of_map.fixed
++++ b/tests/ui/bind_instead_of_map.fixed
+@@ -26,3 +26,9 @@ pub fn foo() -> Option<String> {
+ pub fn example2(x: bool) -> Option<&'static str> {
+     Some("a").and_then(|s| Some(if x { s } else { return None }))
+ }
++
++fn issue16861(b: bool, res: Result<u32, u32>) {
++    let _: Result<u32, u32> = res.or_else(|_| panic!("should not happen"));
++    let _: Result<u32, u32> = res.map_err(|_| if b { panic!("should not happen") } else { 42 });
++    //~^ bind_instead_of_map
++}
+diff --git a/tests/ui/bind_instead_of_map.rs b/tests/ui/bind_instead_of_map.rs
+index 1308fa9f4..65e7e490a 100644
+--- a/tests/ui/bind_instead_of_map.rs
++++ b/tests/ui/bind_instead_of_map.rs
+@@ -26,3 +26,9 @@ pub fn foo() -> Option<String> {
+ pub fn example2(x: bool) -> Option<&'static str> {
+     Some("a").and_then(|s| Some(if x { s } else { return None }))
+ }
++
++fn issue16861(b: bool, res: Result<u32, u32>) {
++    let _: Result<u32, u32> = res.or_else(|_| panic!("should not happen"));
++    let _: Result<u32, u32> = res.or_else(|_| if b { panic!("should not happen") } else { Err(42) });
++    //~^ bind_instead_of_map
++}
+diff --git a/tests/ui/bind_instead_of_map.stderr b/tests/ui/bind_instead_of_map.stderr
+index 08f85fb58..1e2b93adf 100644
+--- a/tests/ui/bind_instead_of_map.stderr
++++ b/tests/ui/bind_instead_of_map.stderr
+@@ -22,5 +22,17 @@ error: using `Result.and_then(Ok)`, which is a no-op
+ LL |     let _ = x.and_then(Ok);
+    |             ^^^^^^^^^^^^^^ help: use the expression directly: `x`
+ 
+-error: aborting due to 3 previous errors
++error: using `Result.or_else(|x| Err(y))`, which is more succinctly expressed as `map_err(|x| y)`
++  --> tests/ui/bind_instead_of_map.rs:32:31
++   |
++LL |     let _: Result<u32, u32> = res.or_else(|_| if b { panic!("should not happen") } else { Err(42) });
++   |                               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
++   |
++help: use `map_err` instead
++   |
++LL -     let _: Result<u32, u32> = res.or_else(|_| if b { panic!("should not happen") } else { Err(42) });
++LL +     let _: Result<u32, u32> = res.map_err(|_| if b { panic!("should not happen") } else { 42 });
++   |
++
++error: aborting due to 4 previous errors
+ 

@@ -1,0 +1,29 @@
+diff --git a/test/plugin/advancedFormat.test.js b/test/plugin/advancedFormat.test.js
+index 955f940..2905538 100644
+--- a/test/plugin/advancedFormat.test.js
++++ b/test/plugin/advancedFormat.test.js
+@@ -5,6 +5,7 @@ import advancedFormat from '../../src/plugin/advancedFormat'
+ import weekOfYear from '../../src/plugin/weekOfYear'
+ import weekYear from '../../src/plugin/weekYear'
+ import '../../src/locale/zh-cn'
++import '../../src/locale/nl'
+ 
+ dayjs.extend(weekYear)
+ dayjs.extend(weekOfYear)
+@@ -44,12 +45,16 @@ it('Format Day of Month Do 1 - 31', () => {
+   expect(dayjs(d).format('Do')).toBe(moment(d).format('Do'))
+   d = '2018-05-04 00:00:00.000'
+   expect(dayjs(d).format('Do')).toBe(moment(d).format('Do'))
++  d = '2018-05-08 00:00:00.000'
++  expect(dayjs(d).locale('nl').format('Do')).toBe(moment(d).locale('nl').format('Do'))
+   d = '2018-05-11'
+   expect(dayjs(d).format('Do')).toBe(moment(d).format('Do'))
+   d = '2018-05-12'
+   expect(dayjs(d).format('Do')).toBe(moment(d).format('Do'))
+   d = '2018-05-13'
+   expect(dayjs(d).format('Do')).toBe(moment(d).format('Do'))
++  d = '2018-05-19 00:00:00.000'
++  expect(dayjs(d).locale('nl').format('Do')).toBe(moment(d).locale('nl').format('Do'))
+   d = '2018-05-22'
+   expect(dayjs(d).format('Do')).toBe(moment(d).format('Do'))
+ })

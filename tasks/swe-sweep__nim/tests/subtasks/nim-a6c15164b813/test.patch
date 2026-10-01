@@ -1,0 +1,14 @@
+diff --git a/tests/statictypes/t20148.nim b/tests/statictypes/t20148.nim
+new file mode 100644
+index 000000000..d74a7755e
+--- /dev/null
++++ b/tests/statictypes/t20148.nim
+@@ -0,0 +1,8 @@
++type Percent = range[0.0 .. 1.0]
++# type Percent = float # using unlimited `float` works fine
++
++proc initColor*(alpha: Percent): bool =
++  echo alpha
++
++const moduleInstanceStyle = initColor(1)
++# let moduleInstanceStyle = initColor(1) # using runtime conversion works fine

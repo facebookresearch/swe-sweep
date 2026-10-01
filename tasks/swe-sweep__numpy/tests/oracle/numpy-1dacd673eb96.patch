@@ -1,0 +1,13 @@
+diff --git a/numpy/core/src/multiarray/multiarraymodule.c b/numpy/core/src/multiarray/multiarraymodule.c
+index f78a748c07..fe19cc9ad5 100644
+--- a/numpy/core/src/multiarray/multiarraymodule.c
++++ b/numpy/core/src/multiarray/multiarraymodule.c
+@@ -2116,7 +2116,7 @@ array_fromstring(PyObject *NPY_UNUSED(ignored), PyObject *args, PyObject *keywds
+         if (DEPRECATE(
+                 "The binary mode of fromstring is deprecated, as it behaves "
+                 "surprisingly on unicode inputs. Use frombuffer instead") < 0) {
+-            Py_DECREF(descr);
++            Py_XDECREF(descr);
+             return NULL;
+         }
+     }

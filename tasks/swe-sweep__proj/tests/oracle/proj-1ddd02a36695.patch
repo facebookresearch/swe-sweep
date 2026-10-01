@@ -1,0 +1,17 @@
+diff --git a/src/iso19111/io.cpp b/src/iso19111/io.cpp
+index d5d0d1c00..e358fc108 100644
+--- a/src/iso19111/io.cpp
++++ b/src/iso19111/io.cpp
+@@ -3773,6 +3773,12 @@ WKTParser::Private::buildProjectedCRS(const WKTNodeNNPtr &node) {
+         ThrowNotExpectedCSType("Cartesian");
+     }
+ 
++    if (cartesianCS->axisList().size() == 3 &&
++        baseGeodCRS->coordinateSystem()->axisList().size() == 2) {
++        baseGeodCRS = NN_NO_CHECK(util::nn_dynamic_pointer_cast<GeodeticCRS>(
++            baseGeodCRS->promoteTo3D(std::string(), dbContext_)));
++    }
++
+     addExtensionProj4ToProp(nodeP, props);
+ 
+     return ProjectedCRS::create(props, baseGeodCRS, conversion,

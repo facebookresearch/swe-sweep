@@ -1,0 +1,12 @@
+diff --git a/extensions/resteasy-reactive/rest-client-reactive/deployment/src/test/java/io/quarkus/rest/client/reactive/multipart/MultipartFilenameTest.java b/extensions/resteasy-reactive/rest-client-reactive/deployment/src/test/java/io/quarkus/rest/client/reactive/multipart/MultipartFilenameTest.java
+index 69bec01287d..f3455861625 100644
+--- a/extensions/resteasy-reactive/rest-client-reactive/deployment/src/test/java/io/quarkus/rest/client/reactive/multipart/MultipartFilenameTest.java
++++ b/extensions/resteasy-reactive/rest-client-reactive/deployment/src/test/java/io/quarkus/rest/client/reactive/multipart/MultipartFilenameTest.java
+@@ -350,7 +350,6 @@ public class MultipartFilenameTest {
+ 
+     public static class ClientFormUsingInputStream {
+         @FormParam("myFile")
+-        @PartType(APPLICATION_OCTET_STREAM)
+         @PartFilename(FILE_NAME)
+         public InputStream file;
+     }

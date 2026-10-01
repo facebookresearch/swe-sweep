@@ -1,0 +1,14 @@
+diff --git a/actionpack/lib/action_dispatch/http/permissions_policy.rb b/actionpack/lib/action_dispatch/http/permissions_policy.rb
+index 9e4b22ca533..29234825016 100644
+--- a/actionpack/lib/action_dispatch/http/permissions_policy.rb
++++ b/actionpack/lib/action_dispatch/http/permissions_policy.rb
+@@ -206,7 +206,8 @@ module ActionDispatch # :nodoc:
+           if context.nil?
+             raise RuntimeError, "Missing context for the dynamic permissions policy source: #{source.inspect}"
+           else
+-            context.instance_exec(&source)
++            resolved = context.instance_exec(&source)
++            apply_mappings(Array.wrap(resolved))
+           end
+         else
+           raise RuntimeError, "Unexpected permissions policy source: #{source.inspect}"

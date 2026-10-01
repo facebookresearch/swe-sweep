@@ -1,0 +1,61 @@
+diff --git a/tests/ui/wildcard_enum_match_arm.fixed b/tests/ui/wildcard_enum_match_arm.fixed
+index 141ff6eb2..e40e52673 100644
+--- a/tests/ui/wildcard_enum_match_arm.fixed
++++ b/tests/ui/wildcard_enum_match_arm.fixed
+@@ -105,3 +105,17 @@ fn main() {
+         }
+     }
+ }
++
++fn issue15091() {
++    enum Foo {
++        A,
++        B,
++        C,
++    }
++
++    match Foo::A {
++        Foo::A => {},
++        r#type @ Foo::B | r#type @ Foo::C => {},
++        //~^ wildcard_enum_match_arm
++    }
++}
+diff --git a/tests/ui/wildcard_enum_match_arm.rs b/tests/ui/wildcard_enum_match_arm.rs
+index a13684e91..8259f0598 100644
+--- a/tests/ui/wildcard_enum_match_arm.rs
++++ b/tests/ui/wildcard_enum_match_arm.rs
+@@ -105,3 +105,17 @@ fn main() {
+         }
+     }
+ }
++
++fn issue15091() {
++    enum Foo {
++        A,
++        B,
++        C,
++    }
++
++    match Foo::A {
++        Foo::A => {},
++        r#type => {},
++        //~^ wildcard_enum_match_arm
++    }
++}
+diff --git a/tests/ui/wildcard_enum_match_arm.stderr b/tests/ui/wildcard_enum_match_arm.stderr
+index 088c6b7b2..1f1de166d 100644
+--- a/tests/ui/wildcard_enum_match_arm.stderr
++++ b/tests/ui/wildcard_enum_match_arm.stderr
+@@ -40,5 +40,11 @@ error: wildcard match will also match any future added variants
+ LL |             _ => (),
+    |             ^ help: try: `Enum::B | Enum::__Private`
+ 
+-error: aborting due to 6 previous errors
++error: wildcard match will also match any future added variants
++  --> tests/ui/wildcard_enum_match_arm.rs:118:9
++   |
++LL |         r#type => {},
++   |         ^^^^^^ help: try: `r#type @ Foo::B | r#type @ Foo::C`
++
++error: aborting due to 7 previous errors
+ 

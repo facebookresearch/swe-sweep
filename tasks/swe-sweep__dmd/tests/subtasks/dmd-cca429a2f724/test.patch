@@ -1,0 +1,51 @@
+diff --git a/compiler/test/compilable/test18646.d b/compiler/test/compilable/test18646.d
+new file mode 100644
+index 0000000000..a9d62a1eba
+--- /dev/null
++++ b/compiler/test/compilable/test18646.d
+@@ -0,0 +1,14 @@
++// https://issues.dlang.org/show_bug.cgi?id=18646
++class SuperClass {}
++
++class TemplatedClass(T : SuperClass) {}
++
++class A18646 : SuperClass {
++    alias T = TemplatedClass!B18646;
++}
++
++class B18646 : SuperClass {
++    alias T = TemplatedClass!C18646;
++}
++
++class C18646 : SuperClass {}
+diff --git a/compiler/test/compilable/test19585.d b/compiler/test/compilable/test19585.d
+new file mode 100644
+index 0000000000..a84a7ee3cd
+--- /dev/null
++++ b/compiler/test/compilable/test19585.d
+@@ -0,0 +1,10 @@
++// https://issues.dlang.org/show_bug.cgi?id=19585
++struct S19585
++{
++    M2 stdin;
++}
++
++mixin template Handle(T, T invalid_value = T.init) {}
++
++struct M1 { mixin Handle!(size_t); }
++struct M2 { mixin Handle!(M1); }
+diff --git a/compiler/test/compilable/test22813.d b/compiler/test/compilable/test22813.d
+new file mode 100644
+index 0000000000..7cdd5345b9
+--- /dev/null
++++ b/compiler/test/compilable/test22813.d
+@@ -0,0 +1,9 @@
++// https://issues.dlang.org/show_bug.cgi?id=22813
++struct Template(int i) { }
++uint test22813()
++{
++    Template!(1) x;
++    return 0;
++}
++immutable constant = test22813();
++alias X = Template!constant;

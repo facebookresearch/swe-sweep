@@ -1,0 +1,34 @@
+diff --git a/plugin/trino-hive/src/test/java/io/trino/plugin/hive/TestParquetPageSkipping.java b/plugin/trino-hive/src/test/java/io/trino/plugin/hive/TestParquetPageSkipping.java
+index f3793bbeb32..48d01323737 100644
+--- a/plugin/trino-hive/src/test/java/io/trino/plugin/hive/TestParquetPageSkipping.java
++++ b/plugin/trino-hive/src/test/java/io/trino/plugin/hive/TestParquetPageSkipping.java
+@@ -24,6 +24,7 @@ import org.testng.annotations.Test;
+ import static io.trino.testing.assertions.Assert.assertEquals;
+ import static io.trino.tpch.TpchTable.ORDERS;
+ import static java.lang.String.format;
++import static io.trino.testing.sql.TestTable.randomTableSuffix;
+ import static org.testng.Assert.assertTrue;
+ 
+ public class TestParquetPageSkipping
+@@ -99,6 +100,21 @@ public class TestParquetPageSkipping
+         }
+     }
+ 
++    @Test
++    public void testFilteringOnColumnNameWithDot()
++    {
++        String nameInSql = "\"a.dot\"";
++        String tableName = "test_column_name_with_dot_" + randomTableSuffix();
++
++        assertUpdate("CREATE TABLE " + tableName + "(key varchar(50), " + nameInSql + " varchar(50)) WITH (format = 'PARQUET')");
++        assertUpdate("INSERT INTO " + tableName + " VALUES ('null value', NULL), ('sample value', 'abc'), ('other value', 'xyz')", 3);
++
++        assertQuery("SELECT key FROM " + tableName + " WHERE " + nameInSql + " IS NULL", "VALUES ('null value')");
++        assertQuery("SELECT key FROM " + tableName + " WHERE " + nameInSql + " = 'abc'", "VALUES ('sample value')");
++
++        assertUpdate("DROP TABLE " + tableName);
++    }
++
+     @Test(dataProvider = "dataType")
+     public void testPageSkipping(String sortByColumn, String sortByColumnType, Object[][] valuesArray)
+     {

@@ -1,0 +1,13 @@
+diff --git a/scipy/optimize/_root.py b/scipy/optimize/_root.py
+index 8dc02f19c4..461050b871 100644
+--- a/scipy/optimize/_root.py
++++ b/scipy/optimize/_root.py
+@@ -283,7 +283,7 @@ def _root_nonlin_solve(fun, x0, args=(), jac=None,
+                 }[_method]
+ 
+     if args:
+-        if jac:
++        if jac is True:
+             def f(x):
+                 return func(x, *args)[0]
+         else:

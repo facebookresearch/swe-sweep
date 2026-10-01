@@ -1,0 +1,33 @@
+diff --git a/compiler/src/dmd/backend/cgelem.d b/compiler/src/dmd/backend/cgelem.d
+index 51d5e26a1b..da0d01bab8 100644
+--- a/compiler/src/dmd/backend/cgelem.d
++++ b/compiler/src/dmd/backend/cgelem.d
+@@ -483,8 +483,14 @@ private elem *fixconvop(elem *e)
+              cop == OPu8_16 || cop == OPs8_16))
+     {   if (e.Eoper != OPshlass && e.Eoper != OPshrass && e.Eoper != OPashrass)
+             e.EV.E2 = el_una(icop,tym,e2);
+-        //printf("after1\n");
+-        //elem_print(e);
++
++        version (MARS)
++        {
++            // https://issues.dlang.org/show_bug.cgi?id=23618
++            if ((cop == OPu16_32 || cop == OPu8_16) && e.Eoper == OPashrass)
++                e.Eoper = OPshrass;     // always unsigned right shift for MARS
++        }
++
+         return e;
+     }
+ 
+diff --git a/compiler/src/dmd/e2ir.d b/compiler/src/dmd/e2ir.d
+index 50ad34b720..fd6d545e47 100644
+--- a/compiler/src/dmd/e2ir.d
++++ b/compiler/src/dmd/e2ir.d
+@@ -2891,6 +2891,7 @@ elem* toElem(Expression e, IRState *irs)
+ 
+     elem* visitUshrAssign(UshrAssignExp e)
+     {
++        //printf("UShrAssignExp.toElem() %s, %s\n", e.e1.type.toChars(), e.e1.toChars());
+         return toElemBinAssign(e, OPshrass);
+     }
+ 

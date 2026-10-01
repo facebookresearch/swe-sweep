@@ -1,0 +1,12 @@
+diff --git a/src/click/shell_completion.py b/src/click/shell_completion.py
+index 3e6bc44..1f42d25 100644
+--- a/src/click/shell_completion.py
++++ b/src/click/shell_completion.py
+@@ -471,6 +471,7 @@ def _is_incomplete_option(args: t.List[str], param: Parameter) -> bool:
+ 
+         if _start_of_option(arg):
+             last_option = arg
++            break
+ 
+     return last_option is not None and last_option in param.opts
+ 

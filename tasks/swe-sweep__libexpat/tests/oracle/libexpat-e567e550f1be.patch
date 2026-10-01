@@ -1,0 +1,18 @@
+diff --git a/expat/lib/xmltok.c b/expat/lib/xmltok.c
+index 387c6e44..b2c1035c 100644
+--- a/expat/lib/xmltok.c
++++ b/expat/lib/xmltok.c
+@@ -1177,6 +1177,13 @@ doParseXmlDecl(const ENCODING *(*encodingFinder)(const ENCODING *, const char *,
+       *versionPtr = val;
+     if (versionEndPtr)
+       *versionEndPtr = ptr;
++    /* The version number must not be empty; VersionNum requires at least
++       one character.  The encoding and standalone pseudo-attributes below
++       already reject an empty value, so keep version consistent. */
++    if (val == ptr - enc->minBytesPerChar) {
++      *badPtr = val;
++      return 0;
++    }
+     if (! parsePseudoAttribute(enc, ptr, end, &name, &nameEnd, &val, &ptr)) {
+       *badPtr = ptr;
+       return 0;

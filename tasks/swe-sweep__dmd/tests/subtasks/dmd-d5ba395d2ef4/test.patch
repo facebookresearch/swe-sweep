@@ -1,0 +1,28 @@
+diff --git a/compiler/test/fail_compilation/imports/import23873.d b/compiler/test/fail_compilation/imports/import23873.d
+new file mode 100644
+index 0000000000..39334cf62e
+--- /dev/null
++++ b/compiler/test/fail_compilation/imports/import23873.d
+@@ -0,0 +1,2 @@
++static if ;
++else auto x
+diff --git a/compiler/test/fail_compilation/test23873.d b/compiler/test/fail_compilation/test23873.d
+new file mode 100644
+index 0000000000..bb6a71dcc2
+--- /dev/null
++++ b/compiler/test/fail_compilation/test23873.d
+@@ -0,0 +1,14 @@
++// https://issues.dlang.org/show_bug.cgi?id=23873
++
++/*
++TEST_OUTPUT:
++---
++fail_compilation/imports/import23873.d(1): Error: (expression) expected following `static if`
++fail_compilation/imports/import23873.d(1): Error: declaration expected following attribute, not `;`
++fail_compilation/imports/import23873.d(3): Error: no identifier for declarator `x`
++---
++*/
++struct Foo
++{
++    import imports.import23873;
++}

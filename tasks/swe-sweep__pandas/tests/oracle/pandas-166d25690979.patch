@@ -1,0 +1,46 @@
+diff --git a/pandas/core/generic.py b/pandas/core/generic.py
+index 38a2cb46ad..45ae979d5a 100644
+--- a/pandas/core/generic.py
++++ b/pandas/core/generic.py
+@@ -5827,14 +5827,22 @@ class NDFrame(PandasObject, indexing.IndexingMixin):
+                         "Only a column name can be used for the "
+                         "key in a dtype mappings argument."
+                     )
++
++            # GH#44417 cast to Series so we can use .iat below, which will be
++            #  robust in case we
++            from pandas import Series
++
++            dtype_ser = Series(dtype, dtype=object)
++            dtype_ser = dtype_ser.reindex(self.columns, fill_value=None, copy=False)
++
+             results = []
+-            for col_name, col in self.items():
+-                if col_name in dtype:
+-                    results.append(
+-                        col.astype(dtype=dtype[col_name], copy=copy, errors=errors)
+-                    )
++            for i, (col_name, col) in enumerate(self.items()):
++                cdt = dtype_ser.iat[i]
++                if isna(cdt):
++                    res_col = col.copy() if copy else col
+                 else:
+-                    results.append(col.copy() if copy else col)
++                    res_col = col.astype(dtype=cdt, copy=copy, errors=errors)
++                results.append(res_col)
+ 
+         elif is_extension_array_dtype(dtype) and self.ndim > 1:
+             # GH 18099/22869: columnwise conversion to extension dtype
+diff --git a/pandas/core/groupby/generic.py b/pandas/core/groupby/generic.py
+index 3c45f72632..b8354e8007 100644
+--- a/pandas/core/groupby/generic.py
++++ b/pandas/core/groupby/generic.py
+@@ -992,7 +992,7 @@ class DataFrameGroupBy(GroupBy[DataFrame]):
+             result = self.obj._constructor(
+                 index=self.grouper.result_index, columns=data.columns
+             )
+-            result = result.astype(data.dtypes.to_dict(), copy=False)
++            result = result.astype(data.dtypes, copy=False)
+             return result
+ 
+         # GH12824

@@ -1,0 +1,65 @@
+diff --git a/src/runtime/pprof/pprof.go b/src/runtime/pprof/pprof.go
+index d295991ef7..55563009b3 100644
+--- a/src/runtime/pprof/pprof.go
++++ b/src/runtime/pprof/pprof.go
+@@ -395,8 +395,7 @@ func printCountCycleProfile(w io.Writer, countName, cycleName string, records []
+ 		locs = b.appendLocsForStack(locs[:0], r.Stack())
+ 		b.pbSample(values, locs, nil)
+ 	}
+-	b.build()
+-	return nil
++	return b.build()
+ }
+ 
+ // printCountProfile prints a countProfile at the specified debug level.
+@@ -466,8 +465,7 @@ func printCountProfile(w io.Writer, debug int, name string, p countProfile) erro
+ 		}
+ 		b.pbSample(values, locs, labels)
+ 	}
+-	b.build()
+-	return nil
++	return b.build()
+ }
+ 
+ // keysByCount sorts keys with higher counts first, breaking ties by key string order.
+diff --git a/src/runtime/pprof/proto.go b/src/runtime/pprof/proto.go
+index a664fdc6ed..28ceb81542 100644
+--- a/src/runtime/pprof/proto.go
++++ b/src/runtime/pprof/proto.go
+@@ -345,7 +345,7 @@ func (b *profileBuilder) addCPUData(data []uint64, tags []unsafe.Pointer) error
+ }
+ 
+ // build completes and returns the constructed profile.
+-func (b *profileBuilder) build() {
++func (b *profileBuilder) build() error {
+ 	b.end = time.Now()
+ 
+ 	b.pb.int64Opt(tagProfile_TimeNanos, b.start.UnixNano())
+@@ -387,8 +387,11 @@ func (b *profileBuilder) build() {
+ 	// TODO: Anything for tagProfile_KeepFrames?
+ 
+ 	b.pb.strings(tagProfile_StringTable, b.strings)
+-	b.zw.Write(b.pb.data)
+-	b.zw.Close()
++	_, err := b.zw.Write(b.pb.data)
++	if err != nil {
++		return err
++	}
++	return b.zw.Close()
+ }
+ 
+ // appendLocsForStack appends the location IDs for the given stack trace to the given
+diff --git a/src/runtime/pprof/protomem.go b/src/runtime/pprof/protomem.go
+index 72aad82b30..e0d3746e36 100644
+--- a/src/runtime/pprof/protomem.go
++++ b/src/runtime/pprof/protomem.go
+@@ -63,8 +63,7 @@ func writeHeapProto(w io.Writer, p []profilerecord.MemProfileRecord, rate int64,
+ 			}
+ 		})
+ 	}
+-	b.build()
+-	return nil
++	return b.build()
+ }
+ 
+ // scaleHeapSample adjusts the data from a heap Sample to

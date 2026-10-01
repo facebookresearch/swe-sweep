@@ -1,0 +1,149 @@
+diff --git a/src/catalog/catalog_entry/duck_schema_entry.cpp b/src/catalog/catalog_entry/duck_schema_entry.cpp
+index ba54471afe..750742cb0b 100644
+--- a/src/catalog/catalog_entry/duck_schema_entry.cpp
++++ b/src/catalog/catalog_entry/duck_schema_entry.cpp
+@@ -36,13 +36,11 @@
+ 
+ namespace duckdb {
+ 
+-void FindForeignKeyInformation(CatalogEntry &entry, AlterForeignKeyType alter_fk_type,
+-                               vector<unique_ptr<AlterForeignKeyInfo>> &fk_arrays) {
+-	if (entry.type != CatalogType::TABLE_ENTRY) {
+-		return;
+-	}
+-	auto &table_entry = entry.Cast<TableCatalogEntry>();
+-	auto &constraints = table_entry.GetConstraints();
++void FindForeignKeyInformation(TableCatalogEntry &table, AlterForeignKeyType alter_fk_type,
++                               vector<unique_ptr<AlterForeignKeyInfo>> &fk_arrays) {
++	auto &constraints = table.GetConstraints();
++	auto &catalog = table.ParentCatalog();
++	auto &name = table.name;
+ 	for (idx_t i = 0; i < constraints.size(); i++) {
+ 		auto &cond = constraints[i];
+ 		if (cond->type != ConstraintType::FOREIGN_KEY) {
+@@ -50,9 +48,9 @@ void FindForeignKeyInformation(CatalogEntry &entry, AlterForeignKeyType alter_fk_
+ 		}
+ 		auto &fk = cond->Cast<ForeignKeyConstraint>();
+ 		if (fk.info.type == ForeignKeyType::FK_TYPE_FOREIGN_KEY_TABLE) {
+-			AlterEntryData alter_data(entry.ParentCatalog().GetName(), fk.info.schema, fk.info.table,
++			AlterEntryData alter_data(catalog.GetName(), fk.info.schema, fk.info.table,
+ 			                          OnEntryNotFound::THROW_EXCEPTION);
+-			fk_arrays.push_back(make_uniq<AlterForeignKeyInfo>(std::move(alter_data), entry.name, fk.pk_columns,
++			fk_arrays.push_back(make_uniq<AlterForeignKeyInfo>(std::move(alter_data), name, fk.pk_columns,
+ 			                                                   fk.fk_columns, fk.info.pk_keys, fk.info.fk_keys,
+ 			                                                   alter_fk_type));
+ 		} else if (fk.info.type == ForeignKeyType::FK_TYPE_PRIMARY_KEY_TABLE &&
+@@ -122,14 +120,9 @@ optional_ptr<CatalogEntry> DuckSchemaEntry::CreateTable(CatalogTransaction trans
+ 	auto &storage = table->GetStorage();
+ 	storage.info->cardinality = storage.GetTotalRows();
+ 
+-	auto entry = AddEntryInternal(transaction, std::move(table), info.Base().on_conflict, info.dependencies);
+-	if (!entry) {
+-		return nullptr;
+-	}
+-
+ 	// add a foreign key constraint in main key table if there is a foreign key constraint
+ 	vector<unique_ptr<AlterForeignKeyInfo>> fk_arrays;
+-	FindForeignKeyInformation(*entry, AlterForeignKeyType::AFT_ADD, fk_arrays);
++	FindForeignKeyInformation(*table, AlterForeignKeyType::AFT_ADD, fk_arrays);
+ 	for (idx_t i = 0; i < fk_arrays.size(); i++) {
+ 		// alter primary key table
+ 		auto &fk_info = *fk_arrays[i];
+@@ -139,6 +132,12 @@ optional_ptr<CatalogEntry> DuckSchemaEntry::CreateTable(CatalogTransaction trans
+ 		auto &set = GetCatalogSet(CatalogType::TABLE_ENTRY);
+ 		info.dependencies.AddDependency(*set.GetEntry(transaction, fk_info.name));
+ 	}
++
++	auto entry = AddEntryInternal(transaction, std::move(table), info.Base().on_conflict, info.dependencies);
++	if (!entry) {
++		return nullptr;
++	}
++
+ 	return entry;
+ }
+ 
+@@ -288,7 +287,10 @@ void DuckSchemaEntry::DropEntry(ClientContext &context, DropInfo &info) {
+ 
+ 	// if there is a foreign key constraint, get that information
+ 	vector<unique_ptr<AlterForeignKeyInfo>> fk_arrays;
+-	FindForeignKeyInformation(*existing_entry, AlterForeignKeyType::AFT_DELETE, fk_arrays);
++	if (existing_entry->type == CatalogType::TABLE_ENTRY) {
++		FindForeignKeyInformation(existing_entry->Cast<TableCatalogEntry>(), AlterForeignKeyType::AFT_DELETE,
++		                          fk_arrays);
++	}
+ 
+ 	if (!set.DropEntry(transaction, info.name, info.cascade, info.allow_drop_internal)) {
+ 		throw InternalException("Could not drop element because of an internal error");
+diff --git a/src/catalog/catalog_set.cpp b/src/catalog/catalog_set.cpp
+index d167fd90d3..baf7612787 100644
+--- a/src/catalog/catalog_set.cpp
++++ b/src/catalog/catalog_set.cpp
+@@ -357,7 +357,7 @@ bool CatalogSet::AlterEntry(CatalogTransaction transaction, const string &name,
+ 	write_lock.unlock();
+ 
+ 	// Check the dependency manager to verify that there are no conflicting dependencies with this alter
+-	catalog.GetDependencyManager().AlterObject(transaction, *entry, *new_entry);
++	catalog.GetDependencyManager().AlterObject(transaction, *entry, *new_entry, alter_info);
+ 
+ 	return true;
+ }
+diff --git a/src/catalog/dependency_manager.cpp b/src/catalog/dependency_manager.cpp
+index 86b1fb251b..1d4a2d48fc 100644
+--- a/src/catalog/dependency_manager.cpp
++++ b/src/catalog/dependency_manager.cpp
+@@ -398,7 +398,8 @@ void DependencyManager::DropObject(CatalogTransaction transaction, CatalogEntry
+ 	}
+ }
+ 
+-void DependencyManager::AlterObject(CatalogTransaction transaction, CatalogEntry &old_obj, CatalogEntry &new_obj) {
++void DependencyManager::AlterObject(CatalogTransaction transaction, CatalogEntry &old_obj, CatalogEntry &new_obj,
++                                    AlterInfo &alter_info) {
+ 	if (IsSystemEntry(new_obj)) {
+ 		D_ASSERT(IsSystemEntry(old_obj));
+ 		// Don't do anything for this
+@@ -415,9 +416,30 @@ void DependencyManager::AlterObject(CatalogTransaction transaction, CatalogEntry
+ 		}
+ 		// conflict: attempting to alter this object but the dependent object still exists
+ 		// no cascade and there are objects that depend on this object: throw error
+-		throw DependencyException("Cannot alter entry \"%s\" because there are entries that "
+-		                          "depend on it.",
+-		                          old_obj.name);
++		bool disallow_alter = true;
++		switch (alter_info.type) {
++		case AlterType::ALTER_TABLE: {
++			auto &alter_table = alter_info.Cast<AlterTableInfo>();
++			switch (alter_table.alter_table_type) {
++			case AlterTableType::FOREIGN_KEY_CONSTRAINT: {
++				// These alters are made as part of a CREATE or DROP table statement when a foreign key column is
++				// present either adding or removing a reference to the referenced primary key table
++				disallow_alter = false;
++				break;
++			}
++			default:
++				break;
++			}
++			break;
++		}
++		default:
++			break;
++		}
++		if (disallow_alter) {
++			throw DependencyException("Cannot alter entry \"%s\" because there are entries that "
++			                          "depend on it.",
++			                          old_obj.name);
++		}
+ 	});
+ 
+ 	// Keep old dependencies
+diff --git a/src/include/duckdb/catalog/dependency_manager.hpp b/src/include/duckdb/catalog/dependency_manager.hpp
+index e580bfccba..b04f0aabf9 100644
+--- a/src/include/duckdb/catalog/dependency_manager.hpp
++++ b/src/include/duckdb/catalog/dependency_manager.hpp
+@@ -110,6 +110,6 @@ private:
+ 	void AddObject(CatalogTransaction transaction, CatalogEntry &object, const DependencyList &dependencies);
+ 	void DropObject(CatalogTransaction transaction, CatalogEntry &object, bool cascade);
+-	void AlterObject(CatalogTransaction transaction, CatalogEntry &old_obj, CatalogEntry &new_obj);
++	void AlterObject(CatalogTransaction transaction, CatalogEntry &old_obj, CatalogEntry &new_obj, AlterInfo &info);
+ 
+ private:
+ 	void RemoveDependency(CatalogTransaction transaction, const DependencyInfo &info);

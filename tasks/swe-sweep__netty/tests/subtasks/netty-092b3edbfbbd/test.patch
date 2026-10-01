@@ -1,0 +1,21 @@
+diff --git a/codec-dns/src/test/java/io/netty/handler/codec/dns/AbstractDnsRecordTest.java b/codec-dns/src/test/java/io/netty/handler/codec/dns/AbstractDnsRecordTest.java
+index f9c4a4f86c..8277108814 100644
+--- a/codec-dns/src/test/java/io/netty/handler/codec/dns/AbstractDnsRecordTest.java
++++ b/codec-dns/src/test/java/io/netty/handler/codec/dns/AbstractDnsRecordTest.java
+@@ -59,4 +59,16 @@ public class AbstractDnsRecordTest {
+         String name = "äaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa";
+         new AbstractDnsRecord(name, DnsRecordType.A, 0) { };
+     }
++
++    /*
++     * RFC-1034 Section 3.1 (page 7 & 8)
++     * RFC-1035 Section 2.3.3 (page 9 & 10)
++     */
++    @Test
++    public void testEqualsAndHashCodeIgnoreCase() {
++        AbstractDnsRecord lowerCase = new AbstractDnsRecord("example.com.", DnsRecordType.A, 0) { };
++        AbstractDnsRecord upperCase = new AbstractDnsRecord("EXAMPLE.COM.", DnsRecordType.A, 0) { };
++        Assert.assertEquals(lowerCase.hashCode(), upperCase.hashCode());
++        Assert.assertEquals(lowerCase, upperCase);
++    }
+ }

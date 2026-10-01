@@ -1,0 +1,76 @@
+diff --git a/gix/src/submodule/mod.rs b/gix/src/submodule/mod.rs
+index 4c0228a6e..2aca3da92 100644
+--- a/gix/src/submodule/mod.rs
++++ b/gix/src/submodule/mod.rs
+@@ -4,7 +4,7 @@
+ use std::{
+     borrow::Cow,
+     cell::{Ref, RefCell, RefMut},
+-    path::PathBuf,
++    path::{Path, PathBuf},
+ };
+ 
+ pub use gix_submodule::*;
+@@ -208,12 +208,7 @@ impl Submodule<'_> {
+     ///
+     /// The retunred directory might not exist yet.
+     pub fn git_dir(&self) -> Result<PathBuf, gix_validate::submodule::name::Error> {
+-        Ok(self
+-            .state
+-            .repo
+-            .common_dir()
+-            .join("modules")
+-            .join(gix_path::from_bstr(self.validated_name()?)))
++        Ok(git_dir_from_name(self.state.repo.common_dir(), self.validated_name()?))
+     }
+ 
+     /// Return the path to the location at which the workdir would be checked out.
+@@ -344,6 +339,48 @@ impl Submodule<'_> {
+     }
+ }
+ 
++/// Append the name textually, like Git's `repo_git_path_append(..., "modules/%s", name)`.
++///
++/// In particular, don't use `Path::join()` for `name`: absolute-looking names are valid in Git,
++/// but joining them as a path would discard the `.git/modules` prefix.
++fn git_dir_from_name(common_dir: &Path, name: &BStr) -> PathBuf {
++    let mut git_dir = common_dir.join("modules").into_os_string();
++    git_dir.push(std::path::MAIN_SEPARATOR_STR);
++    git_dir.push(gix_path::from_bstr(name).as_os_str());
++    git_dir.into()
++}
++
++#[cfg(test)]
++mod tests {
++    use std::path::Path;
++
++    use crate::bstr::ByteSlice;
++
++    #[test]
++    fn git_dir_from_name_keeps_git_compatible_names_below_modules() {
++        let common_dir = Path::new("repo").join(".git");
++        let modules_dir = common_dir.join("modules");
++
++        for name in [
++            b"/etc/cron.d/x" as &[u8],
++            br"\Windows\Temp\x",
++            br"\\host\share\x",
++            b"//host/share/x",
++            br"C:\Windows\Temp\x",
++            b"C:/Windows/Temp/x",
++            b"C:x",
++        ] {
++            let actual = super::git_dir_from_name(&common_dir, name.as_bstr());
++            assert!(
++                actual.starts_with(&modules_dir),
++                "Git-compatible name {name:?} must remain below {} instead of producing {}",
++                modules_dir.display(),
++                actual.display()
++            );
++        }
++    }
++}
++
+ ///
+ #[cfg(feature = "status")]
+ pub mod status {

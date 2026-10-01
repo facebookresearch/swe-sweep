@@ -1,0 +1,64 @@
+diff --git a/src/test/java/io/reactivex/internal/operators/flowable/FlowableFlatMapTest.java b/src/test/java/io/reactivex/internal/operators/flowable/FlowableFlatMapTest.java
+index 4c14417..17eaf37 100644
+--- a/src/test/java/io/reactivex/internal/operators/flowable/FlowableFlatMapTest.java
++++ b/src/test/java/io/reactivex/internal/operators/flowable/FlowableFlatMapTest.java
+@@ -1124,4 +1124,27 @@ public class FlowableFlatMapTest {
+         assertFalse(pp3.hasSubscribers());
+         assertFalse(pp4.hasSubscribers());
+     }
++
++    @Test(timeout = 5000)
++    public void mixedScalarAsync() {
++        for (int i = 0; i < TestHelper.RACE_DEFAULT_LOOPS; i++) {
++            Flowable
++            .range(0, 20)
++            .flatMap(new Function<Integer, Publisher<?>>() {
++                @Override
++                public Publisher<?> apply(Integer integer) throws Exception {
++                    if (integer % 5 != 0) {
++                        return Flowable
++                                .just(integer);
++                    }
++
++                    return Flowable
++                            .just(-integer)
++                            .observeOn(Schedulers.computation());
++                }
++            }, false, 1)
++            .ignoreElements()
++            .blockingAwait();
++        }
++    }
+ }
+diff --git a/src/test/java/io/reactivex/internal/operators/observable/ObservableFlatMapTest.java b/src/test/java/io/reactivex/internal/operators/observable/ObservableFlatMapTest.java
+index 9607220..73eda2c 100644
+--- a/src/test/java/io/reactivex/internal/operators/observable/ObservableFlatMapTest.java
++++ b/src/test/java/io/reactivex/internal/operators/observable/ObservableFlatMapTest.java
+@@ -1085,4 +1085,27 @@ public class ObservableFlatMapTest {
+         assertFalse(ps3.hasObservers());
+         assertFalse(ps4.hasObservers());
+     }
++
++    @Test(timeout = 5000)
++    public void mixedScalarAsync() {
++        for (int i = 0; i < TestHelper.RACE_DEFAULT_LOOPS; i++) {
++            Observable
++            .range(0, 20)
++            .flatMap(new Function<Integer, ObservableSource<?>>() {
++                @Override
++                public ObservableSource<?> apply(Integer integer) throws Exception {
++                    if (integer % 5 != 0) {
++                        return Observable
++                                .just(integer);
++                    }
++
++                    return Observable
++                            .just(-integer)
++                            .observeOn(Schedulers.computation());
++                }
++            }, false, 1)
++            .ignoreElements()
++            .blockingAwait();
++        }
++    }
+ }

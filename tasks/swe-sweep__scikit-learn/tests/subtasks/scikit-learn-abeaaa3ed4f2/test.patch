@@ -1,0 +1,25 @@
+diff --git a/sklearn/tree/tests/test_tree.py b/sklearn/tree/tests/test_tree.py
+index 53767a65ed..f85493543b 100644
+--- a/sklearn/tree/tests/test_tree.py
++++ b/sklearn/tree/tests/test_tree.py
+@@ -1506,3 +1506,20 @@ def test_mae():
+     dt_mae.fit([[3],[5],[3],[8],[5]],[6,7,3,4,3], [0.6,0.3,0.1,1.0,0.3])
+     assert_array_equal(dt_mae.tree_.impurity, [7.0/2.3, 3.0/0.7, 4.0/1.6])
+     assert_array_equal(dt_mae.tree_.value.flat, [4.0, 6.0, 4.0])
++
++
++def test_empty_leaf_infinite_threshold():
++    # try to make empty leaf by using near infinite value.
++    data = np.random.RandomState(0).randn(100, 11) * 2e38
++    data = np.nan_to_num(data.astype('float32'))
++    X_full = data[:, :-1]
++    X_sparse = csc_matrix(X_full)
++    y = data[:, -1]
++    for X in [X_full, X_sparse]:
++        tree = DecisionTreeRegressor(random_state=0).fit(X, y)
++        terminal_regions = tree.apply(X)
++        left_leaf = set(np.where(tree.tree_.children_left == TREE_LEAF)[0])
++        empty_leaf = left_leaf.difference(terminal_regions)
++        infinite_threshold = np.where(~np.isfinite(tree.tree_.threshold))[0]
++        assert len(infinite_threshold) == 0
++        assert len(empty_leaf) == 0

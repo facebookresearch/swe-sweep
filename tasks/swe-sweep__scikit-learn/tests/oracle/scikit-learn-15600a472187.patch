@@ -1,0 +1,13 @@
+diff --git a/sklearn/model_selection/_search.py b/sklearn/model_selection/_search.py
+index 7c7224af47..3b8a0ed882 100644
+--- a/sklearn/model_selection/_search.py
++++ b/sklearn/model_selection/_search.py
+@@ -529,7 +529,7 @@ class BaseSearchCV(six.with_metaclass(ABCMeta, BaseEstimator,
+ 
+         """
+         self._check_is_fitted('inverse_transform')
+-        return self.best_estimator_.transform(Xt)
++        return self.best_estimator_.inverse_transform(Xt)
+ 
+     def _fit(self, X, y, groups, parameter_iterable):
+         """Actual fitting,  performing the search over parameters."""

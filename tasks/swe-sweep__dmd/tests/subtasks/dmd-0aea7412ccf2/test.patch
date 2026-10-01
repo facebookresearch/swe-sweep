@@ -1,0 +1,16 @@
+diff --git a/compiler/test/compilable/test22739.d b/compiler/test/compilable/test22739.d
+new file mode 100644
+index 0000000000..6aeb5d60fd
+--- /dev/null
++++ b/compiler/test/compilable/test22739.d
+@@ -0,0 +1,10 @@
++// https://issues.dlang.org/show_bug.cgi?id=22739
++
++extern(C++) auto f(T)()
++{
++    return T.init;
++}
++void main()
++{
++    f!int;
++}

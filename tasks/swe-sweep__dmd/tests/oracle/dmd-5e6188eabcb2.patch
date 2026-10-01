@@ -1,0 +1,16 @@
+diff --git a/compiler/src/dmd/expressionsem.d b/compiler/src/dmd/expressionsem.d
+index 386643ae7c..8e0c9adf77 100644
+--- a/compiler/src/dmd/expressionsem.d
++++ b/compiler/src/dmd/expressionsem.d
+@@ -15155,10 +15155,8 @@ bool checkSharedAccess(Expression e, Scope* sc, bool returnRef = false)
+             {
+                 if (e.var.isThisDeclaration())
+                     return false;
+-                else
+-                    return sharedError(e);
+             }
+-            else if (!allowRef && e.var.type.isShared())
++            if (!allowRef && e.var.type.isShared())
+                 return sharedError(e);
+ 
+             return false;

@@ -1,0 +1,51 @@
+diff --git a/src/Lean/Elab/Tactic/Simp.lean b/src/Lean/Elab/Tactic/Simp.lean
+index 88304ad2ab..d5e773f0b2 100644
+--- a/src/Lean/Elab/Tactic/Simp.lean
++++ b/src/Lean/Elab/Tactic/Simp.lean
+@@ -336,7 +336,9 @@ def mkSimpOnly (stx : Syntax) (usedSimps : Simp.UsedSimps) : MetaM Syntax := do
+   for (thm, _) in usedSimps.toArray.qsort (·.2 < ·.2) do
+     match thm with
+     | .decl declName post inv => -- global definitions in the environment
+-      if env.contains declName && (inv || !simpOnlyBuiltins.contains declName) then
++      if env.contains declName
++         && (inv || !simpOnlyBuiltins.contains declName)
++         && !Match.isMatchEqnTheorem env declName then
+         let decl : Term ← `($(mkIdent (← unresolveNameGlobal declName)):ident)
+         let arg ← match post, inv with
+           | true,  true  => `(Parser.Tactic.simpLemma| ← $decl:term)
+diff --git a/src/Lean/Meta/Match/MatchEqsExt.lean b/src/Lean/Meta/Match/MatchEqsExt.lean
+index 6cc2058300..0eb87367b0 100644
+--- a/src/Lean/Meta/Match/MatchEqsExt.lean
++++ b/src/Lean/Meta/Match/MatchEqsExt.lean
+@@ -19,14 +19,18 @@ def MatchEqns.size (e : MatchEqns) : Nat :=
+ 
+ structure MatchEqnsExtState where
+   map : PHashMap Name MatchEqns := {}
++  eqns : PHashSet Name := {}
+   deriving Inhabited
+ 
+ /- We generate the equations and splitter on demand, and do not save them on .olean files. -/
+ builtin_initialize matchEqnsExt : EnvExtension MatchEqnsExtState ←
+   registerEnvExtension (pure {})
+ 
+-def registerMatchEqns (matchDeclName : Name) (matchEqns : MatchEqns) : CoreM Unit :=
+-  modifyEnv fun env => matchEqnsExt.modifyState env fun s => { s with map := s.map.insert matchDeclName matchEqns }
++def registerMatchEqns (matchDeclName : Name) (matchEqns : MatchEqns) : CoreM Unit := do
++  modifyEnv fun env => matchEqnsExt.modifyState env fun { map, eqns } => {
++    eqns := matchEqns.eqnNames.foldl (init := eqns) fun eqns eqn => eqns.insert eqn
++    map := map.insert matchDeclName matchEqns
++  }
+ 
+ /-
+   Forward definition. We want to use `getEquationsFor` in the simplifier,
+@@ -34,4 +38,10 @@ def registerMatchEqns (matchDeclName : Name) (matchEqns : MatchEqns) : CoreM Uni
+ @[extern "lean_get_match_equations_for"]
+ opaque getEquationsFor (matchDeclName : Name) : MetaM MatchEqns
+ 
++/--
++Returns `true` if `declName` is the name of a `match` equational theorem.
++-/
++def isMatchEqnTheorem (env : Environment) (declName : Name) : Bool :=
++  matchEqnsExt.getState env |>.eqns.contains declName
++
+ end Lean.Meta.Match

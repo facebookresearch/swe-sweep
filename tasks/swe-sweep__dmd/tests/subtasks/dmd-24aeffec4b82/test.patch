@@ -1,0 +1,11 @@
+diff --git a/compiler/test/compilable/test21039.d b/compiler/test/compilable/test21039.d
+new file mode 100644
+index 0000000000..adc6110c75
+--- /dev/null
++++ b/compiler/test/compilable/test21039.d
+@@ -0,0 +1,5 @@
++// https://github.com/dlang/dmd/issues/21039
++// Zero-length static array with scalar initializer caused ICE
++
++struct A { const(char)[0] b = 0; }
++struct B { int[0] x = 5 + 5; }

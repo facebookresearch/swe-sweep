@@ -1,0 +1,14 @@
+diff --git a/lib/matplotlib/cbook/__init__.py b/lib/matplotlib/cbook/__init__.py
+index b0cde74348..ff6b2a15ec 100644
+--- a/lib/matplotlib/cbook/__init__.py
++++ b/lib/matplotlib/cbook/__init__.py
+@@ -1224,7 +1224,8 @@ def boxplot_stats(X, whis=1.5, bootstrap=None, labels=None,
+             continue
+ 
+         # up-convert to an array, just to be safe
+-        x = np.asarray(x)
++        x = np.ma.asarray(x)
++        x = x.data[~x.mask].ravel()
+ 
+         # arithmetic mean
+         stats['mean'] = np.mean(x)

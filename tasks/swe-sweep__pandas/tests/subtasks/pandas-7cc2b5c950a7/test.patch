@@ -1,0 +1,34 @@
+diff --git a/pandas/tests/io/sas/data/zero_rows.sas7bdat b/pandas/tests/io/sas/data/zero_rows.sas7bdat
+new file mode 100644
+index 0000000000000000000000000000000000000000..65f2c44bccf727aa601a7b35a86fa79f15f79c8b
+GIT binary patch
+literal 5120
+zcmZQzK!8K98WT2)2%g_NiGzXjxM7ckynvtq1A_qrBZDDA6*iU#HbI6c*C7A+Aph`S
+ztg?g!T^vIk39ACCU;$zQ2B0$$z*5h^#K6$k3?VYg8V!Nb5FjQ5*nx@)_!t-_Kr>VZ
+zkj(+r=m=!1L)o%GwhEN}mKRh|K)`k&8<z1Jk=Rh_QED^<MnhmU1V%$(Gz3ONU^E0q
+zLtr!nMnhmU1V&~E{QLd?Kj}UvPuHLSsCGd*bxh#S9fXZMgu=i8RF32}4hAl;LxmVP
+zksSONs74vePtHgziciZ-%}L2C&4n-&px_%2Faec)2LdGBU?y<r1_glBjRN|F002{g
+BH{<{S
+
+literal 0
+HcmV?d00001
+
+diff --git a/pandas/tests/io/sas/test_sas7bdat.py b/pandas/tests/io/sas/test_sas7bdat.py
+index 3b6bfee..1ff868c 100644
+--- a/pandas/tests/io/sas/test_sas7bdat.py
++++ b/pandas/tests/io/sas/test_sas7bdat.py
+@@ -231,6 +231,14 @@ def test_zero_variables(datapath):
+         pd.read_sas(fname)
+ 
+ 
++def test_zero_rows(datapath):
++    # GH 18198
++    fname = datapath("io", "sas", "data", "zero_rows.sas7bdat")
++    result = pd.read_sas(fname)
++    expected = pd.DataFrame([{"char_field": "a", "num_field": 1.0}]).iloc[:0]
++    tm.assert_frame_equal(result, expected)
++
++
+ def test_corrupt_read(datapath):
+     # We don't really care about the exact failure, the important thing is
+     # that the resource should be cleaned up afterwards (BUG #35566)

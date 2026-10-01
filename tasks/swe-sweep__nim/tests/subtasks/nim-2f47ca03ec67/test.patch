@@ -1,0 +1,19 @@
+diff --git a/tests/macros/t21593.nim b/tests/macros/t21593.nim
+new file mode 100644
+index 000000000..b0b7ebe75
+--- /dev/null
++++ b/tests/macros/t21593.nim
+@@ -0,0 +1,13 @@
++discard """
++nimout: '''
++StmtList
++  UIntLit 18446744073709551615
++  IntLit -1'''
++"""
++
++import macros
++
++dumpTree:
++  0xFFFFFFFF_FFFFFFFF'u
++  0xFFFFFFFF_FFFFFFFF
++

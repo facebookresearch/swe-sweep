@@ -1,0 +1,37 @@
+diff --git a/tests/overload/m19737.nim b/tests/overload/m19737.nim
+new file mode 100644
+index 000000000..7f7ac98e2
+--- /dev/null
++++ b/tests/overload/m19737.nim
+@@ -0,0 +1,10 @@
++type
++  UInt128* = object
++    lo, hi: uint64
++
++func `<`*(x, y: UInt128): bool =
++  (x.hi < y.hi) or ((x.hi == y.hi) and (x.lo < y.lo))
++
++when not defined(works):
++  func `>`*(x, y: UInt128): bool =
++    (x.hi > y.hi) or ((x.hi == y.hi) and (x.lo > y.lo))
+diff --git a/tests/overload/t19737.nim b/tests/overload/t19737.nim
+new file mode 100644
+index 000000000..b33ba9d8b
+--- /dev/null
++++ b/tests/overload/t19737.nim
+@@ -0,0 +1,15 @@
++# issue #19737
++
++import ./m19737
++
++var m: seq[uint64]
++
++proc foo(x: bool) = discard
++
++proc test[T: uint64|uint32](s: var seq[T]) =
++  var tmp = newSeq[T](1)
++  s = newSeq[T](1)
++
++  foo s[0] > tmp[0]
++
++test(m)

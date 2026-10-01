@@ -1,0 +1,58 @@
+diff --git a/test/sql/function/string/like_unicode.test b/test/sql/function/string/like_unicode.test
+new file mode 100644
+index 0000000000..9e6cea4926
+--- /dev/null
++++ b/test/sql/function/string/like_unicode.test
+@@ -0,0 +1,52 @@
++# name: test/sql/function/string/like_unicode.test
++# description: Test _ and like unicode characters
++# group: [string]
++
++statement ok
++PRAGMA enable_verification
++
++statement ok
++CREATE TABLE t0 (c0 VARCHAR);
++
++statement ok
++INSERT INTO t0 VALUES ('票'),('t'),('%'),('丑'),('多'), ('🦆');
++
++query I
++SELECT count(*) FROM t0 WHERE t0.c0 LIKE '_';
++----
++6
++
++query I
++SELECT count(*) FROM t0 WHERE t0.c0 ILIKE '_';
++----
++6
++
++query I
++SELECT '🦆a🦆' LIKE '_a_'
++----
++true
++
++query I
++SELECT '🦆a🦆' ILIKE '_A_'
++----
++true
++
++query I
++SELECT 'BaB' ILIKE '_A_'
++----
++true
++
++query I
++SELECT '🦆🦆' ILIKE '_'
++----
++false
++
++query I
++SELECT '🦆🦆' ILIKE '__'
++----
++true
++
++query I
++SELECT '🦆🦆' ILIKE '___'
++----
++false

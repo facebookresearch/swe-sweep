@@ -1,0 +1,43 @@
+diff --git a/tests/Main.idr b/tests/Main.idr
+index d329d6399..33de3825e 100644
+--- a/tests/Main.idr
++++ b/tests/Main.idr
+@@ -142,6 +142,6 @@ idrisTestsData = MkTestPool "Data and record types" [] Nothing
+        -- Records, access and dependent update
+        "record001", "record002", "record003", "record004", "record005",
+-       "record006", "record007", "record008", "record009"]
++       "record006", "record007", "record008", "record009", "record012" ]
+ 
+ idrisTestsBuiltin : TestPool
+ idrisTestsBuiltin = MkTestPool "Builtin types and functions" [] Nothing
+diff --git a/tests/idris2/record012/Issue2065.idr b/tests/idris2/record012/Issue2065.idr
+new file mode 100644
+index 000000000..ef9e8cfb0
+--- /dev/null
++++ b/tests/idris2/record012/Issue2065.idr
+@@ -0,0 +1,9 @@
++
++%prefix_record_projections off
++
++data T : Nat -> Type where
++  MkT : (n : Nat) -> T n
++
++record R where
++  n : Nat
++  x : T n
+diff --git a/tests/idris2/record012/expected b/tests/idris2/record012/expected
+new file mode 100644
+index 000000000..3fefc09a5
+--- /dev/null
++++ b/tests/idris2/record012/expected
+@@ -0,0 +1 @@
++1/1: Building Issue2065 (Issue2065.idr)
+diff --git a/tests/idris2/record012/run b/tests/idris2/record012/run
+new file mode 100755
+index 000000000..a3cc956ce
+--- /dev/null
++++ b/tests/idris2/record012/run
+@@ -0,0 +1,3 @@
++rm -rf build
++
++$1 --no-color --console-width 0 --no-banner --check Issue2065.idr

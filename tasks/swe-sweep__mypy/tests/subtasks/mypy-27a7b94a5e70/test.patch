@@ -1,0 +1,22 @@
+diff --git a/test-data/unit/check-python312.test b/test-data/unit/check-python312.test
+index c50196296..a67ed4abc 100644
+--- a/test-data/unit/check-python312.test
++++ b/test-data/unit/check-python312.test
+@@ -1873,3 +1873,17 @@ d1: Multi[int, str] = Multi[float, str]()  # E: Incompatible types in assignment
+ d2: Multi[float, str] = Multi[int, str]()  # E: Incompatible types in assignment (expression has type "Multi[int, str]", variable has type "Multi[float, str]")
+ d3: Multi[str, int] = Multi[str, float]()
+ d4: Multi[str, float] = Multi[str, int]()  # E: Incompatible types in assignment (expression has type "Multi[str, int]", variable has type "Multi[str, float]")
++
++[case testPEP695MultipleTypeVarTuples]
++from typing import Generic
++from typing_extensions import TypeVarTuple, Unpack
++
++Us = TypeVarTuple("Us")
++
++class C[*Ts, *Us]:  # E: Can only use one type var tuple in a class def
++   pass
++
++class D[*Ts](Generic[Unpack[Us]]):  # E: Generic[...] base class is redundant \
++                                    # E: Can only use one type var tuple in a class def
++    pass
++[builtins fixtures/tuple.pyi]

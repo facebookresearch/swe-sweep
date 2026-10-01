@@ -1,0 +1,34 @@
+diff --git a/model/storage-private/src/main/java/org/keycloak/storage/datastore/DefaultExportImportManager.java b/model/storage-private/src/main/java/org/keycloak/storage/datastore/DefaultExportImportManager.java
+index 6b3d84c527..87a35ee1b3 100644
+--- a/model/storage-private/src/main/java/org/keycloak/storage/datastore/DefaultExportImportManager.java
++++ b/model/storage-private/src/main/java/org/keycloak/storage/datastore/DefaultExportImportManager.java
+@@ -364,6 +364,14 @@ public class DefaultExportImportManager implements ExportImportManager {
+             }
+         }
+ 
++        // import attributes
++
++        if (rep.getAttributes() != null) {
++            for (Map.Entry<String, String> attr : rep.getAttributes().entrySet()) {
++                newRealm.setAttribute(attr.getKey(), attr.getValue());
++            }
++        }
++
+         Map<String, ClientModel> createdClients = new HashMap<>();
+         if (rep.getClients() != null) {
+             createdClients = createClients(session, rep, newRealm, mappedFlows);
+@@ -456,14 +464,6 @@ public class DefaultExportImportManager implements ExportImportManager {
+             newRealm.setDefaultLocale(rep.getDefaultLocale());
+         }
+ 
+-        // import attributes
+-
+-        if (rep.getAttributes() != null) {
+-            for (Map.Entry<String, String> attr : rep.getAttributes().entrySet()) {
+-                newRealm.setAttribute(attr.getKey(), attr.getValue());
+-            }
+-        }
+-
+         if (newRealm.getComponentsStream(newRealm.getId(), KeyProvider.class.getName()).count() == 0) {
+             if (rep.getPrivateKey() != null) {
+                 DefaultKeyProviders.createProviders(newRealm, rep.getPrivateKey(), rep.getCertificate());

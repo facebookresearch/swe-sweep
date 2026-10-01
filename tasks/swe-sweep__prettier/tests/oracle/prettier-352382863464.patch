@@ -1,0 +1,39 @@
+diff --git a/src/language-js/comments/printer-methods.js b/src/language-js/comments/printer-methods.js
+index b76e6ca..64e8fb4 100644
+--- a/src/language-js/comments/printer-methods.js
++++ b/src/language-js/comments/printer-methods.js
+@@ -67,17 +67,23 @@ function getCommentChildNodes(node, options) {
+  */
+ function willPrintOwnComments(path) {
+   const { node, parent } = path;
+-  return (
+-    (isJsxElement(node) ||
+-      (parent &&
+-        (parent.type === "JSXSpreadAttribute" ||
+-          parent.type === "JSXSpreadChild" ||
+-          isUnionType(parent) ||
+-          ((parent.type === "ClassDeclaration" ||
+-            parent.type === "ClassExpression") &&
+-            parent.superClass === node)))) &&
+-    (!hasNodeIgnoreComment(node) || isUnionType(parent))
+-  );
++  if (
++    parent &&
++    (parent.type === "JSXSpreadAttribute" ||
++      parent.type === "JSXSpreadChild" ||
++      isUnionType(parent) ||
++      ((parent.type === "ClassDeclaration" ||
++        parent.type === "ClassExpression") &&
++        parent.superClass === node))
++  ) {
++    return true;
++  }
++
++  if (hasNodeIgnoreComment(node)) {
++    return false;
++  }
++
++  return isJsxElement(node) || isUnionType(node);
+ }
+ 
+ function isGap(text, { parser }) {

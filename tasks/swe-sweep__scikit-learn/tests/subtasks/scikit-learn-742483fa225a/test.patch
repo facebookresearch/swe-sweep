@@ -1,0 +1,31 @@
+diff --git a/sklearn/tests/test_kernel_approximation.py b/sklearn/tests/test_kernel_approximation.py
+index f864214e49..fcae8d373c 100644
+--- a/sklearn/tests/test_kernel_approximation.py
++++ b/sklearn/tests/test_kernel_approximation.py
+@@ -10,6 +10,7 @@ from sklearn.kernel_approximation import RBFSampler
+ from sklearn.kernel_approximation import AdditiveChi2Sampler
+ from sklearn.kernel_approximation import SkewedChi2Sampler
+ from sklearn.kernel_approximation import Nystroem
++from sklearn.datasets import make_classification
+ from sklearn.metrics.pairwise import polynomial_kernel, rbf_kernel
+ 
+ # generate data
+@@ -213,3 +214,18 @@ def test_nystroem_callable():
+              n_components=(n_samples - 1),
+              kernel_params={'log': kernel_log}).fit(X)
+     assert_equal(len(kernel_log), n_samples * (n_samples - 1) / 2)
++
++
++def test_nystroem_component_indices():
++    """Check that `component_indices_` corresponds to the subset of
++    training points used to construct the feature map.
++    Non-regression test for:
++    https://github.com/scikit-learn/scikit-learn/issues/20474
++    """
++    X, _ = make_classification(n_samples=100, n_features=20)
++    feature_map_nystroem = Nystroem(
++        n_components=10,
++        random_state=0,
++    )
++    feature_map_nystroem.fit(X)
++    assert feature_map_nystroem.component_indices_.shape == (10,)

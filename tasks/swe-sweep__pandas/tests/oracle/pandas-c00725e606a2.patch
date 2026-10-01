@@ -1,0 +1,13 @@
+diff --git a/pandas/core/series.py b/pandas/core/series.py
+index a5b13fc471..ea7a7c7873 100644
+--- a/pandas/core/series.py
++++ b/pandas/core/series.py
+@@ -1447,8 +1447,6 @@ class Series(base.IndexOpsMixin, generic.NDFrame):
+ 
+             if inplace:
+                 self.index = new_index
+-                # set name if it was passed, otherwise, keep the previous name
+-                self.name = name or self.name
+             else:
+                 return self._constructor(
+                     self._values.copy(), index=new_index

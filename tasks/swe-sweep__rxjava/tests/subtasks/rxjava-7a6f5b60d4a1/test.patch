@@ -1,0 +1,31 @@
+diff --git a/src/test/java/io/reactivex/internal/operators/flowable/FlowableMapTest.java b/src/test/java/io/reactivex/internal/operators/flowable/FlowableMapTest.java
+index 9ebc328..95f59a5 100644
+--- a/src/test/java/io/reactivex/internal/operators/flowable/FlowableMapTest.java
++++ b/src/test/java/io/reactivex/internal/operators/flowable/FlowableMapTest.java
+@@ -29,6 +29,7 @@ import io.reactivex.exceptions.TestException;
+ import io.reactivex.functions.*;
+ import io.reactivex.internal.functions.Functions;
+ import io.reactivex.internal.fuseable.*;
++import io.reactivex.internal.schedulers.ImmediateThinScheduler;
+ import io.reactivex.internal.subscriptions.BooleanSubscription;
+ import io.reactivex.plugins.RxJavaPlugins;
+ import io.reactivex.processors.*;
+@@ -690,4 +691,18 @@ public class FlowableMapTest {
+         }, false, 1, 1, 1);
+     }
+ 
++    @Test
++    public void conditionalFusionNoNPE() {
++        TestSubscriber<Object> ts = SubscriberFusion.newTest(QueueFuseable.ANY);
++
++        Flowable.empty()
++        .observeOn(ImmediateThinScheduler.INSTANCE)
++        .filter(v -> true)
++        .map(v -> v)
++        .filter(v -> true)
++        .subscribe(ts)
++        ;
++
++        ts.assertResult();
++    }
+ }

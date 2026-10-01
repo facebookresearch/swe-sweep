@@ -1,0 +1,35 @@
+diff --git a/packages/mui-material/src/Rating/Rating.d.ts b/packages/mui-material/src/Rating/Rating.d.ts
+index 01e1772ef9..19202e5b40 100644
+--- a/packages/mui-material/src/Rating/Rating.d.ts
++++ b/packages/mui-material/src/Rating/Rating.d.ts
+@@ -44,7 +44,7 @@ export interface RatingProps
+    * @param {number} value The rating label's value to format.
+    * @returns {string}
+    * @default function defaultLabelText(value) {
+-   *   return `${value} Star${value !== 1 ? 's' : ''}`;
++   *   return `${value || '0'} Star${value !== 1 ? 's' : ''}`;
+    * }
+    */
+   getLabelText?: (value: number) => string;
+diff --git a/packages/mui-material/src/Rating/Rating.js b/packages/mui-material/src/Rating/Rating.js
+index 1282e13216..dde4f099e9 100644
+--- a/packages/mui-material/src/Rating/Rating.js
++++ b/packages/mui-material/src/Rating/Rating.js
+@@ -321,7 +321,7 @@ const defaultIcon = <Star fontSize="inherit" />;
+ const defaultEmptyIcon = <StarBorder fontSize="inherit" />;
+ 
+ function defaultLabelText(value) {
+-  return `${value} Star${value !== 1 ? 's' : ''}`;
++  return `${value || '0'} Star${value !== 1 ? 's' : ''}`;
+ }
+ 
+ const Rating = React.forwardRef(function Rating(inProps, ref) {
+@@ -670,7 +670,7 @@ Rating.propTypes /* remove-proptypes */ = {
+    * @param {number} value The rating label's value to format.
+    * @returns {string}
+    * @default function defaultLabelText(value) {
+-   *   return `${value} Star${value !== 1 ? 's' : ''}`;
++   *   return `${value || '0'} Star${value !== 1 ? 's' : ''}`;
+    * }
+    */
+   getLabelText: PropTypes.func,

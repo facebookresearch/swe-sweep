@@ -1,0 +1,28 @@
+diff --git a/pandas/core/internals/managers.py b/pandas/core/internals/managers.py
+index dca6ddf703..a888649d3e 100644
+--- a/pandas/core/internals/managers.py
++++ b/pandas/core/internals/managers.py
+@@ -598,6 +598,9 @@ class BaseBlockManager(DataManager):
+ 
+         res = self.apply("copy", deep=deep)
+         res.axes = new_axes
++
++        if deep:
++            res._consolidate_inplace()
+         return res
+ 
+     def consolidate(self: T) -> T:
+diff --git a/pandas/core/reshape/reshape.py b/pandas/core/reshape/reshape.py
+index 12ab08c4e3..06af3b2782 100644
+--- a/pandas/core/reshape/reshape.py
++++ b/pandas/core/reshape/reshape.py
+@@ -402,7 +402,8 @@ def _unstack_multiple(data, clocs, fill_value=None):
+ 
+             return result
+ 
+-        dummy = data.copy()
++        # GH#42579 deep=False to avoid consolidating
++        dummy = data.copy(deep=False)
+         dummy.index = dummy_index
+ 
+         unstacked = dummy.unstack("__placeholder__", fill_value=fill_value)

@@ -1,0 +1,21 @@
+diff --git a/test/chi.jl b/test/chi.jl
+new file mode 100644
+index 00000000..c5cfa97b
+--- /dev/null
++++ b/test/chi.jl
+@@ -0,0 +1,2 @@
++# see #1305
++@test isfinite(mean(Chi(1000)))
+\ No newline at end of file
+diff --git a/test/runtests.jl b/test/runtests.jl
+index 007cdbb2..007cdbb2 100644
+--- a/test/runtests.jl
++++ b/test/runtests.jl
+@@ -53,6 +53,7 @@ const tests = [
+     "functionals",
+     "chernoff",
+     "univariate_bounds",
++    "chi",
+ ]
+ 
+ printstyled("Running tests:\n", color=:blue)

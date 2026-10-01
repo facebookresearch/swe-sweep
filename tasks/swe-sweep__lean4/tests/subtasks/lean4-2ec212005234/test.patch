@@ -1,0 +1,30 @@
+diff --git a/tests/lean/run/4406.lean b/tests/lean/run/4406.lean
+new file mode 100644
+index 0000000000..a60a57d133
+--- /dev/null
++++ b/tests/lean/run/4406.lean
+@@ -0,0 +1,24 @@
++import Lean.Elab.Command
++
++/-!
++# Issue 4406: make sure `pp.instantiateMVars` has an effect
++-/
++
++open Lean Meta
++
++set_option pp.mvars false
++
++/-- info: ?_ -/
++#guard_msgs in
++set_option pp.instantiateMVars false in
++run_meta do
++  let mvarId ← mkFreshExprMVar (.some (.const ``Nat []))
++  mvarId.mvarId!.assign (mkNatLit 0)
++  logInfo m!"{mvarId}"
++
++/-- info: 0 -/
++#guard_msgs in
++run_meta do
++  let mvarId ← mkFreshExprMVar (.some (.const ``Nat []))
++  mvarId.mvarId!.assign (mkNatLit 0)
++  logInfo m!"{mvarId}"

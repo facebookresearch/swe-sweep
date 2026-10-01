@@ -1,0 +1,18 @@
+diff --git a/compiler/test/compilable/test15712.d b/compiler/test/compilable/test15712.d
+new file mode 100644
+index 0000000000..07321e5e03
+--- /dev/null
++++ b/compiler/test/compilable/test15712.d
+@@ -0,0 +1,12 @@
++// REQUIRED_ARGS: -unittest
++
++// https://issues.dlang.org/show_bug.cgi?id=15712
++// extern(C) attribute inside extern(C) unittest is incorrectly ignored
++
++extern(C):
++
++unittest
++{
++	extern(C) static void foo() {}
++	static assert(__traits(getLinkage, foo) == "C");
++}

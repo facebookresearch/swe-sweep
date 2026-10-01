@@ -1,0 +1,144 @@
+diff --git a/cmd/tools/vast/vast.v b/cmd/tools/vast/vast.v
+index e65f0d56e..481bf1ad5 100644
+--- a/cmd/tools/vast/vast.v
++++ b/cmd/tools/vast/vast.v
+@@ -804,7 +804,6 @@ fn (t Tree) sum_type_decl(node ast.SumTypeDecl) &Node {
+ 	obj.add('pos', t.pos(node.pos))
+ 	obj.add_terse('typ', t.type_node(node.typ))
+ 	obj.add_terse('generic_types', t.array_node_type(node.generic_types))
+-	obj.add('comments', t.array_node_comment(node.comments))
+ 	obj.add_terse('variants', t.array_node_type_expr(node.variants))
+ 	obj.add('name_pos', t.pos(node.name_pos))
+ 	return obj
+diff --git a/vlib/v/ast/ast.v b/vlib/v/ast/ast.v
+index b5bc6ed2b..1cc962ba9 100644
+--- a/vlib/v/ast/ast.v
++++ b/vlib/v/ast/ast.v
+@@ -114,7 +114,8 @@ pub struct TypeNode {
+ pub:
+ 	pos token.Pos
+ pub mut:
+-	typ Type
++	typ          Type
++	end_comments []Comment // comments that after current type node
+ }
+ 
+ pub enum ComptimeTypeKind {
+@@ -1335,7 +1336,6 @@ pub:
+ 	is_pub        bool
+ 	pos           token.Pos
+ 	name_pos      token.Pos
+-	comments      []Comment
+ 	typ           Type
+ 	generic_types []Type
+ 	attrs         []Attr // attributes of type declaration
+diff --git a/vlib/v/fmt/fmt.v b/vlib/v/fmt/fmt.v
+index 81b345789..6cdfe2ad0 100644
+--- a/vlib/v/fmt/fmt.v
++++ b/vlib/v/fmt/fmt.v
+@@ -1469,6 +1469,11 @@ pub fn (mut f Fmt) fn_type_decl(node ast.FnTypeDecl) {
+ 	f.writeln('')
+ }
+ 
++struct Variant {
++	name string
++	id   int
++}
++
+ pub fn (mut f Fmt) sum_type_decl(node ast.SumTypeDecl) {
+ 	f.attrs(node.attrs)
+ 	start_pos := f.out.len
+@@ -1479,33 +1484,42 @@ pub fn (mut f Fmt) sum_type_decl(node ast.SumTypeDecl) {
+ 	f.write_generic_types(node.generic_types)
+ 	f.write(' = ')
+ 
+-	mut sum_type_names := []string{cap: node.variants.len}
+-	for variant in node.variants {
+-		sum_type_names << f.table.type_to_str_using_aliases(variant.typ, f.mod2alias)
++	mut variants := []Variant{cap: node.variants.len}
++	for i, variant in node.variants {
++		variants << Variant{f.table.type_to_str_using_aliases(variant.typ, f.mod2alias), i}
+ 		f.mark_types_import_as_used(variant.typ)
+ 	}
+-	sum_type_names.sort()
++	variants.sort(a.name < b.name)
+ 
+ 	mut separator := ' | '
++	mut is_multiline := false
+ 	// if line length is too long, put each type on its own line
+ 	mut line_length := f.out.len - start_pos
+-	for sum_type_name in sum_type_names {
++	for variant in variants {
+ 		// 3 = length of ' = ' or ' | '
+-		line_length += 3 + sum_type_name.len
+-		if line_length > fmt.max_len.last() {
++		line_length += 3 + variant.name.len
++		if line_length > fmt.max_len.last() || (variant.id != node.variants.len - 1
++			&& node.variants[variant.id].end_comments.len > 0) {
+ 			separator = '\n\t| '
++			is_multiline = true
+ 			break
+ 		}
+ 	}
+ 
+-	for i, name in sum_type_names {
++	for i, variant in variants {
+ 		if i > 0 {
+ 			f.write(separator)
+ 		}
+-		f.write(name)
++		f.write(variant.name)
++		if node.variants[variant.id].end_comments.len > 0 && is_multiline {
++			f.comments(node.variants[variant.id].end_comments, has_nl: false)
++		}
++	}
++	if !is_multiline {
++		f.comments(node.variants.last().end_comments,
++			has_nl: false
++		)
+ 	}
+-
+-	f.comments(node.comments, has_nl: false)
+ }
+ 
+ //=== Specific Expr methods ===//
+diff --git a/vlib/v/parser/parse_type.v b/vlib/v/parser/parse_type.v
+index 19618b649..c7294cd77 100644
+--- a/vlib/v/parser/parse_type.v
++++ b/vlib/v/parser/parse_type.v
+@@ -371,6 +371,7 @@ pub fn (mut p Parser) parse_sum_type_variants() []ast.TypeNode {
+ 	for {
+ 		type_start_pos := p.tok.pos()
+ 		typ := p.parse_type()
++		end_comments := p.eat_comments(same_line: true)
+ 		// TODO: needs to be its own var, otherwise TCC fails because of a known stack error
+ 		prev_tok := p.prev_tok
+ 		type_end_pos := prev_tok.pos()
+@@ -378,6 +379,7 @@ pub fn (mut p Parser) parse_sum_type_variants() []ast.TypeNode {
+ 		types << ast.TypeNode{
+ 			typ: typ
+ 			pos: type_pos
++			end_comments: end_comments
+ 		}
+ 		if p.tok.kind != .pipe {
+ 			break
+diff --git a/vlib/v/parser/parser.v b/vlib/v/parser/parser.v
+index e26d0ad91..4ea0a7ae3 100644
+--- a/vlib/v/parser/parser.v
++++ b/vlib/v/parser/parser.v
+@@ -4099,7 +4099,6 @@ fn (mut p Parser) type_decl() ast.TypeDecl {
+ 				name_pos)
+ 			return ast.SumTypeDecl{}
+ 		}
+-		comments = p.eat_comments(same_line: true)
+ 		return ast.SumTypeDecl{
+ 			name: name
+ 			typ: typ
+@@ -4109,7 +4108,6 @@ fn (mut p Parser) type_decl() ast.TypeDecl {
+ 			attrs: p.attrs
+ 			pos: decl_pos
+ 			name_pos: name_pos
+-			comments: comments
+ 		}
+ 	}
+ 	// type MyType = int

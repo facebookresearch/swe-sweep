@@ -1,0 +1,34 @@
+diff --git a/src/crypto/x509/sec1.go b/src/crypto/x509/sec1.go
+index 8053ff5cda..ff48e0cc9e 100644
+--- a/src/crypto/x509/sec1.go
++++ b/src/crypto/x509/sec1.go
+@@ -54,6 +54,9 @@ func MarshalECPrivateKey(key *ecdsa.PrivateKey) ([]byte, error) {
+ // marshalECPrivateKey marshals an EC private key into ASN.1, DER format and
+ // sets the curve ID to the given OID, or omits it if OID is nil.
+ func marshalECPrivateKeyWithOID(key *ecdsa.PrivateKey, oid asn1.ObjectIdentifier) ([]byte, error) {
++	if !key.Curve.IsOnCurve(key.X, key.Y) {
++		return nil, errors.New("invalid elliptic key public key")
++	}
+ 	privateKey := make([]byte, (key.Curve.Params().N.BitLen()+7)/8)
+ 	return asn1.Marshal(ecPrivateKey{
+ 		Version:       1,
+diff --git a/src/crypto/x509/x509.go b/src/crypto/x509/x509.go
+index 950f6d08c8..7c64761bd7 100644
+--- a/src/crypto/x509/x509.go
++++ b/src/crypto/x509/x509.go
+@@ -84,11 +84,14 @@ func marshalPublicKey(pub any) (publicKeyBytes []byte, publicKeyAlgorithm pkix.A
+ 		// RFC 3279, Section 2.3.1.
+ 		publicKeyAlgorithm.Parameters = asn1.NullRawValue
+ 	case *ecdsa.PublicKey:
+-		publicKeyBytes = elliptic.Marshal(pub.Curve, pub.X, pub.Y)
+ 		oid, ok := oidFromNamedCurve(pub.Curve)
+ 		if !ok {
+ 			return nil, pkix.AlgorithmIdentifier{}, errors.New("x509: unsupported elliptic curve")
+ 		}
++		if !pub.Curve.IsOnCurve(pub.X, pub.Y) {
++			return nil, pkix.AlgorithmIdentifier{}, errors.New("x509: invalid elliptic curve public key")
++		}
++		publicKeyBytes = elliptic.Marshal(pub.Curve, pub.X, pub.Y)
+ 		publicKeyAlgorithm.Algorithm = oidPublicKeyECDSA
+ 		var paramBytes []byte
+ 		paramBytes, err = asn1.Marshal(oid)

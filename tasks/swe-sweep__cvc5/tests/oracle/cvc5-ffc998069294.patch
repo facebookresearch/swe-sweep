@@ -1,0 +1,62 @@
+diff --git a/src/prop/sat_proof_manager.cpp b/src/prop/sat_proof_manager.cpp
+index 334afc97d2..e88444bca2 100644
+--- a/src/prop/sat_proof_manager.cpp
++++ b/src/prop/sat_proof_manager.cpp
+@@ -154,21 +154,12 @@ void SatProofManager::endResChain(const Minisat::Clause& clause)
+   {
+     clauseLits.insert(MinisatSatSolver::toSatLiteral(clause[i]));
+   }
+-  Node conclusion = getClauseNode(clause);
+-  uint32_t clauseLevel = clause.level() + 1;
+-  if (clauseLevel < userContext()->getLevel()
+-      && !d_resChains.hasGenerator(conclusion))
+-  {
+-    d_optResLevels[conclusion] = clauseLevel;
+-    Trace("sat-proof") << "SatProofManager::endResChain: ..clause's lvl "
+-                       << clause.level() + 1 << " below curr user level "
+-                       << userContext()->getLevel() << "\n";
+-  }
+-  endResChain(conclusion, clauseLits);
++  endResChain(getClauseNode(clause), clauseLits, clause.level() + 1);
+ }
+ 
+ void SatProofManager::endResChain(Node conclusion,
+-                                  const std::set<SatLiteral>& conclusionLits)
++                                  const std::set<SatLiteral>& conclusionLits,
++                                  uint32_t clauseLevel)
+ {
+   Trace("sat-proof") << ", " << conclusion << "\n";
+   if (d_resChains.hasGenerator(conclusion))
+@@ -259,6 +250,15 @@ void SatProofManager::endResChain(Node conclusion,
+       return;
+     }
+   }
++  // if this is a clause whose level is below the current user level, we save it
++  // to have its proof kept during backtracking
++  if (clauseLevel < userContext()->getLevel())
++  {
++    d_optResLevels[conclusion] = clauseLevel;
++    Trace("sat-proof") << "SatProofManager::endResChain: ..clause's lvl "
++                       << clauseLevel << " below curr user level "
++                       << userContext()->getLevel() << "\n";
++  }
+   // since the conclusion can be both reordered and without duplicates and the
+   // SAT solver does not record this information, we use a MACRO_RESOLUTION
+   // step, which bypasses these. Note that we could generate a chain resolution
+diff --git a/src/prop/sat_proof_manager.h b/src/prop/sat_proof_manager.h
+index fa23e47401..9f75582c8e 100644
+--- a/src/prop/sat_proof_manager.h
++++ b/src/prop/sat_proof_manager.h
+@@ -414,8 +414,11 @@ class SatProofManager : protected EnvObj
+    *
+    * @param conclusion the node-level conclusion of the resolution chain
+    * @param conclusionLits the set of literals in the conclusion
++   * @param clauseLevel the level of the clause in the SAT solver (if any)
+    */
+-  void endResChain(Node conclusion, const std::set<SatLiteral>& conclusionLits);
++  void endResChain(Node conclusion,
++                   const std::set<SatLiteral>& conclusionLits,
++                   uint32_t clauseLevel = -1);
+ 
+   /** Explain redundant literal and generate corresponding resolution steps
+    *

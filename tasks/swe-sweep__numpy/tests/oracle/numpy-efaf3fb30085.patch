@@ -1,0 +1,36 @@
+diff --git a/numpy/random/mtrand/distributions.c b/numpy/random/mtrand/distributions.c
+--- a/numpy/random/mtrand/distributions.c
++++ b/numpy/random/mtrand/distributions.c
+@@ -182,6 +182,11 @@ double rk_gamma(rk_state *state, double shape, double scale)
+     return scale * rk_standard_gamma(state, shape);
+ }
+ 
++#define BETA_TINY_THRESHOLD 3e-103
++
++/*
++ *  Note: rk_beta assumes that a != 0 and b != 0.
++ */
+ double rk_beta(rk_state *state, double a, double b)
+ {
+     double Ga, Gb;
+@@ -189,6 +194,20 @@ double rk_beta(rk_state *state, double a, double b)
+     if ((a <= 1.0) && (b <= 1.0))
+     {
+         double U, V, X, Y;
++
++        if (a < BETA_TINY_THRESHOLD && b < BETA_TINY_THRESHOLD)
++        {
++            /*
++             * When a and b are this small, the probability that the
++             * sample would be a double precision float that is not
++             * 0 or 1 is less than approx. 1e-100.  So we use the
++             * proportion a/(a + b) and a single uniform sample to
++             * generate the result.
++             */
++            U = rk_double(state);
++            return (a + b)*U < a;
++        }
++
+         /* Use Johnk's algorithm */
+ 
+         while (1)

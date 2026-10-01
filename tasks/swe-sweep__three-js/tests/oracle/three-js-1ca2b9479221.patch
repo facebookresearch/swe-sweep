@@ -1,0 +1,13 @@
+diff --git a/src/objects/BatchedMesh.js b/src/objects/BatchedMesh.js
+index 154b788816..a05daa75bb 100644
+--- a/src/objects/BatchedMesh.js
++++ b/src/objects/BatchedMesh.js
+@@ -1251,7 +1251,7 @@ class BatchedMesh extends Mesh {
+ 		const availableInstanceIds = this._availableInstanceIds;
+ 		const instanceInfo = this._instanceInfo;
+ 		availableInstanceIds.sort( ascIdSort );
+-		while ( availableInstanceIds[ availableInstanceIds.length - 1 ] === instanceInfo.length ) {
++		while ( availableInstanceIds[ availableInstanceIds.length - 1 ] === instanceInfo.length - 1 ) {
+ 
+ 			instanceInfo.pop();
+ 			availableInstanceIds.pop();

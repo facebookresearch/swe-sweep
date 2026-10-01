@@ -1,0 +1,16 @@
+diff --git a/src/multivariate/vonmisesfisher.jl b/src/multivariate/vonmisesfisher.jl
+index 79298bbe..4ad696b0 100644
+--- a/src/multivariate/vonmisesfisher.jl
++++ b/src/multivariate/vonmisesfisher.jl
+@@ -29,7 +29,10 @@ struct VonMisesFisher{T<:Real} <: ContinuousMultivariateDistribution
+ end
+ 
+ VonMisesFisher(μ::Vector{T}, κ::T) where {T<:Real} = VonMisesFisher{T}(μ, κ)
+-VonMisesFisher(μ::Vector{T}, κ::Real) where {T<:Real} = VonMisesFisher(promote_eltype(μ, κ)...)
++function VonMisesFisher(μ::Vector{T}, κ::Real) where {T<:Real}
++    R = promote_type(T, eltype(κ))
++    return VonMisesFisher(convert(AbstractArray{R}, μ), convert(R, κ))
++end
+ 
+ function VonMisesFisher(θ::Vector)
+     κ = norm(θ)

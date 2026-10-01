@@ -1,0 +1,12 @@
+diff --git a/tests/template/template_issues.nim b/tests/template/template_issues.nim
+index ebcd12345..5b7c54ed6 100644
+--- a/tests/template/template_issues.nim
++++ b/tests/template/template_issues.nim
+@@ -298,3 +298,7 @@ block: # bug #12595
+     discard {i: ""}
+ 
+   test()
++
++block: # issue #19865
++  template f() = discard default(system.int)
++  f()

@@ -1,0 +1,12 @@
+diff --git a/src/animation/AnimationAction.js b/src/animation/AnimationAction.js
+index f6f953b61b..5630db5f5d 100644
+--- a/src/animation/AnimationAction.js
++++ b/src/animation/AnimationAction.js
+@@ -856,6 +856,7 @@ class AnimationAction {
+ 
+ 			} else {
+ 
++				this._loopCount = loopCount;
+ 				this.time = time;
+ 
+ 			}

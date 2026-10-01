@@ -1,0 +1,89 @@
+diff --git a/test/sql-luatest/CMakeLists.txt b/test/sql-luatest/CMakeLists.txt
+index d694bdfb83..adafd3317c 100644
+--- a/test/sql-luatest/CMakeLists.txt
++++ b/test/sql-luatest/CMakeLists.txt
+@@ -3,3 +3,5 @@ build_module(sql_datetime sql_datetime.c)
+ target_link_libraries(sql_datetime msgpuck core)
+ build_module(sql_interval sql_interval.c)
+ target_link_libraries(sql_interval msgpuck core)
++build_module(gh_6572 gh_6572_nan_is_not_null_test.c)
++target_link_libraries(gh_6572 msgpuck core)
+diff --git a/test/sql-luatest/gh_6572_nan_is_not_null_test.c b/test/sql-luatest/gh_6572_nan_is_not_null_test.c
+new file mode 100644
+index 0000000000..734f6cbaf7
+--- /dev/null
++++ b/test/sql-luatest/gh_6572_nan_is_not_null_test.c
+@@ -0,0 +1,25 @@
++#include "msgpuck.h"
++#include "module.h"
++#include "math.h"
++
++enum {
++	BUF_SIZE = 512,
++};
++
++int
++get_nan(box_function_ctx_t *ctx, const char *args, const char *args_end)
++{
++	uint32_t arg_count = mp_decode_array(&args);
++	if (arg_count > 0) {
++		return box_error_set(__FILE__, __LINE__, ER_PROC_C,
++				     "invalid argument count");
++	}
++	char res[BUF_SIZE];
++	memset(res, 0, BUF_SIZE);
++	double d;
++	*(uint64_t *)&d = 0xfff8000000000000;
++	assert(isnan(d));
++	char *end = mp_encode_double(res, d);
++	box_return_mp(ctx, res, end);
++	return 0;
++}
+diff --git a/test/sql-luatest/gh_6572_nan_is_not_null_test.lua b/test/sql-luatest/gh_6572_nan_is_not_null_test.lua
+new file mode 100644
+index 0000000000..8ce8b19d55
+--- /dev/null
++++ b/test/sql-luatest/gh_6572_nan_is_not_null_test.lua
+@@ -0,0 +1,42 @@
++local server = require('test.luatest_helpers.server')
++local t = require('luatest')
++local g = t.group()
++
++g.before_all(function()
++    g.server = server:new({alias = 'test_nan_null'})
++    g.server:start()
++end)
++
++g.after_all(function()
++    g.server:stop()
++end)
++
++g.test_nan_null_lua = function()
++    g.server:exec(function()
++        local t = require('luatest')
++        local sql = [[SELECT LUA('return 0/0'), TYPEOF(LUA('return 0/0'));]]
++        t.assert_equals(box.execute(sql).rows, {{nil, 'NULL'}})
++    end)
++end
++
++g.test_nan_null_c = function()
++    g.server:exec(function()
++        local build_path = os.getenv("BUILDDIR")
++        package.cpath = build_path..'/test/sql-luatest/?.so;'..
++                        build_path..'/test/sql-luatest/?.dylib;'..package.cpath
++        local func = {language = 'C', returns = 'double', exports = {'SQL'}}
++        box.schema.func.create('gh_6572.get_nan', func);
++
++        local t = require('luatest')
++        local sql = [[SELECT "gh_6572.get_nan"(), TYPEOF("gh_6572.get_nan"());]]
++        t.assert_equals(box.execute(sql).rows, {{nil, 'NULL'}})
++    end)
++end
++
++g.test_nan_comp_dec = function()
++    g.server:exec(function()
++        local t = require('luatest')
++        local sql = [[SELECT 1.0 > LUA('return 0/0');]]
++        t.assert_equals(box.execute(sql).rows, {{}})
++    end)
++end

@@ -1,0 +1,23 @@
+diff --git a/vlib/v/slow_tests/inout/printing_interpolating_float.out b/vlib/v/slow_tests/inout/printing_interpolating_float.out
+new file mode 100644
+index 000000000..3e36bdefe
+--- /dev/null
++++ b/vlib/v/slow_tests/inout/printing_interpolating_float.out
+@@ -0,0 +1,4 @@
++                                0.10
++                                 0.10
++                                  0.10
++                                                                 0.100
+diff --git a/vlib/v/slow_tests/inout/printing_interpolating_float.vv b/vlib/v/slow_tests/inout/printing_interpolating_float.vv
+new file mode 100644
+index 000000000..3939c0e5d
+--- /dev/null
++++ b/vlib/v/slow_tests/inout/printing_interpolating_float.vv
+@@ -0,0 +1,7 @@
++fn main() {
++	n := 0.1
++	println('${n:36.2f}')
++	println('${n:37.2f}')
++	println('${n:38.2f}')
++	println('${n:70.3f}')
++}

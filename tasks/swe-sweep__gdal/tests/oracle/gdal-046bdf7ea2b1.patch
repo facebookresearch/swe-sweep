@@ -1,0 +1,18 @@
+diff --git a/ogr/ogrsf_frmts/geojson/ogrgeojsonreader.cpp b/ogr/ogrsf_frmts/geojson/ogrgeojsonreader.cpp
+index d26dd88b36..635b45af77 100644
+--- a/ogr/ogrsf_frmts/geojson/ogrgeojsonreader.cpp
++++ b/ogr/ogrsf_frmts/geojson/ogrgeojsonreader.cpp
+@@ -1934,7 +1934,13 @@ void OGRGeoJSONReaderAddOrUpdateField(
+             if (eSubType == OFSTNone)
+             {
+                 if (eNewType == OFTStringList)
++                {
+                     poFDefn->SetType(OFTStringList);
++                }
++                else if (eNewType != OFTString)
++                {
++                    poFDefn->SetSubType(OFSTJSON);
++                }
+             }
+         }
+         else if (eType == OFTIntegerList)

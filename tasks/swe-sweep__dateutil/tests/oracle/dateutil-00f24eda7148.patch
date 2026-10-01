@@ -1,0 +1,13 @@
+diff --git a/dateutil/rrule.py b/dateutil/rrule.py
+index 032efe5..9c6cd91 100644
+--- a/dateutil/rrule.py
++++ b/dateutil/rrule.py
+@@ -730,7 +730,7 @@ class rrule(rrulebase):
+                 parts.append(partfmt.format(name=name, vals=(','.join(str(v)
+                                                              for v in value))))
+ 
+-        output.append(';'.join(parts))
++        output.append('RRULE:' + ';'.join(parts))
+         return '\n'.join(output)
+ 
+     def replace(self, **kwargs):

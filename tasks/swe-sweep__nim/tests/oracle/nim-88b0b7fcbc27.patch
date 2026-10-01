@@ -1,0 +1,15 @@
+diff --git a/lib/pure/asyncmacro.nim b/lib/pure/asyncmacro.nim
+index fa5d981a7..c4f6fd80e 100644
+--- a/lib/pure/asyncmacro.nim
++++ b/lib/pure/asyncmacro.nim
+@@ -286,8 +286,8 @@ macro async*(prc: untyped): untyped =
+ proc splitParamType(paramType: NimNode, async: bool): NimNode =
+   result = paramType
+   if paramType.kind == nnkInfix and paramType[0].strVal in ["|", "or"]:
+-    let firstAsync = "async" in paramType[1].strVal.normalize
+-    let secondAsync = "async" in paramType[2].strVal.normalize
++    let firstAsync = "async" in paramType[1].toStrLit().strVal.normalize
++    let secondAsync = "async" in paramType[2].toStrLit().strVal.normalize
+ 
+     if firstAsync:
+       result = paramType[if async: 1 else: 2]

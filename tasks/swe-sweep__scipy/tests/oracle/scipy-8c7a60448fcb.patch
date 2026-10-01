@@ -1,0 +1,28 @@
+diff --git a/scipy/interpolate/fitpack/fpintb.f b/scipy/interpolate/fitpack/fpintb.f
+index 4b6569d3bd..b09ca15523 100644
+--- a/scipy/interpolate/fitpack/fpintb.f
++++ b/scipy/interpolate/fitpack/fpintb.f
+@@ -1,4 +1,5 @@
+       subroutine fpintb(t,n,bint,nk1,x,y)
++      implicit none
+ c  subroutine fpintb calculates integrals of the normalized b-splines
+ c  nj,k+1(x) of degree k, defined on the set of knots t(j),j=1,2,...n.
+ c  it makes use of the formulae of gaffney for the calculation of
+@@ -47,6 +48,7 @@ c  the integration limits are arranged in increasing order.
+       min = 1
+   30  if(a.lt.t(k1)) a = t(k1)
+       if(b.gt.t(nk1+1)) b = t(nk1+1)
++      if(a.gt.b) go to 160
+ c  using the expression of gaffney for the indefinite integral of a
+ c  b-spline we find that
+ c  bint(j) = (t(j+k+1)-t(j))*(res(j,b)-res(j,a))/(k+1)
+diff --git a/scipy/interpolate/fitpack/splint.f b/scipy/interpolate/fitpack/splint.f
+index be58142654..776b06b9e1 100644
+--- a/scipy/interpolate/fitpack/splint.f
++++ b/scipy/interpolate/fitpack/splint.f
+@@ -1,4 +1,5 @@
+       real*8 function splint(t,n,c,k,a,b,wrk)
++      implicit none
+ c  function splint calculates the integral of a spline function s(x)
+ c  of degree k, which is given in its normalized b-spline representation
+ c

@@ -1,0 +1,22 @@
+diff --git a/test/gie/builtins.gie b/test/gie/builtins.gie
+--- a/test/gie/builtins.gie
++++ b/test/gie/builtins.gie
+@@ -3394,6 +3394,18 @@
+ operation +proj=moll   +a=6400000
+ -------------------------------------------------------------------------------
+ tolerance 0.1 mm
++accept  0.0 89.99
++expect  0.00 9050917.562466157600
++roundtrip 1
++accept  0.0 89.999
++expect  0.00 9050964.513822982088
++roundtrip 1
++accept  0.0 -89.99
++expect  0.0 -9050917.562466157600
++roundtrip 1
++accept  0.0 -89.999
++expect  0.00 -9050964.513822982088
++roundtrip 1
+ accept  2 1
+ expect  201113.698641813 124066.283433860
+ accept  2 -1

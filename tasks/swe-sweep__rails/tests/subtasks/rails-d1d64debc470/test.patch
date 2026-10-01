@@ -1,0 +1,85 @@
+diff --git a/activerecord/test/cases/autosave_association_test.rb b/activerecord/test/cases/autosave_association_test.rb
+index ef5c71dd46b..4ebf90a9efe 100644
+--- a/activerecord/test/cases/autosave_association_test.rb
++++ b/activerecord/test/cases/autosave_association_test.rb
+@@ -34,6 +34,8 @@ require "models/organization"
+ require "models/guitar"
+ require "models/tuning_peg"
+ require "models/reply"
++require "models/attachment"
++require "models/translation"
+ 
+ class TestAutosaveAssociationsInGeneral < ActiveRecord::TestCase
+   def test_autosave_works_even_when_other_callbacks_update_the_parent_model
+@@ -2008,3 +2010,14 @@ class TestAutosaveAssociationOnAHasManyAssociationDefinedInSubclassWithAcceptsNe
+     assert_equal "Updated", valid_project.name
+   end
+ end
++
++class TestAutosaveAssociationOnABelongsToAssociationDefinedAsRecord < ActiveRecord::TestCase
++  def test_should_not_raise_error
++    translation = Translation.create(locale: "fr", key: "bread", value: "Baguette 🥖")
++    author = Author.create(name: "Dorian Marié")
++    translation.build_attachment(record: author)
++    assert_nothing_raised do
++      translation.save!
++    end
++  end
++end
+diff --git a/activerecord/test/models/attachment.rb b/activerecord/test/models/attachment.rb
+new file mode 100644
+index 00000000000..2d4bc57dc56
+--- /dev/null
++++ b/activerecord/test/models/attachment.rb
+@@ -0,0 +1,7 @@
++# frozen_string_literal: true
++
++class Attachment < ActiveRecord::Base
++  belongs_to :record, polymorphic: true
++
++  has_one :translation
++end
+diff --git a/activerecord/test/models/translation.rb b/activerecord/test/models/translation.rb
+new file mode 100644
+index 00000000000..f7485ba3569
+--- /dev/null
++++ b/activerecord/test/models/translation.rb
+@@ -0,0 +1,9 @@
++# frozen_string_literal: true
++
++class Translation < ActiveRecord::Base
++  belongs_to :attachment, optional: true
++
++  validates :locale, presence: true
++  validates :key, presence: true
++  validates :value, presence: true
++end
+diff --git a/activerecord/test/schema/schema.rb b/activerecord/test/schema/schema.rb
+index 58b5a957243..89c3f85304f 100644
+--- a/activerecord/test/schema/schema.rb
++++ b/activerecord/test/schema/schema.rb
+@@ -58,6 +58,10 @@ ActiveRecord::Schema.define do
+     t.references :tag
+   end
+ 
++  create_table :attachments, force: true do |t|
++    t.references :record, polymorphic: true, null: false
++  end
++
+   create_table :audit_logs, force: true do |t|
+     t.column :message, :string, null: false
+     t.column :developer_id, :integer, null: false
+@@ -1107,6 +1111,13 @@ ActiveRecord::Schema.define do
+     t.datetime :updated_at
+   end
+ 
++  create_table :translations, force: true do |t|
++    t.string :locale, null: false
++    t.string :key, null: false
++    t.string :value, null: false
++    t.references :attachment
++  end
++
+   create_table :tuning_pegs, force: true do |t|
+     t.integer :guitar_id
+     t.float :pitch

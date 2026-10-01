@@ -1,0 +1,13 @@
+diff --git a/sklearn/grid_search.py b/sklearn/grid_search.py
+index 2f432362e3..5dedc72d6f 100644
+--- a/sklearn/grid_search.py
++++ b/sklearn/grid_search.py
+@@ -540,7 +540,7 @@ class BaseSearchCV(six.with_metaclass(ABCMeta, BaseEstimator,
+             underlying estimator.
+ 
+         """
+-        return self.best_estimator_.transform(Xt)
++        return self.best_estimator_.inverse_transform(Xt)
+ 
+     def _fit(self, X, y, parameter_iterable):
+         """Actual fitting,  performing the search over parameters."""

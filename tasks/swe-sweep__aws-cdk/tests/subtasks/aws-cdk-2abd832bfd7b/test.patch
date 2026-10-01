@@ -1,0 +1,15 @@
+diff --git a/packages/@aws-cdk/aws-cloudfront/test/origin-request-policy.test.ts b/packages/@aws-cdk/aws-cloudfront/test/origin-request-policy.test.ts
+index 92db58161c..b2b04af43f 100644
+--- a/packages/@aws-cdk/aws-cloudfront/test/origin-request-policy.test.ts
++++ b/packages/@aws-cdk/aws-cloudfront/test/origin-request-policy.test.ts
+@@ -89,4 +89,10 @@ describe('OriginRequestPolicy', () => {
+     expect(() => new OriginRequestPolicy(stack, 'OriginRequestPolicy7', { headerBehavior: OriginRequestHeaderBehavior.allowList('Foo', 'Bar') })).not.toThrow();
+   });
+ 
++  test('accepts headers with disallowed keywords as part of the header', () => {
++    expect(() => new OriginRequestPolicy(stack, 'OriginRequestPolicy1', { headerBehavior: OriginRequestHeaderBehavior.allowList('x-wp-access-authorization') })).not.toThrow();
++    expect(() => new OriginRequestPolicy(stack, 'OriginRequestPolicy2', { headerBehavior: OriginRequestHeaderBehavior.allowList('do-not-accept-encoding') })).not.toThrow();
++    expect(() => new OriginRequestPolicy(stack, 'OriginRequestPolicy3', { headerBehavior: OriginRequestHeaderBehavior.allowList('authorization-Header') })).not.toThrow();
++  });
++
+   test('throws if more than 10 OriginRequestHeaderBehavior headers are being passed', () => {

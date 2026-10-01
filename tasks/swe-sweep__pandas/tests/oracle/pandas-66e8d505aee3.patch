@@ -1,0 +1,12 @@
+diff --git a/pandas/_libs/groupby.pyx b/pandas/_libs/groupby.pyx
+index 6e2b79a320..e33733ed6d 100644
+--- a/pandas/_libs/groupby.pyx
++++ b/pandas/_libs/groupby.pyx
+@@ -204,7 +204,6 @@ def group_cumprod_float64(
+                     out[i, j] = NaN
+                     if not skipna:
+                         accum[lab, j] = NaN
+-                        break
+ 
+ 
+ @cython.boundscheck(False)

@@ -1,0 +1,23 @@
+diff --git a/scipy/io/harwell_boeing/tests/test_hb.py b/scipy/io/harwell_boeing/tests/test_hb.py
+index 87843988a1..44c69349e4 100644
+--- a/scipy/io/harwell_boeing/tests/test_hb.py
++++ b/scipy/io/harwell_boeing/tests/test_hb.py
+@@ -7,6 +7,7 @@ else:
+     from StringIO import StringIO
+ import tempfile
+ 
++import pytest
+ import numpy as np
+ 
+ from numpy.testing import assert_equal, \
+@@ -69,3 +70,10 @@ class TestHBReadWrite(object):
+         for matrix_format in ('coo', 'csc', 'csr', 'bsr', 'dia', 'dok', 'lil'):
+             matrix = random_matrix.asformat(matrix_format, copy=False)
+             self.check_save_load(matrix)
++
++    @pytest.mark.parametrize("dtype", [np.float64, np.int64])
++    def test_empty_roundtrip(self, dtype):
++        # gh-24082: nnz == 0 used to crash in HBInfo.from_data; the integer
++        # variant additionally exercised a mxtype/format inconsistency.
++        m = csc_matrix(np.zeros((2, 2), dtype=dtype))
++        self.check_save_load(m)

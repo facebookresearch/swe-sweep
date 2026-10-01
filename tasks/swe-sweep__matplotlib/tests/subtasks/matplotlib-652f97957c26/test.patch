@@ -1,0 +1,24 @@
+diff --git a/lib/matplotlib/tests/test_ticker.py b/lib/matplotlib/tests/test_ticker.py
+index 3d38df575f..b9e0d2f9fe 100644
+--- a/lib/matplotlib/tests/test_ticker.py
++++ b/lib/matplotlib/tests/test_ticker.py
+@@ -441,6 +441,19 @@ class TestSymmetricalLogLocator:
+         assert sym._subs == [2.0]
+         assert sym.numticks == 8
+ 
++    @pytest.mark.parametrize(
++            'vmin, vmax, expected',
++            [
++                (0, 1, [0, 1]),
++                (-1, 1, [-1, 0, 1]),
++            ],
++    )
++    def test_values(self, vmin, vmax, expected):
++        # https://github.com/matplotlib/matplotlib/issues/25945
++        sym = mticker.SymmetricalLogLocator(base=10, linthresh=1)
++        ticks = sym.tick_values(vmin=vmin, vmax=vmax)
++        assert_array_equal(ticks, expected)
++
+ 
+ class TestIndexFormatter:
+     @pytest.mark.parametrize('x, label', [(-2, ''),

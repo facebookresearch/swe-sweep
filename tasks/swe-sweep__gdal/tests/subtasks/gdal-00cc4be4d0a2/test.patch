@@ -1,0 +1,26 @@
+diff --git a/autotest/utilities/test_gdalwarp_lib.py b/autotest/utilities/test_gdalwarp_lib.py
+index ecb95898d4..496acb3c75 100644
+--- a/autotest/utilities/test_gdalwarp_lib.py
++++ b/autotest/utilities/test_gdalwarp_lib.py
+@@ -3128,3 +3128,21 @@ def test_gdalwarp_lib_cleanup():
+         os.remove("tmp/testgdalwarp_gcp.tif")
+     except OSError:
+         pass
++
++
++###############################################################################
++# Check fix for https://github.com/OSGeo/gdal/issues/12583
++
++
++def test_gdalwarp_te_srs_check_extent():
++
++    out_ds = gdal.Warp(
++        "",
++        "../gdrivers/data/small_world.tif",
++        options="-te 0 -90 6 0 -te_srs EPSG:4326 -t_srs EPSG:32631 -f MEM",
++    )
++    assert out_ds.RasterXSize == 18
++    assert out_ds.RasterYSize == 273
++    assert out_ds.GetGeoTransform() == pytest.approx(
++        (166021, 37108, 0.0, 0.0, 0.0, -36622), abs=1000
++    )

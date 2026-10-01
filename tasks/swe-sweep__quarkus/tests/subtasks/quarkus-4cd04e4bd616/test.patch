@@ -1,0 +1,40 @@
+diff --git a/independent-projects/resteasy-reactive/server/vertx/src/test/java/org/jboss/resteasy/reactive/server/vertx/test/response/CustomHeadersAndWriterInterceptorTest.java b/independent-projects/resteasy-reactive/server/vertx/src/test/java/org/jboss/resteasy/reactive/server/vertx/test/response/CustomHeadersAndWriterInterceptorTest.java
+index 04a8b03e7aa..9a6a0550010 100644
+--- a/independent-projects/resteasy-reactive/server/vertx/src/test/java/org/jboss/resteasy/reactive/server/vertx/test/response/CustomHeadersAndWriterInterceptorTest.java
++++ b/independent-projects/resteasy-reactive/server/vertx/src/test/java/org/jboss/resteasy/reactive/server/vertx/test/response/CustomHeadersAndWriterInterceptorTest.java
+@@ -7,9 +7,11 @@ import static org.hamcrest.Matchers.is;
+ import java.io.IOException;
+ import java.util.Date;
+ 
++import jakarta.ws.rs.ConstrainedTo;
+ import jakarta.ws.rs.GET;
+ import jakarta.ws.rs.Path;
+ import jakarta.ws.rs.Produces;
++import jakarta.ws.rs.RuntimeType;
+ import jakarta.ws.rs.WebApplicationException;
+ import jakarta.ws.rs.core.MediaType;
+ import jakarta.ws.rs.core.Response;
+@@ -28,7 +30,7 @@ public class CustomHeadersAndWriterInterceptorTest {
+     @RegisterExtension
+     static ResteasyReactiveUnitTest runner = new ResteasyReactiveUnitTest()
+             .withApplicationRoot((jar) -> jar
+-                    .addClasses(TestResource.class, DummyWriterInterceptor.class));
++                    .addClasses(TestResource.class, DummyWriterInterceptor.class, FailingWriterInterceptor.class));
+ 
+     @Test
+     void testResponseHeaders() {
+@@ -61,4 +63,14 @@ public class CustomHeadersAndWriterInterceptorTest {
+         }
+     }
+ 
++    @Provider
++    @ConstrainedTo(RuntimeType.CLIENT)
++    public static class FailingWriterInterceptor implements WriterInterceptor {
++
++        @Override
++        public void aroundWriteTo(WriterInterceptorContext context) throws WebApplicationException {
++            throw new RuntimeException("this is never called");
++        }
++    }
++
+ }

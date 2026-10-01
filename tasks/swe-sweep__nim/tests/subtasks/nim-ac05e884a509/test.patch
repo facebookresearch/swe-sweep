@@ -1,0 +1,17 @@
+diff --git a/tests/js/t20235.nim b/tests/js/t20235.nim
+new file mode 100644
+index 000000000..3a69c2bd6
+--- /dev/null
++++ b/tests/js/t20235.nim
+@@ -0,0 +1,11 @@
++discard """
++  action: "run"
++  output: "0 4"
++"""
++
++proc main =
++  var s = ""
++  s.setLen(4)
++  echo s[0].ord, " ", s.len
++
++main()

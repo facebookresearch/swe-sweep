@@ -1,0 +1,31 @@
+diff --git a/MathlibTest/fun_prop_dev.lean b/MathlibTest/fun_prop_dev.lean
+index 2afb53a491..8b50c084ca 100644
+--- a/MathlibTest/fun_prop_dev.lean
++++ b/MathlibTest/fun_prop_dev.lean
+@@ -629,3 +629,26 @@ example (f : α → β → γ) (hf : Con ↿f) : Con (fun x : α×β => f (fst x)
+ example (f : α → β → γ) (hf : Con ↿f) : Con (fun x : α×β => f (fst x) (snd x)) := by
+   fail_if_success fun_prop
+   apply silentSorry
++
++section MVarBug
++
++opaque Lin' (f : α → β) : Prop
++
++theorem Lin'.lin {f : α → β} (h : Lin' f) : Lin f := silentSorry
++
++variable {Ω ι R : Type*} {X : ι → Ω → R}
++
++example (hX : ∀ i, Lin' (X i)) : Lin (fun ω i ↦ X i ω) := by
++  fail_if_success fun_prop -- fails, ok
++  exact silentSorry
++
++example (hX : ∀ i, Lin' (X i)) : Lin (fun ω i ↦ X i ω) := by
++  have : ∀ i, Lin (X i) := fun i ↦ (hX i).lin
++  fun_prop -- succeeds, ok
++
++example (hX : ∀ i, Lin' (X i)) : Lin (fun ω i ↦ X i ω) := by
++  have := fun i ↦ (hX i).lin
++  fun_prop -- now succeeds
++  -- failed in https://leanprover.zulipchat.com/#narrow/channel/287929-mathlib4/topic/Weird.20behavior.20of.20fun_prop
++
++end MVarBug

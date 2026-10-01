@@ -1,0 +1,13 @@
+diff --git a/tests/stdlib/tbase64.nim b/tests/stdlib/tbase64.nim
+index 98388bb6c..c3bfb818e 100644
+--- a/tests/stdlib/tbase64.nim
++++ b/tests/stdlib/tbase64.nim
+@@ -18,6 +18,8 @@ template main() =
+   doAssert encode("") == ""
+   doAssert decode("") == ""
+ 
++  doAssert decode(" ") == ""
++
+   const testInputExpandsTo76 = "+++++++++++++++++++++++++++++++++++++++++++++++++++++++++"
+   const testInputExpands = "++++++++++++++++++++++++++++++"
+   const longText = """Man is distinguished, not only by his reason, but by this

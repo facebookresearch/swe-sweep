@@ -1,0 +1,17 @@
+diff --git a/modules/openapi-generator/src/main/java/org/openapitools/codegen/languages/TypeScriptNestjsClientCodegen.java b/modules/openapi-generator/src/main/java/org/openapitools/codegen/languages/TypeScriptNestjsClientCodegen.java
+index 2edf3b9d198..4613ae58824 100644
+--- a/modules/openapi-generator/src/main/java/org/openapitools/codegen/languages/TypeScriptNestjsClientCodegen.java
++++ b/modules/openapi-generator/src/main/java/org/openapitools/codegen/languages/TypeScriptNestjsClientCodegen.java
+@@ -312,7 +312,11 @@ public class TypeScriptNestjsClientCodegen extends AbstractTypeScriptClientCodeg
+ 
+                         // Add the more complicated component instead of just the brace.
+                         CodegenParameter parameter = findPathParameterByName(op, parameterName.toString());
+-                        pathBuffer.append(toVarName(parameterName.toString()));
++                        if (parameter != null) {
++                            pathBuffer.append(parameter.paramName);
++                        } else {
++                            pathBuffer.append(toVarName(parameterName.toString()));
++                        }
+                         if (parameter != null && parameter.isDateTime) {
+                             pathBuffer.append(".toISOString()");
+                         }

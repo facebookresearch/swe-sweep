@@ -1,0 +1,26 @@
+diff --git a/pkg/analysis_server/test/src/services/correction/fix/remove_initializer_test.dart b/pkg/analysis_server/test/src/services/correction/fix/remove_initializer_test.dart
+index 170b257f363..1a6aea41587 100644
+--- a/pkg/analysis_server/test/src/services/correction/fix/remove_initializer_test.dart
++++ b/pkg/analysis_server/test/src/services/correction/fix/remove_initializer_test.dart
+@@ -126,6 +126,21 @@ class Test {
+ ''');
+   }
+ 
++  Future<void> test_field_late() async {
++    await resolveTestCode('''
++class Test {
++  /// field example
++  late int? x = null;
++}
++''');
++    await assertHasFix('''
++class Test {
++  /// field example
++  int? x;
++}
++''');
++  }
++
+   Future<void> test_forLoop() async {
+     await resolveTestCode('''
+ void f() {

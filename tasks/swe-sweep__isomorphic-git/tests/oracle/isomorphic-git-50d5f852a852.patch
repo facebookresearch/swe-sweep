@@ -1,0 +1,66 @@
+diff --git a/src/managers/GitRefManager.js b/src/managers/GitRefManager.js
+index d68abe81..70cdca81 100644
+--- a/src/managers/GitRefManager.js
++++ b/src/managers/GitRefManager.js
+@@ -210,6 +210,38 @@ export class GitRefManager {
+     throw new NotFoundError(ref)
+   }
+ 
++  /**
++   * Checks whether a ref names the branch HEAD points at in a repository where
++   * that branch has no commits yet.
++   *
++   * A repository created by `git init` has a HEAD pointing at a branch that
++   * does not exist on disk. Resolving that branch fails the same way resolving
++   * a misspelled ref does, so callers that want to treat the two differently
++   * need this to tell them apart.
++   *
++   * @param {Object} args
++   * @param {FSClient} args.fs - A file system implementation.
++   * @param {string} [args.gitdir=join(dir, '.git')] - [required] The [git directory](dir-vs-gitdir.md) path
++   * @param {string} args.ref - The ref to check.
++   * @returns {Promise<boolean>} - True if the ref names an unborn branch.
++   */
++  static async isUnbornBranch({ fs, gitdir, ref }) {
++    let target
++    try {
++      // depth 2 stops at the symbolic target instead of following it to an oid.
++      target = await GitRefManager.resolve({
++        fs,
++        gitdir,
++        ref: 'HEAD',
++        depth: 2,
++      })
++    } catch (_) {
++      return false
++    }
++    if (!target.startsWith('refs/heads/')) return false
++    return ref === 'HEAD' || refpaths(ref).includes(target)
++  }
++
+   static async exists({ fs, gitdir, ref }) {
+     try {
+       await GitRefManager.expand({ fs, gitdir, ref })
+diff --git a/src/models/GitWalkerRepo.js b/src/models/GitWalkerRepo.js
+index 7b139de4..f7c291da 100644
+--- a/src/models/GitWalkerRepo.js
++++ b/src/models/GitWalkerRepo.js
+@@ -18,9 +18,16 @@ export class GitWalkerRepo {
+       try {
+         oid = await GitRefManager.resolve({ fs, gitdir, ref })
+       } catch (e) {
+-        if (e instanceof NotFoundError) {
+-          // Handle fresh branches with no commits
++        // Only a branch that has no commits yet gets the empty tree. Anything
++        // else that fails to resolve is a ref the caller got wrong, and
++        // swallowing it here would walk an empty tree instead of saying so.
++        if (
++          e instanceof NotFoundError &&
++          (await GitRefManager.isUnbornBranch({ fs, gitdir, ref }))
++        ) {
+           oid = '4b825dc642cb6eb9a060e54bf8d69288fbee4904'
++        } else {
++          throw e
+         }
+       }
+       const tree = await resolveTree({ fs, cache: this.cache, gitdir, oid })

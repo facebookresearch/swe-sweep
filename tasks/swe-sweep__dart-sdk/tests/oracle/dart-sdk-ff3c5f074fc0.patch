@@ -1,0 +1,12 @@
+diff --git a/pkg/analyzer/lib/src/dart/element/type.dart b/pkg/analyzer/lib/src/dart/element/type.dart
+index 07b2623d843..02775c2d3c3 100644
+--- a/pkg/analyzer/lib/src/dart/element/type.dart
++++ b/pkg/analyzer/lib/src/dart/element/type.dart
+@@ -903,6 +903,7 @@ class InterfaceTypeImpl extends TypeImpl implements InterfaceType {
+       element: element,
+       typeArguments: typeArguments,
+       nullabilitySuffix: nullabilitySuffix,
++      alias: alias,
+     );
+   }
+ 

@@ -1,0 +1,31 @@
+diff --git a/test/Succeed/Issue7738.agda b/test/Succeed/Issue7738.agda
+new file mode 100644
+index 0000000000..35ffe06f65
+--- /dev/null
++++ b/test/Succeed/Issue7738.agda
+@@ -0,0 +1,13 @@
++-- Test case by Malin Altenmüller
++
++{-# OPTIONS --rewriting #-}
++
++data One : Set where
++  ⊤ : One
++
++data P : One → One → Set where
++  m : P ⊤ ⊤
++
++{-# BUILTIN REWRITE P #-}
++
++{-# REWRITE m #-}
+diff --git a/test/Succeed/Issue7738b.agda b/test/Succeed/Issue7738b.agda
+new file mode 100644
+index 0000000000..889363aad2
+--- /dev/null
++++ b/test/Succeed/Issue7738b.agda
+@@ -0,0 +1,6 @@
++{-# OPTIONS --rewriting #-}
++open import Agda.Builtin.Equality
++open import Agda.Builtin.Equality.Rewrite
++open import Agda.Builtin.Strict
++
++{-# REWRITE primForceLemma #-}

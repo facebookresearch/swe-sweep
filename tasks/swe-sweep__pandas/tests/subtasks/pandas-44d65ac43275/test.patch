@@ -1,0 +1,17 @@
+diff --git a/pandas/tests/io/formats/test_format.py b/pandas/tests/io/formats/test_format.py
+index b3b718a81c..218e371366 100644
+--- a/pandas/tests/io/formats/test_format.py
++++ b/pandas/tests/io/formats/test_format.py
+@@ -238,6 +238,12 @@ class TestDataFrameFormatting:
+         with option_context("display.max_colwidth", max_len + 2):
+             assert "..." not in repr(df)
+ 
++    def test_repr_truncation_preserves_na(self):
++        # https://github.com/pandas-dev/pandas/issues/55630
++        df = DataFrame({"a": [pd.NA for _ in range(10)]})
++        with option_context("display.max_rows", 2, "display.show_dimensions", False):
++            assert repr(df) == "       a\n0   <NA>\n..   ...\n9   <NA>"
++
+     def test_repr_deprecation_negative_int(self):
+         # FIXME: remove in future version after deprecation cycle
+         # Non-regression test for:

@@ -1,0 +1,68 @@
+diff --git a/numpy/f2py/auxfuncs.py b/numpy/f2py/auxfuncs.py
+--- a/numpy/f2py/auxfuncs.py
++++ b/numpy/f2py/auxfuncs.py
+@@ -46,7 +46,7 @@
+     'isunsigned_long_longarray', 'isunsigned_short',
+     'isunsigned_shortarray', 'l_and', 'l_not', 'l_or', 'outmess',
+     'replace', 'show', 'stripcomma', 'throw_error',
+-]
++    'getuseblocks']
+ 
+ 
+ f2py_version = __version__.version
+@@ -847,3 +847,12 @@ def applyrules(rules, d, var={}):
+             if ret[k] == []:
+                 del ret[k]
+     return ret
++
++
++def getuseblocks(pymod):
++    all_uses = []
++    for inner in pymod['body']:
++        for modblock in inner['body']:
++            if modblock.get('use'):
++                all_uses.extend([x for x in modblock.get('use').keys()])
++    return all_uses
+diff --git a/numpy/f2py/common_rules.py b/numpy/f2py/common_rules.py
+--- a/numpy/f2py/common_rules.py
++++ b/numpy/f2py/common_rules.py
+@@ -20,7 +20,7 @@ from . import __version__
+ f2py_version = __version__.version
+ 
+ from .auxfuncs import (
+-    hasbody, hascommon, hasnote, isintent_hide, outmess
++    hasbody, hascommon, hasnote, isintent_hide, outmess, getuseblocks
+ )
+ from . import capi_maps
+ from . import func2subr
+@@ -84,6 +84,8 @@ def buildhooks(m):
+             outmess('\t\tConstructing COMMON block support for "%s"...\n\t\t  %s\n' % (
+                 name, ','.join(inames)))
+         fadd('subroutine f2pyinit%s(setupfunc)' % name)
++        for usename in getuseblocks(m):
++            fadd(f'use {usename}')
+         fadd('external setupfunc')
+         for n in vnames:
+             fadd(func2subr.var2fixfortran(vars, n))
+diff --git a/numpy/f2py/f90mod_rules.py b/numpy/f2py/f90mod_rules.py
+--- a/numpy/f2py/f90mod_rules.py
++++ b/numpy/f2py/f90mod_rules.py
+@@ -100,6 +100,8 @@ def buildhooks(pymod):
+ 
+     def dadd(line, s=doc):
+         s[0] = '%s\n%s' % (s[0], line)
++
++    usenames = getuseblocks(pymod)
+     for m in findf90modules(pymod):
+         sargs, fargs, efargs, modobjs, notvars, onlyvars = [], [], [], [], [
+             m['name']], []
+@@ -119,6 +121,9 @@ def buildhooks(pymod):
+                 mfargs.append(n)
+         outmess('\t\tConstructing F90 module support for "%s"...\n' %
+                 (m['name']))
++        if m['name'] in usenames:
++            outmess(f"\t\t\tSkipping {m['name']} since it is in 'use'...\n")
++            continue
+         if onlyvars:
+             outmess('\t\t  Variables: %s\n' % (' '.join(onlyvars)))
+         chooks = ['']

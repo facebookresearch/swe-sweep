@@ -1,0 +1,76 @@
+diff --git a/src/click/_compat.py b/src/click/_compat.py
+index b9e1f0d..9d6dcb1 100644
+--- a/src/click/_compat.py
++++ b/src/click/_compat.py
+@@ -585,12 +585,16 @@ def isatty(stream: t.IO) -> bool:
+ 
+ 
+ def _make_cached_stream_func(
+-    src_func: t.Callable[[], t.TextIO], wrapper_func: t.Callable[[], t.TextIO]
+-) -> t.Callable[[], t.TextIO]:
++    src_func: t.Callable[[], t.Optional[t.TextIO]],
++    wrapper_func: t.Callable[[], t.TextIO],
++) -> t.Callable[[], t.Optional[t.TextIO]]:
+     cache: t.MutableMapping[t.TextIO, t.TextIO] = WeakKeyDictionary()
+ 
+-    def func() -> t.TextIO:
++    def func() -> t.Optional[t.TextIO]:
+         stream = src_func()
++
++        if stream is None:
++            return None
+         try:
+             rv = cache.get(stream)
+         except Exception:
+diff --git a/src/click/_termui_impl.py b/src/click/_termui_impl.py
+index 06cf2b7..b904f14 100644
+--- a/src/click/_termui_impl.py
++++ b/src/click/_termui_impl.py
+@@ -10,6 +10,7 @@ import sys
+ import time
+ import typing as t
+ from gettext import gettext as _
++from io import StringIO
+ 
+ from ._compat import _default_text_stdout
+ from ._compat import CYGWIN
+@@ -62,6 +63,11 @@ class ProgressBar(t.Generic[V]):
+         self.label = label or ""
+         if file is None:
+             file = _default_text_stdout()
++
++            # There are no standard streams attached to write to. For example,
++            # pythonw on Windows.
++            if file is None:
++                file = StringIO()
+         self.file = file
+         self.color = color
+         self.update_min_steps = update_min_steps
+@@ -344,6 +350,11 @@ class ProgressBar(t.Generic[V]):
+ def pager(generator: t.Iterable[str], color: t.Optional[bool] = None) -> None:
+     """Decide what method to use for paging through text."""
+     stdout = _default_text_stdout()
++
++    # There are no standard streams attached to write to. For example,
++    # pythonw on Windows.
++    if stdout is None:
++        stdout = StringIO()
+     if not isatty(sys.stdin) or not isatty(stdout):
+         return _nullpager(stdout, generator, color)
+     pager_cmd = (os.environ.get("PAGER", None) or "").strip()
+diff --git a/src/click/utils.py b/src/click/utils.py
+index 91a372d..042d97b 100644
+--- a/src/click/utils.py
++++ b/src/click/utils.py
+@@ -252,6 +252,11 @@ def echo(
+         else:
+             file = _default_text_stdout()
+ 
++        # There are no standard streams attached to write to. For example,
++        # pythonw on Windows.
++        if file is None:
++            return
++
+     # Convert non bytes/text into the native string type.
+     if message is not None and not isinstance(message, (str, bytes, bytearray)):
+         out: t.Optional[t.Union[str, bytes]] = str(message)

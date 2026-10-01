@@ -1,0 +1,16 @@
+diff --git a/handler-proxy/src/test/java/io/netty/handler/proxy/ProxyHandlerTest.java b/handler-proxy/src/test/java/io/netty/handler/proxy/ProxyHandlerTest.java
+index 8ae777d153..9d7d695b40 100644
+--- a/handler-proxy/src/test/java/io/netty/handler/proxy/ProxyHandlerTest.java
++++ b/handler-proxy/src/test/java/io/netty/handler/proxy/ProxyHandlerTest.java
+@@ -264,6 +264,11 @@ public class ProxyHandlerTest {
+                         DESTINATION, "unexpected authMethod: PASSWORD",
+                         new Socks5ProxyHandler(socks5Proxy.address())),
+ 
++                new SuccessTestItem(
++                        "SOCKS5: successful connection to anonymous server, AUTO_READ on",
++                        DESTINATION,
++                        new Socks5ProxyHandler(anonSocks5Proxy.address(), USERNAME, PASSWORD)),
++
+                 new SuccessTestItem(
+                         "SOCKS5: successful connection",
+                         DESTINATION,

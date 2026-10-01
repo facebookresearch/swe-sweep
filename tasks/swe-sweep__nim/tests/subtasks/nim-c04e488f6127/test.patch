@@ -1,0 +1,15 @@
+diff --git a/tests/vm/tmisc_vm.nim b/tests/vm/tmisc_vm.nim
+index 6a0c0c33f..56f253637 100644
+--- a/tests/vm/tmisc_vm.nim
++++ b/tests/vm/tmisc_vm.nim
+@@ -249,3 +249,10 @@ static:
+   echo x2[]
+   let x3 = new(ref MyObject) # cannot generate VM code for ref MyObject
+   echo x3[]
++
++
++static:
++  var foo: string
++  for _ in 0 ..< 100_000:
++    foo.add 'a'
++  doAssert repr(foo).len == 100_002

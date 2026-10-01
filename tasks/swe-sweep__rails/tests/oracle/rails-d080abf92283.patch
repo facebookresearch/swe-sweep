@@ -1,0 +1,13 @@
+diff --git a/activerecord/lib/active_record/connection_adapters/sqlite3/schema_statements.rb b/activerecord/lib/active_record/connection_adapters/sqlite3/schema_statements.rb
+index 39ce83bce8b..3655eead9ae 100644
+--- a/activerecord/lib/active_record/connection_adapters/sqlite3/schema_statements.rb
++++ b/activerecord/lib/active_record/connection_adapters/sqlite3/schema_statements.rb
+@@ -21,7 +21,7 @@ module ActiveRecord
+               WHERE name = #{quote(row['name'])} AND type = 'index'
+             SQL
+ 
+-            /\bON\b\s*"?(\w+?)"?\s*\((?<expressions>.+?)\)(?:\s*WHERE\b\s*(?<where>.+))?\z/i =~ index_sql
++            /\bON\b\s*"?(\w+?)"?\s*\((?<expressions>.+?)\)(?:\s*WHERE\b\s*(?<where>.+))?(?:\s*\/\*.*\*\/)?\z/i =~ index_sql
+ 
+             columns = exec_query("PRAGMA index_info(#{quote(row['name'])})", "SCHEMA").map do |col|
+               col["name"]

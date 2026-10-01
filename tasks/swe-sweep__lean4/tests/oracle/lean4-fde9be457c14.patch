@@ -1,0 +1,33 @@
+diff --git a/src/Lean/Elab/Tactic/Simp.lean b/src/Lean/Elab/Tactic/Simp.lean
+index b61c28b5e2..b2a8848a60 100644
+--- a/src/Lean/Elab/Tactic/Simp.lean
++++ b/src/Lean/Elab/Tactic/Simp.lean
+@@ -340,7 +340,7 @@ def mkSimpOnly (stx : Syntax) (usedSimps : Simp.UsedSimps) : MetaM Syntax := do
+     match thm with
+     | .decl declName post inv => -- global definitions in the environment
+       if env.contains declName && (inv || !simpOnlyBuiltins.contains declName) then
+-        let decl : Term ← `($(mkIdent (← unresolveNameGlobal declName)):ident)
++        let decl : Term ← `($(mkIdent (← unresolveNameGlobalAvoidingLocals declName)):ident)
+         let arg ← match post, inv with
+           | true,  true  => `(Parser.Tactic.simpLemma| ← $decl:term)
+           | true,  false => `(Parser.Tactic.simpLemma| $decl:term)
+diff --git a/src/Lean/ResolveName.lean b/src/Lean/ResolveName.lean
+index 91bef0d..46053c3db9 100644
+--- a/src/Lean/ResolveName.lean
++++ b/src/Lean/ResolveName.lean
+@@ -410,4 +410,15 @@ where
+       | _ => continue
+     return none
+ 
++def unresolveNameGlobalAvoidingLocals [Monad m] [MonadResolveName m] [MonadEnv m] [MonadLCtx m]
++    (n₀ : Name) (fullNames := false) : m Name := do
++  let mut n ← unresolveNameGlobal n₀ fullNames
++  unless (← getLCtx).usesUserName n do return n
++  -- `n` is also a local declaration
++  if n == n₀ then
++    -- `n` is the fully qualified name. So, we append the `_root_` prefix
++    return `_root_ ++ n
++  else
++    return n₀
++
+ end Lean

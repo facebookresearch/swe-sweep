@@ -1,0 +1,16 @@
+diff --git a/tests/collections/tseq.nim b/tests/collections/tseq.nim
+index a7a0c72..9a041065e 100644
+--- a/tests/collections/tseq.nim
++++ b/tests/collections/tseq.nim
+@@ -214,3 +214,11 @@ for i in 0..100:
+   var test = newSeqOfCap[uint32](1)
+   test.setLen(1)
+   doAssert test[0] == 0, $(test[0], i)
++
++block: # bug #12340
++  func consume(x: sink seq[int]) =
++    x[0] += 5
++
++  let x = @[1, 2, 3, 4]
++  consume x
++  doAssert x == @[1, 2, 3, 4]

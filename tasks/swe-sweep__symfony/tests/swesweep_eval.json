@@ -1,0 +1,1434 @@
+{
+  "build_jobs": 4,
+  "container_repo": "/symfony",
+  "evaluation": {
+    "suite": "reproduction",
+    "test_timeout": 3600,
+    "visible_timeout": 14400
+  },
+  "upstream_image": "pandora-maxbug-symfony:v6.4.0",
+  "n_base_passing": 0,
+  "n_base_test_ignore": 1,
+  "oracle_digest": "a7299589626473dee112cd79e93785a7a1aa5763f6a831d0901ce233c24433c6",
+  "oracle_pristine_paths": [],
+  "upstream_commit": "9f7399e15e6172900e0591deb5a57a45769d8205",
+  "reproduction": {
+    "needs_build": false,
+    "suite": {
+      "binary": "phpunit",
+      "config": "phpunit.xml.dist",
+      "type": "phpunit"
+    },
+    "test_timeout": 1800
+  },
+  "schema": 2,
+  "subtasks": [
+    {
+      "f2p": [
+        "testEmptyUpload"
+      ],
+      "id": "symfony-01713a0fcac6",
+      "target_files": [
+        "src/Symfony/Component/BrowserKit/HttpBrowser.php"
+      ]
+    },
+    {
+      "f2p": [
+        "testDoesNotCacheBinaryFileResponses",
+        "testDoesNotStoreResponsesWithUnreadableContent"
+      ],
+      "id": "symfony-0260a1bc8958",
+      "target_files": [
+        "src/Symfony/Component/HttpKernel/HttpCache/Store.php"
+      ]
+    },
+    {
+      "f2p": [
+        "testRouteRedirectControllerNoRouteAtrribute"
+      ],
+      "id": "symfony-043ff3d76cf8",
+      "target_files": [
+        "src/Symfony/Bundle/FrameworkBundle/DataCollector/RouterDataCollector.php"
+      ]
+    },
+    {
+      "f2p": [
+        "testConsumeLoginLinkWithInvalidExpiration",
+        "testConsumeLoginLinkWithInvalidHash"
+      ],
+      "id": "symfony-052bb0935f50",
+      "target_files": [
+        "src/Symfony/Component/Security/Http/LoginLink/LoginLinkHandler.php"
+      ]
+    },
+    {
+      "f2p": [
+        "testAutowireAttribute"
+      ],
+      "id": "symfony-0567318dae23",
+      "target_files": [
+        "src/Symfony/Component/HttpKernel/DependencyInjection/RegisterControllerArgumentLocatorsPass.php"
+      ]
+    },
+    {
+      "f2p": [
+        "testMessageWithTranslatableLabel"
+      ],
+      "id": "symfony-07fe58f18d5a",
+      "target_files": [
+        "src/Symfony/Component/Form/Extension/Validator/ViolationMapper/ViolationMapper.php"
+      ]
+    },
+    {
+      "f2p": [
+        "testDanglingSymlinkIsNeitherAFileNorADirectory"
+      ],
+      "id": "symfony-086e30d73946",
+      "target_files": [
+        "src/Symfony/Component/Finder/Iterator/FileTypeFilterIterator.php"
+      ]
+    },
+    {
+      "f2p": [
+        "testPeekConsume"
+      ],
+      "id": "symfony-08b6757e7c1e",
+      "target_files": [
+        "src/Symfony/Component/RateLimiter/Policy/SlidingWindowLimiter.php"
+      ]
+    },
+    {
+      "f2p": [
+        "testNestedPrototypeErrorPathHasFullContext"
+      ],
+      "id": "symfony-0bf14d5f56be",
+      "target_files": [
+        "src/Symfony/Component/OptionsResolver/OptionsResolver.php"
+      ]
+    },
+    {
+      "f2p": [
+        "testMapFormToDataWithOnlyGetterConfigured"
+      ],
+      "id": "symfony-0eb26e1d548b",
+      "target_files": [
+        "src/Symfony/Component/Form/Extension/Core/DataAccessor/PropertyPathAccessor.php",
+        "src/Symfony/Component/Form/Extension/Core/DataMapper/DataMapper.php"
+      ]
+    },
+    {
+      "f2p": [
+        "testNestedLocatorConfiguredViaAttribute",
+        "testNestedServiceLocatorArgument",
+        "testSubscribedServiceWithAutowireLocatorAttribute"
+      ],
+      "id": "symfony-0f9fece3be38",
+      "target_files": [
+        "src/Symfony/Component/DependencyInjection/Compiler/ServiceLocatorTagPass.php"
+      ]
+    },
+    {
+      "f2p": [
+        "testProcessDefersLazyServices"
+      ],
+      "id": "symfony-110037975e21",
+      "target_files": [
+        "src/Symfony/Component/DependencyInjection/Compiler/CheckCircularReferencesPass.php"
+      ]
+    },
+    {
+      "f2p": [
+        "testParameterWithNullableIntersectionIsAutowiredWhenAliasExists"
+      ],
+      "id": "symfony-1161ed28c2a8",
+      "target_files": [
+        "src/Symfony/Component/DependencyInjection/Compiler/AutowirePass.php"
+      ]
+    },
+    {
+      "f2p": [
+        "testInvalidComparisonWithExtremeDateDoesNotThrow"
+      ],
+      "id": "symfony-12c14e2e162d",
+      "target_files": [
+        "src/Symfony/Component/Validator/ConstraintValidator.php"
+      ]
+    },
+    {
+      "f2p": [
+        "testMissingConstraints",
+        "testMissingSchemes"
+      ],
+      "id": "symfony-151549cda9bb",
+      "target_files": [
+        "src/Symfony/Component/Validator/Constraints/CardScheme.php",
+        "src/Symfony/Component/Validator/Constraints/Expression.php",
+        "src/Symfony/Component/Validator/Constraints/When.php"
+      ]
+    },
+    {
+      "f2p": [
+        "testTypedProperties"
+      ],
+      "id": "symfony-15508ef6434c",
+      "target_files": [
+        "src/Symfony/Component/PropertyInfo/Extractor/ReflectionExtractor.php"
+      ]
+    },
+    {
+      "f2p": [
+        "testZero"
+      ],
+      "id": "symfony-189228a072f7",
+      "target_files": [
+        "src/Symfony/Component/Routing/Matcher/Dumper/CompiledUrlMatcherTrait.php",
+        "src/Symfony/Component/Routing/Matcher/RedirectableUrlMatcher.php",
+        "src/Symfony/Component/Routing/Matcher/TraceableUrlMatcher.php",
+        "src/Symfony/Component/Routing/Matcher/UrlMatcher.php"
+      ]
+    },
+    {
+      "f2p": [
+        "testInlineWithCustomContentId"
+      ],
+      "id": "symfony-194af5fd3aff",
+      "target_files": [
+        "src/Symfony/Component/Mailer/Bridge/Sendgrid/Transport/SendgridApiTransport.php"
+      ]
+    },
+    {
+      "f2p": [
+        "testCreateMappedAssetInMissingVendor"
+      ],
+      "id": "symfony-19dadecf8c5a",
+      "target_files": [
+        "src/Symfony/Component/AssetMapper/Factory/MappedAssetFactory.php"
+      ]
+    },
+    {
+      "f2p": [
+        "testVirtualUse"
+      ],
+      "id": "symfony-1a61a4a0b05b",
+      "target_files": [
+        "src/Symfony/Component/ErrorHandler/DebugClassLoader.php"
+      ]
+    },
+    {
+      "f2p": [
+        "testServicesAreResetOnEnsureKernelShutdown"
+      ],
+      "id": "symfony-21abd0579c45",
+      "target_files": [
+        "src/Symfony/Bundle/FrameworkBundle/Test/KernelTestCase.php",
+        "src/Symfony/Component/DependencyInjection/Container.php"
+      ]
+    },
+    {
+      "f2p": [
+        "testReduceBucketSizeWhenAlreadyExistInStorageWithBiggerBucketSize"
+      ],
+      "id": "symfony-23b2757dbfe1",
+      "target_files": [
+        "src/Symfony/Component/RateLimiter/Policy/TokenBucketLimiter.php"
+      ]
+    },
+    {
+      "f2p": [
+        "testGetTraceAsStringDoesNotTriggerWarning"
+      ],
+      "id": "symfony-25498becc64c",
+      "target_files": [
+        "src/Symfony/Component/ErrorHandler/Error/FatalError.php"
+      ]
+    },
+    {
+      "f2p": [
+        "testDefaultProcessorAndAnotherProcessorWithScalarNode",
+        "testDefaultProcessorWithScalarNode"
+      ],
+      "id": "symfony-25eacb53c914",
+      "target_files": [
+        "src/Symfony/Component/DependencyInjection/Compiler/ValidateEnvPlaceholdersPass.php"
+      ]
+    },
+    {
+      "f2p": [
+        "testEventWhenAlreadyInThisPlace"
+      ],
+      "id": "symfony-264cbc98834d",
+      "target_files": [
+        "src/Symfony/Component/Workflow/Workflow.php"
+      ]
+    },
+    {
+      "f2p": [
+        "testEncodeNestedTraversableWhenNormalizable"
+      ],
+      "id": "symfony-27bea94e427b",
+      "target_files": [
+        "src/Symfony/Component/Serializer/Encoder/XmlEncoder.php"
+      ]
+    },
+    {
+      "f2p": [
+        "testRequestDefaultLocaleIfNoAcceptLanguageHeaderIsPresent"
+      ],
+      "id": "symfony-2a6daf16e16d",
+      "target_files": [
+        "src/Symfony/Component/HttpKernel/EventListener/LocaleListener.php"
+      ]
+    },
+    {
+      "f2p": [
+        "testPathHeaderHasNoName"
+      ],
+      "id": "symfony-33c2635d68d5",
+      "target_files": [
+        "src/Symfony/Component/Mime/Header/PathHeader.php"
+      ]
+    },
+    {
+      "f2p": [
+        "testCompileWithResolveEnv"
+      ],
+      "id": "symfony-349b78024f5b",
+      "target_files": [
+        "src/Symfony/Component/DependencyInjection/ContainerBuilder.php"
+      ]
+    },
+    {
+      "f2p": [
+        "testTaggedBatchMessageHandlerIsRegisteredOnce"
+      ],
+      "id": "symfony-35886eb20592",
+      "target_files": [
+        "src/Symfony/Component/Messenger/DependencyInjection/MessengerPass.php"
+      ]
+    },
+    {
+      "f2p": [
+        "testInlineServiceIsNotAllowedWithoutAllowServices",
+        "testServiceReferenceIsNotAllowedWithoutAllowServices"
+      ],
+      "id": "symfony-386b89bfe59a",
+      "target_files": [
+        "src/Symfony/Component/DependencyInjection/Loader/Configurator/AbstractConfigurator.php"
+      ]
+    },
+    {
+      "f2p": [
+        "testAddNamePrefixDoesNotBreakExternalAliases"
+      ],
+      "id": "symfony-3b77b75173fe",
+      "target_files": [
+        "src/Symfony/Component/Routing/RouteCollection.php"
+      ]
+    },
+    {
+      "f2p": [
+        "testGetMultipleWithTagAwareAdapter"
+      ],
+      "id": "symfony-3c71d0992df4",
+      "target_files": [
+        "src/Symfony/Component/Cache/Psr16Cache.php"
+      ]
+    },
+    {
+      "f2p": [
+        "testCollectedCallerFromArrayMap"
+      ],
+      "id": "symfony-3daff349b591",
+      "target_files": [
+        "src/Symfony/Component/Serializer/Debug/TraceableSerializer.php"
+      ]
+    },
+    {
+      "f2p": [
+        "testColorsOnTerminalWhenDumpingToPhpOutput"
+      ],
+      "id": "symfony-3e0b1ca3e833",
+      "target_files": [
+        "src/Symfony/Component/VarDumper/Dumper/CliDumper.php"
+      ]
+    },
+    {
+      "f2p": [
+        "testItemExpiryIsPreservedWhenPropagatedToPreviousAdapters",
+        "testItemExpiryIsPreservedWhenPropagatedToPreviousAdaptersUsingGetMethod"
+      ],
+      "id": "symfony-42020f11a072",
+      "target_files": [
+        "src/Symfony/Component/Cache/Adapter/ArrayAdapter.php",
+        "src/Symfony/Component/Cache/Adapter/ChainAdapter.php",
+        "src/Symfony/Component/Cache/CacheItem.php"
+      ]
+    },
+    {
+      "f2p": [
+        "testLoadServicesWithEnvironment"
+      ],
+      "id": "symfony-42129a5b6830",
+      "target_files": [
+        "src/Symfony/Component/DependencyInjection/Loader/XmlFileLoader.php"
+      ]
+    },
+    {
+      "f2p": [
+        "testTrailingDirectorySeparatorIsStripped"
+      ],
+      "id": "symfony-42e9fd355a30",
+      "target_files": [
+        "src/Symfony/Component/Finder/Iterator/RecursiveDirectoryIterator.php"
+      ]
+    },
+    {
+      "f2p": [
+        "testClosureWithIntersectionTypesNotInvoked",
+        "testClosureWithUnionTypesNotInvoked"
+      ],
+      "id": "symfony-42f2b89202aa",
+      "target_files": [
+        "src/Symfony/Component/OptionsResolver/OptionsResolver.php"
+      ]
+    },
+    {
+      "f2p": [
+        "testUppercaseHexadecimalPrefixKeys"
+      ],
+      "id": "symfony-430ade90af8c",
+      "target_files": [
+        "src/Symfony/Component/Yaml/Inline.php"
+      ]
+    },
+    {
+      "f2p": [
+        "testTheIndexedTagsByDefaultIndexMethod"
+      ],
+      "id": "symfony-45bdf3d42f8e",
+      "target_files": [
+        "src/Symfony/Component/DependencyInjection/Compiler/PriorityTaggedServiceTrait.php"
+      ]
+    },
+    {
+      "f2p": [
+        "testStopDoesNotThrowAfterBrokenPipe"
+      ],
+      "id": "symfony-461ef4aaa6ac",
+      "target_files": [
+        "src/Symfony/Component/Process/Pipes/AbstractPipes.php"
+      ]
+    },
+    {
+      "f2p": [
+        "testSynchronousNackRethrowsTheError"
+      ],
+      "id": "symfony-471141e92f71",
+      "target_files": [
+        "src/Symfony/Component/Messenger/Handler/BatchHandlerTrait.php"
+      ]
+    },
+    {
+      "f2p": [
+        "testStampsAddedByMiddlewaresDontDisappearWhenValidationFails"
+      ],
+      "id": "symfony-499471967aee",
+      "target_files": [
+        "src/Symfony/Component/Messenger/Exception/DelayedMessageHandlingException.php",
+        "src/Symfony/Component/Messenger/Exception/EnvelopeAwareExceptionInterface.php",
+        "src/Symfony/Component/Messenger/Exception/EnvelopeAwareExceptionTrait.php",
+        "src/Symfony/Component/Messenger/Exception/HandlerFailedException.php",
+        "src/Symfony/Component/Messenger/Exception/ValidationFailedException.php",
+        "src/Symfony/Component/Messenger/Middleware/ValidationMiddleware.php",
+        "src/Symfony/Component/Messenger/Worker.php"
+      ]
+    },
+    {
+      "f2p": [
+        "testMethodsOnParentsAndChildrenAreIgnoredInGetSubscribedServices"
+      ],
+      "id": "symfony-4cdc4817f81c",
+      "target_files": [
+        "src/Symfony/Contracts/Service/ServiceSubscriberTrait.php"
+      ]
+    },
+    {
+      "f2p": [
+        "testGetValue"
+      ],
+      "id": "symfony-507a0d2124cc",
+      "target_files": [
+        "src/Symfony/Component/BrowserKit/Cookie.php"
+      ]
+    },
+    {
+      "f2p": [
+        "testStaticHostIsCaseInsensitive"
+      ],
+      "id": "symfony-50f2899a91af",
+      "target_files": [
+        "src/Symfony/Component/Routing/Matcher/Dumper/CompiledUrlMatcherDumper.php"
+      ]
+    },
+    {
+      "f2p": [
+        "testMirrorWithCustomIteratorAndDeleteOption"
+      ],
+      "id": "symfony-510f1344d4fa",
+      "target_files": [
+        "src/Symfony/Component/Filesystem/Filesystem.php"
+      ]
+    },
+    {
+      "f2p": [
+        "testEncodeException"
+      ],
+      "id": "symfony-51813fb2dc2e",
+      "target_files": [
+        "src/Symfony/Component/Serializer/Encoder/XmlEncoder.php"
+      ]
+    },
+    {
+      "f2p": [
+        "testRunIsNotOverriddenWithProfile"
+      ],
+      "id": "symfony-529ffcc5b90c",
+      "target_files": [
+        "src/Symfony/Component/Console/Command/TraceableCommand.php"
+      ]
+    },
+    {
+      "f2p": [
+        "testAbstractArg"
+      ],
+      "id": "symfony-52c4679ab784",
+      "target_files": [
+        "src/Symfony/Component/DependencyInjection/Compiler/ResolveBindingsPass.php"
+      ]
+    },
+    {
+      "f2p": [
+        "testRetryableHttpClientIntegration"
+      ],
+      "id": "symfony-54eb3cd00810",
+      "target_files": [
+        "src/Symfony/Component/HttpClient/HttpClientTrait.php",
+        "src/Symfony/Component/HttpClient/RetryableHttpClient.php",
+        "src/Symfony/Component/HttpClient/ScopingHttpClient.php"
+      ]
+    },
+    {
+      "f2p": [
+        "testFalseNegativeTrace"
+      ],
+      "id": "symfony-5538caba3078",
+      "target_files": [
+        "src/Symfony/Bundle/WebProfilerBundle/Controller/RouterController.php"
+      ]
+    },
+    {
+      "f2p": [
+        "testInheritedAutoMappingStrategiesAreKeptWhenLoadersMapTheProperty",
+        "testInheritedAutoMappingStrategy",
+        "testLoadersSeeAutoMappingStrategyOfParentProperties"
+      ],
+      "id": "symfony-56edee2c1038",
+      "target_files": [
+        "src/Symfony/Component/Validator/Mapping/Factory/LazyLoadingMetadataFactory.php"
+      ]
+    },
+    {
+      "f2p": [
+        "testListenersAreCalled"
+      ],
+      "id": "symfony-56f3c5ee0989",
+      "target_files": [
+        "src/Symfony/Component/Security/Http/Firewall.php"
+      ]
+    },
+    {
+      "f2p": [
+        "testNestedCollectionsDoNotReuseParentBlockPrefixCache"
+      ],
+      "id": "symfony-5b2c7f97453e",
+      "target_files": [
+        "src/Symfony/Bridge/Twig/Form/TwigRendererEngine.php",
+        "src/Symfony/Component/Form/AbstractRendererEngine.php"
+      ]
+    },
+    {
+      "f2p": [
+        "testTranslatableChoiceLabelDoesNotInheritLabelTranslationParameters",
+        "testTranslatableHelpDoesNotInheritHelpTranslationParameters",
+        "testTranslatableLabelDoesNotInheritLabelTranslationParameters"
+      ],
+      "id": "symfony-5b629d237a9a",
+      "target_files": [
+        "src/Symfony/Component/Form/Extension/Core/Type/BaseType.php",
+        "src/Symfony/Component/Form/Extension/Core/Type/FormType.php"
+      ]
+    },
+    {
+      "f2p": [
+        "testGetValueGetterThrowsExceptionIfUninitializedWithLazyGhost",
+        "testGetValuePropertyThrowsExceptionIfUninitializedWithLazyGhost"
+      ],
+      "id": "symfony-5c29e397c0cd",
+      "target_files": [
+        "src/Symfony/Component/PropertyAccess/PropertyAccessor.php"
+      ]
+    },
+    {
+      "f2p": [
+        "testCommitDoesNotFailWhenTagSaveFails"
+      ],
+      "id": "symfony-5fe28dae8df0",
+      "target_files": [
+        "src/Symfony/Component/Cache/Adapter/AbstractTagAwareAdapter.php"
+      ]
+    },
+    {
+      "f2p": [
+        "testGetLocaleDefaultsToEmptyString"
+      ],
+      "id": "symfony-6414fbf25c35",
+      "target_files": [
+        "src/Symfony/Component/String/Slugger/AsciiSlugger.php"
+      ]
+    },
+    {
+      "f2p": [
+        "testRemoveAlsoRemovesDeprecation"
+      ],
+      "id": "symfony-66b9a15b0614",
+      "target_files": [
+        "src/Symfony/Component/OptionsResolver/OptionsResolver.php"
+      ]
+    },
+    {
+      "f2p": [
+        "testEsiCacheIncludesEmbeddedResponseContentWhenMainAndEmbeddedResponseAreFresh",
+        "testEsiCacheIncludesEmbeddedResponseContentWhenMainResponseFailsRevalidationAndEmbeddedResponseIsFresh",
+        "testEsiCacheIncludesEmbeddedResponseContentWhenMainResponseFailsRevalidationAndEmbeddedResponseIsValid"
+      ],
+      "id": "symfony-66ba7c05b05d",
+      "target_files": [
+        "src/Symfony/Component/HttpKernel/HttpCache/HttpCache.php"
+      ]
+    },
+    {
+      "f2p": [
+        "testSerializerJsonDetailedErrorMessagesInDefaultContextCanBeDisabledWithSeveralConfigsBeingMerged"
+      ],
+      "id": "symfony-67e3e6cf8328",
+      "target_files": [
+        "src/Symfony/Bundle/FrameworkBundle/DependencyInjection/Configuration.php"
+      ]
+    },
+    {
+      "f2p": [
+        "testDenormalizePlainObject"
+      ],
+      "id": "symfony-689c1feaaf8b",
+      "target_files": [
+        "src/Symfony/Component/Serializer/Normalizer/AbstractObjectNormalizer.php"
+      ]
+    },
+    {
+      "f2p": [
+        "testExplicitGroupsOnNestedCompositeArePreserved",
+        "testGroupsArePropagatedToNestedCompositeConstraints"
+      ],
+      "id": "symfony-6aac3eec6776",
+      "target_files": [
+        "src/Symfony/Component/Validator/Constraints/Compound.php"
+      ]
+    },
+    {
+      "f2p": [
+        "testHistoryWithParametersAndNoSlash"
+      ],
+      "id": "symfony-6cba7f588657",
+      "target_files": [
+        "src/Symfony/Component/BrowserKit/AbstractBrowser.php"
+      ]
+    },
+    {
+      "f2p": [
+        "testDisabledAndEnabledInsideFieldsets"
+      ],
+      "id": "symfony-70a19fcf9b84",
+      "target_files": [
+        "src/Symfony/Component/CssSelector/XPath/Extension/HtmlExtension.php"
+      ]
+    },
+    {
+      "f2p": [
+        "testBufferPurePassthru"
+      ],
+      "id": "symfony-7227ecf01407",
+      "target_files": [
+        "src/Symfony/Component/HttpClient/Response/AsyncResponse.php"
+      ]
+    },
+    {
+      "f2p": [
+        "testAddingRouteWithHosts"
+      ],
+      "id": "symfony-72b5e8e4a204",
+      "target_files": [
+        "src/Symfony/Component/Routing/Loader/Configurator/RouteConfigurator.php",
+        "src/Symfony/Component/Routing/Loader/XmlFileLoader.php",
+        "src/Symfony/Component/Routing/Loader/YamlFileLoader.php"
+      ]
+    },
+    {
+      "f2p": [
+        "testParseEmbeddedMappingWithDuplicateKeysShouldThrowException"
+      ],
+      "id": "symfony-73cff9b890de",
+      "target_files": [
+        "src/Symfony/Component/Yaml/Inline.php"
+      ]
+    },
+    {
+      "f2p": [
+        "testAddChoiceOnMultipleSelectKeepsExistingValues"
+      ],
+      "id": "symfony-740916cdfcdf",
+      "target_files": [
+        "src/Symfony/Component/DomCrawler/Field/ChoiceFormField.php"
+      ]
+    },
+    {
+      "f2p": [
+        "testMoneyPatternIgnoresDirectionalMarks",
+        "testMoneyPatternWorksForLocalesWithNonAsciiDigits"
+      ],
+      "id": "symfony-743235036a49",
+      "target_files": [
+        "src/Symfony/Component/Form/Extension/Core/Type/MoneyType.php"
+      ]
+    },
+    {
+      "f2p": [
+        "testDumpEscapesSpecialCharactersInHtmlLabels"
+      ],
+      "id": "symfony-75d69f633c91",
+      "target_files": [
+        "src/Symfony/Component/Workflow/Dumper/GraphvizDumper.php"
+      ]
+    },
+    {
+      "f2p": [
+        "testAccessDeniedWithNonStringSignature",
+        "testCheckRequestWithNonStringHash",
+        "testCheckWithNonStringHash"
+      ],
+      "id": "symfony-77ba7d11c044",
+      "target_files": [
+        "src/Symfony/Component/HttpFoundation/UriSigner.php"
+      ]
+    },
+    {
+      "f2p": [
+        "testTagAddedByAutoconfigurationDoesNotOverrideThePriority"
+      ],
+      "id": "symfony-791183f20089",
+      "target_files": [
+        "src/Symfony/Component/DependencyInjection/Compiler/PriorityTaggedServiceTrait.php"
+      ]
+    },
+    {
+      "f2p": [
+        "testArrayOfObjectsUnique"
+      ],
+      "id": "symfony-79cd9e787f0a",
+      "target_files": [
+        "src/Symfony/Component/Validator/Constraints/UniqueValidator.php"
+      ]
+    },
+    {
+      "f2p": [
+        "testDumpPathDeepIntoScalar"
+      ],
+      "id": "symfony-7ab96df87b09",
+      "target_files": [
+        "src/Symfony/Bundle/FrameworkBundle/Command/ConfigDebugCommand.php"
+      ]
+    },
+    {
+      "f2p": [
+        "testNullPathsAreConvertedToIterable"
+      ],
+      "id": "symfony-7be68a9c587d",
+      "target_files": [
+        "src/Symfony/Bundle/TwigBundle/DependencyInjection/Configuration.php"
+      ]
+    },
+    {
+      "f2p": [
+        "testArrayValueDoesNotTriggerDeprecation"
+      ],
+      "id": "symfony-7c037e8d26f6",
+      "target_files": [
+        "src/Symfony/Component/Validator/Constraints/AbstractComparison.php"
+      ]
+    },
+    {
+      "f2p": [
+        "testAutowireAttributeKeepsPercentEscaping",
+        "testResolveValueKeepsEscapingOnAResolvedBag"
+      ],
+      "id": "symfony-7c8ed555029a",
+      "target_files": [
+        "src/Symfony/Component/DependencyInjection/ContainerBuilder.php",
+        "src/Symfony/Component/DependencyInjection/ParameterBag/ParameterBag.php"
+      ]
+    },
+    {
+      "f2p": [
+        "testTooLongLocale"
+      ],
+      "id": "symfony-7d5ffcf0910f",
+      "target_files": [
+        "src/Symfony/Component/Validator/Constraints/LocaleValidator.php"
+      ]
+    },
+    {
+      "f2p": [
+        "testUninitializedStubPropertiesAreLeftUninitialized",
+        "testUnserializeNullInTypedProperty"
+      ],
+      "id": "symfony-7ec02d0cac3f",
+      "target_files": [
+        "src/Symfony/Component/VarDumper/Cloner/Internal/NoDefault.php",
+        "src/Symfony/Component/VarDumper/Cloner/Stub.php"
+      ]
+    },
+    {
+      "f2p": [
+        "testSchedulerWithCustomTransport"
+      ],
+      "id": "symfony-7f3aefdd7d64",
+      "target_files": [
+        "src/Symfony/Component/Scheduler/DependencyInjection/AddScheduleMessengerPass.php"
+      ]
+    },
+    {
+      "f2p": [
+        "testLoadClassMetadata",
+        "testLoadClassMetadataReturnsTrueIfSuccessful"
+      ],
+      "id": "symfony-8556023cd04c",
+      "target_files": [
+        "src/Symfony/Component/Validator/Mapping/Loader/AbstractLoader.php",
+        "src/Symfony/Component/Validator/Mapping/Loader/XmlFileLoader.php",
+        "src/Symfony/Component/Validator/Mapping/Loader/YamlFileLoader.php"
+      ]
+    },
+    {
+      "f2p": [
+        "testForceAttribute"
+      ],
+      "id": "symfony-8666d315a816",
+      "target_files": [
+        "src/Symfony/Component/HtmlSanitizer/Visitor/DomVisitor.php",
+        "src/Symfony/Component/HtmlSanitizer/Visitor/Node/Node.php"
+      ]
+    },
+    {
+      "f2p": [
+        "testTaggable"
+      ],
+      "id": "symfony-870cba62ca96",
+      "target_files": [
+        "src/Symfony/Component/Cache/Adapter/NullAdapter.php"
+      ]
+    },
+    {
+      "f2p": [
+        "testDumpIntlDomainKeepsPipes"
+      ],
+      "id": "symfony-87a60b4e84db",
+      "target_files": [
+        "src/Symfony/Component/Translation/Dumper/PoFileDumper.php"
+      ]
+    },
+    {
+      "f2p": [
+        "testExecutesCommandThatThrownRecoverableException",
+        "testExecutesCommandThatThrownUnrecoverableException"
+      ],
+      "id": "symfony-88c32bc16d17",
+      "target_files": [
+        "src/Symfony/Component/Console/Messenger/RunCommandMessageHandler.php"
+      ]
+    },
+    {
+      "f2p": [
+        "testChoiceParametrizedLabel",
+        "testChoiceTranslatableLabel"
+      ],
+      "id": "symfony-896c257d4042",
+      "target_files": [
+        "src/Symfony/Bridge/Twig/Extension/FormExtension.php"
+      ]
+    },
+    {
+      "f2p": [
+        "testClassPublicObjectPropertyAsReference"
+      ],
+      "id": "symfony-899c4d4ffbc4",
+      "target_files": [
+        "src/Symfony/Component/HttpKernel/DataCollector/DataCollector.php"
+      ]
+    },
+    {
+      "f2p": [
+        "testProcessWithRuntimeModeNotSet"
+      ],
+      "id": "symfony-8c66a607bebb",
+      "target_files": [
+        "src/Symfony/Bundle/DebugBundle/DependencyInjection/Compiler/DumpDataCollectorPass.php"
+      ]
+    },
+    {
+      "f2p": [
+        "testGetVotersIfAccessDecisionManagerHasNoVoters"
+      ],
+      "id": "symfony-8d59426b389a",
+      "target_files": [
+        "src/Symfony/Bundle/SecurityBundle/DataCollector/SecurityDataCollector.php"
+      ]
+    },
+    {
+      "f2p": [
+        "testValidateNestedAtLeaseOneOfConstraints"
+      ],
+      "id": "symfony-8db9d314ceb2",
+      "target_files": [
+        "src/Symfony/Component/Validator/Constraints/AtLeastOneOfValidator.php"
+      ]
+    },
+    {
+      "f2p": [
+        "testPassesSuspiciousMethodRequests"
+      ],
+      "id": "symfony-998d208f3351",
+      "target_files": [
+        "src/Symfony/Component/HttpKernel/HttpCache/HttpCache.php"
+      ]
+    },
+    {
+      "f2p": [
+        "testFinalizeAcceptsEnvPlaceholderBelowMin"
+      ],
+      "id": "symfony-9bef40d0f49b",
+      "target_files": [
+        "src/Symfony/Component/Config/Definition/NumericNode.php"
+      ]
+    },
+    {
+      "f2p": [
+        "testCheckTypeDeclarationsSkipsSubsequentNamedArguments"
+      ],
+      "id": "symfony-a294bff0d77e",
+      "target_files": [
+        "src/Symfony/Component/DependencyInjection/Compiler/CheckTypeDeclarationsPass.php"
+      ]
+    },
+    {
+      "f2p": [
+        "testCastPeriodWithSubSecondInterval"
+      ],
+      "id": "symfony-a322b3a6d244",
+      "target_files": [
+        "src/Symfony/Component/VarDumper/Caster/DateCaster.php"
+      ]
+    },
+    {
+      "f2p": [
+        "testWarningCount"
+      ],
+      "id": "symfony-a5df088726ac",
+      "target_files": [
+        "src/Symfony/Component/HttpKernel/DataCollector/LoggerDataCollector.php"
+      ]
+    },
+    {
+      "f2p": [
+        "testInitializeDoesNotRepeatAdjacentTextNodes"
+      ],
+      "id": "symfony-a6247dfdfe48",
+      "target_files": [
+        "src/Symfony/Component/DomCrawler/Field/TextareaFormField.php"
+      ]
+    },
+    {
+      "f2p": [
+        "testNullReturnType",
+        "testNullStandaloneReturnType"
+      ],
+      "id": "symfony-a7e6fa1c72cf",
+      "target_files": [
+        "src/Symfony/Component/VarDumper/Caster/ReflectionCaster.php",
+        "src/Symfony/Component/VarExporter/ProxyHelper.php"
+      ]
+    },
+    {
+      "f2p": [
+        "testReserveOutsideWindow",
+        "testReservePartiallyFilledWindow"
+      ],
+      "id": "symfony-a8284d579faa",
+      "target_files": [
+        "src/Symfony/Component/RateLimiter/Policy/Window.php"
+      ]
+    },
+    {
+      "f2p": [
+        "testExcludeSelfFromTaggedServiceLocator"
+      ],
+      "id": "symfony-a8c6b7dd4c3a",
+      "target_files": [
+        "src/Symfony/Component/DependencyInjection/Compiler/ServiceLocatorTagPass.php"
+      ]
+    },
+    {
+      "f2p": [
+        "testHandleBatchWithoutAdminRecipients",
+        "testHandleWithoutAdminRecipients"
+      ],
+      "id": "symfony-aabb36bc2c3a",
+      "target_files": [
+        "src/Symfony/Bridge/Monolog/Handler/NotifierHandler.php"
+      ]
+    },
+    {
+      "f2p": [
+        "testCheckpointWithMultipleRecurringMessagesAtSameTriggerTime"
+      ],
+      "id": "symfony-abb0545291c0",
+      "target_files": [
+        "src/Symfony/Component/Scheduler/Generator/MessageGenerator.php",
+        "src/Symfony/Component/Scheduler/Trigger/TriggerInterface.php"
+      ]
+    },
+    {
+      "f2p": [
+        "testCreateRequestHandlesTrustedHeaders"
+      ],
+      "id": "symfony-adb1df9bd5b5",
+      "target_files": [
+        "src/Symfony/Component/Security/Http/HttpUtils.php"
+      ]
+    },
+    {
+      "f2p": [
+        "testReservationDebtSurvivesCacheExpiration"
+      ],
+      "id": "symfony-ae06fdf75cdd",
+      "target_files": [
+        "src/Symfony/Component/RateLimiter/Policy/TokenBucket.php"
+      ]
+    },
+    {
+      "f2p": [
+        "testInlineWithCustomContentId"
+      ],
+      "id": "symfony-af5b7842f014",
+      "target_files": [
+        "src/Symfony/Component/Mailer/Bridge/Mailjet/Transport/MailjetApiTransport.php"
+      ]
+    },
+    {
+      "f2p": [
+        "testKeepAuthorizationHeaderOnRedirectToSameHostWithConfiguredHostToIpAddressMapping"
+      ],
+      "id": "symfony-afa6c47b346a",
+      "target_files": [
+        "src/Symfony/Component/HttpClient/CurlHttpClient.php"
+      ]
+    },
+    {
+      "f2p": [
+        "testPostGenerateSchemaLockPdo"
+      ],
+      "id": "symfony-b08bacf9f43e",
+      "target_files": [
+        "src/Symfony/Bridge/Doctrine/SchemaListener/LockStoreSchemaListener.php"
+      ]
+    },
+    {
+      "f2p": [
+        "testMakePathRelativeWithExistingFile"
+      ],
+      "id": "symfony-b16c6f4b7629",
+      "target_files": [
+        "src/Symfony/Component/Filesystem/Filesystem.php"
+      ]
+    },
+    {
+      "f2p": [
+        "testGlobToRegexDoubleStarMatchesRootFiles"
+      ],
+      "id": "symfony-b2fd44b02f96",
+      "target_files": [
+        "src/Symfony/Component/Finder/Glob.php"
+      ]
+    },
+    {
+      "f2p": [
+        "testStderrNotMixedWithStdout"
+      ],
+      "id": "symfony-b4bc41cb4955",
+      "target_files": [
+        "src/Symfony/Component/Process/Pipes/UnixPipes.php"
+      ]
+    },
+    {
+      "f2p": [
+        "testConnectionIsResetAfterTimeoutToPreventResponseDesync"
+      ],
+      "id": "symfony-b95440fb1598",
+      "target_files": [
+        "src/Symfony/Component/Mailer/Transport/Smtp/SmtpTransport.php"
+      ]
+    },
+    {
+      "f2p": [
+        "testWriteWithAddingVaryAndAllHeadersOnTheList",
+        "testWriteWithChangingVary",
+        "testWriteWithMultipleVaryAndCachedAllResponse"
+      ],
+      "id": "symfony-ba42630304ab",
+      "target_files": [
+        "src/Symfony/Component/HttpKernel/HttpCache/Store.php"
+      ]
+    },
+    {
+      "f2p": [
+        "testSetBodyIsValid"
+      ],
+      "id": "symfony-be689e8652f2",
+      "target_files": [
+        "src/Symfony/Component/Mime/Email.php"
+      ]
+    },
+    {
+      "f2p": [
+        "testGetReturnPathWhenNull",
+        "testGetReturnPathWhenSet"
+      ],
+      "id": "symfony-c0285224cb9c",
+      "target_files": [
+        "src/Symfony/Bridge/Twig/Mime/WrappedTemplatedEmail.php"
+      ]
+    },
+    {
+      "f2p": [
+        "testAddParametersAfterResolveBreaksConsistency"
+      ],
+      "id": "symfony-c0b6df329710",
+      "target_files": [
+        "src/Symfony/Component/DependencyInjection/ParameterBag/ParameterBag.php"
+      ]
+    },
+    {
+      "f2p": [
+        "testAttributeAutoconfigurationOnAnonymousClass"
+      ],
+      "id": "symfony-c2e888e36d59",
+      "target_files": [
+        "src/Symfony/Component/DependencyInjection/Compiler/ResolveInstanceofConditionalsPass.php"
+      ]
+    },
+    {
+      "f2p": [
+        "testDumpServiceClosureWithNullableTypedReference"
+      ],
+      "id": "symfony-c3aa5811627c",
+      "target_files": [
+        "src/Symfony/Component/DependencyInjection/Dumper/PhpDumper.php"
+      ]
+    },
+    {
+      "f2p": [
+        "testClear"
+      ],
+      "id": "symfony-c49dd6624e9d",
+      "target_files": [
+        "src/Symfony/Component/DependencyInjection/ParameterBag/ParameterBag.php"
+      ]
+    },
+    {
+      "f2p": [
+        "testJsonNull"
+      ],
+      "id": "symfony-c8193eb5118a",
+      "target_files": [
+        "src/Symfony/Bundle/FrameworkBundle/Controller/AbstractController.php"
+      ]
+    },
+    {
+      "f2p": [
+        "testOverwriteWithSectionOutputAndEol",
+        "testOverwriteWithSectionOutputAndEolWithEmptyMessage",
+        "testOverwriteWithSectionOutputAndEolWithEmptyMessageComment"
+      ],
+      "id": "symfony-c89c4709c1a9",
+      "target_files": [
+        "src/Symfony/Component/Console/Helper/ProgressBar.php"
+      ]
+    },
+    {
+      "f2p": [
+        "testInstallsInTheProjectVendorWhenVendorIsASymlink"
+      ],
+      "id": "symfony-ca88299a31a7",
+      "target_files": [
+        "src/Symfony/Bridge/PhpUnit/bin/simple-phpunit.php"
+      ]
+    },
+    {
+      "f2p": [
+        "testDefaultLocaleReturnedWhenNoAcceptLanguageMatchAndDefaultLocaleIsNotFirstEnabledLocale"
+      ],
+      "id": "symfony-cc8124ff7b9c",
+      "target_files": [
+        "src/Symfony/Component/HttpKernel/EventListener/LocaleListener.php"
+      ]
+    },
+    {
+      "f2p": [
+        "testFormatAndWrap"
+      ],
+      "id": "symfony-ccd3372a7dfe",
+      "target_files": [
+        "src/Symfony/Component/Console/Formatter/OutputFormatter.php",
+        "src/Symfony/Component/Console/Helper/Helper.php"
+      ]
+    },
+    {
+      "f2p": [
+        "testInvalidYaml"
+      ],
+      "id": "symfony-d3d77e08f9b9",
+      "target_files": [
+        "src/Symfony/Component/Serializer/Encoder/YamlEncoder.php"
+      ]
+    },
+    {
+      "f2p": [
+        "testKernelIsTerminatedAfterTheResponseContentIsSent"
+      ],
+      "id": "symfony-d732cc318623",
+      "target_files": [
+        "src/Symfony/Component/HttpKernel/HttpKernelBrowser.php"
+      ]
+    },
+    {
+      "f2p": [
+        "testInlineImageUsesContentIdAsName"
+      ],
+      "id": "symfony-d9551f5d7523",
+      "target_files": [
+        "src/Symfony/Component/Mailer/Bridge/Mailchimp/Transport/MandrillApiTransport.php"
+      ]
+    },
+    {
+      "f2p": [
+        "testDenormalizeSerializedNameOfGroupedAttributeWithoutContextGroups"
+      ],
+      "id": "symfony-d9a72a94df8d",
+      "target_files": [
+        "src/Symfony/Component/Serializer/NameConverter/MetadataAwareNameConverter.php"
+      ]
+    },
+    {
+      "f2p": [
+        "testChainAdapterPool"
+      ],
+      "id": "symfony-d9bab552b687",
+      "target_files": [
+        "src/Symfony/Component/Cache/DependencyInjection/CachePoolPass.php"
+      ]
+    },
+    {
+      "f2p": [
+        "testDumpResolvedEnvPlaceholders"
+      ],
+      "id": "symfony-db12a28c70a4",
+      "target_files": [
+        "src/Symfony/Component/DependencyInjection/Dumper/YamlDumper.php"
+      ]
+    },
+    {
+      "f2p": [
+        "testGetErrorCodeWithUninitializedTransliterator",
+        "testGetErrorMessageWithUninitializedTransliterator"
+      ],
+      "id": "symfony-dc452cd266c8",
+      "target_files": [
+        "src/Symfony/Component/Intl/Transliterator/EmojiTransliterator.php"
+      ]
+    },
+    {
+      "f2p": [
+        "testPrefersPropertyOverMethodWithSameNameAndRequiredArgs"
+      ],
+      "id": "symfony-e177f0778374",
+      "target_files": [
+        "src/Symfony/Component/PropertyInfo/Extractor/ReflectionExtractor.php"
+      ]
+    },
+    {
+      "f2p": [
+        "testEmptyDirInPath"
+      ],
+      "id": "symfony-e3c38aebf8d1",
+      "target_files": [
+        "src/Symfony/Component/Process/ExecutableFinder.php"
+      ]
+    },
+    {
+      "f2p": [
+        "testRunTwiceInTheSameProcess"
+      ],
+      "id": "symfony-e406caac6193",
+      "target_files": [
+        "src/Symfony/Component/Messenger/Command/ConsumeMessagesCommand.php"
+      ]
+    },
+    {
+      "f2p": [
+        "testGetPropertiesIgnoresMethodsThatOnlyLookLikeAccessors"
+      ],
+      "id": "symfony-e748f5dd2467",
+      "target_files": [
+        "src/Symfony/Component/PropertyInfo/Extractor/ReflectionExtractor.php"
+      ]
+    },
+    {
+      "f2p": [
+        "testExcludePropertiesDoctrineStyle"
+      ],
+      "id": "symfony-eab983368c46",
+      "target_files": [
+        "src/Symfony/Component/Validator/Constraints/Cascade.php"
+      ]
+    },
+    {
+      "f2p": [
+        "testShortcut"
+      ],
+      "id": "symfony-eef9ac78ddf6",
+      "target_files": [
+        "src/Symfony/Component/Console/Input/InputOption.php"
+      ]
+    },
+    {
+      "f2p": [
+        "testMergePartialDataFromCollection"
+      ],
+      "id": "symfony-f091416bf662",
+      "target_files": [
+        "src/Symfony/Component/Form/Util/FormUtil.php"
+      ]
+    },
+    {
+      "f2p": [
+        "testTheTransportIsSetupOnGet"
+      ],
+      "id": "symfony-f19d29650d59",
+      "target_files": [
+        "src/Symfony/Component/Messenger/Bridge/Doctrine/Transport/Connection.php"
+      ]
+    },
+    {
+      "f2p": [
+        "testGetMarkingWithUninitializedPropertyInheritance"
+      ],
+      "id": "symfony-f28e92e74314",
+      "target_files": [
+        "src/Symfony/Component/Workflow/MarkingStore/MethodMarkingStore.php"
+      ]
+    },
+    {
+      "f2p": [
+        "testHitBackendOnlyOnceWhenCacheWasLocked"
+      ],
+      "id": "symfony-f56eab68e791",
+      "target_files": [
+        "src/Symfony/Component/HttpKernel/HttpCache/CacheWasLockedException.php",
+        "src/Symfony/Component/HttpKernel/HttpCache/HttpCache.php"
+      ]
+    },
+    {
+      "f2p": [
+        "testInstanceofStateIsRestoredAfterImport"
+      ],
+      "id": "symfony-f82c681c170b",
+      "target_files": [
+        "src/Symfony/Component/DependencyInjection/Loader/PhpFileLoader.php"
+      ]
+    },
+    {
+      "f2p": [
+        "testSetCallbackWrapperPropagation"
+      ],
+      "id": "symfony-f8dd2257f8db",
+      "target_files": [
+        "src/Symfony/Component/Cache/Adapter/ChainAdapter.php"
+      ]
+    },
+    {
+      "f2p": [
+        "testSendWithInlineAttachmentsSharingANamePrefix"
+      ],
+      "id": "symfony-fae6a08535d1",
+      "target_files": [
+        "src/Symfony/Component/Mailer/Bridge/Mailgun/Transport/MailgunApiTransport.php"
+      ]
+    },
+    {
+      "f2p": [
+        "testMatchFalseWithTooManyBacktrackingShouldNotPass"
+      ],
+      "id": "symfony-fb38c5f3f256",
+      "target_files": [
+        "src/Symfony/Component/Validator/Constraints/RegexValidator.php"
+      ]
+    },
+    {
+      "f2p": [
+        "testGeneratingCurlCommandForArraysWithResourcesAndUnreachableHost"
+      ],
+      "id": "symfony-fd0180b97192",
+      "target_files": [
+        "src/Symfony/Component/HttpClient/DataCollector/HttpClientDataCollector.php"
+      ]
+    },
+    {
+      "f2p": [
+        "testStaticCallableClass"
+      ],
+      "id": "symfony-fe4e2b80371f",
+      "target_files": [
+        "src/Symfony/Component/DependencyInjection/Compiler/AbstractRecursivePass.php"
+      ]
+    },
+    {
+      "f2p": [
+        "testEmptyImportMapRendersAsJsonObject"
+      ],
+      "id": "symfony-fee9e2eae438",
+      "target_files": [
+        "src/Symfony/Component/AssetMapper/ImportMap/ImportMapRenderer.php"
+      ]
+    }
+  ],
+  "task": "symfony",
+  "version": "v6.4.0"
+}

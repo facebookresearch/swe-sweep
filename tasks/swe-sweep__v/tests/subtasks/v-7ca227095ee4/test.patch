@@ -1,0 +1,24 @@
+diff --git a/vlib/v/tests/nested_or_expr_call_test.v b/vlib/v/tests/nested_or_expr_call_test.v
+new file mode 100644
+index 000000000..46d48185f
+--- /dev/null
++++ b/vlib/v/tests/nested_or_expr_call_test.v
+@@ -0,0 +1,18 @@
++fn get_name() !string {
++	return error('failed')
++}
++
++fn test_nested_or_expr_call() {
++	uid_map := map[int]string{}
++	uid := 2
++	username := if uid <= 0 {
++		'unknown'
++	} else {
++		uid_map[uid] or {
++			name := get_name() or { 'unknown' }
++			name
++		}
++	}
++	assert username == 'unknown'
++	println('${uid} is ${username}')
++}

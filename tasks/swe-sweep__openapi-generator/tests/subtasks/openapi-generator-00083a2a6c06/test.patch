@@ -1,0 +1,59 @@
+diff --git a/modules/openapi-generator/src/test/java/org/openapitools/codegen/OpenAPINormalizerTest.java b/modules/openapi-generator/src/test/java/org/openapitools/codegen/OpenAPINormalizerTest.java
+index 2694910817a..05253ca2f19 100644
+--- a/modules/openapi-generator/src/test/java/org/openapitools/codegen/OpenAPINormalizerTest.java
++++ b/modules/openapi-generator/src/test/java/org/openapitools/codegen/OpenAPINormalizerTest.java
+@@ -414,4 +414,12 @@ public class OpenAPINormalizerTest {
+         assertNotNull(pathItem.getDelete().getParameters().get(0).getSchema().getType());
+         assertNotNull(pathItem.getDelete().getParameters().get(0).getSchema().getTypes());
+     }
++
++    @Test
++    public void testComposedSchemaDoesNotThrow() {
++        OpenAPI openAPI = TestUtils.parseSpec("src/test/resources/3_1/composed-schema.yaml");
++
++        OpenAPINormalizer openAPINormalizer = new OpenAPINormalizer(openAPI, Collections.emptyMap());
++        openAPINormalizer.normalize();
++    }
+ }
+diff --git a/modules/openapi-generator/src/test/resources/3_1/composed-schema.yaml b/modules/openapi-generator/src/test/resources/3_1/composed-schema.yaml
+new file mode 100644
+index 00000000000..5b89638e1e3
+--- /dev/null
++++ b/modules/openapi-generator/src/test/resources/3_1/composed-schema.yaml
+@@ -0,0 +1,36 @@
++openapi: 3.1.0
++info:
++  version: 1.0.0
++  title: Example
++  license:
++    name: MIT
++servers:
++  - url: http://api.example.xyz/v1
++paths:
++  /payment:
++    post:
++      operationId: payment
++      requestBody:
++        content:
++          application/json:
++            schema:
++              $ref: "#/components/schemas/Payment"
++
++components:
++  schemas:
++    Payment:
++      type: object
++      properties:
++        label:
++          type: string
++        otherLabel:
++          type: string
++        amount:
++          type: number
++      oneOf:
++        - required:
++            - label
++            - amount
++        - required:
++            - otherLabel
++            - amount

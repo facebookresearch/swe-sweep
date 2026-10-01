@@ -1,0 +1,13 @@
+diff --git a/lib/pure/collections/deques.nim b/lib/pure/collections/deques.nim
+index 7e9ed32f3..60e0fd351 100644
+--- a/lib/pure/collections/deques.nim
++++ b/lib/pure/collections/deques.nim
+@@ -440,7 +440,7 @@ proc shrink*[T](deq: var Deque[T], fromFirst = 0, fromLast = 0) =
+     deq.head = (deq.head + 1) and deq.mask
+ 
+   for i in 0 ..< fromLast:
+-    destroy(deq.data[deq.tail])
++    destroy(deq.data[(deq.tail - 1) and deq.mask])
+     deq.tail = (deq.tail - 1) and deq.mask
+ 
+   dec deq.count, fromFirst + fromLast

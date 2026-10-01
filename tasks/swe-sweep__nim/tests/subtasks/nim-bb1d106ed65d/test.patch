@@ -1,0 +1,21 @@
+diff --git a/tests/generics/t20996.nim b/tests/generics/t20996.nim
+new file mode 100644
+index 000000000..8aa83c4e2
+--- /dev/null
++++ b/tests/generics/t20996.nim
+@@ -0,0 +1,15 @@
++discard """
++  action: compile
++"""
++
++import std/macros
++
++macro matchMe(x: typed): untyped =
++  discard x.getTypeImpl
++
++type
++  ElementRT = object
++  Element[Z] = ElementRT # this version is needed, even though we don't use it
++
++let ar = ElementRT()
++matchMe(ar)

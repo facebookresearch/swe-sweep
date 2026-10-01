@@ -1,0 +1,18 @@
+diff --git a/test/Succeed/Issue5610.agda b/test/Succeed/Issue5610.agda
+new file mode 100644
+index 0000000000..80a38100f2
+--- /dev/null
++++ b/test/Succeed/Issue5610.agda
+@@ -0,0 +1,12 @@
++{-# OPTIONS --type-in-type #-}
++
++infix 1000 ♯_
++
++postulate
++  ∞  : ∀ {a} (A : Set a) → Set a
++  ♯_ : ∀ {a} {A : Set a} → A → ∞ A
++  ♭  : ∀ {a} {A : Set a} → ∞ A → A
++
++{-# BUILTIN INFINITY ∞  #-}
++{-# BUILTIN SHARP    ♯_ #-}
++{-# BUILTIN FLAT     ♭  #-}

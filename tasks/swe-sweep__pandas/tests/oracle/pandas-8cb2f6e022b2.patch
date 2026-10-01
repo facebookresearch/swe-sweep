@@ -1,0 +1,29 @@
+diff --git a/pandas/io/common.py b/pandas/io/common.py
+index 06b00a9..9c4d7dc 100644
+--- a/pandas/io/common.py
++++ b/pandas/io/common.py
+@@ -14,6 +14,7 @@ from io import (
+     TextIOWrapper,
+ )
+ import mmap
++import re
+ import os
+ from typing import (
+     IO,
+@@ -53,6 +54,7 @@ lzma = import_lzma()
+ 
+ _VALID_URLS = set(uses_relative + uses_netloc + uses_params)
+ _VALID_URLS.discard("")
++_RFC_3986_PATTERN = re.compile(r"^[A-Za-z][A-Za-z0-9+\-+.]*://")
+ 
+ 
+ @dataclasses.dataclass
+@@ -218,7 +220,7 @@ def is_fsspec_url(url: FilePathOrBuffer) -> bool:
+     """
+     return (
+         isinstance(url, str)
+-        and "://" in url
++        and bool(_RFC_3986_PATTERN.match(url))
+         and not url.startswith(("http://", "https://"))
+     )
+ 

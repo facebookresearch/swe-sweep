@@ -1,0 +1,12 @@
+diff --git a/pandas/_libs/tslibs/timedeltas.pyx b/pandas/_libs/tslibs/timedeltas.pyx
+index a26e4c1476..08bcc06ecc 100644
+--- a/pandas/_libs/tslibs/timedeltas.pyx
++++ b/pandas/_libs/tslibs/timedeltas.pyx
+@@ -1290,4 +1290,7 @@ class Timedelta(_Timedelta):
+         elif isinstance(value, str):
++            if type(value) is not str:
++                # GH#48974 np.str_ object
++                value = str(value)
+             if unit is not None:
+                 raise ValueError("unit must not be specified if the value is a str")
+             if (len(value) > 0 and value[0] == 'P') or (

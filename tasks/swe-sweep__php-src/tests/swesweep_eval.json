@@ -1,0 +1,281 @@
+{
+  "build_jobs": 4,
+  "container_repo": "/php-src",
+  "evaluation": {
+    "suite": "reproduction",
+    "test_dirs": [
+      "tests"
+    ],
+    "visible_timeout": 14400
+  },
+  "upstream_image": "pandora-maxbug-php-src:8.2.12",
+  "n_base_passing": 14264,
+  "n_base_test_ignore": 2022,
+  "oracle_digest": "c8028092b521bead27a9e1db55755eb67d860f304ae72c6002818b514d603651",
+  "oracle_pristine_paths": [],
+  "upstream_commit": "9f7399e15e6172900e0591deb5a57a45769d8205",
+  "reproduction": {
+    "build_cmd": "make -j $SWESWEEP_BUILD_JOBS",
+    "build_timeout": 5400,
+    "jobs_env": "SWESWEEP_BUILD_JOBS",
+    "suite": {
+      "type": "phpt"
+    },
+    "test_timeout": 1800
+  },
+  "schema": 2,
+  "subtasks": [
+    {
+      "f2p": [
+        "Zend/tests/gc_047.phpt"
+      ],
+      "id": "php-src-0119a932f650",
+      "target_files": [
+        "Zend/zend_gc.c"
+      ]
+    },
+    {
+      "f2p": [
+        "ext/standard/tests/gh22449.phpt"
+      ],
+      "id": "php-src-04ebc4662274",
+      "target_files": [
+        "ext/standard/user_filters.c"
+      ]
+    },
+    {
+      "f2p": [
+        "ext/pdo_sqlite/tests/pdo_silent_impl_error.phpt"
+      ],
+      "id": "php-src-0d43ce0140da",
+      "target_files": [
+        "ext/pdo/pdo_dbh.c"
+      ]
+    },
+    {
+      "f2p": [
+        "Zend/tests/gh14009_001.phpt",
+        "Zend/tests/interface_constructor_prototype_001.phpt"
+      ],
+      "id": "php-src-1b0195b0b102",
+      "target_files": [
+        "Zend/zend_inheritance.c"
+      ]
+    },
+    {
+      "f2p": [
+        "ext/standard/tests/versioning/version_compare.phpt"
+      ],
+      "id": "php-src-20b922f94767",
+      "target_files": [
+        "ext/standard/versioning.c"
+      ]
+    },
+    {
+      "f2p": [
+        "ext/soap/tests/soap_set_cookie.phpt"
+      ],
+      "id": "php-src-21c8f6bd6ded",
+      "target_files": [
+        "ext/soap/soap.c"
+      ]
+    },
+    {
+      "f2p": [
+        "ext/soap/tests/bug69280.phpt"
+      ],
+      "id": "php-src-3dd6d56bed43",
+      "target_files": [
+        "ext/soap/php_encoding.c",
+        "ext/soap/php_encoding.h",
+        "ext/soap/php_soap.h",
+        "ext/soap/soap.c"
+      ]
+    },
+    {
+      "f2p": [
+        "ext/spl/tests/class_parents_leading_backslash.phpt"
+      ],
+      "id": "php-src-57b891db5eac",
+      "target_files": [
+        "ext/spl/php_spl.c"
+      ]
+    },
+    {
+      "f2p": [
+        "ext/random/tests/02_engine/xoshiro256starstar_unserialize_zero_state.phpt"
+      ],
+      "id": "php-src-644f4c81235d",
+      "target_files": [
+        "ext/random/engine_xoshiro256starstar.c"
+      ]
+    },
+    {
+      "f2p": [
+        "Zend/tests/gh11244-001.phpt",
+        "Zend/tests/gh11244-002.phpt",
+        "Zend/tests/gh11244-003.phpt"
+      ],
+      "id": "php-src-67638986e670",
+      "target_files": [
+        "Zend/zend_hash.c",
+        "Zend/zend_types.h"
+      ]
+    },
+    {
+      "f2p": [
+        "ext/soap/tests/hexbin_odd_length.phpt"
+      ],
+      "id": "php-src-6d6eeee39f95",
+      "target_files": [
+        "ext/soap/php_encoding.c"
+      ]
+    },
+    {
+      "f2p": [
+        "ext/standard/tests/assert/gh18509.phpt"
+      ],
+      "id": "php-src-7708c3973f86",
+      "target_files": [
+        "ext/standard/assert.c"
+      ]
+    },
+    {
+      "f2p": [
+        "ext/zip/tests/gh22649.phpt"
+      ],
+      "id": "php-src-7fcb8a2206e5",
+      "target_files": [
+        "ext/zip/php_zip.c"
+      ]
+    },
+    {
+      "f2p": [
+        "Zend/tests/gh15108-001.phpt",
+        "Zend/tests/gh15108-002.phpt",
+        "Zend/tests/gh15108-003.phpt",
+        "Zend/tests/gh15108-005.phpt",
+        "Zend/tests/gh15108-006.phpt",
+        "Zend/tests/gh15108-007.phpt"
+      ],
+      "id": "php-src-81a2694ec050",
+      "target_files": [
+        "Zend/zend_generators.c",
+        "Zend/zend_generators.h"
+      ]
+    },
+    {
+      "f2p": [
+        "ext/standard/tests/math/round_gh12143_1.phpt",
+        "ext/standard/tests/math/round_gh12143_3.phpt"
+      ],
+      "id": "php-src-9301c38f27df",
+      "target_files": [
+        "ext/standard/math.c"
+      ]
+    },
+    {
+      "f2p": [
+        "Zend/tests/try/gh22280.phpt"
+      ],
+      "id": "php-src-98f103396d0e",
+      "target_files": [
+        "Zend/zend_opcode.c"
+      ]
+    },
+    {
+      "f2p": [
+        "Zend/tests/gh13670_001.phpt",
+        "Zend/tests/gh13670_002.phpt",
+        "Zend/tests/gh13670_003.phpt"
+      ],
+      "id": "php-src-a1232a3e55b9",
+      "target_files": [
+        "Zend/zend_gc.c"
+      ]
+    },
+    {
+      "f2p": [
+        "ext/zip/tests/bug_gh21705.phpt"
+      ],
+      "id": "php-src-a4774432f3b4",
+      "target_files": [
+        "ext/zip/php_zip.c"
+      ]
+    },
+    {
+      "f2p": [
+        "ext/standard/tests/gh14643_longname.phpt"
+      ],
+      "id": "php-src-b9ca7425664a",
+      "target_files": [
+        "Zend/zend_hash.h"
+      ]
+    },
+    {
+      "f2p": [
+        "ext/curl/tests/curl_copy_handle_variation3_clone.phpt"
+      ],
+      "id": "php-src-bba9204567b2",
+      "target_files": [
+        "ext/curl/interface.c"
+      ]
+    },
+    {
+      "f2p": [
+        "ext/spl/tests/gh19577.phpt"
+      ],
+      "id": "php-src-c3a5e71d0aa1",
+      "target_files": [
+        "ext/spl/spl_iterators.c"
+      ]
+    },
+    {
+      "f2p": [
+        "ext/phar/tests/mkdir.phpt"
+      ],
+      "id": "php-src-c94f35c6ad55",
+      "target_files": [
+        "ext/phar/phar_object.c"
+      ]
+    },
+    {
+      "f2p": [
+        "ext/session/tests/gh13891.phpt"
+      ],
+      "id": "php-src-db25b1aca2fe",
+      "target_files": [
+        "ext/standard/url_scanner_ex.re"
+      ]
+    },
+    {
+      "f2p": [
+        "ext/curl/tests/curl_multi_add_handle_lifecycle.phpt"
+      ],
+      "id": "php-src-eaf37a8bb3ef",
+      "target_files": [
+        "ext/curl/multi.c"
+      ]
+    },
+    {
+      "f2p": [
+        "Zend/tests/ast/ast_serialize_floats.phpt"
+      ],
+      "id": "php-src-ef72be6a423c",
+      "target_files": [
+        "Zend/zend_ast.c"
+      ]
+    },
+    {
+      "f2p": [
+        "Zend/tests/type_declarations/callable/callable_variance_closure.phpt"
+      ],
+      "id": "php-src-f79aeee502d8",
+      "target_files": [
+        "Zend/zend_inheritance.c"
+      ]
+    }
+  ],
+  "task": "php-src",
+  "version": "8.2.12"
+}

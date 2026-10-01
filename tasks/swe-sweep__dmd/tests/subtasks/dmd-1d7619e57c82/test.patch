@@ -1,0 +1,21 @@
+diff --git a/compiler/test/compilable/test23857.d b/compiler/test/compilable/test23857.d
+new file mode 100644
+index 0000000000..d1f6c03344
+--- /dev/null
++++ b/compiler/test/compilable/test23857.d
+@@ -0,0 +1,15 @@
++/* REQUIRED_ARGS: -O -inline -release
++ */
++
++// https://issues.dlang.org/show_bug.cgi?id=23857
++
++int mars(int[] a, int u)
++{
++    return (a.ptr[u] < 0) ? u : (a.ptr[u] = mars(a, a.ptr[u]));
++}
++
++void venus()
++{
++    mars([], 0);
++    mars([], 0);
++}

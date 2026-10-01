@@ -1,0 +1,26 @@
+diff --git a/modules/openapi-generator/src/main/java/org/openapitools/codegen/languages/AbstractJavaCodegen.java b/modules/openapi-generator/src/main/java/org/openapitools/codegen/languages/AbstractJavaCodegen.java
+index c1ae3cc8fbb..44bc81fd58b 100644
+--- a/modules/openapi-generator/src/main/java/org/openapitools/codegen/languages/AbstractJavaCodegen.java
++++ b/modules/openapi-generator/src/main/java/org/openapitools/codegen/languages/AbstractJavaCodegen.java
+@@ -1289,6 +1289,9 @@ public abstract class AbstractJavaCodegen extends DefaultCodegen implements Code
+             return localDate.toString();
+         }
+         if (ModelUtils.isArraySchema(schema)) {
++            // swagger-parser parses the default value differently depending on whether it's in a referenced file or not.
++            // cf. https://github.com/swagger-api/swagger-parser/issues/1958
++            // ArrayList if in the referenced file, ArrayNode if not.
+             if (defaultValue instanceof ArrayNode) {
+                 ArrayNode array = (ArrayNode) defaultValue;
+                 return StreamSupport.stream(array.spliterator(), false)
+@@ -1297,6 +1300,11 @@ public abstract class AbstractJavaCodegen extends DefaultCodegen implements Code
+                         .map(item -> StringUtils.removeStart(item, "\""))
+                         .map(item -> StringUtils.removeEnd(item, "\""))
+                         .collect(Collectors.joining(","));
++            } else if (defaultValue instanceof ArrayList) {
++                ArrayList<?> array = (ArrayList<?>) defaultValue;
++                return array.stream()
++                        .map(Object::toString)
++                        .collect(Collectors.joining(","));
+             }
+         }
+         // escape quotes

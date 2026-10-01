@@ -1,0 +1,1995 @@
+diff --git a/packages/babel-parser/test/fixtures/typescript/class/abstract-new-line/input.js b/packages/babel-parser/test/fixtures/typescript/class/abstract-new-line/input.js
+new file mode 100644
+index 0000000000..7c56988be3
+--- /dev/null
++++ b/packages/babel-parser/test/fixtures/typescript/class/abstract-new-line/input.js
+@@ -0,0 +1,2 @@
++abstract
++class B {}
+diff --git a/packages/babel-parser/test/fixtures/typescript/class/abstract-new-line/output.json b/packages/babel-parser/test/fixtures/typescript/class/abstract-new-line/output.json
+new file mode 100644
+index 0000000000..08760bb11d
+--- /dev/null
++++ b/packages/babel-parser/test/fixtures/typescript/class/abstract-new-line/output.json
+@@ -0,0 +1,116 @@
++{
++  "type": "File",
++  "start": 0,
++  "end": 19,
++  "loc": {
++    "start": {
++      "line": 1,
++      "column": 0
++    },
++    "end": {
++      "line": 2,
++      "column": 10
++    }
++  },
++  "program": {
++    "type": "Program",
++    "start": 0,
++    "end": 19,
++    "loc": {
++      "start": {
++        "line": 1,
++        "column": 0
++      },
++      "end": {
++        "line": 2,
++        "column": 10
++      }
++    },
++    "sourceType": "module",
++    "interpreter": null,
++    "body": [
++      {
++        "type": "ExpressionStatement",
++        "start": 0,
++        "end": 8,
++        "loc": {
++          "start": {
++            "line": 1,
++            "column": 0
++          },
++          "end": {
++            "line": 1,
++            "column": 8
++          }
++        },
++        "expression": {
++          "type": "Identifier",
++          "start": 0,
++          "end": 8,
++          "loc": {
++            "start": {
++              "line": 1,
++              "column": 0
++            },
++            "end": {
++              "line": 1,
++              "column": 8
++            },
++            "identifierName": "abstract"
++          },
++          "name": "abstract"
++        }
++      },
++      {
++        "type": "ClassDeclaration",
++        "start": 9,
++        "end": 19,
++        "loc": {
++          "start": {
++            "line": 2,
++            "column": 0
++          },
++          "end": {
++            "line": 2,
++            "column": 10
++          }
++        },
++        "id": {
++          "type": "Identifier",
++          "start": 15,
++          "end": 16,
++          "loc": {
++            "start": {
++              "line": 2,
++              "column": 6
++            },
++            "end": {
++              "line": 2,
++              "column": 7
++            },
++            "identifierName": "B"
++          },
++          "name": "B"
++        },
++        "superClass": null,
++        "body": {
++          "type": "ClassBody",
++          "start": 17,
++          "end": 19,
++          "loc": {
++            "start": {
++              "line": 2,
++              "column": 8
++            },
++            "end": {
++              "line": 2,
++              "column": 10
++            }
++          },
++          "body": []
++        }
++      }
++    ],
++    "directives": []
++  }
++}
+\ No newline at end of file
+diff --git a/packages/babel-parser/test/fixtures/typescript/class/declare-new-line/input.js b/packages/babel-parser/test/fixtures/typescript/class/declare-new-line/input.js
+new file mode 100644
+index 0000000000..2710f781ff
+--- /dev/null
++++ b/packages/babel-parser/test/fixtures/typescript/class/declare-new-line/input.js
+@@ -0,0 +1,2 @@
++declare
++class B {}
+diff --git a/packages/babel-parser/test/fixtures/typescript/class/declare-new-line/output.json b/packages/babel-parser/test/fixtures/typescript/class/declare-new-line/output.json
+new file mode 100644
+index 0000000000..764a3d2f7e
+--- /dev/null
++++ b/packages/babel-parser/test/fixtures/typescript/class/declare-new-line/output.json
+@@ -0,0 +1,116 @@
++{
++  "type": "File",
++  "start": 0,
++  "end": 18,
++  "loc": {
++    "start": {
++      "line": 1,
++      "column": 0
++    },
++    "end": {
++      "line": 2,
++      "column": 10
++    }
++  },
++  "program": {
++    "type": "Program",
++    "start": 0,
++    "end": 18,
++    "loc": {
++      "start": {
++        "line": 1,
++        "column": 0
++      },
++      "end": {
++        "line": 2,
++        "column": 10
++      }
++    },
++    "sourceType": "module",
++    "interpreter": null,
++    "body": [
++      {
++        "type": "ExpressionStatement",
++        "start": 0,
++        "end": 7,
++        "loc": {
++          "start": {
++            "line": 1,
++            "column": 0
++          },
++          "end": {
++            "line": 1,
++            "column": 7
++          }
++        },
++        "expression": {
++          "type": "Identifier",
++          "start": 0,
++          "end": 7,
++          "loc": {
++            "start": {
++              "line": 1,
++              "column": 0
++            },
++            "end": {
++              "line": 1,
++              "column": 7
++            },
++            "identifierName": "declare"
++          },
++          "name": "declare"
++        }
++      },
++      {
++        "type": "ClassDeclaration",
++        "start": 8,
++        "end": 18,
++        "loc": {
++          "start": {
++            "line": 2,
++            "column": 0
++          },
++          "end": {
++            "line": 2,
++            "column": 10
++          }
++        },
++        "id": {
++          "type": "Identifier",
++          "start": 14,
++          "end": 15,
++          "loc": {
++            "start": {
++              "line": 2,
++              "column": 6
++            },
++            "end": {
++              "line": 2,
++              "column": 7
++            },
++            "identifierName": "B"
++          },
++          "name": "B"
++        },
++        "superClass": null,
++        "body": {
++          "type": "ClassBody",
++          "start": 16,
++          "end": 18,
++          "loc": {
++            "start": {
++              "line": 2,
++              "column": 8
++            },
++            "end": {
++              "line": 2,
++              "column": 10
++            }
++          },
++          "body": []
++        }
++      }
++    ],
++    "directives": []
++  }
++}
+\ No newline at end of file
+diff --git a/packages/babel-parser/test/fixtures/typescript/declare/const-new-line/input.js b/packages/babel-parser/test/fixtures/typescript/declare/const-new-line/input.js
+new file mode 100644
+index 0000000000..f8d2e9cb8a
+--- /dev/null
++++ b/packages/babel-parser/test/fixtures/typescript/declare/const-new-line/input.js
+@@ -0,0 +1,2 @@
++declare
++const x: number, y: string;
+diff --git a/packages/babel-parser/test/fixtures/typescript/declare/const-new-line/output.json b/packages/babel-parser/test/fixtures/typescript/declare/const-new-line/output.json
+new file mode 100644
+index 0000000000..4d58e741f4
+--- /dev/null
++++ b/packages/babel-parser/test/fixtures/typescript/declare/const-new-line/output.json
+@@ -0,0 +1,211 @@
++{
++  "type": "File",
++  "start": 0,
++  "end": 35,
++  "loc": {
++    "start": {
++      "line": 1,
++      "column": 0
++    },
++    "end": {
++      "line": 2,
++      "column": 27
++    }
++  },
++  "program": {
++    "type": "Program",
++    "start": 0,
++    "end": 35,
++    "loc": {
++      "start": {
++        "line": 1,
++        "column": 0
++      },
++      "end": {
++        "line": 2,
++        "column": 27
++      }
++    },
++    "sourceType": "module",
++    "interpreter": null,
++    "body": [
++      {
++        "type": "ExpressionStatement",
++        "start": 0,
++        "end": 7,
++        "loc": {
++          "start": {
++            "line": 1,
++            "column": 0
++          },
++          "end": {
++            "line": 1,
++            "column": 7
++          }
++        },
++        "expression": {
++          "type": "Identifier",
++          "start": 0,
++          "end": 7,
++          "loc": {
++            "start": {
++              "line": 1,
++              "column": 0
++            },
++            "end": {
++              "line": 1,
++              "column": 7
++            },
++            "identifierName": "declare"
++          },
++          "name": "declare"
++        }
++      },
++      {
++        "type": "VariableDeclaration",
++        "start": 8,
++        "end": 35,
++        "loc": {
++          "start": {
++            "line": 2,
++            "column": 0
++          },
++          "end": {
++            "line": 2,
++            "column": 27
++          }
++        },
++        "declarations": [
++          {
++            "type": "VariableDeclarator",
++            "start": 14,
++            "end": 23,
++            "loc": {
++              "start": {
++                "line": 2,
++                "column": 6
++              },
++              "end": {
++                "line": 2,
++                "column": 15
++              }
++            },
++            "id": {
++              "type": "Identifier",
++              "start": 14,
++              "end": 23,
++              "loc": {
++                "start": {
++                  "line": 2,
++                  "column": 6
++                },
++                "end": {
++                  "line": 2,
++                  "column": 15
++                },
++                "identifierName": "x"
++              },
++              "name": "x",
++              "typeAnnotation": {
++                "type": "TSTypeAnnotation",
++                "start": 15,
++                "end": 23,
++                "loc": {
++                  "start": {
++                    "line": 2,
++                    "column": 7
++                  },
++                  "end": {
++                    "line": 2,
++                    "column": 15
++                  }
++                },
++                "typeAnnotation": {
++                  "type": "TSNumberKeyword",
++                  "start": 17,
++                  "end": 23,
++                  "loc": {
++                    "start": {
++                      "line": 2,
++                      "column": 9
++                    },
++                    "end": {
++                      "line": 2,
++                      "column": 15
++                    }
++                  }
++                }
++              }
++            },
++            "init": null
++          },
++          {
++            "type": "VariableDeclarator",
++            "start": 25,
++            "end": 34,
++            "loc": {
++              "start": {
++                "line": 2,
++                "column": 17
++              },
++              "end": {
++                "line": 2,
++                "column": 26
++              }
++            },
++            "id": {
++              "type": "Identifier",
++              "start": 25,
++              "end": 34,
++              "loc": {
++                "start": {
++                  "line": 2,
++                  "column": 17
++                },
++                "end": {
++                  "line": 2,
++                  "column": 26
++                },
++                "identifierName": "y"
++              },
++              "name": "y",
++              "typeAnnotation": {
++                "type": "TSTypeAnnotation",
++                "start": 26,
++                "end": 34,
++                "loc": {
++                  "start": {
++                    "line": 2,
++                    "column": 18
++                  },
++                  "end": {
++                    "line": 2,
++                    "column": 26
++                  }
++                },
++                "typeAnnotation": {
++                  "type": "TSStringKeyword",
++                  "start": 28,
++                  "end": 34,
++                  "loc": {
++                    "start": {
++                      "line": 2,
++                      "column": 20
++                    },
++                    "end": {
++                      "line": 2,
++                      "column": 26
++                    }
++                  }
++                }
++              }
++            },
++            "init": null
++          }
++        ],
++        "kind": "const"
++      }
++    ],
++    "directives": []
++  }
++}
+\ No newline at end of file
+diff --git a/packages/babel-parser/test/fixtures/typescript/declare/destructure-new-line/input.js b/packages/babel-parser/test/fixtures/typescript/declare/destructure-new-line/input.js
+new file mode 100644
+index 0000000000..0a7a9c9770
+--- /dev/null
++++ b/packages/babel-parser/test/fixtures/typescript/declare/destructure-new-line/input.js
+@@ -0,0 +1,2 @@
++declare
++const { x, y }: { x: number, y: number };
+diff --git a/packages/babel-parser/test/fixtures/typescript/declare/destructure-new-line/output.json b/packages/babel-parser/test/fixtures/typescript/declare/destructure-new-line/output.json
+new file mode 100644
+index 0000000000..a4ed43a77f
+--- /dev/null
++++ b/packages/babel-parser/test/fixtures/typescript/declare/destructure-new-line/output.json
+@@ -0,0 +1,386 @@
++{
++  "type": "File",
++  "start": 0,
++  "end": 49,
++  "loc": {
++    "start": {
++      "line": 1,
++      "column": 0
++    },
++    "end": {
++      "line": 2,
++      "column": 41
++    }
++  },
++  "program": {
++    "type": "Program",
++    "start": 0,
++    "end": 49,
++    "loc": {
++      "start": {
++        "line": 1,
++        "column": 0
++      },
++      "end": {
++        "line": 2,
++        "column": 41
++      }
++    },
++    "sourceType": "module",
++    "interpreter": null,
++    "body": [
++      {
++        "type": "ExpressionStatement",
++        "start": 0,
++        "end": 7,
++        "loc": {
++          "start": {
++            "line": 1,
++            "column": 0
++          },
++          "end": {
++            "line": 1,
++            "column": 7
++          }
++        },
++        "expression": {
++          "type": "Identifier",
++          "start": 0,
++          "end": 7,
++          "loc": {
++            "start": {
++              "line": 1,
++              "column": 0
++            },
++            "end": {
++              "line": 1,
++              "column": 7
++            },
++            "identifierName": "declare"
++          },
++          "name": "declare"
++        }
++      },
++      {
++        "type": "VariableDeclaration",
++        "start": 8,
++        "end": 49,
++        "loc": {
++          "start": {
++            "line": 2,
++            "column": 0
++          },
++          "end": {
++            "line": 2,
++            "column": 41
++          }
++        },
++        "declarations": [
++          {
++            "type": "VariableDeclarator",
++            "start": 14,
++            "end": 48,
++            "loc": {
++              "start": {
++                "line": 2,
++                "column": 6
++              },
++              "end": {
++                "line": 2,
++                "column": 40
++              }
++            },
++            "id": {
++              "type": "ObjectPattern",
++              "start": 14,
++              "end": 48,
++              "loc": {
++                "start": {
++                  "line": 2,
++                  "column": 6
++                },
++                "end": {
++                  "line": 2,
++                  "column": 40
++                }
++              },
++              "properties": [
++                {
++                  "type": "ObjectProperty",
++                  "start": 16,
++                  "end": 17,
++                  "loc": {
++                    "start": {
++                      "line": 2,
++                      "column": 8
++                    },
++                    "end": {
++                      "line": 2,
++                      "column": 9
++                    }
++                  },
++                  "method": false,
++                  "key": {
++                    "type": "Identifier",
++                    "start": 16,
++                    "end": 17,
++                    "loc": {
++                      "start": {
++                        "line": 2,
++                        "column": 8
++                      },
++                      "end": {
++                        "line": 2,
++                        "column": 9
++                      },
++                      "identifierName": "x"
++                    },
++                    "name": "x"
++                  },
++                  "computed": false,
++                  "shorthand": true,
++                  "value": {
++                    "type": "Identifier",
++                    "start": 16,
++                    "end": 17,
++                    "loc": {
++                      "start": {
++                        "line": 2,
++                        "column": 8
++                      },
++                      "end": {
++                        "line": 2,
++                        "column": 9
++                      },
++                      "identifierName": "x"
++                    },
++                    "name": "x"
++                  },
++                  "extra": {
++                    "shorthand": true
++                  }
++                },
++                {
++                  "type": "ObjectProperty",
++                  "start": 19,
++                  "end": 20,
++                  "loc": {
++                    "start": {
++                      "line": 2,
++                      "column": 11
++                    },
++                    "end": {
++                      "line": 2,
++                      "column": 12
++                    }
++                  },
++                  "method": false,
++                  "key": {
++                    "type": "Identifier",
++                    "start": 19,
++                    "end": 20,
++                    "loc": {
++                      "start": {
++                        "line": 2,
++                        "column": 11
++                      },
++                      "end": {
++                        "line": 2,
++                        "column": 12
++                      },
++                      "identifierName": "y"
++                    },
++                    "name": "y"
++                  },
++                  "computed": false,
++                  "shorthand": true,
++                  "value": {
++                    "type": "Identifier",
++                    "start": 19,
++                    "end": 20,
++                    "loc": {
++                      "start": {
++                        "line": 2,
++                        "column": 11
++                      },
++                      "end": {
++                        "line": 2,
++                        "column": 12
++                      },
++                      "identifierName": "y"
++                    },
++                    "name": "y"
++                  },
++                  "extra": {
++                    "shorthand": true
++                  }
++                }
++              ],
++              "typeAnnotation": {
++                "type": "TSTypeAnnotation",
++                "start": 22,
++                "end": 48,
++                "loc": {
++                  "start": {
++                    "line": 2,
++                    "column": 14
++                  },
++                  "end": {
++                    "line": 2,
++                    "column": 40
++                  }
++                },
++                "typeAnnotation": {
++                  "type": "TSTypeLiteral",
++                  "start": 24,
++                  "end": 48,
++                  "loc": {
++                    "start": {
++                      "line": 2,
++                      "column": 16
++                    },
++                    "end": {
++                      "line": 2,
++                      "column": 40
++                    }
++                  },
++                  "members": [
++                    {
++                      "type": "TSPropertySignature",
++                      "start": 26,
++                      "end": 36,
++                      "loc": {
++                        "start": {
++                          "line": 2,
++                          "column": 18
++                        },
++                        "end": {
++                          "line": 2,
++                          "column": 28
++                        }
++                      },
++                      "key": {
++                        "type": "Identifier",
++                        "start": 26,
++                        "end": 27,
++                        "loc": {
++                          "start": {
++                            "line": 2,
++                            "column": 18
++                          },
++                          "end": {
++                            "line": 2,
++                            "column": 19
++                          },
++                          "identifierName": "x"
++                        },
++                        "name": "x"
++                      },
++                      "computed": false,
++                      "typeAnnotation": {
++                        "type": "TSTypeAnnotation",
++                        "start": 27,
++                        "end": 35,
++                        "loc": {
++                          "start": {
++                            "line": 2,
++                            "column": 19
++                          },
++                          "end": {
++                            "line": 2,
++                            "column": 27
++                          }
++                        },
++                        "typeAnnotation": {
++                          "type": "TSNumberKeyword",
++                          "start": 29,
++                          "end": 35,
++                          "loc": {
++                            "start": {
++                              "line": 2,
++                              "column": 21
++                            },
++                            "end": {
++                              "line": 2,
++                              "column": 27
++                            }
++                          }
++                        }
++                      }
++                    },
++                    {
++                      "type": "TSPropertySignature",
++                      "start": 37,
++                      "end": 46,
++                      "loc": {
++                        "start": {
++                          "line": 2,
++                          "column": 29
++                        },
++                        "end": {
++                          "line": 2,
++                          "column": 38
++                        }
++                      },
++                      "key": {
++                        "type": "Identifier",
++                        "start": 37,
++                        "end": 38,
++                        "loc": {
++                          "start": {
++                            "line": 2,
++                            "column": 29
++                          },
++                          "end": {
++                            "line": 2,
++                            "column": 30
++                          },
++                          "identifierName": "y"
++                        },
++                        "name": "y"
++                      },
++                      "computed": false,
++                      "typeAnnotation": {
++                        "type": "TSTypeAnnotation",
++                        "start": 38,
++                        "end": 46,
++                        "loc": {
++                          "start": {
++                            "line": 2,
++                            "column": 30
++                          },
++                          "end": {
++                            "line": 2,
++                            "column": 38
++                          }
++                        },
++                        "typeAnnotation": {
++                          "type": "TSNumberKeyword",
++                          "start": 40,
++                          "end": 46,
++                          "loc": {
++                            "start": {
++                              "line": 2,
++                              "column": 32
++                            },
++                            "end": {
++                              "line": 2,
++                              "column": 38
++                            }
++                          }
++                        }
++                      }
++                    }
++                  ]
++                }
++              }
++            },
++            "init": null
++          }
++        ],
++        "kind": "const"
++      }
++    ],
++    "directives": []
++  }
++}
+\ No newline at end of file
+diff --git a/packages/babel-parser/test/fixtures/typescript/declare/interface-new-line/input.js b/packages/babel-parser/test/fixtures/typescript/declare/interface-new-line/input.js
+new file mode 100644
+index 0000000000..ba761fb219
+--- /dev/null
++++ b/packages/babel-parser/test/fixtures/typescript/declare/interface-new-line/input.js
+@@ -0,0 +1,2 @@
++declare
++interface I {}
+diff --git a/packages/babel-parser/test/fixtures/typescript/declare/interface-new-line/output.json b/packages/babel-parser/test/fixtures/typescript/declare/interface-new-line/output.json
+new file mode 100644
+index 0000000000..249423eab4
+--- /dev/null
++++ b/packages/babel-parser/test/fixtures/typescript/declare/interface-new-line/output.json
+@@ -0,0 +1,115 @@
++{
++  "type": "File",
++  "start": 0,
++  "end": 22,
++  "loc": {
++    "start": {
++      "line": 1,
++      "column": 0
++    },
++    "end": {
++      "line": 2,
++      "column": 14
++    }
++  },
++  "program": {
++    "type": "Program",
++    "start": 0,
++    "end": 22,
++    "loc": {
++      "start": {
++        "line": 1,
++        "column": 0
++      },
++      "end": {
++        "line": 2,
++        "column": 14
++      }
++    },
++    "sourceType": "module",
++    "interpreter": null,
++    "body": [
++      {
++        "type": "ExpressionStatement",
++        "start": 0,
++        "end": 7,
++        "loc": {
++          "start": {
++            "line": 1,
++            "column": 0
++          },
++          "end": {
++            "line": 1,
++            "column": 7
++          }
++        },
++        "expression": {
++          "type": "Identifier",
++          "start": 0,
++          "end": 7,
++          "loc": {
++            "start": {
++              "line": 1,
++              "column": 0
++            },
++            "end": {
++              "line": 1,
++              "column": 7
++            },
++            "identifierName": "declare"
++          },
++          "name": "declare"
++        }
++      },
++      {
++        "type": "TSInterfaceDeclaration",
++        "start": 8,
++        "end": 22,
++        "loc": {
++          "start": {
++            "line": 2,
++            "column": 0
++          },
++          "end": {
++            "line": 2,
++            "column": 14
++          }
++        },
++        "id": {
++          "type": "Identifier",
++          "start": 18,
++          "end": 19,
++          "loc": {
++            "start": {
++              "line": 2,
++              "column": 10
++            },
++            "end": {
++              "line": 2,
++              "column": 11
++            },
++            "identifierName": "I"
++          },
++          "name": "I"
++        },
++        "body": {
++          "type": "TSInterfaceBody",
++          "start": 20,
++          "end": 22,
++          "loc": {
++            "start": {
++              "line": 2,
++              "column": 12
++            },
++            "end": {
++              "line": 2,
++              "column": 14
++            }
++          },
++          "body": []
++        }
++      }
++    ],
++    "directives": []
++  }
++}
+\ No newline at end of file
+diff --git a/packages/babel-parser/test/fixtures/typescript/declare/let-new-line/input.js b/packages/babel-parser/test/fixtures/typescript/declare/let-new-line/input.js
+new file mode 100644
+index 0000000000..900228beaa
+--- /dev/null
++++ b/packages/babel-parser/test/fixtures/typescript/declare/let-new-line/input.js
+@@ -0,0 +1,2 @@
++declare
++let x;
+diff --git a/packages/babel-parser/test/fixtures/typescript/declare/let-new-line/output.json b/packages/babel-parser/test/fixtures/typescript/declare/let-new-line/output.json
+new file mode 100644
+index 0000000000..2b7786be2c
+--- /dev/null
++++ b/packages/babel-parser/test/fixtures/typescript/declare/let-new-line/output.json
+@@ -0,0 +1,118 @@
++{
++  "type": "File",
++  "start": 0,
++  "end": 14,
++  "loc": {
++    "start": {
++      "line": 1,
++      "column": 0
++    },
++    "end": {
++      "line": 2,
++      "column": 6
++    }
++  },
++  "program": {
++    "type": "Program",
++    "start": 0,
++    "end": 14,
++    "loc": {
++      "start": {
++        "line": 1,
++        "column": 0
++      },
++      "end": {
++        "line": 2,
++        "column": 6
++      }
++    },
++    "sourceType": "module",
++    "interpreter": null,
++    "body": [
++      {
++        "type": "ExpressionStatement",
++        "start": 0,
++        "end": 7,
++        "loc": {
++          "start": {
++            "line": 1,
++            "column": 0
++          },
++          "end": {
++            "line": 1,
++            "column": 7
++          }
++        },
++        "expression": {
++          "type": "Identifier",
++          "start": 0,
++          "end": 7,
++          "loc": {
++            "start": {
++              "line": 1,
++              "column": 0
++            },
++            "end": {
++              "line": 1,
++              "column": 7
++            },
++            "identifierName": "declare"
++          },
++          "name": "declare"
++        }
++      },
++      {
++        "type": "VariableDeclaration",
++        "start": 8,
++        "end": 14,
++        "loc": {
++          "start": {
++            "line": 2,
++            "column": 0
++          },
++          "end": {
++            "line": 2,
++            "column": 6
++          }
++        },
++        "declarations": [
++          {
++            "type": "VariableDeclarator",
++            "start": 12,
++            "end": 13,
++            "loc": {
++              "start": {
++                "line": 2,
++                "column": 4
++              },
++              "end": {
++                "line": 2,
++                "column": 5
++              }
++            },
++            "id": {
++              "type": "Identifier",
++              "start": 12,
++              "end": 13,
++              "loc": {
++                "start": {
++                  "line": 2,
++                  "column": 4
++                },
++                "end": {
++                  "line": 2,
++                  "column": 5
++                },
++                "identifierName": "x"
++              },
++              "name": "x"
++            },
++            "init": null
++          }
++        ],
++        "kind": "let"
++      }
++    ],
++    "directives": []
++  }
++}
+\ No newline at end of file
+diff --git a/packages/babel-parser/test/fixtures/typescript/declare/var-new-line/input.js b/packages/babel-parser/test/fixtures/typescript/declare/var-new-line/input.js
+new file mode 100644
+index 0000000000..7baf8686e1
+--- /dev/null
++++ b/packages/babel-parser/test/fixtures/typescript/declare/var-new-line/input.js
+@@ -0,0 +1,5 @@
++declare
++var x;
++
++declare
++var x: any;
+diff --git a/packages/babel-parser/test/fixtures/typescript/declare/var-new-line/output.json b/packages/babel-parser/test/fixtures/typescript/declare/var-new-line/output.json
+new file mode 100644
+index 0000000000..63eaea000f
+--- /dev/null
++++ b/packages/babel-parser/test/fixtures/typescript/declare/var-new-line/output.json
+@@ -0,0 +1,231 @@
++{
++  "type": "File",
++  "start": 0,
++  "end": 35,
++  "loc": {
++    "start": {
++      "line": 1,
++      "column": 0
++    },
++    "end": {
++      "line": 5,
++      "column": 11
++    }
++  },
++  "program": {
++    "type": "Program",
++    "start": 0,
++    "end": 35,
++    "loc": {
++      "start": {
++        "line": 1,
++        "column": 0
++      },
++      "end": {
++        "line": 5,
++        "column": 11
++      }
++    },
++    "sourceType": "module",
++    "interpreter": null,
++    "body": [
++      {
++        "type": "ExpressionStatement",
++        "start": 0,
++        "end": 7,
++        "loc": {
++          "start": {
++            "line": 1,
++            "column": 0
++          },
++          "end": {
++            "line": 1,
++            "column": 7
++          }
++        },
++        "expression": {
++          "type": "Identifier",
++          "start": 0,
++          "end": 7,
++          "loc": {
++            "start": {
++              "line": 1,
++              "column": 0
++            },
++            "end": {
++              "line": 1,
++              "column": 7
++            },
++            "identifierName": "declare"
++          },
++          "name": "declare"
++        }
++      },
++      {
++        "type": "VariableDeclaration",
++        "start": 8,
++        "end": 14,
++        "loc": {
++          "start": {
++            "line": 2,
++            "column": 0
++          },
++          "end": {
++            "line": 2,
++            "column": 6
++          }
++        },
++        "declarations": [
++          {
++            "type": "VariableDeclarator",
++            "start": 12,
++            "end": 13,
++            "loc": {
++              "start": {
++                "line": 2,
++                "column": 4
++              },
++              "end": {
++                "line": 2,
++                "column": 5
++              }
++            },
++            "id": {
++              "type": "Identifier",
++              "start": 12,
++              "end": 13,
++              "loc": {
++                "start": {
++                  "line": 2,
++                  "column": 4
++                },
++                "end": {
++                  "line": 2,
++                  "column": 5
++                },
++                "identifierName": "x"
++              },
++              "name": "x"
++            },
++            "init": null
++          }
++        ],
++        "kind": "var"
++      },
++      {
++        "type": "ExpressionStatement",
++        "start": 16,
++        "end": 23,
++        "loc": {
++          "start": {
++            "line": 4,
++            "column": 0
++          },
++          "end": {
++            "line": 4,
++            "column": 7
++          }
++        },
++        "expression": {
++          "type": "Identifier",
++          "start": 16,
++          "end": 23,
++          "loc": {
++            "start": {
++              "line": 4,
++              "column": 0
++            },
++            "end": {
++              "line": 4,
++              "column": 7
++            },
++            "identifierName": "declare"
++          },
++          "name": "declare"
++        }
++      },
++      {
++        "type": "VariableDeclaration",
++        "start": 24,
++        "end": 35,
++        "loc": {
++          "start": {
++            "line": 5,
++            "column": 0
++          },
++          "end": {
++            "line": 5,
++            "column": 11
++          }
++        },
++        "declarations": [
++          {
++            "type": "VariableDeclarator",
++            "start": 28,
++            "end": 34,
++            "loc": {
++              "start": {
++                "line": 5,
++                "column": 4
++              },
++              "end": {
++                "line": 5,
++                "column": 10
++              }
++            },
++            "id": {
++              "type": "Identifier",
++              "start": 28,
++              "end": 34,
++              "loc": {
++                "start": {
++                  "line": 5,
++                  "column": 4
++                },
++                "end": {
++                  "line": 5,
++                  "column": 10
++                },
++                "identifierName": "x"
++              },
++              "name": "x",
++              "typeAnnotation": {
++                "type": "TSTypeAnnotation",
++                "start": 29,
++                "end": 34,
++                "loc": {
++                  "start": {
++                    "line": 5,
++                    "column": 5
++                  },
++                  "end": {
++                    "line": 5,
++                    "column": 10
++                  }
++                },
++                "typeAnnotation": {
++                  "type": "TSAnyKeyword",
++                  "start": 31,
++                  "end": 34,
++                  "loc": {
++                    "start": {
++                      "line": 5,
++                      "column": 7
++                    },
++                    "end": {
++                      "line": 5,
++                      "column": 10
++                    }
++                  }
++                }
++              }
++            },
++            "init": null
++          }
++        ],
++        "kind": "var"
++      }
++    ],
++    "directives": []
++  }
++}
+\ No newline at end of file
+diff --git a/packages/babel-parser/test/fixtures/typescript/interface/new-line-error/input.js b/packages/babel-parser/test/fixtures/typescript/interface/new-line-error/input.js
+new file mode 100644
+index 0000000000..707fdd6cfe
+--- /dev/null
++++ b/packages/babel-parser/test/fixtures/typescript/interface/new-line-error/input.js
+@@ -0,0 +1,2 @@
++interface
++F {}
+diff --git a/packages/babel-parser/test/fixtures/typescript/interface/new-line-error/options.json b/packages/babel-parser/test/fixtures/typescript/interface/new-line-error/options.json
+new file mode 100644
+index 0000000000..d36d386ca0
+--- /dev/null
++++ b/packages/babel-parser/test/fixtures/typescript/interface/new-line-error/options.json
+@@ -0,0 +1,3 @@
++{
++  "throws": "Unexpected token, expected \";\" (2:2)"
++}
+diff --git a/packages/babel-parser/test/fixtures/typescript/interface/new-line/input.js b/packages/babel-parser/test/fixtures/typescript/interface/new-line/input.js
+new file mode 100644
+index 0000000000..2c77ad6a91
+--- /dev/null
++++ b/packages/babel-parser/test/fixtures/typescript/interface/new-line/input.js
+@@ -0,0 +1,3 @@
++interface
++F
++{}
+diff --git a/packages/babel-parser/test/fixtures/typescript/interface/new-line/output.json b/packages/babel-parser/test/fixtures/typescript/interface/new-line/output.json
+new file mode 100644
+index 0000000000..56e109b261
+--- /dev/null
++++ b/packages/babel-parser/test/fixtures/typescript/interface/new-line/output.json
+@@ -0,0 +1,116 @@
++{
++  "type": "File",
++  "start": 0,
++  "end": 14,
++  "loc": {
++    "start": {
++      "line": 1,
++      "column": 0
++    },
++    "end": {
++      "line": 3,
++      "column": 2
++    }
++  },
++  "program": {
++    "type": "Program",
++    "start": 0,
++    "end": 14,
++    "loc": {
++      "start": {
++        "line": 1,
++        "column": 0
++      },
++      "end": {
++        "line": 3,
++        "column": 2
++      }
++    },
++    "sourceType": "module",
++    "interpreter": null,
++    "body": [
++      {
++        "type": "ExpressionStatement",
++        "start": 0,
++        "end": 9,
++        "loc": {
++          "start": {
++            "line": 1,
++            "column": 0
++          },
++          "end": {
++            "line": 1,
++            "column": 9
++          }
++        },
++        "expression": {
++          "type": "Identifier",
++          "start": 0,
++          "end": 9,
++          "loc": {
++            "start": {
++              "line": 1,
++              "column": 0
++            },
++            "end": {
++              "line": 1,
++              "column": 9
++            },
++            "identifierName": "interface"
++          },
++          "name": "interface"
++        }
++      },
++      {
++        "type": "ExpressionStatement",
++        "start": 10,
++        "end": 11,
++        "loc": {
++          "start": {
++            "line": 2,
++            "column": 0
++          },
++          "end": {
++            "line": 2,
++            "column": 1
++          }
++        },
++        "expression": {
++          "type": "Identifier",
++          "start": 10,
++          "end": 11,
++          "loc": {
++            "start": {
++              "line": 2,
++              "column": 0
++            },
++            "end": {
++              "line": 2,
++              "column": 1
++            },
++            "identifierName": "F"
++          },
++          "name": "F"
++        }
++      },
++      {
++        "type": "BlockStatement",
++        "start": 12,
++        "end": 14,
++        "loc": {
++          "start": {
++            "line": 3,
++            "column": 0
++          },
++          "end": {
++            "line": 3,
++            "column": 2
++          }
++        },
++        "body": [],
++        "directives": []
++      }
++    ],
++    "directives": []
++  }
++}
+\ No newline at end of file
+diff --git a/packages/babel-parser/test/fixtures/typescript/module-namespace/module-new-line-error/input.js b/packages/babel-parser/test/fixtures/typescript/module-namespace/module-new-line-error/input.js
+new file mode 100644
+index 0000000000..999e730ad0
+--- /dev/null
++++ b/packages/babel-parser/test/fixtures/typescript/module-namespace/module-new-line-error/input.js
+@@ -0,0 +1,2 @@
++module
++Foo {}
+diff --git a/packages/babel-parser/test/fixtures/typescript/module-namespace/module-new-line-error/options.json b/packages/babel-parser/test/fixtures/typescript/module-namespace/module-new-line-error/options.json
+new file mode 100644
+index 0000000000..cd6a9c1b1a
+--- /dev/null
++++ b/packages/babel-parser/test/fixtures/typescript/module-namespace/module-new-line-error/options.json
+@@ -0,0 +1,3 @@
++{
++  "throws": "Unexpected token, expected \";\" (2:4)"
++}
+diff --git a/packages/babel-parser/test/fixtures/typescript/module-namespace/module-new-line/input.js b/packages/babel-parser/test/fixtures/typescript/module-namespace/module-new-line/input.js
+new file mode 100644
+index 0000000000..f3a399f41c
+--- /dev/null
++++ b/packages/babel-parser/test/fixtures/typescript/module-namespace/module-new-line/input.js
+@@ -0,0 +1,3 @@
++module
++Foo
++{}
+diff --git a/packages/babel-parser/test/fixtures/typescript/module-namespace/module-new-line/output.json b/packages/babel-parser/test/fixtures/typescript/module-namespace/module-new-line/output.json
+new file mode 100644
+index 0000000000..bee3b058a5
+--- /dev/null
++++ b/packages/babel-parser/test/fixtures/typescript/module-namespace/module-new-line/output.json
+@@ -0,0 +1,116 @@
++{
++  "type": "File",
++  "start": 0,
++  "end": 13,
++  "loc": {
++    "start": {
++      "line": 1,
++      "column": 0
++    },
++    "end": {
++      "line": 3,
++      "column": 2
++    }
++  },
++  "program": {
++    "type": "Program",
++    "start": 0,
++    "end": 13,
++    "loc": {
++      "start": {
++        "line": 1,
++        "column": 0
++      },
++      "end": {
++        "line": 3,
++        "column": 2
++      }
++    },
++    "sourceType": "module",
++    "interpreter": null,
++    "body": [
++      {
++        "type": "ExpressionStatement",
++        "start": 0,
++        "end": 6,
++        "loc": {
++          "start": {
++            "line": 1,
++            "column": 0
++          },
++          "end": {
++            "line": 1,
++            "column": 6
++          }
++        },
++        "expression": {
++          "type": "Identifier",
++          "start": 0,
++          "end": 6,
++          "loc": {
++            "start": {
++              "line": 1,
++              "column": 0
++            },
++            "end": {
++              "line": 1,
++              "column": 6
++            },
++            "identifierName": "module"
++          },
++          "name": "module"
++        }
++      },
++      {
++        "type": "ExpressionStatement",
++        "start": 7,
++        "end": 10,
++        "loc": {
++          "start": {
++            "line": 2,
++            "column": 0
++          },
++          "end": {
++            "line": 2,
++            "column": 3
++          }
++        },
++        "expression": {
++          "type": "Identifier",
++          "start": 7,
++          "end": 10,
++          "loc": {
++            "start": {
++              "line": 2,
++              "column": 0
++            },
++            "end": {
++              "line": 2,
++              "column": 3
++            },
++            "identifierName": "Foo"
++          },
++          "name": "Foo"
++        }
++      },
++      {
++        "type": "BlockStatement",
++        "start": 11,
++        "end": 13,
++        "loc": {
++          "start": {
++            "line": 3,
++            "column": 0
++          },
++          "end": {
++            "line": 3,
++            "column": 2
++          }
++        },
++        "body": [],
++        "directives": []
++      }
++    ],
++    "directives": []
++  }
++}
+\ No newline at end of file
+diff --git a/packages/babel-parser/test/fixtures/typescript/module-namespace/namespace-new-line-error/input.js b/packages/babel-parser/test/fixtures/typescript/module-namespace/namespace-new-line-error/input.js
+new file mode 100644
+index 0000000000..20f300ac2e
+--- /dev/null
++++ b/packages/babel-parser/test/fixtures/typescript/module-namespace/namespace-new-line-error/input.js
+@@ -0,0 +1,2 @@
++namespace
++Foo {}
+diff --git a/packages/babel-parser/test/fixtures/typescript/module-namespace/namespace-new-line-error/options.json b/packages/babel-parser/test/fixtures/typescript/module-namespace/namespace-new-line-error/options.json
+new file mode 100644
+index 0000000000..cd6a9c1b1a
+--- /dev/null
++++ b/packages/babel-parser/test/fixtures/typescript/module-namespace/namespace-new-line-error/options.json
+@@ -0,0 +1,3 @@
++{
++  "throws": "Unexpected token, expected \";\" (2:4)"
++}
+diff --git a/packages/babel-parser/test/fixtures/typescript/module-namespace/namespace-new-line/input.js b/packages/babel-parser/test/fixtures/typescript/module-namespace/namespace-new-line/input.js
+new file mode 100644
+index 0000000000..65385432e3
+--- /dev/null
++++ b/packages/babel-parser/test/fixtures/typescript/module-namespace/namespace-new-line/input.js
+@@ -0,0 +1,3 @@
++namespace
++Foo
++{}
+diff --git a/packages/babel-parser/test/fixtures/typescript/module-namespace/namespace-new-line/output.json b/packages/babel-parser/test/fixtures/typescript/module-namespace/namespace-new-line/output.json
+new file mode 100644
+index 0000000000..eadadded28
+--- /dev/null
++++ b/packages/babel-parser/test/fixtures/typescript/module-namespace/namespace-new-line/output.json
+@@ -0,0 +1,116 @@
++{
++  "type": "File",
++  "start": 0,
++  "end": 16,
++  "loc": {
++    "start": {
++      "line": 1,
++      "column": 0
++    },
++    "end": {
++      "line": 3,
++      "column": 2
++    }
++  },
++  "program": {
++    "type": "Program",
++    "start": 0,
++    "end": 16,
++    "loc": {
++      "start": {
++        "line": 1,
++        "column": 0
++      },
++      "end": {
++        "line": 3,
++        "column": 2
++      }
++    },
++    "sourceType": "module",
++    "interpreter": null,
++    "body": [
++      {
++        "type": "ExpressionStatement",
++        "start": 0,
++        "end": 9,
++        "loc": {
++          "start": {
++            "line": 1,
++            "column": 0
++          },
++          "end": {
++            "line": 1,
++            "column": 9
++          }
++        },
++        "expression": {
++          "type": "Identifier",
++          "start": 0,
++          "end": 9,
++          "loc": {
++            "start": {
++              "line": 1,
++              "column": 0
++            },
++            "end": {
++              "line": 1,
++              "column": 9
++            },
++            "identifierName": "namespace"
++          },
++          "name": "namespace"
++        }
++      },
++      {
++        "type": "ExpressionStatement",
++        "start": 10,
++        "end": 13,
++        "loc": {
++          "start": {
++            "line": 2,
++            "column": 0
++          },
++          "end": {
++            "line": 2,
++            "column": 3
++          }
++        },
++        "expression": {
++          "type": "Identifier",
++          "start": 10,
++          "end": 13,
++          "loc": {
++            "start": {
++              "line": 2,
++              "column": 0
++            },
++            "end": {
++              "line": 2,
++              "column": 3
++            },
++            "identifierName": "Foo"
++          },
++          "name": "Foo"
++        }
++      },
++      {
++        "type": "BlockStatement",
++        "start": 14,
++        "end": 16,
++        "loc": {
++          "start": {
++            "line": 3,
++            "column": 0
++          },
++          "end": {
++            "line": 3,
++            "column": 2
++          }
++        },
++        "body": [],
++        "directives": []
++      }
++    ],
++    "directives": []
++  }
++}
+\ No newline at end of file
+diff --git a/packages/babel-parser/test/fixtures/typescript/types/new-line/input.js b/packages/babel-parser/test/fixtures/typescript/types/new-line/input.js
+new file mode 100644
+index 0000000000..24e7eba589
+--- /dev/null
++++ b/packages/babel-parser/test/fixtures/typescript/types/new-line/input.js
+@@ -0,0 +1,2 @@
++type
++Foo = string;
+diff --git a/packages/babel-parser/test/fixtures/typescript/types/new-line/output.json b/packages/babel-parser/test/fixtures/typescript/types/new-line/output.json
+new file mode 100644
+index 0000000000..7acae4a0d3
+--- /dev/null
++++ b/packages/babel-parser/test/fixtures/typescript/types/new-line/output.json
+@@ -0,0 +1,132 @@
++{
++  "type": "File",
++  "start": 0,
++  "end": 18,
++  "loc": {
++    "start": {
++      "line": 1,
++      "column": 0
++    },
++    "end": {
++      "line": 2,
++      "column": 13
++    }
++  },
++  "program": {
++    "type": "Program",
++    "start": 0,
++    "end": 18,
++    "loc": {
++      "start": {
++        "line": 1,
++        "column": 0
++      },
++      "end": {
++        "line": 2,
++        "column": 13
++      }
++    },
++    "sourceType": "module",
++    "interpreter": null,
++    "body": [
++      {
++        "type": "ExpressionStatement",
++        "start": 0,
++        "end": 4,
++        "loc": {
++          "start": {
++            "line": 1,
++            "column": 0
++          },
++          "end": {
++            "line": 1,
++            "column": 4
++          }
++        },
++        "expression": {
++          "type": "Identifier",
++          "start": 0,
++          "end": 4,
++          "loc": {
++            "start": {
++              "line": 1,
++              "column": 0
++            },
++            "end": {
++              "line": 1,
++              "column": 4
++            },
++            "identifierName": "type"
++          },
++          "name": "type"
++        }
++      },
++      {
++        "type": "ExpressionStatement",
++        "start": 5,
++        "end": 18,
++        "loc": {
++          "start": {
++            "line": 2,
++            "column": 0
++          },
++          "end": {
++            "line": 2,
++            "column": 13
++          }
++        },
++        "expression": {
++          "type": "AssignmentExpression",
++          "start": 5,
++          "end": 17,
++          "loc": {
++            "start": {
++              "line": 2,
++              "column": 0
++            },
++            "end": {
++              "line": 2,
++              "column": 12
++            }
++          },
++          "operator": "=",
++          "left": {
++            "type": "Identifier",
++            "start": 5,
++            "end": 8,
++            "loc": {
++              "start": {
++                "line": 2,
++                "column": 0
++              },
++              "end": {
++                "line": 2,
++                "column": 3
++              },
++              "identifierName": "Foo"
++            },
++            "name": "Foo"
++          },
++          "right": {
++            "type": "Identifier",
++            "start": 11,
++            "end": 17,
++            "loc": {
++              "start": {
++                "line": 2,
++                "column": 6
++              },
++              "end": {
++                "line": 2,
++                "column": 12
++              },
++              "identifierName": "string"
++            },
++            "name": "string"
++          }
++        }
++      }
++    ],
++    "directives": []
++  }
++}
+\ No newline at end of file

@@ -1,0 +1,54 @@
+diff --git a/lib/logger/test/logger_test.exs b/lib/logger/test/logger_test.exs
+index c5bac9ecf..3f42c05e3 100644
+--- a/lib/logger/test/logger_test.exs
++++ b/lib/logger/test/logger_test.exs
+@@ -650,6 +650,7 @@ defmodule LoggerTest do
+     Logger.configure(translator_inspect_opts: [])
+   end
+ 
++  @tag formatter: [metadata: [:module, :meta]]
+   test "always evaluate messages" do
+     Logger.configure(
+       always_evaluate_messages: true,
+@@ -666,6 +667,16 @@ defmodule LoggerTest do
+         Logger.info(send(self(), "runtime purged"))
+       end
+ 
++      def runtime_purged_anonymous_function do
++        Logger.info(fn -> send(self(), "runtime purged anonymous function") end)
++      end
++
++      def runtime_purged_anonymous_tuple_function do
++        Logger.info(fn ->
++          {send(self(), "runtime purged anonymous tuple function"), meta: true}
++        end)
++      end
++
+       def not_purged do
+         Logger.error(send(self(), "not purged"))
+       end
+@@ -688,6 +699,24 @@ defmodule LoggerTest do
+ 
+     assert_received "runtime purged"
+ 
++    assert capture_log(fn ->
++             Logger.configure(level: :debug)
++             AlwaysEvaluate.runtime_purged_anonymous_function()
++           end) =~ "runtime purged anonymous function"
++
++    assert_received "runtime purged anonymous function"
++
++    log =
++      capture_log(fn ->
++        Logger.configure(level: :debug)
++        AlwaysEvaluate.runtime_purged_anonymous_tuple_function()
++      end)
++
++    assert log =~ "module=LoggerTest.AlwaysEvaluate meta=true"
++    assert log =~ "runtime purged anonymous tuple function"
++
++    assert_received "runtime purged anonymous tuple function"
++
+     assert capture_log(fn ->
+              Logger.configure(level: :error)
+              AlwaysEvaluate.compile_purged()

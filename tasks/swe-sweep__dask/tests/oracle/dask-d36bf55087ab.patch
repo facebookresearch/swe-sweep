@@ -1,0 +1,22 @@
+diff --git a/dask/array/reductions.py b/dask/array/reductions.py
+index 5bd3cd075..fc927df87 100644
+--- a/dask/array/reductions.py
++++ b/dask/array/reductions.py
+@@ -720,7 +720,7 @@ def moment_agg(
+ 
+     mu = divide(totals.sum(axis=axis, **keepdim_kw), n, dtype=dtype)
+     inner_term = divide(totals, ns, dtype=dtype) - mu
+-
++    inner_term = np.where(ns == 0, 0, inner_term)
+     M = _moment_helper(Ms, ns, inner_term, order, sum, axis, kwargs)
+ 
+     denominator = n.sum(axis=axis, **kwargs) - ddof
+@@ -799,7 +799,7 @@ def nanvar(
+     return reduction(
+         a,
+         partial(moment_chunk, sum=chunk.nansum, numel=nannumel),
+-        partial(moment_agg, sum=np.nansum, ddof=ddof),
++        partial(moment_agg, sum=np.sum, ddof=ddof),
+         axis=axis,
+         keepdims=keepdims,
+         dtype=dt,

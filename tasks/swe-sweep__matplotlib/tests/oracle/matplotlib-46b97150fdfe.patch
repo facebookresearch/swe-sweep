@@ -1,0 +1,13 @@
+diff --git a/lib/matplotlib/ticker.py b/lib/matplotlib/ticker.py
+index c36f390697..7eec884c0d 100644
+--- a/lib/matplotlib/ticker.py
++++ b/lib/matplotlib/ticker.py
+@@ -2336,7 +2336,7 @@ class LogLocator(Locator):
+         # Get decades between major ticks.
+         stride = (max(math.ceil(numdec / (numticks - 1)), 1)
+                   if mpl.rcParams['_internal.classic_mode'] else
+-                  (numdec + 1) // numticks + 1)
++                  numdec // numticks + 1)
+ 
+         # if we have decided that the stride is as big or bigger than
+         # the range, clip the stride back to the available range - 1

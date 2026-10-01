@@ -1,0 +1,15 @@
+diff --git a/vlib/v/gen/c/fn.v b/vlib/v/gen/c/fn.v
+index 1cf04ecb1..7bdc0308a 100644
+--- a/vlib/v/gen/c/fn.v
++++ b/vlib/v/gen/c/fn.v
+@@ -2318,6 +2318,10 @@ fn (mut g Gen) ref_or_deref_arg(arg ast.CallArg, expected_type ast.Type, lang as
+ 					g.write(')')
+ 					return
+ 				}
++			} else if arg_sym.kind == .interface_ && exp_sym.kind == .interface_ {
++				if exp_is_ptr && !arg_is_ptr {
++					g.write('&')
++				}
+ 			}
+ 		}
+ 	} else if arg_typ.has_flag(.shared_f) && !expected_type.has_flag(.shared_f) {

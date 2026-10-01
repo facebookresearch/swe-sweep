@@ -1,0 +1,25 @@
+diff --git a/goawk_test.go b/goawk_test.go
+index b2979e6..758bea0 100644
+--- a/goawk_test.go
++++ b/goawk_test.go
+@@ -85,4 +85,5 @@ func TestAWK(t *testing.T) {
+ 	dontRunOnWindows := map[string]bool{
+-		"p.50": true, // because this pipes to Unix sort "sort -t: +0 -1 +2nr"
++		"p.50":     true, // because this pipes to Unix sort "sort -t: +0 -1 +2nr"
++		"t.match1": true, // TODO: remove once https://lists.gnu.org/archive/html/bug-gawk/2025-10/msg00072.html is fixed and in choco (presumably 5.3.3)
+ 	}
+ 
+ 	infos, err := ioutil.ReadDir(testsDir)
+diff --git a/interp/interp_test.go b/interp/interp_test.go
+index 7dbe7b7..7f074ef 100644
+--- a/interp/interp_test.go
++++ b/interp/interp_test.go
+@@ -562,5 +562,8 @@ function f() {
+ 	{`sub("", "\\e", FS)  # !awk !gawk`, "foo bar\nbaz buz\n", "",
+ 		"invalid regex \"\\\\e \": error parsing regexp: invalid escape sequence: `\\e`", ""},
++	// ensure leftmost-longest matching like other awks
++	{`BEGIN { s = "#!a"; sub(/(#|#!)/, "", s); print s }`, "", "a\n", "", ""},
++
+ 	{`BEGIN { print tolower("Foo BaR") }`, "", "foo bar\n", "", ""},
+ 	{`BEGIN { print toupper("Foo BaR") }`, "", "FOO BAR\n", "", ""},
+ 	{`

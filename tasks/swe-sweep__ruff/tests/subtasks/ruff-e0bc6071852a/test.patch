@@ -1,0 +1,12 @@
+diff --git a/crates/ruff_linter/resources/test/fixtures/refurb/FURB118.py b/crates/ruff_linter/resources/test/fixtures/refurb/FURB118.py
+index 9e692ba28e..0a6496913e 100644
+--- a/crates/ruff_linter/resources/test/fixtures/refurb/FURB118.py
++++ b/crates/ruff_linter/resources/test/fixtures/refurb/FURB118.py
+@@ -143,3 +143,7 @@ class NotAMethodButHardToDetect:
+     # without risking false positives elsewhere or introducing complex heuristics
+     # that users would find surprising and confusing
+     FOO = sorted([x for x in BAR], key=lambda x: x.baz)
++
++# Regression https://github.com/astral-sh/ruff/issues/23076
++def func(rows):
++    rows.sort(key=lambda x: (x[x.find("=")], x[1]))

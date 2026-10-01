@@ -1,0 +1,117 @@
+diff --git a/codec-http/src/test/java/io/netty/handler/codec/http/HttpContentCompressorTest.java b/codec-http/src/test/java/io/netty/handler/codec/http/HttpContentCompressorTest.java
+index 6ab2ab88c6..508eb5ae54 100644
+--- a/codec-http/src/test/java/io/netty/handler/codec/http/HttpContentCompressorTest.java
++++ b/codec-http/src/test/java/io/netty/handler/codec/http/HttpContentCompressorTest.java
+@@ -18,6 +18,7 @@ package io.netty.handler.codec.http;
+ import io.netty.buffer.ByteBufUtil;
+ import io.netty.buffer.Unpooled;
+ import io.netty.channel.embedded.EmbeddedChannel;
++import io.netty.handler.codec.DecoderResult;
+ import io.netty.handler.codec.EncoderException;
+ import io.netty.handler.codec.compression.ZlibWrapper;
+ import io.netty.util.CharsetUtil;
+@@ -188,6 +189,7 @@ public class HttpContentCompressorTest {
+         assertThat(chunk.content().isReadable(), is(false));
+         assertThat(chunk, is(instanceOf(LastHttpContent.class)));
+         assertEquals("Netty", ((LastHttpContent) chunk).trailingHeaders().get(of("X-Test")));
++        assertEquals(DecoderResult.SUCCESS, chunk.decoderResult());
+         chunk.release();
+ 
+         assertThat(ch.readOutbound(), is(nullValue()));
+@@ -331,6 +333,7 @@ public class HttpContentCompressorTest {
+         assertThat(res.content().readableBytes(), is(0));
+         assertThat(res.content().toString(CharsetUtil.US_ASCII), is(""));
+         assertEquals("Netty", res.trailingHeaders().get(of("X-Test")));
++        assertEquals(DecoderResult.SUCCESS, res.decoderResult());
+         assertThat(ch.readOutbound(), is(nullValue()));
+     }
+ 
+@@ -370,6 +373,7 @@ public class HttpContentCompressorTest {
+         assertThat(res.content().readableBytes(), is(0));
+         assertThat(res.content().toString(CharsetUtil.US_ASCII), is(""));
+         assertEquals("Netty", res.trailingHeaders().get(of("X-Test")));
++        assertEquals(DecoderResult.SUCCESS, res.decoderResult());
+         assertThat(ch.readOutbound(), is(nullValue()));
+     }
+ 
+diff --git a/codec-http/src/test/java/io/netty/handler/codec/http/HttpContentDecoderTest.java b/codec-http/src/test/java/io/netty/handler/codec/http/HttpContentDecoderTest.java
+index 7a27a4c08a..ff0628527a 100644
+--- a/codec-http/src/test/java/io/netty/handler/codec/http/HttpContentDecoderTest.java
++++ b/codec-http/src/test/java/io/netty/handler/codec/http/HttpContentDecoderTest.java
+@@ -89,6 +89,48 @@ public class HttpContentDecoderTest {
+         assertFalse(channel.finish()); // assert that no messages are left in channel
+     }
+ 
++    @Test
++    public void testChunkedRequestDecompression() {
++        HttpResponseDecoder decoder = new HttpResponseDecoder();
++        HttpContentDecoder decompressor = new HttpContentDecompressor();
++
++        EmbeddedChannel channel = new EmbeddedChannel(decoder, decompressor, null);
++
++        String headers = "HTTP/1.1 200 OK\r\n"
++                + "Transfer-Encoding: chunked\r\n"
++                + "Trailer: My-Trailer\r\n"
++                + "Content-Encoding: gzip\r\n\r\n";
++
++        channel.writeInbound(Unpooled.copiedBuffer(headers.getBytes(CharsetUtil.US_ASCII)));
++
++        String chunkLength = Integer.toHexString(GZ_HELLO_WORLD.length);
++        assertTrue(channel.writeInbound(Unpooled.copiedBuffer(chunkLength + "\r\n", CharsetUtil.US_ASCII)));
++        assertTrue(channel.writeInbound(Unpooled.copiedBuffer(GZ_HELLO_WORLD)));
++        assertTrue(channel.writeInbound(Unpooled.copiedBuffer("\r\n".getBytes(CharsetUtil.US_ASCII))));
++        assertTrue(channel.writeInbound(Unpooled.copiedBuffer("0\r\n", CharsetUtil.US_ASCII)));
++        assertTrue(channel.writeInbound(Unpooled.copiedBuffer("My-Trailer: 42\r\n\r\n\r\n", CharsetUtil.US_ASCII)));
++
++        Object ob1 = channel.readInbound();
++        assertThat(ob1, is(instanceOf(DefaultHttpResponse.class)));
++
++        Object ob2 = channel.readInbound();
++        assertThat(ob1, is(instanceOf(DefaultHttpResponse.class)));
++        HttpContent content = (HttpContent) ob2;
++        assertEquals(HELLO_WORLD, content.content().toString(CharsetUtil.US_ASCII));
++        content.release();
++
++        Object ob3 = channel.readInbound();
++        assertThat(ob1, is(instanceOf(DefaultHttpResponse.class)));
++        LastHttpContent lastContent = (LastHttpContent) ob3;
++        assertNotNull(lastContent.decoderResult());
++        assertTrue(lastContent.decoderResult().isSuccess());
++        assertFalse(lastContent.trailingHeaders().isEmpty());
++        assertEquals("42", lastContent.trailingHeaders().get("My-Trailer"));
++        assertHasInboundMessages(channel, false);
++        assertHasOutboundMessages(channel, false);
++        assertFalse(channel.finish());
++    }
++
+     @Test
+     public void testResponseDecompression() {
+         // baseline test: response decoder, content decompressor && request aggregator work as expected
+diff --git a/codec-http/src/test/java/io/netty/handler/codec/http/HttpContentEncoderTest.java b/codec-http/src/test/java/io/netty/handler/codec/http/HttpContentEncoderTest.java
+index 9242cf8728..6301ee8c0b 100644
+--- a/codec-http/src/test/java/io/netty/handler/codec/http/HttpContentEncoderTest.java
++++ b/codec-http/src/test/java/io/netty/handler/codec/http/HttpContentEncoderTest.java
+@@ -22,6 +22,7 @@ import io.netty.channel.ChannelHandlerContext;
+ import io.netty.channel.ChannelInboundHandlerAdapter;
+ import io.netty.channel.embedded.EmbeddedChannel;
+ import io.netty.handler.codec.CodecException;
++import io.netty.handler.codec.DecoderResult;
+ import io.netty.handler.codec.EncoderException;
+ import io.netty.handler.codec.MessageToByteEncoder;
+ import io.netty.util.CharsetUtil;
+@@ -156,6 +157,7 @@ public class HttpContentEncoderTest {
+         assertThat(chunk.content().isReadable(), is(false));
+         assertThat(chunk, is(instanceOf(LastHttpContent.class)));
+         assertEquals("Netty", ((LastHttpContent) chunk).trailingHeaders().get(of("X-Test")));
++        assertEquals(DecoderResult.SUCCESS, res.decoderResult());
+         chunk.release();
+ 
+         assertThat(ch.readOutbound(), is(nullValue()));
+@@ -285,6 +287,7 @@ public class HttpContentEncoderTest {
+         assertThat(res.content().readableBytes(), is(0));
+         assertThat(res.content().toString(CharsetUtil.US_ASCII), is(""));
+         assertEquals("Netty", res.trailingHeaders().get(of("X-Test")));
++        assertEquals(DecoderResult.SUCCESS, res.decoderResult());
+         assertThat(ch.readOutbound(), is(nullValue()));
+     }
+ 

@@ -1,0 +1,76 @@
+diff --git a/vlib/v/tests/project_with_c_code_2/main2_test.v b/vlib/v/tests/project_with_c_code_2/main2_test.v
+index 529765e3f..3d321f7b6 100644
+--- a/vlib/v/tests/project_with_c_code_2/main2_test.v
++++ b/vlib/v/tests/project_with_c_code_2/main2_test.v
+@@ -6,3 +6,16 @@ fn test_using_c_code_in_the_same_module_works() {
+ 	modc.destroy_vtype(x)
+ 	assert true
+ }
++
++fn test_enum_with_dups_on_the_cside() {
++	for e in [modc.MyEnum.unknown, .name1, .name2, .name3, .name4, .name5, .name6, .common_name1,
++		.common_name2, .common_name3] {
++		println('>>> e: ${e} | int(e): ${int(e)}')
++	}
++	assert modc.MyEnum.name1 == modc.MyEnum.common_name1
++	assert modc.MyEnum.name2 == modc.MyEnum.common_name2
++	assert modc.MyEnum.name3 == modc.MyEnum.common_name3
++	assert modc.MyEnum.name4 != modc.MyEnum.common_name1
++	assert modc.MyEnum.name5 != modc.MyEnum.common_name2
++	assert modc.MyEnum.name6 != modc.MyEnum.common_name3
++}
+diff --git a/vlib/v/tests/project_with_c_code_2/modc/header.h b/vlib/v/tests/project_with_c_code_2/modc/header.h
+index b6975356b..3f62c3eff 100644
+--- a/vlib/v/tests/project_with_c_code_2/modc/header.h
++++ b/vlib/v/tests/project_with_c_code_2/modc/header.h
+@@ -15,5 +15,29 @@ void handle_array2(void *p, int n);
+ void destroy_atype(void *p);
+ 
+ 
++// The following emulates the structure of the SDL3 header SDL_pixels.h, and the enum SDL_PixelFormat.
++// See also https://github.com/vlang/v/issues/25135 .
++#define ABC 1
++#define XYZ 1
++
++typedef enum EnumWithDuplicates {
++    UNKNOWN = 0,
++    NAME1 = 0x1u,
++    NAME2 = 0x2u,
++    NAME3 = 0x3u,
++    NAME4 = 0x4u,
++    NAME5 = 0x5u,
++    NAME6 = 0x6u,
++    #if ABC == XYZ
++	    COMMON_NAME1 = NAME1,
++	    COMMON_NAME2 = NAME2,
++	    COMMON_NAME3 = NAME3
++    #else
++	    COMMON_NAME1 = NAME4,
++	    COMMON_NAME2 = NAME5,
++	    COMMON_NAME3 = NAME6
++    #endif
++} EnumWithDuplicates;
++
+ #endif
+ 
+diff --git a/vlib/v/tests/project_with_c_code_2/modc/wrapper.v b/vlib/v/tests/project_with_c_code_2/modc/wrapper.v
+index c9a3cd509..1eb338e3d 100644
+--- a/vlib/v/tests/project_with_c_code_2/modc/wrapper.v
++++ b/vlib/v/tests/project_with_c_code_2/modc/wrapper.v
+@@ -51,3 +51,16 @@ pub fn call_with_array_param(arr []Vtype) {
+ pub fn destroy_vtype(t Vtype) {
+ 	C.destroy_atype(t.p)
+ }
++
++pub enum MyEnum {
++	unknown      = C.UNKNOWN
++	name1        = C.NAME1
++	name2        = C.NAME2
++	name3        = C.NAME3
++	name4        = C.NAME4
++	name5        = C.NAME5
++	name6        = C.NAME6
++	common_name1 = C.COMMON_NAME1
++	common_name2 = C.COMMON_NAME2
++	common_name3 = C.COMMON_NAME3
++}

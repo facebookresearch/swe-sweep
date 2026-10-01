@@ -1,0 +1,21 @@
+diff --git a/vlib/v/tests/option_selector_cast_test.v b/vlib/v/tests/option_selector_cast_test.v
+new file mode 100644
+index 000000000..01d7baae5
+--- /dev/null
++++ b/vlib/v/tests/option_selector_cast_test.v
+@@ -0,0 +1,15 @@
++[params]
++struct ConnectParams {
++	password ?string
++}
++
++pub fn connect(params ConnectParams) ? {
++	password2 := ?string(params.password)
++	assert password2? == 'foo'
++}
++
++fn test_main() {
++	connect(ConnectParams{
++		password: 'foo'
++	})
++}

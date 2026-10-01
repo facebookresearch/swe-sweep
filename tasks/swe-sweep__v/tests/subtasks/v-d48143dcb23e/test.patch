@@ -1,0 +1,14 @@
+diff --git a/vlib/v/tests/select_auto_sync_test.v b/vlib/v/tests/select_auto_sync_test.v
+new file mode 100644
+index 000000000..10aa5f4ea
+--- /dev/null
++++ b/vlib/v/tests/select_auto_sync_test.v
+@@ -0,0 +1,8 @@
++import time
++
++fn test_main() {
++	select {
++		1 * time.second {}
++	}
++	assert true
++}

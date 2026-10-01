@@ -1,0 +1,49 @@
+diff --git a/tests/ui/allow_attributes.fixed b/tests/ui/allow_attributes.fixed
+index 56a98cca3..ecc9f08c1 100644
+--- a/tests/ui/allow_attributes.fixed
++++ b/tests/ui/allow_attributes.fixed
+@@ -63,6 +63,11 @@ fn msrv_1_80() {
+     let x = 1;
+ }
+ 
++#[rustfmt::skip]
++#[ expect ( dead_code ) ]
++//~^ allow_attributes
++struct Spaced;
++
+ #[deny(clippy::allow_attributes)]
+ fn deny_allow_attributes() -> Option<u8> {
+     let allow = None;
+diff --git a/tests/ui/allow_attributes.rs b/tests/ui/allow_attributes.rs
+index 65a0a6b5a..3ab328b25 100644
+--- a/tests/ui/allow_attributes.rs
++++ b/tests/ui/allow_attributes.rs
+@@ -63,6 +63,11 @@ fn msrv_1_80() {
+     let x = 1;
+ }
+ 
++#[rustfmt::skip]
++#[ allow ( dead_code ) ]
++//~^ allow_attributes
++struct Spaced;
++
+ #[deny(clippy::allow_attributes)]
+ fn deny_allow_attributes() -> Option<u8> {
+     let allow = None;
+diff --git a/tests/ui/allow_attributes.stderr b/tests/ui/allow_attributes.stderr
+index dd5fb21ff..67a70aac8 100644
+--- a/tests/ui/allow_attributes.stderr
++++ b/tests/ui/allow_attributes.stderr
+@@ -19,5 +19,11 @@ error: #[allow] attribute found
+ LL |     #[allow(unused)]
+    |       ^^^^^ help: replace it with: `expect`
+ 
+-error: aborting due to 3 previous errors
++error: #[allow] attribute found
++  --> tests/ui/allow_attributes.rs:67:4
++   |
++LL | #[ allow ( dead_code ) ]
++   |    ^^^^^ help: replace it with: `expect`
++
++error: aborting due to 4 previous errors
+ 

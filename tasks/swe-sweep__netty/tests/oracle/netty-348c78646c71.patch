@@ -1,0 +1,38 @@
+diff --git a/codec-http/src/main/java/io/netty/handler/codec/http/websocketx/extensions/compression/PerMessageDeflateClientExtensionHandshaker.java b/codec-http/src/main/java/io/netty/handler/codec/http/websocketx/extensions/compression/PerMessageDeflateClientExtensionHandshaker.java
+index ef3dfe7245..ddebaaa92f 100644
+--- a/codec-http/src/main/java/io/netty/handler/codec/http/websocketx/extensions/compression/PerMessageDeflateClientExtensionHandshaker.java
++++ b/codec-http/src/main/java/io/netty/handler/codec/http/websocketx/extensions/compression/PerMessageDeflateClientExtensionHandshaker.java
+@@ -186,12 +186,12 @@ public final class PerMessageDeflateClientExtensionHandshaker implements WebSock
+ 
+         @Override
+         public WebSocketExtensionEncoder newExtensionEncoder() {
+-            return new PerMessageDeflateEncoder(compressionLevel, serverWindowSize, serverNoContext);
++            return new PerMessageDeflateEncoder(compressionLevel, clientWindowSize, clientNoContext);
+         }
+ 
+         @Override
+         public WebSocketExtensionDecoder newExtensionDecoder() {
+-            return new PerMessageDeflateDecoder(clientNoContext);
++            return new PerMessageDeflateDecoder(serverNoContext);
+         }
+     }
+ 
+diff --git a/codec-http/src/main/java/io/netty/handler/codec/http/websocketx/extensions/compression/PerMessageDeflateServerExtensionHandshaker.java b/codec-http/src/main/java/io/netty/handler/codec/http/websocketx/extensions/compression/PerMessageDeflateServerExtensionHandshaker.java
+index 738b6f927d..0bf0162e8a 100644
+--- a/codec-http/src/main/java/io/netty/handler/codec/http/websocketx/extensions/compression/PerMessageDeflateServerExtensionHandshaker.java
++++ b/codec-http/src/main/java/io/netty/handler/codec/http/websocketx/extensions/compression/PerMessageDeflateServerExtensionHandshaker.java
+@@ -167,12 +167,12 @@ public final class PerMessageDeflateServerExtensionHandshaker implements WebSock
+ 
+         @Override
+         public WebSocketExtensionEncoder newExtensionEncoder() {
+-            return new PerMessageDeflateEncoder(compressionLevel, clientWindowSize, clientNoContext);
++            return new PerMessageDeflateEncoder(compressionLevel, serverWindowSize, serverNoContext);
+         }
+ 
+         @Override
+         public WebSocketExtensionDecoder newExtensionDecoder() {
+-            return new PerMessageDeflateDecoder(serverNoContext);
++            return new PerMessageDeflateDecoder(clientNoContext);
+         }
+ 
+         @Override

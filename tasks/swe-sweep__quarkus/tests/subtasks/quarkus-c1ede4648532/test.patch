@@ -1,0 +1,164 @@
+diff --git a/extensions/resteasy-reactive/quarkus-resteasy-reactive-jackson/deployment/src/test/java/io/quarkus/resteasy/reactive/jackson/deployment/test/FullyFeaturedStreamConstraintsExceptionTest.java b/extensions/resteasy-reactive/quarkus-resteasy-reactive-jackson/deployment/src/test/java/io/quarkus/resteasy/reactive/jackson/deployment/test/FullyFeaturedStreamConstraintsExceptionTest.java
+new file mode 100644
+index 00000000000..b3e8d4276a0
+--- /dev/null
++++ b/extensions/resteasy-reactive/quarkus-resteasy-reactive-jackson/deployment/src/test/java/io/quarkus/resteasy/reactive/jackson/deployment/test/FullyFeaturedStreamConstraintsExceptionTest.java
+@@ -0,0 +1,53 @@
++package io.quarkus.resteasy.reactive.jackson.deployment.test;
++
++import java.util.function.Supplier;
++
++import jakarta.ws.rs.Consumes;
++import jakarta.ws.rs.PUT;
++import jakarta.ws.rs.Path;
++import jakarta.ws.rs.Produces;
++import jakarta.ws.rs.core.MediaType;
++
++import org.jboss.shrinkwrap.api.ShrinkWrap;
++import org.jboss.shrinkwrap.api.spec.JavaArchive;
++import org.junit.jupiter.api.Test;
++import org.junit.jupiter.api.extension.RegisterExtension;
++
++import com.fasterxml.jackson.annotation.JsonView;
++
++import io.quarkus.test.QuarkusUnitTest;
++import io.restassured.RestAssured;
++
++public class FullyFeaturedStreamConstraintsExceptionTest {
++
++    @RegisterExtension
++    static QuarkusUnitTest test = new QuarkusUnitTest()
++            .setArchiveProducer(new Supplier<>() {
++                @Override
++                public JavaArchive get() {
++                    return ShrinkWrap.create(JavaArchive.class)
++                            .addClasses(FroMage.class, Views.class, Resource.class);
++                }
++            });
++
++    @Test
++    public void test() {
++        String bigNumber = "9".repeat(1001);
++        RestAssured.with()
++                .contentType("application/json")
++                .body("{\"price\": " + bigNumber + "}")
++                .put("/fromage")
++                .then().statusCode(400);
++    }
++
++    @Path("fromage")
++    public static class Resource {
++
++        @PUT
++        @Consumes(MediaType.APPLICATION_JSON)
++        @Produces(MediaType.APPLICATION_JSON)
++        public FroMage put(@JsonView(Views.Public.class) FroMage fromage) {
++            return fromage;
++        }
++    }
++}
+diff --git a/extensions/resteasy-reactive/quarkus-resteasy-reactive-jackson/deployment/src/test/java/io/quarkus/resteasy/reactive/jackson/deployment/test/MessageBodyReaderTests.java b/extensions/resteasy-reactive/quarkus-resteasy-reactive-jackson/deployment/src/test/java/io/quarkus/resteasy/reactive/jackson/deployment/test/MessageBodyReaderTests.java
+index 1cdbc9c28c4..d5ae45f0fe4 100644
+--- a/extensions/resteasy-reactive/quarkus-resteasy-reactive-jackson/deployment/src/test/java/io/quarkus/resteasy/reactive/jackson/deployment/test/MessageBodyReaderTests.java
++++ b/extensions/resteasy-reactive/quarkus-resteasy-reactive-jackson/deployment/src/test/java/io/quarkus/resteasy/reactive/jackson/deployment/test/MessageBodyReaderTests.java
+@@ -6,6 +6,7 @@ import java.io.ByteArrayInputStream;
+ import java.io.IOException;
+ import java.io.InputStream;
+ import java.io.OutputStream;
++import java.math.BigDecimal;
+ import java.nio.charset.StandardCharsets;
+ import java.util.ArrayList;
+ import java.util.List;
+@@ -33,6 +34,7 @@ import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+ import com.fasterxml.jackson.annotation.JsonIdentityReference;
+ import com.fasterxml.jackson.annotation.JsonProperty;
+ import com.fasterxml.jackson.annotation.ObjectIdGenerators;
++import com.fasterxml.jackson.core.exc.StreamConstraintsException;
+ import com.fasterxml.jackson.core.exc.StreamReadException;
+ import com.fasterxml.jackson.databind.DatabindException;
+ import com.fasterxml.jackson.databind.ObjectMapper;
+@@ -84,6 +86,14 @@ class MessageBodyReaderTests {
+             Object invalid = new InvalidDefinition(null);
+             reader.readFrom((Class<Object>) invalid.getClass(), null, null, null, null, stream);
+         }
++
++        void deserializeNumberExceedingConstraints() throws IOException {
++            String bigNumber = "9".repeat(1001);
++            var stream = new ByteArrayInputStream(
++                    ("{\"value\": " + bigNumber + "}").getBytes(StandardCharsets.UTF_8));
++            Object dto = new NumberDto();
++            reader.readFrom((Class<Object>) dto.getClass(), null, null, null, null, stream);
++        }
+     }
+ 
+     @Nested
+@@ -110,6 +120,11 @@ class MessageBodyReaderTests {
+         void shouldThrowInvalidDefinitionException() {
+             assertThrows(InvalidDefinitionException.class, tests::deserializeClassWithInvalidDefinition);
+         }
++
++        @Test
++        void shouldThrowStreamConstraintsException() {
++            assertThrows(StreamConstraintsException.class, tests::deserializeNumberExceedingConstraints);
++        }
+     }
+ 
+     @Nested
+@@ -155,6 +170,17 @@ class MessageBodyReaderTests {
+                 assertThat(ValueInstantiationException.class).isAssignableFrom(e.getCause().getClass());
+             }
+         }
++
++        @Test
++        void shouldThrowWebExceptionWithStreamConstraintsExceptionCause() {
++            var e = assertThrows(WebApplicationException.class, tests::deserializeNumberExceedingConstraints);
++            assertThat(e.getResponse().getStatus()).isEqualTo(Response.Status.BAD_REQUEST.getStatusCode());
++            assertThat(StreamConstraintsException.class).isAssignableFrom(e.getCause().getClass());
++        }
++    }
++
++    static class NumberDto {
++        public BigDecimal value;
+     }
+ 
+     static class InvalidDefinition {
+diff --git a/extensions/resteasy-reactive/quarkus-resteasy-reactive-jackson/deployment/src/test/java/io/quarkus/resteasy/reactive/jackson/deployment/test/StreamConstraintsExceptionTest.java b/extensions/resteasy-reactive/quarkus-resteasy-reactive-jackson/deployment/src/test/java/io/quarkus/resteasy/reactive/jackson/deployment/test/StreamConstraintsExceptionTest.java
+new file mode 100644
+index 00000000000..6bdb40b1299
+--- /dev/null
++++ b/extensions/resteasy-reactive/quarkus-resteasy-reactive-jackson/deployment/src/test/java/io/quarkus/resteasy/reactive/jackson/deployment/test/StreamConstraintsExceptionTest.java
+@@ -0,0 +1,34 @@
++package io.quarkus.resteasy.reactive.jackson.deployment.test;
++
++import java.util.function.Supplier;
++
++import org.jboss.shrinkwrap.api.ShrinkWrap;
++import org.jboss.shrinkwrap.api.spec.JavaArchive;
++import org.junit.jupiter.api.Test;
++import org.junit.jupiter.api.extension.RegisterExtension;
++
++import io.quarkus.test.QuarkusUnitTest;
++import io.restassured.RestAssured;
++
++public class StreamConstraintsExceptionTest {
++
++    @RegisterExtension
++    static QuarkusUnitTest test = new QuarkusUnitTest()
++            .setArchiveProducer(new Supplier<>() {
++                @Override
++                public JavaArchive get() {
++                    return ShrinkWrap.create(JavaArchive.class)
++                            .addClasses(FroMage.class, FroMageEndpoint.class);
++                }
++            });
++
++    @Test
++    public void test() {
++        String bigNumber = "9".repeat(1001);
++        RestAssured.with()
++                .contentType("application/json")
++                .body("{\"price\": " + bigNumber + "}")
++                .put("/fromage")
++                .then().statusCode(400);
++    }
++}

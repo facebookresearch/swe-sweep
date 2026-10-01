@@ -1,0 +1,13 @@
+diff --git a/pandas/core/arrays/categorical.py b/pandas/core/arrays/categorical.py
+index da4bf987d0..8d2633c10b 100644
+--- a/pandas/core/arrays/categorical.py
++++ b/pandas/core/arrays/categorical.py
+@@ -2597,7 +2597,7 @@ class Categorical(NDArrayBackedExtensionArray, PandasObject, ObjectStringArrayMi
+             )
+         values = sanitize_array(values, None, None)
+         null_mask = np.asarray(isna(values))
+-        code_values = self.categories.get_indexer(values)
++        code_values = self.categories.get_indexer_for(values)
+         code_values = code_values[null_mask | (code_values >= 0)]
+         return algorithms.isin(self.codes, code_values)
+ 

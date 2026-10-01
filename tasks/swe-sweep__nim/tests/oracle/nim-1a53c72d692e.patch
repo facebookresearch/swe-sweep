@@ -1,0 +1,30 @@
+diff --git a/compiler/cmdlinehelper.nim b/compiler/cmdlinehelper.nim
+index 007dc2319..02162755c 100644
+--- a/compiler/cmdlinehelper.nim
++++ b/compiler/cmdlinehelper.nim
+@@ -64,7 +64,8 @@ proc loadConfigsAndProcessCmdLine*(self: NimProg, cache: IdentCache; conf: Confi
+       if conf.cmd == cmdNimscript: return false
+   # now process command line arguments again, because some options in the
+   # command line can overwrite the config file's settings
+-  extccomp.initVars(conf)
++  if conf.backend != backendJs: # bug #19059
++    extccomp.initVars(conf)
+   self.processCmdLine(passCmd2, "", conf)
+   if conf.cmd == cmdNone:
+     rawMessage(conf, errGenerated, "command missing")
+diff --git a/compiler/commands.nim b/compiler/commands.nim
+index a1fa55e74..fb2907bb1 100644
+--- a/compiler/commands.nim
++++ b/compiler/commands.nim
+@@ -899,8 +899,9 @@ proc processSwitch*(switch, arg: string, pass: TCmdLinePass, info: TLineInfo;
+     splitSwitch(conf, arg, key, val, pass, info)
+     os.putEnv(key, val)
+   of "cc":
+-    expectArg(conf, switch, arg, pass, info)
+-    setCC(conf, arg, info)
++    if conf.backend != backendJs: # bug #19330
++      expectArg(conf, switch, arg, pass, info)
++      setCC(conf, arg, info)
+   of "track":
+     expectArg(conf, switch, arg, pass, info)
+     track(conf, arg, info)

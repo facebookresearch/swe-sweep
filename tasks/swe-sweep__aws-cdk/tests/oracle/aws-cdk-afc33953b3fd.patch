@@ -1,0 +1,12 @@
+diff --git a/packages/@aws-cdk/core/lib/asset-staging.ts b/packages/@aws-cdk/core/lib/asset-staging.ts
+index b6a84d9af0..7ad4992f29 100644
+--- a/packages/@aws-cdk/core/lib/asset-staging.ts
++++ b/packages/@aws-cdk/core/lib/asset-staging.ts
+@@ -454,6 +454,7 @@ export class AssetStaging extends Construct {
+           user,
+           volumes,
+           environment: options.environment,
++          entrypoint: options.entrypoint,
+           workingDirectory: options.workingDirectory ?? AssetStaging.BUNDLING_INPUT_DIR,
+         });
+       }

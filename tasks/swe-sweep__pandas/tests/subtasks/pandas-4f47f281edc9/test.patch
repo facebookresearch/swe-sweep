@@ -1,0 +1,12 @@
+diff --git a/pandas/tests/dtypes/test_common.py b/pandas/tests/dtypes/test_common.py
+index d0a34cedb7..60047cd3cc 100644
+--- a/pandas/tests/dtypes/test_common.py
++++ b/pandas/tests/dtypes/test_common.py
+@@ -53,6 +53,7 @@ class TestNumpyEADtype:
+             np.float64,
+             float,
+             np.dtype("float64"),
++            "object_",
+         ],
+     )
+     def test_pandas_dtype_valid(self, dtype):

@@ -1,0 +1,32 @@
+diff --git a/test/regress/cli/CMakeLists.txt b/test/regress/cli/CMakeLists.txt
+index 4c481ba7c3..f57b1ffae2 100644
+--- a/test/regress/cli/CMakeLists.txt
++++ b/test/regress/cli/CMakeLists.txt
+@@ -703,6 +703,7 @@ set(regress_0_tests
+   regress0/fmf/fmf-strange-bounds-2.smt2
+   regress0/fmf/forall_unit_data2.smt2
+   regress0/fmf/issue3661-ccard-dec.smt2
++  regress0/fmf/issue12528-fmf-mbqi-trust-unknown.smt2
+   regress0/fmf/issue4850-force-card.smt2
+   regress0/fmf/issue4872-qf_ufc.smt2
+   regress0/fmf/issue5239-uf-ss-tot.smt2
+diff --git a/test/regress/cli/regress0/fmf/issue12528-fmf-mbqi-trust-unknown.smt2 b/test/regress/cli/regress0/fmf/issue12528-fmf-mbqi-trust-unknown.smt2
+new file mode 100644
+index 0000000000..04f1a60daf
+--- /dev/null
++++ b/test/regress/cli/regress0/fmf/issue12528-fmf-mbqi-trust-unknown.smt2
+@@ -0,0 +1,14 @@
++; COMMAND-LINE: --finite-model-find --fmf-mbqi=trust -o incomplete
++; EXPECT: (incomplete INCOMPLETE QUANTIFIERS_FMF)
++; EXPECT: unknown
++; EXPECT: (:reason-unknown incomplete)
++(set-logic UF)
++(declare-sort A 0)
++(declare-fun le (A A) Bool)
++(declare-fun p (A) Bool)
++(declare-const w A)
++(assert (forall ((x A)) (le x x)))
++(assert (forall ((x A)) (=> (le x x) (not (p x)))))
++(assert (p w))
++(check-sat)
++(get-info :reason-unknown)

@@ -1,0 +1,18 @@
+diff --git a/codec-dns/src/main/java/io/netty/handler/codec/dns/DefaultDnsRecordEncoder.java b/codec-dns/src/main/java/io/netty/handler/codec/dns/DefaultDnsRecordEncoder.java
+index 9fe765a7b8..3f9bd5d323 100644
+--- a/codec-dns/src/main/java/io/netty/handler/codec/dns/DefaultDnsRecordEncoder.java
++++ b/codec-dns/src/main/java/io/netty/handler/codec/dns/DefaultDnsRecordEncoder.java
+@@ -69,7 +69,13 @@ public class DefaultDnsRecordEncoder implements DnsRecordEncoder {
+ 
+     private void encodePtrRecord(DnsPtrRecord record, ByteBuf out) throws Exception {
+         encodeRecord0(record, out);
++        int writerIndex = out.writerIndex();
++        // Skip 2 bytes as these will be used to encode the rdataLen after we know how many bytes were written.
++        // See https://www.rfc-editor.org/rfc/rfc1035.html#section-3.2.1
++        out.writerIndex(writerIndex + 2);
+         encodeName(record.hostname(), out);
++        int rdLength = out.writerIndex() - (writerIndex + 2);
++        out.setShort(writerIndex, rdLength);
+     }
+ 
+     private void encodeOptPseudoRecord(DnsOptPseudoRecord record, ByteBuf out) throws Exception {

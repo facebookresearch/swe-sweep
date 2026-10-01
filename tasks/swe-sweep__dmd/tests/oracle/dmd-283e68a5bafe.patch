@@ -1,0 +1,37 @@
+diff --git a/compiler/src/dmd/dcast.d b/compiler/src/dmd/dcast.d
+index f769473f59..8ab71fb858 100644
+--- a/compiler/src/dmd/dcast.d
++++ b/compiler/src/dmd/dcast.d
+@@ -1630,6 +1630,13 @@ Expression castTo(Expression e, Scope* sc, Type t, Type att = null)
+         }
+         else if (tob.ty == Tvector && t1b.ty != Tvector)
+         {
++            if (t1b.ty == Tsarray)
++            {
++                // Casting static array to vector with same size, e.g. `cast(int4) int[4]`
++                if (t1b.size(e.loc) != tob.size(e.loc))
++                    goto Lfail;
++                return new VectorExp(e.loc, e, tob).expressionSemantic(sc);
++            }
+             //printf("test1 e = %s, e.type = %s, tob = %s\n", e.toChars(), e.type.toChars(), tob.toChars());
+             TypeVector tv = tob.isTypeVector();
+             Expression result = new CastExp(e.loc, e, tv.elementType());
+diff --git a/compiler/src/dmd/expressionsem.d b/compiler/src/dmd/expressionsem.d
+index d7ccf7f2b3..268100a5ca 100644
+--- a/compiler/src/dmd/expressionsem.d
++++ b/compiler/src/dmd/expressionsem.d
+@@ -8489,14 +8489,6 @@ private extern (C++) final class ExpressionSemanticVisitor : Visitor
+                 return setError();
+         }
+ 
+-        // Look for casting to a vector type
+-        if (tob.ty == Tvector && t1b.ty != Tvector)
+-        {
+-            result = new VectorExp(exp.loc, exp.e1, exp.to);
+-            result = result.expressionSemantic(sc);
+-            return;
+-        }
+-
+         Expression ex = exp.e1.castTo(sc, exp.to);
+         if (ex.op == EXP.error)
+         {

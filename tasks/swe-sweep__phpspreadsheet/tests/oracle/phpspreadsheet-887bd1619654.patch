@@ -1,0 +1,21 @@
+diff --git a/src/PhpSpreadsheet/Reader/Ods.php b/src/PhpSpreadsheet/Reader/Ods.php
+index b3a84bf70..748cdd306 100644
+--- a/src/PhpSpreadsheet/Reader/Ods.php
++++ b/src/PhpSpreadsheet/Reader/Ods.php
+@@ -365,7 +365,15 @@ class Ods extends BaseReader
+ 
+                                 if ($this->getReadFilter() !== null) {
+                                     if (!$this->getReadFilter()->readCell($columnID, $rowID, $worksheetName)) {
+-                                        ++$columnID;
++                                        if ($cellData->hasAttributeNS($tableNs, 'number-columns-repeated')) {
++                                            $colRepeats = (int) $cellData->getAttributeNS($tableNs, 'number-columns-repeated');
++                                        } else {
++                                            $colRepeats = 1;
++                                        }
++
++                                        for ($i = 0; $i < $colRepeats; ++$i) {
++                                            ++$columnID;
++                                        }
+ 
+                                         continue;
+                                     }

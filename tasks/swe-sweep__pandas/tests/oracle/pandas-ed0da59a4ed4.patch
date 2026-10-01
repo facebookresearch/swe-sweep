@@ -1,0 +1,89 @@
+diff --git a/pandas/_libs/lib.pyx b/pandas/_libs/lib.pyx
+index eb6e979a49..e1d2345678 100644
+--- a/pandas/_libs/lib.pyx
++++ b/pandas/_libs/lib.pyx
+@@ -19,6 +19,8 @@ from cpython.tuple cimport (
+     PyTuple_SET_ITEM,
+ )
+ 
++from pandas._libs.missing import check_na_tuples_nonequal
++
+ PyDateTime_IMPORT
+ 
+ import numpy as np
+@@ -638,7 +640,7 @@ def array_equivalent_object(left: object[:], right: object[:]) -> bool:
+                 or is_matching_na(x, y, nan_matches_none=True)
+             ):
+                 return False
+-        except ValueError:
++        except (ValueError, TypeError):
+             # Avoid raising ValueError when comparing Numpy arrays to other types
+             if cnp.PyArray_IsAnyScalar(x) != cnp.PyArray_IsAnyScalar(y):
+                 # Only compare scalars to scalars and non-scalars to non-scalars
+@@ -647,7 +649,12 @@ def array_equivalent_object(left: object[:], right: object[:]) -> bool:
+                   and not (isinstance(x, type(y)) or isinstance(y, type(x)))):
+                 # Check if non-scalars have the same type
+                 return False
++            elif check_na_tuples_nonequal(x, y):
++                # We have tuples where one Side has a NA and the other side does not
++                # Only condition we may end up with a TypeError
++                return False
+             raise
++
+     return True
+ 
+ 
+diff --git a/pandas/_libs/missing.pxd b/pandas/_libs/missing.pxd
+index d1b72e185c..0d24c084ac 100644
+--- a/pandas/_libs/missing.pxd
++++ b/pandas/_libs/missing.pxd
+@@ -5,6 +5,7 @@ from numpy cimport (
+ 
+ 
+ cpdef bint is_matching_na(object left, object right, bint nan_matches_none=*)
++cpdef bint check_na_tuples_nonequal(object left, object right)
+ 
+ cpdef bint checknull(object val)
+ cpdef bint checknull_old(object val)
+diff --git a/pandas/_libs/missing.pyx b/pandas/_libs/missing.pyx
+index 28df8fecb8..8d75cf70de 100644
+--- a/pandas/_libs/missing.pyx
++++ b/pandas/_libs/missing.pyx
+@@ -42,6 +42,37 @@ cdef:
+     type cDecimal = Decimal  # for faster isinstance checks
+ 
+ 
++cpdef bint check_na_tuples_nonequal(object left, object right):
++    """
++    When we have NA in one of the tuples but not the other we have to check here,
++    because our regular checks fail before with ambigous boolean value.
++
++    Parameters
++    ----------
++    left: Any
++    right: Any
++
++    Returns
++    -------
++    True if we are dealing with tuples that have NA on one side and non NA on
++    the other side.
++
++    """
++    if not isinstance(left, tuple) or not isinstance(right, tuple):
++        return False
++
++    if len(left) != len(right):
++        return False
++
++    for left_element, right_element in zip(left, right):
++        if left_element is C_NA and right_element is not C_NA:
++            return True
++        elif right_element is C_NA and left_element is not C_NA:
++            return True
++
++    return False
++
++
+ cpdef bint is_matching_na(object left, object right, bint nan_matches_none=False):
+     """
+     Check if two scalars are both NA of matching types.

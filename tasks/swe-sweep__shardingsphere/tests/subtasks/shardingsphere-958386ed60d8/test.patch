@@ -1,0 +1,28 @@
+diff --git a/infra/executor/src/test/java/org/apache/shardingsphere/infra/executor/sql/execute/result/query/impl/driver/jdbc/type/stream/JDBCStreamQueryResultTest.java b/infra/executor/src/test/java/org/apache/shardingsphere/infra/executor/sql/execute/result/query/impl/driver/jdbc/type/stream/JDBCStreamQueryResultTest.java
+index 89d4ecd50f2..74cb98a7522 100644
+--- a/infra/executor/src/test/java/org/apache/shardingsphere/infra/executor/sql/execute/result/query/impl/driver/jdbc/type/stream/JDBCStreamQueryResultTest.java
++++ b/infra/executor/src/test/java/org/apache/shardingsphere/infra/executor/sql/execute/result/query/impl/driver/jdbc/type/stream/JDBCStreamQueryResultTest.java
+@@ -28,6 +28,9 @@ import java.sql.ResultSet;
+ import java.sql.SQLException;
+ import java.sql.Time;
+ import java.sql.Timestamp;
++import java.time.Instant;
++import java.time.ZoneId;
++import java.time.ZonedDateTime;
+ import java.util.Calendar;
+ 
+ import static org.hamcrest.CoreMatchers.is;
+@@ -160,6 +163,13 @@ public final class JDBCStreamQueryResultTest {
+         assertThat(new JDBCStreamQueryResult(resultSet).getValue(1, Timestamp.class), is(new Timestamp(0L)));
+     }
+     
++    @Test
++    public void assertGetValueByZonedDateTime() throws SQLException {
++        ResultSet resultSet = mock(ResultSet.class);
++        when(resultSet.getObject(1, ZonedDateTime.class)).thenReturn(ZonedDateTime.ofInstant(Instant.ofEpochSecond(1), ZoneId.systemDefault()));
++        assertThat(new JDBCStreamQueryResult(resultSet).getValue(1, ZonedDateTime.class), is(ZonedDateTime.ofInstant(Instant.ofEpochSecond(1), ZoneId.systemDefault())));
++    }
++    
+     @Test
+     public void assertGetCalendarValueWithDate() throws SQLException {
+         ResultSet result = getResultSet();

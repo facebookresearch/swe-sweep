@@ -1,0 +1,26 @@
+diff --git a/test-data/unit/cmdline.test b/test-data/unit/cmdline.test
+index 35d7b700b..bed4134bf 100644
+--- a/test-data/unit/cmdline.test
++++ b/test-data/unit/cmdline.test
+@@ -1393,3 +1393,21 @@ Ts = TypeVarTuple("Ts")
+ Warning: TypeVarTuple is already enabled by default
+ Warning: Unpack is already enabled by default
+ == Return code: 0
++
++[case testImportlibImportCannotBeResolved]
++# cmd: mypy a.py
++# This test is here because it needs use_builtins_fixtures off.
++
++[file a.py]
++from typing import NamedTuple
++
++class CodecKey(NamedTuple):
++    def foo(self) -> "CodecKey":
++        ...
++
++[file mypy.ini]
++\[mypy]
++
++\[mypy-importlib.*]
++follow_imports = skip
++follow_imports_for_stubs = True

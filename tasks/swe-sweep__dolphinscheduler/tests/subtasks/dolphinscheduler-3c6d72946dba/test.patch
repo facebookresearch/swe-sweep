@@ -1,0 +1,27 @@
+diff --git a/dolphinscheduler-common/src/test/java/org/apache/dolphinscheduler/common/utils/FileUtilsTest.java b/dolphinscheduler-common/src/test/java/org/apache/dolphinscheduler/common/utils/FileUtilsTest.java
+index 2396d52c20..0fdcc2b04b 100644
+--- a/dolphinscheduler-common/src/test/java/org/apache/dolphinscheduler/common/utils/FileUtilsTest.java
++++ b/dolphinscheduler-common/src/test/java/org/apache/dolphinscheduler/common/utils/FileUtilsTest.java
+@@ -88,6 +88,21 @@ public class FileUtilsTest {
+         String fileContent = FileUtils.readFile2Str(new FileInputStream(filePath));
+         Assertions.assertEquals(content, fileContent);
+     }
+ 
++    @Test
++    public void testWriteContent2FileWithoutParentDirectory() throws IOException {
++        Path filePath = Paths.get("write-content-without-parent.txt");
++        String content = "test content";
++
++        try {
++            Assertions.assertTrue(FileUtils.writeContent2File(content, filePath.toString()));
++            try (FileInputStream inputStream = new FileInputStream(filePath.toString())) {
++                Assertions.assertEquals(content, FileUtils.readFile2Str(inputStream));
++            }
++        } finally {
++            Files.deleteIfExists(filePath);
++        }
++    }
++
+     @Test
+     public void testDirectoryTraversal() {
+         // test case which do not directory traversal

@@ -1,0 +1,28 @@
+diff --git a/tests/dialects/test_dialect.py b/tests/dialects/test_dialect.py
+index bfa6ccf772..3d50a93f2b 100644
+--- a/tests/dialects/test_dialect.py
++++ b/tests/dialects/test_dialect.py
+@@ -3134,3 +3134,23 @@ FROM subquery2""",
+                     "postgres": f"PERCENTILE_CONT(0.5) WITHIN GROUP (ORDER BY x){suffix}",
+                 },
+             )
++
++    def test_is_with_dcolon(self):
++        self.validate_all(
++            "SELECT CAST(col IS NULL AS BOOLEAN) FROM (SELECT 1 AS col) AS t",
++            read={
++                "": "SELECT col IS NULL::BOOLEAN FROM (SELECT 1 AS col) AS t",
++                "duckdb": "SELECT col IS NULL::BOOLEAN FROM (SELECT 1 AS col) AS t",
++                "redshift": "SELECT col IS NULL::BOOLEAN FROM (SELECT 1 AS col) AS t",
++                "postgres": "SELECT col IS NULL::BOOLEAN FROM (SELECT 1 AS col) AS t",
++            },
++        )
++        self.validate_all(
++            "SELECT CAST(NOT col IS NULL AS BOOLEAN) FROM (SELECT 1 AS col) AS t",
++            read={
++                "": "SELECT col IS NOT NULL::BOOLEAN FROM (SELECT 1 AS col) AS t",
++                "duckdb": "SELECT col IS NOT NULL::BOOLEAN FROM (SELECT 1 AS col) AS t",
++                "redshift": "SELECT col IS NOT NULL::BOOLEAN FROM (SELECT 1 AS col) AS t",
++                "postgres": "SELECT col IS NOT NULL::BOOLEAN FROM (SELECT 1 AS col) AS t",
++            },
++        )

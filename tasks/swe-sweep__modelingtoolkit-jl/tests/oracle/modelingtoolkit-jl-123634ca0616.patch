@@ -1,0 +1,39 @@
+diff --git a/src/structural_transformation/symbolics_tearing.jl b/src/structural_transformation/symbolics_tearing.jl
+index 1a761803f3..815851a3b6 100644
+--- a/src/structural_transformation/symbolics_tearing.jl
++++ b/src/structural_transformation/symbolics_tearing.jl
+@@ -453,6 +453,8 @@ function tearing_reassemble(state::TearingState, var_eq_matching,
+             # convert it into the mass matrix form.
+             # We cannot solve the differential variable like D(x)
+             if isdervar(iv)
++                isnothing(D) &&
++                    error("Differential found in a non-differential system. Likely this is a bug in the construction of an initialization system. Please report this issue with a reproducible example. Offending equation: $(equations(sys)[ieq])")
+                 order, lv = var_order(iv)
+                 dx = D(simplify_shifts(lower_varname_withshift(
+                     fullvars[lv], idep, order - 1)))
+diff --git a/src/systems/nonlinear/initializesystem.jl b/src/systems/nonlinear/initializesystem.jl
+index cc0b8098a1..aa1ecd9a8b 100644
+--- a/src/systems/nonlinear/initializesystem.jl
++++ b/src/systems/nonlinear/initializesystem.jl
+@@ -91,13 +91,16 @@ function generate_initializesystem(sys::ODESystem;
+         end
+     end
+ 
+-    pars = [parameters(sys); get_iv(sys)]
+-    nleqs = if algebraic_only
+-        [eqs_ics; observed(sys)]
+-    else
+-        [eqs_ics; get_initialization_eqs(sys); initialization_eqs; observed(sys)]
++    if !algebraic_only
++        for eq in [get_initialization_eqs(sys); initialization_eqs]
++            _eq = ModelingToolkit.fixpoint_sub(eq, full_diffmap)
++            push!(eqs_ics, _eq)
++        end
+     end
+ 
++    pars = [parameters(sys); get_iv(sys)]
++    nleqs = [eqs_ics; observed(sys)]
++
+     sys_nl = NonlinearSystem(nleqs,
+         full_states,
+         pars;

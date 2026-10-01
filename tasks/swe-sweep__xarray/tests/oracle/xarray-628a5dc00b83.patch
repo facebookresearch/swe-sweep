@@ -1,0 +1,12 @@
+diff --git a/xarray/core/dataarray.py b/xarray/core/dataarray.py
+index fd3ff60c..2e0a3a70 100644
+--- a/xarray/core/dataarray.py
++++ b/xarray/core/dataarray.py
+@@ -856,6 +856,7 @@ class DataArray(
+             obj = self[key]
+             if isinstance(value, DataArray):
+                 assert_coordinate_consistent(value, obj.coords.variables)
++                value = value.variable
+             # DataArray key -> Variable key
+             key = {
+                 k: v.variable if isinstance(v, DataArray) else v

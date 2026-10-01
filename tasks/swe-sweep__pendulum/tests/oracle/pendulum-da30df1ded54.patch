@@ -1,0 +1,14 @@
+diff --git a/pendulum/period.py b/pendulum/period.py
+index 0000000..1111111 100644
+--- a/pendulum/period.py
++++ b/pendulum/period.py
+@@ -374,6 +374,9 @@ class Period(Duration):
+     def __eq__(self, other):
+         return (self.start, self.end, self._absolute) == (
+             other.start,
+             other.end,
+             other._absolute,
+         )
++
++    def __ne__(self, other: object) -> bool:
++        return not self.__eq__(other)

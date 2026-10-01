@@ -1,0 +1,11 @@
+diff --git a/mpmath/tests/test_elliptic.py b/mpmath/tests/test_elliptic.py
+index fd915cd6..a449fb52 100644
+--- a/mpmath/tests/test_elliptic.py
++++ b/mpmath/tests/test_elliptic.py
+@@ -648,3 +648,6 @@ def test_extra_coverage():
+ 
+ def test_issue_238():
+     assert isnan(qfrom(m=nan))
++
++def test_issue_486():
++    assert isnan(elliprj(1, 2, 3, nan))

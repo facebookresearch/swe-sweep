@@ -1,0 +1,19 @@
+diff --git a/vlib/v/tests/alias_map_clone_test.v b/vlib/v/tests/alias_map_clone_test.v
+new file mode 100644
+index 000000000..781e047c5
+--- /dev/null
++++ b/vlib/v/tests/alias_map_clone_test.v
+@@ -0,0 +1,13 @@
++type Fields = map[string]string
++
++fn test_alias_map_clone() {
++	f := Fields({
++		's': 'a'
++	})
++
++	s := f.clone()
++	println(s)
++	assert s == {
++		's': 'a'
++	}
++}

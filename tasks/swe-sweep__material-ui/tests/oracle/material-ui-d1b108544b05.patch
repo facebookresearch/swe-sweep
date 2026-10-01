@@ -1,0 +1,21 @@
+diff --git a/packages/mui-material/src/Stack/Stack.js b/packages/mui-material/src/Stack/Stack.js
+index 160cce9fd5..ea9df2eb76 100644
+--- a/packages/mui-material/src/Stack/Stack.js
++++ b/packages/mui-material/src/Stack/Stack.js
+@@ -4,6 +4,7 @@ import {
+   createUnarySpacing,
+   getValue,
+   handleBreakpoints,
++  mergeBreakpointsInOrder,
+   unstable_extendSxProp as extendSxProp,
+   unstable_resolveBreakpointValues as resolveBreakpointValues,
+ } from '@mui/system';
+@@ -104,6 +105,8 @@ export const style = ({ ownerState, theme }) => {
+     styles = deepmerge(styles, handleBreakpoints({ theme }, spacingValues, styleFromPropValue));
+   }
+ 
++  styles = mergeBreakpointsInOrder(theme.breakpoints, styles);
++
+   return styles;
+ };
+ 

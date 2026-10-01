@@ -1,0 +1,45 @@
+diff --git a/tests/ui/obfuscated_if_else.fixed b/tests/ui/obfuscated_if_else.fixed
+index 70ae09062..6bdb170a4 100644
+--- a/tests/ui/obfuscated_if_else.fixed
++++ b/tests/ui/obfuscated_if_else.fixed
+@@ -87,3 +87,9 @@ fn issue11141() {
+     let _ = *if true { &42 } else { &17 } as u8;
+     //~^ obfuscated_if_else
+ }
++
++#[allow(clippy::useless_format)]
++fn issue16288() {
++    if true { format!("this is a test") } else { Default::default() };
++    //~^ obfuscated_if_else
++}
+diff --git a/tests/ui/obfuscated_if_else.rs b/tests/ui/obfuscated_if_else.rs
+index 8e1f57ca2..f7b5ea8c0 100644
+--- a/tests/ui/obfuscated_if_else.rs
++++ b/tests/ui/obfuscated_if_else.rs
+@@ -87,3 +87,9 @@ fn issue11141() {
+     let _ = *true.then_some(&42).unwrap_or(&17) as u8;
+     //~^ obfuscated_if_else
+ }
++
++#[allow(clippy::useless_format)]
++fn issue16288() {
++    true.then(|| format!("this is a test")).unwrap_or_default();
++    //~^ obfuscated_if_else
++}
+diff --git a/tests/ui/obfuscated_if_else.stderr b/tests/ui/obfuscated_if_else.stderr
+index 0de7259d8..865dca56b 100644
+--- a/tests/ui/obfuscated_if_else.stderr
++++ b/tests/ui/obfuscated_if_else.stderr
+@@ -139,5 +139,11 @@ error: this method chain can be written more clearly with `if .. else ..`
+ LL |     let _ = *true.then_some(&42).unwrap_or(&17) as u8;
+    |              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ help: try: `if true { &42 } else { &17 }`
+ 
+-error: aborting due to 23 previous errors
++error: this method chain can be written more clearly with `if .. else ..`
++  --> tests/ui/obfuscated_if_else.rs:93:5
++   |
++LL |     true.then(|| format!("this is a test")).unwrap_or_default();
++   |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ help: try: `if true { format!("this is a test") } else { Default::default() }`
++
++error: aborting due to 24 previous errors
+ 

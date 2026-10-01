@@ -1,0 +1,14 @@
+diff --git a/modules/openapi-generator/src/main/resources/JavaSpring/apiDelegate.mustache b/modules/openapi-generator/src/main/resources/JavaSpring/apiDelegate.mustache
+index a14a42a8d0b..060df0fc84c 100644
+--- a/modules/openapi-generator/src/main/resources/JavaSpring/apiDelegate.mustache
++++ b/modules/openapi-generator/src/main/resources/JavaSpring/apiDelegate.mustache
+@@ -27,6 +27,9 @@ import java.util.Optional;
+ {{#async}}
+ import java.util.concurrent.CompletableFuture;
+ {{/async}}
++{{#returnSuccessCode}}
++import java.util.concurrent.atomic.AtomicInteger;
++{{/returnSuccessCode}}
+ import {{javaxPackage}}.annotation.Generated;
+ 
+ {{#operations}}

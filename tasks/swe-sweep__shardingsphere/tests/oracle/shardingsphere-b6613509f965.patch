@@ -1,0 +1,29 @@
+diff --git a/features/sharding/core/src/main/java/org/apache/shardingsphere/sharding/algorithm/sharding/datetime/AutoIntervalShardingAlgorithm.java b/features/sharding/core/src/main/java/org/apache/shardingsphere/sharding/algorithm/sharding/datetime/AutoIntervalShardingAlgorithm.java
+index d068f8a..39a2d49 100644
+--- a/features/sharding/core/src/main/java/org/apache/shardingsphere/sharding/algorithm/sharding/datetime/AutoIntervalShardingAlgorithm.java
++++ b/features/sharding/core/src/main/java/org/apache/shardingsphere/sharding/algorithm/sharding/datetime/AutoIntervalShardingAlgorithm.java
+@@ -28,6 +28,7 @@ import org.apache.shardingsphere.sharding.api.sharding.standard.StandardSharding
+ import org.apache.shardingsphere.sharding.exception.data.InvalidDatetimeFormatException;
+ 
+ import java.text.DecimalFormat;
++import java.text.DecimalFormatSymbols;
+ import java.text.ParsePosition;
+ import java.time.Duration;
+ import java.time.LocalDateTime;
+@@ -35,6 +36,7 @@ import java.time.format.DateTimeFormatter;
+ import java.time.format.DateTimeParseException;
+ import java.util.Collection;
+ import java.util.LinkedHashSet;
++import java.util.Locale;
+ import java.util.Properties;
+ 
+ /**
+@@ -102,7 +104,7 @@ public final class AutoIntervalShardingAlgorithm implements StandardShardingAlgo
+     }
+     
+     private int doSharding(final long shardingValue) {
+-        String position = new DecimalFormat("0.00").format((double) shardingValue / shardingSeconds);
++        String position = new DecimalFormat("0.00", DecimalFormatSymbols.getInstance(Locale.ROOT)).format((double) shardingValue / shardingSeconds);
+         return Math.min(Math.max(0, (int) Math.ceil(Double.parseDouble(position))), autoTablesAmount - 1);
+     }
+     

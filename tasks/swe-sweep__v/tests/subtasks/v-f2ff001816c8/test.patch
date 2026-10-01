@@ -1,0 +1,35 @@
+diff --git a/vlib/v/tests/sumtype_with_reference_test.v b/vlib/v/tests/sumtype_with_reference_test.v
+new file mode 100644
+index 000000000..b62c98292
+--- /dev/null
++++ b/vlib/v/tests/sumtype_with_reference_test.v
+@@ -0,0 +1,29 @@
++struct Parse {
++mut:
++	stack []&Element
++}
++
++struct Balise {}
++
++struct RawText {
++	s string
++}
++
++type Element = Balise | RawText
++
++fn (mut p Parse) process_open_tag() string {
++	mut last := &p.stack[0]
++	if mut last is RawText {
++		println(last)
++		return last.s
++	} else {
++		return ''
++	}
++}
++
++fn test_sumtype_with_reference() {
++	mut parse := Parse{
++		stack: [&RawText{'raw'}]
++	}
++	assert parse.process_open_tag() == 'raw'
++}

@@ -1,0 +1,33 @@
+diff --git a/crates/ruff_linter/src/checkers/ast/analyze/statement.rs b/crates/ruff_linter/src/checkers/ast/analyze/statement.rs
+index 2e7523891b..1232dc52a9 100644
+--- a/crates/ruff_linter/src/checkers/ast/analyze/statement.rs
++++ b/crates/ruff_linter/src/checkers/ast/analyze/statement.rs
+@@ -783,7 +783,9 @@ pub(crate) fn statement(stmt: &Stmt, checker: &mut Checker) {
+             }
+             if checker.enabled(Rule::UnnecessaryBuiltinImport) {
+                 if let Some(module) = module {
+-                    pyupgrade::rules::unnecessary_builtin_import(checker, stmt, module, names);
++                    pyupgrade::rules::unnecessary_builtin_import(
++                        checker, stmt, module, names, level,
++                    );
+                 }
+             }
+             if checker.any_enabled(&[
+diff --git a/crates/ruff_linter/src/rules/pyupgrade/rules/unnecessary_builtin_import.rs b/crates/ruff_linter/src/rules/pyupgrade/rules/unnecessary_builtin_import.rs
+index 41e73a3096..f15b2dfeb3 100644
+--- a/crates/ruff_linter/src/rules/pyupgrade/rules/unnecessary_builtin_import.rs
++++ b/crates/ruff_linter/src/rules/pyupgrade/rules/unnecessary_builtin_import.rs
+@@ -56,7 +56,13 @@ pub(crate) fn unnecessary_builtin_import(
+     stmt: &Stmt,
+     module: &str,
+     names: &[Alias],
++    level: u32,
+ ) {
++    // Ignore relative imports (they're importing from local modules, not Python's builtins).
++    if level > 0 {
++        return;
++    }
++
+     // Ignore irrelevant modules.
+     if !matches!(
+         module,

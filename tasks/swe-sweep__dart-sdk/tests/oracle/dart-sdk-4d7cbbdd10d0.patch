@@ -1,0 +1,19 @@
+diff --git a/runtime/vm/regexp_parser.cc b/runtime/vm/regexp_parser.cc
+index c9f9d4e4796..f2c58072dbd 100644
+--- a/runtime/vm/regexp_parser.cc
++++ b/runtime/vm/regexp_parser.cc
+@@ -217,6 +217,14 @@ bool RegExpBuilder::NeedsDesugaringForUnicode(RegExpCharacterClass* cc) {
+   if (ignore_case()) return true;
+   ZoneGrowableArray<CharacterRange>* ranges = cc->ranges();
+   CharacterRange::Canonicalize(ranges);
++
++  if (cc->is_negated()) {
++    auto negated_ranges =
++        new (Z) ZoneGrowableArray<CharacterRange>(ranges->length());
++    CharacterRange::Negate(ranges, negated_ranges);
++    ranges = negated_ranges;
++  }
++
+   for (int i = ranges->length() - 1; i >= 0; i--) {
+     uint32_t from = ranges->At(i).from();
+     uint32_t to = ranges->At(i).to();

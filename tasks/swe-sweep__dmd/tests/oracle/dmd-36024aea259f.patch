@@ -1,0 +1,70 @@
+diff --git a/compiler/src/dmd/dcast.d b/compiler/src/dmd/dcast.d
+index bb4a9e228b..edddd9144c 100644
+--- a/compiler/src/dmd/dcast.d
++++ b/compiler/src/dmd/dcast.d
+@@ -66,10 +66,14 @@ Expression implicitCastTo(Expression e, Scope* sc, Type t)
+ {
+     Expression visit(Expression e)
+     {
+-        //printf("Expression.implicitCastTo(%s of type %s) => %s\n", e.toChars(), e.type.toChars(), t.toChars());
++        // printf("Expression.implicitCastTo(%s of type %s) => %s\n", e.toChars(), e.type.toChars(), t.toChars());
+ 
+         if (const match = (sc && sc.flags & SCOPE.Cfile) ? e.cimplicitConvTo(t) : e.implicitConvTo(t))
+         {
++            if (match == MATCH.convert && e.type.isTypeNoreturn())
++            {
++                return specialNoreturnCast(e, t);
++            }
+             if (match == MATCH.constant && (e.type.constConv(t) || !e.isLvalue() && e.type.equivalent(t)))
+             {
+                 /* Do not emit CastExp for const conversions and
+@@ -1526,6 +1530,10 @@ Expression castTo(Expression e, Scope* sc, Type t, Type att = null)
+         {
+             return e;
+         }
++        if (e.type.isTypeNoreturn())
++        {
++            return specialNoreturnCast(e, t);
++        }
+         if (auto ve = e.isVarExp())
+         {
+             VarDeclaration v = ve.var.isVarDeclaration();
+@@ -3863,3 +3871,21 @@ IntRange getIntRange(Expression e)
+         case EXP.negate             : return visitNeg(e.isNegExp());
+     }
+ }
++/**
++ * A helper function to "cast" from expressions of type noreturn to
++ * any other type - noreturn is implicitly convertible to any other type.
++ * However, the dmd backend does not like a naive cast from a noreturn expression
++ * (particularly an `assert(0)`) so this function generates:
++ *
++ * `(assert(0), value)` instead of `cast(to)(assert(0))`.
++ *
++ * `value` is currently `to.init` however it cannot be read so could be made simpler.
++ * Params:
++ *   toBeCasted = Expression of type noreturn to cast
++ *   to = Type to cast the expression to.
++ * Returns: A CommaExp, upon any failure ErrorExp will be returned.
++ */
++Expression specialNoreturnCast(Expression toBeCasted, Type to)
++{
++    return Expression.combine(toBeCasted, to.defaultInitLiteral(toBeCasted.loc));
++}
+diff --git a/compiler/src/dmd/expressionsem.d b/compiler/src/dmd/expressionsem.d
+index 09cef816ac..89647bbc32 100644
+--- a/compiler/src/dmd/expressionsem.d
++++ b/compiler/src/dmd/expressionsem.d
+@@ -12217,10 +12217,12 @@ private extern (C++) final class ExpressionSemanticVisitor : Visitor
+         if (t1.ty == Tnoreturn)
+         {
+             exp.type = t2;
++            exp.e1 = specialNoreturnCast(exp.e1, exp.type);
+         }
+         else if (t2.ty == Tnoreturn)
+         {
+             exp.type = t1;
++            exp.e2 = specialNoreturnCast(exp.e2, exp.type);
+         }
+         // If either operand is void the result is void, we have to cast both
+         // the expression to void so that we explicitly discard the expression

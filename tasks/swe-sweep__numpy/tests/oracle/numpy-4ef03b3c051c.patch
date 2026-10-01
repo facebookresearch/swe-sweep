@@ -1,0 +1,16 @@
+diff --git a/numpy/core/src/multiarray/nditer_pywrap.c b/numpy/core/src/multiarray/nditer_pywrap.c
+index a0e1b09a584..992bc013af3 100644
+--- a/numpy/core/src/multiarray/nditer_pywrap.c
++++ b/numpy/core/src/multiarray/nditer_pywrap.c
+@@ -1387,7 +1387,10 @@ npyiter_enable_external_loop(NewNpyArrayIterObject *self)
+         return NULL;
+     }
+ 
+-    NpyIter_EnableExternalLoop(self->iter);
++    if (NpyIter_EnableExternalLoop(self->iter) != NPY_SUCCEED) {
++        return NULL;
++    }
++
+     /* EnableExternalLoop invalidates cached values */
+     npyiter_cache_values(self);
+     /* EnableExternalLoop also resets the iterator */

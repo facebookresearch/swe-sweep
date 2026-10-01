@@ -1,0 +1,67 @@
+diff --git a/src/Compiler/Checking/Expressions/CheckExpressions.fs b/src/Compiler/Checking/Expressions/CheckExpressions.fs
+index 507ba8aeab..0e18e4599a 100644
+--- a/src/Compiler/Checking/Expressions/CheckExpressions.fs
++++ b/src/Compiler/Checking/Expressions/CheckExpressions.fs
+@@ -10578,7 +10578,11 @@ and TcMethodApplication
+ 
+     TcAdhocChecksOnLibraryMethods cenv env isInstance finalCalledMeth finalCalledMethInfo objArgs mMethExpr mItem
+ 
++    // Indexer setters: when index args are named, the remaining unnamed args'
++    // position values won't form a prefix (the 'value' arg has a non-zero j).
++    // Without named args the check passes naturally, so blanket skip is safe.
+     if not finalCalledMeth.IsIndexParamArraySetter &&
++       not finalCalledMeth.IsIndexerSetter &&
+        (finalCalledMeth.ArgSets |> List.existsi (fun i argSet -> argSet.UnnamedCalledArgs |> List.existsi (fun j ca -> ca.Position <> (i, j)))) then
+         errorR(Deprecated(FSComp.SR.tcUnnamedArgumentsDoNotFormPrefix(), mMethExpr))
+ 
+diff --git a/src/Compiler/Checking/MethodCalls.fs b/src/Compiler/Checking/MethodCalls.fs
+index 07e0e95bae..a9c394ee4e 100644
+--- a/src/Compiler/Checking/MethodCalls.fs
++++ b/src/Compiler/Checking/MethodCalls.fs
+@@ -658,19 +658,21 @@ type CalledMeth<'T>
+ 
+                 let nUnnamedCallerArgs = unnamedCallerArgs.Length
+                 let nUnnamedCalledArgs = unnamedCalledArgs.Length
++                // x.Item(i, value = v) — named arg removes 'i' from unnamed, leaving < 2 unnamed called args.
++                let useIndexerSetterShape = isIndexerSetter && nUnnamedCalledArgs >= 2
+                 let supportsParamArgs = 
+                     allowParamArgs && 
+                     nUnnamedCalledArgs >= 1 && 
+                     nUnnamedCallerArgs >= nUnnamedCalledArgs-1 &&
+                     let possibleParamArg =
+-                        if isIndexerSetter then
++                        if useIndexerSetterShape then
+                             unnamedCalledArgs[nUnnamedCalledArgs-2]
+                         else
+                             unnamedCalledArgs[nUnnamedCalledArgs-1]
+                     possibleParamArg.IsParamArray && isArray1DTy g possibleParamArg.CalledArgumentType
+ 
+                 if supportsParamArgs then
+-                    if isIndexerSetter then
++                    if useIndexerSetterShape then
+                         // Note, for an indexer setter nUnnamedCalledArgs will be at least two, and normally exactly 2
+                         let unnamedCalledArgs2 =
+                             unnamedCalledArgs[0..unnamedCalledArgs.Length-3] @
+@@ -808,6 +810,8 @@ type CalledMeth<'T>
+ 
+     member x.IsIndexParamArraySetter = isIndexerSetter && x.UsesParamArrayConversion
+ 
++    member x.IsIndexerSetter = isIndexerSetter
++
+     member x.ParamArrayCalledArgOpt = x.ArgSets |> List.tryPick (fun argSet -> argSet.ParamArrayCalledArgOpt)
+ 
+     member x.ParamArrayCallerArgs = x.ArgSets |> List.tryPick (fun argSet -> if Option.isSome argSet.ParamArrayCalledArgOpt then Some argSet.ParamArrayCallerArgs else None )
+diff --git a/src/Compiler/Checking/MethodCalls.fsi b/src/Compiler/Checking/MethodCalls.fsi
+index 1a62bbe01b..73b4ef3987 100644
+--- a/src/Compiler/Checking/MethodCalls.fsi
++++ b/src/Compiler/Checking/MethodCalls.fsi
+@@ -271,6 +271,9 @@ type CalledMeth<'T> =
+ 
+     member IsIndexParamArraySetter: bool
+ 
++    /// True when this method call is for a property indexer setter (set_Item or named indexer set).
++    member IsIndexerSetter: bool
++
+     /// The method we're attempting to call
+     member Method: MethInfo
+ 

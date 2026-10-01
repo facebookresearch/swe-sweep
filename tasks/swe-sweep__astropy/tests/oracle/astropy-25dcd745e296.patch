@@ -1,0 +1,13 @@
+diff --git a/astropy/wcs/utils.py b/astropy/wcs/utils.py
+index 7e2dc10009..f433a4a640 100644
+--- a/astropy/wcs/utils.py
++++ b/astropy/wcs/utils.py
+@@ -976,7 +976,7 @@ def local_partial_pixel_derivatives(wcs, *pixel, normalize_by_world=False):
+         derivatives[:, i] = world_off - world_ref
+ 
+     if normalize_by_world:
+-        derivatives /= derivatives.sum(axis=0)[:, np.newaxis]
++        derivatives /= derivatives.sum(axis=1)[:, np.newaxis]
+ 
+     return derivatives
+ 

@@ -1,0 +1,43 @@
+diff --git a/pandas/tests/frame/test_stack_unstack.py b/pandas/tests/frame/test_stack_unstack.py
+index 69e5d5e3d5..22075a30bd 100644
+--- a/pandas/tests/frame/test_stack_unstack.py
++++ b/pandas/tests/frame/test_stack_unstack.py
+@@ -2066,3 +2066,16 @@ class TestStackUnstackMultiLevel:
+         )
+         expected.columns = MultiIndex.from_tuples([("cat", 0), ("cat", 1)])
+         tm.assert_frame_equal(result, expected)
++
++    def test_unstack_mixed_level_names(self):
++        # GH#48763
++        arrays = [["a", "a"], [1, 2], ["red", "blue"]]
++        idx = MultiIndex.from_arrays(arrays, names=("x", 0, "y"))
++        df = DataFrame({"m": [1, 2]}, index=idx)
++        result = df.unstack("x")
++        expected = DataFrame(
++            [[1], [2]],
++            columns=MultiIndex.from_tuples([("m", "a")], names=[None, "x"]),
++            index=MultiIndex.from_tuples([(1, "red"), (2, "blue")], names=[0, "y"]),
++        )
++        tm.assert_frame_equal(result, expected)
+diff --git a/pandas/tests/series/methods/test_unstack.py b/pandas/tests/series/methods/test_unstack.py
+index 23b068214d..980fcbc141 100644
+--- a/pandas/tests/series/methods/test_unstack.py
++++ b/pandas/tests/series/methods/test_unstack.py
+@@ -147,3 +147,17 @@ def test_unstack_multi_index_categorical_values():
+         index=dti.rename("major"),
+     )
+     tm.assert_frame_equal(result, expected)
++
++
++def test_unstack_mixed_level_names():
++    # GH#48763
++    arrays = [["a", "a"], [1, 2], ["red", "blue"]]
++    idx = MultiIndex.from_arrays(arrays, names=("x", 0, "y"))
++    ser = Series([1, 2], index=idx)
++    result = ser.unstack("x")
++    expected = DataFrame(
++        [[1], [2]],
++        columns=pd.Index(["a"], name="x"),
++        index=MultiIndex.from_tuples([(1, "red"), (2, "blue")], names=[0, "y"]),
++    )
++    tm.assert_frame_equal(result, expected)

@@ -1,0 +1,41 @@
+diff --git a/core/trino-main/src/test/java/io/trino/sql/planner/TestEffectivePredicateExtractor.java b/core/trino-main/src/test/java/io/trino/sql/planner/TestEffectivePredicateExtractor.java
+index 38e1f8646d3..306403112bd 100644
+--- a/core/trino-main/src/test/java/io/trino/sql/planner/TestEffectivePredicateExtractor.java
++++ b/core/trino-main/src/test/java/io/trino/sql/planner/TestEffectivePredicateExtractor.java
+@@ -110,5 +110,6 @@
+ import static io.trino.sql.tree.BooleanLiteral.TRUE_LITERAL;
+ import static io.trino.sql.tree.ComparisonExpression.Operator.EQUAL;
++import static io.trino.tests.BogusType.BOGUS;
+ import static io.trino.transaction.TransactionBuilder.transaction;
+ import static io.trino.type.UnknownType.UNKNOWN;
+ import static org.testng.Assert.assertEquals;
+@@ -593,6 +593,7 @@
+                 .put(A, BIGINT)
+                 .put(B, BIGINT)
+                 .put(D, DOUBLE)
++                .put(G, BOGUS)
+                 .build());
+ 
+         // one column
+@@ -760,7 +760,21 @@
+                                         new Row(ImmutableList.of(BE)))),
+                         types,
+                         typeAnalyzer),
+                 TRUE_LITERAL);
++
++        // non-comparable and non-orderable
++        assertEquals(
++                effectivePredicateExtractor.extract(
++                        SESSION,
++                        new ValuesNode(
++                                newId(),
++                                ImmutableList.of(G),
++                                ImmutableList.of(
++                                        new Row(ImmutableList.of(bigintLiteral(1))),
++                                        new Row(ImmutableList.of(bigintLiteral(2))))),
++                        types,
++                        typeAnalyzer),
++                TRUE_LITERAL);
+     }
+ 
+     private Expression extract(TypeProvider types, PlanNode node)

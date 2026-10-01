@@ -1,0 +1,14 @@
+diff --git a/tests/template/template_issues.nim b/tests/template/template_issues.nim
+index 1fed694ef..58c40941d 100644
+--- a/tests/template/template_issues.nim
++++ b/tests/template/template_issues.nim
+@@ -296,3 +296,9 @@ block: # bug #12595
+     discard {i: ""}
+ 
+   test()
++
++block: # bug #21920
++  template t[T](): T =
++    discard
++
++  t[void]() # Error: expression has no type: discard

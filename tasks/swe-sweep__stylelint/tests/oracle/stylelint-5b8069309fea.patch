@@ -1,0 +1,114 @@
+diff --git a/lib/rules/selector-attribute-name-disallowed-list/index.cjs b/lib/rules/selector-attribute-name-disallowed-list/index.cjs
+index 82b0c42bb..4ac7f9d81 100644
+--- a/lib/rules/selector-attribute-name-disallowed-list/index.cjs
++++ b/lib/rules/selector-attribute-name-disallowed-list/index.cjs
+@@ -3,6 +3,7 @@
+ 'use strict';
+ 
+ const validateTypes = require('../../utils/validateTypes.cjs');
++const getRuleSelector = require('../../utils/getRuleSelector.cjs');
+ const isStandardSyntaxRule = require('../../utils/isStandardSyntaxRule.cjs');
+ const matchesStringOrRegExp = require('../../utils/matchesStringOrRegExp.cjs');
+ const parseSelector = require('../../utils/parseSelector.cjs');
+@@ -41,26 +42,28 @@ const rule = (primary) => {
+ 				return;
+ 			}
+ 
+-			parseSelector(ruleNode.selector, result, ruleNode)?.walkAttributes((attributeNode) => {
+-				const attributeName = attributeNode.qualifiedAttribute;
++			parseSelector(getRuleSelector(ruleNode), result, ruleNode)?.walkAttributes(
++				(attributeNode) => {
++					const attributeName = attributeNode.qualifiedAttribute;
+ 
+-				if (!matchesStringOrRegExp(attributeName, primary)) {
+-					return;
+-				}
++					if (!matchesStringOrRegExp(attributeName, primary)) {
++						return;
++					}
+ 
+-				const index = attributeNode.sourceIndex + attributeNode.offsetOf('attribute');
+-				const endIndex = index + attributeName.length;
++					const index = attributeNode.sourceIndex + attributeNode.offsetOf('attribute');
++					const endIndex = index + attributeName.length;
+ 
+-				report({
+-					message: messages.rejected,
+-					messageArgs: [attributeName],
+-					node: ruleNode,
+-					index,
+-					endIndex,
+-					result,
+-					ruleName,
+-				});
+-			});
++					report({
++						message: messages.rejected,
++						messageArgs: [attributeName],
++						node: ruleNode,
++						index,
++						endIndex,
++						result,
++						ruleName,
++					});
++				},
++			);
+ 		});
+ 	};
+ };
+diff --git a/lib/rules/selector-attribute-name-disallowed-list/index.mjs b/lib/rules/selector-attribute-name-disallowed-list/index.mjs
+index b6b085f04..24c043a50 100644
+--- a/lib/rules/selector-attribute-name-disallowed-list/index.mjs
++++ b/lib/rules/selector-attribute-name-disallowed-list/index.mjs
+@@ -1,4 +1,5 @@
+ import { isRegExp, isString } from '../../utils/validateTypes.mjs';
++import getRuleSelector from '../../utils/getRuleSelector.mjs';
+ import isStandardSyntaxRule from '../../utils/isStandardSyntaxRule.mjs';
+ import matchesStringOrRegExp from '../../utils/matchesStringOrRegExp.mjs';
+ import parseSelector from '../../utils/parseSelector.mjs';
+@@ -37,26 +38,28 @@ const rule = (primary) => {
+ 				return;
+ 			}
+ 
+-			parseSelector(ruleNode.selector, result, ruleNode)?.walkAttributes((attributeNode) => {
+-				const attributeName = attributeNode.qualifiedAttribute;
++			parseSelector(getRuleSelector(ruleNode), result, ruleNode)?.walkAttributes(
++				(attributeNode) => {
++					const attributeName = attributeNode.qualifiedAttribute;
+ 
+-				if (!matchesStringOrRegExp(attributeName, primary)) {
+-					return;
+-				}
++					if (!matchesStringOrRegExp(attributeName, primary)) {
++						return;
++					}
+ 
+-				const index = attributeNode.sourceIndex + attributeNode.offsetOf('attribute');
+-				const endIndex = index + attributeName.length;
++					const index = attributeNode.sourceIndex + attributeNode.offsetOf('attribute');
++					const endIndex = index + attributeName.length;
+ 
+-				report({
+-					message: messages.rejected,
+-					messageArgs: [attributeName],
+-					node: ruleNode,
+-					index,
+-					endIndex,
+-					result,
+-					ruleName,
+-				});
+-			});
++					report({
++						message: messages.rejected,
++						messageArgs: [attributeName],
++						node: ruleNode,
++						index,
++						endIndex,
++						result,
++						ruleName,
++					});
++				},
++			);
+ 		});
+ 	};
+ };

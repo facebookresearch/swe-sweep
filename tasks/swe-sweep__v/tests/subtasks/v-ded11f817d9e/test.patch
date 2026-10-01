@@ -1,0 +1,18 @@
+diff --git a/vlib/v/tests/option_ptr_init_test.v b/vlib/v/tests/option_ptr_init_test.v
+new file mode 100644
+index 000000000..c45ea9f58
+--- /dev/null
++++ b/vlib/v/tests/option_ptr_init_test.v
+@@ -0,0 +1,12 @@
++struct Queue {
++	head ?&Node
++}
++
++struct Node {
++	next ?&Node
++}
++
++fn test_main() {
++	q := Queue{}
++	assert q.head == none
++}

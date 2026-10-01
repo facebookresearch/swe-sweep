@@ -1,0 +1,25 @@
+diff --git a/tests/destructor/tgotoexc_leak.nim b/tests/destructor/tgotoexc_leak.nim
+new file mode 100644
+index 000000000..c8a234085
+--- /dev/null
++++ b/tests/destructor/tgotoexc_leak.nim
+@@ -0,0 +1,19 @@
++discard """
++  output: '''0
++true'''
++  cmd: "nim c --gc:arc $file"
++"""
++
++# bug #22398
++
++for i in 0 ..< 10_000:
++  try:
++    try:
++      raise newException(ValueError, "")
++    except CatchableError:
++      discard
++      raise newException(ValueError, "") # or raise getCurrentException(), just raise works ok
++  except ValueError:
++    discard
++echo getOccupiedMem()
++echo getCurrentException() == nil

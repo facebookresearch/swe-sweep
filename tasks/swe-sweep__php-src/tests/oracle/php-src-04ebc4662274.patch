@@ -1,0 +1,15 @@
+diff --git a/ext/standard/user_filters.c b/ext/standard/user_filters.c
+index ae4132733be..986bbbd5f4d 100644
+--- a/ext/standard/user_filters.c
++++ b/ext/standard/user_filters.c
+@@ -337,6 +337,10 @@ static php_stream_filter *user_filter_factory_create(const char *filtername,
+ 		return NULL;
+ 	}
+ 
++	if (UNEXPECTED(BG(user_filter_map) == NULL)) {
++		return NULL;
++	}
++
+ 	len = strlen(filtername);
+ 
+ 	/* determine the classname/class entry */

@@ -1,0 +1,13 @@
+diff --git a/packages/nuxt/src/pages/utils.ts b/packages/nuxt/src/pages/utils.ts
+index f939c57e8..1b89c2115 100644
+--- a/packages/nuxt/src/pages/utils.ts
++++ b/packages/nuxt/src/pages/utils.ts
+@@ -183,7 +183,7 @@ export async function augmentPages (routes: NuxtPage[], vfs: Record<string, stri
+   return ctx.augmentedPages
+ }
+ 
+-const SFC_SCRIPT_RE = /<script(?<attrs>[^>]*)>(?<content>[\s\S]*?)<\/script[^>]*>/gi
++const SFC_SCRIPT_RE = /<script(?=\s|>)(?<attrs>[^>]*)>(?<content>[\s\S]*?)<\/script\s*>/gi
+ export function extractScriptContent (sfc: string) {
+   const contents: Array<{ loader: 'tsx' | 'ts', code: string }> = []
+   for (const match of sfc.matchAll(SFC_SCRIPT_RE)) {

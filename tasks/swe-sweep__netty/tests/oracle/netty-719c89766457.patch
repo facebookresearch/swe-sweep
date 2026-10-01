@@ -1,0 +1,13 @@
+diff --git a/codec-http/src/main/java/io/netty/handler/codec/http/HttpClientUpgradeHandler.java b/codec-http/src/main/java/io/netty/handler/codec/http/HttpClientUpgradeHandler.java
+index d3f0b5a3a1..202d36c7d0 100644
+--- a/codec-http/src/main/java/io/netty/handler/codec/http/HttpClientUpgradeHandler.java
++++ b/codec-http/src/main/java/io/netty/handler/codec/http/HttpClientUpgradeHandler.java
+@@ -167,6 +167,8 @@ public class HttpClientUpgradeHandler extends HttpObjectAggregator implements Ch
+         }
+ 
+         if (upgradeRequested) {
++            // Release message before failing the promise.
++            release(msg);
+             promise.setFailure(new IllegalStateException(
+                     "Attempting to write HTTP request with upgrade in progress"));
+             return;

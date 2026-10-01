@@ -1,0 +1,13 @@
+diff --git a/compiler/ccgtypes.nim b/compiler/ccgtypes.nim
+index 492e1f1..998950d 100644
+--- a/compiler/ccgtypes.nim
++++ b/compiler/ccgtypes.nim
+@@ -428,7 +428,7 @@ proc genProcParams(m: BModule, t: PType, rettype, params: var Rope,
+   if t[0] == nil or isInvalidReturnType(m.config, t[0]):
+     rettype = ~"void"
+   else:
+-    rettype = getTypeDescAux(m, t[0], check, skResult)
++    rettype = getTypeDescWeak(m, t[0], check, skResult)
+   for i in 1..<t.n.len:
+     if t.n[i].kind != nkSym: internalError(m.config, t.n.info, "genProcParams")
+     var param = t.n[i].sym

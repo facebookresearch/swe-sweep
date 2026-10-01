@@ -1,0 +1,12 @@
+diff --git a/clippy_lints/src/methods/bind_instead_of_map.rs b/clippy_lints/src/methods/bind_instead_of_map.rs
+index f8520c23e..6390680c0 100644
+--- a/clippy_lints/src/methods/bind_instead_of_map.rs
++++ b/clippy_lints/src/methods/bind_instead_of_map.rs
+@@ -128,6 +128,7 @@ impl BindInsteadOfMap {
+             }
+         });
+         let (span, msg) = if can_sugg
++            && !suggs.is_empty()
+             && let hir::ExprKind::MethodCall(segment, ..) = expr.kind
+             && let Some(msg) = self.lint_msg(cx)
+         {

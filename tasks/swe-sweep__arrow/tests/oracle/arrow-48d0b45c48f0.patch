@@ -1,0 +1,12 @@
+diff --git a/cpp/src/arrow/compute/kernels/scalar_temporal_unary.cc b/cpp/src/arrow/compute/kernels/scalar_temporal_unary.cc
+index 3addaf6863..a88ce38936 100644
+--- a/cpp/src/arrow/compute/kernels/scalar_temporal_unary.cc
++++ b/cpp/src/arrow/compute/kernels/scalar_temporal_unary.cc
+@@ -1237,7 +1237,6 @@ const std::string GetZone(const std::string& format) {
+         zone = "UTC";
+         break;
+       }
+-      cur++;
+     } else {
+       count = 0;
+     }

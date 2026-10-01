@@ -1,0 +1,22 @@
+diff --git a/compiler/test/compilable/imports/test23597.di b/compiler/test/compilable/imports/test23597.di
+new file mode 100644
+index 0000000000..d21a0f7649
+--- /dev/null
++++ b/compiler/test/compilable/imports/test23597.di
+@@ -0,0 +1,3 @@
++module imports.test23597;
++
++void fun()() {}
+diff --git a/compiler/test/compilable/issue23597.d b/compiler/test/compilable/issue23597.d
+new file mode 100644
+index 0000000000..9299d744ce
+--- /dev/null
++++ b/compiler/test/compilable/issue23597.d
+@@ -0,0 +1,7 @@
++/**
++PERMUTE_ARGS: -i
++LINK:
++**/
++import imports.test23597;
++
++void main() { fun(); }

@@ -1,0 +1,25 @@
+diff --git a/test/Succeed/Issue5544.agda b/test/Succeed/Issue5544.agda
+new file mode 100644
+index 0000000000..c10fda0a59
+--- /dev/null
++++ b/test/Succeed/Issue5544.agda
+@@ -0,0 +1,19 @@
++
++postulate
++  Typ : Set
++  ⊢   : Typ → Set
++  N   : Typ
++  t   : ⊢ N
++
++record TopPred : Set where
++  constructor tp
++  field nf : Typ
++
++postulate
++  inv-t[σ] : (T : Typ) → ⊢ T → TopPred
++
++su-I′ : TopPred → Typ
++su-I′ krip =
++    let tp _ = inv-t[σ] _ t
++        open TopPred krip
++    in N

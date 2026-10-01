@@ -1,0 +1,13 @@
+diff --git a/crates/ruff_linter/resources/test/fixtures/pep8_naming/N804.py b/crates/ruff_linter/resources/test/fixtures/pep8_naming/N804.py
+index 17d4d5187a..3fbf2d7c70 100644
+--- a/crates/ruff_linter/resources/test/fixtures/pep8_naming/N804.py
++++ b/crates/ruff_linter/resources/test/fixtures/pep8_naming/N804.py
+@@ -76,3 +76,8 @@ class RenamingInMethodBodyClass(ABCMeta):
+ 
+ def func(x):
+     return x
++
++foo = {}
++class Bar(type(foo)):
++    def foo_method(self):
++        pass

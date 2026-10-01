@@ -1,0 +1,37 @@
+diff --git a/testsuite/integration-arquillian/tests/base/src/test/java/org/keycloak/testsuite/oauth/par/ParTest.java b/testsuite/integration-arquillian/tests/base/src/test/java/org/keycloak/testsuite/oauth/par/ParTest.java
+index 5f6d808414..dce9cfc6db 100644
+--- a/testsuite/integration-arquillian/tests/base/src/test/java/org/keycloak/testsuite/oauth/par/ParTest.java
++++ b/testsuite/integration-arquillian/tests/base/src/test/java/org/keycloak/testsuite/oauth/par/ParTest.java
+@@ -1054,6 +1054,32 @@ public class ParTest extends AbstractClientPoliciesTest {
+         assertEquals(OAuthErrorException.INVALID_REQUEST_OBJECT, pResp.getError());
+     }
+ 
++    // valid PAR when Request Object Required is set to request_uri
++    @Test
++    public void testSuccessfulParWithRequiredRequestUri() throws Exception {
++        // create client dynamically
++        String clientId = createClientDynamically(generateSuffixedName(CLIENT_NAME), (OIDCClientRepresentation clientRep) -> {
++            clientRep.setRedirectUris(new ArrayList<>(List.of(CLIENT_REDIRECT_URI)));
++        });
++        OIDCClientRepresentation oidcCRep = getClientDynamically(clientId);
++        String clientSecret = oidcCRep.getClientSecret();
++        assertEquals(Boolean.FALSE, oidcCRep.getRequirePushedAuthorizationRequests());
++        assertTrue(oidcCRep.getRedirectUris().contains(CLIENT_REDIRECT_URI));
++        updateClientByAdmin(clientId, (ClientRepresentation cRep)->
++                OIDCAdvancedConfigWrapper.fromClientRepresentation(cRep)
++                        .setRequestObjectRequired(OIDCConfigAttributes.REQUEST_OBJECT_REQUIRED_REQUEST_URI));
++
++        // Pushed Authorization Request
++        oauth.clientId(clientId);
++        oauth.redirectUri(CLIENT_REDIRECT_URI);
++        ParResponse pResp = oauth.doPushedAuthorizationRequest(clientId, clientSecret);
++        assertEquals(201, pResp.getStatusCode());
++        String requestUri = pResp.getRequestUri();
++        assertTrue(requestUri.startsWith("urn:ietf:params:oauth:request_uri:"));
++
++        doNormalAuthzProcess(requestUri, CLIENT_REDIRECT_URI, clientId, clientSecret);
++    }
++
+     // PAR including invalid redirect_uri
+     @Test
+     public void testFailureParIncludesInvalidRedirectUri() throws Exception {

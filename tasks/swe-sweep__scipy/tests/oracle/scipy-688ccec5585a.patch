@@ -1,0 +1,17 @@
+diff --git a/scipy/stats/_continuous_distns.py b/scipy/stats/_continuous_distns.py
+index 32ba45ab82..b2ccc96b18 100644
+--- a/scipy/stats/_continuous_distns.py
++++ b/scipy/stats/_continuous_distns.py
+@@ -6129,6 +6129,12 @@ class skew_norm_gen(rv_continuous):
+     def _pdf(self, x, a):
+         return 2.*_norm_pdf(x)*_norm_cdf(a*x)
+ 
++    def _logpdf(self, x, a):
++        return _lazywhere(
++            a == 0, (x, a), lambda x, a: _norm_logpdf(x),
++            f2=lambda x, a: np.log(2)+_norm_logpdf(x)+_norm_logcdf(a*x),
++        )
++
+     def _cdf_single(self, x, *args):
+         _a, _b = self._get_support(*args)
+         if x <= 0:

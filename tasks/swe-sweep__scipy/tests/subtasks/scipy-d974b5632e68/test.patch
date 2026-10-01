@@ -1,0 +1,33 @@
+diff --git a/scipy/odr/tests/test_odr.py b/scipy/odr/tests/test_odr.py
+index 8db26f5d4e..5d0545b018 100644
+--- a/scipy/odr/tests/test_odr.py
++++ b/scipy/odr/tests/test_odr.py
+@@ -6,7 +6,8 @@ from numpy import pi
+ from numpy.testing import (assert_array_almost_equal,
+                            assert_equal, assert_warns)
+ from pytest import raises as assert_raises
+-from scipy.odr import Data, Model, ODR, RealData, OdrStop, OdrWarning
++from scipy.odr import (Data, Model, ODR, RealData, OdrStop, OdrWarning,
++                       OdrError, unilinear)
+ 
+ 
+ class TestODR(object):
+@@ -358,3 +359,18 @@ class TestODR(object):
+         odr2 = ODR(data, model, beta0=np.array([1.]), ifixx=fix)
+         sol2 = odr2.run()
+         assert_equal(sol1.beta, sol2.beta)
++
++    def test_explicit_model_with_implicit_job(self):
++        """
++        Verify fix for gh-23763 that ODR doesn't segfault
++        """
++        x = np.linspace(0, 10, 10)
++        y = 2.0 + 3.0 * x
++
++        data = Data(x, y)
++        model = unilinear  # this is an explicit model
++
++        # job=1 is implicit, should raise on explicit model
++        with assert_raises(OdrError):
++            odr = ODR(data, model, job=1)
++            odr.run()

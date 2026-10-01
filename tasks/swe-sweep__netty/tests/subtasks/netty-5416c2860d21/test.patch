@@ -1,0 +1,25 @@
+diff --git a/codec-http/src/test/java/io/netty/handler/codec/http/HttpRequestDecoderTest.java b/codec-http/src/test/java/io/netty/handler/codec/http/HttpRequestDecoderTest.java
+index 8ff591bd45..8a2345837f 100644
+--- a/codec-http/src/test/java/io/netty/handler/codec/http/HttpRequestDecoderTest.java
++++ b/codec-http/src/test/java/io/netty/handler/codec/http/HttpRequestDecoderTest.java
+@@ -320,4 +320,20 @@ public class HttpRequestDecoderTest {
+         assertTrue(request.decoderResult().cause() instanceof TooLongFrameException);
+         assertFalse(channel.finish());
+     }
++
++    @Test
++    public void testHeaderWithNoValueAndMissingColon() {
++        EmbeddedChannel channel = new EmbeddedChannel(new HttpRequestDecoder());
++        String requestStr = "GET /some/path HTTP/1.1\r\n" +
++                "Content-Length: 0\r\n" +
++                "Host:\r\n" +
++                "netty.io\r\n\r\n";
++
++        assertTrue(channel.writeInbound(Unpooled.copiedBuffer(requestStr, CharsetUtil.US_ASCII)));
++        HttpRequest request = channel.readInbound();
++        System.err.println(request.headers().names().toString());
++        assertTrue(request.decoderResult().isFailure());
++        assertTrue(request.decoderResult().cause() instanceof IllegalArgumentException);
++        assertFalse(channel.finish());
++    }
+ }

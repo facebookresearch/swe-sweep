@@ -1,0 +1,15 @@
+diff --git a/pendulum/datetime.py b/pendulum/datetime.py
+index 4e2762d..610af71 100644
+--- a/pendulum/datetime.py
++++ b/pendulum/datetime.py
+@@ -780,9 +780,7 @@ class DateTime(datetime.datetime, Date):
+                 microseconds=delta.microseconds,
+             )
+ 
+-        return self.subtract(
+-            days=delta.days, seconds=delta.seconds, microseconds=delta.microseconds
+-        )
++        return self.subtract(seconds=delta.total_seconds())
+ 
+     # DIFFERENCES
+ 

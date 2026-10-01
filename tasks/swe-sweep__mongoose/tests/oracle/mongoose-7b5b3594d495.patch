@@ -1,0 +1,13 @@
+diff --git a/lib/document.js b/lib/document.js
+index b665b5cf8..731be3301 100644
+--- a/lib/document.js
++++ b/lib/document.js
+@@ -1162,7 +1162,7 @@ Document.prototype.$set = function $set(path, val, type, options) {
+ 
+   // Assume this is a Mongoose document that was copied into a POJO using
+   // `Object.assign()` or `{...doc}`
+-  val = handleSpreadDoc(val);
++  val = handleSpreadDoc(val, true);
+ 
+   // if this doc is being constructed we should not trigger getters
+   const priorVal = (() => {

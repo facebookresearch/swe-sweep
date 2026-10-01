@@ -1,0 +1,82 @@
+diff --git a/tests/format/scss/mixin/5636.scss b/tests/format/scss/mixin/5636.scss
+new file mode 100644
+index 0000000..c958a43
+--- /dev/null
++++ b/tests/format/scss/mixin/5636.scss
+@@ -0,0 +1,7 @@
++.foo {
++  @include transition(min-height ($spacer/2) ease-in-out);
++}
++
++.bar {
++  @include transition(min-height, $spacer/2, ease-in-out);
++}
+diff --git a/tests/format/scss/mixin/__snapshots__/format.test.js.snap b/tests/format/scss/mixin/__snapshots__/format.test.js.snap
+new file mode 100644
+index 0000000..ed284dc
+--- /dev/null
++++ b/tests/format/scss/mixin/__snapshots__/format.test.js.snap
+@@ -0,0 +1,55 @@
++// Jest Snapshot v1, https://goo.gl/fbAQLP
++
++exports[`5636.scss - {"trailingComma":"es5"} format 1`] = `
++====================================options=====================================
++parsers: ["scss"]
++printWidth: 80
++trailingComma: "es5"
++                                                                                | printWidth
++=====================================input======================================
++.foo {
++  @include transition(min-height ($spacer/2) ease-in-out);
++}
++
++.bar {
++  @include transition(min-height, $spacer/2, ease-in-out);
++}
++
++=====================================output=====================================
++.foo {
++  @include transition(min-height ($spacer/2) ease-in-out);
++}
++
++.bar {
++  @include transition(min-height, $spacer/2, ease-in-out);
++}
++
++================================================================================
++`;
++
++exports[`5636.scss - {"trailingComma":"none"} format 1`] = `
++====================================options=====================================
++parsers: ["scss"]
++printWidth: 80
++trailingComma: "none"
++                                                                                | printWidth
++=====================================input======================================
++.foo {
++  @include transition(min-height ($spacer/2) ease-in-out);
++}
++
++.bar {
++  @include transition(min-height, $spacer/2, ease-in-out);
++}
++
++=====================================output=====================================
++.foo {
++  @include transition(min-height ($spacer/2) ease-in-out);
++}
++
++.bar {
++  @include transition(min-height, $spacer/2, ease-in-out);
++}
++
++================================================================================
++`;
+diff --git a/tests/format/scss/mixin/format.test.js b/tests/format/scss/mixin/format.test.js
+new file mode 100644
+index 0000000..9fd95c4
+--- /dev/null
++++ b/tests/format/scss/mixin/format.test.js
+@@ -0,0 +1,2 @@
++runFormatTest(import.meta, ["scss"], { trailingComma: "none" });
++runFormatTest(import.meta, ["scss"], { trailingComma: "es5" });

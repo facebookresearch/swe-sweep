@@ -1,0 +1,139 @@
+{
+  "build_jobs": 4,
+  "container_repo": "/dolphinscheduler",
+  "evaluation": {
+    "suite": "reproduction",
+    "visible_timeout": 14400
+  },
+  "upstream_image": "pandora-maxbug-dolphinscheduler:3.2.1",
+  "n_base_passing": 109,
+  "n_base_test_ignore": 5,
+  "oracle_digest": "38c6f78cd1a03ffd646bd8c8d3b51aff6ac0db5140fc29ef259817a0bfcd64b3",
+  "oracle_pristine_paths": [],
+  "upstream_commit": "9f7399e15e6172900e0591deb5a57a45769d8205",
+  "reproduction": {
+    "jobs_env": "SWESWEEP_BUILD_JOBS",
+    "needs_build": false,
+    "suite": {
+      "goal": "install",
+      "mvn_args": [
+        "-Dspotless.skip=true",
+        "-Dcheckstyle.skip=true",
+        "-Drat.skip=true",
+        "-Djacoco.skip=true",
+        "-Dspotbugs.skip=true",
+        "-Dmaven.javadoc.skip=true",
+        "-Dmaven.source.skip=true",
+        "-Dlicense.skip=true",
+        "-Denforcer.skip=true"
+      ],
+      "type": "maven"
+    },
+    "test_timeout": 1800
+  },
+  "schema": 2,
+  "subtasks": [
+    {
+      "f2p": [
+        "org.apache.dolphinscheduler.plugin.datasource.postgresql.PostgreSQLDataSourceProcessorTest.testCommentsPreserved",
+        "org.apache.dolphinscheduler.plugin.datasource.postgresql.PostgreSQLDataSourceProcessorTest.testCustomDollarTag",
+        "org.apache.dolphinscheduler.plugin.datasource.postgresql.PostgreSQLDataSourceProcessorTest.testCustomDollarTagBlock",
+        "org.apache.dolphinscheduler.plugin.datasource.postgresql.PostgreSQLDataSourceProcessorTest.testDoBlockAndInsert",
+        "org.apache.dolphinscheduler.plugin.datasource.postgresql.PostgreSQLDataSourceProcessorTest.testDoBlockWithDollarTagInsideString",
+        "org.apache.dolphinscheduler.plugin.datasource.postgresql.PostgreSQLDataSourceProcessorTest.testDoBlockWithEscapedSingleQuote",
+        "org.apache.dolphinscheduler.plugin.datasource.postgresql.PostgreSQLDataSourceProcessorTest.testDoBlockWithSemicolonInsideString",
+        "org.apache.dolphinscheduler.plugin.datasource.postgresql.PostgreSQLDataSourceProcessorTest.testMultipleStatementsWithDoBlock",
+        "org.apache.dolphinscheduler.plugin.datasource.postgresql.PostgreSQLDataSourceProcessorTest.testSingleDoBlock"
+      ],
+      "id": "dolphinscheduler-13a1d218053b",
+      "target_files": [
+        "dolphinscheduler-datasource-plugin/dolphinscheduler-datasource-postgresql/src/main/java/org/apache/dolphinscheduler/plugin/datasource/postgresql/param/PostgreSQLDataSourceProcessor.java"
+      ]
+    },
+    {
+      "f2p": [
+        "org.apache.dolphinscheduler.api.service.UsersServiceTest.testGrantProject",
+        "org.apache.dolphinscheduler.api.service.UsersServiceTest.testGrantProjectWithReadPerm",
+        "org.apache.dolphinscheduler.api.service.UsersServiceTest.testGrantUDFFunction"
+      ],
+      "id": "dolphinscheduler-159aa17fbdcc",
+      "target_files": [
+        "dolphinscheduler-api/src/main/java/org/apache/dolphinscheduler/api/service/impl/UsersServiceImpl.java"
+      ]
+    },
+    {
+      "f2p": [
+        "org.apache.dolphinscheduler.server.master.runner.task.dynamic.DynamicCommandUtilsTest.testCreateCommand"
+      ],
+      "id": "dolphinscheduler-180550161f17",
+      "target_files": [
+        "dolphinscheduler-master/src/main/java/org/apache/dolphinscheduler/server/master/runner/task/dynamic/DynamicCommandUtils.java"
+      ]
+    },
+    {
+      "f2p": [
+        "org.apache.dolphinscheduler.service.process.ProcessServiceTest.testSetGlobalParamIfCommanded"
+      ],
+      "id": "dolphinscheduler-1c6643905228",
+      "target_files": [
+        "dolphinscheduler-service/src/main/java/org/apache/dolphinscheduler/service/process/ProcessServiceImpl.java"
+      ]
+    },
+    {
+      "f2p": [
+        "org.apache.dolphinscheduler.common.graph.DAGTest.testCycleWithConvergingPaths"
+      ],
+      "id": "dolphinscheduler-2060aaaaae15",
+      "target_files": [
+        "dolphinscheduler-common/src/main/java/org/apache/dolphinscheduler/common/graph/DAG.java"
+      ]
+    },
+    {
+      "f2p": [
+        "org.apache.dolphinscheduler.common.utils.FileUtilsTest.testWriteContent2FileWithoutParentDirectory"
+      ],
+      "id": "dolphinscheduler-3c6d72946dba",
+      "target_files": [
+        "dolphinscheduler-common/src/main/java/org/apache/dolphinscheduler/common/utils/FileUtils.java"
+      ]
+    },
+    {
+      "f2p": [
+        "org.apache.dolphinscheduler.common.sql.ClasspathSqlScriptParserTest.testIndentedLicenseHeaderSql"
+      ],
+      "id": "dolphinscheduler-6e2396542d21",
+      "target_files": [
+        "dolphinscheduler-common/src/main/java/org/apache/dolphinscheduler/common/sql/ClasspathSqlScriptParser.java"
+      ]
+    },
+    {
+      "f2p": [
+        "org.apache.dolphinscheduler.plugin.task.pytorch.PytorchTaskTest.testGitProjectUrlInjection"
+      ],
+      "id": "dolphinscheduler-6eb648de42b3",
+      "target_files": [
+        "dolphinscheduler-task-plugin/dolphinscheduler-task-pytorch/src/main/java/org/apache/dolphinscheduler/plugin/task/pytorch/GitProjectManager.java"
+      ]
+    },
+    {
+      "f2p": [
+        "__process_level_failure__"
+      ],
+      "id": "dolphinscheduler-94be318e9b5d",
+      "target_files": [
+        "dolphinscheduler-dao/src/main/java/org/apache/dolphinscheduler/dao/entity/ErrorCommand.java"
+      ]
+    },
+    {
+      "f2p": [
+        "org.apache.dolphinscheduler.plugin.task.api.shell.BaseLinuxShellInterceptorBuilderTest.generateBootstrapCommandTest"
+      ],
+      "id": "dolphinscheduler-9d65872e890c",
+      "target_files": [
+        "dolphinscheduler-task-plugin/dolphinscheduler-task-api/src/main/java/org/apache/dolphinscheduler/plugin/task/api/shell/BaseLinuxShellInterceptorBuilder.java"
+      ]
+    }
+  ],
+  "task": "dolphinscheduler",
+  "version": "3.2.1"
+}

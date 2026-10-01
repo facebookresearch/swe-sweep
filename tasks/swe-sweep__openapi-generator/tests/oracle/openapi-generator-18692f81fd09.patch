@@ -1,0 +1,13 @@
+diff --git a/modules/openapi-generator/src/main/java/org/openapitools/codegen/languages/AbstractKotlinCodegen.java b/modules/openapi-generator/src/main/java/org/openapitools/codegen/languages/AbstractKotlinCodegen.java
+index 6b48b6824a1..03a01ce454e 100644
+--- a/modules/openapi-generator/src/main/java/org/openapitools/codegen/languages/AbstractKotlinCodegen.java
++++ b/modules/openapi-generator/src/main/java/org/openapitools/codegen/languages/AbstractKotlinCodegen.java
+@@ -901,7 +901,7 @@ public abstract class AbstractKotlinCodegen extends DefaultCodegen implements Co
+         } else if ("kotlin.Float".equals(datatype)) {
+             return value + "f";
+         } else {
+-            return "\"" + escapeText(value) + "\"";
++            return "\"" + value + "\"";
+         }
+     }
+ 

@@ -1,0 +1,48 @@
+diff --git a/src/test/java/io/reactivex/internal/operators/flowable/FlowableBufferTest.java b/src/test/java/io/reactivex/internal/operators/flowable/FlowableBufferTest.java
+index 5060c5825..e79130ff4 100644
+--- a/src/test/java/io/reactivex/internal/operators/flowable/FlowableBufferTest.java
++++ b/src/test/java/io/reactivex/internal/operators/flowable/FlowableBufferTest.java
+@@ -2769,4 +2769,19 @@ public class FlowableBufferTest {
+ 
+         sub.run();
+     }
++
++    @Test
++    public void bufferExactFailingSupplier() {
++        Flowable.empty()
++                .buffer(1, TimeUnit.SECONDS, Schedulers.computation(), 10, new Callable<List<Object>>() {
++                    @Override
++                    public List<Object> call() throws Exception {
++                        throw new TestException();
++                    }
++                }, false)
++                .test()
++                .awaitDone(1, TimeUnit.SECONDS)
++                .assertFailure(TestException.class)
++        ;
++    }
+ }
+diff --git a/src/test/java/io/reactivex/internal/operators/observable/ObservableBufferTest.java b/src/test/java/io/reactivex/internal/operators/observable/ObservableBufferTest.java
+index 43612b228..66a4e24dc 100644
+--- a/src/test/java/io/reactivex/internal/operators/observable/ObservableBufferTest.java
++++ b/src/test/java/io/reactivex/internal/operators/observable/ObservableBufferTest.java
+@@ -2136,4 +2136,19 @@ public class ObservableBufferTest {
+             }
+         });
+     }
++
++    @Test
++    public void bufferExactFailingSupplier() {
++        Observable.empty()
++                .buffer(1, TimeUnit.SECONDS, Schedulers.computation(), 10, new Callable<List<Object>>() {
++                    @Override
++                    public List<Object> call() throws Exception {
++                        throw new TestException();
++                    }
++                }, false)
++                .test()
++                .awaitDone(1, TimeUnit.SECONDS)
++                .assertFailure(TestException.class)
++        ;
++    }
+ }

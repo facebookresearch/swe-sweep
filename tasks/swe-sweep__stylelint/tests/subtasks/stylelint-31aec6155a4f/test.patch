@@ -1,0 +1,14 @@
+diff --git a/lib/rules/selector-pseudo-class-no-unknown/__tests__/index.mjs b/lib/rules/selector-pseudo-class-no-unknown/__tests__/index.mjs
+index d742ba6ec..4b45bfe46 100644
+--- a/lib/rules/selector-pseudo-class-no-unknown/__tests__/index.mjs
++++ b/lib/rules/selector-pseudo-class-no-unknown/__tests__/index.mjs
+@@ -127,6 +127,9 @@ testRule({
+ 		{
+ 			code: ':seeking, :stalled, :buffering, :volume-locked, :muted {}',
+ 		},
++		{
++			code: ':checked, :unchecked, :indeterminate {}',
++		},
+ 	],
+ 
+ 	reject: [

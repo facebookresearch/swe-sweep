@@ -1,0 +1,13 @@
+diff --git a/plugins/cleanupIds.js b/plugins/cleanupIds.js
+index c113db2..671a852 100644
+--- a/plugins/cleanupIds.js
++++ b/plugins/cleanupIds.js
+@@ -12,7 +12,7 @@ exports.description = 'removes unused IDs and minifies used';
+ 
+ const regReferencesUrl = /\burl\((["'])?#(.+?)\1\)/;
+ const regReferencesHref = /^#(.+?)$/;
+-const regReferencesBegin = /(\D+)\./;
++const regReferencesBegin = /(\w+)\.[a-zA-Z]/;
+ const generateIdChars = [
+   'a',
+   'b',

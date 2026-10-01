@@ -1,0 +1,220 @@
+diff --git a/tests/ui/branches_sharing_code/shared_at_bottom.rs b/tests/ui/branches_sharing_code/shared_at_bottom.rs
+index 06472a4f5..922d30443 100644
+--- a/tests/ui/branches_sharing_code/shared_at_bottom.rs
++++ b/tests/ui/branches_sharing_code/shared_at_bottom.rs
+@@ -239,3 +239,40 @@ fn fp_if_let_issue7054() {
+ }
+ 
+ fn main() {}
++
++mod issue14873 {
++    fn foo() -> i32 {
++        todo!()
++    }
++
++    macro_rules! qux {
++        ($a:ident, $b:ident, $condition:expr) => {
++            if $condition {
++                "."
++            } else {
++                ""
++            };
++            $a = foo();
++            $b = foo();
++        };
++    }
++
++    fn share_on_bottom() {
++        let mut a = 0;
++        let mut b = 0;
++        if false {
++            qux!(a, b, a == b);
++        } else {
++            qux!(a, b, a != b);
++        };
++
++        if false {
++            qux!(a, b, a == b);
++            let y = 1;
++        } else {
++            qux!(a, b, a != b);
++            let y = 1;
++            //~^ branches_sharing_code
++        }
++    }
++}
+diff --git a/tests/ui/branches_sharing_code/shared_at_bottom.stderr b/tests/ui/branches_sharing_code/shared_at_bottom.stderr
+index 648a99c65..f437db8b7 100644
+--- a/tests/ui/branches_sharing_code/shared_at_bottom.stderr
++++ b/tests/ui/branches_sharing_code/shared_at_bottom.stderr
+@@ -157,5 +157,20 @@ LL ~     if x == 17 { b = 1; a = 0x99; } else { }
+ LL +     a = 0x99;
+    |
+ 
+-error: aborting due to 9 previous errors
++error: all if blocks contain the same code at the end
++  --> tests/ui/branches_sharing_code/shared_at_bottom.rs:274:9
++   |
++LL | /             let y = 1;
++LL | |
++LL | |         }
++   | |_________^
++   |
++   = warning: some moved values might need to be renamed to avoid wrong references
++help: consider moving these statements after the if
++   |
++LL ~         }
++LL +         let y = 1;
++   |
++
++error: aborting due to 10 previous errors
+ 
+diff --git a/tests/ui/branches_sharing_code/shared_at_top.rs b/tests/ui/branches_sharing_code/shared_at_top.rs
+index 694c67d4c..dcd77679f 100644
+--- a/tests/ui/branches_sharing_code/shared_at_top.rs
++++ b/tests/ui/branches_sharing_code/shared_at_top.rs
+@@ -124,3 +124,34 @@ fn pf_local_with_inferred_type_issue7053() {
+ }
+ 
+ fn main() {}
++
++mod issue14873 {
++    fn foo() -> i32 {
++        todo!()
++    }
++
++    macro_rules! qux {
++        ($a:ident, $b:ident, $condition:expr) => {
++            let $a: i32 = foo();
++            let $b: i32 = foo();
++            if $condition { "." } else { "" }
++        };
++    }
++
++    fn share_on_top() {
++        if false {
++            qux!(a, b, a == b);
++        } else {
++            qux!(a, b, a != b);
++        };
++
++        if false {
++            //~^ branches_sharing_code
++            let x = 1;
++            qux!(a, b, a == b);
++        } else {
++            let x = 1;
++            qux!(a, b, a != b);
++        }
++    }
++}
+diff --git a/tests/ui/branches_sharing_code/shared_at_top.stderr b/tests/ui/branches_sharing_code/shared_at_top.stderr
+index d28e9c7af..30efb98b3 100644
+--- a/tests/ui/branches_sharing_code/shared_at_top.stderr
++++ b/tests/ui/branches_sharing_code/shared_at_top.stderr
+@@ -125,5 +125,20 @@ note: the lint level is defined here
+ LL | #![deny(clippy::branches_sharing_code, clippy::if_same_then_else)]
+    |                                        ^^^^^^^^^^^^^^^^^^^^^^^^^
+ 
+-error: aborting due to 7 previous errors
++error: all if blocks contain the same code at the start
++  --> tests/ui/branches_sharing_code/shared_at_top.rs:148:9
++   |
++LL | /         if false {
++LL | |
++LL | |             let x = 1;
++   | |______________________^
++   |
++   = warning: some moved values might need to be renamed to avoid wrong references
++help: consider moving these statements before the if
++   |
++LL ~         let x = 1;
++LL +         if false {
++   |
++
++error: aborting due to 8 previous errors
+ 
+diff --git a/tests/ui/branches_sharing_code/shared_at_top_and_bottom.rs b/tests/ui/branches_sharing_code/shared_at_top_and_bottom.rs
+index 75334f70f..e848f0601 100644
+--- a/tests/ui/branches_sharing_code/shared_at_top_and_bottom.rs
++++ b/tests/ui/branches_sharing_code/shared_at_top_and_bottom.rs
+@@ -128,3 +128,42 @@ fn added_note_for_expression_use() -> u32 {
+ }
+ 
+ fn main() {}
++
++mod issue14873 {
++    fn foo() -> i32 {
++        todo!()
++    }
++
++    macro_rules! qux {
++        ($a:ident, $b:ident, $condition:expr) => {
++            let mut $a: i32 = foo();
++            let mut $b: i32 = foo();
++            if $condition {
++                "."
++            } else {
++                ""
++            };
++            $a = foo();
++            $b = foo();
++        };
++    }
++
++    fn share_on_top_and_bottom() {
++        if false {
++            qux!(a, b, a == b);
++        } else {
++            qux!(a, b, a != b);
++        };
++
++        if false {
++            //~^ branches_sharing_code
++            let x = 1;
++            qux!(a, b, a == b);
++            let y = 1;
++        } else {
++            let x = 1;
++            qux!(a, b, a != b);
++            let y = 1;
++        }
++    }
++}
+diff --git a/tests/ui/branches_sharing_code/shared_at_top_and_bottom.stderr b/tests/ui/branches_sharing_code/shared_at_top_and_bottom.stderr
+index 2200ab450..40f3453ed 100644
+--- a/tests/ui/branches_sharing_code/shared_at_top_and_bottom.stderr
++++ b/tests/ui/branches_sharing_code/shared_at_top_and_bottom.stderr
+@@ -159,5 +159,31 @@ LL ~     }
+ LL +     x * 4
+    |
+ 
+-error: aborting due to 5 previous errors
++error: all if blocks contain the same code at both the start and the end
++  --> tests/ui/branches_sharing_code/shared_at_top_and_bottom.rs:158:9
++   |
++LL | /         if false {
++LL | |
++LL | |             let x = 1;
++   | |______________________^
++   |
++note: this code is shared at the end
++  --> tests/ui/branches_sharing_code/shared_at_top_and_bottom.rs:166:9
++   |
++LL | /             let y = 1;
++LL | |         }
++   | |_________^
++   = warning: some moved values might need to be renamed to avoid wrong references
++help: consider moving these statements before the if
++   |
++LL ~         let x = 1;
++LL +         if false {
++   |
++help: consider moving these statements after the if
++   |
++LL ~         }
++LL +         let y = 1;
++   |
++
++error: aborting due to 6 previous errors
+ 

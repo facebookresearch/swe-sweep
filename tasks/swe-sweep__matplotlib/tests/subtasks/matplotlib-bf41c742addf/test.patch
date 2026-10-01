@@ -1,0 +1,18 @@
+diff --git a/lib/matplotlib/tests/test_mathtext.py b/lib/matplotlib/tests/test_mathtext.py
+index b200c3a9e0..b89ceaa144 100644
+--- a/lib/matplotlib/tests/test_mathtext.py
++++ b/lib/matplotlib/tests/test_mathtext.py
+@@ -299,6 +299,13 @@ def test_single_minus_sign():
+     assert not np.all(array == 0xff)
+ 
+ 
++@pytest.mark.parametrize("expr", [r"$x^2'$", r"$x^a'$", r"$x^2''$", r"$x^\alpha'$"])
++def test_mathtext_single_char_super_with_prime(expr):
++    # Regression test for a crash: prime after a single-char superscript.
++    parser = mathtext.MathTextParser('agg')
++    parser.parse(expr)
++
++
+ @check_figures_equal(extensions=["png"])
+ def test_spaces(fig_test, fig_ref):
+     fig_test.subplots().set_title(r"$1\,2\>3\ 4$")

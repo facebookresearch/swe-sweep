@@ -1,0 +1,22 @@
+diff --git a/compiler/ccgstmts.nim b/compiler/ccgstmts.nim
+index 559849f..1530962 100644
+--- a/compiler/ccgstmts.nim
++++ b/compiler/ccgstmts.nim
+@@ -741,10 +741,14 @@ proc genRaiseStmt(p: BProc, t: PNode) =
+     var e = rdLoc(a)
+     discard getTypeDesc(p.module, t[0].typ)
+     var typ = skipTypes(t[0].typ, abstractPtrs)
+-    # XXX For reasons that currently escape me, this is only required by the new
+-    # C++ based exception handling:
+-    if p.config.exc == excCpp:
++    case p.config.exc
++    of excCpp:
+       blockLeaveActions(p, howManyTrys = 0, howManyExcepts = p.inExceptBlockLen)
++    of excGoto:
++      blockLeaveActions(p, howManyTrys = 0,
++        howManyExcepts = (if p.nestedTryStmts.len > 0 and p.nestedTryStmts[^1].inExcept: 1 else: 0))
++    else:
++      discard
+     genLineDir(p, t)
+     if isImportedException(typ, p.config):
+       lineF(p, cpsStmts, "throw $1;$n", [e])

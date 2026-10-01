@@ -1,0 +1,18 @@
+diff --git a/xarray/tests/test_plot.py b/xarray/tests/test_plot.py
+index d80445af..6cc061a7 100644
+--- a/xarray/tests/test_plot.py
++++ b/xarray/tests/test_plot.py
+@@ -729,6 +729,13 @@ class TestPlot(PlotTestCase):
+         expected = "dim_0_bins_center [m]"
+         assert actual == expected
+ 
++    def test_multiplot_over_length_one_dim(self) -> None:
++        a = easy_array((3, 1, 1, 1))
++        d = DataArray(a, dims=("x", "col", "row", "hue"))
++        d.plot(col="col")
++        d.plot(row="row")
++        d.plot(hue="hue")
++
+ 
+ class TestPlot1D(PlotTestCase):
+     @pytest.fixture(autouse=True)

@@ -1,0 +1,39 @@
+diff --git a/modules/gdscript/tests/scripts/lsp/first_line_class_name.gd b/modules/gdscript/tests/scripts/lsp/first_line_class_name.gd
+new file mode 100644
+index 0000000000..2a836b7101
+--- /dev/null
++++ b/modules/gdscript/tests/scripts/lsp/first_line_class_name.gd
+@@ -0,0 +1,5 @@
++class_name Test
++extends Node
++
++func _init():
++	pass
+diff --git a/modules/gdscript/tests/test_lsp.h b/modules/gdscript/tests/test_lsp.h
+index 976aa2b509..bf733962ef 100644
+--- a/modules/gdscript/tests/test_lsp.h
++++ b/modules/gdscript/tests/test_lsp.h
+@@ -468,6 +468,23 @@ func f():
+ 			test_resolve_symbols(uri, all_test_data, all_test_data);
+ 		}
+ 
++		SUBCASE("selectionRange of root class must be inside range") {
++			LocalVector<String> paths = {
++				"res://lsp/first_line_class_name.gd", // class_name (and thus selection range) before extends
++			};
++
++			for (const String &path : paths) {
++				assert_no_errors_in(path);
++				GDScriptLanguageProtocol::get_singleton()->get_workspace()->parse_local_script(path);
++				ExtendGDScriptParser *parser = GDScriptLanguageProtocol::get_singleton()->get_workspace()->parse_results[path];
++				REQUIRE(parser);
++				lsp::DocumentSymbol cls = parser->get_symbols();
++
++				REQUIRE(((cls.range.start.line == cls.selectionRange.start.line && cls.range.start.character <= cls.selectionRange.start.character) || (cls.range.start.line < cls.selectionRange.start.line)));
++				REQUIRE(((cls.range.end.line == cls.selectionRange.end.line && cls.range.end.character >= cls.selectionRange.end.character) || (cls.range.end.line > cls.selectionRange.end.line)));
++			}
++		}
++
+ 		memdelete(proto);
+ 		finish_language();
+ 	}

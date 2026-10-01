@@ -1,0 +1,41 @@
+diff --git a/src/Compilers/CSharp/Test/Syntax/Syntax/SyntaxNormalizerTests.cs b/src/Compilers/CSharp/Test/Syntax/Syntax/SyntaxNormalizerTests.cs
+index b05dc0f3771..14afa6fec45 100644
+--- a/src/Compilers/CSharp/Test/Syntax/Syntax/SyntaxNormalizerTests.cs
++++ b/src/Compilers/CSharp/Test/Syntax/Syntax/SyntaxNormalizerTests.cs
+@@ -6236,6 +6236,36 @@ static class E
+   {
+   }
+ }
++""");
++        }
++
++        [Fact]
++        public void TestNormalizeSuppression_01()
++        {
++            TestNormalizeDeclaration("""
++throw null!;
++""", """
++throw null!;
++""");
++        }
++
++        [Fact]
++        public void TestNormalizeSuppression_02()
++        {
++            TestNormalizeDeclaration("""
++throw x!;
++""", """
++throw x!;
++""");
++        }
++
++        [Fact]
++        public void TestNormalizeSuppression_03()
++        {
++            TestNormalizeDeclaration("""
++M()!;
++""", """
++M()!;
+ """);
+         }
+     }

@@ -1,0 +1,18 @@
+diff --git a/sqlglot/expressions.py b/sqlglot/expressions.py
+index 7471b3b3dd..28fd7a6cb4 100644
+--- a/sqlglot/expressions.py
++++ b/sqlglot/expressions.py
+@@ -5988,11 +5988,11 @@ class Lead(AggFunc):
+ # some dialects have a distinction between first and first_value, usually first is an aggregate func
+ # and first_value is a window func
+ class First(AggFunc):
+-    pass
++    arg_types = {"this": True, "expression": False}
+ 
+ 
+ class Last(AggFunc):
+-    pass
++    arg_types = {"this": True, "expression": False}
+ 
+ 
+ class FirstValue(AggFunc):

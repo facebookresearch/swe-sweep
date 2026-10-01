@@ -1,0 +1,48 @@
+diff --git a/worktree_commit_test.go b/worktree_commit_test.go
+index 519e1636..305f4e86 100644
+--- a/worktree_commit_test.go
++++ b/worktree_commit_test.go
+@@ -11,6 +11,8 @@ import (
+ 
+ 	"github.com/go-git/go-git/v5/plumbing"
+ 	"github.com/go-git/go-git/v5/plumbing/cache"
++	"github.com/go-git/go-git/v5/plumbing/filemode"
++	"github.com/go-git/go-git/v5/plumbing/format/index"
+ 	"github.com/go-git/go-git/v5/plumbing/object"
+ 	"github.com/go-git/go-git/v5/plumbing/storer"
+ 	"github.com/go-git/go-git/v5/storage/filesystem"
+@@ -24,6 +26,34 @@ import (
+ 	. "gopkg.in/check.v1"
+ )
+ 
++// This tests that buildTreeHelper correctly
++// handles file entries with zero hashes. This was a bug where files with
++// zero hashes would incorrectly trigger recursive tree building, causing
++// a nil pointer dereference panic.
++func (s *WorktreeSuite) TestBuildTreeHelper_1773(c *C) {
++	fs := memfs.New()
++	storage := memory.NewStorage()
++
++	h := &buildTreeHelper{
++		fs: fs,
++		s:  storage,
++	}
++
++	// Create an index with a file that has a zero hash.
++	idx := &index.Index{
++		Entries: []*index.Entry{
++			{
++				Name: "file.txt",
++				Mode: filemode.Regular,
++				Hash: plumbing.ZeroHash,
++			},
++		},
++	}
++
++	_, err := h.BuildTree(idx)
++	c.Assert(err, IsNil)
++}
++
+ func (s *WorktreeSuite) TestCommitEmptyOptions(c *C) {
+ 	r, err := Init(memory.NewStorage(), memfs.New())
+ 	c.Assert(err, IsNil)

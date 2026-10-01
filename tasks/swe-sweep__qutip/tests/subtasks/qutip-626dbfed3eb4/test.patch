@@ -1,0 +1,19 @@
+diff --git a/qutip/tests/test_qobj.py b/qutip/tests/test_qobj.py
+index 603d06835..8526c1fe7 100644
+--- a/qutip/tests/test_qobj.py
++++ b/qutip/tests/test_qobj.py
+@@ -295,6 +295,13 @@ def test_QobjAddition():
+     data = 2.0 * data
+     assert np.all(x3.data.todense() - np.matrix(data) == 0)
+     assert np.all(x4.data.todense() - np.matrix(data) == 0)
+ 
++    ket = Qobj([[1j],[0.]])
++    with pytest.raises(TypeError):
++        out = ket + 1.
++
++    with pytest.raises(TypeError):
++        out = 1. + ket
++
+ 
+ def test_QobjSubtraction():
+     "Qobj subtraction"

@@ -1,0 +1,28 @@
+diff --git a/tests/ui/unnecessary_to_owned.fixed b/tests/ui/unnecessary_to_owned.fixed
+index b064a8b8f..316eac0b5 100644
+--- a/tests/ui/unnecessary_to_owned.fixed
++++ b/tests/ui/unnecessary_to_owned.fixed
+@@ -675,3 +675,9 @@ mod issue_14242 {
+         rc_slice_provider().to_vec().into_iter()
+     }
+ }
++
++fn issue14833() {
++    use std::collections::HashSet;
++    let mut s = HashSet::<&String>::new();
++    s.remove(&"hello".to_owned());
++}
+diff --git a/tests/ui/unnecessary_to_owned.rs b/tests/ui/unnecessary_to_owned.rs
+index 7954a4ad4..f2dbd1db3 100644
+--- a/tests/ui/unnecessary_to_owned.rs
++++ b/tests/ui/unnecessary_to_owned.rs
+@@ -675,3 +675,9 @@ mod issue_14242 {
+         rc_slice_provider().to_vec().into_iter()
+     }
+ }
++
++fn issue14833() {
++    use std::collections::HashSet;
++    let mut s = HashSet::<&String>::new();
++    s.remove(&"hello".to_owned());
++}

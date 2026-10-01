@@ -1,0 +1,25 @@
+diff --git a/compiler/test/runnable/noreturn2.d b/compiler/test/runnable/noreturn2.d
+index ef0627202c..82f25f8e82 100644
+--- a/compiler/test/runnable/noreturn2.d
++++ b/compiler/test/runnable/noreturn2.d
+@@ -145,6 +145,20 @@ void testAccess()
+         foo(a);
+         assert(false, "Unreachable!"); // Ditto
+     });
++
++    testAssertFailure(__LINE__ + 3, msg,
++    {
++        noreturn v;
++        auto id = typeid(v);
++    });
++
++    // test condition
++    testAssertFailure(__LINE__ + 3, msg,
++    {
++        noreturn v;
++        if (v)
++            return;
++    });
+ }
+ 
+ /*****************************************/

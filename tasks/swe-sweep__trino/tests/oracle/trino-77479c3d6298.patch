@@ -1,0 +1,13 @@
+diff --git a/core/trino-parser/src/main/java/io/trino/sql/SqlFormatter.java b/core/trino-parser/src/main/java/io/trino/sql/SqlFormatter.java
+index 06f66c949a6..f754f5709db 100644
+--- a/core/trino-parser/src/main/java/io/trino/sql/SqlFormatter.java
++++ b/core/trino-parser/src/main/java/io/trino/sql/SqlFormatter.java
+@@ -1004,7 +1004,7 @@ public final class SqlFormatter
+             if (node.isExists()) {
+                 builder.append("IF EXISTS ");
+             }
+-            builder.append(node.getName());
++            builder.append(formatName(node.getName()));
+ 
+             return null;
+         }

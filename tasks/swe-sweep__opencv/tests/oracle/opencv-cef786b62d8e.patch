@@ -1,0 +1,13 @@
+diff --git a/modules/imgcodecs/src/grfmt_tiff.cpp b/modules/imgcodecs/src/grfmt_tiff.cpp
+index d6f05f7a65..04df6ff8bb 100644
+--- a/modules/imgcodecs/src/grfmt_tiff.cpp
++++ b/modules/imgcodecs/src/grfmt_tiff.cpp
+@@ -820,7 +820,7 @@ bool TiffEncoder::writeLibTiff( const std::vector<Mat>& img_vec, const std::vect
+             return false;
+         }
+ 
+-        if (compression != COMPRESSION_NONE && !TIFFSetField(pTiffHandle, TIFFTAG_PREDICTOR, predictor))
++        if ((compression == COMPRESSION_LZW || compression == COMPRESSION_ADOBE_DEFLATE || compression == COMPRESSION_DEFLATE) && !TIFFSetField(pTiffHandle, TIFFTAG_PREDICTOR, predictor))
+         {
+             TIFFClose(pTiffHandle);
+             return false;

@@ -1,0 +1,24 @@
+diff --git a/scipy/ndimage/tests/test_ndimage.py b/scipy/ndimage/tests/test_ndimage.py
+index fcf0c5e520..a515043fc9 100644
+--- a/scipy/ndimage/tests/test_ndimage.py
++++ b/scipy/ndimage/tests/test_ndimage.py
+@@ -2491,6 +2491,18 @@ class TestNdimage:
+                     [-1, -1, -1, -1, -1, -1, -1],
+                     [-1, -1, -1, -1, -1, -1, -1]]
+         assert_array_almost_equal(out, expected)
+ 
++    def test_watershed_ift08(self):
++        # Test cost larger than uint8. See gh-10069.
++        shape = (2, 2)
++        data = numpy.array([[256, 0],
++                            [0, 0]], numpy.uint16)
++        markers = numpy.array([[1, 0],
++                               [0, 0]], numpy.int8)
++        out = ndimage.watershed_ift(data, markers)
++        expected = [[1, 1],
++                    [1, 1]]
++        assert_array_almost_equal(out, expected)
++
+     def test_distance_transform_bf01(self):
+         # brute force (bf) distance transform
+         for type_ in self.types:

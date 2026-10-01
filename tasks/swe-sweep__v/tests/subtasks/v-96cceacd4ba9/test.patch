@@ -1,0 +1,19 @@
+diff --git a/vlib/v/tests/builtin_arrays/array_map_to_fixed_array_test.v b/vlib/v/tests/builtin_arrays/array_map_to_fixed_array_test.v
+new file mode 100644
+index 000000000..8228b54d3
+--- /dev/null
++++ b/vlib/v/tests/builtin_arrays/array_map_to_fixed_array_test.v
+@@ -0,0 +1,13 @@
++type Mat4 = [16]f32
++
++struct GameObject {
++mut:
++	transform Mat4
++	children  []&GameObject
++}
++
++fn test_array_map_to_fixed_array() {
++	mut v1 := &GameObject{}
++	eprintln('children: ${v1.children.map(it.transform)}')
++	assert '${v1.children.map(it.transform)}' == '[]'
++}

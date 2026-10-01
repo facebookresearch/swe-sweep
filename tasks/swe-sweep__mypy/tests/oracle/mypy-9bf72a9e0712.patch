@@ -1,0 +1,15 @@
+diff --git a/mypy/semanal.py b/mypy/semanal.py
+index 7145e7f7e..a9dbc8a2d 100644
+--- a/mypy/semanal.py
++++ b/mypy/semanal.py
+@@ -6511,7 +6511,9 @@ class SemanticAnalyzer(
+                 implicit_node = node
+         # 2b. Class attributes __qualname__ and __module__
+         if self.type and not self.is_func_scope() and name in {"__qualname__", "__module__"}:
+-            return SymbolTableNode(MDEF, Var(name, self.str_type()))
++            v = Var(name, self.str_type())
++            v._fullname = self.qualified_name(name)
++            return SymbolTableNode(MDEF, v)
+         # 3. Local (function) scopes
+         for table in reversed(self.locals):
+             if table is not None and name in table:

@@ -1,0 +1,177 @@
+diff --git a/src/box/tuple.c b/src/box/tuple.c
+index 2d32ed980b..3653eb55dc 100644
+--- a/src/box/tuple.c
++++ b/src/box/tuple.c
+@@ -509,7 +509,8 @@ tuple_field_go_to_index(const char **field, uint64_t index)
+ }
+ 
+ int
+-tuple_field_go_to_key(const char **field, const char *key, int len)
++tuple_field_go_to_key(const char **field, const char *key, int len,
++		      const char **field_key)
+ {
+ 	enum mp_type type = mp_typeof(**field);
+ 	if (type != MP_MAP)
+@@ -519,6 +520,8 @@ tuple_field_go_to_key(const char **field, const char *key, int len)
+ 		type = mp_typeof(**field);
+ 		if (type == MP_STR) {
+ 			uint32_t value_len;
++			if (field_key != NULL)
++				*field_key = *field;
+ 			const char *value = mp_decode_str(field, &value_len);
+ 			if (value_len == (uint)len &&
+ 			    memcmp(value, key, len) == 0)
+@@ -552,7 +555,8 @@ tuple_go_to_path(const char **data, const char *path, uint32_t path_len,
+ 			rc = tuple_field_go_to_index(data, token.num);
+ 			break;
+ 		case JSON_TOKEN_STR:
+-			rc = tuple_field_go_to_key(data, token.str, token.len);
++			rc = tuple_field_go_to_key(data, token.str, token.len,
++						   /*field_key=*/NULL);
+ 			break;
+ 		default:
+ 			assert(token.type == JSON_TOKEN_END);
+diff --git a/src/box/tuple.h b/src/box/tuple.h
+index 1dff426625..76fb15ad17 100644
+--- a/src/box/tuple.h
++++ b/src/box/tuple.h
+@@ -926,12 +926,14 @@ tuple_field_go_to_index(const char **field, uint64_t index);
+  * @param[in][out] field Field to propagate.
+  * @param key Key to propagate to.
+  * @param len Length of @a key.
++ * @param field_key Pointer to key in @a field.
+  *
+  * @retval  0 Success, the index was found.
+  * @retval -1 Not found.
+  */
+ int
+-tuple_field_go_to_key(const char **field, const char *key, int len);
++tuple_field_go_to_key(const char **field, const char *key, int len,
++		      const char **field_key);
+ 
+ /**
+  * Get tuple field by field index, relative JSON path and
+diff --git a/src/box/xrow_update_bar.c b/src/box/xrow_update_bar.c
+index f21d5e6051..0de983037b 100644
+--- a/src/box/xrow_update_bar.c
++++ b/src/box/xrow_update_bar.c
+@@ -53,21 +53,19 @@ xrow_update_bar_finish(struct xrow_update_field *field)
+  *
+  * @param op Update operation.
+  * @param field Field to locate in.
+- * @param[out] key_len_or_index One parameter for two values,
+- *        depending on where the target point is located: in an
+- *        array or a map. In case of map it is size of a key
+- *        before the found point. It is used to find range of the
+- *        both key and value in '#' operation to drop the pair.
+- *        In case of array it is index of the array element to be
+- *        able to check how many fields are left for deletion.
++ * @param[out] index The parameter is set to index in array in case target point
++ *        is located in a array. Otherwise is undefined.
++ * @param[out] field_key The parameter is set to pointer to key in map in case
++ *        target point is located in a map. Otherwise is undefined. NULL is
++ *        valid to ignore this output parameter.
+  *
+  * @retval 0 Success.
+  * @retval -1 Not found or invalid JSON.
+  */
+ static inline int
+ xrow_update_bar_locate(struct xrow_update_op *op,
+-		       struct xrow_update_field *field,
+-		       int *key_len_or_index)
++		       struct xrow_update_field *field, int *index,
++		       const char **field_key)
+ {
+ 	/*
+ 	 * Bar update is not flat by definition. It always has a
+@@ -88,17 +86,16 @@ xrow_update_bar_locate(struct xrow_update_op *op,
+ 	struct json_token token;
+ 	while ((rc = json_lexer_next_token(&op->lexer, &token)) == 0 &&
+ 	       token.type != JSON_TOKEN_END) {
+-
+ 		switch (token.type) {
+ 		case JSON_TOKEN_NUM:
+ 			field->bar.parent = pos;
+-			*key_len_or_index = token.num;
++			*index = token.num;
+ 			rc = tuple_field_go_to_index(&pos, token.num);
+ 			break;
+ 		case JSON_TOKEN_STR:
+ 			field->bar.parent = pos;
+-			*key_len_or_index = token.len;
+-			rc = tuple_field_go_to_key(&pos, token.str, token.len);
++			rc = tuple_field_go_to_key(&pos, token.str, token.len,
++						   field_key);
+ 			break;
+ 		default:
+ 			assert(token.type == JSON_TOKEN_ANY);
+@@ -164,7 +161,8 @@ xrow_update_bar_locate_opt(struct xrow_update_op *op,
+ 		case JSON_TOKEN_STR:
+ 			field->bar.parent = pos;
+ 			*key_len_or_index = token.len;
+-			rc = tuple_field_go_to_key(&pos, token.str, token.len);
++			rc = tuple_field_go_to_key(&pos, token.str, token.len,
++						   /*field_key=*/NULL);
+ 			break;
+ 		default:
+ 			assert(token.type == JSON_TOKEN_ANY);
+@@ -266,14 +264,15 @@ xrow_update_op_do_nop_delete(struct xrow_update_op *op,
+ {
+ 	assert(op->opcode == '#');
+ 	assert(field->type == XUPDATE_NOP);
+-	int key_len_or_index = 0;
+-	if (xrow_update_bar_locate(op, field, &key_len_or_index) != 0)
++	int index = 0;
++	const char *field_key = NULL;
++	if (xrow_update_bar_locate(op, field, &index, &field_key) != 0)
+ 		return -1;
+ 	if (mp_typeof(*field->bar.parent) == MP_ARRAY) {
+ 		const char *tmp = field->bar.parent;
+ 		uint32_t size = mp_decode_array(&tmp);
+-		if (key_len_or_index + op->arg.del.count > size)
+-			op->arg.del.count = size - key_len_or_index;
++		if (index + op->arg.del.count > size)
++			op->arg.del.count = size - index;
+ 		const char *end = field->bar.point + field->bar.point_size;
+ 		for (uint32_t i = 1; i < op->arg.del.count; ++i)
+ 			mp_next(&end);
+@@ -281,10 +280,10 @@ xrow_update_op_do_nop_delete(struct xrow_update_op *op,
+ 	} else {
+ 		if (op->arg.del.count != 1)
+ 			return xrow_update_err_delete1(op);
+-		/* Take key size into account to delete it too. */
+-		key_len_or_index = mp_sizeof_str(key_len_or_index);
+-		field->bar.point -= key_len_or_index;
+-		field->bar.point_size += key_len_or_index;
++		const char *field_key_end = field_key;
++		mp_next(&field_key_end);
++		field->bar.point = field_key;
++		field->bar.point_size += field_key_end - field_key;
+ 	}
+ 	return xrow_update_bar_finish(field);
+ }
+@@ -313,8 +312,8 @@ xrow_update_op_do_nop_##op_type(struct xrow_update_op *op,			\
+ 				struct xrow_update_field *field)		\
+ {										\
+ 	assert(field->type == XUPDATE_NOP);					\
+-	int key_len_or_index;							\
+-	if (xrow_update_bar_locate(op, field, &key_len_or_index) != 0)		\
++	int index;								\
++	if (xrow_update_bar_locate(op, field, &index, /*field_key=*/NULL) != 0)	\
+ 		return -1;							\
+ 	if (xrow_update_op_do_##op_type(op, field->bar.point) != 0)		\
+ 		return -1;							\
+diff --git a/src/box/xrow_update_route.c b/src/box/xrow_update_route.c
+index 0a3654745b..34a2b3e801 100644
+--- a/src/box/xrow_update_route.c
++++ b/src/box/xrow_update_route.c
+@@ -213,7 +213,8 @@ xrow_update_route_branch(struct xrow_update_field *field,
+ 			break;
+ 		case JSON_TOKEN_STR:
+ 			rc = tuple_field_go_to_key(&parent, new_token.str,
+-						   new_token.len);
++						   new_token.len,
++						   /*field_key=*/NULL);
+ 			break;
+ 		default:
+ 			/*

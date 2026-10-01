@@ -1,0 +1,16 @@
+diff --git a/packages/babel-parser/src/plugins/typescript.js b/packages/babel-parser/src/plugins/typescript.js
+index 5c1472728a..514fb1e8fb 100644
+--- a/packages/babel-parser/src/plugins/typescript.js
++++ b/packages/babel-parser/src/plugins/typescript.js
+@@ -1803,9 +1803,8 @@ export default (superClass: Class<Parser>): Class<Parser> =>
+     }
+ 
+     parseObjPropValue(prop: N.ObjectMember, ...args): void {
+-      if (this.isRelational("<")) {
+-        throw new Error("TODO");
+-      }
++      const typeParameters = this.tsTryParseTypeParameters();
++      if (typeParameters) prop.typeParameters = typeParameters;
+ 
+       super.parseObjPropValue(prop, ...args);
+     }

@@ -1,0 +1,93 @@
+diff --git a/pandas/tests/frame/methods/test_reindex.py b/pandas/tests/frame/methods/test_reindex.py
+index bee8025275..b70ceea845 100644
+--- a/pandas/tests/frame/methods/test_reindex.py
++++ b/pandas/tests/frame/methods/test_reindex.py
+@@ -8,6 +8,8 @@ from itertools import permutations
+ import numpy as np
+ import pytest
+ 
++from pandas._libs.tslibs.timezones import dateutil_gettz as gettz
++
+ import pandas as pd
+ from pandas import (
+     Categorical,
+@@ -78,6 +80,41 @@ class TestReindexSetIndex:
+         result = df2.reset_index()
+         tm.assert_frame_equal(result, expected)
+ 
++    @pytest.mark.parametrize(
++        "timezone, year, month, day, hour",
++        [["America/Chicago", 2013, 11, 3, 1], ["America/Santiago", 2021, 4, 3, 23]],
++    )
++    def test_reindex_timestamp_with_fold(self, timezone, year, month, day, hour):
++        # see gh-40817
++        test_timezone = gettz(timezone)
++        transition_1 = pd.Timestamp(
++            year=year,
++            month=month,
++            day=day,
++            hour=hour,
++            minute=0,
++            fold=0,
++            tzinfo=test_timezone,
++        )
++        transition_2 = pd.Timestamp(
++            year=year,
++            month=month,
++            day=day,
++            hour=hour,
++            minute=0,
++            fold=1,
++            tzinfo=test_timezone,
++        )
++        df = (
++            DataFrame({"index": [transition_1, transition_2], "vals": ["a", "b"]})
++            .set_index("index")
++            .reindex(["1", "2"])
++        )
++        tm.assert_frame_equal(
++            df,
++            DataFrame({"index": ["1", "2"], "vals": [None, None]}).set_index("index"),
++        )
++
+ 
+ class TestDataFrameSelectReindex:
+     # These are specific reindex-based tests; other indexing tests should go in
+diff --git a/pandas/tests/scalar/timestamp/test_timestamp.py b/pandas/tests/scalar/timestamp/test_timestamp.py
+index 1c34b5c8e5..f734c331e3 100644
+--- a/pandas/tests/scalar/timestamp/test_timestamp.py
++++ b/pandas/tests/scalar/timestamp/test_timestamp.py
+@@ -445,6 +445,33 @@ class TestTimestamp:
+         stamp = Timestamp(datetime(2011, 1, 1))
+         assert d[stamp] == 5
+ 
++    @pytest.mark.parametrize(
++        "timezone, year, month, day, hour",
++        [["America/Chicago", 2013, 11, 3, 1], ["America/Santiago", 2021, 4, 3, 23]],
++    )
++    def test_hash_timestamp_with_fold(self, timezone, year, month, day, hour):
++        # see gh-33931
++        test_timezone = gettz(timezone)
++        transition_1 = Timestamp(
++            year=year,
++            month=month,
++            day=day,
++            hour=hour,
++            minute=0,
++            fold=0,
++            tzinfo=test_timezone,
++        )
++        transition_2 = Timestamp(
++            year=year,
++            month=month,
++            day=day,
++            hour=hour,
++            minute=0,
++            fold=1,
++            tzinfo=test_timezone,
++        )
++        assert hash(transition_1) == hash(transition_2)
++
+     def test_tz_conversion_freq(self, tz_naive_fixture):
+         # GH25241
+         with tm.assert_produces_warning(FutureWarning, match="freq"):

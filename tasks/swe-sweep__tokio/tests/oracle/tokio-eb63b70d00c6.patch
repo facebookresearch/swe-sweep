@@ -1,0 +1,14 @@
+diff --git a/tokio/src/runtime/scheduler/multi_thread/worker.rs b/tokio/src/runtime/scheduler/multi_thread/worker.rs
+--- a/tokio/src/runtime/scheduler/multi_thread/worker.rs
++++ b/tokio/src/runtime/scheduler/multi_thread/worker.rs
+@@ -395,6 +395,10 @@
+ 
+         let cx = maybe_cx.expect("no .is_some() == false cases above should lead here");
+ 
++        // Since deferred tasks don't stay on `core`, make sure to wake them
++        // before blocking.
++        cx.defer.wake();
++
+         // Get the worker core. If none is set, then blocking is fine!
+         let core = match cx.core.borrow_mut().take() {
+             Some(core) => core,

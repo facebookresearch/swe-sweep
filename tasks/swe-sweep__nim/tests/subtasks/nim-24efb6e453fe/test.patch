@@ -1,0 +1,16 @@
+diff --git a/tests/ccgbugs/t21995.nim b/tests/ccgbugs/t21995.nim
+new file mode 100644
+index 000000000..0ec88aa59
+--- /dev/null
++++ b/tests/ccgbugs/t21995.nim
+@@ -0,0 +1,9 @@
++discard """
++    targets: "c cpp"
++    output: "Hi!"
++"""
++
++try:
++  raise
++except:
++  echo "Hi!"
+\ No newline at end of file

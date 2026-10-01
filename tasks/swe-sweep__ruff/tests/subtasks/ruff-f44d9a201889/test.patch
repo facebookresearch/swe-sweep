@@ -1,0 +1,59 @@
+diff --git a/crates/ruff_linter/resources/test/fixtures/isort/required_imports/docstring_followed_by_continuation.py b/crates/ruff_linter/resources/test/fixtures/isort/required_imports/docstring_followed_by_continuation.py
+new file mode 100644
+index 0000000000..4426d86c7b
+--- /dev/null
++++ b/crates/ruff_linter/resources/test/fixtures/isort/required_imports/docstring_followed_by_continuation.py
+@@ -0,0 +1,3 @@
++"""Hello, world!"""\
++
++x = 1; y = 2
+diff --git a/crates/ruff_linter/src/rules/isort/mod.rs b/crates/ruff_linter/src/rules/isort/mod.rs
+index 04bfc55c71..0ad92d763b 100644
+--- a/crates/ruff_linter/src/rules/isort/mod.rs
++++ b/crates/ruff_linter/src/rules/isort/mod.rs
+@@ -794,6 +794,7 @@ mod tests {
+     #[test_case(Path::new("comments_and_newlines.py"))]
+     #[test_case(Path::new("docstring.py"))]
+     #[test_case(Path::new("docstring.pyi"))]
++    #[test_case(Path::new("docstring_followed_by_continuation.py"))]
+     #[test_case(Path::new("docstring_only.py"))]
+     #[test_case(Path::new("docstring_with_continuation.py"))]
+     #[test_case(Path::new("docstring_with_semicolon.py"))]
+@@ -828,6 +829,7 @@ mod tests {
+     #[test_case(Path::new("comments_and_newlines.py"))]
+     #[test_case(Path::new("docstring.py"))]
+     #[test_case(Path::new("docstring.pyi"))]
++    #[test_case(Path::new("docstring_followed_by_continuation.py"))]
+     #[test_case(Path::new("docstring_only.py"))]
+     #[test_case(Path::new("docstring_with_continuation.py"))]
+     #[test_case(Path::new("docstring_with_semicolon.py"))]
+diff --git a/crates/ruff_linter/src/rules/isort/snapshots/ruff_linter__rules__isort__tests__required_import_docstring_followed_by_continuation.py.snap b/crates/ruff_linter/src/rules/isort/snapshots/ruff_linter__rules__isort__tests__required_import_docstring_followed_by_continuation.py.snap
+new file mode 100644
+index 0000000000..56afca4d3b
+--- /dev/null
++++ b/crates/ruff_linter/src/rules/isort/snapshots/ruff_linter__rules__isort__tests__required_import_docstring_followed_by_continuation.py.snap
+@@ -0,0 +1,9 @@
++---
++source: crates/ruff_linter/src/rules/isort/mod.rs
++---
++docstring_followed_by_continuation.py:1:1: I002 [*] Missing required import: `from __future__ import annotations`
++ℹ Safe fix
++1 1 | """Hello, world!"""\
++2 2 | 
++  3 |+from __future__ import annotations
++3 4 | x = 1; y = 2
+diff --git a/crates/ruff_linter/src/rules/isort/snapshots/ruff_linter__rules__isort__tests__required_import_with_alias_docstring_followed_by_continuation.py.snap b/crates/ruff_linter/src/rules/isort/snapshots/ruff_linter__rules__isort__tests__required_import_with_alias_docstring_followed_by_continuation.py.snap
+new file mode 100644
+index 0000000000..bfce198bae
+--- /dev/null
++++ b/crates/ruff_linter/src/rules/isort/snapshots/ruff_linter__rules__isort__tests__required_import_with_alias_docstring_followed_by_continuation.py.snap
+@@ -0,0 +1,9 @@
++---
++source: crates/ruff_linter/src/rules/isort/mod.rs
++---
++docstring_followed_by_continuation.py:1:1: I002 [*] Missing required import: `from __future__ import annotations as _annotations`
++ℹ Safe fix
++1 1 | """Hello, world!"""\
++2 2 | 
++  3 |+from __future__ import annotations as _annotations
++3 4 | x = 1; y = 2

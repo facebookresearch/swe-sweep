@@ -1,0 +1,13 @@
+diff --git a/src/full/Agda/TypeChecking/Primitive/Cubical.hs b/src/full/Agda/TypeChecking/Primitive/Cubical.hs
+index 6ff6a17..1dd7978 100644
+--- a/src/full/Agda/TypeChecking/Primitive/Cubical.hs
++++ b/src/full/Agda/TypeChecking/Primitive/Cubical.hs
+@@ -1178,7 +1178,7 @@ primTransHComp cmd ts nelims = do
+         lam "j" $ \ j ->
+           comp l (lam "i" $ \ i -> bA <@> i <@> j) (phi `imax` (ineg j `imax` j))
+                       (lam "i'" $ \ i ->
+-                            let or f1 f2 = pure tOr <#> l <@> f1 <@> f2 <#> lam "_" (\ _ -> bA <@> i <@> j) in
++                            let or f1 f2 = pure tOr <#> (l <@> i) <@> f1 <@> f2 <#> lam "_" (\ _ -> bA <@> i <@> j) in
+                                        or phi (ineg j `imax` j)
+                                           <@> ilam "o" (\ o -> u0 <@@> (x <@> pure iz, y <@> pure iz, j))
+                                           <@> (or (ineg j) j <@> ilam "_" (const (x <@> i))

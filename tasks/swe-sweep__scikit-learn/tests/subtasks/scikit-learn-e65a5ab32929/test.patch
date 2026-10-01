@@ -1,0 +1,15 @@
+diff --git a/sklearn/feature_extraction/tests/test_text.py b/sklearn/feature_extraction/tests/test_text.py
+index 6f22e70f18..9abe2b2e57 100644
+--- a/sklearn/feature_extraction/tests/test_text.py
++++ b/sklearn/feature_extraction/tests/test_text.py
+@@ -966,3 +966,10 @@ def test_vectorizer_vocab_clone():
+     vect_vocab.fit(ALL_FOOD_DOCS)
+     vect_vocab_clone.fit(ALL_FOOD_DOCS)
+     assert_equal(vect_vocab_clone.vocabulary_, vect_vocab.vocabulary_)
++
++
++def test_nonnegative_hashing_vectorizer_result_indices():
++    # add test for pr 19035
++    hashing = HashingVectorizer(n_features=1000000, ngram_range=(2, 3))
++    indices = hashing.transform(['22pcs efuture']).indices
++    assert indices[0] >= 0

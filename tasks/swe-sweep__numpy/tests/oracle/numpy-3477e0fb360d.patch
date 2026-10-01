@@ -1,0 +1,25 @@
+diff --git a/numpy/lib/function_base.py b/numpy/lib/function_base.py
+--- a/numpy/lib/function_base.py
++++ b/numpy/lib/function_base.py
+@@ -1758,6 +1758,12 @@ def _create_arrays(broadcast_shape, dim_sizes, list_of_core_dims, dtypes):
+     return arrays
+ 
+ 
++def _get_vectorize_dtype(dtype):
++    if dtype.char in "SU":
++        return dtype.char
++    return dtype
++
++
+ class vectorize(object):
+     """
+     vectorize(pyfunc, otypes=None, doc=None, excluded=None, cache=False,
+@@ -1926,7 +1932,7 @@ class vectorize(object):
+                 if char not in typecodes['All']:
+                     raise ValueError("Invalid otype specified: %s" % (char,))
+         elif iterable(otypes):
+-            otypes = ''.join([_nx.dtype(x).char for x in otypes])
++            otypes = [_get_vectorize_dtype(_nx.dtype(x)) for x in otypes]
+         elif otypes is not None:
+             raise ValueError("Invalid otype specification")
+         self.otypes = otypes

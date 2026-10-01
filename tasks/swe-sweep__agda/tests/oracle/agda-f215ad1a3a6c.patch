@@ -1,0 +1,84 @@
+diff --git a/src/full/Agda/TypeChecking/Primitive/Cubical.hs b/src/full/Agda/TypeChecking/Primitive/Cubical.hs
+index 6ff6a17..da14e45 100644
+--- a/src/full/Agda/TypeChecking/Primitive/Cubical.hs
++++ b/src/full/Agda/TypeChecking/Primitive/Cubical.hs
+@@ -1021,15 +1021,31 @@ primTransHComp cmd ts nelims = do
+ 
+                  Def q es -> do
+                    info <- getConstInfo q
+-                   let   lam_i = Lam defaultArgInfo . Abs "i"
++                   let
++                     lam_i = Lam defaultArgInfo . Abs "i"
++
++                     -- When should Kan operations on a record value reduce?
++                     doR r@Record{recEtaEquality' = eta} = case theEtaEquality eta of
++                       -- If it's a no-eta, pattern-matching record, then the
++                       -- Kan operations behave as they do for data types; Only
++                       -- reduce when the base is a constructor
++                       NoEta PatternMatching -> case unArg u0 of
++                         Con{} -> True
++                         _ -> False
++                       -- For every other case, we can reduce into a value
++                       -- defined by copatterns; However, this would expose the
++                       -- internal name of transp/hcomp when printed, so hold
++                       -- off until there are projections.
++                       _ -> nelims > 0
++                     doR _ = False
+ 
+                    case theDef info of
+-                     r@Record{recComp = kit} | nelims > 0, Just as <- allApplyElims es, DoTransp <- cmd, Just transpR <- nameOfTransp kit
++                     r@Record{recComp = kit} | doR r, Just as <- allApplyElims es, DoTransp <- cmd, Just transpR <- nameOfTransp kit
+                                 -> if recPars r == 0
+                                    then redReturn $ unArg u0
+                                    else redReturn $ (Def transpR []) `apply`
+                                                (map (fmap lam_i) as ++ [ignoreBlocking sphi,u0])
+-                         | nelims > 0, Just as <- allApplyElims es, DoHComp <- cmd, Just hCompR <- nameOfHComp kit
++                         | doR r, Just as <- allApplyElims es, DoHComp <- cmd, Just hCompR <- nameOfHComp kit
+                                 -> redReturn $ (Def hCompR []) `apply`
+                                                (as ++ [ignoreBlocking sphi,fromMaybe __IMPOSSIBLE__ u,u0])
+ 
+diff --git a/src/full/Agda/TypeChecking/Rules/Record.hs b/src/full/Agda/TypeChecking/Rules/Record.hs
+index 5a4680e..8db261a 100644
+--- a/src/full/Agda/TypeChecking/Rules/Record.hs
++++ b/src/full/Agda/TypeChecking/Rules/Record.hs
+@@ -346,7 +346,7 @@ checkRecDef i name uc (RecordDirectives ind eta0 pat con) (A.DataDefParams gpars
+ 
+       -- we define composition here so that the projections are already in the signature.
+       escapeContext impossible npars $ do
+-        addCompositionForRecord name con tel (map argFromDom fs) ftel rect
++        addCompositionForRecord name haveEta con tel (map argFromDom fs) ftel rect
+ 
+       -- The confluence checker needs to know what symbols match against
+       -- the constructor.
+@@ -365,13 +365,14 @@ checkRecDef i name uc (RecordDirectives ind eta0 pat con) (A.DataDefParams gpars
+ 
+ addCompositionForRecord
+   :: QName       -- ^ Datatype name.
++  -> EtaEquality
+   -> ConHead
+   -> Telescope   -- ^ @Γ@ parameters.
+   -> [Arg QName] -- ^ Projection names.
+   -> Telescope   -- ^ @Γ ⊢ Φ@ field types.
+   -> Type        -- ^ @Γ ⊢ T@ target type.
+   -> TCM ()
+-addCompositionForRecord name con tel fs ftel rect = do
++addCompositionForRecord name eta con tel fs ftel rect = do
+   cxt <- getContextTelescope
+   inTopContext $ do
+ 
+@@ -382,6 +383,15 @@ addCompositionForRecord name con tel fs ftel rect = do
+         r@Constructor{} -> r { conComp = kit, conProj = Just [] }  -- no projections
+         _ -> __IMPOSSIBLE__
+ 
++    -- No-eta record with pattern matching (i.e., withOUT copattern
++    -- matching): define composition as for a data type, attach it to
++    -- the record.
++    else if theEtaEquality eta == NoEta PatternMatching then do
++      kit <- defineCompData name con (abstract cxt tel) (unArg <$> fs) ftel rect []
++      modifySignature $ updateDefinition name $ updateTheDef $ \case
++        r@Record{} -> r { recComp = kit }
++        _ -> __IMPOSSIBLE__
++
+     -- Record has fields: attach composition data to record type
+     else do
+       -- If record has irrelevant fields but irrelevant projections are disabled,

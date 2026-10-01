@@ -1,0 +1,19 @@
+diff --git a/pkg/analyzer/test/generated/invalid_code_test.dart b/pkg/analyzer/test/generated/invalid_code_test.dart
+index 1e701bbf0c2..e04bc98065f 100644
+--- a/pkg/analyzer/test/generated/invalid_code_test.dart
++++ b/pkg/analyzer/test/generated/invalid_code_test.dart
+@@ -415,6 +415,14 @@ extension on int {}
+ ''');
+   }
+ 
++  test_issue_52432() async {
++    await _assertCanBeAnalyzed(r'''
++void f() {
++  void g([super.foo]) {}
++}
++''');
++  }
++
+   test_keywordInConstructorInitializer_assert() async {
+     await _assertCanBeAnalyzed('''
+ class C {

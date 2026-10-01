@@ -1,0 +1,25 @@
+diff --git a/pandas/tests/io/json/test_normalize.py b/pandas/tests/io/json/test_normalize.py
+index 78181fe2c4..316f262885 100644
+--- a/pandas/tests/io/json/test_normalize.py
++++ b/pandas/tests/io/json/test_normalize.py
+@@ -170,6 +170,20 @@ class TestJSONNormalize:
+ 
+         tm.assert_frame_equal(result, expected)
+ 
++    def test_fields_list_type_normalize(self):
++        parse_metadata_fields_list_type = [
++            {"values": [1, 2, 3], "metadata": {"listdata": [1, 2]}}
++        ]
++        result = json_normalize(
++            parse_metadata_fields_list_type,
++            record_path=["values"],
++            meta=[["metadata", "listdata"]],
++        )
++        expected = DataFrame(
++            {0: [1, 2, 3], "metadata.listdata": [[1, 2], [1, 2], [1, 2]]}
++        )
++        tm.assert_frame_equal(result, expected)
++
+     def test_empty_array(self):
+         result = json_normalize([])
+         expected = DataFrame()

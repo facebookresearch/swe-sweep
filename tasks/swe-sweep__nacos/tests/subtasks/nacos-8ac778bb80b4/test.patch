@@ -1,0 +1,17 @@
+diff --git a/api/src/test/java/com/alibaba/nacos/api/naming/utils/NamingUtilsTest.java b/api/src/test/java/com/alibaba/nacos/api/naming/utils/NamingUtilsTest.java
+index 1867ddeb1..3688718d0 100644
+--- a/api/src/test/java/com/alibaba/nacos/api/naming/utils/NamingUtilsTest.java
++++ b/api/src/test/java/com/alibaba/nacos/api/naming/utils/NamingUtilsTest.java
+@@ -72,6 +72,12 @@ class NamingUtilsTest {
+         assertEquals(StringUtils.EMPTY, NamingUtils.getServiceName(null));
+     }
+     
++    @Test
++    void testGetServiceNameTrailingSpliter() {
++        // When input is "group@@", the serviceName after "@@" is empty; should return "" not crash
++        assertEquals(StringUtils.EMPTY, NamingUtils.getServiceName("group@@"));
++    }
++    
+     @Test
+     void testGetGroupName() {
+         String validServiceName = "group@@serviceName";

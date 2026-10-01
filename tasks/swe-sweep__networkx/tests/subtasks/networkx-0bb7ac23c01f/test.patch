@@ -1,0 +1,14 @@
+diff --git a/networkx/algorithms/operators/tests/test_binary.py b/networkx/algorithms/operators/tests/test_binary.py
+index 97743822d..4ce6f9bf0 100644
+--- a/networkx/algorithms/operators/tests/test_binary.py
++++ b/networkx/algorithms/operators/tests/test_binary.py
+@@ -199,6 +199,9 @@ def test_difference_attributes():
+     assert set(gh.nodes()) == set(g.nodes())
+     assert set(gh.nodes()) == set(h.nodes())
+     assert sorted(gh.edges()) == []
++    # node and graph data should not be copied over
++    assert gh.nodes.data() != g.nodes.data()
++    assert gh.graph != g.graph
+ 
+ 
+ def test_difference_multigraph_attributes():

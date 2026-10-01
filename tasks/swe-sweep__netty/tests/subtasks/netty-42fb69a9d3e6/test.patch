@@ -1,0 +1,36 @@
+diff --git a/codec-http/src/test/java/io/netty/handler/codec/http/HttpObjectAggregatorTest.java b/codec-http/src/test/java/io/netty/handler/codec/http/HttpObjectAggregatorTest.java
+index 7dc0ac5..0a8bcb4 100644
+--- a/codec-http/src/test/java/io/netty/handler/codec/http/HttpObjectAggregatorTest.java
++++ b/codec-http/src/test/java/io/netty/handler/codec/http/HttpObjectAggregatorTest.java
+@@ -24,6 +24,7 @@ import io.netty.handler.codec.DecoderResult;
+ import io.netty.handler.codec.DecoderResultProvider;
+ import io.netty.handler.codec.TooLongFrameException;
+ import io.netty.util.CharsetUtil;
++import io.netty.util.ReferenceCountUtil;
+ import org.junit.Test;
+ import org.mockito.Mockito;
+ 
+@@ -517,4 +518,23 @@ public class HttpObjectAggregatorTest {
+         aggregatedRep.release();
+         replacedRep.release();
+     }
++
++    @Test
++    public void testOversizedRequestWithAutoReadFalse() {
++        EmbeddedChannel embedder = new EmbeddedChannel(new HttpRequestDecoder(), new HttpObjectAggregator(4));
++        embedder.config().setAutoRead(false);
++        assertFalse(embedder.writeInbound(Unpooled.copiedBuffer(
++                "PUT /upload HTTP/1.1\r\n"
++                + "Content-Length: 5\r\n\r\n", CharsetUtil.US_ASCII)));
++
++        assertNull(embedder.readInbound());
++
++        FullHttpResponse response = embedder.readOutbound();
++        assertEquals(HttpResponseStatus.REQUEST_ENTITY_TOO_LARGE, response.status());
++        assertEquals("0", response.headers().get(HttpHeaderNames.CONTENT_LENGTH));
++        ReferenceCountUtil.release(response);
++
++        assertFalse(embedder.isOpen());
++        assertFalse(embedder.finish());
++    }
+ }

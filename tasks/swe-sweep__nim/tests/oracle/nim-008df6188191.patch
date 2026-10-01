@@ -1,0 +1,13 @@
+diff --git a/compiler/jstypes.nim b/compiler/jstypes.nim
+index 56d075af7..4b4ca9fe7 100644
+--- a/compiler/jstypes.nim
++++ b/compiler/jstypes.nim
+@@ -133,7 +133,7 @@ proc genTypeInfo(p: PProc, typ: PType): Rope =
+       "var $1 = {size: 0,kind: $2,base: null,node: null,finalizer: null};$n" %
+       [result, rope(ord(t.kind))]
+     prepend(p.g.typeInfo, s)
+-  of tyVar, tyLent, tyRef, tyPtr, tySequence, tyRange, tySet:
++  of tyVar, tyLent, tyRef, tyPtr, tySequence, tyRange, tySet, tyOpenArray:
+     var s =
+       "var $1 = {size: 0, kind: $2, base: null, node: null, finalizer: null};$n" %
+               [result, rope(ord(t.kind))]

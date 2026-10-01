@@ -1,0 +1,75 @@
+diff --git a/src/Symfony/Component/Form/Tests/Extension/Core/Type/EnumTypeTest.php b/src/Symfony/Component/Form/Tests/Extension/Core/Type/EnumTypeTest.php
+index 0458720aa0f..77443806a6b 100644
+--- a/src/Symfony/Component/Form/Tests/Extension/Core/Type/EnumTypeTest.php
++++ b/src/Symfony/Component/Form/Tests/Extension/Core/Type/EnumTypeTest.php
+@@ -276,6 +276,21 @@ class EnumTypeTest extends BaseTypeTestCase
+         $this->assertEquals('Left', $view->children[0]->vars['label']->trans(new IdentityTranslator()));
+     }
+ 
++    public function testTranslatableChoiceLabelDoesNotInheritLabelTranslationParameters()
++    {
++        $form = $this->factory->create($this->getTestedType(), null, [
++            'multiple' => false,
++            'expanded' => true,
++            'class' => TranslatableTextAlign::class,
++            'label_translation_parameters' => ['%count%' => 12],
++        ]);
++
++        $view = $form->createView();
++
++        $this->assertSame(['%count%' => 12], $view->vars['label_translation_parameters']);
++        $this->assertSame([], $view->children[0]->vars['label_translation_parameters']);
++    }
++
+     protected function getTestOptions(): array
+     {
+         return ['class' => Suit::class];
+diff --git a/src/Symfony/Component/Form/Tests/Extension/Core/Type/FormTypeTest.php b/src/Symfony/Component/Form/Tests/Extension/Core/Type/FormTypeTest.php
+index 46bc25f9fe1..b433c923cec 100644
+--- a/src/Symfony/Component/Form/Tests/Extension/Core/Type/FormTypeTest.php
++++ b/src/Symfony/Component/Form/Tests/Extension/Core/Type/FormTypeTest.php
+@@ -28,6 +28,7 @@ use Symfony\Component\Form\Tests\Fixtures\Author;
+ use Symfony\Component\Form\Tests\Fixtures\FixedDataTransformer;
+ use Symfony\Component\OptionsResolver\Exception\InvalidOptionsException;
+ use Symfony\Component\PropertyAccess\PropertyPath;
++use Symfony\Component\Translation\TranslatableMessage;
+ use Symfony\Component\Validator\Validation;
+ 
+ class FormTest_AuthorWithoutRefSetter
+@@ -752,6 +753,36 @@ $ref2
+         $this->assertEquals(['%parent_param%' => 'parent_value', '%override_param%' => 'child_value'], $view['child']->vars['help_translation_parameters']);
+     }
+ 
++    public function testTranslatableLabelDoesNotInheritLabelTranslationParameters()
++    {
++        $view = $this->factory
++            ->createNamedBuilder('parent', self::TESTED_TYPE, null, [
++                'label_translation_parameters' => ['%param%' => 'value'],
++            ])
++            ->add('child', $this->getTestedType(), [
++                'label' => new TranslatableMessage('child.label'),
++            ])
++            ->getForm()
++            ->createView();
++
++        $this->assertSame([], $view['child']->vars['label_translation_parameters']);
++    }
++
++    public function testTranslatableHelpDoesNotInheritHelpTranslationParameters()
++    {
++        $view = $this->factory
++            ->createNamedBuilder('parent', self::TESTED_TYPE, null, [
++                'help_translation_parameters' => ['%param%' => 'value'],
++            ])
++            ->add('child', $this->getTestedType(), [
++                'help' => new TranslatableMessage('child.help'),
++            ])
++            ->getForm()
++            ->createView();
++
++        $this->assertSame([], $view['child']->vars['help_translation_parameters']);
++    }
++
+     public function testErrorBubblingDoesNotSkipCompoundFieldsWithInheritDataConfigured()
+     {
+         $form = $this->factory->createNamedBuilder('form', self::TESTED_TYPE)

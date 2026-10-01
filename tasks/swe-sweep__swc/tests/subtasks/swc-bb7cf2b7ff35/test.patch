@@ -1,0 +1,50 @@
+diff --git a/crates/swc_bundler/tests/fixture/issue-5642/input/deps.ts b/crates/swc_bundler/tests/fixture/issue-5642/input/deps.ts
+new file mode 100644
+index 0000000000..012802a17a
+--- /dev/null
++++ b/crates/swc_bundler/tests/fixture/issue-5642/input/deps.ts
+@@ -0,0 +1,2 @@
++await Promise.resolve(true);
++export * from "./lib1";
+diff --git a/crates/swc_bundler/tests/fixture/issue-5642/input/entry.ts b/crates/swc_bundler/tests/fixture/issue-5642/input/entry.ts
+new file mode 100644
+index 0000000000..f1ff972ff4
+--- /dev/null
++++ b/crates/swc_bundler/tests/fixture/issue-5642/input/entry.ts
+@@ -0,0 +1,2 @@
++import * as lib from "./deps";
++console.log(lib);
+diff --git a/crates/swc_bundler/tests/fixture/issue-5642/input/lib1.ts b/crates/swc_bundler/tests/fixture/issue-5642/input/lib1.ts
+new file mode 100644
+index 0000000000..f57da3afdf
+--- /dev/null
++++ b/crates/swc_bundler/tests/fixture/issue-5642/input/lib1.ts
+@@ -0,0 +1 @@
++export const starExport = 1;
+diff --git a/crates/swc_bundler/tests/fixture/issue-5642/output/entry.inlined.ts b/crates/swc_bundler/tests/fixture/issue-5642/output/entry.inlined.ts
+new file mode 100644
+index 0000000000..be66cea0ec
+--- /dev/null
++++ b/crates/swc_bundler/tests/fixture/issue-5642/output/entry.inlined.ts
+@@ -0,0 +1,7 @@
++await Promise.resolve(true);
++const mod = await async function() {
++    return {
++        starExport: 1
++    };
++}();
++console.log(mod);
+diff --git a/crates/swc_bundler/tests/fixture/issue-5642/output/entry.ts b/crates/swc_bundler/tests/fixture/issue-5642/output/entry.ts
+new file mode 100644
+index 0000000000..5e62b7be87
+--- /dev/null
++++ b/crates/swc_bundler/tests/fixture/issue-5642/output/entry.ts
+@@ -0,0 +1,8 @@
++const starExport = 1;
++await Promise.resolve(true);
++const mod = await async function() {
++    return {
++        starExport
++    };
++}();
++console.log(mod);

@@ -1,0 +1,15 @@
+diff --git a/src/core_functions/aggregate/distributive/minmax.cpp b/src/core_functions/aggregate/distributive/minmax.cpp
+index 287f38dfc6..771f16da09 100644
+--- a/src/core_functions/aggregate/distributive/minmax.cpp
++++ b/src/core_functions/aggregate/distributive/minmax.cpp
+@@ -578,8 +578,8 @@ static AggregateFunction GetMinMaxOperator(const LogicalType &type) {
+ 	auto internal_type = type.InternalType();
+ 	switch (internal_type) {
+ 	case PhysicalType::VARCHAR:
+-		return AggregateFunction::UnaryAggregateDestructor<MinMaxState<string_t>, string_t, string_t, OP_STRING>(
+-		    type.id(), type.id());
++		return AggregateFunction::UnaryAggregateDestructor<MinMaxState<string_t>, string_t, string_t, OP_STRING>(
++		    type, type);
+ 	case PhysicalType::LIST:
+ 	case PhysicalType::STRUCT:
+ 	case PhysicalType::ARRAY:

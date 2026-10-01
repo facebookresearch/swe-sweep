@@ -1,0 +1,290 @@
+diff --git a/src/test/java/io/reactivex/internal/operators/flowable/FlowableMergeWithCompletableTest.java b/src/test/java/io/reactivex/internal/operators/flowable/FlowableMergeWithCompletableTest.java
+index eab8439e0..b97fb77d6 100644
+--- a/src/test/java/io/reactivex/internal/operators/flowable/FlowableMergeWithCompletableTest.java
++++ b/src/test/java/io/reactivex/internal/operators/flowable/FlowableMergeWithCompletableTest.java
+@@ -13,10 +13,10 @@
+ 
+ package io.reactivex.internal.operators.flowable;
+ 
+-import org.junit.Test;
+-
+ import static org.junit.Assert.*;
+ 
++import org.junit.Test;
++
+ import io.reactivex.*;
+ import io.reactivex.exceptions.TestException;
+ import io.reactivex.functions.Action;
+@@ -137,4 +137,40 @@ public class FlowableMergeWithCompletableTest {
+             ts.assertResult(1);
+         }
+     }
++
++    @Test
++    public void cancelOtherOnMainError() {
++        PublishProcessor<Integer> pp = PublishProcessor.create();
++        CompletableSubject cs = CompletableSubject.create();
++
++        TestSubscriber<Integer> ts = pp.mergeWith(cs).test();
++
++        assertTrue(pp.hasSubscribers());
++        assertTrue(cs.hasObservers());
++
++        pp.onError(new TestException());
++
++        ts.assertFailure(TestException.class);
++
++        assertFalse("main has observers!", pp.hasSubscribers());
++        assertFalse("other has observers", cs.hasObservers());
++    }
++
++    @Test
++    public void cancelMainOnOtherError() {
++        PublishProcessor<Integer> pp = PublishProcessor.create();
++        CompletableSubject cs = CompletableSubject.create();
++
++        TestSubscriber<Integer> ts = pp.mergeWith(cs).test();
++
++        assertTrue(pp.hasSubscribers());
++        assertTrue(cs.hasObservers());
++
++        cs.onError(new TestException());
++
++        ts.assertFailure(TestException.class);
++
++        assertFalse("main has observers!", pp.hasSubscribers());
++        assertFalse("other has observers", cs.hasObservers());
++    }
+ }
+diff --git a/src/test/java/io/reactivex/internal/operators/flowable/FlowableMergeWithMaybeTest.java b/src/test/java/io/reactivex/internal/operators/flowable/FlowableMergeWithMaybeTest.java
+index 0585a6554..5b41573d2 100644
+--- a/src/test/java/io/reactivex/internal/operators/flowable/FlowableMergeWithMaybeTest.java
++++ b/src/test/java/io/reactivex/internal/operators/flowable/FlowableMergeWithMaybeTest.java
+@@ -28,6 +28,6 @@ import io.reactivex.functions.Function;
+ import io.reactivex.internal.subscriptions.BooleanSubscription;
+ import io.reactivex.plugins.RxJavaPlugins;
+ import io.reactivex.processors.PublishProcessor;
+-import io.reactivex.subjects.MaybeSubject;
++import io.reactivex.subjects.*;
+ import io.reactivex.subscribers.TestSubscriber;
+ 
+@@ -402,4 +402,40 @@ public class FlowableMergeWithMaybeTest {
+         ts.assertValueCount(Flowable.bufferSize());
+         ts.assertComplete();
+     }
++
++    @Test
++    public void cancelOtherOnMainError() {
++        PublishProcessor<Integer> pp = PublishProcessor.create();
++        MaybeSubject<Integer> ms = MaybeSubject.create();
++
++        TestSubscriber<Integer> ts = pp.mergeWith(ms).test();
++
++        assertTrue(pp.hasSubscribers());
++        assertTrue(ms.hasObservers());
++
++        pp.onError(new TestException());
++
++        ts.assertFailure(TestException.class);
++
++        assertFalse("main has observers!", pp.hasSubscribers());
++        assertFalse("other has observers", ms.hasObservers());
++    }
++
++    @Test
++    public void cancelMainOnOtherError() {
++        PublishProcessor<Integer> pp = PublishProcessor.create();
++        MaybeSubject<Integer> ms = MaybeSubject.create();
++
++        TestSubscriber<Integer> ts = pp.mergeWith(ms).test();
++
++        assertTrue(pp.hasSubscribers());
++        assertTrue(ms.hasObservers());
++
++        ms.onError(new TestException());
++
++        ts.assertFailure(TestException.class);
++
++        assertFalse("main has observers!", pp.hasSubscribers());
++        assertFalse("other has observers", ms.hasObservers());
++    }
+ }
+diff --git a/src/test/java/io/reactivex/internal/operators/flowable/FlowableMergeWithSingleTest.java b/src/test/java/io/reactivex/internal/operators/flowable/FlowableMergeWithSingleTest.java
+index 180384ff1..4534b6d91 100644
+--- a/src/test/java/io/reactivex/internal/operators/flowable/FlowableMergeWithSingleTest.java
++++ b/src/test/java/io/reactivex/internal/operators/flowable/FlowableMergeWithSingleTest.java
+@@ -398,4 +398,40 @@ public class FlowableMergeWithSingleTest {
+         ts.assertValueCount(Flowable.bufferSize());
+         ts.assertComplete();
+     }
++
++    @Test
++    public void cancelOtherOnMainError() {
++        PublishProcessor<Integer> pp = PublishProcessor.create();
++        SingleSubject<Integer> ss = SingleSubject.create();
++
++        TestSubscriber<Integer> ts = pp.mergeWith(ss).test();
++
++        assertTrue(pp.hasSubscribers());
++        assertTrue(ss.hasObservers());
++
++        pp.onError(new TestException());
++
++        ts.assertFailure(TestException.class);
++
++        assertFalse("main has observers!", pp.hasSubscribers());
++        assertFalse("other has observers", ss.hasObservers());
++    }
++
++    @Test
++    public void cancelMainOnOtherError() {
++        PublishProcessor<Integer> pp = PublishProcessor.create();
++        SingleSubject<Integer> ss = SingleSubject.create();
++
++        TestSubscriber<Integer> ts = pp.mergeWith(ss).test();
++
++        assertTrue(pp.hasSubscribers());
++        assertTrue(ss.hasObservers());
++
++        ss.onError(new TestException());
++
++        ts.assertFailure(TestException.class);
++
++        assertFalse("main has observers!", pp.hasSubscribers());
++        assertFalse("other has observers", ss.hasObservers());
++    }
+ }
+diff --git a/src/test/java/io/reactivex/internal/operators/observable/ObservableMergeWithCompletableTest.java b/src/test/java/io/reactivex/internal/operators/observable/ObservableMergeWithCompletableTest.java
+index 76c939bc7..1d138993e 100644
+--- a/src/test/java/io/reactivex/internal/operators/observable/ObservableMergeWithCompletableTest.java
++++ b/src/test/java/io/reactivex/internal/operators/observable/ObservableMergeWithCompletableTest.java
+@@ -136,4 +136,40 @@ public class ObservableMergeWithCompletableTest {
+         .test()
+         .assertResult(1);
+     }
++
++    @Test
++    public void cancelOtherOnMainError() {
++        PublishSubject<Integer> ps = PublishSubject.create();
++        CompletableSubject cs = CompletableSubject.create();
++
++        TestObserver<Integer> to = ps.mergeWith(cs).test();
++
++        assertTrue(ps.hasObservers());
++        assertTrue(cs.hasObservers());
++
++        ps.onError(new TestException());
++
++        to.assertFailure(TestException.class);
++
++        assertFalse("main has observers!", ps.hasObservers());
++        assertFalse("other has observers", cs.hasObservers());
++    }
++
++    @Test
++    public void cancelMainOnOtherError() {
++        PublishSubject<Integer> ps = PublishSubject.create();
++        CompletableSubject cs = CompletableSubject.create();
++
++        TestObserver<Integer> to = ps.mergeWith(cs).test();
++
++        assertTrue(ps.hasObservers());
++        assertTrue(cs.hasObservers());
++
++        cs.onError(new TestException());
++
++        to.assertFailure(TestException.class);
++
++        assertFalse("main has observers!", ps.hasObservers());
++        assertFalse("other has observers", cs.hasObservers());
++    }
+ }
+diff --git a/src/test/java/io/reactivex/internal/operators/observable/ObservableMergeWithMaybeTest.java b/src/test/java/io/reactivex/internal/operators/observable/ObservableMergeWithMaybeTest.java
+index fec139f16..e11c925ce 100644
+--- a/src/test/java/io/reactivex/internal/operators/observable/ObservableMergeWithMaybeTest.java
++++ b/src/test/java/io/reactivex/internal/operators/observable/ObservableMergeWithMaybeTest.java
+@@ -273,4 +273,39 @@ public class ObservableMergeWithMaybeTest {
+         to.assertResult(0, 1, 2, 3, 4);
+     }
+ 
++    @Test
++    public void cancelOtherOnMainError() {
++        PublishSubject<Integer> ps = PublishSubject.create();
++        MaybeSubject<Integer> ms = MaybeSubject.create();
++
++        TestObserver<Integer> to = ps.mergeWith(ms).test();
++
++        assertTrue(ps.hasObservers());
++        assertTrue(ms.hasObservers());
++
++        ps.onError(new TestException());
++
++        to.assertFailure(TestException.class);
++
++        assertFalse("main has observers!", ps.hasObservers());
++        assertFalse("other has observers", ms.hasObservers());
++    }
++
++    @Test
++    public void cancelMainOnOtherError() {
++        PublishSubject<Integer> ps = PublishSubject.create();
++        MaybeSubject<Integer> ms = MaybeSubject.create();
++
++        TestObserver<Integer> to = ps.mergeWith(ms).test();
++
++        assertTrue(ps.hasObservers());
++        assertTrue(ms.hasObservers());
++
++        ms.onError(new TestException());
++
++        to.assertFailure(TestException.class);
++
++        assertFalse("main has observers!", ps.hasObservers());
++        assertFalse("other has observers", ms.hasObservers());
++    }
+ }
+diff --git a/src/test/java/io/reactivex/internal/operators/observable/ObservableMergeWithSingleTest.java b/src/test/java/io/reactivex/internal/operators/observable/ObservableMergeWithSingleTest.java
+index cf5710ad0..cad2dad3b 100644
+--- a/src/test/java/io/reactivex/internal/operators/observable/ObservableMergeWithSingleTest.java
++++ b/src/test/java/io/reactivex/internal/operators/observable/ObservableMergeWithSingleTest.java
+@@ -264,4 +264,40 @@ public class ObservableMergeWithSingleTest {
+ 
+         to.assertResult(0, 1, 2, 3, 4);
+     }
++
++    @Test
++    public void cancelOtherOnMainError() {
++        PublishSubject<Integer> ps = PublishSubject.create();
++        SingleSubject<Integer> ss = SingleSubject.create();
++
++        TestObserver<Integer> to = ps.mergeWith(ss).test();
++
++        assertTrue(ps.hasObservers());
++        assertTrue(ss.hasObservers());
++
++        ps.onError(new TestException());
++
++        to.assertFailure(TestException.class);
++
++        assertFalse("main has observers!", ps.hasObservers());
++        assertFalse("other has observers", ss.hasObservers());
++    }
++
++    @Test
++    public void cancelMainOnOtherError() {
++        PublishSubject<Integer> ps = PublishSubject.create();
++        SingleSubject<Integer> ss = SingleSubject.create();
++
++        TestObserver<Integer> to = ps.mergeWith(ss).test();
++
++        assertTrue(ps.hasObservers());
++        assertTrue(ss.hasObservers());
++
++        ss.onError(new TestException());
++
++        to.assertFailure(TestException.class);
++
++        assertFalse("main has observers!", ps.hasObservers());
++        assertFalse("other has observers", ss.hasObservers());
++    }
+ }

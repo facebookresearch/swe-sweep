@@ -1,0 +1,20 @@
+diff --git a/lib/matplotlib/tests/test_text.py b/lib/matplotlib/tests/test_text.py
+index 435da82..8e24c04 100644
+--- a/lib/matplotlib/tests/test_text.py
++++ b/lib/matplotlib/tests/test_text.py
+@@ -657,6 +657,15 @@ def test_wrap():
+                                         'times.')
+ 
+ 
++def test_mathwrap():
++    fig = plt.figure(figsize=(6, 4))
++    s = r'This is a very $\overline{\mathrm{long}}$ line of Mathtext.'
++    text = fig.text(0, 0.5, s, size=40, wrap=True)
++    fig.canvas.draw()
++    assert text._get_wrapped_text() == ('This is a very $\\overline{\\mathrm{long}}$\n'
++                                        'line of Mathtext.')
++
++
+ def test_long_word_wrap():
+     fig = plt.figure(figsize=(6, 4))
+     text = fig.text(9.5, 8, 'Alonglineoftexttowrap', wrap=True)

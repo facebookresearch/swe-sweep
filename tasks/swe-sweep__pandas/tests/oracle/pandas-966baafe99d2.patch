@@ -1,0 +1,15 @@
+diff --git a/pandas/core/dtypes/missing.py b/pandas/core/dtypes/missing.py
+index 000b5ebbdd..3ee5d8c2f2 100644
+--- a/pandas/core/dtypes/missing.py
++++ b/pandas/core/dtypes/missing.py
+@@ -505,6 +505,10 @@ def _array_equivalent_object(left, right, strict_nan):
+                 elif "boolean value of NA is ambiguous" in str(err):
+                     return False
+                 raise
++            except ValueError:
++                # numpy can raise a ValueError if left and right cannot be
++                # compared (e.g. nested arrays)
++                return False
+     return True
+ 
+ 

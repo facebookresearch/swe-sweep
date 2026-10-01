@@ -1,0 +1,62 @@
+diff --git a/tests/ui/manual_unwrap_or_default.fixed b/tests/ui/manual_unwrap_or_default.fixed
+index 189fe876a..11023ac11 100644
+--- a/tests/ui/manual_unwrap_or_default.fixed
++++ b/tests/ui/manual_unwrap_or_default.fixed
+@@ -32,6 +32,15 @@ fn main() {
+ 
+     let x: Result<String, i64> = Ok(String::new());
+     x.unwrap_or_default();
++
++    // edge case
++    // because the `Some(bizarro)` pattern is not actually reachable,
++    // changing this match to `unwrap_or_default` would have side effects
++    let bizarro = Some(String::new());
++    match bizarro {
++        _ => String::new(),
++        Some(bizarro) => bizarro,
++    };
+ }
+ 
+ // Issue #12531
+diff --git a/tests/ui/manual_unwrap_or_default.rs b/tests/ui/manual_unwrap_or_default.rs
+index ca8792676..bf06d9af7 100644
+--- a/tests/ui/manual_unwrap_or_default.rs
++++ b/tests/ui/manual_unwrap_or_default.rs
+@@ -64,6 +64,15 @@ fn main() {
+     } else {
+         String::new()
+     };
++
++    // edge case
++    // because the `Some(bizarro)` pattern is not actually reachable,
++    // changing this match to `unwrap_or_default` would have side effects
++    let bizarro = Some(String::new());
++    match bizarro {
++        _ => String::new(),
++        Some(bizarro) => bizarro,
++    };
+ }
+ 
+ // Issue #12531
+diff --git a/tests/ui/manual_unwrap_or_default.stderr b/tests/ui/manual_unwrap_or_default.stderr
+index e8f38a2e3..031100832 100644
+--- a/tests/ui/manual_unwrap_or_default.stderr
++++ b/tests/ui/manual_unwrap_or_default.stderr
+@@ -76,7 +76,7 @@ LL | |     };
+    | |_____^ help: replace it with: `x.unwrap_or_default()`
+ 
+ error: match can be simplified with `.unwrap_or_default()`
+-  --> tests/ui/manual_unwrap_or_default.rs:74:24
++  --> tests/ui/manual_unwrap_or_default.rs:83:24
+    |
+ LL |               Some(_) => match *b {
+    |  ________________________^
+@@ -87,7 +87,7 @@ LL | |             },
+    | |_____________^ help: replace it with: `(*b).unwrap_or_default()`
+ 
+ error: if let can be simplified with `.unwrap_or_default()`
+-  --> tests/ui/manual_unwrap_or_default.rs:143:5
++  --> tests/ui/manual_unwrap_or_default.rs:152:5
+    |
+ LL | /     if let Some(x) = Some(42) {
+ LL | |

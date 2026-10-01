@@ -1,0 +1,140 @@
+diff --git a/modules/openapi-generator/src/test/java/org/openapitools/codegen/java/AbstractJavaCodegenTest.java b/modules/openapi-generator/src/test/java/org/openapitools/codegen/java/AbstractJavaCodegenTest.java
+index aeee65e8b46..8b6e6281a14 100644
+--- a/modules/openapi-generator/src/test/java/org/openapitools/codegen/java/AbstractJavaCodegenTest.java
++++ b/modules/openapi-generator/src/test/java/org/openapitools/codegen/java/AbstractJavaCodegenTest.java
+@@ -17,14 +17,18 @@
+ 
+ package org.openapitools.codegen.java;
+ 
++import io.swagger.parser.OpenAPIParser;
+ import io.swagger.v3.oas.models.Components;
+ import io.swagger.v3.oas.models.OpenAPI;
+ import io.swagger.v3.oas.models.media.*;
+ 
++import io.swagger.v3.oas.models.parameters.Parameter;
++import io.swagger.v3.parser.core.models.ParseOptions;
+ import java.time.OffsetDateTime;
+ import java.time.ZonedDateTime;
+ import java.util.*;
+ 
++import java.util.stream.Collectors;
+ import org.openapitools.codegen.*;
+ import org.openapitools.codegen.languages.AbstractJavaCodegen;
+ import org.openapitools.codegen.utils.ModelUtils;
+@@ -873,6 +877,26 @@ public class AbstractJavaCodegenTest {
+         Assert.assertTrue(cm.imports.contains("UUID"));
+     }
+ 
++    @Test
++    public void arrayParameterDefaultValueDoesNotNeedBraces() throws Exception {
++        ParseOptions parseOptions = new ParseOptions();
++        parseOptions.setResolve(true);
++        final OpenAPI openAPI = new OpenAPIParser()
++                .readLocation("src/test/resources/3_0/issue_16223.yaml", null, parseOptions)
++                .getOpenAPI();
++        final P_AbstractJavaCodegen codegen = new P_AbstractJavaCodegen();
++        codegen.setOpenAPI(openAPI);
++
++        Map<String, Schema> schemas = openAPI.getPaths().get("/test").getGet().getParameters().stream()
++                .collect(Collectors.toMap(
++                        Parameter::getName,
++                        p -> ModelUtils.getReferencedSchema(openAPI, p.getSchema())));
++        Assert.assertEquals(codegen.toDefaultParameterValue(schemas.get("fileEnumWithDefault")), "A,B");
++        Assert.assertEquals(codegen.toDefaultParameterValue(schemas.get("fileEnumWithDefaultEmpty")), "");
++        Assert.assertEquals(codegen.toDefaultParameterValue(schemas.get("inlineEnumWithDefault")), "A,B");
++        Assert.assertEquals(codegen.toDefaultParameterValue(schemas.get("inlineEnumWithDefaultEmpty")), "");
++    }
++
+     private static Schema<?> createObjectSchemaWithMinItems() {
+         return new ObjectSchema()
+                 .addProperties("id", new IntegerSchema().format("int32"))
+diff --git a/modules/openapi-generator/src/test/resources/3_0/issue_16223.yaml b/modules/openapi-generator/src/test/resources/3_0/issue_16223.yaml
+new file mode 100644
+index 00000000000..db720b714f7
+--- /dev/null
++++ b/modules/openapi-generator/src/test/resources/3_0/issue_16223.yaml
+@@ -0,0 +1,54 @@
++---
++openapi: 3.0.3
++info:
++  title: Test
++  version: 1.0.0-SNAPSHOT
++paths:
++  /test:
++    get:
++      parameters:
++        - name: fileEnumWithDefault
++          in: query
++          schema:
++            $ref: './issue_16223_enum_with_default.yaml'
++        - name: fileEnumWithDefaultEmpty
++          in: query
++          schema:
++            $ref: './issue_16223_enum_with_default_empty.yaml'
++        - name: inlineEnumWithDefault
++          in: query
++          schema:
++            type: array
++            items:
++              type: string
++              enum:
++                - A
++                - B
++                - C
++            default:
++              - A
++              - B
++        - name: inlineEnumWithDefaultEmpty
++          in: query
++          schema:
++            type: array
++            items:
++              type: string
++              enum:
++                - A
++                - B
++                - C
++            default: []
++      responses:
++        "200":
++          description: OK
++
++components:
++  schemas:
++    Test:
++      type: object
++      properties:
++        withDefault:
++          $ref: './issue_16223_enum_with_default.yaml'
++        withEmptyDefault:
++          $ref: './issue_16223_enum_with_default_empty.yaml'
+diff --git a/modules/openapi-generator/src/test/resources/3_0/issue_16223_enum_with_default.yaml b/modules/openapi-generator/src/test/resources/3_0/issue_16223_enum_with_default.yaml
+new file mode 100644
+index 00000000000..c926f665b89
+--- /dev/null
++++ b/modules/openapi-generator/src/test/resources/3_0/issue_16223_enum_with_default.yaml
+@@ -0,0 +1,10 @@
++type: array
++items:
++  type: string
++  enum:
++    - A
++    - B
++    - C
++default:
++  - A
++  - B
+diff --git a/modules/openapi-generator/src/test/resources/3_0/issue_16223_enum_with_default_empty.yaml b/modules/openapi-generator/src/test/resources/3_0/issue_16223_enum_with_default_empty.yaml
+new file mode 100644
+index 00000000000..066864a0630
+--- /dev/null
++++ b/modules/openapi-generator/src/test/resources/3_0/issue_16223_enum_with_default_empty.yaml
+@@ -0,0 +1,8 @@
++type: array
++items:
++  type: string
++  enum:
++    - A
++    - B
++    - C
++default: []

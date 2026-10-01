@@ -1,0 +1,14 @@
+diff --git a/vlib/v/gen/c/str_intp.v b/vlib/v/gen/c/str_intp.v
+index 7f1553cb2..a45bb5314 100644
+--- a/vlib/v/gen/c/str_intp.v
++++ b/vlib/v/gen/c/str_intp.v
+@@ -265,7 +265,8 @@ fn (mut g Gen) string_inter_literal(node ast.StringInterLiteral) {
+ 	g.write(' str_intp(${node.vals.len}, ')
+ 	g.write('_MOV((StrIntpData[]){')
+ 	for i, val in node.vals {
+-		escaped_val := util.smart_quote(val, false)
++		mut escaped_val := util.smart_quote(val, false)
++		escaped_val = escaped_val.replace('\0', '\\0')
+ 
+ 		if escaped_val.len > 0 {
+ 			g.write('{_SLIT("${escaped_val}"), ')

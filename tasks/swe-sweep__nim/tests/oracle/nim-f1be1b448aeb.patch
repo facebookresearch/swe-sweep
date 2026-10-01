@@ -1,0 +1,8 @@
+diff --git a/compiler/parser.nim b/compiler/parser.nim
+--- a/compiler/parser.nim
++++ b/compiler/parser.nim
+@@ -1322,3 +1322,3 @@
+ proc binaryNot(p: var Parser; a: PNode): PNode =
+-  if p.tok.tokType == tkNot:
++  if p.tok.tokType == tkNot and p.tok.indent < 0:
+     let notOpr = newIdentNodeP(p.tok.ident, p)

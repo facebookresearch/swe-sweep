@@ -1,0 +1,64 @@
+diff --git a/modules/openapi-generator/src/test/java/org/openapitools/codegen/typescript/typescriptangular/TypeScriptAngularClientCodegenTest.java b/modules/openapi-generator/src/test/java/org/openapitools/codegen/typescript/typescriptangular/TypeScriptAngularClientCodegenTest.java
+index 7d7de3a8840..e3acfc55621 100644
+--- a/modules/openapi-generator/src/test/java/org/openapitools/codegen/typescript/typescriptangular/TypeScriptAngularClientCodegenTest.java
++++ b/modules/openapi-generator/src/test/java/org/openapitools/codegen/typescript/typescriptangular/TypeScriptAngularClientCodegenTest.java
+@@ -343,5 +343,29 @@ public class TypeScriptAngularClientCodegenTest {
+                 Paths.get(output + "/model/folder.ts"),
+                 "files?: Array<SystemFile>;" // ensure it's an array of SystemFile (not Any)
+         );
+     }
++
++    @Test
++    public void testOpenIdCredentialsAreSet() throws Exception {
++        // GIVEN
++        final String specPath = "src/test/resources/3_1/issue_21245.yaml";
++
++        File output = Files.createTempDirectory("test").toFile();
++        output.deleteOnExit();
++
++        // WHEN
++        final CodegenConfigurator configurator = new CodegenConfigurator()
++                .setGeneratorName("typescript-angular")
++                .setInputSpec(specPath)
++                .setOutputDir(output.getAbsolutePath().replace("\\", "/"));
++
++        final ClientOptInput clientOptInput = configurator.toClientOptInput();
++
++        Generator generator = new DefaultGenerator();
++        generator.opts(clientOptInput).generate();
++
++        //THEN
++        String credentialsSet = "localVarHeaders = localVarHeaders.set('Authorization', 'Bearer ' + localVarCredential);";
++        TestUtils.assertFileContains(Paths.get(output + "/api/default.service.ts"), credentialsSet);
++    }
+ }
+diff --git a/modules/openapi-generator/src/test/resources/3_1/issue_21245.yaml b/modules/openapi-generator/src/test/resources/3_1/issue_21245.yaml
+new file mode 100644
+index 00000000000..e3c71d1243b
+--- /dev/null
++++ b/modules/openapi-generator/src/test/resources/3_1/issue_21245.yaml
+@@ -0,0 +1,23 @@
++openapi: 3.1.0
++info:
++  title: Angular OIDC test
++  version: 1.0.0
++paths:
++  /test:
++    get:
++      responses:
++        '200':
++          description: Successful response
++          content:
++            application/json:
++              schema:
++                type: string
++components:
++  securitySchemes:
++    oidc:
++      type: openIdConnect
++      openIdConnectUrl: 'http://localhost:8000'
++security:
++  - oidc:
++      - board:read
++      - board:write
+\ No newline at end of file

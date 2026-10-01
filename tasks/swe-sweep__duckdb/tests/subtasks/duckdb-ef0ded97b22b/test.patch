@@ -1,0 +1,13 @@
+diff --git a/test/sql/types/interval/test_interval_comparison.test b/test/sql/types/interval/test_interval_comparison.test
+index ace8d875d3..83a70972cd 100644
+--- a/test/sql/types/interval/test_interval_comparison.test
++++ b/test/sql/types/interval/test_interval_comparison.test
+@@ -46,3 +46,8 @@ SELECT INTERVAL '1' YEAR = INTERVAL '12' MONTH
+ ----
+ 1
+ 
++# Double carry left
++query I
++select interval '28 days 432000 seconds' = interval '1 month 3 days';
++----
++True

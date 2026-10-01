@@ -1,0 +1,22 @@
+diff --git a/src/Symfony/Component/HttpKernel/Tests/HttpCache/HttpCacheTest.php b/src/Symfony/Component/HttpKernel/Tests/HttpCache/HttpCacheTest.php
+index 2a9f48463c8..b1ef34cae78 100644
+--- a/src/Symfony/Component/HttpKernel/Tests/HttpCache/HttpCacheTest.php
++++ b/src/Symfony/Component/HttpKernel/Tests/HttpCache/HttpCacheTest.php
+@@ -61,6 +61,17 @@ class HttpCacheTest extends HttpCacheTestCase
+         $this->assertFalse($this->response->headers->has('Age'));
+     }
+ 
++    public function testPassesSuspiciousMethodRequests()
++    {
++        $this->setNextResponse(200);
++        $this->request('POST', '/', ['HTTP_X-HTTP-Method-Override' => '__CONSTRUCT']);
++        $this->assertHttpKernelIsCalled();
++        $this->assertResponseOk();
++        $this->assertTraceNotContains('stale');
++        $this->assertTraceNotContains('invalid');
++        $this->assertFalse($this->response->headers->has('Age'));
++    }
++
+     public function testInvalidatesOnPostPutDeleteRequests()
+     {
+         foreach (['post', 'put', 'delete'] as $method) {

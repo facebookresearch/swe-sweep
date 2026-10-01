@@ -1,0 +1,46 @@
+diff --git a/crates/ruff_linter/src/rules/pandas_vet/mod.rs b/crates/ruff_linter/src/rules/pandas_vet/mod.rs
+index e99f7e5ff9..982eedbde5 100644
+--- a/crates/ruff_linter/src/rules/pandas_vet/mod.rs
++++ b/crates/ruff_linter/src/rules/pandas_vet/mod.rs
+@@ -29,6 +29,21 @@ mod tests {
+     "#,
+         "PD002_fail"
+     )]
++    #[test_case(
++        r"
++        import polars as pl
++        x = pl.DataFrame()
++        x.drop(['a'], inplace=True)
++        ",
++        "PD002_pass_polars"
++    )]
++    #[test_case(
++        r"
++        x = DataFrame()
++        x.drop(['a'], inplace=True)
++        ",
++        "PD002_pass_no_import"
++    )]
+     #[test_case(
+         r"
+         import pandas as pd
+diff --git a/crates/ruff_linter/src/rules/pandas_vet/snapshots/ruff_linter__rules__pandas_vet__tests__PD002_pass_no_import.snap b/crates/ruff_linter/src/rules/pandas_vet/snapshots/ruff_linter__rules__pandas_vet__tests__PD002_pass_no_import.snap
+new file mode 100644
+index 0000000000..07173f8f1b
+--- /dev/null
++++ b/crates/ruff_linter/src/rules/pandas_vet/snapshots/ruff_linter__rules__pandas_vet__tests__PD002_pass_no_import.snap
+@@ -0,0 +1,4 @@
++---
++source: crates/ruff_linter/src/rules/pandas_vet/mod.rs
++---
++
+diff --git a/crates/ruff_linter/src/rules/pandas_vet/snapshots/ruff_linter__rules__pandas_vet__tests__PD002_pass_polars.snap b/crates/ruff_linter/src/rules/pandas_vet/snapshots/ruff_linter__rules__pandas_vet__tests__PD002_pass_polars.snap
+new file mode 100644
+index 0000000000..07173f8f1b
+--- /dev/null
++++ b/crates/ruff_linter/src/rules/pandas_vet/snapshots/ruff_linter__rules__pandas_vet__tests__PD002_pass_polars.snap
+@@ -0,0 +1,4 @@
++---
++source: crates/ruff_linter/src/rules/pandas_vet/mod.rs
++---
++

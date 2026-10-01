@@ -1,0 +1,464 @@
+diff --git a/packages/babel-parser/test/fixtures/flow/anonymous-function-no-parens-types/good_14/input.js b/packages/babel-parser/test/fixtures/flow/anonymous-function-no-parens-types/good_14/input.js
+new file mode 100644
+index 0000000000..7d3fa382c4
+--- /dev/null
++++ b/packages/babel-parser/test/fixtures/flow/anonymous-function-no-parens-types/good_14/input.js
+@@ -0,0 +1 @@
++type T = Array<(string) => number>
+\ No newline at end of file
+diff --git a/packages/babel-parser/test/fixtures/flow/anonymous-function-no-parens-types/good_14/output.json b/packages/babel-parser/test/fixtures/flow/anonymous-function-no-parens-types/good_14/output.json
+new file mode 100644
+index 0000000000..3b566aaa7f
+--- /dev/null
++++ b/packages/babel-parser/test/fixtures/flow/anonymous-function-no-parens-types/good_14/output.json
+@@ -0,0 +1,183 @@
++{
++  "type": "File",
++  "start": 0,
++  "end": 34,
++  "loc": {
++    "start": {
++      "line": 1,
++      "column": 0
++    },
++    "end": {
++      "line": 1,
++      "column": 34
++    }
++  },
++  "program": {
++    "type": "Program",
++    "start": 0,
++    "end": 34,
++    "loc": {
++      "start": {
++        "line": 1,
++        "column": 0
++      },
++      "end": {
++        "line": 1,
++        "column": 34
++      }
++    },
++    "sourceType": "module",
++    "interpreter": null,
++    "body": [
++      {
++        "type": "TypeAlias",
++        "start": 0,
++        "end": 34,
++        "loc": {
++          "start": {
++            "line": 1,
++            "column": 0
++          },
++          "end": {
++            "line": 1,
++            "column": 34
++          }
++        },
++        "id": {
++          "type": "Identifier",
++          "start": 5,
++          "end": 6,
++          "loc": {
++            "start": {
++              "line": 1,
++              "column": 5
++            },
++            "end": {
++              "line": 1,
++              "column": 6
++            },
++            "identifierName": "T"
++          },
++          "name": "T"
++        },
++        "typeParameters": null,
++        "right": {
++          "type": "GenericTypeAnnotation",
++          "start": 9,
++          "end": 34,
++          "loc": {
++            "start": {
++              "line": 1,
++              "column": 9
++            },
++            "end": {
++              "line": 1,
++              "column": 34
++            }
++          },
++          "typeParameters": {
++            "type": "TypeParameterInstantiation",
++            "start": 14,
++            "end": 34,
++            "loc": {
++              "start": {
++                "line": 1,
++                "column": 14
++              },
++              "end": {
++                "line": 1,
++                "column": 34
++              }
++            },
++            "params": [
++              {
++                "type": "FunctionTypeAnnotation",
++                "start": 15,
++                "end": 33,
++                "loc": {
++                  "start": {
++                    "line": 1,
++                    "column": 15
++                  },
++                  "end": {
++                    "line": 1,
++                    "column": 33
++                  }
++                },
++                "params": [
++                  {
++                    "type": "FunctionTypeParam",
++                    "start": 16,
++                    "end": 22,
++                    "loc": {
++                      "start": {
++                        "line": 1,
++                        "column": 16
++                      },
++                      "end": {
++                        "line": 1,
++                        "column": 22
++                      }
++                    },
++                    "name": null,
++                    "optional": false,
++                    "typeAnnotation": {
++                      "type": "StringTypeAnnotation",
++                      "start": 16,
++                      "end": 22,
++                      "loc": {
++                        "start": {
++                          "line": 1,
++                          "column": 16
++                        },
++                        "end": {
++                          "line": 1,
++                          "column": 22
++                        }
++                      }
++                    }
++                  }
++                ],
++                "rest": null,
++                "returnType": {
++                  "type": "NumberTypeAnnotation",
++                  "start": 27,
++                  "end": 33,
++                  "loc": {
++                    "start": {
++                      "line": 1,
++                      "column": 27
++                    },
++                    "end": {
++                      "line": 1,
++                      "column": 33
++                    }
++                  }
++                },
++                "typeParameters": null
++              }
++            ]
++          },
++          "id": {
++            "type": "Identifier",
++            "start": 9,
++            "end": 14,
++            "loc": {
++              "start": {
++                "line": 1,
++                "column": 9
++              },
++              "end": {
++                "line": 1,
++                "column": 14
++              },
++              "identifierName": "Array"
++            },
++            "name": "Array"
++          }
++        }
++      }
++    ],
++    "directives": []
++  }
++}
+\ No newline at end of file
+diff --git a/packages/babel-parser/test/fixtures/flow/anonymous-function-no-parens-types/good_15/input.js b/packages/babel-parser/test/fixtures/flow/anonymous-function-no-parens-types/good_15/input.js
+new file mode 100644
+index 0000000000..f275738965
+--- /dev/null
++++ b/packages/babel-parser/test/fixtures/flow/anonymous-function-no-parens-types/good_15/input.js
+@@ -0,0 +1 @@
++let x = (): Array<(string) => number> => []
+\ No newline at end of file
+diff --git a/packages/babel-parser/test/fixtures/flow/anonymous-function-no-parens-types/good_15/output.json b/packages/babel-parser/test/fixtures/flow/anonymous-function-no-parens-types/good_15/output.json
+new file mode 100644
+index 0000000000..fb3eb337bc
+--- /dev/null
++++ b/packages/babel-parser/test/fixtures/flow/anonymous-function-no-parens-types/good_15/output.json
+@@ -0,0 +1,251 @@
++{
++  "type": "File",
++  "start": 0,
++  "end": 43,
++  "loc": {
++    "start": {
++      "line": 1,
++      "column": 0
++    },
++    "end": {
++      "line": 1,
++      "column": 43
++    }
++  },
++  "program": {
++    "type": "Program",
++    "start": 0,
++    "end": 43,
++    "loc": {
++      "start": {
++        "line": 1,
++        "column": 0
++      },
++      "end": {
++        "line": 1,
++        "column": 43
++      }
++    },
++    "sourceType": "module",
++    "interpreter": null,
++    "body": [
++      {
++        "type": "VariableDeclaration",
++        "start": 0,
++        "end": 43,
++        "loc": {
++          "start": {
++            "line": 1,
++            "column": 0
++          },
++          "end": {
++            "line": 1,
++            "column": 43
++          }
++        },
++        "declarations": [
++          {
++            "type": "VariableDeclarator",
++            "start": 4,
++            "end": 43,
++            "loc": {
++              "start": {
++                "line": 1,
++                "column": 4
++              },
++              "end": {
++                "line": 1,
++                "column": 43
++              }
++            },
++            "id": {
++              "type": "Identifier",
++              "start": 4,
++              "end": 5,
++              "loc": {
++                "start": {
++                  "line": 1,
++                  "column": 4
++                },
++                "end": {
++                  "line": 1,
++                  "column": 5
++                },
++                "identifierName": "x"
++              },
++              "name": "x"
++            },
++            "init": {
++              "type": "ArrowFunctionExpression",
++              "start": 8,
++              "end": 43,
++              "loc": {
++                "start": {
++                  "line": 1,
++                  "column": 8
++                },
++                "end": {
++                  "line": 1,
++                  "column": 43
++                }
++              },
++              "predicate": null,
++              "returnType": {
++                "type": "TypeAnnotation",
++                "start": 10,
++                "end": 37,
++                "loc": {
++                  "start": {
++                    "line": 1,
++                    "column": 10
++                  },
++                  "end": {
++                    "line": 1,
++                    "column": 37
++                  }
++                },
++                "typeAnnotation": {
++                  "type": "GenericTypeAnnotation",
++                  "start": 12,
++                  "end": 37,
++                  "loc": {
++                    "start": {
++                      "line": 1,
++                      "column": 12
++                    },
++                    "end": {
++                      "line": 1,
++                      "column": 37
++                    }
++                  },
++                  "typeParameters": {
++                    "type": "TypeParameterInstantiation",
++                    "start": 17,
++                    "end": 37,
++                    "loc": {
++                      "start": {
++                        "line": 1,
++                        "column": 17
++                      },
++                      "end": {
++                        "line": 1,
++                        "column": 37
++                      }
++                    },
++                    "params": [
++                      {
++                        "type": "FunctionTypeAnnotation",
++                        "start": 18,
++                        "end": 36,
++                        "loc": {
++                          "start": {
++                            "line": 1,
++                            "column": 18
++                          },
++                          "end": {
++                            "line": 1,
++                            "column": 36
++                          }
++                        },
++                        "params": [
++                          {
++                            "type": "FunctionTypeParam",
++                            "start": 19,
++                            "end": 25,
++                            "loc": {
++                              "start": {
++                                "line": 1,
++                                "column": 19
++                              },
++                              "end": {
++                                "line": 1,
++                                "column": 25
++                              }
++                            },
++                            "name": null,
++                            "optional": false,
++                            "typeAnnotation": {
++                              "type": "StringTypeAnnotation",
++                              "start": 19,
++                              "end": 25,
++                              "loc": {
++                                "start": {
++                                  "line": 1,
++                                  "column": 19
++                                },
++                                "end": {
++                                  "line": 1,
++                                  "column": 25
++                                }
++                              }
++                            }
++                          }
++                        ],
++                        "rest": null,
++                        "returnType": {
++                          "type": "NumberTypeAnnotation",
++                          "start": 30,
++                          "end": 36,
++                          "loc": {
++                            "start": {
++                              "line": 1,
++                              "column": 30
++                            },
++                            "end": {
++                              "line": 1,
++                              "column": 36
++                            }
++                          }
++                        },
++                        "typeParameters": null
++                      }
++                    ]
++                  },
++                  "id": {
++                    "type": "Identifier",
++                    "start": 12,
++                    "end": 17,
++                    "loc": {
++                      "start": {
++                        "line": 1,
++                        "column": 12
++                      },
++                      "end": {
++                        "line": 1,
++                        "column": 17
++                      },
++                      "identifierName": "Array"
++                    },
++                    "name": "Array"
++                  }
++                }
++              },
++              "id": null,
++              "generator": false,
++              "async": false,
++              "params": [],
++              "body": {
++                "type": "ArrayExpression",
++                "start": 41,
++                "end": 43,
++                "loc": {
++                  "start": {
++                    "line": 1,
++                    "column": 41
++                  },
++                  "end": {
++                    "line": 1,
++                    "column": 43
++                  }
++                },
++                "elements": []
++              }
++            }
++          }
++        ],
++        "kind": "let"
++      }
++    ],
++    "directives": []
++  }
++}
+\ No newline at end of file

@@ -1,0 +1,13 @@
+diff --git a/src/common/operator/cast_operators.cpp b/src/common/operator/cast_operators.cpp
+index 69ed385..80a677a 100644
+--- a/src/common/operator/cast_operators.cpp
++++ b/src/common/operator/cast_operators.cpp
+@@ -2385,7 +2385,7 @@ bool DoubleToDecimalCast(SRC input, DST &result, string *error_message, uint8_t
+ 	// Add the sign (-1, 0, 1) times a tiny value to fix floating point issues (issue 3091)
+ 	double sign = (double(0) < value) - (value < double(0));
+ 	value += 1e-9 * sign;
+-	if (value <= -NumericHelper::DOUBLE_POWERS_OF_TEN[width] || value >= NumericHelper::DOUBLE_POWERS_OF_TEN[width]) {
++	if (value <= -NumericHelper::DOUBLE_POWERS_OF_TEN[width] || value >= NumericHelper::DOUBLE_POWERS_OF_TEN[width] || !Value::IsFinite(value)) {
+ 		string error = StringUtil::Format("Could not cast value %f to DECIMAL(%d,%d)", value, width, scale);
+ 		HandleCastError::AssignError(error, error_message);
+ 		return false;

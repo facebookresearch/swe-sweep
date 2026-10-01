@@ -1,0 +1,54 @@
+diff --git a/activerecord/test/cases/associations_test.rb b/activerecord/test/cases/associations_test.rb
+index 074a775a369..a05cbe122ea 100644
+--- a/activerecord/test/cases/associations_test.rb
++++ b/activerecord/test/cases/associations_test.rb
+@@ -31,6 +31,8 @@ require "models/discount"
+ require "models/line_item"
+ require "models/shipping_line"
+ require "models/essay"
++require "models/dog"
++require "models/other_dog"
+ 
+ class AssociationsTest < ActiveRecord::TestCase
+   fixtures :accounts, :companies, :developers, :projects, :developers_projects,
+@@ -396,6 +398,7 @@ end
+ 
+ class PreloaderTest < ActiveRecord::TestCase
+-  fixtures :posts, :comments, :books, :authors, :tags, :taggings, :essays, :categories, :author_addresses
++  fixtures :posts, :comments, :books, :authors, :tags, :taggings, :essays, :categories, :author_addresses,
++           :dogs, :other_dogs
+ 
+   def test_preload_with_scope
+     post = posts(:welcome)
+@@ -802,6 +805,31 @@ class PreloaderTest < ActiveRecord::TestCase
+     end
+   end
+ 
++  def test_multi_database_polymorphic_preload_with_same_table_name
++    dog = dogs(:sophie)
++    dog_comment = comments(:greetings)
++    dog_comment.origin_type = dog.class.name
++    dog_comment.origin_id = dog.id
++
++    other_dog = other_dogs(:lassie)
++    other_dog_comment = comments(:more_greetings)
++    other_dog_comment.origin_type = other_dog.class.name
++    other_dog_comment.origin_id = other_dog.id
++
++    # Both Dog and OtherDog are backed by a table named `dogs`,
++    # however they are stored in different databases and should
++    # therefore result in two separate queries rather than be batched
++    # together.
++    #
++    # Expected
++    #   SELECT FROM dogs ... (Dog)
++    #   SELECT FROM dogs ... (OtherDog)
++    assert_queries(2) do
++      preloader = ActiveRecord::Associations::Preloader.new(records: [dog_comment, other_dog_comment], associations: :origin)
++      preloader.call
++    end
++  end
++
+   def test_preload_with_available_records
+     post = posts(:welcome)
+     david = authors(:david)

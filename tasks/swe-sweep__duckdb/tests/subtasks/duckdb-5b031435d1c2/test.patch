@@ -1,0 +1,46 @@
+diff --git a/test/sql/types/bit/bit_issue_11211.test b/test/sql/types/bit/bit_issue_11211.test
+new file mode 100644
+index 0000000000..3c9775c672
+--- /dev/null
++++ b/test/sql/types/bit/bit_issue_11211.test
+@@ -0,0 +1,28 @@
++# name: test/sql/types/bit/bit_issue_11211.test
++# description: Issue #11211 - Incorrect equality comparison for BIT type
++# group: [bit]
++
++statement ok
++PRAGMA enable_verification
++
++query I
++select ( 2::bit & 2::bit ) = 2::bit as b;
++----
++true
++
++query I
++select ( 2::bit & 2::bit ) = 2::bit as b;
++----
++true
++
++query IIII
++FROM
++(
++  SELECT
++  ( 2::bit & 2::bit ) AS a,
++  2::bit AS b,
++  (a = b) AS '(a = b)',
++)
++SELECT a, b, a = b, "(a = b)";
++----
++00000000000000000000000000000010	00000000000000000000000000000010	true	true
+diff --git a/test/sql/types/bit/test_bit_functions.test b/test/sql/types/bit/test_bit_functions.test
+index 12a3ba9c02..0f1b358d72 100644
+--- a/test/sql/types/bit/test_bit_functions.test
++++ b/test/sql/types/bit/test_bit_functions.test
+@@ -129,7 +129,6 @@ SELECT set_bit('011'::BIT, -1, 0)
+ ----
+ Out of Range Error: bit index -1 out of valid range
+ 
+-
+ # **** BIT_COUNT ****
+ query I
+ SELECT bit_count('10101'::BIT)

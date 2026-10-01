@@ -1,0 +1,44 @@
+diff --git a/activerecord/test/cases/relation/where_chain_test.rb b/activerecord/test/cases/relation/where_chain_test.rb
+index 985de69e4f5..30c7225f2dc 100644
+--- a/activerecord/test/cases/relation/where_chain_test.rb
++++ b/activerecord/test/cases/relation/where_chain_test.rb
+@@ -20,6 +20,13 @@ module ActiveRecord
+       end
+     end
+ 
++    def test_associated_with_child_association
++      Comment.where.associated(:children).tap do |relation|
++        assert_includes     relation, comments(:greetings)
++        assert_not_includes relation, comments(:more_greetings)
++      end
++    end
++
+     def test_associated_with_multiple_associations
+       Post.where.associated(:author, :comments).tap do |relation|
+         assert_includes     relation, posts(:welcome)
+@@ -34,6 +41,13 @@ module ActiveRecord
+       assert posts(:authorless).comments.empty?
+       assert_equal [posts(:authorless)], Post.where.missing(:author, :comments).to_a
+     end
++
++    def test_missing_with_child_association
++      Comment.where.missing(:children).tap do |relation|
++        assert_includes     relation, comments(:more_greetings)
++        assert_not_includes relation, comments(:greetings)
++      end
++    end
+ 
+     def test_not_inverts_where_clause
+       relation = Post.where.not(title: "hello")
+diff --git a/activerecord/test/fixtures/comments.yml b/activerecord/test/fixtures/comments.yml
+index 6069d25f791..ce8b88dbf7a 100644
+--- a/activerecord/test/fixtures/comments.yml
++++ b/activerecord/test/fixtures/comments.yml
+@@ -7,6 +7,7 @@ greetings:
+ more_greetings:
+   id: 2
+   post_id: 1
++  parent_id: 1
+   body: Thank you again for the welcome
+   type: Comment
+ 

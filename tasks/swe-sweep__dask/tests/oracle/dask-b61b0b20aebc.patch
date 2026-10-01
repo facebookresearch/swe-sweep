@@ -1,0 +1,13 @@
+diff --git a/dask/array/utils.py b/dask/array/utils.py
+index 27500e0b8..02a788857 100644
+--- a/dask/array/utils.py
++++ b/dask/array/utils.py
+@@ -58,6 +58,8 @@ def meta_from_array(x, ndim=None, dtype=None):
+ 
+     if x is None:
+         x = np.ndarray
++    elif dtype is None and hasattr(x, "dtype"):
++        dtype = x.dtype
+ 
+     if isinstance(x, type):
+         x = x(shape=(0,) * (ndim or 0), dtype=dtype)

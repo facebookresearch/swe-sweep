@@ -1,0 +1,77 @@
+diff --git a/src/full/Agda/Interaction/Imports.hs b/src/full/Agda/Interaction/Imports.hs
+index 6180986..95a82e0 100644
+--- a/src/full/Agda/Interaction/Imports.hs
++++ b/src/full/Agda/Interaction/Imports.hs
+@@ -1166,7 +1166,12 @@ buildInterface src topLevel = do
+     -- and should be dead-code eliminated (#1928).
+     origDisplayForms <- HMap.filter (not . null) . HMap.map (filter isClosed) <$> useTC stImportsDisplayForms
+     -- TODO: Kill some ranges?
+-    (display, sig) <- eliminateDeadCode origDisplayForms =<< getSignature
++    let scope = topLevelScope topLevel
++    -- Andreas, Oskar, 2023-10-19, issue #6931:
++    -- To not delete module telescopes of empty public modules,
++    -- we need to pass the public modules to the dead-code elimination
++    -- (to be mined for additional roots for the reachability analysis).
++    (display, sig) <- eliminateDeadCode (publicModules scope) origDisplayForms =<< getSignature
+     userwarns      <- useTC stLocalUserWarnings
+     importwarn     <- useTC stWarningOnImport
+     syntaxInfo     <- useTC stSyntaxInfo
+@@ -1187,7 +1192,7 @@ buildInterface src topLevel = do
+       , iImportedModules = mhs
+       , iModuleName      = mname
+       , iScope           = empty -- publicModules scope
+-      , iInsideScope     = topLevelScope topLevel
++      , iInsideScope     = scope
+       , iSignature       = sig
+       , iDisplayForms    = display
+       , iUserWarnings    = userwarns
+diff --git a/src/full/Agda/TypeChecking/DeadCode.hs b/src/full/Agda/TypeChecking/DeadCode.hs
+index 3ddeb05..88ddab8 100644
+--- a/src/full/Agda/TypeChecking/DeadCode.hs
++++ b/src/full/Agda/TypeChecking/DeadCode.hs
+@@ -22,15 +22,16 @@ import Agda.Utils.Lens
+ 
+ -- | Run before serialisation to remove any definitions that are not reachable
+ --   from the public interface to the module.
+-eliminateDeadCode :: DisplayForms -> Signature -> TCM (DisplayForms, Signature)
+-eliminateDeadCode disp sig = Bench.billTo [Bench.DeadCode] $ do
++eliminateDeadCode :: Map.Map ModuleName a -> DisplayForms -> Signature -> TCM (DisplayForms, Signature)
++eliminateDeadCode publicModules disp sig = Bench.billTo [Bench.DeadCode] $ do
+   patsyn <- getPatternSyns
+   public <- Set.mapMonotonic anameName . publicNames <$> getScope
+   defs <- traverse instantiateFull $ sig ^. sigDefinitions
+   -- #2921: Eliminating definitions with attached COMPILE pragmas results in
+   -- the pragmas not being checked. Simple solution: don't eliminate these.
+   let hasCompilePragma = Set.fromList . HMap.keys . HMap.filter (not . Map.null . defCompiledRep) $ defs
+-  let r     = reachableFrom (Set.union public hasCompilePragma) patsyn defs
++  let rootSections = Map.elems $ (sig ^. sigSections) `Map.intersection` publicModules
++      r     = reachableFrom rootSections (Set.union public hasCompilePragma) patsyn defs
+       dead  = Set.fromList (HMap.keys defs) `Set.difference` r
+       valid = getAll . namesIn' (All . (`Set.notMember` dead))  -- no used name is dead
+       defs' = HMap.map ( \ d -> d { defDisplay = filter valid (defDisplay d) } )
+@@ -39,9 +40,10 @@ eliminateDeadCode disp sig = Bench.billTo [Bench.DeadCode] $ do
+   reportSLn "tc.dead" 10 $ "Removed " ++ show (HMap.size defs - HMap.size defs') ++ " unused definitions."
+   return (disp', set sigDefinitions defs' sig)
+ 
+-reachableFrom :: Set QName -> A.PatternSynDefns -> Definitions -> Set QName
+-reachableFrom names psyns defs = follow names (Set.toList names)
++reachableFrom :: [Section] -> Set QName -> A.PatternSynDefns -> Definitions -> Set QName
++reachableFrom sections names psyns defs = follow names' (Set.toList names')
+   where
++    names' = Set.union names (Set.unions (map (namesIn . (^. secTelescope)) sections))
+     follow visited [] = visited
+     follow visited (x : xs) = follow (Set.union visited new) (Set.toList new ++ xs)
+       where
+diff --git a/src/full/Agda/TypeChecking/Serialise.hs b/src/full/Agda/TypeChecking/Serialise.hs
+index 3a68b95..165ccf5 100644
+--- a/src/full/Agda/TypeChecking/Serialise.hs
++++ b/src/full/Agda/TypeChecking/Serialise.hs
+@@ -72,7 +72,7 @@ import Agda.Utils.IORef
+ -- 32-bit machines). Word64 does not have these problems.
+ 
+ currentInterfaceVersion :: Word64
+-currentInterfaceVersion = 20210514 * 10 + 1
++currentInterfaceVersion = 20231019 * 10 + 0
+ 
+ -- | The result of 'encode' and 'encodeInterface'.
+ 

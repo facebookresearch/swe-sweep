@@ -1,0 +1,26 @@
+diff --git a/test/regress/cli/CMakeLists.txt b/test/regress/cli/CMakeLists.txt
+index 83da543934..9a32259f7e 100644
+--- a/test/regress/cli/CMakeLists.txt
++++ b/test/regress/cli/CMakeLists.txt
+@@ -2255,6 +2255,7 @@ set(regress_1_tests
+   regress1/nl/proj-issue294.smt2
+   regress1/nl/proj-issue297.smt2
+   regress1/nl/proj-issue302.smt2
++  regress1/nl/proj-issue530.smt2 
+   regress1/nl/quant-nl.smt2
+   regress1/nl/red-exp.smt2
+   regress1/nl/rewriting-sums.smt2
+diff --git a/test/regress/cli/regress1/nl/proj-issue530.smt2 b/test/regress/cli/regress1/nl/proj-issue530.smt2
+new file mode 100644
+index 0000000000..8dbc4f747a
+--- /dev/null
++++ b/test/regress/cli/regress1/nl/proj-issue530.smt2
+@@ -0,0 +1,8 @@
++(set-logic ALL)
++(set-info :status unsat)
++(set-option :check-proofs true)
++(set-option :proof-check eager)
++(declare-const x Real)
++(assert (= real.pi (/ real.pi (tan (to_real (to_int x))))))
++(assert (= 1 (to_int x)))
++(check-sat)

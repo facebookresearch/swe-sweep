@@ -1,0 +1,84 @@
+diff --git a/interp/interp.go b/interp/interp.go
+index 171e2cc..5524eb0 100644
+--- a/interp/interp.go
++++ b/interp/interp.go
+@@ -133,6 +133,9 @@ type interp struct {
+ 	outputMode       IOMode
+ 	csvOutputConfig  CSVOutputConfig
+ 
++	savedFieldSep      string
++	savedFieldSepRegex *regexp.Regexp
++
+ 	// Parsed program, compiled functions and constants
+ 	program   *parser.Program
+ 	functions []compiler.Function
+@@ -412,6 +415,7 @@ func newInterp(program *parser.Program) *interp {
+ 	p.convertFormat = "%.6g"
+ 	p.outputFormat = "%.6g"
+ 	p.fieldSep = " "
++	p.savedFieldSep = " "
+ 	p.recordSep = "\n"
+ 	p.outputFieldSep = " "
+ 	p.outputRecordSep = "\n"
+diff --git a/interp/io.go b/interp/io.go
+index edfe03e..0105c9d 100644
+--- a/interp/io.go
++++ b/interp/io.go
+@@ -644,12 +644,18 @@ func (p *interp) setLine(line string, isTrueStr bool) {
+ 	p.lineIsTrueStr = isTrueStr
+ 	p.haveFields = false
+ 	p.reparseCSV = true
++
++	// POSIX says that fields should be evaluated as if they were split using
++	// the value of FS at the time that record's value was read. Because we
++	// split fields lazily, we need to save FS here.
++	p.savedFieldSep = p.fieldSep
++	p.savedFieldSepRegex = p.fieldSepRegex
+ }
+ 
+ // Ensure that the current line is parsed into fields, splitting it
+ // into fields if it hasn't been already
+ func (p *interp) ensureFields() {
+ 	if p.haveFields {
+ 		return
+ 	}
+ 	p.haveFields = true
+@@ -677,10 +683,10 @@ func (p *interp) ensureFields() {
+-	case p.fieldSep == " ":
++	case p.savedFieldSep == " ":
+ 		// FS space (default) means split fields on any whitespace
+ 		p.fields = strings.Fields(p.line)
+ 	case p.line == "":
+ 		p.fields = nil
+-	case utf8.RuneCountInString(p.fieldSep) <= 1:
++	case utf8.RuneCountInString(p.savedFieldSep) <= 1:
+ 		// 1-char FS is handled as plain split (not regex)
+-		p.fields = strings.Split(p.line, p.fieldSep)
++		p.fields = strings.Split(p.line, p.savedFieldSep)
+ 	default:
+ 		// Split on FS as a regex
+-		p.fields = p.fieldSepRegex.Split(p.line, -1)
++		p.fields = p.savedFieldSepRegex.Split(p.line, -1)
+ 	}
+ 
+ 	// Special case for when RS=="" and FS is single character,
+ 	// split on newline in addition to FS. See more here:
+ 	// https://www.gnu.org/software/gawk/manual/html_node/Multiple-Line.html
+-	if p.inputMode == DefaultMode && p.recordSep == "" && utf8.RuneCountInString(p.fieldSep) == 1 {
++	if p.inputMode == DefaultMode && p.recordSep == "" && utf8.RuneCountInString(p.savedFieldSep) == 1 {
+ 		fields := make([]string, 0, len(p.fields))
+ 		for _, field := range p.fields {
+ 			lines := strings.Split(field, "\n")
+diff --git a/interp/newexecute.go b/interp/newexecute.go
+index 519ef16..ee22d36 100644
+--- a/interp/newexecute.go
++++ b/interp/newexecute.go
+@@ -132,6 +132,8 @@ func (p *interp) resetVars() {
+ 	p.outputFormat = "%.6g"
+ 	p.fieldSep = " "
+ 	p.fieldSepRegex = nil
++	p.savedFieldSep = " "
++	p.savedFieldSepRegex = nil
+ 	p.recordSep = "\n"
+ 	p.recordSepRegex = nil
+ 	p.recordTerminator = ""

@@ -1,0 +1,18 @@
+diff --git a/vlib/v/tests/generics/generic_muls_test.v b/vlib/v/tests/generics/generic_muls_test.v
+new file mode 100644
+index 000000000..c5940c364
+--- /dev/null
++++ b/vlib/v/tests/generics/generic_muls_test.v
+@@ -0,0 +1,12 @@
++fn test_main() {
++	la := 'lalala'
++	la2 := &la
++	la3 := &la2
++	a(la3)
++}
++
++fn a[T](t &&T) {
++	println(t)
++	dump(t)
++	assert **t == 'lalala'
++}

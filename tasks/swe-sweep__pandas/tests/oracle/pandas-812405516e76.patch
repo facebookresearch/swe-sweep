@@ -1,0 +1,27 @@
+diff --git a/pandas/io/stata.py b/pandas/io/stata.py
+index b8d5617202..1a230f4ae4 100644
+--- a/pandas/io/stata.py
++++ b/pandas/io/stata.py
+@@ -3646,12 +3646,16 @@ class StataWriterUTF8(StataWriter117):
+         # High code points appear to be acceptable
+         for c in name:
+             if (
+-                ord(c) < 128
+-                and (c < "A" or c > "Z")
+-                and (c < "a" or c > "z")
+-                and (c < "0" or c > "9")
+-                and c != "_"
+-            ) or 128 <= ord(c) < 256:
++                (
++                    ord(c) < 128
++                    and (c < "A" or c > "Z")
++                    and (c < "a" or c > "z")
++                    and (c < "0" or c > "9")
++                    and c != "_"
++                )
++                or 128 <= ord(c) < 192
++                or c in {"×", "÷"}
++            ):
+                 name = name.replace(c, "_")
+ 
+         return name

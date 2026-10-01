@@ -1,0 +1,93 @@
+diff --git a/lib/rules/custom-property-no-missing-var-function/__tests__/index.mjs b/lib/rules/custom-property-no-missing-var-function/__tests__/index.mjs
+index bcaacb0ad..b416b556a 100644
+--- a/lib/rules/custom-property-no-missing-var-function/__tests__/index.mjs
++++ b/lib/rules/custom-property-no-missing-var-function/__tests__/index.mjs
+@@ -32,6 +32,10 @@ testRule({
+ 			code: 'a { color: var(--foo, red); }',
+ 			description: 'undeclared dashed-idents in var with fallback',
+ 		},
++		{
++			code: 'a { color: var(--foo, var(--bar)); }',
++			description: 'nested var() with fallback using declared custom properties',
++		},
+ 		{
+ 			code: 'a { --foo: var(--bar); }',
+ 			description: 'undeclared dashed-idents in vars assigned to custom property',
+@@ -59,6 +63,22 @@ testRule({
+ 		{
+ 			code: '@property --foo {} a { view-transition-name: --foo; }',
+ 		},
++		{
++			code: 'a { color: calc(var(--foo) + 100px); }',
++			description: 'valid var() usage in calc with additional value',
++		},
++		{
++			code: 'a { color: var(--foo, calc(var(--bar) + 20px)); }',
++			description: 'nested var() with fallback using calc',
++		},
++		{
++			code: 'a { color: calc(100px + var(--foo)); }',
++			description: 'valid var() usage in calc with leading value',
++		},
++		{
++			code: 'a { color: var(--foo, var(--bar, var(--foobar, #000))); }',
++			description: 'nested fallbacks in var() with recursive fallback values',
++		},
+ 	],
+ 
+ 	reject: [
+@@ -90,7 +110,7 @@ testRule({
+ 			description: 'declared in :root custom property',
+ 		},
+ 		{
+-			code: ':root { --bar: 0px; } a { color: calc(var(--foo) + --bar)); }',
++			code: ':root { --bar: 0px; } a { color: calc(var(--foo) + --bar); }',
+ 			message: messages.rejected('--bar'),
+ 			line: 1,
+ 			column: 52,
+@@ -105,7 +125,7 @@ testRule({
+ 			column: 36,
+ 			endLine: 1,
+ 			endColumn: 41,
+-			description: 'declared custom property and used with fall back',
++			description: 'declared custom property and used with fallback',
+ 		},
+ 		{
+ 			code: ':root { --bar: 0; } a { color: --foo(--bar); }',
+@@ -150,5 +170,36 @@ testRule({
+ 			],
+ 			description: 'two declared via at-property custom properties',
+ 		},
++		{
++			code: stripIndent`
++				a {
++					--foo: red;
++					--bar: blue;
++
++					color: var(--foo, --bar);
++				}
++			`,
++			message: messages.rejected('--bar'),
++			line: 5,
++			column: 20,
++			endLine: 5,
++			endColumn: 25,
++			description: 'var() with missing var() syntax on fallback',
++		},
++		{
++			code: stripIndent`
++				a {
++					--foo: red;
++					--bar: blue;
++					--baz: green;
++
++					color: var(--foo, var(--bar, --baz));
++				}
++			`,
++			warnings: [
++				{ message: messages.rejected('--baz'), line: 6, column: 31, endLine: 6, endColumn: 36 },
++			],
++			description: 'nested var() with second-level fallback missing var() syntax',
++		},
+ 	],
+ });

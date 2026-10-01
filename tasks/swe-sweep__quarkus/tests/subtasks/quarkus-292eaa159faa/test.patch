@@ -1,0 +1,84 @@
+diff --git a/extensions/hibernate-orm/deployment/src/test/java/io/quarkus/hibernate/orm/packages/PackageLevelAnnotationWithExplicitPackagePropertyTest.java b/extensions/hibernate-orm/deployment/src/test/java/io/quarkus/hibernate/orm/packages/PackageLevelAnnotationWithExplicitPackagePropertyTest.java
+new file mode 100644
+index 00000000000..ad8e71cc35e
+--- /dev/null
++++ b/extensions/hibernate-orm/deployment/src/test/java/io/quarkus/hibernate/orm/packages/PackageLevelAnnotationWithExplicitPackagePropertyTest.java
+@@ -0,0 +1,51 @@
++package io.quarkus.hibernate.orm.packages;
++
++import static org.assertj.core.api.Assertions.assertThat;
++
++import java.util.List;
++
++import jakarta.inject.Inject;
++import jakarta.persistence.EntityManager;
++import jakarta.transaction.UserTransaction;
++
++import org.junit.jupiter.api.Test;
++import org.junit.jupiter.api.extension.RegisterExtension;
++
++import io.quarkus.hibernate.orm.TransactionTestUtils;
++import io.quarkus.test.QuarkusUnitTest;
++
++public class PackageLevelAnnotationWithExplicitPackagePropertyTest {
++
++    @RegisterExtension
++    static QuarkusUnitTest runner = new QuarkusUnitTest()
++            .withApplicationRoot((jar) -> jar
++                    .addClass(TransactionTestUtils.class)
++                    .addPackage(PackageLevelAnnotationWithExplicitPackagePropertyTest.class.getPackage()))
++            .withConfigurationResource("application.properties")
++            .overrideConfigKey("quarkus.hibernate-orm.packages", "io.quarkus.hibernate.orm.packages");
++
++    @Inject
++    EntityManager entityManager;
++
++    @Inject
++    UserTransaction transaction;
++
++    @Test
++    public void test() {
++        ParentEntity parent1 = new ParentEntity("parent1");
++
++        inTransaction(() -> {
++            entityManager.persist(parent1);
++        });
++
++        inTransaction(() -> {
++            final List<ParentEntity> list = entityManager.createNamedQuery("test", ParentEntity.class)
++                    .getResultList();
++            assertThat(list.size()).isEqualTo(1);
++        });
++    }
++
++    private void inTransaction(Runnable runnable) {
++        TransactionTestUtils.inTransaction(transaction, runnable);
++    }
++}
+diff --git a/extensions/hibernate-orm/deployment/src/test/java/io/quarkus/hibernate/orm/packages/ParentEntity.java b/extensions/hibernate-orm/deployment/src/test/java/io/quarkus/hibernate/orm/packages/ParentEntity.java
+index a759a40a3b9..bc75e4550cb 100644
+--- a/extensions/hibernate-orm/deployment/src/test/java/io/quarkus/hibernate/orm/packages/ParentEntity.java
++++ b/extensions/hibernate-orm/deployment/src/test/java/io/quarkus/hibernate/orm/packages/ParentEntity.java
+@@ -4,7 +4,10 @@ import jakarta.persistence.Entity;
+ import jakarta.persistence.GeneratedValue;
+ import jakarta.persistence.Id;
+ 
++import org.hibernate.annotations.Filter;
++
+ @Entity
++@Filter(name = "filter")
+ public class ParentEntity {
+ 
+     @Id
+diff --git a/extensions/hibernate-orm/deployment/src/test/java/io/quarkus/hibernate/orm/packages/package-info.java b/extensions/hibernate-orm/deployment/src/test/java/io/quarkus/hibernate/orm/packages/package-info.java
+index 9c4d582d3b2..7c4587ce450 100644
+--- a/extensions/hibernate-orm/deployment/src/test/java/io/quarkus/hibernate/orm/packages/package-info.java
++++ b/extensions/hibernate-orm/deployment/src/test/java/io/quarkus/hibernate/orm/packages/package-info.java
+@@ -1,4 +1,6 @@
+ @NamedQuery(name = "test", query = "from ParentEntity")
++@FilterDef(name = "filter", defaultCondition = "true")
+ package io.quarkus.hibernate.orm.packages;
+ 
++import org.hibernate.annotations.FilterDef;
+ import org.hibernate.annotations.NamedQuery;
+\ No newline at end of file

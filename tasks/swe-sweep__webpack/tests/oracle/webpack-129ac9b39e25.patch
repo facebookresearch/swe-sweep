@@ -1,0 +1,13 @@
+diff --git a/lib/json/JsonGenerator.js b/lib/json/JsonGenerator.js
+index b16d406e7..ec7f9dd1f 100644
+--- a/lib/json/JsonGenerator.js
++++ b/lib/json/JsonGenerator.js
+@@ -175,7 +175,7 @@ class JsonGenerator extends Generator {
+ 		const jsonExpr =
+ 			jsonStr.length > 20 && typeof finalJson === "object"
+ 				? `JSON.parse('${jsonStr.replace(/[\\']/g, "\\$&")}')`
+-				: jsonStr;
++				: jsonStr.replace(/"__proto__":/g, '["__proto__"]:');
+ 		let content;
+ 		if (concatenationScope) {
+ 			content = `${runtimeTemplate.supportsConst() ? "const" : "var"} ${

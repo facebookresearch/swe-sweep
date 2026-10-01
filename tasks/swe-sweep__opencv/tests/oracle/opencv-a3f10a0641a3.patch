@@ -1,0 +1,24 @@
+diff --git a/modules/ml/src/boost.cpp b/modules/ml/src/boost.cpp
+index 4b94410eeb..58f572b90d 100644
+--- a/modules/ml/src/boost.cpp
++++ b/modules/ml/src/boost.cpp
+@@ -490,6 +490,7 @@ public:
+ 
+     float predict( InputArray samples, OutputArray results, int flags ) const CV_OVERRIDE
+     {
++        CV_Assert( samples.cols() == getVarCount() && samples.type() == CV_32F );
+         return impl.predict(samples, results, flags);
+     }
+ 
+diff --git a/modules/ml/src/rtrees.cpp b/modules/ml/src/rtrees.cpp
+index 1deee6f6c8..46af37ce11 100644
+--- a/modules/ml/src/rtrees.cpp
++++ b/modules/ml/src/rtrees.cpp
+@@ -479,6 +479,7 @@ public:
+     float predict( InputArray samples, OutputArray results, int flags ) const CV_OVERRIDE
+     {
+         CV_TRACE_FUNCTION();
++        CV_Assert( samples.cols() == getVarCount() && samples.type() == CV_32F );
+         return impl.predict(samples, results, flags);
+     }
+ 

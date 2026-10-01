@@ -1,0 +1,17 @@
+diff --git a/packages/babel-parser/src/plugins/typescript.js b/packages/babel-parser/src/plugins/typescript.js
+index 0000000000..0000000000 100644
+--- a/packages/babel-parser/src/plugins/typescript.js
++++ b/packages/babel-parser/src/plugins/typescript.js
+@@ -1819,7 +1819,11 @@ export default (superClass: Class<Parser>): Class<Parser> =>
+     // `let x: number;`
+     parseVarHead(decl: N.VariableDeclarator): void {
+       super.parseVarHead(decl);
+-      if (decl.id.type === "Identifier" && this.eat(tt.bang)) {
++      if (
++        decl.id.type === "Identifier" &&
++        !this.hasPrecedingLineBreak() &&
++        this.eat(tt.bang)
++      ) {
+         decl.definite = true;
+       }
+ 

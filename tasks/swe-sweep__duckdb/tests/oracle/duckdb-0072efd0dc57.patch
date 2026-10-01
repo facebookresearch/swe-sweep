@@ -1,0 +1,304 @@
+diff --git a/src/catalog/catalog_entry/duck_table_entry.cpp b/src/catalog/catalog_entry/duck_table_entry.cpp
+index 7c93ece48f..994b98b26a 100644
+--- a/src/catalog/catalog_entry/duck_table_entry.cpp
++++ b/src/catalog/catalog_entry/duck_table_entry.cpp
+@@ -279,9 +279,9 @@ unique_ptr<CatalogEntry> DuckTableEntry::RenameColumn(ClientContext &context, Re
+ 		case ConstraintType::UNIQUE: {
+ 			// UNIQUE constraint: possibly need to rename columns
+ 			auto &unique = copy->Cast<UniqueConstraint>();
+-			for (idx_t i = 0; i < unique.columns.size(); i++) {
+-				if (unique.columns[i] == info.old_name) {
+-					unique.columns[i] = info.new_name;
++			for (auto &column_name : unique.GetColumnNamesMutable()) {
++				if (column_name == info.old_name) {
++					column_name = info.new_name;
+ 				}
+ 			}
+ 			break;
+@@ -399,13 +399,13 @@ void DuckTableEntry::UpdateConstraintsOnColumnDrop(const LogicalIndex &removed_i
+ 		case ConstraintType::UNIQUE: {
+ 			auto copy = constraint->Copy();
+ 			auto &unique = copy->Cast<UniqueConstraint>();
+-			if (unique.index.index != DConstants::INVALID_INDEX) {
+-				if (unique.index == removed_index) {
++			if (unique.HasIndex()) {
++				if (unique.GetIndex() == removed_index) {
+ 					throw CatalogException(
+ 					    "Cannot drop column \"%s\" because there is a UNIQUE constraint that depends on it",
+ 					    info.removed_column);
+ 				}
+-				unique.index = adjusted_indices[unique.index.index];
++				unique.SetIndex(adjusted_indices[unique.GetIndex().index]);
+ 			}
+ 			create_info.constraints.push_back(std::move(copy));
+ 			break;
+diff --git a/src/catalog/catalog_entry/table_catalog_entry.cpp b/src/catalog/catalog_entry/table_catalog_entry.cpp
+index c433249732..f89d214f54 100644
+--- a/src/catalog/catalog_entry/table_catalog_entry.cpp
++++ b/src/catalog/catalog_entry/table_catalog_entry.cpp
+@@ -85,19 +85,18 @@ string TableCatalogEntry::ColumnsToSQL(const ColumnList &columns, const vector<u
+ 			not_null_columns.insert(not_null.index);
+ 		} else if (constraint->type == ConstraintType::UNIQUE) {
+ 			auto &pk = constraint->Cast<UniqueConstraint>();
+-			vector<string> constraint_columns = pk.columns;
+-			if (pk.index.index != DConstants::INVALID_INDEX) {
++			if (pk.HasIndex()) {
+ 				// no columns specified: single column constraint
+-				if (pk.is_primary_key) {
+-					pk_columns.insert(pk.index);
++				if (pk.IsPrimaryKey()) {
++					pk_columns.insert(pk.GetIndex());
+ 				} else {
+-					unique_columns.insert(pk.index);
++					unique_columns.insert(pk.GetIndex());
+ 				}
+ 			} else {
+ 				// multi-column constraint, this constraint needs to go at the end after all columns
+-				if (pk.is_primary_key) {
++				if (pk.IsPrimaryKey()) {
+ 					// multi key pk column: insert set of columns into multi_key_pks
+-					for (auto &col : pk.columns) {
++					for (auto &col : pk.GetColumnNames()) {
+ 						multi_key_pks.insert(col);
+ 					}
+ 				}
+diff --git a/src/function/table/system/duckdb_constraints.cpp b/src/function/table/system/duckdb_constraints.cpp
+index 560c6b3a3d..64aff39469 100644
+--- a/src/function/table/system/duckdb_constraints.cpp
++++ b/src/function/table/system/duckdb_constraints.cpp
+@@ -153,7 +153,7 @@ void DuckDBConstraintsFunction(ClientContext &context, TableFunctionInput &data_
+ 				break;
+ 			case ConstraintType::UNIQUE: {
+ 				auto &unique = constraint->Cast<UniqueConstraint>();
+-				constraint_type = unique.is_primary_key ? "PRIMARY KEY" : "UNIQUE";
++				constraint_type = unique.IsPrimaryKey() ? "PRIMARY KEY" : "UNIQUE";
+ 				break;
+ 			}
+ 			case ConstraintType::NOT_NULL:
+diff --git a/src/function/table/system/duckdb_tables.cpp b/src/function/table/system/duckdb_tables.cpp
+index 256badef56..2503cfbf80 100644
+--- a/src/function/table/system/duckdb_tables.cpp
++++ b/src/function/table/system/duckdb_tables.cpp
+@@ -87,7 +87,7 @@ static bool TableHasPrimaryKey(TableCatalogEntry &table) {
+ 	for (auto &constraint : table.GetConstraints()) {
+ 		if (constraint->type == ConstraintType::UNIQUE) {
+ 			auto &unique = constraint->Cast<UniqueConstraint>();
+-			if (unique.is_primary_key) {
++			if (unique.IsPrimaryKey()) {
+ 				return true;
+ 			}
+ 		}
+diff --git a/src/function/table/system/pragma_table_info.cpp b/src/function/table/system/pragma_table_info.cpp
+index 64ff4694fd..3e47ff398b 100644
+--- a/src/function/table/system/pragma_table_info.cpp
++++ b/src/function/table/system/pragma_table_info.cpp
+@@ -195,12 +195,16 @@ static ColumnConstraintInfo CheckConstraints(TableCatalogEntry &table, const Col
+ 		}
+ 		case ConstraintType::UNIQUE: {
+ 			auto &unique = constraint->Cast<UniqueConstraint>();
+-			bool &constraint_info = unique.is_primary_key ? result.pk : result.unique;
+-			if (unique.index == column.Logical()) {
+-				constraint_info = true;
+-			}
+-			if (std::find(unique.columns.begin(), unique.columns.end(), column.GetName()) != unique.columns.end()) {
+-				constraint_info = true;
++			bool &constraint_info = unique.IsPrimaryKey() ? result.pk : result.unique;
++			if (unique.HasIndex()) {
++				if (unique.GetIndex() == column.Logical()) {
++					constraint_info = true;
++				}
++			} else {
++				auto &columns = unique.GetColumnNames();
++				if (std::find(columns.begin(), columns.end(), column.GetName()) != columns.end()) {
++					constraint_info = true;
++				}
+ 			}
+ 			break;
+ 		}
+diff --git a/src/include/duckdb/parser/constraints/unique_constraint.hpp b/src/include/duckdb/parser/constraints/unique_constraint.hpp
+index 66073108bc..570a3e27cc 100644
+--- a/src/include/duckdb/parser/constraints/unique_constraint.hpp
++++ b/src/include/duckdb/parser/constraints/unique_constraint.hpp
+@@ -21,14 +21,6 @@ public:
+ 	DUCKDB_API UniqueConstraint(LogicalIndex index, bool is_primary_key);
+ 	DUCKDB_API UniqueConstraint(vector<string> columns, bool is_primary_key);
+ 
+-	//! The index of the column for which this constraint holds. Only used when the constraint relates to a single
+-	//! column, equal to DConstants::INVALID_INDEX if not used
+-	LogicalIndex index;
+-	//! The set of columns for which this constraint holds by name. Only used when the index field is not used.
+-	vector<string> columns;
+-	//! Whether or not this is a PRIMARY KEY constraint, or a UNIQUE constraint.
+-	bool is_primary_key;
+-
+ public:
+ 	DUCKDB_API string ToString() const override;
+ 
+@@ -37,8 +29,57 @@ public:
+ 	DUCKDB_API void Serialize(Serializer &serializer) const override;
+ 	DUCKDB_API static unique_ptr<Constraint> Deserialize(Deserializer &deserializer);
+ 
++	bool IsPrimaryKey() const {
++		return is_primary_key;
++	}
++
++	bool HasIndex() const {
++		return index.index != DConstants::INVALID_INDEX;
++	}
++
++	LogicalIndex GetIndex() const {
++		if (!HasIndex()) {
++			throw InternalException("UniqueConstraint::GetIndex called on a unique constraint without a defined index");
++		}
++		return index;
++	}
++	void SetIndex(LogicalIndex new_index) {
++		D_ASSERT(new_index.index != DConstants::INVALID_INDEX);
++		index = new_index;
++	}
++
++	const vector<string> &GetColumnNames() const {
++		D_ASSERT(columns.size() >= 1);
++		return columns;
++	}
++	vector<string> &GetColumnNamesMutable() {
++		D_ASSERT(columns.size() >= 1);
++		return columns;
++	}
++
++	void SetColumnName(string name) {
++		if (!columns.empty()) {
++			// name has already been set
++			return;
++		}
++		columns.push_back(std::move(name));
++	}
++
+ private:
+ 	UniqueConstraint();
++
++#ifdef DUCKDB_API_1_0
++private:
++#else
++public:
++#endif
++	//! The index of the column for which this constraint holds. Only used when the constraint relates to a single
++	//! column, equal to DConstants::INVALID_INDEX if not used
++	LogicalIndex index;
++	//! The set of columns for which this constraint holds by name. Only used when the index field is not used.
++	vector<string> columns;
++	//! Whether or not this is a PRIMARY KEY constraint, or a UNIQUE constraint.
++	bool is_primary_key;
+ };
+ 
+ } // namespace duckdb
+diff --git a/src/parser/constraints/unique_constraint.cpp b/src/parser/constraints/unique_constraint.cpp
+index 29fd536e8b..8613231eb4 100644
+--- a/src/parser/constraints/unique_constraint.cpp
++++ b/src/parser/constraints/unique_constraint.cpp
+@@ -28,11 +28,13 @@ string UniqueConstraint::ToString() const {
+ }
+ 
+ unique_ptr<Constraint> UniqueConstraint::Copy() const {
+-	if (index.index == DConstants::INVALID_INDEX) {
++	if (!HasIndex()) {
+ 		return make_uniq<UniqueConstraint>(columns, is_primary_key);
+ 	} else {
+ 		auto result = make_uniq<UniqueConstraint>(index, is_primary_key);
+-		result->columns = columns;
++		if (!columns.empty()) {
++			result->columns.push_back(columns[0]);
++		}
+ 		return std::move(result);
+ 	}
+ }
+diff --git a/src/planner/binder/statement/bind_create.cpp b/src/planner/binder/statement/bind_create.cpp
+index 7903342bd8..69fdc4afca 100644
+--- a/src/planner/binder/statement/bind_create.cpp
++++ b/src/planner/binder/statement/bind_create.cpp
+@@ -272,16 +272,16 @@ static void FindMatchingPrimaryKeyColumns(const ColumnList &columns, const vecto
+ 			continue;
+ 		}
+ 		auto &unique = constr->Cast<UniqueConstraint>();
+-		if (find_primary_key && !unique.is_primary_key) {
++		if (find_primary_key && !unique.IsPrimaryKey()) {
+ 			continue;
+ 		}
+ 		found_constraint = true;
+ 
+ 		vector<string> pk_names;
+-		if (unique.index.index != DConstants::INVALID_INDEX) {
+-			pk_names.push_back(columns.GetColumn(LogicalIndex(unique.index)).Name());
++		if (unique.HasIndex()) {
++			pk_names.push_back(columns.GetColumn(LogicalIndex(unique.GetIndex())).Name());
+ 		} else {
+-			pk_names = unique.columns;
++			pk_names = unique.GetColumnNames();
+ 		}
+ 		if (find_primary_key) {
+ 			// found matching primary key
+@@ -414,15 +414,14 @@ static bool AnyConstraintReferencesGeneratedColumn(CreateTableInfo &table_info)
+ 		}
+ 		case ConstraintType::UNIQUE: {
+ 			auto &constraint = constr->Cast<UniqueConstraint>();
+-			auto index = constraint.index;
+-			if (index.index == DConstants::INVALID_INDEX) {
+-				for (auto &col : constraint.columns) {
++			if (!constraint.HasIndex()) {
++				for (auto &col : constraint.GetColumnNames()) {
+ 					if (generated_columns.count(col)) {
+ 						return true;
+ 					}
+ 				}
+ 			} else {
+-				if (table_info.columns.GetColumn(index).Generated()) {
++				if (table_info.columns.GetColumn(constraint.GetIndex()).Generated()) {
+ 					return true;
+ 				}
+ 			}
+diff --git a/src/planner/binder/statement/bind_create_table.cpp b/src/planner/binder/statement/bind_create_table.cpp
+index 683c475ddb..b2b0bfbef5 100644
+--- a/src/planner/binder/statement/bind_create_table.cpp
++++ b/src/planner/binder/statement/bind_create_table.cpp
+@@ -76,17 +76,16 @@ static void BindConstraints(Binder &binder, BoundCreateTableInfo &info) {
+ 			// have to resolve columns of the unique constraint
+ 			vector<LogicalIndex> keys;
+ 			logical_index_set_t key_set;
+-			if (unique.index.index != DConstants::INVALID_INDEX) {
+-				D_ASSERT(unique.index.index < base.columns.LogicalColumnCount());
++			if (unique.HasIndex()) {
++				D_ASSERT(unique.GetIndex().index < base.columns.LogicalColumnCount());
+ 				// unique constraint is given by single index
+-				unique.columns.push_back(base.columns.GetColumn(unique.index).Name());
+-				keys.push_back(unique.index);
+-				key_set.insert(unique.index);
++				unique.SetColumnName(base.columns.GetColumn(unique.GetIndex()).Name());
++				keys.push_back(unique.GetIndex());
++				key_set.insert(unique.GetIndex());
+ 			} else {
+ 				// unique constraint is given by list of names
+ 				// have to resolve names
+-				D_ASSERT(!unique.columns.empty());
+-				for (auto &keyname : unique.columns) {
++				for (auto &keyname : unique.GetColumnNames()) {
+ 					if (!base.columns.ColumnExists(keyname)) {
+ 						throw ParserException("column \"%s\" named in key does not exist", keyname);
+ 					}
+@@ -102,7 +101,7 @@ static void BindConstraints(Binder &binder, BoundCreateTableInfo &info) {
+ 				}
+ 			}
+ 
+-			if (unique.is_primary_key) {
++			if (unique.IsPrimaryKey()) {
+ 				// we can only have one primary key per table
+ 				if (has_primary_key) {
+ 					throw ParserException("table \"%s\" has more than one primary key", base.table);
+@@ -111,7 +110,7 @@ static void BindConstraints(Binder &binder, BoundCreateTableInfo &info) {
+ 				primary_keys = keys;
+ 			}
+ 			info.bound_constraints.push_back(
+-			    make_uniq<BoundUniqueConstraint>(std::move(keys), std::move(key_set), unique.is_primary_key));
++			    make_uniq<BoundUniqueConstraint>(std::move(keys), std::move(key_set), unique.IsPrimaryKey()));
+ 			break;
+ 		}
+ 		case ConstraintType::FOREIGN_KEY: {

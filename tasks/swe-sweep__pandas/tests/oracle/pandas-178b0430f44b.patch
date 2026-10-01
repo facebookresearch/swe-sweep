@@ -1,0 +1,13 @@
+diff --git a/pandas/core/frame.py b/pandas/core/frame.py
+index f14cb74f7c..bc90a8a67f 100644
+--- a/pandas/core/frame.py
++++ b/pandas/core/frame.py
+@@ -2234,7 +2234,7 @@ class DataFrame(NDFrame, OpsMixin):
+ 
+         if is_iterator(data):
+             if nrows == 0:
+-                return cls()
++                return cls(index=index, columns=columns)
+ 
+             try:
+                 first_row = next(data)

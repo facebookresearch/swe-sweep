@@ -1,0 +1,54 @@
+diff --git a/numpy/core/src/multiarray/nditer_constr.c b/numpy/core/src/multiarray/nditer_constr.c
+index b6acce5709..2483971963 100644
+--- a/numpy/core/src/multiarray/nditer_constr.c
++++ b/numpy/core/src/multiarray/nditer_constr.c
+@@ -1631,6 +1631,24 @@ npyiter_fill_axisdata(NpyIter *iter, npy_uint32 flags, npyiter_opitflags *op_itf
+                                         "read-write");
+                                 return 0;
+                             }
++                            /*
++                             * The ARRAYMASK can't be a reduction, because
++                             * it would be possible to write back to the
++                             * array once when the ARRAYMASK says 'True',
++                             * then have the reduction on the ARRAYMASK
++                             * later flip to 'False', indicating that the
++                             * write back should never have been done,
++                             * and violating the strict masking semantics
++                             */
++                            if (iop == maskop) {
++                                PyErr_SetString(PyExc_ValueError,
++                                        "output operand requires a "
++                                        "reduction, but is flagged as "
++                                        "the ARRAYMASK operand which "
++                                        "is not permitted to be the "
++                                        "result of a reduction");
++                                return 0;
++                            }
+                             NIT_ITFLAGS(iter) |= NPY_ITFLAG_REDUCE;
+                             op_itflags[iop] |= NPY_OP_ITFLAG_REDUCE;
+                         }
+@@ -1659,6 +1677,24 @@ npyiter_fill_axisdata(NpyIter *iter, npy_uint32 flags, npyiter_opitflags *op_itf
+                                     "read-write");
+                             return 0;
+                         }
++                        /*
++                         * The ARRAYMASK can't be a reduction, because
++                         * it would be possible to write back to the
++                         * array once when the ARRAYMASK says 'True',
++                         * then have the reduction on the ARRAYMASK
++                         * later flip to 'False', indicating that the
++                         * write back should never have been done,
++                         * and violating the strict masking semantics
++                         */
++                        if (iop == maskop) {
++                            PyErr_SetString(PyExc_ValueError,
++                                    "output operand requires a "
++                                    "reduction, but is flagged as "
++                                    "the ARRAYMASK operand which "
++                                    "is not permitted to be the "
++                                    "result of a reduction");
++                            return 0;
++                        }
+                         NIT_ITFLAGS(iter) |= NPY_ITFLAG_REDUCE;
+                         op_itflags[iop] |= NPY_OP_ITFLAG_REDUCE;
+                     }

@@ -1,0 +1,19 @@
+diff --git a/src/Symfony/Component/String/Tests/Slugger/AsciiSluggerTest.php b/src/Symfony/Component/String/Tests/Slugger/AsciiSluggerTest.php
+index c6b937920..270e59a68 100644
+--- a/src/Symfony/Component/String/Tests/Slugger/AsciiSluggerTest.php
++++ b/src/Symfony/Component/String/Tests/Slugger/AsciiSluggerTest.php
+@@ -99,4 +99,14 @@ class AsciiSluggerTest extends TestCase
+             'undefined_locale', // Behaves the same as if emoji support is disabled
+         ];
+     }
++
++    public function testGetLocaleDefaultsToEmptyString()
++    {
++        $slugger = new AsciiSlugger();
++
++        $this->assertSame('', $slugger->getLocale());
++
++        $slugger->setLocale('en');
++        $this->assertSame('en', $slugger->getLocale());
++    }
+ }

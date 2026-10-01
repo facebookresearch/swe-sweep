@@ -1,0 +1,110 @@
+diff --git a/extensions/spring-data-jpa/deployment/src/test/java/io/quarkus/spring/data/deployment/MethodNameParserTest.java b/extensions/spring-data-jpa/deployment/src/test/java/io/quarkus/spring/data/deployment/MethodNameParserTest.java
+index 6f11148faf8..6c3b27f1632 100644
+--- a/extensions/spring-data-jpa/deployment/src/test/java/io/quarkus/spring/data/deployment/MethodNameParserTest.java
++++ b/extensions/spring-data-jpa/deployment/src/test/java/io/quarkus/spring/data/deployment/MethodNameParserTest.java
+@@ -17,6 +17,10 @@ import org.jboss.jandex.Indexer;
+ import org.jboss.jandex.MethodInfo;
+ import org.junit.jupiter.api.Test;
+ 
++import io.quarkus.spring.data.deployment.generics.ChildBase;
++import io.quarkus.spring.data.deployment.generics.ParentBase;
++import io.quarkus.spring.data.deployment.generics.ParentBaseRepository;
++
+ public class MethodNameParserTest {
+ 
+     private final Class<?> repositoryClass = PersonRepository.class;
+@@ -95,6 +99,32 @@ public class MethodNameParserTest {
+         assertThat(exception).hasMessageContaining("Person does not contain a field named: _");
+     }
+ 
++    @Test
++    public void testGenericsWithWildcard() throws Exception {
++        Class[] additionalClasses = new Class[] { ChildBase.class };
++
++        MethodNameParser.Result result = parseMethod(ParentBaseRepository.class, "countParentsByChildren_Nombre",
++                ParentBase.class,
++                additionalClasses);
++        assertThat(result).isNotNull();
++        assertSameClass(result.getEntityClass(), ParentBase.class);
++        assertThat(result.getQuery()).isEqualTo("FROM ParentBase WHERE children.nombre = ?1");
++        assertThat(result.getParamCount()).isEqualTo(1);
++    }
++
++    @Test
++    public void shouldParseRepositoryMethodOverEntityContainingACollection() throws Exception {
++        Class[] additionalClasses = new Class[] { LoginEvent.class };
++
++        MethodNameParser.Result result = parseMethod(UserRepository.class, "countUsersByLoginEvents_Id",
++                User.class,
++                additionalClasses);
++        assertThat(result).isNotNull();
++        assertSameClass(result.getEntityClass(), User.class);
++        assertThat(result.getQuery()).isEqualTo("FROM User WHERE loginEvents.id = ?1");
++        assertThat(result.getParamCount()).isEqualTo(1);
++    }
++
+     private AbstractStringAssert<?> assertSameClass(ClassInfo classInfo, Class<?> aClass) {
+         return assertThat(classInfo.name().toString()).isEqualTo(aClass.getName());
+     }
+diff --git a/extensions/spring-data-jpa/deployment/src/test/java/io/quarkus/spring/data/deployment/UserRepository.java b/extensions/spring-data-jpa/deployment/src/test/java/io/quarkus/spring/data/deployment/UserRepository.java
+index 61d15169d25..caef9e4231c 100644
+--- a/extensions/spring-data-jpa/deployment/src/test/java/io/quarkus/spring/data/deployment/UserRepository.java
++++ b/extensions/spring-data-jpa/deployment/src/test/java/io/quarkus/spring/data/deployment/UserRepository.java
+@@ -28,4 +28,6 @@ public interface UserRepository extends JpaRepository<User, String> {
+ 
+     // purposely with compiled parameter name not matching the query to also test that @Param takes precedence
+     User getUserByFullNameUsingNamedQueries(@Param("name") String arg);
++
++    long countUsersByLoginEvents_Id(Long id);
+ }
+diff --git a/extensions/spring-data-jpa/deployment/src/test/java/io/quarkus/spring/data/deployment/generics/ChildBase.java b/extensions/spring-data-jpa/deployment/src/test/java/io/quarkus/spring/data/deployment/generics/ChildBase.java
+new file mode 100644
+index 00000000000..670487953ff
+--- /dev/null
++++ b/extensions/spring-data-jpa/deployment/src/test/java/io/quarkus/spring/data/deployment/generics/ChildBase.java
+@@ -0,0 +1,9 @@
++package io.quarkus.spring.data.deployment.generics;
++
++import jakarta.persistence.MappedSuperclass;
++
++@MappedSuperclass
++public class ChildBase {
++    String nombre;
++    String detail;
++}
+diff --git a/extensions/spring-data-jpa/deployment/src/test/java/io/quarkus/spring/data/deployment/generics/ParentBase.java b/extensions/spring-data-jpa/deployment/src/test/java/io/quarkus/spring/data/deployment/generics/ParentBase.java
+new file mode 100644
+index 00000000000..efb76254359
+--- /dev/null
++++ b/extensions/spring-data-jpa/deployment/src/test/java/io/quarkus/spring/data/deployment/generics/ParentBase.java
+@@ -0,0 +1,17 @@
++package io.quarkus.spring.data.deployment.generics;
++
++import java.util.List;
++
++import jakarta.persistence.CascadeType;
++import jakarta.persistence.MappedSuperclass;
++import jakarta.persistence.OneToMany;
++
++@MappedSuperclass
++public class ParentBase<T extends ChildBase> {
++    String name;
++    String detail;
++    int age;
++    float test;
++    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
++    private List<T> children;
++}
+diff --git a/extensions/spring-data-jpa/deployment/src/test/java/io/quarkus/spring/data/deployment/generics/ParentBaseRepository.java b/extensions/spring-data-jpa/deployment/src/test/java/io/quarkus/spring/data/deployment/generics/ParentBaseRepository.java
+new file mode 100644
+index 00000000000..bb12c2c038c
+--- /dev/null
++++ b/extensions/spring-data-jpa/deployment/src/test/java/io/quarkus/spring/data/deployment/generics/ParentBaseRepository.java
+@@ -0,0 +1,7 @@
++package io.quarkus.spring.data.deployment.generics;
++
++import org.springframework.data.jpa.repository.JpaRepository;
++
++public interface ParentBaseRepository<T extends ParentBase<?>> extends JpaRepository<T, Long> {
++    long countParentsByChildren_Nombre(String name);
++}

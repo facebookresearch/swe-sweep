@@ -1,0 +1,13 @@
+diff --git a/server-spi-private/src/main/java/org/keycloak/events/Event.java b/server-spi-private/src/main/java/org/keycloak/events/Event.java
+index 80fae506a0..b43f76a529 100644
+--- a/server-spi-private/src/main/java/org/keycloak/events/Event.java
++++ b/server-spi-private/src/main/java/org/keycloak/events/Event.java
+@@ -107,7 +107,7 @@ public class Event {
+     }
+ 
+     public void setSessionId(String sessionId) {
+-        this.sessionId = sessionId;
++        this.sessionId = maxLength(sessionId, 255);
+     }
+ 
+     public String getIpAddress() {

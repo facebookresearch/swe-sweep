@@ -1,0 +1,20 @@
+diff --git a/tests/lean/run/5176.lean b/tests/lean/run/5176.lean
+new file mode 100644
+index 0000000000..231e6db4f9
+--- /dev/null
++++ b/tests/lean/run/5176.lean
+@@ -0,0 +1,14 @@
++class Foo where
++
++class Bar extends Foo where
++  bar : True
++
++def foo : Foo := {}
++
++example [Bar] : Bar := {
++  foo with bar := by {
++    rename_i inst
++    guard_hyp inst : Bar
++    trivial
++  }
++}

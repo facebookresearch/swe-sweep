@@ -1,0 +1,212 @@
+diff --git a/src/smt/proof_manager.cpp b/src/smt/proof_manager.cpp
+index 53fd9f49c3..3849355b95 100644
+--- a/src/smt/proof_manager.cpp
++++ b/src/smt/proof_manager.cpp
+@@ -305,7 +305,14 @@ void PfManager::translateDifficultyMap(std::map<Node, Node>& dmap,
+   Trace("difficulty-proc") << "Get final proof" << std::endl;
+   std::shared_ptr<ProofNode> fpf = connectProofToAssertions(pf, smt);
+   Trace("difficulty-debug") << "Final proof is " << *fpf.get() << std::endl;
+-  Assert(fpf->getRule() == PfRule::SCOPE);
++  // We are typically a SCOPE here, although if we are not, then the proofs
++  // have no free assumptions. If this is the case, then the only difficulty
++  // was incremented on auxiliary lemmas added during preprocessing. Since
++  // there are no dependencies, then the difficulty map is empty.
++  if (fpf->getRule() != PfRule::SCOPE)
++  {
++    return;
++  }
+   fpf = fpf->getChildren()[0];
+   // analyze proof
+   Assert(fpf->getRule() == PfRule::SAT_REFUTATION);
+diff --git a/src/smt/solver_engine.cpp b/src/smt/solver_engine.cpp
+index bb199fa9b6..0728052964 100644
+--- a/src/smt/solver_engine.cpp
++++ b/src/smt/solver_engine.cpp
+@@ -1786,7 +1786,8 @@ void SolverEngine::getDifficultyMap(std::map<Node, Node>& dmap)
+   Assert(d_pfManager);
+   // get difficulty map from theory engine first
+   TheoryEngine* te = d_smtSolver->getTheoryEngine();
+-  te->getDifficultyMap(dmap);
++  // do not include lemmas
++  te->getDifficultyMap(dmap, false);
+   // then ask proof manager to translate dmap in terms of the input
+   d_pfManager->translateDifficultyMap(dmap, *d_smtSolver.get());
+ }
+diff --git a/src/theory/difficulty_manager.cpp b/src/theory/difficulty_manager.cpp
+index 36a6b2c5f0..d933f5ca7d 100644
+--- a/src/theory/difficulty_manager.cpp
++++ b/src/theory/difficulty_manager.cpp
+@@ -33,6 +33,7 @@ DifficultyManager::DifficultyManager(Env& env,
+     : EnvObj(env),
+       d_rlv(rlv),
+       d_input(userContext()),
++      d_lemma(userContext()),
+       d_val(val),
+       d_dfmap(userContext())
+ {
+@@ -47,11 +48,19 @@ void DifficultyManager::notifyInputAssertions(
+   }
+ }
+ 
+-void DifficultyManager::getDifficultyMap(std::map<Node, Node>& dmap)
++void DifficultyManager::getDifficultyMap(std::map<Node, Node>& dmap,
++                                         bool includeLemmas)
+ {
+   NodeManager* nm = NodeManager::currentNM();
+   for (const std::pair<const Node, uint64_t> p : d_dfmap)
+   {
++    if (!includeLemmas)
++    {
++      if (d_input.find(p.first) == d_input.end())
++      {
++        continue;
++      }
++    }
+     dmap[p.first] = nm->mkConstInt(Rational(p.second));
+   }
+ }
+@@ -68,7 +77,7 @@ uint64_t DifficultyManager::getCurrentDifficulty(const Node& n) const
+ 
+ void DifficultyManager::notifyLemma(Node n, bool inFullEffortCheck)
+ {
+-  d_input.insert(n);
++  d_lemma.insert(n);
+   // compute if we should consider the lemma
+   bool considerLemma = false;
+   if (options().smt.difficultyMode
+@@ -132,20 +141,23 @@ void DifficultyManager::notifyCandidateModel(TheoryModel* m)
+     return;
+   }
+   Trace("diff-man") << "DifficultyManager::notifyCandidateModel, #input="
+-                    << d_input.size() << std::endl;
+-  for (const Node& a : d_input)
++                    << d_input.size() << " #lemma=" << d_lemma.size()
++                    << std::endl;
++  for (size_t i = 0; i < 2; i++)
+   {
+-    // should have miniscoped the assertions upstream
+-    Assert(a.getKind() != kind::AND);
+-    // check if each input is satisfied
+-    Node av = m->getValue(a);
+-    if (av.isConst() && av.getConst<bool>())
++    NodeSet& ns = i == 0 ? d_input : d_lemma;
++    for (const Node& a : ns)
+     {
+-      continue;
++      // check if each input is satisfied
++      Node av = m->getValue(a);
++      if (av.isConst() && av.getConst<bool>())
++      {
++        continue;
++      }
++      Trace("diff-man") << "  not true: " << a << std::endl;
++      // not satisfied, increment counter
++      incrementDifficulty(a);
+     }
+-    Trace("diff-man") << "  not true: " << a << std::endl;
+-    // not satisfied, increment counter
+-    incrementDifficulty(a);
+   }
+   Trace("diff-man") << std::endl;
+ }
+diff --git a/src/theory/difficulty_manager.h b/src/theory/difficulty_manager.h
+index d946f9403c..0f896818c4 100644
+--- a/src/theory/difficulty_manager.h
++++ b/src/theory/difficulty_manager.h
+@@ -46,8 +46,12 @@ class DifficultyManager : protected EnvObj
+   /**
+    * Get difficulty map, which populates dmap mapping preprocessed assertions
+    * to a difficulty measure (a constant integer).
++   *
++   * @param dmap The difficulty map to populate.
++   * @param includeLemmas Whether to include difficulty of lemmas in the domain
++   * of dmap.
+    */
+-  void getDifficultyMap(std::map<Node, Node>& dmap);
++  void getDifficultyMap(std::map<Node, Node>& dmap, bool includeLemmas = false);
+   /**
+    * Get the current difficulty for input formula or lemma n.
+    */
+@@ -79,11 +83,10 @@ class DifficultyManager : protected EnvObj
+   void incrementDifficulty(TNode a, uint64_t amount = 1);
+   /** Pointer to the parent relevance manager */
+   RelevanceManager* d_rlv;
+-  /**
+-   * The input assertions, tracked to ensure we do not increment difficulty
+-   * on lemmas.
+-   */
++  /** The input assertions */
+   NodeSet d_input;
++  /** The lemmas */
++  NodeSet d_lemma;
+   /** The valuation object, used to query current value of theory literals */
+   Valuation d_val;
+   /**
+diff --git a/src/theory/relevance_manager.cpp b/src/theory/relevance_manager.cpp
+index 0e58d8d315..c841d96968 100644
+--- a/src/theory/relevance_manager.cpp
++++ b/src/theory/relevance_manager.cpp
+@@ -566,11 +566,12 @@ void RelevanceManager::notifyCandidateModel(TheoryModel* m)
+   }
+ }
+ 
+-void RelevanceManager::getDifficultyMap(std::map<Node, Node>& dmap)
++void RelevanceManager::getDifficultyMap(std::map<Node, Node>& dmap,
++                                        bool includeLemmas)
+ {
+   if (d_dman != nullptr)
+   {
+-    d_dman->getDifficultyMap(dmap);
++    d_dman->getDifficultyMap(dmap, includeLemmas);
+   }
+ }
+ 
+diff --git a/src/theory/relevance_manager.h b/src/theory/relevance_manager.h
+index 45bda54303..a18d87f6bc 100644
+--- a/src/theory/relevance_manager.h
++++ b/src/theory/relevance_manager.h
+@@ -149,8 +149,12 @@ class RelevanceManager : public TheoryEngineModule
+   void notifyCandidateModel(TheoryModel* m) override;
+   /**
+    * Get difficulty map
++   *
++   * @param dmap The difficulty map to populate.
++   * @param includeLemmas Whether to include difficulty of lemmas in the domain
++   * of dmap.
+    */
+-  void getDifficultyMap(std::map<Node, Node>& dmap);
++  void getDifficultyMap(std::map<Node, Node>& dmap, bool includeLemmas);
+ 
+  private:
+   /**
+diff --git a/src/theory/theory_engine.cpp b/src/theory/theory_engine.cpp
+index 1c082e356c..e9903176b4 100644
+--- a/src/theory/theory_engine.cpp
++++ b/src/theory/theory_engine.cpp
+@@ -1146,10 +1146,11 @@ theory::EqualityStatus TheoryEngine::getEqualityStatus(TNode a, TNode b)
+   return d_sharedSolver->getEqualityStatus(a, b);
+ }
+ 
+-void TheoryEngine::getDifficultyMap(std::map<Node, Node>& dmap)
++void TheoryEngine::getDifficultyMap(std::map<Node, Node>& dmap,
++                                    bool includeLemmas)
+ {
+   Assert(d_relManager != nullptr);
+-  d_relManager->getDifficultyMap(dmap);
++  d_relManager->getDifficultyMap(dmap, includeLemmas);
+ }
+ 
+ theory::IncompleteId TheoryEngine::getModelUnsoundId() const
+diff --git a/src/theory/theory_engine.h b/src/theory/theory_engine.h
+index e17e2fb168..d7cdbb7eb7 100644
+--- a/src/theory/theory_engine.h
++++ b/src/theory/theory_engine.h
+@@ -391,7 +391,7 @@ class TheoryEngine : protected EnvObj
+    *
+    * For details, see theory/difficuly_manager.h.
+    */
+-  void getDifficultyMap(std::map<Node, Node>& dmap);
++  void getDifficultyMap(std::map<Node, Node>& dmap, bool includeLemmas = false);
+ 
+   /** Get incomplete id, valid when isModelUnsound is true. */
+   theory::IncompleteId getModelUnsoundId() const;

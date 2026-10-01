@@ -1,0 +1,15 @@
+diff --git a/codec/src/main/java/io/netty/handler/codec/DateFormatter.java b/codec/src/main/java/io/netty/handler/codec/DateFormatter.java
+index 8897cb5a60..8791103175 100644
+--- a/codec/src/main/java/io/netty/handler/codec/DateFormatter.java
++++ b/codec/src/main/java/io/netty/handler/codec/DateFormatter.java
+@@ -388,8 +388,8 @@ public final class DateFormatter {
+             }
+         }
+ 
+-        // terminate trailing token
+-        return tokenStart != -1 && parseToken(txt, tokenStart, txt.length());
++        // terminate trailing token at end, not txt.length(), so a substring parse doesn't overrun
++        return tokenStart != -1 && parseToken(txt, tokenStart, end);
+     }
+ 
+     private boolean normalizeAndValidate() {

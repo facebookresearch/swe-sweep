@@ -1,0 +1,747 @@
+diff --git a/__tests__/__fixtures__/test-merge-file-deletion.git/HEAD b/__tests__/__fixtures__/test-merge-file-deletion.git/HEAD
+new file mode 100644
+index 0000000000000000000000000000000000000000..0d9c7d1097b3f3d92545e2944a4822f6ae251571
+GIT binary patch
+literal 18
+ZcmXR)O|w!cN=+-)&qz&7Db`Qq0suU~1{MGS
+
+literal 0
+HcmV?d00001
+
+diff --git a/__tests__/__fixtures__/test-merge-file-deletion.git/config b/__tests__/__fixtures__/test-merge-file-deletion.git/config
+new file mode 100644
+index 0000000000000000000000000000000000000000..1d0754dfa0efc4c3d19bf86dabefcf583d83af8e
+GIT binary patch
+literal 108
+zcmX|(%L#xm5CzXk6(I!}8?ch#!Oun(6IY(AV)q6FF9X9oUYrEfTLaqVU==(`PzJpS
+s2g~L<*IJV}Q<0gfDNeFx9Pmp-ZA#7yc;U_0vlF>agO)wqg7rgVUk6_#cmMzZ
+
+literal 0
+HcmV?d00001
+
+diff --git a/__tests__/__fixtures__/test-merge-file-deletion.git/description b/__tests__/__fixtures__/test-merge-file-deletion.git/description
+new file mode 100644
+index 0000000000000000000000000000000000000000..498b267a8c7812490d6479839c5577eaaec79d62
+GIT binary patch
+literal 73
+zcmWH|%S+5nO;IRHEyyp<EXgmbv{pz>$t+PQ$;d2LNXyJgRZve!Elw`VEGWs$&r??@
+Q$yWgB0LrH#Y0~2Y0PnOK(EtDd
+
+literal 0
+HcmV?d00001
+
+diff --git a/__tests__/__fixtures__/test-merge-file-deletion.git/hooks/applypatch-msg.sample b/__tests__/__fixtures__/test-merge-file-deletion.git/hooks/applypatch-msg.sample
+new file mode 100755
+index 0000000000000000000000000000000000000000..a5d7b84a673458d14d9aab082183a1968c2c7492
+GIT binary patch
+literal 478
+zcmY+AT}}fr420iv3X@h92(lHgNJwx8E|6}$o2dCy?4>P;yW@1*QeN%xH{)5{tv5cc
+z$*F}}z<UBb*jNIB%XtUXS6>)7L+`NP0Xu{~$LJYC9w8!;9TC{>Fu~?11Y1ft7R$YZ
+zq2>ryh$dPeF5>QF^dX?x!R0Az#Z{1d&kj;f<_l{EV#^bO9T+QkqRFRGaI;6vrFzSF
+zp@JWv5o}^=afx%eN!tNj9X&Nf2zig&CdI8B-aK}BYVZNiVMUbeMoMAl>6H5ks*K`!
+z(xeTg|GqboM%^jZ!RXnLGlV=9HJ2y5SG~NKjbJ`av6T>vX-cWiog8RAYa8f6D@I~4
+b2hhtaLc?k$#bN({xcq*8)XO*hqh8c6SRA2`
+
+literal 0
+HcmV?d00001
+
+diff --git a/__tests__/__fixtures__/test-merge-file-deletion.git/hooks/commit-msg.sample b/__tests__/__fixtures__/test-merge-file-deletion.git/hooks/commit-msg.sample
+new file mode 100755
+index 0000000000000000000000000000000000000000..b58d1184a9d43a39c0d95f32453efc78581877d6
+GIT binary patch
+literal 896
+zcmaKqO>fgc5Qfk3uXu4HoJ4V~a71dPLJ;&qCF-6Csn+(`Ue(@pch{6c`0vcxjR**F
+ziIVZm`|-rn7fB{nV(VZUOmV3|-$dIrgj(x+*xbm@!D-|*<@azkA=hmy9U5JsC2K`R
+zYrcFdnuZEwPY5f1IxdBHl&*$W1YxSaCFNFwh7v77m&5l`HpBw177n$r=N>10AZ6n*
+zQLX!?;FN4Kh%2q)?_@MfSSMU>AxcLE(%N3C3PM42ozb0<!qF)*WC^bzlw(KDr@Hgb
+ztTIMlpLt5wY#RN@{dkoMK0E{Q91^|<lVF9Emz2mDqO1AV=U&0^h)WL>zv`vJ(JO9k
+z6|Mumyj6a}m<EH4*wpWdqJY4StP~ZoF3XrPH<GFHGoR$di4}I*mmXXsHy@$-0?0%G
+zS&#tFD^g@cvqIL7R-K_v7>a)fVyyu<-?rKin5G*6NH^BJxqfpooBMzJt1x(fmEK+6
+zrXQ|9-Cgb8eN1tL<^5P8vdLjTUoW@&#d<kQ{;2U9`%ThC3wEnG0^$dY@GxWP5aDbS
+z;&=q*HKQ75+wCy+tWwYR^tR^0@f&JU^j#zQ2mOPVWyFrGLm1+MW#)rpboeV!^lThV
+yV6}1FqgV0)aeit<h?2u+Ouj5P{xd0}#gOwyFd3q5U%tZb|2ZbZ`@0E#2EPEVsUWBT
+
+literal 0
+HcmV?d00001
+
+diff --git a/__tests__/__fixtures__/test-merge-file-deletion.git/hooks/fsmonitor-watchman.sample b/__tests__/__fixtures__/test-merge-file-deletion.git/hooks/fsmonitor-watchman.sample
+new file mode 100755
+index 0000000000000000000000000000000000000000..e673bb3980f3c286291809e05f80873852bc3e9c
+GIT binary patch
+literal 3327
+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
+Wawo=kBR8L4hs(pea)Ur`I{yH%&MpD~
+
+literal 0
+HcmV?d00001
+
+diff --git a/__tests__/__fixtures__/test-merge-file-deletion.git/hooks/post-update.sample b/__tests__/__fixtures__/test-merge-file-deletion.git/hooks/post-update.sample
+new file mode 100755
+index 0000000000000000000000000000000000000000..ec17ec1939b7c3e86b7cb6c0c4de6b0818a7e75e
+GIT binary patch
+literal 189
+zcmXZVQ4)eM3<S{so??YxfirjqFAyM=4$^dz;Nb18=;!XvylpSTnDSstXhVxz1|PJQ
+zCu0#=VUwofa6wTnqzpo#Y2_I;izOF*BZ^`-hP+rSGVj|6SISmI-TG6$3pmqQVPBG+
+n`n4LFwto}TcM~*~^=>aSIX8U>eDH)va{Q{!SnExfa+L4^re{E#
+
+literal 0
+HcmV?d00001
+
+diff --git a/__tests__/__fixtures__/test-merge-file-deletion.git/hooks/pre-applypatch.sample b/__tests__/__fixtures__/test-merge-file-deletion.git/hooks/pre-applypatch.sample
+new file mode 100755
+index 0000000000000000000000000000000000000000..4142082bcb939bbc17985a69ba748491ac6b62a5
+GIT binary patch
+literal 424
+zcmY+ATTTNp3`PI5ic31GK#*4aRziY3uz}3f(?rZ9QS9jh#NP4r0pj=CI>*<GyLB7W
+znuA%G1>O?q=*Kb;Le3xHuErvej6K!ZpKu6X5E;JB(>ZSmT^`3MLR$s2C-_o^Q}NOT
+z^fiz0%5<ZT14d%@J6fGp@8RYMc^bCrje<jzfRvN_q?*CvWl~o!R8`7TOgqJ?MjbVm
+z8okhsir8Z&_#`|Z%#sU4C71KA(hN$z)p`=N#oX};Rip8m^l_eL*iy;;HL)vWR@g;x
+z92}EO#puF?{9>DXohWASimyy?Zr;=vgtLLyGwibbV2uz9+!40<MOZAC`T*+wht1dX
+LqitU8x7nB<t;mlw
+
+literal 0
+HcmV?d00001
+
+diff --git a/__tests__/__fixtures__/test-merge-file-deletion.git/hooks/pre-commit.sample b/__tests__/__fixtures__/test-merge-file-deletion.git/hooks/pre-commit.sample
+new file mode 100755
+index 0000000000000000000000000000000000000000..6a756416384c210ada2631f17862f5c01fffa478
+GIT binary patch
+literal 1638
+zcmZvc(Qn%}5XPUazvAiyNdrW7(#Na`U}PB<AlQI4Kp)y-pv9BLMdGO>WyeLazrEj4
+za*7Olv&G}xci;VvM{kyE=a;c5j*25%dE#f&^(|8)@<g!;u1}PNwj5l&r(I(bxkzR$
+zL;k*Is-){&N^BR%aBJF@Ev@%7-?%iL&1vUSLte;)&Csz=aY6Lh9I7-jv=*278CRxI
+zUw-2t6q88<>eYz@3dh0u4H-|S?}PNgnZ(p_jAp~+YUI!i1_e}fOwv<AnNcG2A>dJn
+zy;-Bh)SwgX^PB=cb<>yH>6y^H4_uBn=Zm6nHEBnIw`FfaWGc(al;7`GztYXp@^<Nm
+zwxxGBCzl1v`eJ4_#`&18HKgD+axpuid+(An?WF38tgCC9BDFW}`n0DMm`T?EaFu@M
+zIex1e8WWpxJfad~(8!naXGQG_^m$*?UWROjc7wUd4kPg8>cj2*J!zNPbEL>fp;l}S
+z{LID(at^#G@+I6cv2yNuEMAGP-3HySMcQm%T)c`q)9Qb*bpg@|ob)3qF<A~_QSdWY
+zba`{~PUCKa#7KQ>QZ1n)3{@M(^w`@hdn?ZVpX^@{%Uhs?B=EYUI!H%r&U{!42GO+6
+zK5#G5B?<clePl4!w*n9Ks5TIo6lwfJ9`NK-b|4rJpa5ThmhqfoZz`bFn1E}b(Lf<o
+z#*x_MS_{WO$tRj0zcOS_Z?0*sj?U=|ot!8Ge+a-ml%@eVNlj~HeqyZ{WI%R<G0-Rl
+z<H0^Q9Qd5xx^x;fiT02Fz7DY3o)a9TUIIFBty6-8K1hq9M!LK>jkFwM$lIR6**Qh$
+ztBj*M5x)*5@Ie69Hvx<WONIhSQ==bp_=!-<(QQ2T&W_R+#SFoTMmjRfWm%c3K|on5
+zVx{<YkKcM$f;*UZy`u6P9Uq|oUd)IdZvS3AJY3&u)1{@;PgMT<<@3cUeWzVTWp$=D
+zUQCNsVJPq4f4=+kx8g1Y30Jhj6NJUd&{*~EHS45Gu*Q!{dW9{kjJgisKztYRc)VJd
+zorI@xusw^uhvG@lJ{+D{jhakA+~hf8fEAJ(yLIufM=uWxXv4<g&a{_L9_yH&Q{7TE
+z--@!U|5Tnm<j8s(uAV>%0<MaJ@<TN3p}t@LS-`x!g<3PqFY4vb7ePDVTy57lj4dOL
+xt&|YYNBr}QrLIA?%E^!6_)aMAwQ=pV!TJ#8i8^oj8RNyoA@XJRFT*X%;s@7;DGLAq
+
+literal 0
+HcmV?d00001
+
+diff --git a/__tests__/__fixtures__/test-merge-file-deletion.git/hooks/pre-push.sample b/__tests__/__fixtures__/test-merge-file-deletion.git/hooks/pre-push.sample
+new file mode 100755
+index 0000000000000000000000000000000000000000..6187dbf4390fc6e28445dd3d988aefb9d1111988
+GIT binary patch
+literal 1348
+zcma)6(Q4c<5PUv;#nyK;E#xk_(5KJ@N}x1QLMaV>C~YI#>$8Y0xsn_w`TEYvb}sEh
+zY2b*w($3D#XtjKClpA{#YNeL+&Jy42wriMb=WZz!-gJ?oqdWGddZ3}!kxU?+yFSHp
+zrmhb)mm8uB-85WM{y^EzM8L^TM!JgZ$waDkprYpD7KdWZ<hgZ`DMTIna7Z~2bFQ3c
+z()J<N#_m!|&TJ>JROYfmHaJY=_};`ogNZe1vd*p_*}Dl8-y_aong-xASG5G-7Xe9a
+z;(sx6PcXu*a!um~q0nisTSg1vG^MS!v|iH{V&sI$Qy)-is7+C)n6xfJ<t!Mbvy6(X
+z6G^@P{81GB_gS1qpMoO!LQ4eigM6V)R4-@!uoWPg-}NoqB*oY(|LS$KNt`b&WNmdc
+z&d%0>cj4MLX_r`Q=svO?4HfpG@4CjI6r5{}<pAPfCQZXNTWVjDu^pHho1#)?l!@qV
+z<De>7R_F6N)Ow4L$@p<+z6G+i_a%(CFw|}klLk?&^L&R6lPaS9o<D=TkZRnHS`I<)
+z5<wpW*d|Z2ua}=PdNnwID_lG8b{+>`Z<HDdoMo$Rrh4CCagr(Z_~!WR_&@)Yf|-~Z
+z&$<K$bo~>(O)K;~IhBHAwV#Np(y4{1=o@9LF$uwp&S-_&^j$5`kyVSul0HCcz?a<M
+z9wKt87Tg3`P3e2k=lL@L5UzNj+-qCZhiSs$CE>=;5&~&~-5sO(JrzW!GC;WQN{wNK
+z4H&o(<sSYGXi;SH<T>D;+-CD9dSw(2F6lxZ1&o|0xHLgvW5hbU!D9ji@74|K(%O;?
+zAl&Qd;0MkhK)%F1yFpG81ZT3<n4O7`PeO1}J34=PLfL!Q+wxgCxfByQSa&E7$2@%*
+U02cDf&=xCjmS37^m7>S$H@y0-qW}N^
+
+literal 0
+HcmV?d00001
+
+diff --git a/__tests__/__fixtures__/test-merge-file-deletion.git/hooks/pre-rebase.sample b/__tests__/__fixtures__/test-merge-file-deletion.git/hooks/pre-rebase.sample
+new file mode 100755
+index 0000000000000000000000000000000000000000..6cbef5c370d8c3486ca85423dd70440c5e0a2aa2
+GIT binary patch
+literal 4898
+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
+
+literal 0
+HcmV?d00001
+
+diff --git a/__tests__/__fixtures__/test-merge-file-deletion.git/hooks/pre-receive.sample b/__tests__/__fixtures__/test-merge-file-deletion.git/hooks/pre-receive.sample
+new file mode 100755
+index 0000000000000000000000000000000000000000..a1fd29ec14823d8bc4a8d1a2cfe35451580f5118
+GIT binary patch
+literal 544
+zcmZ`#%TB{E5Io0UF}M+ZKq%!%6(qy~xKJe88&c(_8`(6mqu8Y&#J{sn5f33QYwzyN
+z?Ckaq#w%mTUW=aS;nIR$RNYhr?c4^wXiXCk9BQ>8Y(2r1XtrL%HNiORPnb2=^hNWA
+z*{`5NJMvIf^$U%lRe%qw4cM8W(T~8DDmHnag_K>Rr6(%FH<eX(nk+L3a^I9cHDP@8
+zwPqvHiUV1-V*f#NBQ9~wl2+B9mD0qXgKS#LS}MpqlROc^lnCSlG7Fhr-_Do!i-()#
+z?0$YbyIWq(7I$+g*n$;_$xlVH)16La$ka$=Rs8(JOV&;#2|cR{lEaqr$3IXOVN9X;
+z!ZPhZ5{9QGUk4fuIqOo$SVY;nx;x8{RkFD8InuXIqBqLlB`yxnB6B+BxIf@t>BR(0
+Y;smb>eoUSY1_no%47tB{mPBd92U6On$N&HU
+
+literal 0
+HcmV?d00001
+
+diff --git a/__tests__/__fixtures__/test-merge-file-deletion.git/hooks/prepare-commit-msg.sample b/__tests__/__fixtures__/test-merge-file-deletion.git/hooks/prepare-commit-msg.sample
+new file mode 100755
+index 0000000000000000000000000000000000000000..10fa14c5ab0134436e2ae435138bf921eb477c60
+GIT binary patch
+literal 1492
+zcmai!Ur*aG6vdy{PjN{r%AY0~+uKklF~(S>F(%r*A;3*;8jsY@YzGG7!|ymwDPw4p
+z`jFbb_n!N^$L?>WbE#5W_WHd(9Vp^oVp&&ArPkMEGb3w9PE&2T7KX`{OqpITrK3tO
+zXvx-!1t*9-6jjAJ&F?5$U^g6!=vKP2jZ$LCq>J{ukf`8F;iweWuOPn5+GQM3p{q*Y
+zhK#;y&OwdTYLzC0Ahrt{TC%z^87D+Dg!mq?RyU^BmPw+NCeER5-NrhayedRag2om=
+zA!KDk4}z3d@jV+&)(O|x5kl8_e0DL{#&HfB*qWh~67#lE?D=#fGFSozS7IeV&=hrS
+z<IqmLw2LU|`3(M4D?_TRY5)L%hIut3o3vdP(pX1YF|sf9O?%1%jr#PhVu8k4IW|wV
+zuEv%m5tUrkD}bGHptGE5mD7{L7+&M*29=61;anC4#j$TF4n!z65eiEM%%05SEPpgm
+zIOjrl4r(0|Vxlgs2k!t8@t%X13^Q>i8b3Klxn`?|-d8n;fy6N?L!&m~zx~+=TXNoI
+zkj}2#0dSMAxRJ<n42!06p*W9qQN(a<B|-4H@YbW5P{?VWtSTsK4TK?ki(x+a8C;C&
+z4ha`p16j@j<2yV(Iho8ZPo~G0pC(_9#)G}p()9HE*&!C*^roK=_Qr#^y<XZ_)850H
+zO+~Rx=Hi-S=o!`qG^tS)F51>Iy-5By(=<tNtUpM%hZGH-sffI-GH;2;t)ON!@LD2_
+z4hLxT;24j9a6H=f|A}4}h)E2?K8^&X(YcB!p)3CcbOy;phN=AJlq*EOB3TgBrnI?9
+zgVxBqyEGot>zBmS{=ToavmHLzip=*jJ^e5qZ25vW!q73GhpuNwXP1+YM_*_306Rl~
+zqM=PM&bN}C_vhQm&LI860PpC0FRh2ZVV?`w+2Cfn*cm(mY%DsEDh8H}@!72cB<e?N
+uo~wbk7XdE`!};<3dOz^?ySO1O?SH_1!W5u30-;Oq)ZN{e2q9}Bd%pp>!Pm_I
+
+literal 0
+HcmV?d00001
+
+diff --git a/__tests__/__fixtures__/test-merge-file-deletion.git/hooks/update.sample b/__tests__/__fixtures__/test-merge-file-deletion.git/hooks/update.sample
+new file mode 100755
+index 0000000000000000000000000000000000000000..80ba94135cc378364af9d3cb2450df48e51faf2c
+GIT binary patch
+literal 3610
+zcmb_f-*4MC5Pr7)iYsHpwc#I0_LkHcx&$lwFksk{r=bXFnX<UZq$kpG)ouU#K9Z76
+z%bC-xGYV7@dB^YWzWaDOc{7<wH8FW|lAO?cMdCAGt_nf9){kV;Qm!mnO|wF$kF-`?
+zDQ&qGbFzG4C@b}ngtDTPYB7d~8(tJxoK?gY(o!i>A)mx(#nVSd8)<Xm<zl^riMhmT
+zrub5j$@%$67xVC-#KwcU)9}n^z+!W0JfI;=yoG<0Nw=nntygnEVmRL+&?=J)JdFGg
+z4=xll1~9#e0>A>%o%1}?x)5BE5!TQq7d98=VW=Bf6f_g${UAiCa5T1hKc!e{Bdsp0
+zG0_hd%|*u71u~b5iZ)vHEKFT~A}n)J2rH1r7m)aUNN>paA&hSVvD9;!RWF0!?sQu6
+z%B8>?N#uZMs63^m;8toijw1IlfdEHipOsvtVBXO}Y{L(`1xj>KiT|2{xlolyFTM&&
+zDVExbqN*cCNe(c<BN7v$R}K~!`)||$_3*FelOr$8z*#VOx#Vh2g;XM`dt}PG=PW^w
+zl;R1`7c4=Wgy-*AWB4o2gax`>q>qWr=r<aDA=dry@$TXF<1dUpT{%Q5>4-E(+uV9y
+zmTQL-K<Z}qE$x7(5sWdT>(h(Iklw<1rPs9K$`1Wgs@JZ6*Q*uMQy=ILBlzDprtTTN
+zLs-}JF2sX}5X^PI+4&jNIZrZ~L}ApKU^LPpu3)|UJ2*KAb8YxSTpl^~@X)3XUP;=*
+zG3~x}(w2IiLBX7S#C;uUOh56)q0<9bUb2q&_LDY2k65?2?wyV1Jz^Sx#Kziis|+t0
+zZa4NF4?X!P(<Lbl84RR?I3%l5|1MJNUcsY*dW;11&j0A`7&?jevwo6tBd{15GN^9C
+z?v=X(=22&{0sTb`CN;AMg8}^<&WkaSzcF%df*uPm`TN!HTwNu?@U&^E8`n!@tCcVa
+z4z%wEmbuP7!*4tuyZ?qHZ4bTdn+D{-)es7aSK#e9`65a^Wp3-&{8*qps}Ex|MIM}s
+zh};3kgM&5=XC<OABI(2nHC4GC`OrtU!Qc1IRcE;AtYLGY_v(|~!J3(X6=pIRIz^Bc
+zS?-+RejM%10(fb1UD}7**|hs-{d97&^YJ&fd0}GRc3UxegD7pe7EzF$sGxVyr1q&p
+z>h7J2Iv5boHmVA~1aaG`a9!`%^F4Uhb3N_uIEW?(n?{B{^*oPV@LRQWl?5SJe1VCh
+zQAPL)g4O9jvO11KdwC1x33;n&0jI50gay2RF%h?JaBu@bxRhTJ@lljGIzVjKH7?k;
+z+4oS==_!SA?+K$`iF9`B;?p&utDh!njp^y)`t%%8hdU@Pz#a15YfO459wv%;g;`V@
+zYoaXsYs)qFPkwB9MGhh-&nF?riEWP8L&27^&4sh;Mo@)y+sf<P^$3w~{JiAr7fyH$
+zX^*3ShH32}BC!ukdzEY^gt$5p-~KPWVUlX++m`rDa7Eo>-geT?;F%B)?PAIXgV)E}
+z^7>6h8idYzuPTgM2+%1trYPe^q!Qm0@%!)H-Y}s#s^9yM8$V!NLjN9>-ayl!`lK@o
+nUp`Kh&~Lk@!;0Tg-ygM{`w4C*Rjr%uN2#RAF}r##J4^lnzgBmv
+
+literal 0
+HcmV?d00001
+
+diff --git a/__tests__/__fixtures__/test-merge-file-deletion.git/info/exclude b/__tests__/__fixtures__/test-merge-file-deletion.git/info/exclude
+new file mode 100644
+index 0000000000000000000000000000000000000000..a5196d1be8fb59edf8062bef36d3a602e0812139
+GIT binary patch
+literal 240
+zcmXYqK?=e!6h!x)VxWtv*mf_t5?px$aS_{}Hj?C*<cHXeXE&AZhT*-L3ZoI&*l1%Z
+zqG?zr3TvQGZ__}H4(u*%p*rI=cU!%ya5ugfGATh66$IJHgu1Gs0-<N;$V+SsdE)?u
+zIq;i$f#WE4f$_MWicZjMEob9LWKMR#iwZq54~QgST^6=i%u0lUkJu-_J**QBMq}ZG
+Wth_)NDbl|`oQr&HAFQ5h`0jqAIZ*BZ
+
+literal 0
+HcmV?d00001
+
+diff --git a/__tests__/__fixtures__/test-merge-file-deletion.git/objects/01/3c3b5e962bc4710035b2893fd5aacc496be2ac b/__tests__/__fixtures__/test-merge-file-deletion.git/objects/01/3c3b5e962bc4710035b2893fd5aacc496be2ac
+new file mode 100644
+index 0000000000000000000000000000000000000000..d3004d63f43d5c6f73acb21a5f17d2e0788ad816
+GIT binary patch
+literal 158
+zcmV;P0Ac@l0hNwR3IZ_@L|x|;y%&aj?4$=oyns6|&^_ref^miz!Q-1NSet?e^{8d5
+z_0hpQI`pOrkxHN#5(iCKL=iKI4eI7>3!x1p<gAj}x#_Dz5>fBOVnX!dGZmTxC7Fwt
+z$V+0Dp}>>jPhYnNw>H6D-yP1i_0d=Ta^0UgEnB^S^U(*4v$t@xBWBQXuj}7K!#M-L
+Mw!UgJKVO(c1bF~V4gdfE
+
+literal 0
+HcmV?d00001
+
+diff --git a/__tests__/__fixtures__/test-merge-file-deletion.git/objects/0d/759dca105e2c3089fde162b4e58af88e41c81b b/__tests__/__fixtures__/test-merge-file-deletion.git/objects/0d/759dca105e2c3089fde162b4e58af88e41c81b
+new file mode 100644
+index 0000000000000000000000000000000000000000..c3c5a5314228a63912f407e5c8852cc85760f5ed
+GIT binary patch
+literal 84
+zcmV-a0IUCa0V^p=O;s>AVK6i>Ff%bxNX*MG$w)2IE2$`9u$Fi#bbI+cpJs-;9P2jM
+q_Z4;bu7xT~%g+ZZImc+G%FMmu_DZ(zVbkj8%~?Ff%?kjaS{}R2&L_tJ
+
+literal 0
+HcmV?d00001
+
+diff --git a/__tests__/__fixtures__/test-merge-file-deletion.git/objects/2a/0435e23f4f9a3c5b98313044c392cad1805c60 b/__tests__/__fixtures__/test-merge-file-deletion.git/objects/2a/0435e23f4f9a3c5b98313044c392cad1805c60
+new file mode 100644
+index 0000000000000000000000000000000000000000..3c7660d01da99d7812b52dcf62e95bf20e83bb25
+GIT binary patch
+literal 160
+zcmV;R0AK%j0hNwX3c@fDME%Yw_FpLJrkk`N;syNk0=vx?1!GEF!Q-1NI4}%6cra@%
+z<zavr4%Sp5AgTmRnd3Akp_BsBNW#%;FKL>1_G5NCH+>l-5yeqFB_b5e^ENM`i_3-*
+zc}>hhlxcGOv3qTBZ3Eo&ZEz~h`d;+QWq<0h)^dgsBL<2KdN}$X*J;0J`nTvfXK1w=
+O@T=NgoBIKE0!5TtdP)8O
+
+literal 0
+HcmV?d00001
+
+diff --git a/__tests__/__fixtures__/test-merge-file-deletion.git/objects/32/2eb327da6487b57732515ba60ea605e74a801d b/__tests__/__fixtures__/test-merge-file-deletion.git/objects/32/2eb327da6487b57732515ba60ea605e74a801d
+new file mode 100644
+index 0000000000000000000000000000000000000000..c52e023b4e1ec023932f4ee7760cf733fd891337
+GIT binary patch
+literal 85
+zcmV-b0IL6Z0V^p=O;s?nWH2-^Ff%bxNX*MG$w)2IE2$`9ILBzF%FMmu_DZ(zVbkj8
+r%~?Ff&CA392o#Eok{Lc_Za*8z=^LE-K08c;vuDq~cRbDj{-hj{Mz1Ig
+
+literal 0
+HcmV?d00001
+
+diff --git a/__tests__/__fixtures__/test-merge-file-deletion.git/objects/3a/f12a0702336ccffe7e28a0f333c96b7c80d930 b/__tests__/__fixtures__/test-merge-file-deletion.git/objects/3a/f12a0702336ccffe7e28a0f333c96b7c80d930
+new file mode 100644
+index 0000000000000000000000000000000000000000..89b0569745658f13564cdb4f41b7d83fb5190ab3
+GIT binary patch
+literal 157
+zcmV;O0Al}m0hP`{3c@fD1yI*HMfO5TGMOX;B3{6q7nsJ07ED`W1dng7;NN`s@ZjgI
+z)}?D_@z9%y7Ag`Gib=C$uoRK}ofA^xSVE3-NuGp_+PTR(AR7-T4vH_tka4C27L4~9
+z$Ys9UWH1M#_|u<T)7LiXo4mU|)z(K}<jZw`$&|Nx*470F7|0oYG$U%P<6f7)p<32q
+Lm-V53bNfQLpQlZl
+
+literal 0
+HcmV?d00001
+
+diff --git a/__tests__/__fixtures__/test-merge-file-deletion.git/objects/3b/18e512dba79e4c8300dd08aeb37f8e728b8dad b/__tests__/__fixtures__/test-merge-file-deletion.git/objects/3b/18e512dba79e4c8300dd08aeb37f8e728b8dad
+new file mode 100644
+index 0000000000000000000000000000000000000000..737255d35f9fdc00cb59627bec500befb1e0c83f
+GIT binary patch
+literal 28
+kcmb<m^geacKghr&>4eAGlPAM9&g-A@e8|M$BFNSW0I|{wg#Z8m
+
+literal 0
+HcmV?d00001
+
+diff --git a/__tests__/__fixtures__/test-merge-file-deletion.git/objects/41/77c50e5b275cfe723b55ad988df251b05e930e b/__tests__/__fixtures__/test-merge-file-deletion.git/objects/41/77c50e5b275cfe723b55ad988df251b05e930e
+new file mode 100644
+index 0000000000000000000000000000000000000000..6489f0e15717e062fe0d41893cde72014f1065f0
+GIT binary patch
+literal 157
+zcmV;O0Al}m0hNwR3IZ_@L|x|;y%&Z|PdXnE@dEC=KsxE5V9XFBczkmOYg6!`c$HeM
+zj{&&4!{{Pl*dyg+4JNk2A!@6I3>TkmK<^8Sn4pc?W0%(e$1J$ACP##f*%u!+?>H1>
+z8<UHXi82`#KjYpyT>Anyc@H?%K4xF!8|(g*CAE5n6)kQwMH-HJMol{J4f%VhvOHx7
+Ll-AS_gJeW2iQGew
+
+literal 0
+HcmV?d00001
+
+diff --git a/__tests__/__fixtures__/test-merge-file-deletion.git/objects/48/79e8360c4d0b8aba65c4635fb5ae07841d662c b/__tests__/__fixtures__/test-merge-file-deletion.git/objects/48/79e8360c4d0b8aba65c4635fb5ae07841d662c
+new file mode 100644
+index 0000000000000000000000000000000000000000..aa4bcd80213c811bc2ca5b82dd4b49ea4c9fc8d2
+GIT binary patch
+literal 85
+zcmV-b0IL6Z0V^p=O;s?nWH2-^Ff%bxNX*MG$w)2IE2$`9ILBzF%FMmu_DZ(zVbkj8
+r%~?Ff&CA392o#Eok{NhQ=bjRX(=q7$`!H$C)2<(Vjwhr6`cfT$XC^5L
+
+literal 0
+HcmV?d00001
+
+diff --git a/__tests__/__fixtures__/test-merge-file-deletion.git/objects/4b/825dc642cb6eb9a060e54bf8d69288fbee4904 b/__tests__/__fixtures__/test-merge-file-deletion.git/objects/4b/825dc642cb6eb9a060e54bf8d69288fbee4904
+new file mode 100644
+index 0000000000000000000000000000000000000000..adf64119a33d7621aeeaa505d30adb58afaa5559
+GIT binary patch
+literal 15
+Wcmb<m)YkO!4K+w$VBpeWVgvvgJ_3UP
+
+literal 0
+HcmV?d00001
+
+diff --git a/__tests__/__fixtures__/test-merge-file-deletion.git/objects/54/3e2ff1a47fa107679bdd8fe6c961964719e841 b/__tests__/__fixtures__/test-merge-file-deletion.git/objects/54/3e2ff1a47fa107679bdd8fe6c961964719e841
+new file mode 100644
+index 0000000000000000000000000000000000000000..9afdc23dd6541b3ab594ce40e5fc4dd16299a6e4
+GIT binary patch
+literal 155
+zcmV;M0A&Ao0hNwH3c@fDMP26<*$ZWonWPDbcma1_U^<<mU~Gvgczoj#{F?_K9z0n~
+zc{J-C9a>ejl*X(HBM8kfC7w72p@?Cb0xOJ(+#I79vvJi|7a0hHdR%D9j1s1t&>;{B
+zW-mOu1VJJg-rIex_F4yf(|5C{Qd{RmKU}t_4ziZBbv}9wF?+B_=rjH8c}@QojqLRo
+JXuk57LKOdSLVW-L
+
+literal 0
+HcmV?d00001
+
+diff --git a/__tests__/__fixtures__/test-merge-file-deletion.git/objects/59/b4ca24ebcf9ea444271a1c0196b6d438d6699b b/__tests__/__fixtures__/test-merge-file-deletion.git/objects/59/b4ca24ebcf9ea444271a1c0196b6d438d6699b
+new file mode 100644
+index 0000000000000000000000000000000000000000..b728b7a426520c1f5c5489e48c29f1617a8f13e9
+GIT binary patch
+literal 156
+zcmV;N0Av4n0hNwH3IZ_@1U=^!xeH4&*-0iK;s?C>flPLSf^nCa1)pzxf_-UdsHXB-
+z>!WM1^Px8p?Ws8OE+i)b3k%{xY@FD*m_leAF<B#|w$$X+bzl~-Y%m}K!$O6kqrkBM
+z`;<dUJT7onY47*7>1&(xP2OFfYU`sf@=0}j%9Pi7))qWC^bw3cnh`bDq1WYaQ02Y-
+K1l1Q$r9#PMs!Ejr
+
+literal 0
+HcmV?d00001
+
+diff --git a/__tests__/__fixtures__/test-merge-file-deletion.git/objects/68/f38637a3e75fbe55d8b03e19d0f85038b810e8 b/__tests__/__fixtures__/test-merge-file-deletion.git/objects/68/f38637a3e75fbe55d8b03e19d0f85038b810e8
+new file mode 100644
+index 0000000000000000000000000000000000000000..19f7bcbcb7f046073df27fc5dd52a805abb938c6
+GIT binary patch
+literal 45
+zcmV+|0Mh?>0V^p=O;s>9U@$QN0)^tDWCq^Sxu*o;bPPKGK1|y3wChKo;|Xa1?XwQq
+DgUS=U
+
+literal 0
+HcmV?d00001
+
+diff --git a/__tests__/__fixtures__/test-merge-file-deletion.git/objects/7b/be21b057552b2d8f89387b9f2b6ac7aab55d54 b/__tests__/__fixtures__/test-merge-file-deletion.git/objects/7b/be21b057552b2d8f89387b9f2b6ac7aab55d54
+new file mode 100644
+index 0000000000000000000000000000000000000000..695d1408bd6ee4c833ffad9dee06331412948dc3
+GIT binary patch
+literal 127
+zcmV-_0D%8^0hNtG3c@fDMP26<vlq%t(k3m4cma1_V4O}c&{&BhczkmO|K`Di$Ctg<
+zVn8t-tf_(orO2A*k(YH0`A)*q%863WGDj34LiFhPV~@STwGD97x5244>%8cf>ub|N
+h_Id{L(T6E69^r_6uG@ZR`giEcvsmHH{Q%XXHFHAgLWckV
+
+literal 0
+HcmV?d00001
+
+diff --git a/__tests__/__fixtures__/test-merge-file-deletion.git/objects/96/3d753df709f222e3d1addabe7ad9eb6776db8d b/__tests__/__fixtures__/test-merge-file-deletion.git/objects/96/3d753df709f222e3d1addabe7ad9eb6776db8d
+new file mode 100644
+index 0000000000000000000000000000000000000000..2e6fbff961b531d990e283d78a0b5f5d6a6f0297
+GIT binary patch
+literal 85
+zcmV-b0IL6Z0V^p=O;s?nWH2-^Ff%bxNX*MG$w)2IE2$`9ILBzF%FMmu_DZ(zVbkj8
+r%~?Ff&CA392o#Eok{J#MN;G}@P*(Z*ADd*I%7UWoZz9G32ap{mLV+gf
+
+literal 0
+HcmV?d00001
+
+diff --git a/__tests__/__fixtures__/test-merge-file-deletion.git/objects/96/c08bae8d14647738b0290a1b1a0d41e52ba202 b/__tests__/__fixtures__/test-merge-file-deletion.git/objects/96/c08bae8d14647738b0290a1b1a0d41e52ba202
+new file mode 100644
+index 0000000000000000000000000000000000000000..f3dbe53cf62eebf56f6e8b9bed1dd9186b8ba2c8
+GIT binary patch
+literal 197
+zcmV;$06PD80hNzEYC|y)gj4Gj+qnoBX{FT<gpdok%LP{ZR<R*^&nODy_*UZsWSW8D
+z`-+jH_uB+a`DG4O5K1A%!pxR2hlrS4@f^g9%U(6Iq}D2#I}hC_1ecPKRjQasnkMv>
+zh_{mS){tDaq{Ul(^457-gqDa^LUPvnrRL(>M$96i#Hz?*_;+590he)xPyLzj*2i4^
+zp?}=(-+Gp#zk|bwo?<}@uXe?(b={fzZ_!+Id@0nyyIkS4o#3|51H?Q44?I<4%9d#|
+
+literal 0
+HcmV?d00001
+
+diff --git a/__tests__/__fixtures__/test-merge-file-deletion.git/objects/a7/863ed303b37622d64e5a4be458ab2d8ec0def1 b/__tests__/__fixtures__/test-merge-file-deletion.git/objects/a7/863ed303b37622d64e5a4be458ab2d8ec0def1
+new file mode 100644
+index 0000000000000000000000000000000000000000..f7b3ba3843c1375bde864b21fc7d8be7fd920e2e
+GIT binary patch
+literal 157
+zcmV;O0Al}m0hNwR3IZ_@L|x|;y%!|Ylg<Z3yns6|kWM-}U}lCG!Q-1NSepk0kE*oQ
+zx^%#a4!wzhVULuPHJI26hp4R<GF*JN0lhCQVuChmk4@GNj#+SGO^yf|voAi(-f<|%
+zHYOJ%6J;_ge)@B3aBC;H%e%w5wmx{3Z>;-EPHC$bn9$-(V@ShMkEqd(dtLq()v^wE
+LSs&^L`aMIYT*5_?
+
+literal 0
+HcmV?d00001
+
+diff --git a/__tests__/__fixtures__/test-merge-file-deletion.git/objects/bc/cc788c032f49936e976828e67e2b01521e3729 b/__tests__/__fixtures__/test-merge-file-deletion.git/objects/bc/cc788c032f49936e976828e67e2b01521e3729
+new file mode 100644
+index 0000000000000000000000000000000000000000..3f4ff89e16007bd285a299df212dfa2417e3171a
+GIT binary patch
+literal 198
+zcmV;%06G770hNzIY6CG0MZ2C;XqQDH*wTz;Ln*yLcD;aXNll<L6I>U1{LCf?=-+(!
+zytnvmU)S3J<oq(a8I(lI3#oG`j)+DYMOCV?XtA1@lh&-$UAk=pmYEFQqs;6Q11Bz3
+zHM^x&QY>laSS-)+$&+|Q2^^3pwdQVYm?bz79Y*DrgBA*t{EqA1;nL6WX+Hzr);^B@
+zus>Pv-*#^M`VJ8j(vk`WcnwFUV?FK+`?ok<tbZBQE?c|8$xm?G#tt?;0FSs;y<d7?
+AC;$Ke
+
+literal 0
+HcmV?d00001
+
+diff --git a/__tests__/__fixtures__/test-merge-file-deletion.git/objects/c3/511882f6f07679f3fe06197e24a0726bf61433 b/__tests__/__fixtures__/test-merge-file-deletion.git/objects/c3/511882f6f07679f3fe06197e24a0726bf61433
+new file mode 100644
+index 0000000000000000000000000000000000000000..5d248f763ff9ab536884a09bb4c58b57a861b9b6
+GIT binary patch
+literal 56
+zcmV-80LTA$0V^p=O;s?qWH2-^Ff%bxNX*MG$w)2IE2$`9u$Fi#bbI+cpJs-;9P2jM
+O_Z4;bt_1*Wk`c~TP8VhX
+
+literal 0
+HcmV?d00001
+
+diff --git a/__tests__/__fixtures__/test-merge-file-deletion.git/objects/c3/e16ae784a9d43fb1ca5da717ffc860cc110020 b/__tests__/__fixtures__/test-merge-file-deletion.git/objects/c3/e16ae784a9d43fb1ca5da717ffc860cc110020
+new file mode 100644
+index 0000000000000000000000000000000000000000..37efd264c929aec9fd83b88e21a5bea38e78829f
+GIT binary patch
+literal 45
+zcmV+|0Mh?>0V^p=O;s>9U@$QN0)^tDWQI?f+s{UF`Ua=I&kmE|?Af#L9gi~r@&yg*
+Dk*O33
+
+literal 0
+HcmV?d00001
+
+diff --git a/__tests__/__fixtures__/test-merge-file-deletion.git/objects/c5/74769aaa0a2846228f93a4c3c183ee6ac7ffb5 b/__tests__/__fixtures__/test-merge-file-deletion.git/objects/c5/74769aaa0a2846228f93a4c3c183ee6ac7ffb5
+new file mode 100644
+index 0000000000000000000000000000000000000000..41ca151c7531bcd8cd92e671fb46313187305217
+GIT binary patch
+literal 45
+zcmb<m)YkO!4K*-JFfe3bYJIdQrR{K|knerFDWP@$j;lp3-?TvE_v{WshF_2P>H&LW
+B6B+;j
+
+literal 0
+HcmV?d00001
+
+diff --git a/__tests__/__fixtures__/test-merge-file-deletion.git/objects/ce/013625030ba8dba906f756967f9e9ca394464a b/__tests__/__fixtures__/test-merge-file-deletion.git/objects/ce/013625030ba8dba906f756967f9e9ca394464a
+new file mode 100644
+index 0000000000000000000000000000000000000000..6802d49492403f3d23831789ec6a4a14984b1538
+GIT binary patch
+literal 21
+dcmb<m^geacKgb~YgvZ&FC!aGh$R1@80RU%{2;Kky
+
+literal 0
+HcmV?d00001
+
+diff --git a/__tests__/__fixtures__/test-merge-file-deletion.git/objects/e9/fe785e08b2a3197594da8598a7f6c7bf849ea0 b/__tests__/__fixtures__/test-merge-file-deletion.git/objects/e9/fe785e08b2a3197594da8598a7f6c7bf849ea0
+new file mode 100644
+index 0000000000000000000000000000000000000000..86964fa0ec95c637712beaffd534bb74f608b882
+GIT binary patch
+literal 56
+zcmV-80LTA$0V^p=O;s?qWH2-^Ff%bxNX*MG$w)2IE2$`9ILBzF%FMmu_DZ(zVbkj8
+O%~?Ff%?kiw2N2kTc^Pv6
+
+literal 0
+HcmV?d00001
+
+diff --git a/__tests__/__fixtures__/test-merge-file-deletion.git/objects/f2/69b7cd59094d5365ef6b5618098cbcbeee0c43 b/__tests__/__fixtures__/test-merge-file-deletion.git/objects/f2/69b7cd59094d5365ef6b5618098cbcbeee0c43
+new file mode 100644
+index 0000000000000000000000000000000000000000..525564bf6b8d96c5de8beb77fbbe205ff8fa3413
+GIT binary patch
+literal 52
+zcmV-40L%Y)0V^p=O;s>9WiT`_Ff%bxNXyUHE2$`9ILBzF%FMmu_DZ(zVbkj8%~?Ff
+K%?kh@GY=;rix$TK
+
+literal 0
+HcmV?d00001
+
+diff --git a/__tests__/__fixtures__/test-merge-file-deletion.git/objects/fe/6df3fd2525c2a35069d494be022e4876588a22 b/__tests__/__fixtures__/test-merge-file-deletion.git/objects/fe/6df3fd2525c2a35069d494be022e4876588a22
+new file mode 100644
+index 0000000000000000000000000000000000000000..a1fe33dcdb41dd9b8eb4e6c8d34824b242e70be7
+GIT binary patch
+literal 198
+zcmV;%06G770hNzUYC|y$guC`Bw9BFp{3FXYl+p`i*9*w9UK6O_3$6=2e!R&6I-7yv
+zn}Ly|_uB-Y^2;2mATeR0!pxR^M)E#yB```5mxC&?q;0Fw+<E9eA(o259<|C=lo8P<
+z$4;y(RH<Reji{9R<T+&u+JX%=q_y4%H8NJkn7R6vRczDE8UCHuW58vc;ZuJmy!A1c
+zf9N0g`?sFu=<nb>`4Fji3$J#`taRO(`tPE-==f5ogLk>Ysh;4r&jZ*z0A*uU%jeT+
+A=>Px#
+
+literal 0
+HcmV?d00001
+
+diff --git a/__tests__/__fixtures__/test-merge-file-deletion.git/packed-refs b/__tests__/__fixtures__/test-merge-file-deletion.git/packed-refs
+new file mode 100644
+index 0000000000000000000000000000000000000000..8cdc3256ff72f2c1132af63eaf03adb2df6483d4
+GIT binary patch
+literal 645
+zcmY+BL5>_T2u1gGijuN!4F+uR+y*etMCnOJ)g48-ecVzns+YFJ|BuJF{mbI#<;Z#4
+z|NgjtyzgI`*Btx&bG`n%JRi5;$9?^6wL6C)r^oDR%#2d31eD&q4JI9}_3ry4@9iUP
+z+}>=P*~X+fuwo4~s?hr2&YpmntkSBgA-+sqKJ)mV7k{ATk-s806K#}(fSjZuj>cJS
+z#c)+~9GU?mXF2Ei#ziD5WObApGX=?Owb50_#9AC`c7i-l#nxMZx}}c7jYUWuu!9vZ
+z27^mhbVGPyjwkatF+-tPec2m&uoM7VAljFXY8JsuT%yIfeQcE}an52a(+WtF?qlc@
+z8NDsnE2yXP%ci+`M2Knt;pE<_WtXO?*(A}SR4hq?{oIvL=6PZ!n*|L7kf=q><t$MR
+uCK0WEmrxi>**Rx!;%kwIO{vSxy2e~vs(7F1%|gtU_EGsf^=Y?z9@~Ec!N9-(
+
+literal 0
+HcmV?d00001
+
+diff --git a/__tests__/test-merge.js b/__tests__/test-merge.js
+index e707f883..0656b906 100644
+--- a/__tests__/test-merge.js
++++ b/__tests__/test-merge.js
+@@ -543,4 +543,121 @@ describe('merge', () => {
+     expect(error).not.toBeNull()
+     expect(error.code).toBe(Errors.MergeNotSupportedError.code)
+   })
++  it('merge two branches where ours adds a new file and theirs deletes a file', async () => {
++    // Setup
++    const { fs, gitdir } = await makeFixture('test-merge-file-deletion')
++
++    const commit = (
++      await log({
++        fs,
++        gitdir,
++        depth: 1,
++        ref: 'a-merge-b-reference',
++      })
++    )[0].commit
++    // Test
++    const report = await merge({
++      fs,
++      gitdir,
++      ours: 'a',
++      theirs: 'b',
++      author: {
++        name: 'Mr. Test',
++        email: 'mrtest@example.com',
++        timestamp: 1262356920,
++        timezoneOffset: -0,
++      },
++    })
++    const mergeCommit = (
++      await log({
++        fs,
++        gitdir,
++        ref: 'a',
++        depth: 1,
++      })
++    )[0].commit
++
++    expect(report.tree).toBe(commit.tree)
++    expect(mergeCommit.tree).toEqual(commit.tree)
++    expect(mergeCommit.message).toEqual(commit.message)
++    expect(mergeCommit.parent).toEqual(commit.parent)
++  })
++  it('merge two branches where ours deletes a file and theirs adds a new file', async () => {
++    // Setup
++    const { fs, gitdir } = await makeFixture('test-merge-file-deletion')
++
++    const commit = (
++      await log({
++        fs,
++        gitdir,
++        depth: 1,
++        ref: 'c-merge-d-reference',
++      })
++    )[0].commit
++    // Test
++    const report = await merge({
++      fs,
++      gitdir,
++      ours: 'c',
++      theirs: 'd',
++      author: {
++        name: 'Mr. Test',
++        email: 'mrtest@example.com',
++        timestamp: 1262356920,
++        timezoneOffset: -0,
++      },
++    })
++    const mergeCommit = (
++      await log({
++        fs,
++        gitdir,
++        ref: 'c',
++        depth: 1,
++      })
++    )[0].commit
++
++    expect(report.tree).toBe(commit.tree)
++    expect(mergeCommit.tree).toEqual(commit.tree)
++    expect(mergeCommit.message).toEqual(commit.message)
++    expect(mergeCommit.parent).toEqual(commit.parent)
++  })
++  it('merge preserves nested directory structure when combining unrelated changes', async () => {
++    // Setup
++    const { fs, gitdir } = await makeFixture('test-merge-file-deletion')
++
++    const commit = (
++      await log({
++        fs,
++        gitdir,
++        depth: 1,
++        ref: 'e-merge-f-reference',
++      })
++    )[0].commit
++    // Test
++    const report = await merge({
++      fs,
++      gitdir,
++      ours: 'e',
++      theirs: 'f',
++      author: {
++        name: 'Mr. Test',
++        email: 'mrtest@example.com',
++        timestamp: 1262356920,
++        timezoneOffset: -0,
++      },
++    })
++    const mergeCommit = (
++      await log({
++        fs,
++        gitdir,
++        ref: 'e',
++        depth: 1,
++      })
++    )[0].commit
++
++    expect(report.tree).toBe(commit.tree)
++    expect(mergeCommit.tree).toEqual(commit.tree)
++    expect(mergeCommit.message).toEqual(commit.message)
++    expect(mergeCommit.parent).toEqual(commit.parent)
++  })
+ })

@@ -1,0 +1,35 @@
+diff --git a/vlib/v/slow_tests/inout/printing_option_or_expr_with_map_val.out b/vlib/v/slow_tests/inout/printing_option_or_expr_with_map_val.out
+new file mode 100644
+index 000000000..71e24d60d
+--- /dev/null
++++ b/vlib/v/slow_tests/inout/printing_option_or_expr_with_map_val.out
+@@ -0,0 +1 @@
++MapString({'abc': 'String Error'})
+diff --git a/vlib/v/slow_tests/inout/printing_option_or_expr_with_map_val.vv b/vlib/v/slow_tests/inout/printing_option_or_expr_with_map_val.vv
+new file mode 100644
+index 000000000..3fb3e9368
+--- /dev/null
++++ b/vlib/v/slow_tests/inout/printing_option_or_expr_with_map_val.vv
+@@ -0,0 +1,22 @@
++struct MyError {
++  msg string
++  code int
++}
++
++fn (my MyError) msg() string {
++	return my.msg
++}
++
++fn (my MyError) code() int {
++	return my.code
++}
++
++type MapString = map[string]string | int
++
++fn f() ?MapString {
++  return MyError{msg: 'String Error'}
++}
++
++fn main() {
++  println(f() or { { 'abc': err.msg() } })
++}

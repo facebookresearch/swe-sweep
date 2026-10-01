@@ -1,0 +1,75 @@
+diff --git a/lib/rules/selector-no-vendor-prefix/__tests__/index.mjs b/lib/rules/selector-no-vendor-prefix/__tests__/index.mjs
+index 6a46576ff..eddf3ef27 100644
+--- a/lib/rules/selector-no-vendor-prefix/__tests__/index.mjs
++++ b/lib/rules/selector-no-vendor-prefix/__tests__/index.mjs
+@@ -1,3 +1,5 @@
++import { stripIndent } from 'common-tags';
++
+ import rule from '../index.mjs';
+ const { messages, ruleName } = rule;
+ 
+@@ -41,6 +43,16 @@ testRule({
+ 			code: 'a[data-foo=":-webkit-full-screen"] {}',
+ 			description: 'string',
+ 		},
++		{
++			code: stripIndent`
++				/* stylelint-disable-next-line selector-no-vendor-prefix */
++				:-ms-fullscreen, /* stylelint-disable-next-line selector-no-vendor-prefix */
++				:-ms-fullscreen,
++				/* stylelint-disable-next-line selector-no-vendor-prefix */
++				:-ms-fullscreen
++				{}
++			`,
++		},
+ 	],
+ 
+ 	reject: [
+@@ -116,6 +128,47 @@ testRule({
+ 			endLine: 1,
+ 			endColumn: 43,
+ 		},
++		{
++			code: stripIndent`
++				/* a comment */
++				:-ms-fullscreen, /* a comment */
++				:-ms-fullscreen,
++				/* a comment */
++				:-ms-fullscreen
++				{}
++			`,
++			fixed: stripIndent`
++				/* a comment */
++				:fullscreen, /* a comment */
++				:fullscreen,
++				/* a comment */
++				:fullscreen
++				{}
++			`,
++			warnings: [
++				{
++					message: messages.rejected(':-ms-fullscreen'),
++					line: 2,
++					column: 1,
++					endLine: 2,
++					endColumn: 16,
++				},
++				{
++					message: messages.rejected(':-ms-fullscreen'),
++					line: 3,
++					column: 1,
++					endLine: 3,
++					endColumn: 16,
++				},
++				{
++					message: messages.rejected(':-ms-fullscreen'),
++					line: 5,
++					column: 1,
++					endLine: 5,
++					endColumn: 16,
++				},
++			],
++		},
+ 	],
+ });
+ 

@@ -1,0 +1,23 @@
+diff --git a/independent-projects/resteasy-reactive/common/processor/src/main/java/org/jboss/resteasy/reactive/common/processor/scanning/ResteasyReactiveScanner.java b/independent-projects/resteasy-reactive/common/processor/src/main/java/org/jboss/resteasy/reactive/common/processor/scanning/ResteasyReactiveScanner.java
+index 772015b57e6..cbb3f8f91db 100644
+--- a/independent-projects/resteasy-reactive/common/processor/src/main/java/org/jboss/resteasy/reactive/common/processor/scanning/ResteasyReactiveScanner.java
++++ b/independent-projects/resteasy-reactive/common/processor/src/main/java/org/jboss/resteasy/reactive/common/processor/scanning/ResteasyReactiveScanner.java
+@@ -284,6 +284,18 @@ public class ResteasyReactiveScanner {
+                         if (!scannedResources.containsKey(clazz.name())) {
+                             scannedResources.put(clazz.name(), clazz);
+                             scannedResourcePaths.put(clazz.name(), i.getValue());
++
++                            // check for server exception mapper method in implementation class of the interface.
++                            List<AnnotationInstance> exceptionMapperAnnotationInstances = clazz.annotationsMap()
++                                    .get(ResteasyReactiveDotNames.SERVER_EXCEPTION_MAPPER);
++                            if (exceptionMapperAnnotationInstances != null) {
++                                for (AnnotationInstance instance : exceptionMapperAnnotationInstances) {
++                                    if (instance.target().kind() != AnnotationTarget.Kind.METHOD) {
++                                        continue;
++                                    }
++                                    methodExceptionMappers.add(instance.target().asMethod());
++                                }
++                            }
+                         }
+                     }
+                 }

@@ -1,0 +1,559 @@
+{
+  "build_jobs": 4,
+  "container_repo": "/swc",
+  "evaluation": {
+    "suite": "reproduction",
+    "visible_timeout": 14400
+  },
+  "upstream_image": "pandora-maxbug-swc:1.2.184",
+  "n_base_passing": 0,
+  "n_base_test_ignore": 1,
+  "oracle_digest": "8d840e818b53a485fea0259c9053d1e12068e82511e7d4a6dcd51bdc921a6ab6",
+  "oracle_pristine_paths": [],
+  "upstream_commit": "9f7399e15e6172900e0591deb5a57a45769d8205",
+  "reproduction": {
+    "needs_build": false,
+    "suite": {
+      "exact": false,
+      "fixture_case_names": true,
+      "fixture_targets": [
+        {
+          "crate": "crates/jsdoc",
+          "pattern": "^crates/jsdoc/tests/fixtures/",
+          "target": "fixture"
+        },
+        {
+          "crate": "crates/swc",
+          "pattern": "^crates/swc/tests/deno\\-unit/",
+          "target": "projects"
+        },
+        {
+          "crate": "crates/swc",
+          "pattern": "^crates/swc/tests/env/",
+          "target": "projects"
+        },
+        {
+          "crate": "crates/swc",
+          "pattern": "^crates/swc/tests/errors/",
+          "target": "error_msg"
+        },
+        {
+          "crate": "crates/swc",
+          "pattern": "^crates/swc/tests/fixture/",
+          "target": "projects"
+        },
+        {
+          "crate": "crates/swc",
+          "pattern": "^crates/swc/tests/srcmap/",
+          "target": "source_map"
+        },
+        {
+          "crate": "crates/swc",
+          "pattern": "^crates/swc/tests/stacktrace/",
+          "target": "source_map"
+        },
+        {
+          "crate": "crates/swc",
+          "pattern": "^crates/swc/tests/swcrc_errors/",
+          "target": "error_msg"
+        },
+        {
+          "crate": "crates/swc",
+          "pattern": "^crates/swc/tests/tsc\\-references/",
+          "target": "tsc"
+        },
+        {
+          "crate": "crates/swc",
+          "pattern": "^crates/swc/tests/vercel/",
+          "target": "projects"
+        },
+        {
+          "crate": "crates/swc_bundler",
+          "pattern": "^crates/swc_bundler/tests/common/",
+          "target": "deno"
+        },
+        {
+          "crate": "crates/swc_bundler",
+          "pattern": "^crates/swc_bundler/tests/deno\\-exec/",
+          "target": "deno"
+        },
+        {
+          "crate": "crates/swc_css_codegen",
+          "pattern": "^crates/swc_css_codegen/tests/options/",
+          "target": "fixture"
+        },
+        {
+          "crate": "crates/swc_css_lints",
+          "pattern": "^crates/swc_css_lints/tests/rules/",
+          "target": "lints"
+        },
+        {
+          "crate": "crates/swc_css_parser",
+          "pattern": "^crates/swc_css_parser/tests/errors/",
+          "target": "fixture"
+        },
+        {
+          "crate": "crates/swc_css_parser",
+          "pattern": "^crates/swc_css_parser/tests/line\\-comment/",
+          "target": "fixture"
+        },
+        {
+          "crate": "crates/swc_css_parser",
+          "pattern": "^crates/swc_css_parser/tests/recovery/",
+          "target": "fixture"
+        },
+        {
+          "crate": "crates/swc_css_prefixer",
+          "pattern": "^crates/swc_css_prefixer/tests/fixture/",
+          "target": "prefixer"
+        },
+        {
+          "crate": "crates/swc_ecma_codegen",
+          "pattern": "^crates/swc_ecma_codegen/tests/test262\\-min/",
+          "target": "test262"
+        },
+        {
+          "crate": "crates/swc_ecma_codegen",
+          "pattern": "^crates/swc_ecma_codegen/tests/test262\\-parser/",
+          "target": "test262"
+        },
+        {
+          "crate": "crates/swc_ecma_lints",
+          "pattern": "^crates/swc_ecma_lints/tests/pass/",
+          "target": "fixture"
+        },
+        {
+          "crate": "crates/swc_ecma_loader",
+          "pattern": "^crates/swc_ecma_loader/tests/basic_import/",
+          "target": "node_resolver"
+        },
+        {
+          "crate": "crates/swc_ecma_loader",
+          "pattern": "^crates/swc_ecma_loader/tests/hoisting/",
+          "target": "node_resolver"
+        },
+        {
+          "crate": "crates/swc_ecma_minifier",
+          "pattern": "^crates/swc_ecma_minifier/tests/fixture/",
+          "target": "compress"
+        },
+        {
+          "crate": "crates/swc_ecma_minifier",
+          "pattern": "^crates/swc_ecma_minifier/tests/full/",
+          "target": "compress"
+        },
+        {
+          "crate": "crates/swc_ecma_minifier",
+          "pattern": "^crates/swc_ecma_minifier/tests/projects/",
+          "target": "compress"
+        },
+        {
+          "crate": "crates/swc_ecma_minifier",
+          "pattern": "^crates/swc_ecma_minifier/tests/single\\-pass/",
+          "target": "compress"
+        },
+        {
+          "crate": "crates/swc_ecma_minifier",
+          "pattern": "^crates/swc_ecma_minifier/tests/terser/",
+          "target": "compress"
+        },
+        {
+          "crate": "crates/swc_ecma_parser",
+          "pattern": "^crates/swc_ecma_parser/tests/common/",
+          "target": "test262"
+        },
+        {
+          "crate": "crates/swc_ecma_parser",
+          "pattern": "^crates/swc_ecma_parser/tests/shifted/",
+          "target": "typescript"
+        },
+        {
+          "crate": "crates/swc_ecma_parser",
+          "pattern": "^crates/swc_ecma_parser/tests/test262\\-error\\-references/",
+          "target": "test262"
+        },
+        {
+          "crate": "crates/swc_ecma_parser",
+          "pattern": "^crates/swc_ecma_parser/tests/test262\\-parser/",
+          "target": "test262"
+        },
+        {
+          "crate": "crates/swc_ecma_parser",
+          "pattern": "^crates/swc_ecma_parser/tests/tsc/",
+          "target": "typescript"
+        },
+        {
+          "crate": "crates/swc_ecma_parser",
+          "pattern": "^crates/swc_ecma_parser/tests/typescript\\-errors/",
+          "target": "typescript"
+        },
+        {
+          "crate": "crates/swc_ecma_preset_env",
+          "pattern": "^crates/swc_ecma_preset_env/tests/fixtures/",
+          "target": "test"
+        },
+        {
+          "crate": "crates/swc_ecma_transforms",
+          "pattern": "^crates/swc_ecma_transforms/tests/fixture/",
+          "target": "decorators"
+        },
+        {
+          "crate": "crates/swc_ecma_transforms_base",
+          "pattern": "^crates/swc_ecma_transforms_base/tests/resolver/",
+          "target": "fixture"
+        },
+        {
+          "crate": "crates/swc_ecma_transforms_base",
+          "pattern": "^crates/swc_ecma_transforms_base/tests/ts\\-resolver/",
+          "target": "fixture"
+        },
+        {
+          "crate": "crates/swc_ecma_transforms_compat",
+          "pattern": "^crates/swc_ecma_transforms_compat/tests/async\\-to\\-generator/",
+          "target": "es2017_async_to_generator"
+        },
+        {
+          "crate": "crates/swc_ecma_transforms_compat",
+          "pattern": "^crates/swc_ecma_transforms_compat/tests/block\\-scoping/",
+          "target": "es2015_block_scoping"
+        },
+        {
+          "crate": "crates/swc_ecma_transforms_compat",
+          "pattern": "^crates/swc_ecma_transforms_compat/tests/classes/",
+          "target": "es2015_classes"
+        },
+        {
+          "crate": "crates/swc_ecma_transforms_compat",
+          "pattern": "^crates/swc_ecma_transforms_compat/tests/for\\-of/",
+          "target": "es2015_for_of"
+        },
+        {
+          "crate": "crates/swc_ecma_transforms_compat",
+          "pattern": "^crates/swc_ecma_transforms_compat/tests/new\\-target/",
+          "target": "es2015_new_target"
+        },
+        {
+          "crate": "crates/swc_ecma_transforms_compat",
+          "pattern": "^crates/swc_ecma_transforms_compat/tests/opt\\-chain/",
+          "target": "es2020_optional_chaining"
+        },
+        {
+          "crate": "crates/swc_ecma_transforms_compat",
+          "pattern": "^crates/swc_ecma_transforms_compat/tests/private\\-in\\-object/",
+          "target": "es2022_private_in_object"
+        },
+        {
+          "crate": "crates/swc_ecma_transforms_compat",
+          "pattern": "^crates/swc_ecma_transforms_compat/tests/static\\-blocks/",
+          "target": "es2022_static_blocks"
+        },
+        {
+          "crate": "crates/swc_ecma_transforms_module",
+          "pattern": "^crates/swc_ecma_transforms_module/tests/fixture/",
+          "target": "common_js"
+        },
+        {
+          "crate": "crates/swc_ecma_transforms_module",
+          "pattern": "^crates/swc_ecma_transforms_module/tests/paths/",
+          "target": "path_node"
+        },
+        {
+          "crate": "crates/swc_ecma_transforms_optimization",
+          "pattern": "^crates/swc_ecma_transforms_optimization/tests/dce/",
+          "target": "fixture"
+        },
+        {
+          "crate": "crates/swc_ecma_transforms_optimization",
+          "pattern": "^crates/swc_ecma_transforms_optimization/tests/dce\\-jsx/",
+          "target": "fixture"
+        },
+        {
+          "crate": "crates/swc_ecma_transforms_optimization",
+          "pattern": "^crates/swc_ecma_transforms_optimization/tests/expr\\-simplifier/",
+          "target": "fixture"
+        },
+        {
+          "crate": "crates/swc_ecma_transforms_typescript",
+          "pattern": "^crates/swc_ecma_transforms_typescript/tests/fixture/",
+          "target": "strip"
+        },
+        {
+          "crate": "crates/swc_ecma_transforms_typescript",
+          "pattern": "^crates/swc_ecma_transforms_typescript/tests/tsc/",
+          "target": "strip_correctness"
+        },
+        {
+          "crate": "crates/swc_ecma_transforms_typescript",
+          "pattern": "^crates/swc_ecma_transforms_typescript/tests/typescript/",
+          "target": "strip_correctness"
+        },
+        {
+          "crate": "crates/swc_estree_compat",
+          "pattern": "^crates/swc_estree_compat/tests/fixtures/",
+          "target": "convert"
+        },
+        {
+          "crate": "crates/swc_html_codegen",
+          "pattern": "^crates/swc_html_codegen/tests/document_fragment/",
+          "target": "fixture"
+        },
+        {
+          "crate": "crates/swc_html_codegen",
+          "pattern": "^crates/swc_html_codegen/tests/html5lib\\-tests\\-fixture/",
+          "target": "fixture"
+        },
+        {
+          "crate": "crates/swc_html_codegen",
+          "pattern": "^crates/swc_html_codegen/tests/options/",
+          "target": "fixture"
+        },
+        {
+          "crate": "crates/swc_html_codegen",
+          "pattern": "^crates/swc_html_codegen/tests/recovery/",
+          "target": "fixture"
+        },
+        {
+          "crate": "crates/swc_html_minifier",
+          "pattern": "^crates/swc_html_minifier/tests/recovery/",
+          "target": "fixture"
+        },
+        {
+          "crate": "crates/swc_html_parser",
+          "pattern": "^crates/swc_html_parser/tests/html5lib\\-tests/",
+          "target": "fixture"
+        },
+        {
+          "crate": "crates/swc_html_parser",
+          "pattern": "^crates/swc_html_parser/tests/html5lib\\-tests\\-fixture/",
+          "target": "fixture"
+        },
+        {
+          "crate": "crates/swc_html_parser",
+          "pattern": "^crates/swc_html_parser/tests/iframe_srcdoc/",
+          "target": "fixture"
+        },
+        {
+          "crate": "crates/swc_html_parser",
+          "pattern": "^crates/swc_html_parser/tests/recovery/",
+          "target": "fixture"
+        },
+        {
+          "crate": "crates/swc_node_bundler",
+          "pattern": "^crates/swc_node_bundler/tests/pass/",
+          "target": "fixture"
+        },
+        {
+          "crate": "crates/swc_webpack_ast",
+          "pattern": "^crates/swc_webpack_ast/tests/tsc/",
+          "target": "fixture"
+        },
+        {
+          "crate": "crates/swc_webpack_ast",
+          "pattern": "^crates/swc_webpack_ast/tests/tsc\\-references/",
+          "target": "fixture"
+        },
+        {
+          "crate": "crates/swc_webpack_ast",
+          "pattern": "^crates/swc_webpack_ast/tests/typescript/",
+          "target": "fixture"
+        },
+        {
+          "crate": "crates/testing_macros",
+          "pattern": "^crates/testing_macros/tests/ignore/",
+          "target": "test"
+        },
+        {
+          "crate": "crates/testing_macros",
+          "pattern": "^crates/testing_macros/tests/simple/",
+          "target": "test"
+        },
+        {
+          "crate": "\\1",
+          "pattern": "^(crates/[^/]+)/tests/([^/.]+)/",
+          "target": "\\2"
+        }
+      ],
+      "type": "cargo"
+    },
+    "test_timeout": 2400
+  },
+  "schema": 2,
+  "subtasks": [
+    {
+      "f2p": [
+        "main::should_visit_program"
+      ],
+      "id": "swc-0e94e5fe9090",
+      "target_files": [
+        "crates/swc_ecma_visit/src/lib.rs"
+      ]
+    },
+    {
+      "f2p": [
+        "fixture::test_resolver_tests__resolver__minifier__13__input_js",
+        "fixture::test_resolver_tests__resolver__minifier__14__input_js"
+      ],
+      "id": "swc-22b2eb8f6c34",
+      "target_files": [
+        "crates/swc_ecma_transforms_base/src/resolver/mod.rs"
+      ]
+    },
+    {
+      "f2p": [
+        "path_node::fixture_tests__paths__issue_6159__input"
+      ],
+      "id": "swc-3cd86ef1ff0e",
+      "target_files": [
+        "crates/swc_ecma_transforms_module/src/rewriter.rs"
+      ]
+    },
+    {
+      "f2p": [
+        "fixture::ts_tests__fixture__typescript__interface__input_ts"
+      ],
+      "id": "swc-468630687d05",
+      "target_files": [
+        "crates/swc_ecma_codegen/src/typescript.rs"
+      ]
+    },
+    {
+      "f2p": [
+        "typescript::spec_tests__typescript__issue_7186__1__input_ts",
+        "typescript::spec_tests__typescript__issue_7186__2__input_tsx"
+      ],
+      "id": "swc-4d3d8b085f33",
+      "target_files": [
+        "crates/swc_ecma_parser/src/parser/typescript.rs"
+      ]
+    },
+    {
+      "f2p": [
+        "jsx::references_tests__jsx__basic__issue_6522__input_js"
+      ],
+      "id": "swc-5131a0e38232",
+      "target_files": [
+        "crates/swc_ecma_parser/src/lexer/state.rs"
+      ]
+    },
+    {
+      "f2p": [
+        "error_msg::fixture_tests__errors__lints__const_assign__1__input_js"
+      ],
+      "id": "swc-693bea4b1ff3",
+      "target_files": [
+        "crates/swc_ecma_lints/src/rules/const_assign.rs"
+      ]
+    },
+    {
+      "f2p": [
+        "typescript::spec_tests__typescript__issue_4937__index_ts"
+      ],
+      "id": "swc-6f5a7a7fe149",
+      "target_files": [
+        "crates/swc_ecma_parser/src/parser/typescript.rs"
+      ]
+    },
+    {
+      "f2p": [
+        "typescript::spec_tests__typescript__import__export_import_type_require__input_ts"
+      ],
+      "id": "swc-74746bc4feb5",
+      "target_files": [
+        "crates/swc_ecma_parser/src/parser/stmt/module_item.rs"
+      ]
+    },
+    {
+      "f2p": [
+        "fixture::js_tests__fixture__issues__5289__input_js"
+      ],
+      "id": "swc-87e7149ceae8",
+      "target_files": [
+        "crates/swc_ecma_codegen/src/text_writer/semicolon.rs"
+      ]
+    },
+    {
+      "f2p": [
+        "projects::tests_tests__fixture__issues_4xxx__4855__input"
+      ],
+      "id": "swc-890a7c60b43f",
+      "target_files": [
+        "crates/swc_ecma_minifier/src/compress/pure/misc.rs",
+        "crates/swc_ecma_transforms_optimization/src/simplify/branch/mod.rs"
+      ]
+    },
+    {
+      "f2p": [
+        "fixture::pass_tests__pass__issue_4907__1__input_js"
+      ],
+      "id": "swc-8abb93d2b49a",
+      "target_files": [
+        "crates/swc_ecma_lints/src/rules/duplicate_bindings.rs"
+      ]
+    },
+    {
+      "f2p": [
+        "projects::tests_tests__fixture__issues_7xxx__7218__input"
+      ],
+      "id": "swc-8e248c47ca1f",
+      "target_files": [
+        "crates/swc_ecma_transforms_typescript/src/strip.rs"
+      ]
+    },
+    {
+      "f2p": [
+        "fixture::ts_tests__fixture__issues__6171__input_ts"
+      ],
+      "id": "swc-8f4276dd3507",
+      "target_files": [
+        "crates/swc_ecma_codegen/src/typescript.rs"
+      ]
+    },
+    {
+      "f2p": [
+        "projects::issue_6009"
+      ],
+      "id": "swc-9eb0daaea106",
+      "target_files": [
+        "crates/swc/src/lib.rs"
+      ]
+    },
+    {
+      "f2p": [
+        "fixture::pass_tests__fixture__issue_5642__input"
+      ],
+      "id": "swc-bb7cf2b7ff35",
+      "target_files": [
+        "crates/swc_bundler/src/bundler/chunk/merge.rs"
+      ]
+    },
+    {
+      "f2p": [
+        "fixture::minify_fixtures_tests__fixture__compress_keyframe_selector__input_css"
+      ],
+      "id": "swc-be2ba9ca947c",
+      "target_files": [
+        "crates/swc_css_minifier/src/compress/keyframes.rs"
+      ]
+    },
+    {
+      "f2p": [
+        "typescript::spec_tests__typescript__issue_6430__index_ts"
+      ],
+      "id": "swc-d2c3e7c71804",
+      "target_files": [
+        "crates/swc_ecma_parser/src/parser/typescript.rs"
+      ]
+    },
+    {
+      "f2p": [
+        "fixture::ts_tests__fixture__issues__6616__input_ts"
+      ],
+      "id": "swc-fcfcea33a209",
+      "target_files": [
+        "crates/swc_ecma_codegen/src/typescript.rs"
+      ]
+    }
+  ],
+  "task": "swc",
+  "version": "1.2.184"
+}

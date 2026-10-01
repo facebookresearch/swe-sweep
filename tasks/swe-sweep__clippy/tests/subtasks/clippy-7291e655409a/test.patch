@@ -1,0 +1,71 @@
+diff --git a/tests/ui/dbg_macro/dbg_macro.fixed b/tests/ui/dbg_macro/dbg_macro.fixed
+index 3b9dee818..5993c2faf 100644
+--- a/tests/ui/dbg_macro/dbg_macro.fixed
++++ b/tests/ui/dbg_macro/dbg_macro.fixed
+@@ -123,3 +123,19 @@ mod issue12131 {
+         //~^ dbg_macro
+     }
+ }
++
++mod issue14914 {
++    use std::future::Future;
++
++    fn takes_async_fn<F, Fut>(_f: F)
++    where
++        F: FnOnce(i32) -> Fut,
++        Fut: Future<Output = i32>,
++    {
++    }
++
++    fn should_not_panic() {
++        takes_async_fn(async |val| val);
++        //~^ dbg_macro
++    }
++}
+diff --git a/tests/ui/dbg_macro/dbg_macro.rs b/tests/ui/dbg_macro/dbg_macro.rs
+index 1dbbc6fe9..58d7e106e 100644
+--- a/tests/ui/dbg_macro/dbg_macro.rs
++++ b/tests/ui/dbg_macro/dbg_macro.rs
+@@ -123,3 +123,19 @@ mod issue12131 {
+         //~^ dbg_macro
+     }
+ }
++
++mod issue14914 {
++    use std::future::Future;
++
++    fn takes_async_fn<F, Fut>(_f: F)
++    where
++        F: FnOnce(i32) -> Fut,
++        Fut: Future<Output = i32>,
++    {
++    }
++
++    fn should_not_panic() {
++        takes_async_fn(async |val| dbg!(val));
++        //~^ dbg_macro
++    }
++}
+diff --git a/tests/ui/dbg_macro/dbg_macro.stderr b/tests/ui/dbg_macro/dbg_macro.stderr
+index f1412023c..5a65b38a8 100644
+--- a/tests/ui/dbg_macro/dbg_macro.stderr
++++ b/tests/ui/dbg_macro/dbg_macro.stderr
+@@ -230,5 +230,17 @@ LL -         print!("{}", dbg!(s));
+ LL +         print!("{}", s);
+    |
+ 
+-error: aborting due to 19 previous errors
++error: the `dbg!` macro is intended as a debugging tool
++  --> tests/ui/dbg_macro/dbg_macro.rs:138:36
++   |
++LL |         takes_async_fn(async |val| dbg!(val));
++   |                                    ^^^^^^^^^
++   |
++help: remove the invocation before committing it to a version control system
++   |
++LL -         takes_async_fn(async |val| dbg!(val));
++LL +         takes_async_fn(async |val| val);
++   |
++
++error: aborting due to 20 previous errors
+ 

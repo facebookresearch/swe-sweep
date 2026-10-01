@@ -1,0 +1,195 @@
+diff --git a/tests/ui/bool_comparison.fixed b/tests/ui/bool_comparison.fixed
+index 166abbe54..e8edc33b5 100644
+--- a/tests/ui/bool_comparison.fixed
++++ b/tests/ui/bool_comparison.fixed
+@@ -91,7 +91,6 @@ fn main() {
+     };
+ }
+ 
+-#[allow(dead_code)]
+ fn issue3703() {
+     struct Foo;
+     impl PartialEq<bool> for Foo {
+@@ -127,7 +126,6 @@ fn issue3703() {
+     if false < Foo {}
+ }
+ 
+-#[allow(dead_code)]
+ fn issue4983() {
+     let a = true;
+     let b = false;
+@@ -157,7 +155,6 @@ fn func() -> bool {
+     true
+ }
+ 
+-#[allow(dead_code)]
+ fn issue3973() {
+     // ok, don't lint on `cfg` invocation
+     if false == cfg!(feature = "debugging") {}
+@@ -199,3 +196,19 @@ fn issue9907() {
+     let _ = ((1 < 2) != m!(func)) as usize;
+     //~^ bool_comparison
+ }
++
++fn issue15497() {
++    fn func() -> bool {
++        true
++    }
++
++    fn foo(x: bool) -> bool {
++        x & !m!(func)
++        //~^ bool_comparison
++    }
++
++    fn bar(x: bool) -> bool {
++        !x & m!(func)
++        //~^ bool_comparison
++    }
++}
+diff --git a/tests/ui/bool_comparison.rs b/tests/ui/bool_comparison.rs
+index 7265c2b4c..180046390 100644
+--- a/tests/ui/bool_comparison.rs
++++ b/tests/ui/bool_comparison.rs
+@@ -91,7 +91,6 @@ fn main() {
+     };
+ }
+ 
+-#[allow(dead_code)]
+ fn issue3703() {
+     struct Foo;
+     impl PartialEq<bool> for Foo {
+@@ -127,7 +126,6 @@ fn issue3703() {
+     if false < Foo {}
+ }
+ 
+-#[allow(dead_code)]
+ fn issue4983() {
+     let a = true;
+     let b = false;
+@@ -157,7 +155,6 @@ fn func() -> bool {
+     true
+ }
+ 
+-#[allow(dead_code)]
+ fn issue3973() {
+     // ok, don't lint on `cfg` invocation
+     if false == cfg!(feature = "debugging") {}
+@@ -199,3 +196,19 @@ fn issue9907() {
+     let _ = ((1 < 2) == !m!(func)) as usize;
+     //~^ bool_comparison
+ }
++
++fn issue15497() {
++    fn func() -> bool {
++        true
++    }
++
++    fn foo(x: bool) -> bool {
++        x > m!(func)
++        //~^ bool_comparison
++    }
++
++    fn bar(x: bool) -> bool {
++        x < m!(func)
++        //~^ bool_comparison
++    }
++}
+diff --git a/tests/ui/bool_comparison.stderr b/tests/ui/bool_comparison.stderr
+index ddbb9ff78..a398870e7 100644
+--- a/tests/ui/bool_comparison.stderr
++++ b/tests/ui/bool_comparison.stderr
+@@ -86,70 +86,82 @@ LL |     if x > y {
+    |        ^^^^^ help: try simplifying it as shown: `x & !y`
+ 
+ error: this comparison might be written more concisely
+-  --> tests/ui/bool_comparison.rs:135:8
++  --> tests/ui/bool_comparison.rs:133:8
+    |
+ LL |     if a == !b {};
+    |        ^^^^^^^ help: try simplifying it as shown: `a != b`
+ 
+ error: this comparison might be written more concisely
+-  --> tests/ui/bool_comparison.rs:137:8
++  --> tests/ui/bool_comparison.rs:135:8
+    |
+ LL |     if !a == b {};
+    |        ^^^^^^^ help: try simplifying it as shown: `a != b`
+ 
+ error: this comparison might be written more concisely
+-  --> tests/ui/bool_comparison.rs:142:8
++  --> tests/ui/bool_comparison.rs:140:8
+    |
+ LL |     if b == !a {};
+    |        ^^^^^^^ help: try simplifying it as shown: `b != a`
+ 
+ error: this comparison might be written more concisely
+-  --> tests/ui/bool_comparison.rs:144:8
++  --> tests/ui/bool_comparison.rs:142:8
+    |
+ LL |     if !b == a {};
+    |        ^^^^^^^ help: try simplifying it as shown: `b != a`
+ 
+ error: equality checks against false can be replaced by a negation
+-  --> tests/ui/bool_comparison.rs:169:8
++  --> tests/ui/bool_comparison.rs:166:8
+    |
+ LL |     if false == m!(func) {}
+    |        ^^^^^^^^^^^^^^^^^ help: try simplifying it as shown: `!m!(func)`
+ 
+ error: equality checks against false can be replaced by a negation
+-  --> tests/ui/bool_comparison.rs:171:8
++  --> tests/ui/bool_comparison.rs:168:8
+    |
+ LL |     if m!(func) == false {}
+    |        ^^^^^^^^^^^^^^^^^ help: try simplifying it as shown: `!m!(func)`
+ 
+ error: equality checks against true are unnecessary
+-  --> tests/ui/bool_comparison.rs:173:8
++  --> tests/ui/bool_comparison.rs:170:8
+    |
+ LL |     if true == m!(func) {}
+    |        ^^^^^^^^^^^^^^^^ help: try simplifying it as shown: `m!(func)`
+ 
+ error: equality checks against true are unnecessary
+-  --> tests/ui/bool_comparison.rs:175:8
++  --> tests/ui/bool_comparison.rs:172:8
+    |
+ LL |     if m!(func) == true {}
+    |        ^^^^^^^^^^^^^^^^ help: try simplifying it as shown: `m!(func)`
+ 
+ error: equality checks against false can be replaced by a negation
+-  --> tests/ui/bool_comparison.rs:193:14
++  --> tests/ui/bool_comparison.rs:190:14
+    |
+ LL |     let _ = ((1 < 2) == false) as usize;
+    |              ^^^^^^^^^^^^^^^^ help: try simplifying it as shown: `1 >= 2`
+ 
+ error: equality checks against false can be replaced by a negation
+-  --> tests/ui/bool_comparison.rs:195:14
++  --> tests/ui/bool_comparison.rs:192:14
+    |
+ LL |     let _ = (false == m!(func)) as usize;
+    |              ^^^^^^^^^^^^^^^^^ help: try simplifying it as shown: `!m!(func)`
+ 
+ error: this comparison might be written more concisely
+-  --> tests/ui/bool_comparison.rs:199:14
++  --> tests/ui/bool_comparison.rs:196:14
+    |
+ LL |     let _ = ((1 < 2) == !m!(func)) as usize;
+    |              ^^^^^^^^^^^^^^^^^^^^ help: try simplifying it as shown: `(1 < 2) != m!(func)`
+ 
+-error: aborting due to 25 previous errors
++error: order comparisons between booleans can be simplified
++  --> tests/ui/bool_comparison.rs:206:9
++   |
++LL |         x > m!(func)
++   |         ^^^^^^^^^^^^ help: try simplifying it as shown: `x & !m!(func)`
++
++error: order comparisons between booleans can be simplified
++  --> tests/ui/bool_comparison.rs:211:9
++   |
++LL |         x < m!(func)
++   |         ^^^^^^^^^^^^ help: try simplifying it as shown: `!x & m!(func)`
++
++error: aborting due to 27 previous errors
+ 

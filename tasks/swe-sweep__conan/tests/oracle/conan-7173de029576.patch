@@ -1,0 +1,14 @@
+diff --git a/conan/tools/env/environment.py b/conan/tools/env/environment.py
+index 5c1581293..684688bfe 100644
+--- a/conan/tools/env/environment.py
++++ b/conan/tools/env/environment.py
+@@ -212,8 +212,7 @@ class Environment:
+ 
+     def copy(self):
+         e = Environment()
+-        # TODO: Check this, the internal list is not being copied
+-        e._values = self._values.copy()
++        e._values = {k: v.copy() for k, v in self._values.items()}
+         return e
+ 
+     def __repr__(self):

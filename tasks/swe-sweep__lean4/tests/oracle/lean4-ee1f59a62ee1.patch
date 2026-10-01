@@ -1,0 +1,61 @@
+diff --git a/src/Lean/Meta/Tactic/Apply.lean b/src/Lean/Meta/Tactic/Apply.lean
+index 891c43f..eb27549 100644
+--- a/src/Lean/Meta/Tactic/Apply.lean
++++ b/src/Lean/Meta/Tactic/Apply.lean
+@@ -119,8 +119,8 @@ private def reorderGoals (mvars : Array Expr) : ApplyNewGoals → MetaM (List MV
+   | ApplyNewGoals.all => return mvars.toList.map Lean.Expr.mvarId!
+ 
+ /-- Custom `isDefEq` for the `apply` tactic -/
+-private def isDefEqApply (cfg : ApplyConfig) (a b : Expr) : MetaM Bool := do
+-  if cfg.approx then
++private def isDefEqApply (approx : Bool) (a b : Expr) : MetaM Bool := do
++  if approx then
+     approxDefEq <| isDefEqGuarded a b
+   else
+     isDefEqGuarded a b
+@@ -164,7 +164,7 @@ def _root_.Lean.MVarId.apply (mvarId : MVarId) (e : Expr) (cfg : ApplyConfig :=
+       if i < rangeNumArgs.stop then
+         let s ← saveState
+         let (newMVars, binderInfos, eType) ← forallMetaTelescopeReducing eType i
+-        if (← isDefEqApply cfg eType targetType) then
++        if (← isDefEqApply cfg.approx eType targetType) then
+           return (newMVars, binderInfos)
+         else
+           s.restore
+@@ -193,6 +193,21 @@ def apply (mvarId : MVarId) (e : Expr) (cfg : ApplyConfig := {}) : MetaM (List M
+ def _root_.Lean.MVarId.applyConst (mvar : MVarId) (c : Name) (cfg : ApplyConfig := {}) : MetaM (List MVarId) := do
+   mvar.apply (← mkConstWithFreshMVarLevels c) cfg
+ 
++/-- Close the given goal using `e`, instantiated with `n` metavariables. -/
++def _root_.Lean.MVarId.applyN (mvarId : MVarId) (e : Expr) (n : Nat) (useApproxDefEq := true) : MetaM (List MVarId) :=
++  mvarId.withContext do
++    mvarId.checkNotAssigned `apply
++    let targetType ← mvarId.getType
++    let eType      ← inferType e
++    let (mvarIds, _, eType) ← forallMetaBoundedTelescope eType n
++    unless mvarIds.size == n do
++      throwError "Applied type takes fewer than {n} arguments:\n{indentExpr eType}"
++    unless (← isDefEqApply useApproxDefEq eType targetType) do
++      throwError "Type mismatch: target is{indentExpr targetType}\nbut applied expression has \
++        type{indentExpr eType}\nafter applying {n} arguments."
++    mvarId.assign (e.beta mvarIds)
++    return (mvarIds.map (·.mvarId!)).toList
++
+ end Meta
+ 
+ open Meta
+diff --git a/src/Lean/Meta/Tactic/Split.lean b/src/Lean/Meta/Tactic/Split.lean
+index 9e68455..c679621 100644
+--- a/src/Lean/Meta/Tactic/Split.lean
++++ b/src/Lean/Meta/Tactic/Split.lean
+@@ -238,9 +238,7 @@ def applyMatchSplitter (mvarId : MVarId) (matcherDeclName : Name) (us : Array Le
+     let splitter := mkAppN (mkApp splitter motive) discrsNew
+     check splitter
+     trace[Meta.Tactic.split] "after check splitter"
+-    let mvarIds ← mvarId.apply splitter
+-    unless mvarIds.length == matchEqns.size do
+-      throwError "'applyMatchSplitter' failed, unexpected number of goals created after applying splitter for '{matcherDeclName}'."
++    let mvarIds ← mvarId.applyN splitter matchEqns.size
+     let (_, mvarIds) ← mvarIds.foldlM (init := (0, [])) fun (i, mvarIds) mvarId => do
+       let numParams := matchEqns.splitterAltNumParams[i]!
+       let (_, mvarId) ← mvarId.introN numParams

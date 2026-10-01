@@ -1,0 +1,17 @@
+diff --git a/scipy/ndimage/tests/test_ndimage.py b/scipy/ndimage/tests/test_ndimage.py
+index 8878358e87..ef215f774a 100644
+--- a/scipy/ndimage/tests/test_ndimage.py
++++ b/scipy/ndimage/tests/test_ndimage.py
+@@ -1322,6 +1322,12 @@ class TestNdimage:
+                 a = fft.irfft(a, shape[0], 0)
+                 assert_almost_equal(ndimage.sum(a), 1.0, decimal=dec)
+ 
++    def test_fourier_ellipsoid_unimplemented_ndim(self):
++        # arrays with ndim > 3 raise NotImplementedError
++        x = numpy.ones((4, 6, 8, 10), dtype=numpy.complex128)
++        with pytest.raises(NotImplementedError):
++            a = ndimage.fourier_ellipsoid(x, 3)
++
+     def test_fourier_ellipsoid_complex01(self):
+         for shape in [(32, 16), (31, 15)]:
+             for type_, dec in zip([numpy.complex64, numpy.complex128],

@@ -1,0 +1,13 @@
+diff --git a/lib/matplotlib/axes/_axes.py b/lib/matplotlib/axes/_axes.py
+index 679499a4ea..87e9401bb2 100644
+--- a/lib/matplotlib/axes/_axes.py
++++ b/lib/matplotlib/axes/_axes.py
+@@ -3861,7 +3861,7 @@ class Axes(_AxesBase):
+             (data_line, tuple(caplines), tuple(barcols)),
+             has_xerr=(xerr is not None), has_yerr=(yerr is not None),
+             label=label)
+-        self.containers.append(errorbar_container)
++        self.add_container(errorbar_container)
+ 
+         return errorbar_container  # (l0, caplines, barcols)
+ 

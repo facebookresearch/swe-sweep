@@ -1,0 +1,470 @@
+diff --git a/tests/ui/unit_arg.rs b/tests/ui/unit_arg.rs
+index 22a6a26da..4208efad6 100644
+--- a/tests/ui/unit_arg.rs
++++ b/tests/ui/unit_arg.rs
+@@ -151,3 +151,27 @@ fn main() {
+     bad();
+     ok();
+ }
++
++fn issue14857() {
++    let fn_take_unit = |_: ()| {};
++    fn some_other_fn(_: &i32) {}
++
++    macro_rules! mac {
++        (def) => {
++            Default::default()
++        };
++        (func $f:expr) => {
++            $f()
++        };
++        (nonempty_block $e:expr) => {{
++            some_other_fn(&$e);
++            $e
++        }};
++    }
++    fn_take_unit(mac!(def));
++    //~^ unit_arg
++    fn_take_unit(mac!(func Default::default));
++    //~^ unit_arg
++    fn_take_unit(mac!(nonempty_block Default::default()));
++    //~^ unit_arg
++}
+diff --git a/tests/ui/unit_arg.stderr b/tests/ui/unit_arg.stderr
+index 6c333d979..0dcfb02b9 100644
+--- a/tests/ui/unit_arg.stderr
++++ b/tests/ui/unit_arg.stderr
+@@ -199,5 +199,26 @@ LL ~     foo(1);
+ LL +     Some(())
+    |
+ 
+-error: aborting due to 10 previous errors
++error: passing a unit value to a function
++  --> tests/ui/unit_arg.rs:171:5
++   |
++LL |     fn_take_unit(mac!(def));
++   |     ^^^^^^^^^^^^^^^^^^^^^^^
++   |
++
++error: passing a unit value to a function
++  --> tests/ui/unit_arg.rs:173:5
++   |
++LL |     fn_take_unit(mac!(func Default::default));
++   |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
++   |
++
++error: passing a unit value to a function
++  --> tests/ui/unit_arg.rs:175:5
++   |
++LL |     fn_take_unit(mac!(nonempty_block Default::default()));
++   |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
++   |
++
++error: aborting due to 13 previous errors
+ 
+diff --git a/tests/ui/unit_arg_empty_blocks.fixed b/tests/ui/unit_arg_empty_blocks.fixed
+deleted file mode 100644
+index b045a3360..000000000
+--- a/tests/ui/unit_arg_empty_blocks.fixed
++++ /dev/null
+@@ -1,34 +0,0 @@
+-#![warn(clippy::unit_arg)]
+-#![allow(unused_must_use, unused_variables)]
+-#![allow(clippy::no_effect, clippy::uninlined_format_args)]
+-
+-use std::fmt::Debug;
+-
+-fn foo<T: Debug>(t: T) {
+-    println!("{:?}", t);
+-}
+-
+-fn foo3<T1: Debug, T2: Debug, T3: Debug>(t1: T1, t2: T2, t3: T3) {
+-    println!("{:?}, {:?}, {:?}", t1, t2, t3);
+-}
+-
+-fn bad() {
+-    foo(());
+-    //~^ unit_arg
+-    foo3((), 2, 2);
+-    //~^ unit_arg
+-    foo(0);
+-    taking_two_units((), ());
+-    //~^ unit_arg
+-    foo(0);
+-    foo(1);
+-    taking_three_units((), (), ());
+-    //~^ unit_arg
+-}
+-
+-fn taking_two_units(a: (), b: ()) {}
+-fn taking_three_units(a: (), b: (), c: ()) {}
+-
+-fn main() {
+-    bad();
+-}
+diff --git a/tests/ui/unit_arg_empty_blocks.rs b/tests/ui/unit_arg_empty_blocks.rs
+deleted file mode 100644
+index ab305913f..000000000
+--- a/tests/ui/unit_arg_empty_blocks.rs
++++ /dev/null
+@@ -1,31 +0,0 @@
+-#![warn(clippy::unit_arg)]
+-#![allow(unused_must_use, unused_variables)]
+-#![allow(clippy::no_effect, clippy::uninlined_format_args)]
+-
+-use std::fmt::Debug;
+-
+-fn foo<T: Debug>(t: T) {
+-    println!("{:?}", t);
+-}
+-
+-fn foo3<T1: Debug, T2: Debug, T3: Debug>(t1: T1, t2: T2, t3: T3) {
+-    println!("{:?}, {:?}, {:?}", t1, t2, t3);
+-}
+-
+-fn bad() {
+-    foo({});
+-    //~^ unit_arg
+-    foo3({}, 2, 2);
+-    //~^ unit_arg
+-    taking_two_units({}, foo(0));
+-    //~^ unit_arg
+-    taking_three_units({}, foo(0), foo(1));
+-    //~^ unit_arg
+-}
+-
+-fn taking_two_units(a: (), b: ()) {}
+-fn taking_three_units(a: (), b: (), c: ()) {}
+-
+-fn main() {
+-    bad();
+-}
+diff --git a/tests/ui/unit_arg_empty_blocks.stderr b/tests/ui/unit_arg_empty_blocks.stderr
+deleted file mode 100644
+index 2c686d58e..000000000
+--- a/tests/ui/unit_arg_empty_blocks.stderr
++++ /dev/null
+@@ -1,46 +0,0 @@
+-error: passing a unit value to a function
+-  --> tests/ui/unit_arg_empty_blocks.rs:16:5
+-   |
+-LL |     foo({});
+-   |     ^^^^--^
+-   |         |
+-   |         help: use a unit literal instead: `()`
+-   |
+-   = note: `-D clippy::unit-arg` implied by `-D warnings`
+-   = help: to override `-D warnings` add `#[allow(clippy::unit_arg)]`
+-
+-error: passing a unit value to a function
+-  --> tests/ui/unit_arg_empty_blocks.rs:18:5
+-   |
+-LL |     foo3({}, 2, 2);
+-   |     ^^^^^--^^^^^^^
+-   |          |
+-   |          help: use a unit literal instead: `()`
+-
+-error: passing unit values to a function
+-  --> tests/ui/unit_arg_empty_blocks.rs:20:5
+-   |
+-LL |     taking_two_units({}, foo(0));
+-   |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+-   |
+-help: move the expression in front of the call and replace it with the unit literal `()`
+-   |
+-LL ~     foo(0);
+-LL ~     taking_two_units((), ());
+-   |
+-
+-error: passing unit values to a function
+-  --> tests/ui/unit_arg_empty_blocks.rs:22:5
+-   |
+-LL |     taking_three_units({}, foo(0), foo(1));
+-   |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+-   |
+-help: move the expressions in front of the call and replace them with the unit literal `()`
+-   |
+-LL ~     foo(0);
+-LL +     foo(1);
+-LL ~     taking_three_units((), (), ());
+-   |
+-
+-error: aborting due to 4 previous errors
+-
+diff --git a/tests/ui/unit_arg_fixable.fixed b/tests/ui/unit_arg_fixable.fixed
+new file mode 100644
+index 000000000..03353a140
+--- /dev/null
++++ b/tests/ui/unit_arg_fixable.fixed
+@@ -0,0 +1,78 @@
++#![warn(clippy::unit_arg)]
++#![allow(unused_must_use, unused_variables)]
++#![allow(clippy::no_effect, clippy::uninlined_format_args)]
++
++use std::fmt::Debug;
++
++fn foo<T: Debug>(t: T) {
++    println!("{:?}", t);
++}
++
++fn foo3<T1: Debug, T2: Debug, T3: Debug>(t1: T1, t2: T2, t3: T3) {
++    println!("{:?}, {:?}, {:?}", t1, t2, t3);
++}
++
++fn bad() {
++    foo(());
++    //~^ unit_arg
++    foo3((), 2, 2);
++    //~^ unit_arg
++    foo(0);
++    taking_two_units((), ());
++    //~^ unit_arg
++    foo(0);
++    foo(1);
++    taking_three_units((), (), ());
++    //~^ unit_arg
++}
++
++fn taking_two_units(a: (), b: ()) {}
++fn taking_three_units(a: (), b: (), c: ()) {}
++
++fn main() {
++    bad();
++}
++
++fn issue14857() {
++    let fn_take_unit = |_: ()| {};
++    fn_take_unit(());
++    //~^ unit_arg
++
++    fn some_other_fn(_: &i32) {}
++
++    macro_rules! another_mac {
++        () => {
++            some_other_fn(&Default::default())
++        };
++        ($e:expr) => {
++            some_other_fn(&$e)
++        };
++    }
++
++    another_mac!();
++    fn_take_unit(());
++    //~^ unit_arg
++    another_mac!(1);
++    fn_take_unit(());
++    //~^ unit_arg
++
++    macro_rules! mac {
++        (nondef $e:expr) => {
++            $e
++        };
++        (empty_block) => {{}};
++    }
++    fn_take_unit(mac!(nondef ()));
++    //~^ unit_arg
++    mac!(empty_block);
++    fn_take_unit(());
++    //~^ unit_arg
++
++    fn def<T: Default>() -> T {
++        Default::default()
++    }
++
++    let _: () = def();
++    fn_take_unit(());
++    //~^ unit_arg
++}
+diff --git a/tests/ui/unit_arg_fixable.rs b/tests/ui/unit_arg_fixable.rs
+new file mode 100644
+index 000000000..03fd96efd
+--- /dev/null
++++ b/tests/ui/unit_arg_fixable.rs
+@@ -0,0 +1,71 @@
++#![warn(clippy::unit_arg)]
++#![allow(unused_must_use, unused_variables)]
++#![allow(clippy::no_effect, clippy::uninlined_format_args)]
++
++use std::fmt::Debug;
++
++fn foo<T: Debug>(t: T) {
++    println!("{:?}", t);
++}
++
++fn foo3<T1: Debug, T2: Debug, T3: Debug>(t1: T1, t2: T2, t3: T3) {
++    println!("{:?}, {:?}, {:?}", t1, t2, t3);
++}
++
++fn bad() {
++    foo({});
++    //~^ unit_arg
++    foo3({}, 2, 2);
++    //~^ unit_arg
++    taking_two_units({}, foo(0));
++    //~^ unit_arg
++    taking_three_units({}, foo(0), foo(1));
++    //~^ unit_arg
++}
++
++fn taking_two_units(a: (), b: ()) {}
++fn taking_three_units(a: (), b: (), c: ()) {}
++
++fn main() {
++    bad();
++}
++
++fn issue14857() {
++    let fn_take_unit = |_: ()| {};
++    fn_take_unit(Default::default());
++    //~^ unit_arg
++
++    fn some_other_fn(_: &i32) {}
++
++    macro_rules! another_mac {
++        () => {
++            some_other_fn(&Default::default())
++        };
++        ($e:expr) => {
++            some_other_fn(&$e)
++        };
++    }
++
++    fn_take_unit(another_mac!());
++    //~^ unit_arg
++    fn_take_unit(another_mac!(1));
++    //~^ unit_arg
++
++    macro_rules! mac {
++        (nondef $e:expr) => {
++            $e
++        };
++        (empty_block) => {{}};
++    }
++    fn_take_unit(mac!(nondef Default::default()));
++    //~^ unit_arg
++    fn_take_unit(mac!(empty_block));
++    //~^ unit_arg
++
++    fn def<T: Default>() -> T {
++        Default::default()
++    }
++
++    fn_take_unit(def());
++    //~^ unit_arg
++}
+diff --git a/tests/ui/unit_arg_fixable.stderr b/tests/ui/unit_arg_fixable.stderr
+new file mode 100644
+index 000000000..ccd5aa832
+--- /dev/null
++++ b/tests/ui/unit_arg_fixable.stderr
+@@ -0,0 +1,110 @@
++error: passing a unit value to a function
++  --> tests/ui/unit_arg_fixable.rs:16:5
++   |
++LL |     foo({});
++   |     ^^^^--^
++   |         |
++   |         help: use a unit literal instead: `()`
++   |
++   = note: `-D clippy::unit-arg` implied by `-D warnings`
++   = help: to override `-D warnings` add `#[allow(clippy::unit_arg)]`
++
++error: passing a unit value to a function
++  --> tests/ui/unit_arg_fixable.rs:18:5
++   |
++LL |     foo3({}, 2, 2);
++   |     ^^^^^--^^^^^^^
++   |          |
++   |          help: use a unit literal instead: `()`
++
++error: passing unit values to a function
++  --> tests/ui/unit_arg_fixable.rs:20:5
++   |
++LL |     taking_two_units({}, foo(0));
++   |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
++   |
++help: move the expression in front of the call and replace it with the unit literal `()`
++   |
++LL ~     foo(0);
++LL ~     taking_two_units((), ());
++   |
++
++error: passing unit values to a function
++  --> tests/ui/unit_arg_fixable.rs:22:5
++   |
++LL |     taking_three_units({}, foo(0), foo(1));
++   |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
++   |
++help: move the expressions in front of the call and replace them with the unit literal `()`
++   |
++LL ~     foo(0);
++LL +     foo(1);
++LL ~     taking_three_units((), (), ());
++   |
++
++error: passing a unit value to a function
++  --> tests/ui/unit_arg_fixable.rs:35:5
++   |
++LL |     fn_take_unit(Default::default());
++   |     ^^^^^^^^^^^^^------------------^
++   |                  |
++   |                  help: use a unit literal instead: `()`
++
++error: passing a unit value to a function
++  --> tests/ui/unit_arg_fixable.rs:49:5
++   |
++LL |     fn_take_unit(another_mac!());
++   |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
++   |
++help: move the expression in front of the call and replace it with the unit literal `()`
++   |
++LL ~     another_mac!();
++LL ~     fn_take_unit(());
++   |
++
++error: passing a unit value to a function
++  --> tests/ui/unit_arg_fixable.rs:51:5
++   |
++LL |     fn_take_unit(another_mac!(1));
++   |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
++   |
++help: move the expression in front of the call and replace it with the unit literal `()`
++   |
++LL ~     another_mac!(1);
++LL ~     fn_take_unit(());
++   |
++
++error: passing a unit value to a function
++  --> tests/ui/unit_arg_fixable.rs:60:5
++   |
++LL |     fn_take_unit(mac!(nondef Default::default()));
++   |     ^^^^^^^^^^^^^^^^^^^^^^^^^------------------^^
++   |                              |
++   |                              help: use a unit literal instead: `()`
++
++error: passing a unit value to a function
++  --> tests/ui/unit_arg_fixable.rs:62:5
++   |
++LL |     fn_take_unit(mac!(empty_block));
++   |     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
++   |
++help: move the expression in front of the call and replace it with the unit literal `()`
++   |
++LL ~     mac!(empty_block);
++LL ~     fn_take_unit(());
++   |
++
++error: passing a unit value to a function
++  --> tests/ui/unit_arg_fixable.rs:69:5
++   |
++LL |     fn_take_unit(def());
++   |     ^^^^^^^^^^^^^^^^^^^
++   |
++help: move the expression in front of the call and replace it with the unit literal `()`
++   |
++LL ~     let _: () = def();
++LL ~     fn_take_unit(());
++   |
++
++error: aborting due to 10 previous errors
++

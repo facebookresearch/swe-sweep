@@ -1,0 +1,38 @@
+diff --git a/compiler/ccgcalls.nim b/compiler/ccgcalls.nim
+index 9993322fb..48e7fd290 100644
+--- a/compiler/ccgcalls.nim
++++ b/compiler/ccgcalls.nim
+@@ -156,7 +156,7 @@ proc reifiedOpenArray(n: PNode): bool {.inline.} =
+   else:
+     result = true
+ 
+-proc genOpenArraySlice(p: BProc; q: PNode; formalType, destType: PType): (Rope, Rope) =
++proc genOpenArraySlice(p: BProc; q: PNode; formalType, destType: PType; prepareForMutation = false): (Rope, Rope) =
+   var a, b, c: TLoc
+   initLocExpr(p, q[1], a)
+   initLocExpr(p, q[2], b)
+@@ -164,6 +164,8 @@ proc genOpenArraySlice(p: BProc; q: PNode; formalType, destType: PType): (Rope,
+   # but first produce the required index checks:
+   if optBoundsCheck in p.options:
+     genBoundsCheck(p, a, b, c)
++  if prepareForMutation:
++    linefmt(p, cpsStmts, "#nimPrepareStrMutationV2($1);$n", [byRefLoc(p, a)])
+   let ty = skipTypes(a.t, abstractVar+{tyPtr})
+   let dest = getTypeDesc(p.module, destType)
+   let lengthExpr = "($1)-($2)+1" % [rdLoc(c), rdLoc(b)]
+diff --git a/compiler/ccgexprs.nim b/compiler/ccgexprs.nim
+index fe7cb252e..f428324b7 100644
+--- a/compiler/ccgexprs.nim
++++ b/compiler/ccgexprs.nim
+@@ -2408,7 +2408,10 @@ proc genDispose(p: BProc; n: PNode) =
+       lineCg(p, cpsStmts, ["#nimDestroyAndDispose($#)", rdLoc(a)])
+ 
+ proc genSlice(p: BProc; e: PNode; d: var TLoc) =
+-  let (x, y) = genOpenArraySlice(p, e, e.typ, e.typ.lastSon)
++  let (x, y) = genOpenArraySlice(p, e, e.typ, e.typ.lastSon,
++    prepareForMutation = e[1].kind == nkHiddenDeref and
++                         e[1].typ.skipTypes(abstractInst).kind == tyString and
++                         p.config.selectedGC in {gcArc, gcOrc})
+   if d.k == locNone: getTemp(p, e.typ, d)
+   linefmt(p, cpsStmts, "$1.Field0 = $2; $1.Field1 = $3;$n", [rdLoc(d), x, y])
+   when false:

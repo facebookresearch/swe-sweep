@@ -1,0 +1,14 @@
+diff --git a/vlib/v/gen/c/assert.v b/vlib/v/gen/c/assert.v
+index bf463c3d5..f181b69ad 100644
+--- a/vlib/v/gen/c/assert.v
++++ b/vlib/v/gen/c/assert.v
+@@ -85,6 +85,9 @@ fn (mut g Gen) assert_subexpression_to_ctemp(expr ast.Expr, expr_type ast.Type)
+ 				return g.new_ctemp_var_then_gen(expr, expr_type)
+ 			}
+ 		}
++		ast.LockExpr {
++			return g.new_ctemp_var_then_gen(expr, expr_type)
++		}
+ 		else {}
+ 	}
+ 	return c.unsupported_ctemp_assert_transform

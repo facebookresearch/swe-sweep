@@ -1,0 +1,16 @@
+diff --git a/crates/ruff_linter/src/rules/pylint/rules/literal_membership.rs b/crates/ruff_linter/src/rules/pylint/rules/literal_membership.rs
+index 3ff08e9549..0bf8b94e78 100644
+--- a/crates/ruff_linter/src/rules/pylint/rules/literal_membership.rs
++++ b/crates/ruff_linter/src/rules/pylint/rules/literal_membership.rs
+@@ -65,6 +65,11 @@ pub(crate) fn literal_membership(checker: &mut Checker, compare: &ast::ExprCompa
+         _ => return,
+     };
+ 
++    // Skip empty collections (#15729).
++    if elts.is_empty() {
++        return;
++    }
++
+     // If `left`, or any of the elements in `right`, are known to _not_ be hashable, return.
+     if std::iter::once(compare.left.as_ref())
+         .chain(elts)

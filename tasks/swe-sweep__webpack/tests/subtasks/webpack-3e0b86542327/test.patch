@@ -1,0 +1,30 @@
+diff --git a/test/configCases/parsing/issue-14720/index.js b/test/configCases/parsing/issue-14720/index.js
+new file mode 100644
+index 000000000..0445694f6
+--- /dev/null
++++ b/test/configCases/parsing/issue-14720/index.js
+@@ -0,0 +1,7 @@
++it("should generate a chunk for a full require dependencies in require.ensure", done => {
++	require.ensure([], () => {
++		expect(require("./module").property).toBe(42);
++		expect(__STATS__.chunks.length).toBe(2);
++		done();
++	});
++});
+diff --git a/test/configCases/parsing/issue-14720/module.js b/test/configCases/parsing/issue-14720/module.js
+new file mode 100644
+index 000000000..599937426
+--- /dev/null
++++ b/test/configCases/parsing/issue-14720/module.js
+@@ -0,0 +1 @@
++exports.property = 42;
+diff --git a/test/configCases/parsing/issue-14720/webpack.config.js b/test/configCases/parsing/issue-14720/webpack.config.js
+new file mode 100644
+index 000000000..dffc81bba
+--- /dev/null
++++ b/test/configCases/parsing/issue-14720/webpack.config.js
+@@ -0,0 +1,4 @@
++/** @type {import("../../../../").Configuration} */
++module.exports = {
++	mode: "production"
++};

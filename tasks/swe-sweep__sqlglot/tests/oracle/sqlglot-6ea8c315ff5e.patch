@@ -1,0 +1,12 @@
+diff --git a/sqlglot/dialects/tsql.py b/sqlglot/dialects/tsql.py
+index 79319d6087..349cec6326 100644
+--- a/sqlglot/dialects/tsql.py
++++ b/sqlglot/dialects/tsql.py
+@@ -905,6 +905,7 @@ class TSQL(Dialect):
+             exp.AnyValue: any_value_to_max_sql,
+             exp.ArrayToString: rename_func("STRING_AGG"),
+             exp.AutoIncrementColumnConstraint: lambda *_: "IDENTITY",
++            exp.Ceil: rename_func("CEILING"),
+             exp.Chr: rename_func("CHAR"),
+             exp.DateAdd: date_delta_sql("DATEADD"),
+             exp.DateDiff: date_delta_sql("DATEDIFF"),

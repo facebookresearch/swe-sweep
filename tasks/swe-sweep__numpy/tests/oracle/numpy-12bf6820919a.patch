@@ -1,0 +1,13 @@
+diff --git a/numpy/core/src/multiarray/iterators.c b/numpy/core/src/multiarray/iterators.c
+index 9fcdc91b2f..73c15b0998 100644
+--- a/numpy/core/src/multiarray/iterators.c
++++ b/numpy/core/src/multiarray/iterators.c
+@@ -1388,7 +1388,7 @@ arraymultiter_new(PyTypeObject *NPY_UNUSED(subtype), PyObject *args, PyObject *k
+     PyArrayMultiIterObject *multi;
+     PyObject *arr;
+ 
+-    if (kwds != NULL) {
++    if (kwds != NULL && PyDict_Size(kwds) > 0) {
+         PyErr_SetString(PyExc_ValueError,
+                         "keyword arguments not accepted.");
+         return NULL;

@@ -1,0 +1,36 @@
+diff --git a/src/flag/flag_test.go b/src/flag/flag_test.go
+index 791a8826be..1755168405 100644
+--- a/src/flag/flag_test.go
++++ b/src/flag/flag_test.go
+@@ -353,6 +353,31 @@ func TestUserDefinedBool(t *testing.T) {
+ 	}
+ }
+ 
++func TestUserDefinedBoolUsage(t *testing.T) {
++	var flags FlagSet
++	flags.Init("test", ContinueOnError)
++	var buf bytes.Buffer
++	flags.SetOutput(&buf)
++	var b boolFlagVar
++	flags.Var(&b, "b", "X")
++	b.count = 0
++	// b.IsBoolFlag() will return true and usage will look boolean.
++	flags.PrintDefaults()
++	got := buf.String()
++	want := "  -b\tX\n"
++	if got != want {
++		t.Errorf("false: want %q; got %q", want, got)
++	}
++	b.count = 4
++	// b.IsBoolFlag() will return false and usage will look non-boolean.
++	flags.PrintDefaults()
++	got = buf.String()
++	want = "  -b\tX\n  -b value\n    \tX\n"
++	if got != want {
++		t.Errorf("false: want %q; got %q", want, got)
++	}
++}
++
+ func TestSetOutput(t *testing.T) {
+ 	var flags FlagSet
+ 	var buf bytes.Buffer

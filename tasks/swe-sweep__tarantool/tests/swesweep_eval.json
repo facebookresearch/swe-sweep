@@ -1,0 +1,414 @@
+{
+  "build_jobs": 4,
+  "container_repo": "/tarantool",
+  "evaluation": {
+    "suite": "reproduction",
+    "test_dirs": [
+      "test"
+    ],
+    "visible_timeout": 28800
+  },
+  "upstream_image": "pandora-maxbug-tarantool:2.10.0",
+  "n_base_passing": 980,
+  "n_base_test_ignore": 121,
+  "oracle_digest": "2ffa74a139c63f711ff61a7db5268955ed8f8af59b7e926adaf0e66e50d5389d",
+  "oracle_pristine_paths": [],
+  "upstream_commit": "9f7399e15e6172900e0591deb5a57a45769d8205",
+  "reproduction": {
+    "build_cmd": "tarantool-build",
+    "build_timeout": 5400,
+    "jobs_env": "SWESWEEP_BUILD_JOBS",
+    "suite": {
+      "type": "tarantool-test-run"
+    },
+    "test_timeout": 1800
+  },
+  "schema": 2,
+  "subtasks": [
+    {
+      "f2p": [
+        "unit/prbuf.test"
+      ],
+      "id": "tarantool-02d1749c6bfb",
+      "target_files": [
+        "src/lib/core/prbuf.c"
+      ]
+    },
+    {
+      "f2p": [
+        "box-luatest/gh_7539_mvcc_dirty_data_written_to_snapshot_test.lua"
+      ],
+      "id": "tarantool-067eeb123c0e",
+      "target_files": [
+        "src/box/memtx_hash.cc"
+      ]
+    },
+    {
+      "f2p": [
+        "box-luatest/gh_7226_admin_grant_error_test.lua"
+      ],
+      "id": "tarantool-0b1d99f9080c",
+      "target_files": [
+        "src/box/lua/schema.lua"
+      ]
+    },
+    {
+      "f2p": [
+        "sql-luatest/gh_7295_uint_and_int_def_err_test.lua"
+      ],
+      "id": "tarantool-0e02e4373959",
+      "target_files": [
+        "src/box/sql/expr.c"
+      ]
+    },
+    {
+      "f2p": [
+        "__process_level_failure__"
+      ],
+      "id": "tarantool-0e3671b1b049",
+      "target_files": [
+        "src/box/lua/load_cfg.lua"
+      ]
+    },
+    {
+      "f2p": [
+        "sql-luatest/gh_5976_indexed_by_assertion_test.lua"
+      ],
+      "id": "tarantool-217abe7a70be",
+      "target_files": [
+        "src/box/sql/where.c"
+      ]
+    },
+    {
+      "f2p": [
+        "app-tap/datetime.test.lua"
+      ],
+      "id": "tarantool-3203ce795485",
+      "target_files": [
+        "src/lib/tzcode/strftime.c"
+      ]
+    },
+    {
+      "f2p": [
+        "app-luatest/gh_7210_backtrace_for_fiber_obj_info_test.lua"
+      ],
+      "id": "tarantool-35044a57ea04",
+      "target_files": [
+        "src/lua/fiber.c"
+      ]
+    },
+    {
+      "f2p": [
+        "engine-luatest/gh_7645_ck_fk_constraints_test.lua"
+      ],
+      "id": "tarantool-354f1a67549b",
+      "target_files": [
+        "src/box/tuple_constraint_def.c"
+      ]
+    },
+    {
+      "f2p": [
+        "sql-luatest/gh_7063_dequote_test.lua"
+      ],
+      "id": "tarantool-39735317fbaf",
+      "target_files": [
+        "src/box/sql/util.c"
+      ]
+    },
+    {
+      "f2p": [
+        "sql-luatest/gh_6575_assertion_in_modulo_test.lua"
+      ],
+      "id": "tarantool-40d35b1255f4",
+      "target_files": [
+        "src/box/sql/util.c"
+      ]
+    },
+    {
+      "f2p": [
+        "__process_level_failure__"
+      ],
+      "id": "tarantool-452a757c1c97",
+      "target_files": [
+        "src/box/lua/stat.c"
+      ]
+    },
+    {
+      "f2p": [
+        "sql-luatest/gh_7358_prepared_stmt_truncation_test.lua"
+      ],
+      "id": "tarantool-46aa6eb83fb9",
+      "target_files": [
+        "src/box/sql/alter.c",
+        "src/box/sql/build.c",
+        "src/box/sql/delete.c",
+        "src/box/sql/insert.c",
+        "src/box/sql/sqlInt.h",
+        "src/box/sql/trigger.c",
+        "src/box/sql/update.c",
+        "src/box/sql/vdbe.c",
+        "src/box/sql/vdbe.h",
+        "src/box/sql/vdbeaux.c",
+        "src/box/sql/where.c"
+      ]
+    },
+    {
+      "f2p": [
+        "engine-luatest/gh_6377_decimal_compare_inf_crash_test.lua"
+      ],
+      "id": "tarantool-46b0022d552a",
+      "target_files": [
+        "src/box/tuple_compare.cc"
+      ]
+    },
+    {
+      "f2p": [
+        "box-luatest/gh_7657_merger_use_after_free_in_gen_test.lua"
+      ],
+      "id": "tarantool-4753065c09ed",
+      "target_files": [
+        "src/box/lua/merger.c"
+      ]
+    },
+    {
+      "f2p": [
+        "box-luatest/graceful_shutdown_test.lua"
+      ],
+      "id": "tarantool-4e1bd4f2ca09",
+      "target_files": [
+        "src/box/lua/net_box.lua"
+      ]
+    },
+    {
+      "f2p": [
+        "replication-luatest/gh_7204_greeting_timeout_test.lua"
+      ],
+      "id": "tarantool-4f3f87493c3a",
+      "target_files": [
+        "src/box/applier.cc"
+      ]
+    },
+    {
+      "f2p": [
+        "sql-luatest/gh_7043_temp_space_format_test.lua"
+      ],
+      "id": "tarantool-67319bd2abd7",
+      "target_files": [
+        "src/box/sql/select.c"
+      ]
+    },
+    {
+      "f2p": [
+        "box/update.test.lua"
+      ],
+      "id": "tarantool-7516474ad8c9",
+      "target_files": [
+        "src/box/xrow_update_route.c"
+      ]
+    },
+    {
+      "f2p": [
+        "box-luatest/gh_7685_memtx_tree_idx_get_with_nullable_field_phantom_read_test.lua"
+      ],
+      "id": "tarantool-7530007077a3",
+      "target_files": [
+        "src/box/index_def.c",
+        "src/box/memtx_tree.cc"
+      ]
+    },
+    {
+      "f2p": [
+        "box-luatest/gh_7375_fix_gap_tracking_corner_cases_test.lua"
+      ],
+      "id": "tarantool-77c69aba7b2a",
+      "target_files": [
+        "src/box/memtx_tree.cc",
+        "src/box/memtx_tx.c"
+      ]
+    },
+    {
+      "f2p": [
+        "box-luatest/gh_7477_memtx_hash_idx_gt_iter_dirty_reads_test.lua"
+      ],
+      "id": "tarantool-78ccf4ee3c7f",
+      "target_files": [
+        "src/box/memtx_hash.cc"
+      ]
+    },
+    {
+      "f2p": [
+        "box-luatest/gh_13027_update_json_path_encoding_mismatch_test.lua"
+      ],
+      "id": "tarantool-8c4fecf8c4f6",
+      "target_files": [
+        "src/box/tuple.c",
+        "src/box/tuple.h",
+        "src/box/xrow_update_bar.c",
+        "src/box/xrow_update_route.c"
+      ]
+    },
+    {
+      "f2p": [
+        "box-luatest/gh_7614_fix_nullable_from_format_test.lua"
+      ],
+      "id": "tarantool-8cfc91109fe1",
+      "target_files": [
+        "src/box/lua/schema.lua"
+      ]
+    },
+    {
+      "f2p": [
+        "box-luatest/gh_6506_wakeup_writing_to_wal_fiber_test.lua"
+      ],
+      "id": "tarantool-95c521353f4e",
+      "target_files": [
+        "src/box/journal.h",
+        "src/box/wal.c"
+      ]
+    },
+    {
+      "f2p": [
+        "app-tap/datetime.test.lua"
+      ],
+      "id": "tarantool-9eaa7be00afa",
+      "target_files": [
+        "src/lua/datetime.lua"
+      ]
+    },
+    {
+      "f2p": [
+        "sql-luatest/gh_5526_no_error_on_too_many_indexes_test.lua"
+      ],
+      "id": "tarantool-a0264983c4a6",
+      "target_files": [
+        "src/box/alter.cc",
+        "src/box/index_def.c",
+        "src/box/index_def.h",
+        "src/box/sql/build.c"
+      ]
+    },
+    {
+      "f2p": [
+        "replication-luatest/gh_7581_downstream_lag_test.lua"
+      ],
+      "id": "tarantool-b01da1bbf9f4",
+      "target_files": [
+        "src/box/relay.cc"
+      ]
+    },
+    {
+      "f2p": [
+        "unit/fiber.test"
+      ],
+      "id": "tarantool-c2e562efa2e4",
+      "target_files": [
+        "src/lib/core/fiber.c"
+      ]
+    },
+    {
+      "f2p": [
+        "box-luatest/gh_6647_yield_gc_hook_test.lua"
+      ],
+      "id": "tarantool-c8612c63469d",
+      "target_files": [
+        "src/lua/utils.c"
+      ]
+    },
+    {
+      "f2p": [
+        "replication-luatest/gh_7584_missing_xlog_test.lua"
+      ],
+      "id": "tarantool-d32112b21656",
+      "target_files": [
+        "src/box/wal.c",
+        "src/lib/vclock/vclock.h"
+      ]
+    },
+    {
+      "f2p": [
+        "box-luatest/gh_7712_loss_of_commited_tuple_in_secondary_index_test.lua"
+      ],
+      "id": "tarantool-d527e3e234ed",
+      "target_files": [
+        "src/box/memtx_tx.c"
+      ]
+    },
+    {
+      "f2p": [
+        "sql-luatest/gh_7345_any_in_order_by_ephem_test.lua"
+      ],
+      "id": "tarantool-dad93ce21d26",
+      "target_files": [
+        "src/box/sql/select.c"
+      ]
+    },
+    {
+      "f2p": [
+        "box-luatest/gh_7761_memtx_sk_index_uniqueness_violation_test.lua"
+      ],
+      "id": "tarantool-dbfb0940d12f",
+      "target_files": [
+        "src/box/memtx_tx.c"
+      ]
+    },
+    {
+      "f2p": [
+        "sql-luatest/gh_6572_nan_is_not_null_test.lua"
+      ],
+      "id": "tarantool-e409eec61dc6",
+      "target_files": [
+        "src/box/sql/mem.c"
+      ]
+    },
+    {
+      "f2p": [
+        "sql-luatest/gh_6422_autoinc_ids_reset_test.lua"
+      ],
+      "id": "tarantool-f3e2922c14ee",
+      "target_files": [
+        "src/box/execute.c",
+        "src/box/sql/sqlInt.h",
+        "src/box/sql/vdbeapi.c"
+      ]
+    },
+    {
+      "f2p": [
+        "sql-luatest/gh_6650_round_with_big_precision_test.lua"
+      ],
+      "id": "tarantool-f4801b8daa83",
+      "target_files": [
+        "src/box/sql/func.c"
+      ]
+    },
+    {
+      "f2p": [
+        "sql-luatest/gh_5183_fix_index_field_missing_test.lua"
+      ],
+      "id": "tarantool-f7aac1b241c3",
+      "target_files": [
+        "src/box/sql.c"
+      ]
+    },
+    {
+      "f2p": [
+        "app-luatest/gh_5064_console_ignore_i_flag_without_tty_test.lua"
+      ],
+      "id": "tarantool-f90cfe93f0ad",
+      "target_files": [
+        "src/lua/init.c"
+      ]
+    },
+    {
+      "f2p": [
+        "box-luatest/gh_7409_rev_iters_phantom_reads_test.lua"
+      ],
+      "id": "tarantool-fc35d5a6cfe7",
+      "target_files": [
+        "src/box/memtx_tree.cc",
+        "src/box/memtx_tx.c"
+      ]
+    }
+  ],
+  "task": "tarantool",
+  "version": "2.10.0"
+}

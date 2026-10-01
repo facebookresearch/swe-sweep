@@ -1,0 +1,13 @@
+diff --git a/vlib/v/tests/consts/const_indexexpr_dep_test.v b/vlib/v/tests/consts/const_indexexpr_dep_test.v
+new file mode 100644
+index 000000000..cfd35e99b
+--- /dev/null
++++ b/vlib/v/tests/consts/const_indexexpr_dep_test.v
+@@ -0,0 +1,7 @@
++const array1 = [1]
++const array2 = [array1]
++const array3 = array2[0]
++
++fn test_main() {
++	assert array3 == array1
++}

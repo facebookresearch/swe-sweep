@@ -1,0 +1,18 @@
+diff --git a/packages/babel-parser/src/parser/expression.js b/packages/babel-parser/src/parser/expression.js
+index e1ea1aa55d..dae74bf3d6 100644
+--- a/packages/babel-parser/src/parser/expression.js
++++ b/packages/babel-parser/src/parser/expression.js
+@@ -794,7 +794,12 @@ export default class ExpressionParser extends LValParser {
+         ) {
+           this.next();
+           return this.parseFunction(node, false, false, true);
+-        } else if (canBeArrow && id.name === "async" && this.match(tt.name)) {
++        } else if (
++          canBeArrow &&
++          !this.canInsertSemicolon() &&
++          id.name === "async" &&
++          this.match(tt.name)
++        ) {
+           const oldYield = this.state.yieldInPossibleArrowParameters;
+           this.state.yieldInPossibleArrowParameters = null;
+           const params = [this.parseIdentifier()];

@@ -1,0 +1,52 @@
+diff --git a/packages/babel-parser/src/plugins/jsx/index.js b/packages/babel-parser/src/plugins/jsx/index.js
+index 5d3c2ec2ec..4daa31ef54 100644
+--- a/packages/babel-parser/src/plugins/jsx/index.js
++++ b/packages/babel-parser/src/plugins/jsx/index.js
+@@ -250,10 +250,16 @@ export default (superClass: Class<Parser>): Class<Parser> =>
+     // Parses element name in any form - namespaced, member
+     // or single identifier.
+ 
+-    jsxParseElementName(): N.JSXNamespacedName | N.JSXMemberExpression {
++    jsxParseElementName():
++      | N.JSXIdentifier
++      | N.JSXNamespacedName
++      | N.JSXMemberExpression {
+       const startPos = this.state.start;
+       const startLoc = this.state.startLoc;
+       let node = this.jsxParseNamespacedName();
++      if (node.type === "JSXNamespacedName") {
++        return node;
++      }
+       while (this.eat(tt.dot)) {
+         const newNode = this.startNodeAt(startPos, startLoc);
+         newNode.object = node;
+diff --git a/packages/babel-types/src/definitions/jsx.js b/packages/babel-types/src/definitions/jsx.js
+index 776714c873..a088f03c19 100644
+--- a/packages/babel-types/src/definitions/jsx.js
++++ b/packages/babel-types/src/definitions/jsx.js
+@@ -30,7 +30,11 @@ defineType("JSXClosingElement", {
+   aliases: ["JSX", "Immutable"],
+   fields: {
+     name: {
+-      validate: assertNodeType("JSXIdentifier", "JSXMemberExpression"),
++      validate: assertNodeType(
++        "JSXIdentifier",
++        "JSXMemberExpression",
++        "JSXNamespacedName",
++      ),
+     },
+   },
+ });
+@@ -130,7 +134,11 @@ defineType("JSXOpeningElement", {
+   aliases: ["JSX", "Immutable"],
+   fields: {
+     name: {
+-      validate: assertNodeType("JSXIdentifier", "JSXMemberExpression"),
++      validate: assertNodeType(
++        "JSXIdentifier",
++        "JSXMemberExpression",
++        "JSXNamespacedName",
++      ),
+     },
+     selfClosing: {
+       default: false,

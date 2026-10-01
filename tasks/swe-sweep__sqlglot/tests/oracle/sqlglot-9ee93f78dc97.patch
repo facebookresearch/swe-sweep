@@ -1,0 +1,14 @@
+diff --git a/sqlglot/dialects/clickhouse.py b/sqlglot/dialects/clickhouse.py
+index 9aa811c10f..68354f823d 100644
+--- a/sqlglot/dialects/clickhouse.py
++++ b/sqlglot/dialects/clickhouse.py
+@@ -609,6 +609,9 @@ class ClickHouse(Dialect):
+             elif not self._match(TokenType.R_BRACE):
+                 self.raise_error("Expecting }")
+ 
++            if isinstance(this, exp.Identifier) and not this.quoted:
++                this = exp.var(this.name)
++
+             return self.expression(exp.Placeholder, this=this, kind=kind)
+ 
+         def _parse_bracket(

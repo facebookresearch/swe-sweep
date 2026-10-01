@@ -1,0 +1,63 @@
+diff --git a/src/Symfony/Component/Serializer/Tests/Encoder/XmlEncoderTest.php b/src/Symfony/Component/Serializer/Tests/Encoder/XmlEncoderTest.php
+index 6708ce219fa..ddc97de4432 100644
+--- a/src/Symfony/Component/Serializer/Tests/Encoder/XmlEncoderTest.php
++++ b/src/Symfony/Component/Serializer/Tests/Encoder/XmlEncoderTest.php
+@@ -26,6 +26,7 @@ use Symfony\Component\Serializer\Tests\Fixtures\EnvelopeNormalizer;
+ use Symfony\Component\Serializer\Tests\Fixtures\EnvelopeObject;
+ use Symfony\Component\Serializer\Tests\Fixtures\NormalizableTraversableDummy;
+ use Symfony\Component\Serializer\Tests\Fixtures\ScalarDummy;
++use Symfony\Component\Serializer\Tests\Fixtures\ScalarTraversableDummy;
+ 
+ class XmlEncoderTest extends TestCase
+ {
+@@ -440,6 +441,21 @@ class XmlEncoderTest extends TestCase
+         $this->assertEquals($expected, $serializer->serialize(new NormalizableTraversableDummy(), 'xml'));
+     }
+ 
++    public function testEncodeNestedTraversableWhenNormalizable()
++    {
++        $serializer = new Serializer([new CustomNormalizer()], ['xml' => new XmlEncoder()]);
++
++        $expected = <<<'XML'
++            <?xml version="1.0"?>
++            <response><scalar>normalized</scalar><nested><foo>normalizedFoo</foo><bar>normalizedBar</bar></nested></response>
++
++            XML;
++
++        $data = ['scalar' => new ScalarTraversableDummy(), 'nested' => new NormalizableTraversableDummy()];
++
++        $this->assertSame($expected, $serializer->serialize($data, 'xml'));
++    }
++
+     public function testDecode()
+     {
+         $source = $this->getXmlSource();
+diff --git a/src/Symfony/Component/Serializer/Tests/Fixtures/ScalarTraversableDummy.php b/src/Symfony/Component/Serializer/Tests/Fixtures/ScalarTraversableDummy.php
+new file mode 100644
+index 00000000000..d2982631122
+--- /dev/null
++++ b/src/Symfony/Component/Serializer/Tests/Fixtures/ScalarTraversableDummy.php
+@@ -0,0 +1,23 @@
++<?php
++
++/*
++ * This file is part of the Symfony package.
++ *
++ * (c) Fabien Potencier <fabien@symfony.com>
++ *
++ * For the full copyright and license information, please view the LICENSE
++ * file that was distributed with this source code.
++ */
++
++namespace Symfony\Component\Serializer\Tests\Fixtures;
++
++use Symfony\Component\Serializer\Normalizer\NormalizableInterface;
++use Symfony\Component\Serializer\Normalizer\NormalizerInterface;
++
++class ScalarTraversableDummy extends TraversableDummy implements NormalizableInterface
++{
++    public function normalize(NormalizerInterface $normalizer, ?string $format = null, array $context = []): array|string|int|float|bool
++    {
++        return 'normalized';
++    }
++}

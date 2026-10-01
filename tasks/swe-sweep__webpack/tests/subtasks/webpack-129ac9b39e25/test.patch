@@ -1,0 +1,50 @@
+diff --git a/test/configCases/json/proto/data.json b/test/configCases/json/proto/data.json
+new file mode 100644
+index 000000000..861e272df
+--- /dev/null
++++ b/test/configCases/json/proto/data.json
+@@ -0,0 +1 @@
++{"__proto__":{}}
+diff --git a/test/configCases/json/proto/data1.json b/test/configCases/json/proto/data1.json
+new file mode 100644
+index 000000000..5b5c28795
+--- /dev/null
++++ b/test/configCases/json/proto/data1.json
+@@ -0,0 +1,5 @@
++{
++  "__proto__": {
++    "fail": true
++  }
++}
+diff --git a/test/configCases/json/proto/index.js b/test/configCases/json/proto/index.js
+new file mode 100644
+index 000000000..f3211ad6d
+--- /dev/null
++++ b/test/configCases/json/proto/index.js
+@@ -0,0 +1,15 @@
++import data from './data.json';
++import data2 from 'data:application/json,{"__proto__":{}}';
++import data3 from './data1.json';
++import data4 from 'data:application/json,{"a":"__proto__"}';
++
++it("should preserves `__proto__` properties", () => {
++	expect(Object.getPrototypeOf(data) === Object.getPrototypeOf({})).toBe(true);
++	expect(Object.getPrototypeOf(data2) === Object.getPrototypeOf({})).toBe(true);
++	expect(Object.getPrototypeOf(data3) === Object.getPrototypeOf({})).toBe(true);
++	expect(Object.getPrototypeOf(data4) === Object.getPrototypeOf({})).toBe(true);
++	expect(data).toMatchObject({["__proto__"]: {}});
++	expect(data2).toMatchObject({["__proto__"]: {}});
++	expect(data3.__proto__.fail).toBe(true);
++	expect(data4.a).toBe("__proto__");
++});
+diff --git a/test/configCases/json/proto/webpack.config.js b/test/configCases/json/proto/webpack.config.js
+new file mode 100644
+index 000000000..dd53b2878
+--- /dev/null
++++ b/test/configCases/json/proto/webpack.config.js
+@@ -0,0 +1,5 @@
++/** @type {import("../../../../").Configuration} */
++module.exports = {
++	devtool: false,
++	mode: "development"
++};

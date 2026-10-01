@@ -1,0 +1,15 @@
+diff --git a/src/Symfony/Component/DomCrawler/Field/TextareaFormField.php b/src/Symfony/Component/DomCrawler/Field/TextareaFormField.php
+index c647efad4fe..881e421a257 100644
+--- a/src/Symfony/Component/DomCrawler/Field/TextareaFormField.php
++++ b/src/Symfony/Component/DomCrawler/Field/TextareaFormField.php
+@@ -31,9 +31,6 @@ class TextareaFormField extends FormField
+             throw new \LogicException(sprintf('A TextareaFormField can only be created from a textarea tag (%s given).', $this->node->nodeName));
+         }
+ 
+-        $this->value = '';
+-        foreach ($this->node->childNodes as $node) {
+-            $this->value .= $node->wholeText;
+-        }
++        $this->value = $this->node->textContent;
+     }
+ }

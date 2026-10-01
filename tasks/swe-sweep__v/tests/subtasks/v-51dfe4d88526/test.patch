@@ -1,0 +1,16 @@
+diff --git a/vlib/v/tests/builtin_arrays/array_append_map_with_or_expr_test.v b/vlib/v/tests/builtin_arrays/array_append_map_with_or_expr_test.v
+new file mode 100644
+index 000000000..0c7263a8d
+--- /dev/null
++++ b/vlib/v/tests/builtin_arrays/array_append_map_with_or_expr_test.v
+@@ -0,0 +1,10 @@
++fn test_array_append_map_with_or_expr() {
++	foobar := {
++		'foo': 'Foo'
++		'bar': 'Bar'
++	}
++	mut arr := []string{}
++	arr << foobar['foo']
++	arr << foobar['baz'] or { 'Unknown' }
++	assert arr == ['Foo', 'Unknown']
++}

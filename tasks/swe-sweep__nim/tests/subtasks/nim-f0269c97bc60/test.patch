@@ -1,0 +1,20 @@
+diff --git a/tests/borrow/tborrow.nim b/tests/borrow/tborrow.nim
+index 35652e2e0..8a40982a8 100644
+--- a/tests/borrow/tborrow.nim
++++ b/tests/borrow/tborrow.nim
+@@ -88,4 +88,13 @@ block: # Borrow from generic alias
+     c = default(C)
+     e = default(E)
+   assert c.i == int(0)
+-  assert e.i == 0d
+\ No newline at end of file
++  assert e.i == 0d
++
++block: # issue #22069
++  type
++    Vehicle[C: static[int]] = object
++      color: array[C, int]
++    Car[C: static[int]] {.borrow: `.`.} = distinct Vehicle[C]
++    MuscleCar = Car[128]
++  var x: MuscleCar
++  doAssert x.color is array[128, int]

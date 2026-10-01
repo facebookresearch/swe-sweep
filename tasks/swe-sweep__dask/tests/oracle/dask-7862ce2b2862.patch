@@ -1,0 +1,13 @@
+diff --git a/dask/dataframe/core.py b/dask/dataframe/core.py
+index 960d160ec..726ffbc84 100644
+--- a/dask/dataframe/core.py
++++ b/dask/dataframe/core.py
+@@ -4141,6 +4141,8 @@ class DataFrame(_Frame):
+         npartitions=None,
+         shuffle=None,
+     ):
++        if is_series_like(other) and hasattr(other, "name"):
++            other = other.to_frame()
+ 
+         if not is_dataframe_like(other):
+             raise ValueError("other must be DataFrame")

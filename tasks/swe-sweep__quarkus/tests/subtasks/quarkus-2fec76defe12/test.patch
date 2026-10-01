@@ -1,0 +1,59 @@
+diff --git a/independent-projects/resteasy-reactive/server/vertx/src/test/java/org/jboss/resteasy/reactive/server/vertx/test/resource/basic/RequestFilterQueryParamsTest.java b/independent-projects/resteasy-reactive/server/vertx/src/test/java/org/jboss/resteasy/reactive/server/vertx/test/resource/basic/RequestFilterQueryParamsTest.java
+index 1c286fcd542..a295578b9b5 100644
+--- a/independent-projects/resteasy-reactive/server/vertx/src/test/java/org/jboss/resteasy/reactive/server/vertx/test/resource/basic/RequestFilterQueryParamsTest.java
++++ b/independent-projects/resteasy-reactive/server/vertx/src/test/java/org/jboss/resteasy/reactive/server/vertx/test/resource/basic/RequestFilterQueryParamsTest.java
+@@ -13,8 +13,10 @@ import jakarta.ws.rs.QueryParam;
+ import jakarta.ws.rs.container.ContainerRequestContext;
+ import jakarta.ws.rs.container.ContainerRequestFilter;
+ import jakarta.ws.rs.container.PreMatching;
++import jakarta.ws.rs.core.Context;
+ import jakarta.ws.rs.core.MediaType;
+ import jakarta.ws.rs.core.UriBuilder;
++import jakarta.ws.rs.core.UriInfo;
+ import jakarta.ws.rs.ext.Provider;
+ 
+ import org.hamcrest.Matchers;
+@@ -37,16 +39,31 @@ public class RequestFilterQueryParamsTest {
+                 .then()
+                 .statusCode(200)
+                 .body(Matchers.equalTo("Hello filter"));
++
++        get("/dummy/2")
++                .then()
++                .statusCode(200)
++                .body(Matchers.equalTo("Hello name=filter"));
+     }
+ 
+     @Path("hello")
+     public static class BlockingHelloResource {
+ 
++        @Context
++        UriInfo uriInfo;
++
+         @GET
+         @Produces(MediaType.TEXT_PLAIN)
+         public String hello(@QueryParam("name") @DefaultValue("world") String name) {
+             return "Hello " + name;
+         }
++
++        @Path("2")
++        @GET
++        @Produces(MediaType.TEXT_PLAIN)
++        public String hello2() {
++            return "Hello " + uriInfo.getRequestUri().getQuery();
++        }
+     }
+ 
+     @Provider
+@@ -56,8 +73,9 @@ public class RequestFilterQueryParamsTest {
+         @Override
+         public void filter(ContainerRequestContext requestContext)
+                 throws IOException {
+-            UriBuilder builder = requestContext.getUriInfo().getRequestUriBuilder();
+-            builder.replacePath("/hello");
++            UriInfo originalUriInfo = requestContext.getUriInfo();
++            UriBuilder builder = originalUriInfo.getRequestUriBuilder();
++            builder.replacePath(originalUriInfo.getPath().contains("2") ? "/hello/2" : "/hello");
+             builder.replaceQueryParam("name", "filter");
+             URI uri = builder.build();
+             requestContext.setRequestUri(uri);

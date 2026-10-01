@@ -1,0 +1,14 @@
+diff --git a/compiler/semcall.nim b/compiler/semcall.nim
+index a306478..57cf92e 100644
+--- a/compiler/semcall.nim
++++ b/compiler/semcall.nim
+@@ -570,7 +570,8 @@ proc semResolvedCall(c: PContext, x: var TCandidate,
+   result = x.call
+   instGenericConvertersSons(c, result, x)
+   result[0] = newSymNode(finalCallee, getCallLineInfo(result[0]))
+-  result.typ = finalCallee.typ[0]
++  if finalCallee.magic notin {mArrGet, mArrPut}:
++    result.typ = finalCallee.typ[0]
+   updateDefaultParams(result)
+ 
+ proc canDeref(n: PNode): bool {.inline.} =

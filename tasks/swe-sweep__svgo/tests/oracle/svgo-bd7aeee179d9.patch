@@ -1,0 +1,140 @@
+diff --git a/lib/parser.js b/lib/parser.js
+index 8c40eda..aeed3f0 100644
+--- a/lib/parser.js
++++ b/lib/parser.js
+@@ -15,7 +15,7 @@
+ 
+ // @ts-ignore sax will be replaced with something else later
+ const SAX = require('@trysound/sax');
+-const { textElems } = require('../plugins/_collections.js');
++const { textElems } = require('../plugins/_collections');
+ 
+ class SvgoParserError extends Error {
+   /**
+diff --git a/lib/stringifier.js b/lib/stringifier.js
+index a33814b..712d62f 100644
+--- a/lib/stringifier.js
++++ b/lib/stringifier.js
+@@ -12,7 +12,7 @@
+  * @typedef {import('./types').StringifyOptions} StringifyOptions
+  */
+ 
+-const { textElems } = require('../plugins/_collections.js');
++const { textElems } = require('../plugins/_collections');
+ 
+ /**
+  * @typedef {{
+diff --git a/plugins/_collections.js b/plugins/_collections.js
+index 5ef493e..d264acd 100644
+--- a/plugins/_collections.js
++++ b/plugins/_collections.js
+@@ -93,13 +93,19 @@ exports.elemsGroups = {
+   ],
+ };
+ 
+-exports.textElems = exports.elemsGroups.textContent.concat('title');
++/**
++ * Elements where adding or removing whitespace may effect rendering, metadata,
++ * or semantic meaning.
++ *
++ * @see https://developer.mozilla.org/docs/Web/HTML/Element/pre
++ */
++exports.textElems = [...exports.elemsGroups.textContent, 'title', 'pre'];
+ 
+ exports.pathElems = ['path', 'glyph', 'missing-glyph'];
+ 
+-// https://www.w3.org/TR/SVG11/intro.html#Definitions
+ /**
+  * @type {Record<string, Array<string>>}
++ * @see https://www.w3.org/TR/SVG11/intro.html#Definitions
+  */
+ exports.attrsGroups = {
+   animationAddition: ['additive', 'accumulate'],
+@@ -363,7 +369,6 @@ exports.attrsGroupsDefaults = {
+   },
+ };
+ 
+-// https://www.w3.org/TR/SVG11/eltindex.html
+ /**
+  * @type {Record<string, {
+  *   attrsGroups: Array<string>,
+@@ -372,6 +377,7 @@ exports.attrsGroupsDefaults = {
+  *   contentGroups?: Array<string>,
+  *   content?: Array<string>,
+  * }>}
++ * @see https://www.w3.org/TR/SVG11/eltindex.html
+  */
+ exports.elems = {
+   a: {
+@@ -1948,7 +1954,9 @@ exports.editorNamespaces = [
+   'http://www.vector.evaxdesign.sk',
+ ];
+ 
+-// https://www.w3.org/TR/SVG11/linking.html#processingIRI
++/**
++ * @see https://www.w3.org/TR/SVG11/linking.html#processingIRI
++ */
+ exports.referencesProps = [
+   'clip-path',
+   'color-profile',
+@@ -1962,7 +1970,9 @@ exports.referencesProps = [
+   'style',
+ ];
+ 
+-// https://www.w3.org/TR/SVG11/propidx.html
++/**
++ * @see https://www.w3.org/TR/SVG11/propidx.html
++ */
+ exports.inheritableAttrs = [
+   'clip-rule',
+   'color',
+@@ -2216,7 +2226,9 @@ exports.colorsShortNames = {
+   '#f5deb3': 'wheat',
+ };
+ 
+-// https://www.w3.org/TR/SVG11/single-page.html#types-DataTypeColor
++/**
++ * @see https://www.w3.org/TR/SVG11/single-page.html#types-DataTypeColor
++ */
+ exports.colorsProps = [
+   'color',
+   'fill',
+diff --git a/plugins/removeAttributesBySelector.js b/plugins/removeAttributesBySelector.js
+index 09db8a8..12630c2 100644
+--- a/plugins/removeAttributesBySelector.js
++++ b/plugins/removeAttributesBySelector.js
+@@ -69,7 +69,7 @@ exports.description =
+  *   ↓
+  * <rect x="0" y="0" width="100" height="100"/>
+  *
+- * @link https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_Selectors|MDN CSS Selectors
++ * @link https://developer.mozilla.org/docs/Web/CSS/CSS_Selectors|MDN CSS Selectors
+  *
+  * @author Bradley Mease
+  *
+diff --git a/plugins/removeDesc.js b/plugins/removeDesc.js
+index 4520ed2..f766350 100644
+--- a/plugins/removeDesc.js
++++ b/plugins/removeDesc.js
+@@ -12,7 +12,7 @@ const standardDescs = /^(Created with|Created using)/;
+  * Removes only standard editors content or empty elements 'cause it can be used for accessibility.
+  * Enable parameter 'removeAny' to remove any description.
+  *
+- * https://developer.mozilla.org/en-US/docs/Web/SVG/Element/desc
++ * https://developer.mozilla.org/docs/Web/SVG/Element/desc
+  *
+  * @author Daniel Wabyick
+  *
+diff --git a/plugins/removeTitle.js b/plugins/removeTitle.js
+index ee136cd..906dd3c 100644
+--- a/plugins/removeTitle.js
++++ b/plugins/removeTitle.js
+@@ -8,7 +8,7 @@ exports.description = 'removes <title>';
+ /**
+  * Remove <title>.
+  *
+- * https://developer.mozilla.org/en-US/docs/Web/SVG/Element/title
++ * https://developer.mozilla.org/docs/Web/SVG/Element/title
+  *
+  * @author Igor Kalashnikov
+  *

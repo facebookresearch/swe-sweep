@@ -1,0 +1,23 @@
+diff --git a/expat/lib/xmlparse.c b/expat/lib/xmlparse.c
+index 086fca59..a5a34c1a 100644
+--- a/expat/lib/xmlparse.c
++++ b/expat/lib/xmlparse.c
+@@ -5924,9 +5924,16 @@ storeEntityValue(XML_Parser parser, const ENCODING *enc,
+       return XML_ERROR_NO_MEMORY;
+   }
+ 
++  const char *next = entityTextPtr;
++
++  /* Nothing to tokenize. */
++  if (entityTextPtr >= entityTextEnd) {
++    result = XML_ERROR_NONE;
++    goto endEntityValue;
++  }
++
+   for (;;) {
+-    const char *next
+-        = entityTextPtr; /* XmlEntityValueTok doesn't always set the last arg */
++    next = entityTextPtr; /* XmlEntityValueTok doesn't always set the last arg */
+     int tok = XmlEntityValueTok(enc, entityTextPtr, entityTextEnd, &next);
+ 
+ #ifdef XML_DTD

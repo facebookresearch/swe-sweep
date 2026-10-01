@@ -1,0 +1,46 @@
+diff --git a/buffer/src/main/java/io/netty/buffer/ReadOnlyByteBufferBuf.java b/buffer/src/main/java/io/netty/buffer/ReadOnlyByteBufferBuf.java
+index c7cda05fd9..a8e0b2fb81 100644
+--- a/buffer/src/main/java/io/netty/buffer/ReadOnlyByteBufferBuf.java
++++ b/buffer/src/main/java/io/netty/buffer/ReadOnlyByteBufferBuf.java
+@@ -208,14 +208,10 @@ class ReadOnlyByteBufferBuf extends AbstractReferenceCountedByteBuf {
+ 
+     @Override
+     public ByteBuf getBytes(int index, ByteBuffer dst) {
+-        checkIndex(index);
+-        if (dst == null) {
+-            throw new NullPointerException("dst");
+-        }
++        checkIndex(index, dst.remaining());
+ 
+-        int bytesToCopy = Math.min(capacity() - index, dst.remaining());
+         ByteBuffer tmpBuf = internalNioBuffer();
+-        tmpBuf.clear().position(index).limit(index + bytesToCopy);
++        tmpBuf.clear().position(index).limit(index + dst.remaining());
+         dst.put(tmpBuf);
+         return this;
+     }
+diff --git a/buffer/src/main/java/io/netty/buffer/ReadOnlyUnsafeDirectByteBuf.java b/buffer/src/main/java/io/netty/buffer/ReadOnlyUnsafeDirectByteBuf.java
+index 316760eca7..4cabc3eb20 100644
+--- a/buffer/src/main/java/io/netty/buffer/ReadOnlyUnsafeDirectByteBuf.java
++++ b/buffer/src/main/java/io/netty/buffer/ReadOnlyUnsafeDirectByteBuf.java
+@@ -96,20 +96,6 @@ final class ReadOnlyUnsafeDirectByteBuf extends ReadOnlyByteBufferBuf {
+         return this;
+     }
+ 
+-    @Override
+-    public ByteBuf getBytes(int index, ByteBuffer dst) {
+-        checkIndex(index);
+-        if (dst == null) {
+-            throw new NullPointerException("dst");
+-        }
+-
+-        int bytesToCopy = Math.min(capacity() - index, dst.remaining());
+-        ByteBuffer tmpBuf = internalNioBuffer();
+-        tmpBuf.clear().position(index).limit(index + bytesToCopy);
+-        dst.put(tmpBuf);
+-        return this;
+-    }
+-
+     @Override
+     public ByteBuf copy(int index, int length) {
+         checkIndex(index, length);

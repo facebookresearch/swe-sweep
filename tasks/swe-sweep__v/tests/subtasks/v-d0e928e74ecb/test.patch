@@ -1,0 +1,35 @@
+diff --git a/vlib/v/checker/tests/flag_enum_exhaustive_else_branch.out b/vlib/v/checker/tests/flag_enum_exhaustive_else_branch.out
+new file mode 100644
+index 000000000..190ec3554
+--- /dev/null
++++ b/vlib/v/checker/tests/flag_enum_exhaustive_else_branch.out
+@@ -0,0 +1,7 @@
++vlib/v/checker/tests/flag_enum_exhaustive_else_branch.vv:11:1: error: match must be exhaustive (add `else {}` at the end)
++    9 | dump(perm)
++   10 | 
++   11 | match perm {
++      | ~~~~~~~~~~~~
++   12 |     .read { println('r') }
++   13 |     .write { println('w') }
+diff --git a/vlib/v/checker/tests/flag_enum_exhaustive_else_branch.vv b/vlib/v/checker/tests/flag_enum_exhaustive_else_branch.vv
+new file mode 100644
+index 000000000..bf45e8443
+--- /dev/null
++++ b/vlib/v/checker/tests/flag_enum_exhaustive_else_branch.vv
+@@ -0,0 +1,16 @@
++[flag]
++enum Permission {
++	read
++	write
++	execute
++}
++
++perm := Permission.read | Permission.write | Permission.execute
++dump(perm)
++
++match perm {
++	.read { println('r') }
++	.write { println('w') }
++	.execute { println('x') }
++	// must require an `else` here
++}

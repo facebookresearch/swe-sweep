@@ -1,0 +1,15 @@
+diff --git a/lib/core/macros.nim b/lib/core/macros.nim
+index b370aaa7b..ad87a0f64 100644
+--- a/lib/core/macros.nim
++++ b/lib/core/macros.nim
+@@ -1360,7 +1360,9 @@ proc `$`*(node: NimNode): string =
+   of nnkOpenSymChoice, nnkClosedSymChoice:
+     result = $node[0]
+   of nnkAccQuoted:
+-    result = $node[0]
++    result = ""
++    for i in 0 ..< node.len:
++      result.add(repr(node[i]))
+   else:
+     badNodeKind node, "$"
+ 

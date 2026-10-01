@@ -1,0 +1,34 @@
+diff --git a/sqlglot/optimizer/qualify_columns.py b/sqlglot/optimizer/qualify_columns.py
+index 871bb36..78f49cd 100644
+--- a/sqlglot/optimizer/qualify_columns.py
++++ b/sqlglot/optimizer/qualify_columns.py
+@@ -8,7 +8,7 @@ from sqlglot.dialects.dialect import Dialect, DialectType
+ from sqlglot.errors import OptimizeError
+ from sqlglot.helper import seq_get, SingleValuedMapping
+ from sqlglot.optimizer.annotate_types import TypeAnnotator
+-from sqlglot.optimizer.scope import Scope, build_scope, traverse_scope, walk_in_scope
++from sqlglot.optimizer.scope import Scope, build_scope, traverse_scope, find_in_scope, walk_in_scope
+ from sqlglot.optimizer.simplify import simplify_parens
+ from sqlglot.schema import Schema, ensure_schema
+ 
+@@ -274,11 +274,16 @@ def _expand_alias_refs(
+             table = resolver.get_table(column.name) if resolve_table and not column.table else None
+             alias_expr, i = alias_to_expression.get(column.name, (None, 1))
+             double_agg = (
+-                (
+-                    alias_expr.find(exp.AggFunc)
++                bool(
++                    find_in_scope(alias_expr, exp.AggFunc)
+                     and (
+-                        column.find_ancestor(exp.AggFunc)
+-                        and not isinstance(column.find_ancestor(exp.Window, exp.Select), exp.Window)
++                        is_group_by
++                        or (
++                            column.find_ancestor(exp.AggFunc)
++                            and not isinstance(
++                                column.find_ancestor(exp.Window, exp.Select), exp.Window
++                            )
++                        )
+                     )
+                 )
+                 if alias_expr

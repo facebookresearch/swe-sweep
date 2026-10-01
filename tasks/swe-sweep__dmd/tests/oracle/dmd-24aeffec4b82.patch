@@ -1,0 +1,15 @@
+diff --git a/compiler/src/dmd/dinterpret.d b/compiler/src/dmd/dinterpret.d
+index 2e1d4f8626..a80af34d10 100644
+--- a/compiler/src/dmd/dinterpret.d
++++ b/compiler/src/dmd/dinterpret.d
+@@ -2547,7 +2547,9 @@ public:
+             }
+         }
+ 
+-        if (expsx !is e.elements)
++        // Only create new ArrayLiteralExp if needed (don't forget to check basis as well!)
++        // https://github.com/dlang/dmd/issues/21039
++        if (expsx !is e.elements || basis !is e.basis)
+         {
+             // todo: all tuple expansions should go in semantic phase.
+             expandTuples(expsx);

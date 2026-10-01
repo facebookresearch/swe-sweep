@@ -1,0 +1,29 @@
+diff --git a/src/parser/parser.cpp b/src/parser/parser.cpp
+index 7dd7a43d9f..066cc639f5 100644
+--- a/src/parser/parser.cpp
++++ b/src/parser/parser.cpp
+@@ -95,6 +95,9 @@ regular:
+ 			quote = query[pos];
+ 			pos++;
+ 			goto in_quotes;
++		} else if (query[pos] == '$' && query[pos + 1] == '$') {
++			pos += 2;
++			goto in_dollar_quotes;
+ 		} else if (query[pos] == '-' && query[pos + 1] == '-') {
+ 			goto in_comment;
+ 		}
+@@ -113,6 +116,14 @@ in_quotes:
+ 		}
+ 	}
+ 	goto end;
++in_dollar_quotes:
++	for (; pos + 2 < qsize; pos++) {
++		if (query[pos] == '$' && query[pos + 1] == '$') {
++			pos += 2;
++			goto regular;
++		}
++	}
++	goto end;
+ in_comment:
+ 	for (; pos < qsize; pos++) {
+ 		if (query[pos] == '\n' || query[pos] == '\r') {

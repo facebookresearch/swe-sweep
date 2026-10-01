@@ -1,0 +1,30 @@
+diff --git a/extensions/security/runtime/src/main/java/io/quarkus/security/runtime/interceptor/PermitAllInterceptor.java b/extensions/security/runtime/src/main/java/io/quarkus/security/runtime/interceptor/PermitAllInterceptor.java
+index 8fedc6b2bf6..22e15a9beb2 100644
+--- a/extensions/security/runtime/src/main/java/io/quarkus/security/runtime/interceptor/PermitAllInterceptor.java
++++ b/extensions/security/runtime/src/main/java/io/quarkus/security/runtime/interceptor/PermitAllInterceptor.java
+@@ -7,6 +7,8 @@ import jakarta.interceptor.AroundInvoke;
+ import jakarta.interceptor.Interceptor;
+ import jakarta.interceptor.InvocationContext;
+ 
++import io.quarkus.security.spi.runtime.AuthorizationController;
++
+ /**
+  * @author Michal Szynkiewicz, michal.l.szynkiewicz@gmail.com
+  */
+@@ -18,8 +20,15 @@ public class PermitAllInterceptor {
+     @Inject
+     SecurityHandler handler;
+ 
++    @Inject
++    AuthorizationController controller;
++
+     @AroundInvoke
+     public Object intercept(InvocationContext ic) throws Exception {
+-        return handler.handle(ic);
++        if (controller.isAuthorizationEnabled()) {
++            return handler.handle(ic);
++        } else {
++            return ic.proceed();
++        }
+     }
+ }

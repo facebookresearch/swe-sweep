@@ -1,0 +1,1460 @@
+{
+  "build_jobs": 4,
+  "container_repo": "/scipy",
+  "evaluation": {
+    "paths": "scipy",
+    "test_timeout": 1200,
+    "visible_timeout": 7200
+  },
+  "upstream_image": "pandora-maxbug-scipy:1.3.0",
+  "n_base_passing": 15535,
+  "n_base_test_ignore": 1562,
+  "oracle_digest": "5979c3a9fb6fc8bcefd1242cb6b00576ba49e441b83d3ee00ba67c31f21c2b56",
+  "oracle_pristine_paths": [],
+  "upstream_commit": "9f7399e15e6172900e0591deb5a57a45769d8205",
+  "reproduction": {
+    "build_timeout": 7200,
+    "jobs_env": "NPY_NUM_BUILD_JOBS"
+  },
+  "schema": 2,
+  "subtasks": [
+    {
+      "f2p": [
+        "scipy.stats.tests.test_distributions.TestErlang::test_gh_pr_10949_argcheck"
+      ],
+      "id": "scipy-029451964461",
+      "target_files": [
+        "scipy/stats/_continuous_distns.py"
+      ]
+    },
+    {
+      "f2p": [
+        "scipy.stats.tests.test_distributions::test_burr12_isf_near_zero[1e-12-0.25-35-2.0888618213462466]",
+        "scipy.stats.tests.test_distributions::test_burr12_isf_near_zero[1e-12-20-0.5-15.848931924611135]",
+        "scipy.stats.tests.test_distributions::test_burr12_isf_near_zero[1e-19-20-0.5-79.43282347242815]",
+        "scipy.stats.tests.test_distributions::test_burr12_isf_near_zero[1e-80-0.25-35-1360930951.7972188]"
+      ],
+      "id": "scipy-04bb629e0a9a",
+      "target_files": [
+        "scipy/stats/_continuous_distns.py"
+      ]
+    },
+    {
+      "f2p": [
+        "__process_level_failure__"
+      ],
+      "id": "scipy-05de34be607e",
+      "target_files": [
+        "scipy/special/_ellip_harm.pxd"
+      ]
+    },
+    {
+      "f2p": [
+        "scipy.optimize.tests.test__shgo.TestShgoArguments::test_17_custom_sampling"
+      ],
+      "id": "scipy-0874468d461c",
+      "target_files": [
+        "scipy/optimize/_shgo.py"
+      ]
+    },
+    {
+      "f2p": [
+        "__process_level_failure__"
+      ],
+      "id": "scipy-09e4ba28ab13",
+      "target_files": [
+        "scipy/interpolate/fitpack/fpknot.f"
+      ]
+    },
+    {
+      "f2p": [
+        "scipy.cluster.tests.test_vq.TestKMean::test_kmeans2_init"
+      ],
+      "id": "scipy-0b0b8edaa420",
+      "target_files": [
+        "scipy/cluster/vq.py"
+      ]
+    },
+    {
+      "f2p": [
+        "scipy.stats.tests.test_binned_statistic.TestBinnedStatistic::test_big_number_std"
+      ],
+      "id": "scipy-0c4b4d9c0f1d",
+      "target_files": [
+        "scipy/stats/_binned_statistic.py"
+      ]
+    },
+    {
+      "f2p": [
+        "scipy.linalg.tests.test_misc::test_norm"
+      ],
+      "id": "scipy-0d020fc8a85a",
+      "target_files": [
+        "scipy/linalg/misc.py"
+      ]
+    },
+    {
+      "f2p": [
+        "scipy.optimize.tests.test__root.TestRoot::test_tol_norm"
+      ],
+      "id": "scipy-0dd00d245fc2",
+      "target_files": [
+        "scipy/optimize/nonlin.py"
+      ]
+    },
+    {
+      "f2p": [
+        "scipy.sparse.linalg.eigen.arpack.tests.test_arpack::test_hermitian_modes"
+      ],
+      "id": "scipy-0e9a1b94bef8",
+      "target_files": [
+        "scipy/sparse/linalg/eigen/arpack/arpack.py"
+      ]
+    },
+    {
+      "f2p": [
+        "scipy.optimize.tests.test_minimize_constrained::test_gh11649"
+      ],
+      "id": "scipy-109a3d62a3a3",
+      "target_files": [
+        "scipy/optimize/_trustregion_constr/minimize_trustregion_constr.py",
+        "scipy/optimize/_trustregion_constr/tr_interior_point.py"
+      ]
+    },
+    {
+      "f2p": [
+        "scipy.sparse.tests.test_csr::test_csr_bool_indexing"
+      ],
+      "id": "scipy-10fc3a07d833",
+      "target_files": [
+        "scipy/sparse/_index.py"
+      ]
+    },
+    {
+      "f2p": [
+        "scipy.optimize.tests.test_lbfgsb_hessinv::test_gh_issue18730"
+      ],
+      "id": "scipy-12559116b1b9",
+      "target_files": [
+        "scipy/optimize/_lbfgsb_py.py"
+      ]
+    },
+    {
+      "f2p": [
+        "__process_level_failure__"
+      ],
+      "id": "scipy-1311076d5a84",
+      "target_files": [
+        "scipy/stats/_stats.pyx"
+      ]
+    },
+    {
+      "f2p": [
+        "scipy.optimize.tests.test__shgo.TestShgoArguments::test_16_disp_bounds_minimizer"
+      ],
+      "id": "scipy-13801deafe3c",
+      "target_files": [
+        "scipy/optimize/_shgo.py"
+      ]
+    },
+    {
+      "f2p": [
+        "scipy.signal.tests.test_bsplines.TestBSplines::test_gauss_spline_list"
+      ],
+      "id": "scipy-13fb80669c45",
+      "target_files": [
+        "scipy/signal/bsplines.py"
+      ]
+    },
+    {
+      "f2p": [
+        "scipy.linalg.tests.test_basic.TestSolve::test_simple_her_actuallysym"
+      ],
+      "id": "scipy-1fbf44b869bf",
+      "target_files": [
+        "scipy/linalg/basic.py"
+      ]
+    },
+    {
+      "f2p": [
+        "scipy.ndimage.tests.test_ndimage.TestNdimage::test_fourier_ellipsoid_unimplemented_ndim"
+      ],
+      "id": "scipy-236d0a85c89e",
+      "target_files": [
+        "scipy/ndimage/fourier.py"
+      ]
+    },
+    {
+      "f2p": [
+        "scipy.cluster.tests.test_vq.TestKMean::test_kmeans_diff_convergence"
+      ],
+      "id": "scipy-23a9e42e1929",
+      "target_files": [
+        "scipy/cluster/vq.py"
+      ]
+    },
+    {
+      "f2p": [
+        "scipy.stats.tests.test_distributions.TestGenpareto::test_stats[-1-expected_stats3]",
+        "scipy.stats.tests.test_distributions.TestGenpareto::test_stats[0.1111111111111111-expected_stats2]",
+        "scipy.stats.tests.test_distributions.TestGenpareto::test_stats[0.25-expected_stats1]",
+        "scipy.stats.tests.test_distributions.TestGenpareto::test_var"
+      ],
+      "id": "scipy-2570ed5fc7fc",
+      "target_files": [
+        "scipy/stats/_continuous_distns.py"
+      ]
+    },
+    {
+      "f2p": [
+        "scipy.signal.tests.test_savitzky_golay::test_sg_filter_valid_window_length_3d"
+      ],
+      "id": "scipy-2a017c94447f",
+      "target_files": [
+        "scipy/signal/_savitzky_golay.py"
+      ]
+    },
+    {
+      "f2p": [
+        "scipy.ndimage.tests.test_ndimage.TestNdimage::test_watershed_ift08"
+      ],
+      "id": "scipy-2c87f2fe27a6",
+      "target_files": [
+        "scipy/ndimage/src/ni_measure.c"
+      ]
+    },
+    {
+      "f2p": [
+        "scipy.ndimage.tests.test_ndimage.TestNdimage::test_fourier_ellipsoid_1d_complex"
+      ],
+      "id": "scipy-2e62daaf1d29",
+      "target_files": [
+        "scipy/ndimage/src/ni_fourier.c"
+      ]
+    },
+    {
+      "f2p": [
+        "scipy.optimize.tests.test_lsq_linear.TestBVLS::test_np_matrix",
+        "scipy.optimize.tests.test_lsq_linear.TestTRF::test_np_matrix"
+      ],
+      "id": "scipy-2e9cc7bda1fa",
+      "target_files": [
+        "scipy/optimize/_lsq/lsq_linear.py"
+      ]
+    },
+    {
+      "f2p": [
+        "scipy.sparse.tests.test_base.Test64Bit::test_no_64[TestCSR-test_has_sorted_indices]",
+        "scipy.sparse.tests.test_base.Test64Bit::test_resiliency_all_32[TestCSR-test_has_sorted_indices]",
+        "scipy.sparse.tests.test_base.Test64Bit::test_resiliency_all_64[TestCSR-test_has_sorted_indices]",
+        "scipy.sparse.tests.test_base.Test64Bit::test_resiliency_limit_10[TestCSR-test_has_sorted_indices]",
+        "scipy.sparse.tests.test_base.Test64Bit::test_resiliency_random[TestCSR-test_has_sorted_indices]",
+        "scipy.sparse.tests.test_base.TestCSR::test_has_sorted_indices",
+        "scipy.sparse.tests.test_base.TestCSRNonCanonical::test_has_sorted_indices"
+      ],
+      "id": "scipy-2f1aa08cd698",
+      "target_files": [
+        "scipy/sparse/compressed.py"
+      ]
+    },
+    {
+      "f2p": [
+        "scipy.special.tests.test_lambertw::test_lambertw_subnormal_k0[1e-316]",
+        "scipy.special.tests.test_lambertw::test_lambertw_subnormal_k0[z1]",
+        "scipy.special.tests.test_lambertw::test_lambertw_subnormal_k0[z2]"
+      ],
+      "id": "scipy-33895d8b521d",
+      "target_files": [
+        "scipy/special/_lambertw.pxd"
+      ]
+    },
+    {
+      "f2p": [
+        "scipy.stats.tests.test_distributions.TestChi::test_mean"
+      ],
+      "id": "scipy-33deb78925d1",
+      "target_files": [
+        "scipy/stats/_continuous_distns.py"
+      ]
+    },
+    {
+      "f2p": [
+        "scipy.linalg.tests.test_interpolative.TestInterpolativeDecomposition::test_bug_9793"
+      ],
+      "id": "scipy-35f913b7a5ac",
+      "target_files": [
+        "scipy/linalg/_interpolative_backend.py"
+      ]
+    },
+    {
+      "f2p": [
+        "scipy.optimize.tests.test_zeros::test_gh13407"
+      ],
+      "id": "scipy-3af88fc70a8b",
+      "target_files": [
+        "scipy/optimize/_zeros_py.py"
+      ]
+    },
+    {
+      "f2p": [
+        "scipy.stats.tests.test_stats.TestCorrSpearmanr::test_nan_policy_bug_12411"
+      ],
+      "id": "scipy-3c3211773435",
+      "target_files": [
+        "scipy/stats/stats.py"
+      ]
+    },
+    {
+      "f2p": [
+        "scipy.stats.tests.test_distributions.TestGamma::test_isf"
+      ],
+      "id": "scipy-3d6670b28d17",
+      "target_files": [
+        "scipy/stats/_continuous_distns.py"
+      ]
+    },
+    {
+      "f2p": [
+        "scipy.sparse.linalg.tests.test_matfuncs.TestExpM::test_matrix_input"
+      ],
+      "id": "scipy-3e1423536891",
+      "target_files": [
+        "scipy/sparse/linalg/matfuncs.py"
+      ]
+    },
+    {
+      "f2p": [
+        "__process_level_failure__"
+      ],
+      "id": "scipy-3fbef21a8267",
+      "target_files": [
+        "scipy/ndimage/src/ni_morphology.c"
+      ]
+    },
+    {
+      "f2p": [
+        "scipy.ndimage.tests.test_measurements::test_median_gh12836_bool",
+        "scipy.ndimage.tests.test_measurements::test_median_no_int_overflow"
+      ],
+      "id": "scipy-401c348b3fcd",
+      "target_files": [
+        "scipy/ndimage/measurements.py"
+      ]
+    },
+    {
+      "f2p": [
+        "scipy.interpolate.tests.test_pade::test_pade_complex"
+      ],
+      "id": "scipy-4187681d1a62",
+      "target_files": [
+        "scipy/interpolate/_pade.py"
+      ]
+    },
+    {
+      "f2p": [
+        "scipy.optimize.tests.test__root.TestRoot::test_gh_10370"
+      ],
+      "id": "scipy-4344a79d027a",
+      "target_files": [
+        "scipy/optimize/_root.py"
+      ]
+    },
+    {
+      "f2p": [
+        "scipy.odr.tests.test_odr.TestODR::test_odr_model_default_meta"
+      ],
+      "id": "scipy-479b797c5665",
+      "target_files": [
+        "scipy/odr/_odrpack.py"
+      ]
+    },
+    {
+      "f2p": [
+        "scipy.sparse.tests.test_construct.TestConstructUtils::test_kron"
+      ],
+      "id": "scipy-48544a449b21",
+      "target_files": [
+        "scipy/sparse/construct.py"
+      ]
+    },
+    {
+      "f2p": [
+        "scipy.odr.tests.test_odr.TestODR::test_pickling_data",
+        "scipy.odr.tests.test_odr.TestODR::test_pickling_model",
+        "scipy.odr.tests.test_odr.TestODR::test_pickling_odr",
+        "scipy.odr.tests.test_odr.TestODR::test_pickling_output",
+        "scipy.odr.tests.test_odr.TestODR::test_pickling_real_data"
+      ],
+      "id": "scipy-48badfba57a9",
+      "target_files": [
+        "scipy/odr/_odrpack.py"
+      ]
+    },
+    {
+      "f2p": [
+        "scipy.interpolate.tests.test_interpolate.TestPolyConversions::test_broken_conversions"
+      ],
+      "id": "scipy-492f88ed93ff",
+      "target_files": [
+        "scipy/interpolate/interpolate.py"
+      ]
+    },
+    {
+      "f2p": [
+        "scipy.stats.tests.test_distributions::test_burr12_moments_edge"
+      ],
+      "id": "scipy-49a20725f39c",
+      "target_files": [
+        "scipy/stats/_continuous_distns.py"
+      ]
+    },
+    {
+      "f2p": [
+        "scipy.stats.tests.test_distributions.TestNormInvGauss::test_gh8718",
+        "scipy.stats.tests.test_distributions.TestNormInvGauss::test_sf_isf_mpmath[10-5--1.5-2.308435233930669e-29-1e-09]",
+        "scipy.stats.tests.test_distributions.TestNormInvGauss::test_sf_isf_mpmath[25-1-0-1.1318690184042579e-13-0.0001]",
+        "scipy.stats.tests.test_distributions.TestNormInvGauss::test_sf_isf_mpmath_vectorized"
+      ],
+      "id": "scipy-4bf7ccedd450",
+      "target_files": [
+        "scipy/stats/_continuous_distns.py"
+      ]
+    },
+    {
+      "f2p": [
+        "scipy.stats.tests.test_distributions.TestHalfLogistic::test_isf[2.767793053473475e-87-200]",
+        "scipy.stats.tests.test_distributions.TestHalfLogistic::test_isf[7.440151952041672e-44-100]",
+        "scipy.stats.tests.test_distributions.TestHalfLogistic::test_sf[100-7.440151952041672e-44]",
+        "scipy.stats.tests.test_distributions.TestHalfLogistic::test_sf[200-2.767793053473475e-87]"
+      ],
+      "id": "scipy-4e906eb8e3b4",
+      "target_files": [
+        "scipy/stats/_continuous_distns.py"
+      ]
+    },
+    {
+      "f2p": [
+        "scipy.stats.tests.test_stats::test_kendalltau"
+      ],
+      "id": "scipy-538e27ab7383",
+      "target_files": [
+        "scipy/stats/mstats_basic.py",
+        "scipy/stats/stats.py"
+      ]
+    },
+    {
+      "f2p": [
+        "scipy.ndimage.tests.test_splines::test_spline_filter_reflect_small_n[2-2]",
+        "scipy.ndimage.tests.test_splines::test_spline_filter_reflect_small_n[2-3]",
+        "scipy.ndimage.tests.test_splines::test_spline_filter_reflect_small_n[2-4]",
+        "scipy.ndimage.tests.test_splines::test_spline_filter_reflect_small_n[2-5]",
+        "scipy.ndimage.tests.test_splines::test_spline_filter_reflect_small_n[3-2]",
+        "scipy.ndimage.tests.test_splines::test_spline_filter_reflect_small_n[3-3]",
+        "scipy.ndimage.tests.test_splines::test_spline_filter_reflect_small_n[3-4]",
+        "scipy.ndimage.tests.test_splines::test_spline_filter_reflect_small_n[3-5]",
+        "scipy.ndimage.tests.test_splines::test_spline_filter_reflect_small_n[4-2]",
+        "scipy.ndimage.tests.test_splines::test_spline_filter_reflect_small_n[4-3]",
+        "scipy.ndimage.tests.test_splines::test_spline_filter_reflect_small_n[4-4]",
+        "scipy.ndimage.tests.test_splines::test_spline_filter_reflect_small_n[4-5]",
+        "scipy.ndimage.tests.test_splines::test_spline_filter_reflect_small_n[5-2]",
+        "scipy.ndimage.tests.test_splines::test_spline_filter_reflect_small_n[5-3]",
+        "scipy.ndimage.tests.test_splines::test_spline_filter_reflect_small_n[5-4]",
+        "scipy.ndimage.tests.test_splines::test_spline_filter_reflect_small_n[5-5]"
+      ],
+      "id": "scipy-53ac521380e9",
+      "target_files": [
+        "scipy/ndimage/src/ni_splines.c"
+      ]
+    },
+    {
+      "f2p": [
+        "scipy.stats.tests.test_distributions.TestExponNorm::test_cdf_small_K[-10000.0-0.01-100-0.0]",
+        "scipy.stats.tests.test_distributions.TestExponNorm::test_cdf_small_K[-10000.0-0.01-1000-6.920401854427357e-24]",
+        "scipy.stats.tests.test_distributions.TestExponNorm::test_cdf_small_K[-5-0.005-1-2.7939945412195734e-07]",
+        "scipy.stats.tests.test_distributions.TestExponNorm::test_cdf_small_K[0-0.01-1-0.4960109760186432]",
+        "scipy.stats.tests.test_distributions.TestExponNorm::test_cdf_small_K[5-0.001-1-0.9999997118542392]",
+        "scipy.stats.tests.test_distributions.TestExponNorm::test_sf_small_K[-3-0.001-1-0.9986545205566117]",
+        "scipy.stats.tests.test_distributions.TestExponNorm::test_sf_small_K[10-0.005-0.5-3.0603340062892486e-89]",
+        "scipy.stats.tests.test_distributions.TestExponNorm::test_sf_small_K[10-0.01-1-8.474702916146657e-24]",
+        "scipy.stats.tests.test_distributions.TestExponNorm::test_sf_small_K[2-0.005-1-0.02302280664231312]",
+        "scipy.stats.tests.test_distributions.TestExponNorm::test_sf_small_K[20-0.005-0.5-0.0]",
+        "scipy.stats.tests.test_distributions.TestExponNorm::test_sf_small_K[5-0.005-0.5-8.024820681931086e-24]"
+      ],
+      "id": "scipy-54559358c6b3",
+      "target_files": [
+        "scipy/stats/_continuous_distns.py"
+      ]
+    },
+    {
+      "f2p": [
+        "scipy.optimize.tests.test_optimize::test_result_x_shape_when_len_x_is_one"
+      ],
+      "id": "scipy-551eb7e82919",
+      "target_files": [
+        "scipy/optimize/optimize.py"
+      ]
+    },
+    {
+      "f2p": [
+        "scipy.special.tests.test_sf_error::test_sf_error_special_refcount"
+      ],
+      "id": "scipy-59ac0343ac47",
+      "target_files": [
+        "scipy/special/sf_error.c"
+      ]
+    },
+    {
+      "f2p": [
+        "scipy.stats.tests.test_mstats_basic.TestTrimming::test_trimr"
+      ],
+      "id": "scipy-5a02e2e1449b",
+      "target_files": [
+        "scipy/stats/mstats_basic.py"
+      ]
+    },
+    {
+      "f2p": [
+        "scipy.interpolate.tests.test_interpolate.TestInterp1D::test_all_nans"
+      ],
+      "id": "scipy-5a17b00fa9a8",
+      "target_files": [
+        "scipy/interpolate/interpolate.py"
+      ]
+    },
+    {
+      "f2p": [
+        "scipy.signal.tests.test_peak_finding.TestRidgeLines::test_sorting"
+      ],
+      "id": "scipy-5b5a818c8d25",
+      "target_files": [
+        "scipy/signal/_peak_finding.py"
+      ]
+    },
+    {
+      "f2p": [
+        "scipy.stats.tests.test_morestats.TestShapiro::test_gh14462"
+      ],
+      "id": "scipy-5d44f161ba0a",
+      "target_files": [
+        "scipy/stats/_morestats.py"
+      ]
+    },
+    {
+      "f2p": [
+        "scipy.special.tests.test_cdft_asymptotic::test_stdtr_vs_R_large_df",
+        "scipy.special.tests.test_cdft_asymptotic::test_stdtrit_vs_R_large_df"
+      ],
+      "id": "scipy-5db5712868f2",
+      "target_files": [
+        "scipy/special/cdf_wrappers.c"
+      ]
+    },
+    {
+      "f2p": [
+        "scipy.stats.tests.test_stats::test_chiquare_data_types[1000000-int32]",
+        "scipy.stats.tests.test_stats::test_chiquare_data_types[200-uint8]"
+      ],
+      "id": "scipy-627a85ed444e",
+      "target_files": [
+        "scipy/stats/stats.py"
+      ]
+    },
+    {
+      "f2p": [
+        "scipy.linalg.tests.test_decomp::test_subspace_angles"
+      ],
+      "id": "scipy-67ef7c386e01",
+      "target_files": [
+        "scipy/linalg/decomp_svd.py"
+      ]
+    },
+    {
+      "f2p": [
+        "scipy.stats.tests.test_distributions.TestSkewNorm::test_pdf_large_x"
+      ],
+      "id": "scipy-688ccec5585a",
+      "target_files": [
+        "scipy/stats/_continuous_distns.py"
+      ]
+    },
+    {
+      "f2p": [
+        "scipy.sparse.linalg.tests.test_matfuncs.TestExpM::test_exp_sinch_overflow"
+      ],
+      "id": "scipy-68f21cf455e2",
+      "target_files": [
+        "scipy/sparse/linalg/matfuncs.py"
+      ]
+    },
+    {
+      "f2p": [
+        "scipy.stats.tests.test_stats.TestVariability::test_zscore_2d_all_nan",
+        "scipy.stats.tests.test_stats.TestVariability::test_zscore_2d_all_nan_row",
+        "scipy.stats.tests.test_stats.TestVariability::test_zscore_constant_input_1d",
+        "scipy.stats.tests.test_stats.TestVariability::test_zscore_constant_input_2d",
+        "scipy.stats.tests.test_stats.TestVariability::test_zscore_constant_input_2d_nan_policy_omit",
+        "scipy.stats.tests.test_stats.TestVariability::test_zscore_empty_input[x0]"
+      ],
+      "id": "scipy-6bd52025cde0",
+      "target_files": [
+        "scipy/stats/stats.py"
+      ]
+    },
+    {
+      "f2p": [
+        "scipy.stats.tests.test_discrete_basic::test_isf_with_loc[bernoulli-args0]",
+        "scipy.stats.tests.test_discrete_basic::test_isf_with_loc[binom-args1]",
+        "scipy.stats.tests.test_discrete_basic::test_isf_with_loc[boltzmann-args2]",
+        "scipy.stats.tests.test_discrete_basic::test_isf_with_loc[dist17-args17]",
+        "scipy.stats.tests.test_discrete_basic::test_isf_with_loc[geom-args4]",
+        "scipy.stats.tests.test_discrete_basic::test_isf_with_loc[hypergeom-args5]",
+        "scipy.stats.tests.test_discrete_basic::test_isf_with_loc[hypergeom-args6]",
+        "scipy.stats.tests.test_discrete_basic::test_isf_with_loc[hypergeom-args7]",
+        "scipy.stats.tests.test_discrete_basic::test_isf_with_loc[logser-args8]",
+        "scipy.stats.tests.test_discrete_basic::test_isf_with_loc[nbinom-args10]",
+        "scipy.stats.tests.test_discrete_basic::test_isf_with_loc[nbinom-args9]",
+        "scipy.stats.tests.test_discrete_basic::test_isf_with_loc[planck-args11]",
+        "scipy.stats.tests.test_discrete_basic::test_isf_with_loc[poisson-args12]",
+        "scipy.stats.tests.test_discrete_basic::test_isf_with_loc[randint-args13]",
+        "scipy.stats.tests.test_discrete_basic::test_isf_with_loc[yulesimon-args16]",
+        "scipy.stats.tests.test_discrete_basic::test_isf_with_loc[zipf-args15]"
+      ],
+      "id": "scipy-6da9d36e31f4",
+      "target_files": [
+        "scipy/stats/_distn_infrastructure.py"
+      ]
+    },
+    {
+      "f2p": [
+        "scipy.stats.tests.test_distributions.TestDgamma::test_cdf_ppf_sf_isf_tail[-20-1-1.030576811219279e-09]",
+        "scipy.stats.tests.test_distributions.TestDgamma::test_cdf_ppf_sf_isf_tail[-25-0.125-5.333071920958156e-14]",
+        "scipy.stats.tests.test_distributions.TestDgamma::test_cdf_ppf_sf_isf_tail[-40-1-2.1241771276457944e-18]",
+        "scipy.stats.tests.test_distributions.TestDgamma::test_cdf_ppf_sf_isf_tail[-50-5-2.7248509914602648e-17]"
+      ],
+      "id": "scipy-72887e00773b",
+      "target_files": [
+        "scipy/stats/_continuous_distns.py"
+      ]
+    },
+    {
+      "f2p": [
+        "scipy.io.matlab.tests.test_mio::test_gh_19659"
+      ],
+      "id": "scipy-757314b61362",
+      "target_files": [
+        "scipy/io/matlab/_mio4.py"
+      ]
+    },
+    {
+      "f2p": [
+        "scipy.stats.tests.test_distributions::test_vonmises_entropy[1000--2.03468891852547]",
+        "scipy.stats.tests.test_distributions::test_vonmises_entropy[2000--2.3813876496587847]"
+      ],
+      "id": "scipy-77558d164234",
+      "target_files": [
+        "scipy/stats/_continuous_distns.py"
+      ]
+    },
+    {
+      "f2p": [
+        "scipy.optimize.tests.test__dual_annealing.TestDualAnnealing::test_local_search_option_bounds"
+      ],
+      "id": "scipy-7891f38663ae",
+      "target_files": [
+        "scipy/optimize/_dual_annealing.py"
+      ]
+    },
+    {
+      "f2p": [
+        "scipy.integrate.tests.test_banded_ode_solvers::test_banded_lsoda"
+      ],
+      "id": "scipy-78ea778e72ed",
+      "target_files": [
+        "scipy/integrate/_ode.py"
+      ]
+    },
+    {
+      "f2p": [
+        "scipy.stats.tests.test_stats.TestMoments::test_kurtosis_constant_value",
+        "scipy.stats.tests.test_stats.TestMoments::test_skew_constant_value"
+      ],
+      "id": "scipy-79e84457f77b",
+      "target_files": [
+        "scipy/stats/mstats_basic.py",
+        "scipy/stats/stats.py"
+      ]
+    },
+    {
+      "f2p": [
+        "scipy.special.tests.test_boxcox::test_boxcox_premature_overflow[0.01--155]",
+        "scipy.special.tests.test_boxcox::test_boxcox_premature_overflow[100-155]"
+      ],
+      "id": "scipy-7c3572a0c9e4",
+      "target_files": [
+        "scipy/special/_boxcox.pxd"
+      ]
+    },
+    {
+      "f2p": [
+        "scipy.optimize.tests.test__differential_evolution.TestDifferentialEvolutionSolver::test_maxfun_stops_solve"
+      ],
+      "id": "scipy-7e55b7623793",
+      "target_files": [
+        "scipy/optimize/_differentialevolution.py"
+      ]
+    },
+    {
+      "f2p": [
+        "scipy.stats.tests.test_mstats_basic.TestDescribe::test_basic_with_axis"
+      ],
+      "id": "scipy-7e8fc99a78dd",
+      "target_files": [
+        "scipy/stats/mstats_basic.py",
+        "scipy/stats/stats.py"
+      ]
+    },
+    {
+      "f2p": [
+        "scipy.special.tests.test_logsumexp::test_logsumexp"
+      ],
+      "id": "scipy-7f3d6faee450",
+      "target_files": [
+        "scipy/special/_logsumexp.py"
+      ]
+    },
+    {
+      "f2p": [
+        "scipy.interpolate.tests.test_polyint.TestCubicSpline::test_second_derivative_continuity_gh_11758",
+        "scipy.interpolate.tests.test_polyint.TestCubicSpline::test_three_points"
+      ],
+      "id": "scipy-823753d89609",
+      "target_files": [
+        "scipy/interpolate/_cubic.py"
+      ]
+    },
+    {
+      "f2p": [
+        "scipy.stats.tests.test_discrete_basic::test_ppf_with_loc[bernoulli-args0]",
+        "scipy.stats.tests.test_discrete_basic::test_ppf_with_loc[binom-args1]",
+        "scipy.stats.tests.test_discrete_basic::test_ppf_with_loc[boltzmann-args2]",
+        "scipy.stats.tests.test_discrete_basic::test_ppf_with_loc[dist17-args17]",
+        "scipy.stats.tests.test_discrete_basic::test_ppf_with_loc[geom-args4]",
+        "scipy.stats.tests.test_discrete_basic::test_ppf_with_loc[hypergeom-args5]",
+        "scipy.stats.tests.test_discrete_basic::test_ppf_with_loc[hypergeom-args6]",
+        "scipy.stats.tests.test_discrete_basic::test_ppf_with_loc[hypergeom-args7]",
+        "scipy.stats.tests.test_discrete_basic::test_ppf_with_loc[logser-args8]",
+        "scipy.stats.tests.test_discrete_basic::test_ppf_with_loc[nbinom-args10]",
+        "scipy.stats.tests.test_discrete_basic::test_ppf_with_loc[nbinom-args9]",
+        "scipy.stats.tests.test_discrete_basic::test_ppf_with_loc[planck-args11]",
+        "scipy.stats.tests.test_discrete_basic::test_ppf_with_loc[poisson-args12]",
+        "scipy.stats.tests.test_discrete_basic::test_ppf_with_loc[randint-args13]",
+        "scipy.stats.tests.test_discrete_basic::test_ppf_with_loc[yulesimon-args16]",
+        "scipy.stats.tests.test_discrete_basic::test_ppf_with_loc[zipf-args15]"
+      ],
+      "id": "scipy-844e9cc348c0",
+      "target_files": [
+        "scipy/stats/_distn_infrastructure.py"
+      ]
+    },
+    {
+      "f2p": [
+        "scipy.interpolate.tests.test_interpolate.TestInterpN::test_length_one_axis",
+        "scipy.interpolate.tests.test_interpolate.TestRegularGridInterpolator::test_length_one_axis",
+        "scipy.interpolate.tests.test_interpolate.TestRegularGridInterpolator::test_length_one_axis2[linear-3.141592653589793]",
+        "scipy.interpolate.tests.test_interpolate.TestRegularGridInterpolator::test_length_one_axis2[linear-None]",
+        "scipy.interpolate.tests.test_interpolate.TestRegularGridInterpolator::test_length_one_axis2[linear-nan]",
+        "scipy.interpolate.tests.test_interpolate.TestRegularGridInterpolator::test_length_one_axis2[nearest-3.141592653589793]",
+        "scipy.interpolate.tests.test_interpolate.TestRegularGridInterpolator::test_length_one_axis2[nearest-None]",
+        "scipy.interpolate.tests.test_interpolate.TestRegularGridInterpolator::test_length_one_axis2[nearest-nan]"
+      ],
+      "id": "scipy-85acb2caa80e",
+      "target_files": [
+        "scipy/interpolate/_interpolate.py"
+      ]
+    },
+    {
+      "f2p": [
+        "scipy.ndimage.tests.test_ndimage.TestNdimage::test_correlate26"
+      ],
+      "id": "scipy-85dfb2872e1e",
+      "target_files": [
+        "scipy/ndimage/src/ni_support.c"
+      ]
+    },
+    {
+      "f2p": [
+        "scipy.spatial.tests.test_distance::test_sokalmichener_with_weight"
+      ],
+      "id": "scipy-88d23bc3cf1f",
+      "target_files": [
+        "scipy/spatial/distance.py"
+      ]
+    },
+    {
+      "f2p": [
+        "scipy.interpolate.tests.test_fitpack2.TestUnivariateSpline::test_integral_out_of_bounds"
+      ],
+      "id": "scipy-8c7a60448fcb",
+      "target_files": [
+        "scipy/interpolate/fitpack/fpintb.f",
+        "scipy/interpolate/fitpack/splint.f"
+      ]
+    },
+    {
+      "f2p": [
+        "scipy.integrate.tests.test_bvp::test_big_problem_with_parameters"
+      ],
+      "id": "scipy-8caeb29e9f63",
+      "target_files": [
+        "scipy/integrate/_bvp.py"
+      ]
+    },
+    {
+      "f2p": [
+        "scipy.interpolate.tests.test_polyint::test_roots_extrapolate_gh_11185"
+      ],
+      "id": "scipy-8f91a77a4ca6",
+      "target_files": [
+        "scipy/interpolate/_ppoly.pyx"
+      ]
+    },
+    {
+      "f2p": [
+        "__process_level_failure__"
+      ],
+      "id": "scipy-8facc30261cb",
+      "target_files": [
+        "scipy/sparse/compressed.py"
+      ]
+    },
+    {
+      "f2p": [
+        "scipy.spatial.tests.test_distance.TestCdist::test_cdist_minkowski_random[inf]",
+        "scipy.spatial.tests.test_distance.TestPdist::test_pdist_minkowski_random_p[inf]"
+      ],
+      "id": "scipy-8fed9267828e",
+      "target_files": [
+        "scipy/spatial/distance.py",
+        "scipy/spatial/setup.py",
+        "scipy/spatial/src/distance_impl.h"
+      ]
+    },
+    {
+      "f2p": [
+        "scipy.optimize.tests.test_differentiable_functions.TestScalarFunction::test_x_storage_overlap",
+        "scipy.optimize.tests.test_differentiable_functions.TestVectorialFunction::test_x_storage_overlap"
+      ],
+      "id": "scipy-90dfc94c359f",
+      "target_files": [
+        "scipy/optimize/_differentiable_functions.py"
+      ]
+    },
+    {
+      "f2p": [
+        "scipy.optimize.tests.test__numdiff::test__compute_absolute_step"
+      ],
+      "id": "scipy-913aea69af40",
+      "target_files": [
+        "scipy/optimize/_numdiff.py"
+      ]
+    },
+    {
+      "f2p": [
+        "scipy.sparse.linalg.tests.test_interface::test_transpose_noconjugate"
+      ],
+      "id": "scipy-92104421abfc",
+      "target_files": [
+        "scipy/sparse/linalg/interface.py"
+      ]
+    },
+    {
+      "f2p": [
+        "scipy.ndimage.tests.test_ndimage.TestNdimage::test_rotate_exact_180"
+      ],
+      "id": "scipy-93ad01e8d28b",
+      "target_files": [
+        "scipy/ndimage/interpolation.py"
+      ]
+    },
+    {
+      "f2p": [
+        "scipy.integrate.tests.test_ivp::test_integration_complex_sparse"
+      ],
+      "id": "scipy-9b1e8ff3b444",
+      "target_files": [
+        "scipy/integrate/_ivp/common.py"
+      ]
+    },
+    {
+      "f2p": [
+        "scipy.sparse.linalg.isolve.tests.test_lsmr::test_lsmr_maxiter_zero_with_show"
+      ],
+      "id": "scipy-9dad197fabcd",
+      "target_files": [
+        "scipy/sparse/linalg/_isolve/lsmr.py"
+      ]
+    },
+    {
+      "f2p": [
+        "scipy.sparse.tests.test_construct.TestConstructUtils::test_kron_large"
+      ],
+      "id": "scipy-a33ea6b073a0",
+      "target_files": [
+        "scipy/sparse/construct.py"
+      ]
+    },
+    {
+      "f2p": [
+        "scipy.stats.tests.test_distributions::test_pdf_overflow_gh19616"
+      ],
+      "id": "scipy-a5031dac07cb",
+      "target_files": [
+        "scipy/stats/_continuous_distns.py"
+      ]
+    },
+    {
+      "f2p": [
+        "scipy.stats.tests.test_distributions.TestRvDiscrete::test_expect"
+      ],
+      "id": "scipy-a72a03797073",
+      "target_files": [
+        "scipy/stats/_distn_infrastructure.py"
+      ]
+    },
+    {
+      "f2p": [
+        "scipy.io.matlab.tests.test_mio_utils::test_squeeze_element"
+      ],
+      "id": "scipy-a90d7f43b09f",
+      "target_files": [
+        "scipy/io/matlab/mio_utils.pyx"
+      ]
+    },
+    {
+      "f2p": [
+        "scipy.optimize.tests.test_linesearch.TestLineSearch::test_scalar_search_wolfe2_regression"
+      ],
+      "id": "scipy-adb4e69c61b8",
+      "target_files": [
+        "scipy/optimize/linesearch.py"
+      ]
+    },
+    {
+      "f2p": [
+        "scipy.io.tests.test_mmio::test_gh11389"
+      ],
+      "id": "scipy-ae616de9c052",
+      "target_files": [
+        "scipy/io/mmio.py"
+      ]
+    },
+    {
+      "f2p": [
+        "scipy.spatial.tests.test_kdtree::test_cdktree_empty_input[False-False]",
+        "scipy.spatial.tests.test_kdtree::test_cdktree_empty_input[False-True]",
+        "scipy.spatial.tests.test_kdtree::test_cdktree_empty_input[True-False]",
+        "scipy.spatial.tests.test_kdtree::test_cdktree_empty_input[True-True]"
+      ],
+      "id": "scipy-b204987bf8ab",
+      "target_files": [
+        "scipy/spatial/ckdtree.pyx"
+      ]
+    },
+    {
+      "f2p": [
+        "scipy.stats.tests.test_distributions::test_vonmises_pdf[0.1-25.0-1.7515464099118245]",
+        "scipy.stats.tests.test_distributions::test_vonmises_pdf[0.1-800-0.2073272544458798]"
+      ],
+      "id": "scipy-b79a35490707",
+      "target_files": [
+        "scipy/stats/_continuous_distns.py"
+      ]
+    },
+    {
+      "f2p": [
+        "scipy.stats.tests.test_distributions.TestGumbelR::test_isf",
+        "scipy.stats.tests.test_distributions.TestGumbelR::test_sf"
+      ],
+      "id": "scipy-bbe4fc272348",
+      "target_files": [
+        "scipy/stats/_continuous_distns.py"
+      ]
+    },
+    {
+      "f2p": [
+        "scipy.stats.tests.test_distributions.TestLevyStable::test_rvs_alpha1[0.5]",
+        "scipy.stats.tests.test_distributions.TestLevyStable::test_rvs_alpha1[1]"
+      ],
+      "id": "scipy-bca2b660c869",
+      "target_files": [
+        "scipy/stats/_continuous_distns.py"
+      ]
+    },
+    {
+      "f2p": [
+        "scipy.sparse.tests.test_base.Test64Bit::test_no_64[TestDIA-test_setdiag]",
+        "scipy.sparse.tests.test_base.Test64Bit::test_resiliency_all_32[TestDIA-test_setdiag]",
+        "scipy.sparse.tests.test_base.Test64Bit::test_resiliency_all_64[TestDIA-test_setdiag]",
+        "scipy.sparse.tests.test_base.Test64Bit::test_resiliency_limit_10[TestDIA-test_setdiag]",
+        "scipy.sparse.tests.test_base.Test64Bit::test_resiliency_random[TestDIA-test_setdiag]",
+        "scipy.sparse.tests.test_base.TestDIA::test_setdiag"
+      ],
+      "id": "scipy-bf67c968d398",
+      "target_files": [
+        "scipy/sparse/dia.py"
+      ]
+    },
+    {
+      "f2p": [
+        "scipy.optimize._trustregion_constr.tests.test_report::test_gh10880"
+      ],
+      "id": "scipy-bfce1da4c826",
+      "target_files": [
+        "scipy/optimize/_trustregion_constr/report.py"
+      ]
+    },
+    {
+      "f2p": [
+        "scipy.signal.tests.test_filter_design.TestGroupDelay::test_complex_coef"
+      ],
+      "id": "scipy-c15b3135bc63",
+      "target_files": [
+        "scipy/signal/_filter_design.py"
+      ]
+    },
+    {
+      "f2p": [
+        "scipy.linalg.tests.test_cython_blas.TestWfuncPointers::test_float_args"
+      ],
+      "id": "scipy-c2d671b76906",
+      "target_files": [
+        "scipy/linalg/_generate_pyx.py"
+      ]
+    },
+    {
+      "f2p": [
+        "scipy.signal.tests.test_ltisys.TestStateSpace::test_operators"
+      ],
+      "id": "scipy-c3378c5833dd",
+      "target_files": [
+        "scipy/signal/ltisys.py"
+      ]
+    },
+    {
+      "f2p": [
+        "scipy.stats.tests.test_contingency::test_chi2_contingency_yates_gh13875"
+      ],
+      "id": "scipy-c3e679824b36",
+      "target_files": [
+        "scipy/stats/contingency.py"
+      ]
+    },
+    {
+      "f2p": [
+        "scipy.special.tests.test_basic::test_pseudo_huber_small_r"
+      ],
+      "id": "scipy-c6019f0046ef",
+      "target_files": [
+        "scipy/special/_convex_analysis.pxd"
+      ]
+    },
+    {
+      "f2p": [
+        "scipy.sparse.tests.test_base.Test64Bit::test_no_64[TestCSR-test_fancy_indexing]",
+        "scipy.sparse.tests.test_base.Test64Bit::test_resiliency_all_32[TestCSR-test_fancy_indexing]",
+        "scipy.sparse.tests.test_base.Test64Bit::test_resiliency_all_64[TestCSR-test_fancy_indexing]",
+        "scipy.sparse.tests.test_base.Test64Bit::test_resiliency_limit_10[TestCSR-test_fancy_indexing]",
+        "scipy.sparse.tests.test_base.Test64Bit::test_resiliency_random[TestCSR-test_fancy_indexing]",
+        "scipy.sparse.tests.test_base.TestCSR::test_fancy_indexing",
+        "scipy.sparse.tests.test_base.TestCSRNonCanonical::test_fancy_indexing"
+      ],
+      "id": "scipy-c616fb33d154",
+      "target_files": [
+        "scipy/sparse/_csr.py"
+      ]
+    },
+    {
+      "f2p": [
+        "scipy.stats.tests.test_stats.TestCorrSpearmanr::test_nan_policy_bug_12458"
+      ],
+      "id": "scipy-ce6830329f06",
+      "target_files": [
+        "scipy/stats/mstats_basic.py"
+      ]
+    },
+    {
+      "f2p": [
+        "scipy.sparse.csgraph.tests.test_shortest_path::test_directed_sparse_zero",
+        "scipy.sparse.csgraph.tests.test_shortest_path::test_undirected_sparse_zero"
+      ],
+      "id": "scipy-d157170a6b1c",
+      "target_files": [
+        "scipy/sparse/csgraph/_shortest_path.pyx"
+      ]
+    },
+    {
+      "f2p": [
+        "scipy.stats.tests.test_discrete_distns::test_skellam_gh11474",
+        "scipy.stats.tests.test_distributions.TestRice::test_rice_gh9836",
+        "scipy.stats.tests.test_distributions::test_ncx2_gh12731"
+      ],
+      "id": "scipy-d2c04bf22990",
+      "target_files": [
+        "scipy/special/cdflib/cdfchn.f"
+      ]
+    },
+    {
+      "f2p": [
+        "scipy.io.harwell_boeing.tests.test_hb.TestHBReadWrite::test_empty_roundtrip[float64]",
+        "scipy.io.harwell_boeing.tests.test_hb.TestHBReadWrite::test_empty_roundtrip[int64]"
+      ],
+      "id": "scipy-d4f8f16d137b",
+      "target_files": [
+        "scipy/io/_harwell_boeing/hb.py"
+      ]
+    },
+    {
+      "f2p": [
+        "scipy.interpolate.tests.test_fitpack2.TestRectSphereBivariateSpline::test_negative_evaluation"
+      ],
+      "id": "scipy-d50d8b20313e",
+      "target_files": [
+        "scipy/interpolate/fitpack2.py"
+      ]
+    },
+    {
+      "f2p": [
+        "__process_level_failure__"
+      ],
+      "id": "scipy-d7afc7f94458",
+      "target_files": [
+        "scipy/odr/__odrpack.c"
+      ]
+    },
+    {
+      "f2p": [
+        "scipy.interpolate.tests.test_fitpack2.TestRectSphereBivariateSpline::test_pole_continuity_gh_14591"
+      ],
+      "id": "scipy-d93580961f15",
+      "target_files": [
+        "scipy/interpolate/src/fitpack.pyf"
+      ]
+    },
+    {
+      "f2p": [
+        "__process_level_failure__"
+      ],
+      "id": "scipy-d974b5632e68",
+      "target_files": [
+        "scipy/odr/_odrpack.py"
+      ]
+    },
+    {
+      "f2p": [
+        "scipy.optimize.tests.test_optimize.TestOptimizeSimple::test_gh10771"
+      ],
+      "id": "scipy-dabd05fb4ad4",
+      "target_files": [
+        "scipy/optimize/_minimize.py"
+      ]
+    },
+    {
+      "f2p": [
+        "scipy.spatial.tests.test_distance::test_yule_all_same"
+      ],
+      "id": "scipy-db35bafc4caa",
+      "target_files": [
+        "scipy/spatial/distance.py",
+        "scipy/spatial/src/distance_impl.h"
+      ]
+    },
+    {
+      "f2p": [
+        "scipy.stats.tests.test_distributions::test_crystalball_entropy"
+      ],
+      "id": "scipy-dce9e051dc08",
+      "target_files": [
+        "scipy/_lib/_util.py",
+        "scipy/stats/_continuous_distns.py"
+      ]
+    },
+    {
+      "f2p": [
+        "scipy.stats.tests.test_distributions.TestGeom::test_entropy_gh18226"
+      ],
+      "id": "scipy-dd478e75eb98",
+      "target_files": [
+        "scipy/stats/_discrete_distns.py"
+      ]
+    },
+    {
+      "f2p": [
+        "scipy.optimize.tests.test_trustregion_exact.TestIterativeSubproblem::test_gh20244"
+      ],
+      "id": "scipy-de06bd657275",
+      "target_files": [
+        "scipy/optimize/_trustregion_exact.py"
+      ]
+    },
+    {
+      "f2p": [
+        "scipy.stats.tests.test_stats::test_weightedtau"
+      ],
+      "id": "scipy-dec7679d778d",
+      "target_files": [
+        "scipy/stats/stats.py"
+      ]
+    },
+    {
+      "f2p": [
+        "scipy.sparse.linalg.dsolve.tests.test_linsolve.TestLinsolve::test_twodiags[int64-csc]",
+        "scipy.sparse.linalg.dsolve.tests.test_linsolve.TestLinsolve::test_twodiags[int64-csr]"
+      ],
+      "id": "scipy-df8679b46697",
+      "target_files": [
+        "scipy/sparse/linalg/_dsolve/linsolve.py"
+      ]
+    },
+    {
+      "f2p": [
+        "scipy.sparse.tests.test_base.Test64Bit::test_no_64[TestLIL-test_truediv_scalar]",
+        "scipy.sparse.tests.test_base.Test64Bit::test_resiliency_all_32[TestLIL-test_truediv_scalar]",
+        "scipy.sparse.tests.test_base.Test64Bit::test_resiliency_all_64[TestLIL-test_truediv_scalar]",
+        "scipy.sparse.tests.test_base.Test64Bit::test_resiliency_limit_10[TestLIL-test_truediv_scalar]",
+        "scipy.sparse.tests.test_base.Test64Bit::test_resiliency_random[TestLIL-test_truediv_scalar]",
+        "scipy.sparse.tests.test_base.TestLIL::test_truediv_scalar"
+      ],
+      "id": "scipy-e3766dba81d2",
+      "target_files": [
+        "scipy/sparse/_lil.py"
+      ]
+    },
+    {
+      "f2p": [
+        "scipy.optimize.tests.test_lsq_linear.TestBVLS::test_convergence_small_matrix",
+        "scipy.optimize.tests.test_lsq_linear.TestBVLS::test_large_rank_deficient",
+        "scipy.optimize.tests.test_lsq_linear.TestTRF::test_convergence_small_matrix",
+        "scipy.optimize.tests.test_lsq_linear.TestTRF::test_large_rank_deficient"
+      ],
+      "id": "scipy-e3f451e37bb0",
+      "target_files": [
+        "scipy/optimize/_lsq/bvls.py"
+      ]
+    },
+    {
+      "f2p": [
+        "scipy.sparse.tests.test_base.Test64Bit::test_no_64[TestCSC-test_assign_empty_spmatrix]",
+        "scipy.sparse.tests.test_base.Test64Bit::test_no_64[TestCSR-test_assign_empty_spmatrix]",
+        "scipy.sparse.tests.test_base.Test64Bit::test_no_64[TestDOK-test_assign_empty_spmatrix]",
+        "scipy.sparse.tests.test_base.Test64Bit::test_no_64[TestLIL-test_assign_empty_spmatrix]",
+        "scipy.sparse.tests.test_base.Test64Bit::test_resiliency_all_32[TestCSC-test_assign_empty_spmatrix]",
+        "scipy.sparse.tests.test_base.Test64Bit::test_resiliency_all_32[TestCSR-test_assign_empty_spmatrix]",
+        "scipy.sparse.tests.test_base.Test64Bit::test_resiliency_all_32[TestDOK-test_assign_empty_spmatrix]",
+        "scipy.sparse.tests.test_base.Test64Bit::test_resiliency_all_32[TestLIL-test_assign_empty_spmatrix]",
+        "scipy.sparse.tests.test_base.Test64Bit::test_resiliency_all_64[TestCSC-test_assign_empty_spmatrix]",
+        "scipy.sparse.tests.test_base.Test64Bit::test_resiliency_all_64[TestCSR-test_assign_empty_spmatrix]",
+        "scipy.sparse.tests.test_base.Test64Bit::test_resiliency_all_64[TestDOK-test_assign_empty_spmatrix]",
+        "scipy.sparse.tests.test_base.Test64Bit::test_resiliency_all_64[TestLIL-test_assign_empty_spmatrix]",
+        "scipy.sparse.tests.test_base.Test64Bit::test_resiliency_limit_10[TestCSC-test_assign_empty_spmatrix]",
+        "scipy.sparse.tests.test_base.Test64Bit::test_resiliency_limit_10[TestCSR-test_assign_empty_spmatrix]",
+        "scipy.sparse.tests.test_base.Test64Bit::test_resiliency_limit_10[TestDOK-test_assign_empty_spmatrix]",
+        "scipy.sparse.tests.test_base.Test64Bit::test_resiliency_limit_10[TestLIL-test_assign_empty_spmatrix]",
+        "scipy.sparse.tests.test_base.Test64Bit::test_resiliency_random[TestCSC-test_assign_empty_spmatrix]",
+        "scipy.sparse.tests.test_base.Test64Bit::test_resiliency_random[TestCSR-test_assign_empty_spmatrix]",
+        "scipy.sparse.tests.test_base.Test64Bit::test_resiliency_random[TestDOK-test_assign_empty_spmatrix]",
+        "scipy.sparse.tests.test_base.Test64Bit::test_resiliency_random[TestLIL-test_assign_empty_spmatrix]",
+        "scipy.sparse.tests.test_base.TestCSC::test_assign_empty_spmatrix",
+        "scipy.sparse.tests.test_base.TestCSR::test_assign_empty_spmatrix",
+        "scipy.sparse.tests.test_base.TestDOK::test_assign_empty_spmatrix",
+        "scipy.sparse.tests.test_base.TestLIL::test_assign_empty_spmatrix"
+      ],
+      "id": "scipy-e5b74ab80442",
+      "target_files": [
+        "scipy/sparse/_index.py",
+        "scipy/sparse/compressed.py"
+      ]
+    },
+    {
+      "f2p": [
+        "scipy.optimize.tests.test_zeros::test_gh_14486_converged_false"
+      ],
+      "id": "scipy-e8ba99183749",
+      "target_files": [
+        "scipy/optimize/_zeros_py.py"
+      ]
+    },
+    {
+      "f2p": [
+        "scipy.optimize.tests.test_slsqp.TestSLSQP::test_gh9640"
+      ],
+      "id": "scipy-e9578fa856c4",
+      "target_files": [
+        "scipy/optimize/slsqp/slsqp_optmz.f"
+      ]
+    },
+    {
+      "f2p": [
+        "scipy.interpolate.tests.test_polyint.TestBarycentric::test_int_input"
+      ],
+      "id": "scipy-ee087e0d3d22",
+      "target_files": [
+        "scipy/interpolate/polyint.py"
+      ]
+    },
+    {
+      "f2p": [
+        "scipy.stats.tests.test_morestats.TestYeojohnson::test_input_high_variance"
+      ],
+      "id": "scipy-f28309179b7c",
+      "target_files": [
+        "scipy/stats/_morestats.py"
+      ]
+    },
+    {
+      "f2p": [
+        "scipy.stats.tests.test_distributions.TestGenLogistic::test_logpdf[-1000--1499.5945348918917]",
+        "scipy.stats.tests.test_distributions.TestLogistic::test_logpdf_extreme_values"
+      ],
+      "id": "scipy-f46fad307512",
+      "target_files": [
+        "scipy/stats/_continuous_distns.py"
+      ]
+    },
+    {
+      "f2p": [
+        "scipy.io.tests.test_idl::test_identification"
+      ],
+      "id": "scipy-f6787613c9d6",
+      "target_files": [
+        "scipy/io/_idl.py"
+      ]
+    },
+    {
+      "f2p": [
+        "scipy.signal.tests.test_windows.TestDPSS::test_degenerate"
+      ],
+      "id": "scipy-f67d988a0b73",
+      "target_files": [
+        "scipy/signal/windows/_windows.py"
+      ]
+    },
+    {
+      "f2p": [
+        "scipy.stats.tests.test_morestats.TestCircFuncs::test_circfuncs_close[circstd-std]"
+      ],
+      "id": "scipy-f6ce5695b59f",
+      "target_files": [
+        "scipy/stats/morestats.py"
+      ]
+    },
+    {
+      "f2p": [
+        "scipy.sparse.tests.test_base.Test64Bit::test_no_64[TestCSC-test_dtype_preservation_empty_index]",
+        "scipy.sparse.tests.test_base.Test64Bit::test_no_64[TestCSC-test_dtype_preservation_empty_slice]",
+        "scipy.sparse.tests.test_base.Test64Bit::test_no_64[TestCSR-test_dtype_preservation_empty_index]",
+        "scipy.sparse.tests.test_base.Test64Bit::test_no_64[TestCSR-test_dtype_preservation_empty_slice]",
+        "scipy.sparse.tests.test_base.Test64Bit::test_resiliency_all_32[TestCSC-test_dtype_preservation_empty_index]",
+        "scipy.sparse.tests.test_base.Test64Bit::test_resiliency_all_32[TestCSC-test_dtype_preservation_empty_slice]",
+        "scipy.sparse.tests.test_base.Test64Bit::test_resiliency_all_32[TestCSR-test_dtype_preservation_empty_index]",
+        "scipy.sparse.tests.test_base.Test64Bit::test_resiliency_all_32[TestCSR-test_dtype_preservation_empty_slice]",
+        "scipy.sparse.tests.test_base.Test64Bit::test_resiliency_all_64[TestCSC-test_dtype_preservation_empty_index]",
+        "scipy.sparse.tests.test_base.Test64Bit::test_resiliency_all_64[TestCSC-test_dtype_preservation_empty_slice]",
+        "scipy.sparse.tests.test_base.Test64Bit::test_resiliency_all_64[TestCSR-test_dtype_preservation_empty_index]",
+        "scipy.sparse.tests.test_base.Test64Bit::test_resiliency_all_64[TestCSR-test_dtype_preservation_empty_slice]",
+        "scipy.sparse.tests.test_base.Test64Bit::test_resiliency_limit_10[TestCSC-test_dtype_preservation_empty_index]",
+        "scipy.sparse.tests.test_base.Test64Bit::test_resiliency_limit_10[TestCSC-test_dtype_preservation_empty_slice]",
+        "scipy.sparse.tests.test_base.Test64Bit::test_resiliency_limit_10[TestCSR-test_dtype_preservation_empty_index]",
+        "scipy.sparse.tests.test_base.Test64Bit::test_resiliency_limit_10[TestCSR-test_dtype_preservation_empty_slice]",
+        "scipy.sparse.tests.test_base.Test64Bit::test_resiliency_random[TestCSC-test_dtype_preservation_empty_index]",
+        "scipy.sparse.tests.test_base.Test64Bit::test_resiliency_random[TestCSC-test_dtype_preservation_empty_slice]",
+        "scipy.sparse.tests.test_base.Test64Bit::test_resiliency_random[TestCSR-test_dtype_preservation_empty_index]",
+        "scipy.sparse.tests.test_base.Test64Bit::test_resiliency_random[TestCSR-test_dtype_preservation_empty_slice]",
+        "scipy.sparse.tests.test_base.TestCSC::test_dtype_preservation_empty_index",
+        "scipy.sparse.tests.test_base.TestCSC::test_dtype_preservation_empty_slice",
+        "scipy.sparse.tests.test_base.TestCSCNonCanonical::test_dtype_preservation_empty_index",
+        "scipy.sparse.tests.test_base.TestCSCNonCanonical::test_dtype_preservation_empty_slice",
+        "scipy.sparse.tests.test_base.TestCSR::test_dtype_preservation_empty_index",
+        "scipy.sparse.tests.test_base.TestCSR::test_dtype_preservation_empty_slice",
+        "scipy.sparse.tests.test_base.TestCSRNonCanonical::test_dtype_preservation_empty_index",
+        "scipy.sparse.tests.test_base.TestCSRNonCanonical::test_dtype_preservation_empty_slice"
+      ],
+      "id": "scipy-f7537bcca248",
+      "target_files": [
+        "scipy/sparse/_compressed.py"
+      ]
+    },
+    {
+      "f2p": [
+        "scipy.interpolate.tests.test_fitpack2.TestUnivariateSpline::test_derivative_extrapolation"
+      ],
+      "id": "scipy-f818d8241584",
+      "target_files": [
+        "scipy/interpolate/fitpack2.py"
+      ]
+    },
+    {
+      "f2p": [
+        "scipy.sparse.csgraph.tests.test_shortest_path::test_negative_weights[J]"
+      ],
+      "id": "scipy-f83f36d17ee4",
+      "target_files": [
+        "scipy/sparse/csgraph/_shortest_path.pyx"
+      ]
+    },
+    {
+      "f2p": [
+        "scipy.io.arff.tests.test_arffread.TestQuotedNominal::test_attributes",
+        "scipy.io.arff.tests.test_arffread.TestQuotedNominal::test_data",
+        "scipy.io.arff.tests.test_arffread.TestQuotedNominalSpaces::test_attributes",
+        "scipy.io.arff.tests.test_arffread.TestQuotedNominalSpaces::test_data"
+      ],
+      "id": "scipy-f95ab1578ff7",
+      "target_files": [
+        "scipy/io/arff/arffread.py"
+      ]
+    },
+    {
+      "f2p": [
+        "scipy.spatial.tests.test_distance.TestSomeDistanceFunctions::test_correlation_positive"
+      ],
+      "id": "scipy-fa4f07a85d09",
+      "target_files": [
+        "scipy/spatial/distance.py"
+      ]
+    },
+    {
+      "f2p": [
+        "scipy.stats.tests.test_distributions::test_ncf_variance"
+      ],
+      "id": "scipy-fd015ff20c64",
+      "target_files": [
+        "scipy/stats/_continuous_distns.py"
+      ]
+    },
+    {
+      "f2p": [
+        "scipy.sparse.tests.test_base.Test64Bit::test_no_64[TestCOO-test_constructor1]",
+        "scipy.sparse.tests.test_base.Test64Bit::test_no_64[TestCSR-test_constructor4]",
+        "scipy.sparse.tests.test_base.Test64Bit::test_resiliency_all_32[TestCOO-test_constructor1]",
+        "scipy.sparse.tests.test_base.Test64Bit::test_resiliency_all_32[TestCSR-test_constructor4]",
+        "scipy.sparse.tests.test_base.Test64Bit::test_resiliency_all_64[TestCOO-test_constructor1]",
+        "scipy.sparse.tests.test_base.Test64Bit::test_resiliency_all_64[TestCSR-test_constructor4]",
+        "scipy.sparse.tests.test_base.Test64Bit::test_resiliency_limit_10[TestCOO-test_constructor1]",
+        "scipy.sparse.tests.test_base.Test64Bit::test_resiliency_limit_10[TestCSR-test_constructor4]",
+        "scipy.sparse.tests.test_base.Test64Bit::test_resiliency_random[TestCOO-test_constructor1]",
+        "scipy.sparse.tests.test_base.Test64Bit::test_resiliency_random[TestCSR-test_constructor4]",
+        "scipy.sparse.tests.test_base.TestCOO::test_constructor1",
+        "scipy.sparse.tests.test_base.TestCOONonCanonical::test_constructor1",
+        "scipy.sparse.tests.test_base.TestCSR::test_constructor4",
+        "scipy.sparse.tests.test_base.TestCSRNonCanonical::test_constructor4"
+      ],
+      "id": "scipy-ffd6bd12f6ff",
+      "target_files": [
+        "scipy/sparse/compressed.py",
+        "scipy/sparse/coo.py"
+      ]
+    }
+  ],
+  "task": "scipy",
+  "version": "1.3.0"
+}

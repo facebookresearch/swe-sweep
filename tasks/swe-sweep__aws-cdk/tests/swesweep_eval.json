@@ -1,0 +1,377 @@
+{
+  "build_jobs": 4,
+  "container_repo": "/aws-cdk",
+  "evaluation": {
+    "suite": "reproduction",
+    "visible_timeout": 14400
+  },
+  "upstream_image": "pandora-maxbug-aws-cdk:1.94.1",
+  "n_base_passing": 5253,
+  "n_base_test_ignore": 170,
+  "oracle_digest": "498814a501f2d1845f7053781e402c59b60aafb2ef4125aec2df9b1cd39c7b6e",
+  "oracle_pristine_paths": [],
+  "upstream_commit": "9f7399e15e6172900e0591deb5a57a45769d8205",
+  "reproduction": {
+    "jobs_env": "SWESWEEP_BUILD_JOBS",
+    "needs_build": false,
+    "suite": {
+      "compile_cmd": "$(git rev-parse --show-toplevel)/node_modules/.bin/tsc --build tsconfig.json || true",
+      "compiled_ext": ".js",
+      "config_name": "jest.config.js",
+      "type": "jest-per-package"
+    },
+    "test_timeout": 1200
+  },
+  "schema": 2,
+  "subtasks": [
+    {
+      "f2p": [
+        "Recognize isolated subnet by route table"
+      ],
+      "id": "aws-cdk-09d3619e26a0",
+      "target_files": [
+        "packages/aws-cdk/lib/context-providers/vpcs.ts"
+      ]
+    },
+    {
+      "f2p": [
+        "maxCapacity defaults to minCapacity when using Token"
+      ],
+      "id": "aws-cdk-0dca19933745",
+      "target_files": [
+        "packages/aws-cdk-lib/aws-autoscaling/lib/auto-scaling-group.ts"
+      ]
+    },
+    {
+      "f2p": [
+        "step scaling with adjustmentType by default"
+      ],
+      "id": "aws-cdk-0e7a84a35a4a",
+      "target_files": [
+        "packages/aws-cdk-lib/aws-autoscaling/lib/step-scaling-policy.ts"
+      ]
+    },
+    {
+      "f2p": [
+        "Start Query Execution omit QueryExecutionContext if no catalog or database name provided"
+      ],
+      "id": "aws-cdk-0ee19441d7ed",
+      "target_files": [
+        "packages/@aws-cdk/aws-stepfunctions-tasks/lib/athena/start-query-execution.ts"
+      ]
+    },
+    {
+      "f2p": [
+        "singleton lambda bind to vpc and access connections"
+      ],
+      "id": "aws-cdk-1608f0862a7d",
+      "target_files": [
+        "packages/@aws-cdk/aws-lambda/lib/singleton-lambda.ts"
+      ]
+    },
+    {
+      "f2p": [
+        "cluster can create a cluster with a single instance",
+        "cluster create a cluster from a snapshot"
+      ],
+      "id": "aws-cdk-262c40b7f1d0",
+      "target_files": [
+        "packages/@aws-cdk/aws-rds/lib/cluster.ts"
+      ]
+    },
+    {
+      "f2p": [
+        "with ttl of 0"
+      ],
+      "id": "aws-cdk-29dc71670133",
+      "target_files": [
+        "packages/@aws-cdk/aws-route53/lib/record-set.ts"
+      ]
+    },
+    {
+      "f2p": [
+        "OriginRequestPolicy accepts headers with disallowed keywords as part of the header"
+      ],
+      "id": "aws-cdk-2abd832bfd7b",
+      "target_files": [
+        "packages/@aws-cdk/aws-cloudfront/lib/origin-request-policy.ts"
+      ]
+    },
+    {
+      "f2p": [
+        "api key enabled flag is respected"
+      ],
+      "id": "aws-cdk-30039807d511",
+      "target_files": [
+        "packages/@aws-cdk/aws-apigateway/lib/api-key.ts"
+      ]
+    },
+    {
+      "f2p": [
+        "handles a resource changing its Type"
+      ],
+      "id": "aws-cdk-331d64286010",
+      "target_files": [
+        "packages/@aws-cdk/cloudformation-diff/lib/diff/types.ts"
+      ]
+    },
+    {
+      "f2p": [
+        "apex domain handles domain segments that collide with Object.prototype methods"
+      ],
+      "id": "aws-cdk-46ef97a8d533",
+      "target_files": [
+        "packages/aws-cdk-lib/aws-certificatemanager/lib/util.ts"
+      ]
+    },
+    {
+      "f2p": [
+        "can parse tag values from command line arguments with equals sign in value"
+      ],
+      "id": "aws-cdk-4f27d9500b7b",
+      "target_files": [
+        "packages/aws-cdk/lib/settings.ts"
+      ]
+    },
+    {
+      "f2p": [
+        "IAM user user imported by user ARN with path",
+        "IAM user user imported by user ARN with path (multiple elements)",
+        "IAM user user imported by user attributes with path (multiple elements) has a name",
+        "IAM user user imported by user attributes with path has a name"
+      ],
+      "id": "aws-cdk-4f3e59537369",
+      "target_files": [
+        "packages/@aws-cdk/aws-iam/lib/user.ts"
+      ]
+    },
+    {
+      "f2p": [
+        "PrincipalWithConditions inherits principalAccount from AccountPrincipal"
+      ],
+      "id": "aws-cdk-54601adb1dab",
+      "target_files": [
+        "packages/@aws-cdk/aws-iam/lib/principals.ts"
+      ]
+    },
+    {
+      "f2p": [
+        "Application default Flink Application"
+      ],
+      "id": "aws-cdk-5dedf8209754",
+      "target_files": [
+        "packages/@aws-cdk/aws-kinesisanalytics-flink/lib/application.ts"
+      ]
+    },
+    {
+      "f2p": [
+        "cross-environment CodePipeline correctly detects that an Action is cross-account from the account of the resource backing the Action"
+      ],
+      "id": "aws-cdk-5f7f061ba914",
+      "target_files": [
+        "packages/@aws-cdk/aws-codepipeline/lib/pipeline.ts"
+      ]
+    },
+    {
+      "f2p": [
+        "SAML provider name"
+      ],
+      "id": "aws-cdk-610e43eb0d1e",
+      "target_files": [
+        "packages/@aws-cdk/aws-iam/lib/saml-provider.ts"
+      ]
+    },
+    {
+      "f2p": [
+        "correctly skips bundling with stack under stage"
+      ],
+      "id": "aws-cdk-67df677f5bf9",
+      "target_files": [
+        "packages/@aws-cdk/core/lib/asset-staging.ts"
+      ]
+    },
+    {
+      "f2p": [
+        "Fields correctly serialize a nested array",
+        "Fields deep replace correctly handles fields in nested arrays"
+      ],
+      "id": "aws-cdk-73fac97ae9b3",
+      "target_files": [
+        "packages/aws-cdk-lib/aws-stepfunctions/lib/private/json-path.ts"
+      ]
+    },
+    {
+      "f2p": [
+        "instance DatabaseInstanceFromSnapshot can create a new database instance with fromDatabaseInstanceAttributes using a token for the port"
+      ],
+      "id": "aws-cdk-7a48c520ac49",
+      "target_files": [
+        "packages/@aws-cdk/aws-rds/lib/instance.ts"
+      ]
+    },
+    {
+      "f2p": [
+        "can describe protocol"
+      ],
+      "id": "aws-cdk-7be523839c1c",
+      "target_files": [
+        "packages/@aws-cdk/cloudformation-diff/lib/network/security-group-rule.ts"
+      ]
+    },
+    {
+      "f2p": [
+        "User Pool fails when the same trigger is added twice"
+      ],
+      "id": "aws-cdk-82906b255926",
+      "target_files": [
+        "packages/@aws-cdk/aws-cognito/lib/user-pool.ts"
+      ]
+    },
+    {
+      "f2p": [
+        "usage plan usage plan with integer and float throttling limits"
+      ],
+      "id": "aws-cdk-87b5902047d8",
+      "target_files": [
+        "packages/@aws-cdk/aws-apigateway/lib/usage-plan.ts",
+        "packages/@aws-cdk/aws-apigateway/lib/util.ts"
+      ]
+    },
+    {
+      "f2p": [
+        "base case if source directory is a symlink"
+      ],
+      "id": "aws-cdk-8bcf02de718c",
+      "target_files": [
+        "packages/@aws-cdk/core/lib/fs/fingerprint.ts"
+      ]
+    },
+    {
+      "f2p": [
+        "tests bind is called for all next targets"
+      ],
+      "id": "aws-cdk-8ec1ba1decb2",
+      "target_files": [
+        "packages/@aws-cdk/aws-elasticloadbalancingv2/lib/alb/application-listener-action.ts"
+      ]
+    },
+    {
+      "f2p": [
+        "isEnabled strings are evaluated as boolean"
+      ],
+      "id": "aws-cdk-8f42601f2b14",
+      "target_files": [
+        "packages/@aws-cdk/core/lib/feature-flags.ts"
+      ]
+    },
+    {
+      "f2p": [
+        "tests Accepts unresolved priority"
+      ],
+      "id": "aws-cdk-9b812bbf7e56",
+      "target_files": [
+        "packages/@aws-cdk/aws-elasticloadbalancingv2/lib/alb/application-listener-rule.ts"
+      ]
+    },
+    {
+      "f2p": [
+        "volume basic volume"
+      ],
+      "id": "aws-cdk-9d1ca2f1d2ba",
+      "target_files": [
+        "packages/@aws-cdk/aws-ec2/lib/volume.ts"
+      ]
+    },
+    {
+      "f2p": [
+        "apply boundary to role created by a custom resource",
+        "apply boundary to roles created via CfnResource",
+        "apply boundary to users created via CfnResource"
+      ],
+      "id": "aws-cdk-aa2b20a0cb63",
+      "target_files": [
+        "packages/@aws-cdk/aws-iam/lib/permissions-boundary.ts"
+      ]
+    },
+    {
+      "f2p": [
+        "Fields repeated object references at different tree paths should not be considered as recursions"
+      ],
+      "id": "aws-cdk-ae87316b3d88",
+      "target_files": [
+        "packages/@aws-cdk/aws-stepfunctions/lib/json-path.ts"
+      ]
+    },
+    {
+      "f2p": [
+        "bundling with docker entrypoint"
+      ],
+      "id": "aws-cdk-afc33953b3fd",
+      "target_files": [
+        "packages/@aws-cdk/core/lib/asset-staging.ts"
+      ]
+    },
+    {
+      "f2p": [
+        "overrides addPropertyOverride() allows assigning an attribute of a different resource"
+      ],
+      "id": "aws-cdk-b1a8fec05a4c",
+      "target_files": [
+        "packages/@aws-cdk/core/lib/cfn-resource.ts",
+        "packages/@aws-cdk/core/lib/private/resolve.ts",
+        "packages/@aws-cdk/core/lib/token.ts"
+      ]
+    },
+    {
+      "f2p": [
+        "util JsonSchemaMapper.toCfnJsonSchema \"id\" maps to \"id\" when using DRAFT-04"
+      ],
+      "id": "aws-cdk-bf56efe0c469",
+      "target_files": [
+        "packages/@aws-cdk/aws-apigateway/lib/util.ts"
+      ]
+    },
+    {
+      "f2p": [
+        "cross-env group ARNs include path",
+        "cross-env role ARNs include path",
+        "cross-env user ARNs include path"
+      ],
+      "id": "aws-cdk-c3eca76faa73",
+      "target_files": [
+        "packages/@aws-cdk/aws-iam/lib/group.ts",
+        "packages/@aws-cdk/aws-iam/lib/role.ts",
+        "packages/@aws-cdk/aws-iam/lib/user.ts"
+      ]
+    },
+    {
+      "f2p": [
+        "PrincipalWithConditions.addCondition should work"
+      ],
+      "id": "aws-cdk-c79737151909",
+      "target_files": [
+        "packages/@aws-cdk/aws-iam/lib/principals.ts"
+      ]
+    },
+    {
+      "f2p": [
+        "instances with local NVME drive are correctly named"
+      ],
+      "id": "aws-cdk-cf7a0bb1c0fa",
+      "target_files": [
+        "packages/@aws-cdk/aws-ec2/lib/instance-types.ts"
+      ]
+    },
+    {
+      "f2p": [
+        "step scaling"
+      ],
+      "id": "aws-cdk-f3cf088d6b0c",
+      "target_files": [
+        "packages/@aws-cdk/aws-autoscaling/lib/step-scaling-policy.ts"
+      ]
+    }
+  ],
+  "task": "aws-cdk",
+  "version": "1.94.1"
+}

@@ -1,0 +1,31 @@
+diff --git a/compiler/test/fail_compilation/ice23564.d b/compiler/test/fail_compilation/ice23564.d
+new file mode 100644
+index 0000000000..75b5d4ef9c
+--- /dev/null
++++ b/compiler/test/fail_compilation/ice23564.d
+@@ -0,0 +1,25 @@
++/* TEST_OUTPUT:
++---
++fail_compilation/ice23564.d(10): Error: cannot construct nested class `FreeList` because no implicit `this` reference to outer class `RBTree` is available
++---
++*/
++class BlockHeader
++{
++    this()
++    {
++        new FreeList;
++    }
++}
++
++class RBTree
++{
++    class FreeList
++    {
++    }
++
++    void _each_reverse()
++    {
++    }
++}
++
++alias FreeList = RBTree.FreeList;

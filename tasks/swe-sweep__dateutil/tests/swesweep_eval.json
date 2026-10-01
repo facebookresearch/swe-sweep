@@ -1,0 +1,113 @@
+{
+  "build_jobs": 4,
+  "container_repo": "/dateutil",
+  "evaluation": {
+    "paths": "dateutil",
+    "test_timeout": 600
+  },
+  "upstream_image": "pandora-maxbug-dateutil:2.6.0",
+  "n_base_passing": 1064,
+  "n_base_test_ignore": 43,
+  "oracle_digest": "fb3936ad4fcd5f834c93ee04900fc732ba35cb8bde624225cf7f19b9dc8a781e",
+  "oracle_pristine_paths": [],
+  "upstream_commit": "9f7399e15e6172900e0591deb5a57a45769d8205",
+  "reproduction": {
+    "needs_build": false
+  },
+  "schema": 2,
+  "subtasks": [
+    {
+      "f2p": [
+        "dateutil.test.test_rrule.RRuleTest::testStrAppendRRULEToken"
+      ],
+      "id": "dateutil-00f24eda7148",
+      "target_files": [
+        "dateutil/rrule.py"
+      ]
+    },
+    {
+      "f2p": [
+        "dateutil.test.test_parser.ParserTest::testMinuteWithLettersSpaces1",
+        "dateutil.test.test_parser.ParserTest::testMinuteWithLettersSpaces3"
+      ],
+      "id": "dateutil-12b515156ace",
+      "target_files": [
+        "dateutil/parser.py"
+      ]
+    },
+    {
+      "f2p": [
+        "dateutil.test.test_rrule.RRuleTest::testCountZero"
+      ],
+      "id": "dateutil-3524fed91a72",
+      "target_files": [
+        "dateutil/rrule.py"
+      ]
+    },
+    {
+      "f2p": [
+        "dateutil.test.test_parser.ParserTest::testFuzzyWithTokens"
+      ],
+      "id": "dateutil-3cee01bd24a7",
+      "target_files": [
+        "dateutil/parser.py"
+      ]
+    },
+    {
+      "f2p": [
+        "dateutil.test.test_parser.ParserTest::test_idx_check"
+      ],
+      "id": "dateutil-3e678953535c",
+      "target_files": [
+        "dateutil/parser.py"
+      ]
+    },
+    {
+      "f2p": [
+        "dateutil.test.test_parser.ParserTest::testCustomParserShortDaynames"
+      ],
+      "id": "dateutil-63a08d99c655",
+      "target_files": [
+        "dateutil/parser.py"
+      ]
+    },
+    {
+      "f2p": [
+        "dateutil.test.test_tz.TzLocalNixTest::testTzLocalTimeTrimColon"
+      ],
+      "id": "dateutil-811ae35f643a",
+      "target_files": [
+        "dateutil/tz/tz.py"
+      ]
+    },
+    {
+      "f2p": [
+        "dateutil.test.test_relativedelta.RelativeDeltaTest::testAdditionFloatValue"
+      ],
+      "id": "dateutil-b0d52b98d4b9",
+      "target_files": [
+        "dateutil/relativedelta.py"
+      ]
+    },
+    {
+      "f2p": [
+        "dateutil.test.test_relativedelta.RelativeDeltaTest::testAbsoluteAddition"
+      ],
+      "id": "dateutil-b93d8f56ffe5",
+      "target_files": [
+        "dateutil/relativedelta.py"
+      ]
+    },
+    {
+      "f2p": [
+        "dateutil.test.test_parser.ParserTest::test_mstridx"
+      ],
+      "id": "dateutil-f3948e6cb5bf",
+      "target_files": [
+        "dateutil/parser.py"
+      ]
+    }
+  ],
+  "task": "dateutil",
+  "version": "2.6.0"
+}

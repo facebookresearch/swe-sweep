@@ -1,0 +1,13 @@
+diff --git a/codec-http/src/main/java/io/netty/handler/codec/http/multipart/AbstractDiskHttpData.java b/codec-http/src/main/java/io/netty/handler/codec/http/multipart/AbstractDiskHttpData.java
+index 54baafa56d..d089f93966 100644
+--- a/codec-http/src/main/java/io/netty/handler/codec/http/multipart/AbstractDiskHttpData.java
++++ b/codec-http/src/main/java/io/netty/handler/codec/http/multipart/AbstractDiskHttpData.java
+@@ -82,7 +82,7 @@ public abstract class AbstractDiskHttpData extends AbstractHttpData {
+         String newpostfix;
+         String diskFilename = getDiskFilename();
+         if (diskFilename != null) {
+-            newpostfix = '_' + diskFilename;
++            newpostfix = '_' + Integer.toString(diskFilename.hashCode());
+         } else {
+             newpostfix = getPostfix();
+         }

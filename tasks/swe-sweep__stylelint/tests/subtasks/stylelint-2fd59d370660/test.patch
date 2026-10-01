@@ -1,0 +1,49 @@
+diff --git a/lib/rules/function-url-no-scheme-relative/__tests__/index.mjs b/lib/rules/function-url-no-scheme-relative/__tests__/index.mjs
+index f03cc35c5..e8f8bf717 100644
+--- a/lib/rules/function-url-no-scheme-relative/__tests__/index.mjs
++++ b/lib/rules/function-url-no-scheme-relative/__tests__/index.mjs
+@@ -69,6 +69,21 @@ testRule({
+ 			code: 'a { background: url(var(--image)); }',
+ 			description: 'ignore variable',
+ 		},
++		{
++			code: "@import url('../foo.css');",
++		},
++		{
++			code: '@import url("../foo.css");',
++		},
++		{
++			code: "@import url('/path/to/foo.css');",
++		},
++		{
++			code: "@import url('https://www.google.com/foo.css');",
++		},
++		{
++			code: "@import url('http://www.google.com/foo.css');",
++		},
+ 	],
+ 
+ 	reject: [
+@@ -128,6 +143,22 @@ testRule({
+ 			endLine: 1,
+ 			endColumn: 69,
+ 		},
++		{
++			code: "@import url('//www.google.com/foo.css')",
++			message: messages.rejected,
++			line: 1,
++			column: 13,
++			endLine: 1,
++			endColumn: 39,
++		},
++		{
++			code: `@import url("//www.google.com/foo.css") screen and (min-width: 768px);`,
++			message: messages.rejected,
++			line: 1,
++			column: 13,
++			endLine: 1,
++			endColumn: 39,
++		},
+ 	],
+ });
+ 

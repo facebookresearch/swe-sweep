@@ -1,0 +1,25 @@
+diff --git a/test/regress/cli/CMakeLists.txt b/test/regress/cli/CMakeLists.txt
+index d092f84fbe..ab2c638d10 100644
+--- a/test/regress/cli/CMakeLists.txt
++++ b/test/regress/cli/CMakeLists.txt
+@@ -953,6 +953,7 @@ set(regress_0_tests
+   regress0/nl/proj-issue-451-ran-combination-1.smt2
+   regress0/nl/proj-issue-451-ran-combination-2.smt2
+   regress0/nl/proj-issue-465-asan-proofs.smt2
++  regress0/nl/proj-issue552-narith-cee.smt2
+   regress0/nl/real-as-int.smt2
+   regress0/nl/real-div-ufnra.smt2
+   regress0/nl/sin-cos-346-b-chunk-0169.smt2
+diff --git a/test/regress/cli/regress0/nl/proj-issue552-narith-cee.smt2 b/test/regress/cli/regress0/nl/proj-issue552-narith-cee.smt2
+new file mode 100644
+index 0000000000..9a40e1e50a
+--- /dev/null
++++ b/test/regress/cli/regress0/nl/proj-issue552-narith-cee.smt2
+@@ -0,0 +1,7 @@
++; EXPECT: sat
++(set-logic ALL)
++(set-option :sets-ext true)
++(set-option :ee-mode central)
++(declare-const x (Set (_ BitVec 44)))
++(assert (> (set.card x) (div (set.card x) (set.card x))))
++(check-sat)

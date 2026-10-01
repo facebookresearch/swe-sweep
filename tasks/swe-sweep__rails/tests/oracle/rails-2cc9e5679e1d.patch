@@ -1,0 +1,12 @@
+diff --git a/activesupport/lib/active_support/core_ext/range/overlaps.rb b/activesupport/lib/active_support/core_ext/range/overlaps.rb
+index f753607f8bb..c286988d13a 100644
+--- a/activesupport/lib/active_support/core_ext/range/overlaps.rb
++++ b/activesupport/lib/active_support/core_ext/range/overlaps.rb
+@@ -5,6 +5,6 @@ class Range
+   #  (1..5).overlaps?(4..6) # => true
+   #  (1..5).overlaps?(7..9) # => false
+   def overlaps?(other)
+-    cover?(other.first) || other.cover?(first)
++    other.begin == self.begin || cover?(other.begin) || other.cover?(self.begin)
+   end
+ end

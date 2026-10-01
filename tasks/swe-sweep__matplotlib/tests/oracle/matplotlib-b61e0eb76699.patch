@@ -1,0 +1,30 @@
+diff --git a/lib/matplotlib/path.py b/lib/matplotlib/path.py
+index bfc3250df6..45826439b9 100644
+--- a/lib/matplotlib/path.py
++++ b/lib/matplotlib/path.py
+@@ -9,6 +9,7 @@ such as `.PathPatch` and `.PathCollection`, can be used for convenient `Path`
+ visualisation.
+ """
+ 
++import copy
+ from functools import lru_cache
+ from weakref import WeakValueDictionary
+ 
+@@ -259,16 +260,13 @@ class Path:
+         """
+         return self._readonly
+ 
+-    def __copy__(self):
++    def copy(self):
+         """
+         Return a shallow copy of the `Path`, which will share the
+         vertices and codes with the source `Path`.
+         """
+-        import copy
+         return copy.copy(self)
+ 
+-    copy = __copy__
+-
+     def __deepcopy__(self, memo=None):
+         """
+         Return a deepcopy of the `Path`.  The `Path` will not be

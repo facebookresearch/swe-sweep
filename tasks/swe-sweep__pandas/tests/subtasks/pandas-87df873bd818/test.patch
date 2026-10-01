@@ -1,0 +1,19 @@
+diff --git a/pandas/tests/arrays/test_array.py b/pandas/tests/arrays/test_array.py
+index 14ca7a61c5..2288ac408d 100644
+--- a/pandas/tests/arrays/test_array.py
++++ b/pandas/tests/arrays/test_array.py
+@@ -370,6 +370,14 @@ def test_array_not_registered(registry_without_decimal):
+     result = pd.array(data, dtype=DecimalDtype)
+     expected = DecimalArray._from_sequence(data)
+     tm.assert_equal(result, expected)
++
++
++def test_array_to_numpy_na():
++    # GH#40638
++    arr = pd.array([pd.NA, 1], dtype="string")
++    result = arr.to_numpy(na_value=True, dtype=bool)
++    expected = np.array([True, True])
++    tm.assert_numpy_array_equal(result, expected)
+ 
+ 
+ class TestArrayAnalytics:

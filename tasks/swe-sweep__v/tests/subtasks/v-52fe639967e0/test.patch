@@ -1,0 +1,20 @@
+diff --git a/vlib/v/tests/shared_generic_test.v b/vlib/v/tests/shared_generic_test.v
+new file mode 100644
+index 000000000..cdef7b87d
+--- /dev/null
++++ b/vlib/v/tests/shared_generic_test.v
+@@ -0,0 +1,14 @@
++struct Foo[T] {
++	a T
++}
++
++fn test_shared_struct_has_generics() {
++	shared foo := Foo[int]{1}
++	lock foo {
++		assert foo.a == 1
++	}
++	shared bar := &Foo[int]{1}
++	lock bar {
++		assert bar.a == 1
++	}
++}

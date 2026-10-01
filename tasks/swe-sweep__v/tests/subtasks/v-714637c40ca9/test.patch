@@ -1,0 +1,20 @@
+diff --git a/vlib/v/tests/indexexpr_or_test.v b/vlib/v/tests/indexexpr_or_test.v
+new file mode 100644
+index 000000000..d2dcd1370
+--- /dev/null
++++ b/vlib/v/tests/indexexpr_or_test.v
+@@ -0,0 +1,14 @@
++struct Element {
++	children []int
++}
++
++fn f() []Element {
++	return [Element{
++		children: [1, 2, 3]
++	}]
++}
++
++fn test_main() {
++	a := f()[0]!.children[0]!.str()
++	assert dump(a) == '1'
++}

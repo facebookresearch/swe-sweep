@@ -1,0 +1,52 @@
+diff --git a/crates/oxc_linter/src/context/host.rs b/crates/oxc_linter/src/context/host.rs
+index f9770f5c79..f204aa9063 100644
+--- a/crates/oxc_linter/src/context/host.rs
++++ b/crates/oxc_linter/src/context/host.rs
+@@ -194,6 +194,11 @@ impl<'a> ContextHost<'a> {
+         &mut self.sub_hosts[self.current_sub_host_index.get()]
+     }
+ 
++    // Whether the current sub host is the first one.
++    pub fn is_first_sub_host(&self) -> bool {
++        self.current_sub_host_index.get() == 0
++    }
++
+     /// Shared reference to the [`Semantic`] analysis of current script block.
+     #[inline]
+     pub fn semantic(&self) -> &Semantic<'a> {
+diff --git a/crates/oxc_linter/src/rules/unicorn/filename_case.rs b/crates/oxc_linter/src/rules/unicorn/filename_case.rs
+index 26aa951768..b3297d8c42 100644
+--- a/crates/oxc_linter/src/rules/unicorn/filename_case.rs
++++ b/crates/oxc_linter/src/rules/unicorn/filename_case.rs
+@@ -6,7 +6,10 @@ use oxc_macros::declare_oxc_lint;
+ use oxc_span::Span;
+ use serde_json::Value;
+ 
+-use crate::{context::LintContext, rule::Rule};
++use crate::{
++    context::{ContextHost, LintContext},
++    rule::Rule,
++};
+ 
+ fn filename_case_diagnostic(message: String, help_message: String) -> OxcDiagnostic {
+     OxcDiagnostic::warn(message).with_label(Span::default()).with_help(help_message)
+@@ -258,6 +261,10 @@ impl Rule for FilenameCase {
+ 
+         ctx.diagnostic(filename_case_diagnostic(message, help_message));
+     }
++
++    fn should_run(&self, ctx: &ContextHost<'_>) -> bool {
++        ctx.is_first_sub_host()
++    }
+ }
+ 
+ #[test]
+@@ -441,6 +448,8 @@ fn test() {
+             serde_json::json!([{ "case": "snakeCase", "multipleFileExtensions": false }]),
+         ),
+         ("", None, None, Some(PathBuf::from("FooBar.tsx"))),
++        // should only report once
++        ("<script></script><script setup></script>", None, None, Some(PathBuf::from("FooBar.vue"))),
+     ];
+ 
+     Tester::new(FilenameCase::NAME, FilenameCase::PLUGIN, pass, fail).test_and_snapshot();

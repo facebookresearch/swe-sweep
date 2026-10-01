@@ -1,0 +1,12 @@
+diff --git a/numpy/core/src/multiarray/methods.c b/numpy/core/src/multiarray/methods.c
+index 262514ec6c0..d81650ecdc1 100644
+--- a/numpy/core/src/multiarray/methods.c
++++ b/numpy/core/src/multiarray/methods.c
+@@ -735,6 +735,7 @@ array_setscalar(PyArrayObject *self, PyObject *args)
+         else {
+             PyErr_SetString(PyExc_ValueError,
+                     "can only convert an array of size 1 to a Python scalar");
++            return NULL;
+         }
+     }
+     /* Special case of C-order flat indexing... :| */

@@ -1,0 +1,27 @@
+diff --git a/pkg/analysis_server/lib/src/services/refactoring/legacy/refactoring.dart b/pkg/analysis_server/lib/src/services/refactoring/legacy/refactoring.dart
+index cb4f456c5ba..84ccad26222 100644
+--- a/pkg/analysis_server/lib/src/services/refactoring/legacy/refactoring.dart
++++ b/pkg/analysis_server/lib/src/services/refactoring/legacy/refactoring.dart
+@@ -464,6 +464,8 @@ abstract class RenameRefactoring implements Refactoring {
+       nameNode = node;
+     } else if (node is EnumConstantDeclaration) {
+       nameNode = node.name;
++    } else if (node is ExtensionDeclaration) {
++      nameNode = node.name;
+     } else if (node is FieldFormalParameter) {
+       nameNode = node.name;
+     } else if (node is ImportDirective) {
+diff --git a/pkg/analysis_server/lib/src/services/refactoring/legacy/rename_unit_member.dart b/pkg/analysis_server/lib/src/services/refactoring/legacy/rename_unit_member.dart
+index f2e22b47c16..58e6a37f4be 100644
+--- a/pkg/analysis_server/lib/src/services/refactoring/legacy/rename_unit_member.dart
++++ b/pkg/analysis_server/lib/src/services/refactoring/legacy/rename_unit_member.dart
+@@ -51,6 +51,9 @@ class RenameUnitMemberRefactoringImpl extends RenameRefactoringImpl {
+ 
+   @override
+   String get refactoringName {
++    if (element is ExtensionElement) {
++      return 'Rename Extension';
++    }
+     if (element is FunctionElement) {
+       return 'Rename Top-Level Function';
+     }

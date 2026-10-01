@@ -1,0 +1,42 @@
+diff --git a/lib/rules/selector-class-pattern/index.cjs b/lib/rules/selector-class-pattern/index.cjs
+index 5f3ee98a4..c69727a6a 100644
+--- a/lib/rules/selector-class-pattern/index.cjs
++++ b/lib/rules/selector-class-pattern/index.cjs
+@@ -4,6 +4,7 @@
+ 
+ const resolveNestedSelector = require('postcss-resolve-nested-selector');
+ const validateTypes = require('../../utils/validateTypes.cjs');
++const getRuleSelector = require('../../utils/getRuleSelector.cjs');
+ const isKeyframeSelector = require('../../utils/isKeyframeSelector.cjs');
+ const isStandardSyntaxRule = require('../../utils/isStandardSyntaxRule.cjs');
+ const isStandardSyntaxSelector = require('../../utils/isStandardSyntaxSelector.cjs');
+@@ -74,7 +75,7 @@ const rule = (primary, secondaryOptions) => {
+ 					if (selectorRoot) checkSelector(selectorRoot, ruleNode);
+ 				}
+ 			} else {
+-				const selectorRoot = parseSelector(selector, result, ruleNode);
++				const selectorRoot = parseSelector(getRuleSelector(ruleNode), result, ruleNode);
+ 
+ 				if (selectorRoot) checkSelector(selectorRoot, ruleNode);
+ 			}
+diff --git a/lib/rules/selector-class-pattern/index.mjs b/lib/rules/selector-class-pattern/index.mjs
+index 6916667d3..815434aaa 100644
+--- a/lib/rules/selector-class-pattern/index.mjs
++++ b/lib/rules/selector-class-pattern/index.mjs
+@@ -1,6 +1,7 @@
+ import resolveNestedSelector from 'postcss-resolve-nested-selector';
+ 
+ import { isBoolean, isRegExp, isString } from '../../utils/validateTypes.mjs';
++import getRuleSelector from '../../utils/getRuleSelector.mjs';
+ import isKeyframeSelector from '../../utils/isKeyframeSelector.mjs';
+ import isStandardSyntaxRule from '../../utils/isStandardSyntaxRule.mjs';
+ import isStandardSyntaxSelector from '../../utils/isStandardSyntaxSelector.mjs';
+@@ -71,7 +72,7 @@ const rule = (primary, secondaryOptions) => {
+ 					if (selectorRoot) checkSelector(selectorRoot, ruleNode);
+ 				}
+ 			} else {
+-				const selectorRoot = parseSelector(selector, result, ruleNode);
++				const selectorRoot = parseSelector(getRuleSelector(ruleNode), result, ruleNode);
+ 
+ 				if (selectorRoot) checkSelector(selectorRoot, ruleNode);
+ 			}

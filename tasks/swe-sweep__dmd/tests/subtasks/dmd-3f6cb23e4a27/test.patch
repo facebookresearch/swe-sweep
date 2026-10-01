@@ -1,0 +1,11 @@
+diff --git a/compiler/test/compilable/test23866.i b/compiler/test/compilable/test23866.i
+new file mode 100644
+index 0000000000..71a251a364
+--- /dev/null
++++ b/compiler/test/compilable/test23866.i
+@@ -0,0 +1,5 @@
++// https://issues.dlang.org/show_bug.cgi?id=23866
++
++struct __declspec(align(16)) __declspec(no_init_all) S { };
++
++typedef struct __attribute__((aligned(16))) __declspec(no_init_all) S2 { } S2;

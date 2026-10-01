@@ -1,0 +1,13 @@
+diff --git a/src/black/cache.py b/src/black/cache.py
+index ef9d99a7..5882fd65 100644
+--- a/src/black/cache.py
++++ b/src/black/cache.py
+@@ -49,7 +49,7 @@ def read_cache(mode: Mode) -> Cache:
+     with cache_file.open("rb") as fobj:
+         try:
+             cache: Cache = pickle.load(fobj)
+-        except (pickle.UnpicklingError, ValueError, IndexError):
++        except (pickle.UnpicklingError, EOFError, ValueError, IndexError):
+             return {}
+ 
+     return cache

@@ -1,0 +1,30 @@
+diff --git a/features/readwrite-splitting/core/src/main/java/org/apache/shardingsphere/readwritesplitting/algorithm/loadbalance/FixedReplicaWeightReadQueryLoadBalanceAlgorithm.java b/features/readwrite-splitting/core/src/main/java/org/apache/shardingsphere/readwritesplitting/algorithm/loadbalance/FixedReplicaWeightReadQueryLoadBalanceAlgorithm.java
+index 3a5c96598e4..6d5ace05a70 100644
+--- a/features/readwrite-splitting/core/src/main/java/org/apache/shardingsphere/readwritesplitting/algorithm/loadbalance/FixedReplicaWeightReadQueryLoadBalanceAlgorithm.java
++++ b/features/readwrite-splitting/core/src/main/java/org/apache/shardingsphere/readwritesplitting/algorithm/loadbalance/FixedReplicaWeightReadQueryLoadBalanceAlgorithm.java
+@@ -48,8 +48,8 @@ public final class FixedReplicaWeightReadQueryLoadBalanceAlgorithm implements Re
+     
+     @Override
+     public String getDataSource(final String name, final String writeDataSourceName, final List<String> readDataSourceNames, final TransactionConnectionContext context) {
+-        double[] weight = WEIGHT_MAP.containsKey(name) ? WEIGHT_MAP.get(name) : initWeight(readDataSourceNames);
+-        WEIGHT_MAP.putIfAbsent(name, weight);
++        double[] weight = WEIGHT_MAP.containsKey(name) && WEIGHT_MAP.get(name).length == readDataSourceNames.size() ? WEIGHT_MAP.get(name) : initWeight(readDataSourceNames);
++        WEIGHT_MAP.put(name, weight);
+         if (context.isInTransaction()) {
+             if (null == context.getReadWriteSplitReplicaRoute()) {
+                 context.setReadWriteSplitReplicaRoute(getDataSourceName(readDataSourceNames, weight));
+diff --git a/features/readwrite-splitting/core/src/main/java/org/apache/shardingsphere/readwritesplitting/algorithm/loadbalance/WeightReadQueryLoadBalanceAlgorithm.java b/features/readwrite-splitting/core/src/main/java/org/apache/shardingsphere/readwritesplitting/algorithm/loadbalance/WeightReadQueryLoadBalanceAlgorithm.java
+index 4f733e5e743..ad20cdd9081 100644
+--- a/features/readwrite-splitting/core/src/main/java/org/apache/shardingsphere/readwritesplitting/algorithm/loadbalance/WeightReadQueryLoadBalanceAlgorithm.java
++++ b/features/readwrite-splitting/core/src/main/java/org/apache/shardingsphere/readwritesplitting/algorithm/loadbalance/WeightReadQueryLoadBalanceAlgorithm.java
+@@ -51,8 +51,8 @@ public final class WeightReadQueryLoadBalanceAlgorithm implements ReadQueryLoadB
+         if (context.isInTransaction()) {
+             return writeDataSourceName;
+         }
+-        double[] weight = weightMap.containsKey(name) ? weightMap.get(name) : initWeight(readDataSourceNames);
+-        weightMap.putIfAbsent(name, weight);
++        double[] weight = weightMap.containsKey(name) && weightMap.get(name).length == readDataSourceNames.size() ? weightMap.get(name) : initWeight(readDataSourceNames);
++        weightMap.put(name, weight);
+         return getDataSourceName(readDataSourceNames, weight);
+     }
+     

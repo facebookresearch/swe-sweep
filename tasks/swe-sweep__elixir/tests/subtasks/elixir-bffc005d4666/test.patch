@@ -1,0 +1,18 @@
+diff --git a/lib/elixir/test/elixir/uri_test.exs b/lib/elixir/test/elixir/uri_test.exs
+index 598d0af87..0c58db61e 100644
+--- a/lib/elixir/test/elixir/uri_test.exs
++++ b/lib/elixir/test/elixir/uri_test.exs
+@@ -828,7 +828,13 @@ defmodule URITest do
+     test "merges empty path" do
+       base = URI.parse("http://example.com")
+       assert URI.merge(base, "/foo") |> to_string == "http://example.com/foo"
+       assert URI.merge(base, "foo") |> to_string == "http://example.com/foo"
+     end
++
++    test "merges when base path is empty string" do
++      base = %URI{scheme: "http", host: "example.com", path: ""}
++      assert URI.merge(base, "foo") |> to_string() == "http://example.com/foo"
++      assert URI.merge(base, "/bar") |> to_string() == "http://example.com/bar"
++    end
+   end
+ end

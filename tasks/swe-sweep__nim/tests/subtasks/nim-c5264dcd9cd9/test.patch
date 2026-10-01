@@ -1,0 +1,12 @@
+diff --git a/tests/async/t21447.nim b/tests/async/t21447.nim
+new file mode 100644
+index 000000000..e4f7ae31f
+--- /dev/null
++++ b/tests/async/t21447.nim
+@@ -0,0 +1,6 @@
++discard """
++  action: "compile"
++  cmd: "nim c -d:release -d:futureLogging $file"
++"""
++
++import std/asyncdispatch

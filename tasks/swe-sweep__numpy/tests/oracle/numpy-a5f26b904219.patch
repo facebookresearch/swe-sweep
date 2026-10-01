@@ -1,0 +1,13 @@
+diff --git a/numpy/core/src/multiarray/methods.c b/numpy/core/src/multiarray/methods.c
+index e5845f2f64d..ae26bbd4ab3 100644
+--- a/numpy/core/src/multiarray/methods.c
++++ b/numpy/core/src/multiarray/methods.c
+@@ -1469,7 +1469,7 @@ array_argpartition(PyArrayObject *self, PyObject *args, PyObject *kwds)
+ static PyObject *
+ array_searchsorted(PyArrayObject *self, PyObject *args, PyObject *kwds)
+ {
+-    static char *kwlist[] = {"keys", "side", "sorter", NULL};
++    static char *kwlist[] = {"v", "side", "sorter", NULL};
+     PyObject *keys;
+     PyObject *sorter;
+     NPY_SEARCHSIDE side = NPY_SEARCHLEFT;

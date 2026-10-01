@@ -1,0 +1,36 @@
+diff --git a/tests/ccgbugs/t15623.nim b/tests/ccgbugs/t15623.nim
+new file mode 100644
+index 000000000..c8246c85b
+--- /dev/null
++++ b/tests/ccgbugs/t15623.nim
+@@ -0,0 +1,11 @@
++discard """
++  action: "compile"
++"""
++
++# bug #15623
++block:
++  echo cast[ptr int](nil)[]
++
++block:
++  var x: ref int = nil
++  echo cast[ptr int](x)[]
+diff --git a/tests/ccgbugs/t15623_2.nim b/tests/ccgbugs/t15623_2.nim
+new file mode 100644
+index 000000000..4f33bc745
+--- /dev/null
++++ b/tests/ccgbugs/t15623_2.nim
+@@ -0,0 +1,13 @@
++discard """
++  output: '''0
++0
++'''
++"""
++
++# bug #15623
++block:
++  echo cast[int](cast[ptr int](nil))
++
++block:
++  var x: ref int = nil
++  echo cast[int](cast[ptr int](x))

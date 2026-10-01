@@ -1,0 +1,30 @@
+diff --git a/packages/expect-utils/src/utils.ts b/packages/expect-utils/src/utils.ts
+index eabef3e925..9cf8b1a822 100644
+--- a/packages/expect-utils/src/utils.ts
++++ b/packages/expect-utils/src/utils.ts
+@@ -310,12 +310,14 @@ export const subsetEquality = (
+         return undefined;
+       }
+ 
+-      return Object.keys(subset).every(key => {
++      if (seenReferences.has(subset)) return undefined;
++      seenReferences.set(subset, true);
++
++      const matchResult = Object.keys(subset).every(key => {
+         if (isObjectWithKeys(subset[key])) {
+           if (seenReferences.has(subset[key])) {
+             return equals(object[key], subset[key], [iterableEquality]);
+           }
+-          seenReferences.set(subset[key], true);
+         }
+         const result =
+           object != null &&
+@@ -332,6 +334,8 @@ export const subsetEquality = (
+         seenReferences.delete(subset[key]);
+         return result;
+       });
++      seenReferences.delete(subset);
++      return matchResult;
+     };
+ 
+   return subsetEqualityWithContext()(object, subset);

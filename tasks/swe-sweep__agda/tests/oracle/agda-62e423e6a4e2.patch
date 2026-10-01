@@ -1,0 +1,61 @@
+diff --git a/src/full/Agda/TypeChecking/MetaVars.hs b/src/full/Agda/TypeChecking/MetaVars.hs
+index f084de8..7b58b4c 100644
+--- a/src/full/Agda/TypeChecking/MetaVars.hs
++++ b/src/full/Agda/TypeChecking/MetaVars.hs
+@@ -404,6 +404,8 @@ newQuestionMark' new ii cmp t = lookupInteractionMeta ii >>= \case
+     let dlen = length delta
+     let gxs  = map (fst . unDom) gamma
+     let dxs  = map (fst . unDom) delta
++    let gys  = map nameCanonical gxs
++    let dys  = map nameCanonical dxs
+     reportSDoc "tc.interaction" 20 $ vcat
+       [ "reusing meta"
+       , nest 2 $ "creation context:" <+> pretty gxs
+@@ -419,7 +421,7 @@ newQuestionMark' new ii cmp t = lookupInteractionMeta ii >>= \case
+       -- Case: no record variable in the context.
+       -- Test whether Δ is an extension of Γ.
+       Nothing -> do
+-        unless (gxs `List.isSuffixOf` dxs) $ do
++        unless (gys `List.isSuffixOf` dys) $ do
+           reportSDoc "impossible" 10 $ vcat
+             [ "expecting meta-creation context"
+             , nest 2 $ pretty gxs
+@@ -442,10 +444,8 @@ newQuestionMark' new ii cmp t = lookupInteractionMeta ii >>= \case
+         let g0len = length dxs - k - 1
+         -- Find out the Δ₂ and Γ₁ parts.
+         -- However, as they do not share common ancestry, the @nameId@s differ,
+-        -- so we consider only the original concrete names.
++        -- so we consider only the original concrete names in gys and dys.
+         -- This is a bit risky... blame goes to #434.
+-        let gys = map nameCanonical gxs
+-        let dys = map nameCanonical dxs
+         let (d2len, g1len) = findOverlap (take k dys) gys
+         reportSDoc "tc.interaction" 30 $ vcat $ map (nest 2)
+           [ "glen  =" <+> pretty glen
+diff --git a/src/full/Agda/TypeChecking/Rules/Term.hs b/src/full/Agda/TypeChecking/Rules/Term.hs
+index 485928e..42c3cdd 100644
+--- a/src/full/Agda/TypeChecking/Rules/Term.hs
++++ b/src/full/Agda/TypeChecking/Rules/Term.hs
+@@ -212,14 +212,21 @@ isType_ e = traceCall (IsType_ e) $ do
+       -- The meta was created in a context of length @n@.
+       let n  = length . envContext . clEnv . miClosRange . mvInfo $ mv
+       (vs, rest) <- splitAt n <$> getContextArgs
++
++      let oldCxtNames = map nameCanonical $ map (fst . unDom) $ envContext
++                      $ clEnv $ miClosRange $ mvInfo $ mv
++
++      newCxtNames <- map nameCanonical <$> getContextNames
+       reportSDoc "tc.ip" 20 $ vcat
+         [ "  s0   = " <+> prettyTCM s0
+         , "  vs   = " <+> prettyTCM vs
+         , "  rest = " <+> prettyTCM rest
++        , "  oldCxtNames = " <+> prettyTCM oldCxtNames
++        , "  newCxtNames = " <+> prettyTCM newCxtNames
+         ]
+       -- We assume the meta variable use here is in an extension of the original context.
+       -- If not we revert to the old buggy behavior of #707 (see test/Succeed/Issue2257b).
+-      if (length vs /= n) then fallback else do
++      if (not $ List.isPrefixOf oldCxtNames newCxtNames) then fallback else do
+       s1  <- reduce =<< piApplyM s0 vs
+       reportSDoc "tc.ip" 20 $ vcat
+         [ "  s1   = " <+> prettyTCM s1

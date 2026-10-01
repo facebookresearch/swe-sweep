@@ -1,0 +1,29 @@
+diff --git a/extensions/undertow/deployment/src/test/java/io/quarkus/undertow/test/ServletWebXmlTestCase.java b/extensions/undertow/deployment/src/test/java/io/quarkus/undertow/test/ServletWebXmlTestCase.java
+index 30b0e7c7122..64ca9d88894 100644
+--- a/extensions/undertow/deployment/src/test/java/io/quarkus/undertow/test/ServletWebXmlTestCase.java
++++ b/extensions/undertow/deployment/src/test/java/io/quarkus/undertow/test/ServletWebXmlTestCase.java
+@@ -33,7 +33,11 @@ public class ServletWebXmlTestCase {
+             "  <mime-mapping>\n" +
+             "    <extension>wasm</extension>\n" +
+             "    <mime-type>application/wasm</mime-type>\n" +
+-            "  </mime-mapping>" +
++            "  </mime-mapping>\n" +
++            "    <error-page>\n" +
++            "        <error-code>404</error-code>\n" +
++            "        <location>/mapped</location>\n" +
++            "    </error-page>\n" +
+             "</web-app>";
+ 
+     @RegisterExtension
+@@ -56,4 +60,11 @@ public class ServletWebXmlTestCase {
+                 .statusCode(200)
+                 .contentType(is("application/wasm"));
+     }
++
++    @Test
++    public void test404Mapping() {
++        RestAssured.when().get("/missing").then()
++                .statusCode(404)
++                .body(is("web xml servlet"));
++    }
+ }

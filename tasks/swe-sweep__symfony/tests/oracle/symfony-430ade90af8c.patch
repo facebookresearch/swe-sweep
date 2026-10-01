@@ -1,0 +1,12 @@
+diff --git a/src/Symfony/Component/Yaml/Inline.php b/src/Symfony/Component/Yaml/Inline.php
+index bcfd37668c1..0bbcfefb3ad 100644
+--- a/src/Symfony/Component/Yaml/Inline.php
++++ b/src/Symfony/Component/Yaml/Inline.php
+@@ -944,6 +944,6 @@ class Inline
+      */
+     private static function getHexRegex(): string
+     {
+-        return '~^0x[0-9a-f_]++$~i';
++        return '~^0x[0-9a-fA-F_]++$~';
+     }
+ }

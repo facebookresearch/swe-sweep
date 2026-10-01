@@ -1,0 +1,22 @@
+diff --git a/tests/errmsgs/t25732.nim b/tests/errmsgs/t25732.nim
+new file mode 100644
+index 000000000..6293f55bb
+--- /dev/null
++++ b/tests/errmsgs/t25732.nim
+@@ -0,0 +1,15 @@
++discard """
++cmd: "nim check --hints:off $file"
++action: "reject"
++nimout: '''
++t25732.nim(15, 32) Error: undeclared identifier: 'a'
++t25732.nim(15, 32) Error: expression 'a' has no type (or is ambiguous)
++t25732.nim(15, 33) Error: undeclared field: 'b'
++t25732.nim(15, 33) Error: undeclared field: '.'
++t25732.nim(15, 33) Error: undeclared field: '.'
++'''
++"""
++
++
++
++static: (for f in [0]: discard a.b == f)
+\ No newline at end of file

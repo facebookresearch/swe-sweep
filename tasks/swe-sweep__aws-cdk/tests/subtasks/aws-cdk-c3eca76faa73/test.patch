@@ -1,0 +1,136 @@
+diff --git a/packages/@aws-cdk/aws-iam/test/group.test.ts b/packages/@aws-cdk/aws-iam/test/group.test.ts
+index 781d2b2ece..6d0a4e83e0 100644
+--- a/packages/@aws-cdk/aws-iam/test/group.test.ts
++++ b/packages/@aws-cdk/aws-iam/test/group.test.ts
+@@ -1,5 +1,5 @@
+ import '@aws-cdk/assert/jest';
+-import { App, Stack } from '@aws-cdk/core';
++import { App, CfnResource, Stack } from '@aws-cdk/core';
+ import { Group, ManagedPolicy, User } from '../lib';
+ 
+ describe('IAM groups', () => {
+@@ -57,3 +57,32 @@ describe('IAM groups', () => {
+     });
+   });
+ });
++
++test('cross-env group ARNs include path', () => {
++  const app = new App();
++  const groupStack = new Stack(app, 'group-stack', { env: { account: '123456789012', region: 'us-east-1' } });
++  const referencerStack = new Stack(app, 'referencer-stack', { env: { region: 'us-east-2' } });
++  const group = new Group(groupStack, 'Group', {
++    path: '/sample/path/',
++    groupName: 'sample-name',
++  });
++  new CfnResource(referencerStack, 'Referencer', {
++    type: 'Custom::GroupReferencer',
++    properties: { GroupArn: group.groupArn },
++  });
++
++  expect(referencerStack).toHaveResourceLike('Custom::GroupReferencer', {
++    GroupArn: {
++      'Fn::Join': [
++        '',
++        [
++          'arn:',
++          {
++            Ref: 'AWS::Partition',
++          },
++          ':iam::123456789012:group/sample/path/sample-name',
++        ],
++      ],
++    },
++  });
++});
+diff --git a/packages/@aws-cdk/aws-iam/test/role.test.ts b/packages/@aws-cdk/aws-iam/test/role.test.ts
+index e0927e14b8..b0b8f01ee9 100644
+--- a/packages/@aws-cdk/aws-iam/test/role.test.ts
++++ b/packages/@aws-cdk/aws-iam/test/role.test.ts
+@@ -1,5 +1,5 @@
+ import '@aws-cdk/assert/jest';
+-import { Duration, Stack, App } from '@aws-cdk/core';
++import { Duration, Stack, App, CfnResource } from '@aws-cdk/core';
+ import { AnyPrincipal, ArnPrincipal, CompositePrincipal, FederatedPrincipal, ManagedPolicy, PolicyStatement, Role, ServicePrincipal, User, Policy, PolicyDocument } from '../lib';
+ 
+ describe('IAM role', () => {
+@@ -562,4 +562,34 @@ test('managed policy ARNs are deduplicated', () => {
+       },
+     ],
+   });
+-});
+\ No newline at end of file
++});
++
++test('cross-env role ARNs include path', () => {
++  const app = new App();
++  const roleStack = new Stack(app, 'role-stack', { env: { account: '123456789012', region: 'us-east-1' } });
++  const referencerStack = new Stack(app, 'referencer-stack', { env: { region: 'us-east-2' } });
++  const role = new Role(roleStack, 'Role', {
++    assumedBy: new ServicePrincipal('sns.amazonaws.com'),
++    path: '/sample/path/',
++    roleName: 'sample-name',
++  });
++  new CfnResource(referencerStack, 'Referencer', {
++    type: 'Custom::RoleReferencer',
++    properties: { RoleArn: role.roleArn },
++  });
++
++  expect(referencerStack).toHaveResourceLike('Custom::RoleReferencer', {
++    RoleArn: {
++      'Fn::Join': [
++        '',
++        [
++          'arn:',
++          {
++            Ref: 'AWS::Partition',
++          },
++          ':iam::123456789012:role/sample/path/sample-name',
++        ],
++      ],
++    },
++  });
++});
+diff --git a/packages/@aws-cdk/aws-iam/test/user.test.ts b/packages/@aws-cdk/aws-iam/test/user.test.ts
+index ecb41b1908..d7f749e992 100644
+--- a/packages/@aws-cdk/aws-iam/test/user.test.ts
++++ b/packages/@aws-cdk/aws-iam/test/user.test.ts
+@@ -1,5 +1,5 @@
+ import '@aws-cdk/assert/jest';
+-import { App, SecretValue, Stack } from '@aws-cdk/core';
++import { App, CfnResource, SecretValue, Stack } from '@aws-cdk/core';
+ import { ManagedPolicy, Policy, PolicyStatement, User } from '../lib';
+ 
+ describe('IAM user', () => {
+@@ -178,3 +178,32 @@ describe('IAM user', () => {
+     });
+   });
+ });
++
++test('cross-env user ARNs include path', () => {
++  const app = new App();
++  const userStack = new Stack(app, 'user-stack', { env: { account: '123456789012', region: 'us-east-1' } });
++  const referencerStack = new Stack(app, 'referencer-stack', { env: { region: 'us-east-2' } });
++  const user = new User(userStack, 'User', {
++    path: '/sample/path/',
++    userName: 'sample-name',
++  });
++  new CfnResource(referencerStack, 'Referencer', {
++    type: 'Custom::UserReferencer',
++    properties: { UserArn: user.userArn },
++  });
++
++  expect(referencerStack).toHaveResourceLike('Custom::UserReferencer', {
++    UserArn: {
++      'Fn::Join': [
++        '',
++        [
++          'arn:',
++          {
++            Ref: 'AWS::Partition',
++          },
++          ':iam::123456789012:user/sample/path/sample-name',
++        ],
++      ],
++    },
++  });
++});

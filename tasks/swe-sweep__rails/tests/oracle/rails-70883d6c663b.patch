@@ -1,0 +1,15 @@
+diff --git a/actionpack/lib/action_controller/metal/basic_implicit_render.rb b/actionpack/lib/action_controller/metal/basic_implicit_render.rb
+index f9a758ff0e2..15413317b8d 100644
+--- a/actionpack/lib/action_controller/metal/basic_implicit_render.rb
++++ b/actionpack/lib/action_controller/metal/basic_implicit_render.rb
+@@ -3,7 +3,9 @@
+ module ActionController
+   module BasicImplicitRender # :nodoc:
+     def send_action(method, *args)
+-      super.tap { default_render unless performed? }
++      ret = super
++      default_render unless performed?
++      ret
+     end
+ 
+     def default_render

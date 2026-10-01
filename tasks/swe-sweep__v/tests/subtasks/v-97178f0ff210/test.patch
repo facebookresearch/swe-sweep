@@ -1,0 +1,24 @@
+diff --git a/vlib/v/checker/tests/int_ptr_array_index_err.out b/vlib/v/checker/tests/int_ptr_array_index_err.out
+new file mode 100644
+index 000000000..f42a700e0
+--- /dev/null
++++ b/vlib/v/checker/tests/int_ptr_array_index_err.out
+@@ -0,0 +1,6 @@
++vlib/v/checker/tests/int_ptr_array_index_err.vv:5:14: error: non-integer index `&int` (array type `[]u8`)
++    3 |         offset += 4
++    4 |     }
++    5 |     return bytes[offset]
++      |                 ~~~~~~~~
++    6 | }
+diff --git a/vlib/v/checker/tests/int_ptr_array_index_err.vv b/vlib/v/checker/tests/int_ptr_array_index_err.vv
+new file mode 100644
+index 000000000..f86d686a1
+--- /dev/null
++++ b/vlib/v/checker/tests/int_ptr_array_index_err.vv
+@@ -0,0 +1,6 @@
++pub fn read_int(bytes []u8, mut offset &int) int {
++	defer {
++		offset += 4
++	}
++	return bytes[offset]
++}

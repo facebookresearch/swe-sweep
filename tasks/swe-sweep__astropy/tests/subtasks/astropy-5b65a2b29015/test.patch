@@ -1,0 +1,32 @@
+diff --git a/astropy/modeling/tests/example_models.py b/astropy/modeling/tests/example_models.py
+index 013d76e398..00698e0477 100644
+--- a/astropy/modeling/tests/example_models.py
++++ b/astropy/modeling/tests/example_models.py
+@@ -169,6 +169,7 @@ models_1D = {
+         "x_lim": [-10, 10],
+         "integral": 1,
+         "bbox_peak": True,
++        "deriv_initial": [10, 0.5, 4],
+     },
+     RickerWavelet1D: {
+         "parameters": [1, 0, 1],
+diff --git a/astropy/modeling/tests/test_models.py b/astropy/modeling/tests/test_models.py
+index a366e90b20..a69ddd0b89 100644
+--- a/astropy/modeling/tests/test_models.py
++++ b/astropy/modeling/tests/test_models.py
+@@ -620,8 +620,14 @@ class Fittable1DModelTester:
+         new_model_no_deriv = fitter_no_deriv(
+             model_no_deriv, x, data, estimate_jacobian=True
+         )
++
++        if isinstance(model_with_deriv, models.Lorentz1D):
++            atol = 1e-6
++        else:
++            atol = 0.15
++
+         assert_allclose(
+-            new_model_with_deriv.parameters, new_model_no_deriv.parameters, atol=0.15
++            new_model_with_deriv.parameters, new_model_no_deriv.parameters, atol=atol
+         )
+ 
+ 

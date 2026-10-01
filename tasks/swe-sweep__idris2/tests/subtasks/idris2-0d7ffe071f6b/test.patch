@@ -1,0 +1,38 @@
+diff --git a/tests/Main.idr b/tests/Main.idr
+index 993658fc9..078ca1a0e 100644
+--- a/tests/Main.idr
++++ b/tests/Main.idr
+@@ -41,6 +41,7 @@ idrisTestsBasic = MkTestPool "Fundamental language features" [] Nothing
+        "basic046", "basic047",             "basic049", "basic050",
+        "basic051", "basic052", "basic053", "basic054", "basic055",
+        "basic056", "basic057", "basic058", "basic059", "basic060",
++       "literals001",
+        "basic061",
+        "interpolation001", "interpolation002"]
+ 
+diff --git a/tests/idris2/literals001/Test.idr b/tests/idris2/literals001/Test.idr
+new file mode 100644
+index 000000000..fe1c8e2b9
+--- /dev/null
++++ b/tests/idris2/literals001/Test.idr
+@@ -0,0 +1,4 @@
++{-
++c : Char
++c = '"'
++-}
+diff --git a/tests/idris2/literals001/expected b/tests/idris2/literals001/expected
+new file mode 100644
+index 000000000..31e5db7f3
+--- /dev/null
++++ b/tests/idris2/literals001/expected
+@@ -0,0 +1 @@
++1/1: Building Test (Test.idr)
+diff --git a/tests/idris2/literals001/run b/tests/idris2/literals001/run
+new file mode 100755
+index 000000000..71e882e50
+--- /dev/null
++++ b/tests/idris2/literals001/run
+@@ -0,0 +1,3 @@
++rm -rf build
++
++$1 --no-color --console-width 0 --no-banner -c Test.idr

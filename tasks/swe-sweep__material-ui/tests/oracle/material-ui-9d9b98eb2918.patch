@@ -1,0 +1,27 @@
+diff --git a/packages/mui-material/src/Select/Select.js b/packages/mui-material/src/Select/Select.js
+index bb319d638d..7e3b785a0f 100644
+--- a/packages/mui-material/src/Select/Select.js
++++ b/packages/mui-material/src/Select/Select.js
+@@ -114,7 +114,8 @@ const Select = React.forwardRef(function Select(inProps, ref) {
+     ...(multiple && native && variant === 'outlined' ? { notched: true } : {}),
+     ref: inputComponentRef,
+     className: clsx(InputComponent.props.className, className),
+-    variant,
++    // If a custom input is provided via 'input' prop, do not allow 'variant' to be propagated to it's root element. See https://github.com/mui/material-ui/issues/33894.
++    ...(!input && { variant }),
+     ...other,
+   });
+ });
+diff --git a/packages/mui-material/src/TablePagination/TablePagination.js b/packages/mui-material/src/TablePagination/TablePagination.js
+index 041e575aac..cfb0b58b46 100644
+--- a/packages/mui-material/src/TablePagination/TablePagination.js
++++ b/packages/mui-material/src/TablePagination/TablePagination.js
+@@ -199,7 +199,7 @@ const TablePagination = React.forwardRef(function TablePagination(inProps, ref)
+         {rowsPerPageOptions.length > 1 && (
+           <TablePaginationSelect
+             variant="standard"
+-            input={<InputBase />}
++            {...(!SelectProps.variant && { input: <InputBase /> })}
+             value={rowsPerPage}
+             onChange={onRowsPerPageChange}
+             id={selectId}

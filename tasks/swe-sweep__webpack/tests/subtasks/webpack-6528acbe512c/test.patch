@@ -1,0 +1,76 @@
+diff --git a/test/configCases/clean/link/index.js b/test/configCases/clean/link/index.js
+new file mode 100644
+index 000000000..bbd9de415
+--- /dev/null
++++ b/test/configCases/clean/link/index.js
+@@ -0,0 +1 @@
++it("should compile and run the test", function() {});
+diff --git a/test/configCases/clean/link/test.filter.js b/test/configCases/clean/link/test.filter.js
+new file mode 100644
+index 000000000..abb7722f5
+--- /dev/null
++++ b/test/configCases/clean/link/test.filter.js
+@@ -0,0 +1,16 @@
++const fs = require("fs");
++const path = require("path");
++
++module.exports = () => {
++	try {
++		fs.symlinkSync(
++			path.join(__dirname, "index.js"),
++			path.join(__dirname, ".testlink"),
++			"file"
++		);
++		fs.unlinkSync(path.join(__dirname, ".testlink"));
++		return true;
++	} catch (e) {
++		return false;
++	}
++};
+diff --git a/test/configCases/clean/link/webpack.config.js b/test/configCases/clean/link/webpack.config.js
+new file mode 100644
+index 000000000..6250f15d4
+--- /dev/null
++++ b/test/configCases/clean/link/webpack.config.js
+@@ -0,0 +1,41 @@
++const fs = require("fs");
++const path = require("path");
++const readDir = require("../enabled/readdir");
++
++/** @type {import("../../../../").Configuration} */
++module.exports = {
++	output: {
++		clean: true
++	},
++	plugins: [
++		compiler => {
++			let once = true;
++			compiler.hooks.environment.tap("Test", () => {
++				if (once) {
++					const outputPath = compiler.options.output.path;
++					const originalPath = path.join(outputPath, "file.ext");
++					fs.writeFileSync(originalPath, "");
++					const customDir = path.join(outputPath, "this/dir/should/be/removed");
++					fs.mkdirSync(customDir, { recursive: true });
++					fs.symlinkSync(
++						originalPath,
++						path.join(customDir, "file-link.ext"),
++						"file"
++					);
++					once = false;
++				}
++			});
++			compiler.hooks.afterEmit.tap("Test", compilation => {
++				const outputPath = compilation.getPath(compiler.outputPath, {});
++				expect(readDir(outputPath)).toMatchInlineSnapshot(`
++			Object {
++			  "directories": Array [],
++			  "files": Array [
++			    "bundle0.js",
++			  ],
++			}
++		`);
++			});
++		}
++	]
++};

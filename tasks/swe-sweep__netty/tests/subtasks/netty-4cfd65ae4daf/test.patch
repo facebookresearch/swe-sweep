@@ -1,0 +1,37 @@
+diff --git a/handler/src/test/java/io/netty/handler/ssl/SslHandlerTest.java b/handler/src/test/java/io/netty/handler/ssl/SslHandlerTest.java
+index 1c3b44b36e..e3c5f9f69c 100644
+--- a/handler/src/test/java/io/netty/handler/ssl/SslHandlerTest.java
++++ b/handler/src/test/java/io/netty/handler/ssl/SslHandlerTest.java
+@@ -172,6 +172,32 @@ public class SslHandlerTest {
+         }
+     }
+ 
++    @Test
++    public void testIncorrectLength() throws Exception {
++        final SelfSignedCertificate cert = new SelfSignedCertificate();
++        final EmbeddedChannel channel = new EmbeddedChannel();
++        channel.pipeline().addLast(
++                SslContextBuilder.forServer(cert.key(), cert.cert())
++                        .sslProvider(SslProvider.JDK)
++                        .build()
++                        .newHandler(channel.alloc()));
++        final ByteBuf buf = channel.alloc().buffer(5);
++        buf.writeByte(0x0);
++        buf.writeByte(0x1);
++        buf.writeByte(0xfe);
++        buf.writeByte(0x87);
++        buf.writeByte(0x2);
++        try {
++            channel.writeInbound(buf);
++            fail();
++        } catch (DecoderException e) {
++            // The JDK equivalent of getEncryptedPacketLength has some optimizations and can behave slightly
++            // differently to ours, but this should always be a sign of bad input data.
++            assertThat(e.getCause(), is(instanceOf(NotSslRecordException.class)));
++        }
++        assertTrue(channel.finishAndReleaseAll());
++    }
++
+     @Test
+     public void testNonByteBufWriteIsReleased() throws Exception {
+         SSLEngine engine = SSLContext.getDefault().createSSLEngine();

@@ -1,0 +1,58 @@
+diff --git a/lib/minify.js b/lib/minify.js
+index d3c501f..659ddb5 100644
+--- a/lib/minify.js
++++ b/lib/minify.js
+@@ -219,9 +219,12 @@ async function minify(files, options) {
+     if (options.format.spidermonkey) {
+         result.ast = toplevel.to_mozilla_ast();
+     }
++    let format_options;
+     if (!HOP(options.format, "code") || options.format.code) {
++        // Make a shallow copy so that we can modify without mutating the user's input.
++        format_options = {...options.format};
+         if (options.sourceMap) {
+-            options.format.source_map = await SourceMap({
++            format_options.source_map = await SourceMap({
+                 file: options.sourceMap.filename,
+                 orig: options.sourceMap.content,
+                 root: options.sourceMap.root
+@@ -230,21 +233,21 @@ async function minify(files, options) {
+                 if (files instanceof AST_Toplevel) {
+                     throw new Error("original source content unavailable");
+                 } else for (var name in files) if (HOP(files, name)) {
+-                    options.format.source_map.get().setSourceContent(name, files[name]);
++                    format_options.source_map.get().setSourceContent(name, files[name]);
+                 }
+             }
+         }
+-        delete options.format.ast;
+-        delete options.format.code;
+-        delete options.format.spidermonkey;
+-        var stream = OutputStream(options.format);
++        delete format_options.ast;
++        delete format_options.code;
++        delete format_options.spidermonkey;
++        var stream = OutputStream(format_options);
+         toplevel.print(stream);
+         result.code = stream.get();
+         if (options.sourceMap) {
+             if(options.sourceMap.asObject) {
+-                result.map = options.format.source_map.get().toJSON();
++                result.map = format_options.source_map.get().toJSON();
+             } else {
+-                result.map = options.format.source_map.toString();
++                result.map = format_options.source_map.toString();
+             }
+             if (options.sourceMap.url == "inline") {
+                 var sourceMap = typeof result.map === "object" ? JSON.stringify(result.map) : result.map;
+@@ -260,8 +263,8 @@ async function minify(files, options) {
+             options.nameCache.props = cache_to_json(options.mangle.properties.cache);
+         }
+     }
+-    if (options.format && options.format.source_map) {
+-        options.format.source_map.destroy();
++    if (format_options && format_options.source_map) {
++        format_options.source_map.destroy();
+     }
+     if (timings) {
+         timings.end = Date.now();

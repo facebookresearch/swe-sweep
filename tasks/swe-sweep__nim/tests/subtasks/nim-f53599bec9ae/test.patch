@@ -1,0 +1,50 @@
+diff --git a/tests/errmsgs/t22097.nim b/tests/errmsgs/t22097.nim
+new file mode 100644
+index 000000000..b50db08a3
+--- /dev/null
++++ b/tests/errmsgs/t22097.nim
+@@ -0,0 +1,9 @@
++discard """
++  errormsg: "for a 'var' type a variable needs to be passed; but 'uint16(x)' is immutable"
++"""
++
++proc toUInt16(x: var uint16) =
++  discard
++
++var x = uint8(1)
++toUInt16 x
+\ No newline at end of file
+diff --git a/tests/tuples/ttuples_various.nim b/tests/tuples/ttuples_various.nim
+index dc060da1e..97bc70bd2 100644
+--- a/tests/tuples/ttuples_various.nim
++++ b/tests/tuples/ttuples_various.nim
+@@ -171,3 +171,29 @@ block tuple_with_seq:
+     echo s
+     (s, 7)
+   t = test(t.a)
++
++block: # bug #22049
++  type A = object
++    field: tuple[a, b, c: seq[int]]
++
++  func value(v: var A): var tuple[a, b, c: seq[int]] =
++    v.field
++  template get(v: A): tuple[a, b, c: seq[int]] = v.value
++
++  var v = A(field: (@[1], @[2], @[3]))
++  var (a, b, c) = v.get()
++
++  doAssert a == @[1]
++  doAssert b == @[2]
++  doAssert c == @[3]
++
++block: # bug #22054
++  type A = object
++    field: tuple[a: int]
++
++  func value(v: var A): var tuple[a: int] =
++    v.field
++  template get(v: A): tuple[a: int] = v.value
++
++  var v = A(field: (a: 1314))
++  doAssert get(v)[0] == 1314

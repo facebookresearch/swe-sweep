@@ -1,0 +1,17 @@
+diff --git a/actionview/test/template/form_helper_test.rb b/actionview/test/template/form_helper_test.rb
+index 9b0e28c884c..6b428cb60ac 100644
+--- a/actionview/test/template/form_helper_test.rb
++++ b/actionview/test/template/form_helper_test.rb
+@@ -1465,6 +1465,12 @@ class FormHelperTest < ActionView::TestCase
+     assert_dom_equal(expected, week_field("post", "written_on"))
+   end
+ 
++  def test_week_field_with_iso_week_year_boundary
++    expected = %{<input id="post_written_on" name="post[written_on]" type="week" value="2015-W53" />}
++    @post.written_on = DateTime.new(2016, 1, 1, 1, 2, 3)
++    assert_dom_equal(expected, week_field("post", "written_on"))
++  end
++
+   def test_url_field
+     expected = %{<input id="user_homepage" name="user[homepage]" type="url" />}
+     assert_dom_equal(expected, url_field("user", "homepage"))

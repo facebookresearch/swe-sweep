@@ -1,0 +1,15 @@
+diff --git a/lib/trino-orc/src/main/java/io/trino/orc/writer/SliceDictionaryColumnWriter.java b/lib/trino-orc/src/main/java/io/trino/orc/writer/SliceDictionaryColumnWriter.java
+index 898e5576bb7..1ebc555bd90 100644
+--- a/lib/trino-orc/src/main/java/io/trino/orc/writer/SliceDictionaryColumnWriter.java
++++ b/lib/trino-orc/src/main/java/io/trino/orc/writer/SliceDictionaryColumnWriter.java
+@@ -479,6 +479,10 @@ public class SliceDictionaryColumnWriter
+     public List<StreamDataOutput> getBloomFilters(CompressedMetadataWriter metadataWriter)
+             throws IOException
+     {
++        if (directEncoded) {
++            return directColumnWriter.getBloomFilters(metadataWriter);
++        }
++
+         List<BloomFilter> bloomFilters = rowGroups.stream()
+                 .map(rowGroup -> rowGroup.getColumnStatistics().getBloomFilter())
+                 .filter(Objects::nonNull)

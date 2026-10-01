@@ -1,0 +1,25 @@
+diff --git a/lib/model.js b/lib/model.js
+--- a/lib/model.js
++++ b/lib/model.js
+@@ -3667,11 +3667,9 @@
+  * @param {Boolean} [options.j=true] If false, disable [journal acknowledgement](https://docs.mongodb.com/manual/reference/write-concern/#j-option)
+  *
+  */
+-Model.bulkSave = async function(documents, options) {
++Model.bulkSave = async function bulkSave(documents, options) {
+   options = options || {};
+ 
+-  const writeOperations = this.buildBulkWriteOperations(documents, { skipValidation: true, timestamps: options.timestamps });
+-
+   if (options.timestamps != null) {
+     for (const document of documents) {
+       document.$__.saveOptions = document.$__.saveOptions || {};
+@@ -3682,6 +3680,8 @@
+ 
+   await Promise.all(documents.map(buildPreSavePromise));
+ 
++  const writeOperations = this.buildBulkWriteOperations(documents, { skipValidation: true, timestamps: options.timestamps });
++
+   const { bulkWriteResult, bulkWriteError } = await this.bulkWrite(writeOperations, options).then(
+     (res) => ({ bulkWriteResult: res, bulkWriteError: null }),
+     (err) => ({ bulkWriteResult: null, bulkWriteError: err })

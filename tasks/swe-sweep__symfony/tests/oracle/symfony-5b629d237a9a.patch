@@ -1,0 +1,39 @@
+diff --git a/src/Symfony/Component/Form/Extension/Core/Type/BaseType.php b/src/Symfony/Component/Form/Extension/Core/Type/BaseType.php
+index bb50889c89d..7ec759d000f 100644
+--- a/src/Symfony/Component/Form/Extension/Core/Type/BaseType.php
++++ b/src/Symfony/Component/Form/Extension/Core/Type/BaseType.php
+@@ -18,6 +18,7 @@ use Symfony\Component\Form\FormBuilderInterface;
+ use Symfony\Component\Form\FormInterface;
+ use Symfony\Component\Form\FormView;
+ use Symfony\Component\OptionsResolver\OptionsResolver;
++use Symfony\Contracts\Translation\TranslatableInterface;
+ 
+ /**
+  * Encapsulates common logic of {@link FormType} and {@link ButtonType}.
+@@ -63,7 +64,10 @@ abstract class BaseType extends AbstractType
+ 
+             $translationDomain ??= $view->parent->vars['translation_domain'];
+ 
+-            $labelTranslationParameters = array_merge($view->parent->vars['label_translation_parameters'], $labelTranslationParameters);
++            if (!$options['label'] instanceof TranslatableInterface) {
++                $labelTranslationParameters = array_merge($view->parent->vars['label_translation_parameters'], $labelTranslationParameters);
++            }
++
+             $attrTranslationParameters = array_merge($view->parent->vars['attr_translation_parameters'], $attrTranslationParameters);
+ 
+             if (!$labelFormat) {
+diff --git a/src/Symfony/Component/Form/Extension/Core/Type/FormType.php b/src/Symfony/Component/Form/Extension/Core/Type/FormType.php
+index 432ba78cd7f..9409099006c 100644
+--- a/src/Symfony/Component/Form/Extension/Core/Type/FormType.php
++++ b/src/Symfony/Component/Form/Extension/Core/Type/FormType.php
+@@ -89,7 +89,9 @@ class FormType extends BaseType
+                 $view->vars['attr']['readonly'] = true;
+             }
+ 
+-            $helpTranslationParameters = array_merge($view->parent->vars['help_translation_parameters'], $helpTranslationParameters);
++            if (!$options['help'] instanceof TranslatableInterface) {
++                $helpTranslationParameters = array_merge($view->parent->vars['help_translation_parameters'], $helpTranslationParameters);
++            }
+         }
+ 
+         $formConfig = $form->getConfig();

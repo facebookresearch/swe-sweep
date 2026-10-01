@@ -1,0 +1,41 @@
+diff --git a/compiler/concepts.nim b/compiler/concepts.nim
+index a810b3642..bcf2d4d0e 100644
+--- a/compiler/concepts.nim
++++ b/compiler/concepts.nim
+@@ -274,7 +274,7 @@ proc matchSym(c: PContext; candidate: PSym, n: PNode; m: var MatchCon): bool =
+ proc matchSyms(c: PContext, n: PNode; kinds: set[TSymKind]; m: var MatchCon): bool =
+   ## Walk the current scope, extract candidates which the same name as 'n[namePos]',
+   ## 'n' is the nkProcDef or similar from the concept that we try to match.
+-  let candidates = searchInScopesFilterBy(c, n[namePos].sym.name, kinds)
++  let candidates = searchInScopesAllCandidatesFilterBy(c, n[namePos].sym.name, kinds)
+   for candidate in candidates:
+     #echo "considering ", typeToString(candidate.typ), " ", candidate.magic
+     m.magic = candidate.magic
+diff --git a/compiler/lookups.nim b/compiler/lookups.nim
+index 3f4fcb4d0..e7bca08bc 100644
+--- a/compiler/lookups.nim
++++ b/compiler/lookups.nim
+@@ -228,6 +228,23 @@ proc debugScopes*(c: PContext; limit=0, max = int.high) {.deprecated.} =
+     if i == limit: return
+     inc i
+ 
++proc searchInScopesAllCandidatesFilterBy*(c: PContext, s: PIdent, filter: TSymKinds): seq[PSym] =
++  result = @[]
++  for scope in allScopes(c.currentScope):
++    var ti: TIdentIter
++    var candidate = initIdentIter(ti, scope.symbols, s)
++    while candidate != nil:
++      if candidate.kind in filter:
++        result.add candidate
++      candidate = nextIdentIter(ti, scope.symbols)
++
++  if result.len == 0:
++    var marked = initIntSet()
++    for im in c.imports.mitems:
++      for s in symbols(im, marked, s, c.graph):
++        if s.kind in filter:
++          result.add s
++
+ proc searchInScopesFilterBy*(c: PContext, s: PIdent, filter: TSymKinds): seq[PSym] =
+   result = @[]
+   block outer:

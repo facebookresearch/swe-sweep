@@ -1,0 +1,157 @@
+diff --git a/gix-error/tests/error/exn.rs b/gix-error/tests/error/exn.rs
+index 9744f8ff6..fcf327de0 100644
+--- a/gix-error/tests/error/exn.rs
++++ b/gix-error/tests/error/exn.rs
+@@ -697,3 +697,49 @@ fn causes_display(err: &(dyn std::error::Error + 'static), style: Style) -> Vec<
+     }
+     out
+ }
++
++#[test]
++fn erased_frames_still_expose_the_original_error() {
++    let e = ErrorWithSource("E1", message("E1-source")).raise().erased();
++    assert!(
++        e.downcast_any_ref::<ErrorWithSource>().is_some(),
++        "erased frames can still be downcast to the original error type"
++    );
++    let frame_error = e.iter().next().expect("there is one frame").error();
++    assert!(
++        frame_error.downcast_ref::<ErrorWithSource>().is_some(),
++        "the frame yields the original error, not the erasure marker"
++    );
++    assert_eq!(
++        frame_error
++            .source()
++            .expect("the source is reachable through the erasure")
++            .to_string(),
++        "E1-source",
++        "std-style source chains continue through erased errors"
++    );
++}
++
++/// Mirrors the pattern that broke in https://github.com/GitoxideLabs/gitoxide/issues/2694, where
++/// a caller of `Error::sources()` downcasts each error to react to a specific one.
++#[cfg(any(feature = "tree-error", not(feature = "auto-chain-error")))]
++#[test]
++fn erased_errors_are_found_by_source_iteration() {
++    let e: gix_error::Error = message("E1").raise_erased().into();
++    assert!(
++        e.sources().any(|err| err.downcast_ref::<Message>().is_some()),
++        "sources() yields the original error type even after type-erasure"
++    );
++}
++
++#[test]
++fn erased_into_inner_preserves_source_chain() {
++    let e = ErrorWithSource("E1", message("E1-source")).raise_erased().into_inner();
++    assert_eq!(
++        std::error::Error::source(&e)
++            .expect("the erased error forwards to the wrapped error's source")
++            .to_string(),
++        "E1-source",
++        "type erasure remains transparent to std-style source traversal"
++    );
++}
+diff --git a/gix-index/tests/index/file/write.rs b/gix-index/tests/index/file/write.rs
+index c1de3974c..d612b82b2 100644
+--- a/gix-index/tests/index/file/write.rs
++++ b/gix-index/tests/index/file/write.rs
+@@ -301,10 +301,10 @@ fn compare_raw_bytes(generated: &[u8], expected: &[u8], fixture: &str) {
+             let generated = &generated[range_left..range_right];
+             let expected = &expected[range_left..range_right];
+ 
+-            panic! {"\n\nRoundtrip failed for index in fixture {:?} at position {:?}\n\
+-            \t  Actual: ... {:?} ...\n\
+-            \tExpected: ... {:?} ...\n\n\
+-            ", &fixture, index, generated, expected}
++            panic! {"\n\nRoundtrip failed for index in fixture {fixture:?} at position {index:?}\n\
++            \t  Actual: ... {generated:?} ...\n\
++            \tExpected: ... {expected:?} ...\n\n\
++            "}
+         }
+     }
+ }
+diff --git a/gix-odb/tests/odb/store/dynamic.rs b/gix-odb/tests/odb/store/dynamic.rs
+index 3a02f891e..36d75d8da 100644
+--- a/gix-odb/tests/odb/store/dynamic.rs
++++ b/gix-odb/tests/odb/store/dynamic.rs
+@@ -663,12 +663,12 @@ mod disambiguate_prefix {
+         let (handle, _tmp) = db_with_all_object_sources().unwrap();
+         let id = hex_to_id("a7065b5e971a6d8b55875d8cf634a3a37202ab23");
+         let potential_prefix = Candidate::new(id, 40).unwrap();
+-        assert!(
++        assert_eq!(
+             handle
+                 .disambiguate_prefix(potential_prefix)
+                 .unwrap()
+-                .expect("object exists")
+-                == potential_prefix.to_prefix(),
++                .expect("object exists"),
++            potential_prefix.to_prefix(),
+         );
+ 
+         assert_eq!(
+diff --git a/gix/tests/gix/revision/spec/from_bytes/mod.rs b/gix/tests/gix/revision/spec/from_bytes/mod.rs
+index 9cda99a15..433e690fa 100644
+--- a/gix/tests/gix/revision/spec/from_bytes/mod.rs
++++ b/gix/tests/gix/revision/spec/from_bytes/mod.rs
+@@ -109,6 +109,34 @@ fn names_are_made_available_via_references() {
+     );
+ }
+ 
++#[test]
++fn missing_revision_keeps_reference_lookup_error_in_error_sources_for_path_fallback() -> crate::Result {
++    let repo = repo("complex_graph")?;
++    let err = repo
++        .rev_parse("README.md")
++        .expect_err("missing revspec must fail before callers can inspect the error chain");
++
++    let not_found = err
++        .sources()
++        .find_map(|err| err.downcast_ref::<gix::refs::file::find::existing::Error>())
++        .expect("reference lookup failure remains visible in error sources after rev-parse");
++
++    match not_found {
++        gix::refs::file::find::existing::Error::NotFound { name } => {
++            assert_eq!(
++                name,
++                std::path::Path::new("README.md"),
++                "the ref lookup error carries the unresolved revspec for path fallback"
++            );
++        }
++        gix::refs::file::find::existing::Error::Find(_) => {
++            panic!("expected a missing ref error, got a lower-level ref lookup failure")
++        }
++    }
++
++    Ok(())
++}
++
+ #[test]
+ fn bad_objects_are_valid_until_they_are_actually_read_from_the_odb() {
+     {
+diff --git a/tests/journey/gix.sh b/tests/journey/gix.sh
+index 58e4dc5ac..230a85f8c 100644
+--- a/tests/journey/gix.sh
++++ b/tests/journey/gix.sh
+@@ -73,6 +73,20 @@ title "gix (with repository)"
+     )
+   )
+ 
++  title "gix diff"
++  (with "the 'diff' sub-command"
++    snapshot="$snapshot/diff"
++    (small-repo-in-sandbox
++      (with "'file', an index revspec, and an on-disk path"
++        it "diffs the blob in the index against the file on disk" && {
++          echo "an addition" >> b &&
++          WITH_SNAPSHOT="$snapshot/file-index-vs-worktree" \
++          expect_run $SUCCESSFULLY "$exe_plumbing" --no-verbose diff file :b b
++        }
++      )
++    )
++  )
++
+   title "gix remote"
+   (when "running 'remote'"
+     snapshot="$snapshot/remote"

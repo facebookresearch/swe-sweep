@@ -1,0 +1,148 @@
+diff --git a/src/theory/arith/arith_rewriter.cpp b/src/theory/arith/arith_rewriter.cpp
+index cbc8260..fad5b5a 100644
+--- a/src/theory/arith/arith_rewriter.cpp
++++ b/src/theory/arith/arith_rewriter.cpp
+@@ -45,6 +45,49 @@ namespace cvc5::internal {
+ namespace theory {
+ namespace arith {
+ 
++/**
++ * Flatten a node into a vector of its (direct or indirect) children, collecting
++ * how many times each child occurs in the sum.
++ * A sequence of kinds is given that indicate which kinds to traverse over.
++ * This method is similar to expr::algorithm::flatten but does not use a tree
++ * traversal. Instead it merges subterms, based on counting the number of
++ * occurrences, as a Rational.
++ * @param t The node to be flattened
++ * @param children The resulting list of children
++ * @param kinds A sequence of kinds to consider for flattening
++ */
++template <typename... Kinds>
++bool flattenAndCollectSum(TNode t,
++                          std::vector<std::pair<TNode, Rational>>& children,
++                          Kinds... kinds)
++{
++  if (!expr::algorithm::canFlatten(t, kinds...)) return false;
++  std::map<TNode, Rational> countMap;
++  countMap[t] = Rational(1);
++  Kind tk = t.getKind();
++  while (!countMap.empty())
++  {
++    auto cur = std::prev(countMap.end());
++    TNode tc = cur->first;
++    Kind k = tc.getKind();
++    Rational coeff = cur->second;
++    countMap.erase(cur);
++    while (k == Kind::MULT && tc.getNumChildren() == 2 && tc[0].isConst())
++    {
++      coeff *= tc[0].getConst<Rational>();
++      tc = tc[1];
++      k = tc.getKind();
++    }
++    bool recurse;
++    if constexpr (sizeof...(kinds) == 0) recurse = tk == k;
++    else recurse = ((kinds == k) || ...);
++    if (recurse)
++      for (TNode cc : tc) countMap[cc] += coeff;
++    else children.emplace_back(tc, coeff);
++  }
++  return true;
++}
++
+ ArithRewriter::ArithRewriter(OperatorElim& oe) : d_opElim(oe) {}
+ 
+ RewriteResponse ArithRewriter::preRewrite(TNode t)
+@@ -431,7 +474,23 @@ RewriteResponse ArithRewriter::rewriteSub(TNode t)
+ RewriteResponse ArithRewriter::preRewritePlus(TNode t)
+ {
+   Assert(t.getKind() == kind::ADD);
+-  return RewriteResponse(REWRITE_DONE, expr::algorithm::flatten(t));
++  std::vector<std::pair<TNode, Rational>> children;
++  if (!flattenAndCollectSum(t, children, kind::ADD))
++    return RewriteResponse(REWRITE_DONE, t);
++  NodeManager* nm = NodeManager::currentNM();
++  NodeBuilder nb(kind::ADD);
++  Rational coeff(0);
++  for (const auto& c : children)
++  {
++    if (c.first.isConst()) coeff += c.first.getConst<Rational>() * c.second;
++    else if (c.second.isOne()) nb << c.first;
++    else nb << nm->mkNode(kind::MULT, nm->mkConstRealOrInt(c.second), c.first);
++  }
++  if (!coeff.isZero() || nb.getNumChildren() == 0)
++    nb << nm->mkConstRealOrInt(t.getType(), coeff);
++  Node ret = nb.getNumChildren() == 1 ? nb[0] : nb.constructNode();
++  ret = rewriter::maybeEnsureReal(t.getType(), ret);
++  return RewriteResponse(REWRITE_DONE, ret);
+ }
+ 
+ RewriteResponse ArithRewriter::postRewritePlus(TNode t)
+@@ -439,13 +498,24 @@ RewriteResponse ArithRewriter::postRewritePlus(TNode t)
+   Assert(t.getKind() == kind::ADD);
+   Assert(t.getNumChildren() > 1);
+ 
+-  std::vector<TNode> children;
+-  expr::algorithm::flatten(t, children, Kind::ADD, Kind::TO_REAL);
+-
+   rewriter::Sum sum;
+-  for (const auto& child : children)
++  std::vector<std::pair<TNode, Rational>> children;
++  if (!flattenAndCollectSum(t, children, Kind::ADD, Kind::TO_REAL))
++    rewriter::addToSum(sum, t);
++  else
+   {
+-    rewriter::addToSum(sum, child);
++    Rational coeff(0);
++    for (const auto& c : children)
++    {
++      if (c.first.isConst()) coeff += c.first.getConst<Rational>() * c.second;
++      else if (c.second.isOne()) rewriter::addToSum(sum, c.first);
++      else
++      {
++        RealAlgebraicNumber mul = RealAlgebraicNumber(c.second);
++        rewriter::addMonomialToSum(sum, c.first, mul);
++      }
++    }
++    if (!coeff.isZero()) rewriter::addToSum(sum, NodeManager::currentNM()->mkConstRealOrInt(coeff));
+   }
+   Node retSum = rewriter::collectSum(sum);
+   retSum = rewriter::maybeEnsureReal(t.getType(), retSum);
+diff --git a/src/theory/arith/rewriter/addition.cpp b/src/theory/arith/rewriter/addition.cpp
+index 334caba..97271ca 100644
+--- a/src/theory/arith/rewriter/addition.cpp
++++ b/src/theory/arith/rewriter/addition.cpp
+@@ -168,6 +168,16 @@ bool isIntegral(const Sum& sum)
+   return true;
+ }
+ 
++void addMonomialToSum(Sum& sum,
++                      TNode product,
++                      RealAlgebraicNumber& multiplicity)
++{
++  Assert(product.getKind() != Kind::ADD);
++  std::vector<Node> monomial;
++  addToProduct(monomial, multiplicity, product);
++  addToSum(sum, mkNonlinearMult(monomial), multiplicity);
++}
++
+ void addToSum(Sum& sum, TNode n, bool negate)
+ {
+   if (n.getKind() == Kind::ADD)
+diff --git a/src/theory/arith/rewriter/addition.h b/src/theory/arith/rewriter/addition.h
+index 5e9fc03..3da101d 100644
+--- a/src/theory/arith/rewriter/addition.h
++++ b/src/theory/arith/rewriter/addition.h
+@@ -70,6 +70,13 @@ bool isIntegral(const Sum& sum);
+  */
+ void addToSum(Sum& sum, TNode n, bool negate = false);
+ 
++/**
++ * Add the arithmetic term `product` to the given sum with coefficient `multiplicity`.
++ */
++void addMonomialToSum(Sum& sum,
++                      TNode product,
++                      RealAlgebraicNumber& multiplicity);
++
+ /**
+  * Evaluates the sum object (mapping monomials to their multiplicities) into a
+  * single node (of kind `ADD`, unless the sum has less than two summands).

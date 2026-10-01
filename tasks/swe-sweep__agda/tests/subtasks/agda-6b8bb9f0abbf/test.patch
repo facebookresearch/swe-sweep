@@ -1,0 +1,13 @@
+diff --git a/test/Succeed/Issue5787.agda b/test/Succeed/Issue5787.agda
+new file mode 100644
+index 0000000000..8024e6d2bd
+--- /dev/null
++++ b/test/Succeed/Issue5787.agda
+@@ -0,0 +1,7 @@
++
++postulate
++  A B : Set
++  f : @0 {{A}} → B
++
++g : @0 {{A}} → B
++g = f

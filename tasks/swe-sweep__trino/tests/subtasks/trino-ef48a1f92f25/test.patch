@@ -1,0 +1,184 @@
+diff --git a/lib/trino-parquet/src/test/java/io/trino/parquet/TestTupleDomainParquetPredicate.java b/lib/trino-parquet/src/test/java/io/trino/parquet/TestTupleDomainParquetPredicate.java
+index 229dd9ef37e..27f0acdccdb 100644
+--- a/lib/trino-parquet/src/test/java/io/trino/parquet/TestTupleDomainParquetPredicate.java
++++ b/lib/trino-parquet/src/test/java/io/trino/parquet/TestTupleDomainParquetPredicate.java
+@@ -41,7 +41,6 @@ import org.testng.annotations.DataProvider;
+ import org.testng.annotations.Test;
+ 
+ import java.io.ByteArrayOutputStream;
+-import java.math.BigDecimal;
+ import java.math.BigInteger;
+ import java.time.LocalDateTime;
+ import java.time.ZoneOffset;
+@@ -64,7 +63,6 @@ import static io.trino.spi.type.BigintType.BIGINT;
+ import static io.trino.spi.type.BooleanType.BOOLEAN;
+ import static io.trino.spi.type.DateType.DATE;
+ import static io.trino.spi.type.DecimalType.createDecimalType;
+-import static io.trino.spi.type.Decimals.encodeScaledValue;
+ import static io.trino.spi.type.DoubleType.DOUBLE;
+ import static io.trino.spi.type.IntegerType.INTEGER;
+ import static io.trino.spi.type.RealType.REAL;
+@@ -77,6 +75,7 @@ import static io.trino.spi.type.Timestamps.NANOSECONDS_PER_MILLISECOND;
+ import static io.trino.spi.type.Timestamps.PICOSECONDS_PER_NANOSECOND;
+ import static io.trino.spi.type.Timestamps.round;
+ import static io.trino.spi.type.TinyintType.TINYINT;
++import static io.trino.spi.type.UnscaledDecimal128Arithmetic.unscaledDecimal;
+ import static io.trino.spi.type.VarcharType.createUnboundedVarcharType;
+ import static io.trino.spi.type.VarcharType.createVarcharType;
+ import static java.lang.Float.NaN;
+@@ -205,10 +204,12 @@ public class TestTupleDomainParquetPredicate
+             throws Exception
+     {
+         String column = "ShortDecimalColumn";
+-        Type type = createDecimalType(5, 0);
++        Type type = createDecimalType(5, 2);
+         assertEquals(getDomain(type, 0, null, ID, column, UTC), all(type));
+ 
+-        assertEquals(getDomain(type, 10, longColumnStats(100L, 100L), ID, column, UTC), singleValue(type, 100L));
++        assertEquals(getDomain(type, 10, longColumnStats(10012L, 10012L), ID, column, UTC), singleValue(type, 10012L));
++        // Test that statistics overflowing the size of the type are not used
++        assertEquals(getDomain(type, 10, longColumnStats(100012L, 100012L), ID, column, UTC), notNull(type));
+ 
+         assertEquals(getDomain(type, 10, longColumnStats(0L, 100L), ID, column, UTC), create(ValueSet.ofRanges(range(type, 0L, true, 100L, true)), false));
+         // fail on corrupted statistics
+@@ -217,14 +218,57 @@ public class TestTupleDomainParquetPredicate
+                 .withMessage("Corrupted statistics for column \"ShortDecimalColumn\" in Parquet file \"testFile\": [min: 100, max: 10, num_nulls: 0]");
+     }
+ 
++    @Test
++    public void testShortDecimalWithNoScale()
++            throws Exception
++    {
++        String column = "ShortDecimalColumnWithNoScale";
++        Type type = createDecimalType(5, 0);
++        assertEquals(getDomain(type, 0, null, ID, column, UTC), all(type));
++
++        assertEquals(getDomain(type, 10, longColumnStats(100L, 100L), ID, column, UTC), singleValue(type, 100L));
++        // Test that statistics overflowing the size of the type are not used
++        assertEquals(getDomain(type, 10, longColumnStats(123456L, 123456), ID, column, UTC), notNull(type));
++
++        assertEquals(getDomain(type, 10, longColumnStats(0L, 100L), ID, column, UTC), create(ValueSet.ofRanges(range(type, 0L, true, 100L, true)), false));
++        // fail on corrupted statistics
++        assertThatExceptionOfType(ParquetCorruptionException.class)
++                .isThrownBy(() -> getDomain(type, 10, longColumnStats(100L, 10L), ID, column, UTC))
++                .withMessage("Corrupted statistics for column \"ShortDecimalColumnWithNoScale\" in Parquet file \"testFile\": [min: 100, max: 10, num_nulls: 0]");
++    }
++
+     @Test
+     public void testLongDecimal()
+             throws Exception
+     {
+         String column = "LongDecimalColumn";
++        DecimalType type = createDecimalType(20, 5);
++        BigInteger maximum = new BigInteger("12345678901234512345");
++
++        Slice zero = unscaledDecimal(BigInteger.valueOf(0L));
++        Slice hundred = unscaledDecimal(BigInteger.valueOf(100L));
++        Slice max = unscaledDecimal(maximum);
++
++        assertEquals(getDomain(type, 0, null, ID, column, UTC), all(type));
++        assertEquals(getDomain(type, 10, binaryColumnStats(maximum, maximum), ID, column, UTC), singleValue(type, max));
++
++        assertEquals(
++                getDomain(type, 10, binaryColumnStats(0L, 100L), ID, column, UTC),
++                create(ValueSet.ofRanges(range(type, zero, true, hundred, true)), false));
++        // fail on corrupted statistics
++        assertThatExceptionOfType(ParquetCorruptionException.class)
++                .isThrownBy(() -> getDomain(type, 10, binaryColumnStats(100L, 10L), ID, column, UTC))
++                .withMessage("Corrupted statistics for column \"LongDecimalColumn\" in Parquet file \"testFile\": [min: 0x64, max: 0x0A, num_nulls: 0]");
++    }
++
++    @Test
++    public void testLongDecimalWithNoScale()
++            throws Exception
++    {
++        String column = "LongDecimalColumnWithNoScale";
+         DecimalType type = createDecimalType(20, 0);
+-        Slice zero = encodeScaledValue(new BigDecimal("0"), type.getScale());
+-        Slice hundred = encodeScaledValue(new BigDecimal("100"), type.getScale());
++        Slice zero = unscaledDecimal(BigInteger.valueOf(0L));
++        Slice hundred = unscaledDecimal(BigInteger.valueOf(100L));
+         assertEquals(getDomain(type, 0, null, ID, column, UTC), all(type));
+ 
+         assertEquals(getDomain(type, 10, binaryColumnStats(100L, 100L), ID, column, UTC), singleValue(type, hundred));
+@@ -233,7 +277,7 @@ public class TestTupleDomainParquetPredicate
+         // fail on corrupted statistics
+         assertThatExceptionOfType(ParquetCorruptionException.class)
+                 .isThrownBy(() -> getDomain(type, 10, binaryColumnStats(100L, 10L), ID, column, UTC))
+-                .withMessage("Corrupted statistics for column \"LongDecimalColumn\" in Parquet file \"testFile\": [min: 0x64, max: 0x0A, num_nulls: 0]");
++                .withMessage("Corrupted statistics for column \"LongDecimalColumnWithNoScale\" in Parquet file \"testFile\": [min: 0x64, max: 0x0A, num_nulls: 0]");
+     }
+ 
+     @Test
+@@ -512,11 +556,16 @@ public class TestTupleDomainParquetPredicate
+     }
+ 
+     private static BinaryStatistics binaryColumnStats(long minimum, long maximum)
++    {
++        return binaryColumnStats(BigInteger.valueOf(minimum), BigInteger.valueOf(maximum));
++    }
++
++    private static BinaryStatistics binaryColumnStats(BigInteger minimum, BigInteger maximum)
+     {
+         BinaryStatistics statistics = new BinaryStatistics();
+         statistics.setMinMax(
+-                Binary.fromConstantByteArray(BigInteger.valueOf(minimum).toByteArray()),
+-                Binary.fromConstantByteArray(BigInteger.valueOf(maximum).toByteArray()));
++                Binary.fromConstantByteArray(minimum.toByteArray()),
++                Binary.fromConstantByteArray(maximum.toByteArray()));
+         return statistics;
+     }
+ 
+diff --git a/plugin/trino-hive/src/test/java/io/trino/plugin/hive/TestHiveConnectorTest.java b/plugin/trino-hive/src/test/java/io/trino/plugin/hive/TestHiveConnectorTest.java
+index 3548eff4d60..5c22231e580 100644
+--- a/plugin/trino-hive/src/test/java/io/trino/plugin/hive/TestHiveConnectorTest.java
++++ b/plugin/trino-hive/src/test/java/io/trino/plugin/hive/TestHiveConnectorTest.java
+@@ -4547,6 +4547,48 @@ public class TestHiveConnectorTest
+         return format("TIMESTAMP '%s'", TIMESTAMP_FORMATTER.format(timestamp));
+     }
+ 
++    @Test
++    public void testParquetShortDecimalPredicatePushdown()
++    {
++        assertUpdate("DROP TABLE IF EXISTS test_parquet_decimal_predicate_pushdown");
++        assertUpdate("CREATE TABLE test_parquet_decimal_predicate_pushdown (decimal_t DECIMAL(5, 3)) WITH (format = 'PARQUET')");
++        assertUpdate("INSERT INTO test_parquet_decimal_predicate_pushdown VALUES DECIMAL '12.345'", 1);
++
++        assertQuery("SELECT * FROM test_parquet_decimal_predicate_pushdown", "VALUES 12.345");
++        assertQuery("SELECT count(*) FROM test_parquet_decimal_predicate_pushdown WHERE decimal_t = DECIMAL '12.345'", "VALUES 1");
++
++        assertNoDataRead("SELECT * FROM test_parquet_decimal_predicate_pushdown WHERE decimal_t < DECIMAL '12.345'");
++        assertNoDataRead("SELECT * FROM test_parquet_decimal_predicate_pushdown WHERE decimal_t > DECIMAL '12.345'");
++        assertNoDataRead("SELECT * FROM test_parquet_decimal_predicate_pushdown WHERE decimal_t != DECIMAL '12.345'");
++    }
++
++    @Test
++    public void testParquetLongDecimalPredicatePushdown()
++    {
++        assertUpdate("DROP TABLE IF EXISTS test_parquet_long_decimal_predicate_pushdown");
++        assertUpdate("CREATE TABLE test_parquet_long_decimal_predicate_pushdown (decimal_t DECIMAL(20, 3)) WITH (format = 'PARQUET')");
++        assertUpdate("INSERT INTO test_parquet_long_decimal_predicate_pushdown VALUES DECIMAL '12345678900000000.345'", 1);
++
++        assertQuery("SELECT * FROM test_parquet_long_decimal_predicate_pushdown", "VALUES 12345678900000000.345");
++        assertQuery("SELECT count(*) FROM test_parquet_long_decimal_predicate_pushdown WHERE decimal_t = DECIMAL '12345678900000000.345'", "VALUES 1");
++
++        assertNoDataRead("SELECT * FROM test_parquet_long_decimal_predicate_pushdown WHERE decimal_t < DECIMAL '12345678900000000.345'");
++        assertNoDataRead("SELECT * FROM test_parquet_long_decimal_predicate_pushdown WHERE decimal_t > DECIMAL '12345678900000000.345'");
++        assertNoDataRead("SELECT * FROM test_parquet_long_decimal_predicate_pushdown WHERE decimal_t != DECIMAL '12345678900000000.345'");
++    }
++
++    private void assertNoDataRead(@Language("SQL") String sql)
++    {
++        // TODO: replace this with a simple query stats check once we find a way to wait until all pending updates to query stats have been applied
++        // (might be fixed by https://github.com/trinodb/trino/issues/5172)
++        assertEventually(new Duration(5, SECONDS), () -> {
++            DistributedQueryRunner queryRunner = getDistributedQueryRunner();
++            ResultWithQueryId<MaterializedResult> queryResult = queryRunner.executeWithQueryId(getSession(), sql);
++            assertEquals(getQueryInfo(queryRunner, queryResult).getQueryStats().getProcessedInputDataSize().toBytes(), 0);
++            assertThat(queryResult.getResult().getRowCount()).isEqualTo(0);
++        });
++    }
++
+     private QueryInfo getQueryInfo(DistributedQueryRunner queryRunner, ResultWithQueryId<MaterializedResult> queryResult)
+     {
+         return queryRunner.getCoordinator().getQueryManager().getFullQueryInfo(queryResult.getQueryId());

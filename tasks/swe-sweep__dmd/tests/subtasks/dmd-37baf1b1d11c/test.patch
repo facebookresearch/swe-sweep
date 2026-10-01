@@ -1,0 +1,31 @@
+diff --git a/compiler/test/fail_compilation/test23905.d b/compiler/test/fail_compilation/test23905.d
+new file mode 100644
+index 0000000000..5b30fa855e
+--- /dev/null
++++ b/compiler/test/fail_compilation/test23905.d
+@@ -0,0 +1,25 @@
++// https://issues.dlang.org/show_bug.cgi?id=23905
++
++/*
++TEST_OUTPUT:
++---
++fail_compilation/test23905.d(24): Error: enum `test23905.Foo` is opaque and has no default initializer
++---
++*/
++
++struct SumType(T)
++{
++    T storage;
++
++    bool opEquals(Rhs)(Rhs rhs)
++    if (is(typeof(Rhs.init)))
++    {
++    }
++
++}
++
++enum Foo;
++
++void main(){
++    SumType!Foo data = Foo.init;
++}

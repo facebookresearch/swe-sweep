@@ -1,0 +1,28 @@
+diff --git a/activerecord/test/cases/relation/where_test.rb b/activerecord/test/cases/relation/where_test.rb
+index f911ed5c446..9ca3e23cc34 100644
+--- a/activerecord/test/cases/relation/where_test.rb
++++ b/activerecord/test/cases/relation/where_test.rb
+@@ -410,6 +410,11 @@ module ActiveRecord
+       assert_equal essays(:david_modest_proposal), essay
+     end
+ 
++    def test_where_on_association_with_collection_polymorphic_relation
++      treasures = Treasure.where(name: ["diamond", "emerald"], price_estimates: PriceEstimate.all)
++      assert_equal [treasures(:diamond)], treasures
++    end
++
+     def test_where_with_strong_parameters
+       author = authors(:david)
+       params = ProtectedParams.new(name: author.name)
+diff --git a/activerecord/test/fixtures/treasures.yml b/activerecord/test/fixtures/treasures.yml
+index 9db15798fd4..4d3d760f053 100644
+--- a/activerecord/test/fixtures/treasures.yml
++++ b/activerecord/test/fixtures/treasures.yml
+@@ -8,3 +8,7 @@ sapphire:
+ ruby:
+   name: $LABEL
+   looter: louis (Parrot)
++
++emerald:
++  id: 1
++  name: $LABEL

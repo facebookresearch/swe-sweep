@@ -1,0 +1,15 @@
+diff --git a/transport/src/main/java/io/netty/channel/PendingWriteQueue.java b/transport/src/main/java/io/netty/channel/PendingWriteQueue.java
+index 2dcf3efd8e..16ae47bd24 100644
+--- a/transport/src/main/java/io/netty/channel/PendingWriteQueue.java
++++ b/transport/src/main/java/io/netty/channel/PendingWriteQueue.java
+@@ -144,7 +144,9 @@ public final class PendingWriteQueue {
+                     Object msg = write.msg;
+                     ChannelPromise promise = write.promise;
+                     recycle(write, false);
+-                    combiner.add(promise);
++                    if (!(promise instanceof VoidChannelPromise)) {
++                        combiner.add(promise);
++                    }
+                     ctx.write(msg, promise);
+                     write = next;
+                 }

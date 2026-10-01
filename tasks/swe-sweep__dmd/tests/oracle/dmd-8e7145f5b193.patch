@@ -1,0 +1,13 @@
+diff --git a/compiler/src/dmd/dtemplate.d b/compiler/src/dmd/dtemplate.d
+--- a/compiler/src/dmd/dtemplate.d
++++ b/compiler/src/dmd/dtemplate.d
+@@ -6229,8 +6229,7 @@
+         // minst is finalized after the 1st invocation.
+-        // tnext and tinst are only needed for the 1st invocation and
++        // tnext is only needed for the 1st invocation and
+         // cleared for further invocations.
+         TemplateInstance tnext = this.tnext;
+         TemplateInstance tinst = this.tinst;
+         this.tnext = null;
+-        this.tinst = null;
+ 

@@ -1,0 +1,12 @@
+diff --git a/lib/schema/SubdocumentPath.js b/lib/schema/SubdocumentPath.js
+index e748d6a50..1eb65207d 100644
+--- a/lib/schema/SubdocumentPath.js
++++ b/lib/schema/SubdocumentPath.js
+@@ -172,6 +172,7 @@ SubdocumentPath.prototype.cast = function(val, doc, init, priorVal, options) {
+   options = Object.assign({}, options, { priorDoc: priorVal });
+   if (init) {
+     subdoc = new Constructor(void 0, selected, doc, false, { defaults: false });
++    delete subdoc.$__.defaults;
+     subdoc.$init(val);
+     applyDefaults(subdoc, selected);
+   } else {

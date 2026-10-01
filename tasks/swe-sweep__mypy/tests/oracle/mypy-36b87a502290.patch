@@ -1,0 +1,13 @@
+diff --git a/mypy/join.py b/mypy/join.py
+index ac01d11d1..fcfc6cbaa 100644
+--- a/mypy/join.py
++++ b/mypy/join.py
+@@ -635,6 +635,8 @@ class TypeJoinVisitor(TypeVisitor[ProperType]):
+         typ = get_proper_type(typ)
+         if isinstance(typ, Instance):
+             return object_from_instance(typ)
++        elif isinstance(typ, TypeType):
++            return self.default(typ.item)
+         elif isinstance(typ, UnboundType):
+             return AnyType(TypeOfAny.special_form)
+         elif isinstance(typ, TupleType):

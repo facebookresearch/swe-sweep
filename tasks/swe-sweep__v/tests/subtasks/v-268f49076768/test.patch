@@ -1,0 +1,21 @@
+diff --git a/vlib/v/tests/if_assign_test.v b/vlib/v/tests/if_assign_test.v
+new file mode 100644
+index 000000000..2fb087bda
+--- /dev/null
++++ b/vlib/v/tests/if_assign_test.v
+@@ -0,0 +1,15 @@
++struct Foo {
++mut:
++	option ?string
++}
++
++fn test_main() {
++	mut foo := Foo{}
++	some_val := 1
++	foo.option = if some_val > 0 {
++		'awesome'
++	} else {
++		none
++	}
++	assert foo.option? == 'awesome'
++}

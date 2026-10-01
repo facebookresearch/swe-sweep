@@ -1,0 +1,46 @@
+diff --git a/src/main/java/io/reactivex/internal/operators/flowable/FlowableBufferTimed.java b/src/main/java/io/reactivex/internal/operators/flowable/FlowableBufferTimed.java
+index 4e3be8a9e..06736603f 100644
+--- a/src/main/java/io/reactivex/internal/operators/flowable/FlowableBufferTimed.java
++++ b/src/main/java/io/reactivex/internal/operators/flowable/FlowableBufferTimed.java
+@@ -501,13 +501,14 @@ public final class FlowableBufferTimed<T, U extends Collection<? super T>> exten
+                 buffer = null;
+             }
+ 
+-            queue.offer(b);
+-            done = true;
+-            if (enter()) {
+-                QueueDrainHelper.drainMaxLoop(queue, downstream, false, this, this);
++            if (b != null) {
++                queue.offer(b);
++                done = true;
++                if (enter()) {
++                    QueueDrainHelper.drainMaxLoop(queue, downstream, false, this, this);
++                }
++                w.dispose();
+             }
+-
+-            w.dispose();
+         }
+ 
+         @Override
+diff --git a/src/main/java/io/reactivex/internal/operators/observable/ObservableBufferTimed.java b/src/main/java/io/reactivex/internal/operators/observable/ObservableBufferTimed.java
+index 8a6fafea6..b9f692db9 100644
+--- a/src/main/java/io/reactivex/internal/operators/observable/ObservableBufferTimed.java
++++ b/src/main/java/io/reactivex/internal/operators/observable/ObservableBufferTimed.java
+@@ -504,10 +504,12 @@ extends AbstractObservableWithUpstream<T, U> {
+                 buffer = null;
+             }
+ 
+-            queue.offer(b);
+-            done = true;
+-            if (enter()) {
+-                QueueDrainHelper.drainLoop(queue, downstream, false, this, this);
++            if (b != null) {
++                queue.offer(b);
++                done = true;
++                if (enter()) {
++                    QueueDrainHelper.drainLoop(queue, downstream, false, this, this);
++                }
+             }
+         }
+ 

@@ -1,0 +1,18 @@
+diff --git a/test-data/unit/check-python310.test b/test-data/unit/check-python310.test
+index bb8f038eb..80fd64fa3 100644
+--- a/test-data/unit/check-python310.test
++++ b/test-data/unit/check-python310.test
+@@ -2289,3 +2289,13 @@ def f(x: Tuple[Unpack[Ts]]) -> None:
+             reveal_type(b3)  # N: Revealed type is "builtins.list[builtins.object]"
+             reveal_type(c3)  # N: Revealed type is "builtins.int"
+ [builtins fixtures/tuple.pyi]
++
++[case testAssignmentToFinalInMatchCaseNotAllowed]
++from typing import Final
++
++FOO: Final[int] = 10
++
++val: int = 8
++match val:
++    case FOO:  # E: Cannot assign to final name "FOO"
++        pass

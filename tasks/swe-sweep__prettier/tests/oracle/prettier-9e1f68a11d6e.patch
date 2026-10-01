@@ -1,0 +1,14 @@
+diff --git a/src/language-yaml/print/mapping-item.js b/src/language-yaml/print/mapping-item.js
+index 43a837b23..e5e4bd8a8 100644
+--- a/src/language-yaml/print/mapping-item.js
++++ b/src/language-yaml/print/mapping-item.js
+@@ -76,7 +76,8 @@ function printMappingItem(path, options, print) {
+     !hasLeadingComments(value.content) &&
+     !hasMiddleComments(value.content) &&
+     !hasEndComments(value) &&
+-    isAbsolutelyPrintedAsSingleLineNode(value.content, options)
++    isAbsolutelyPrintedAsSingleLineNode(value.content, options) &&
++    isAbsolutelyPrintedAsSingleLineNode(key.content, options)
+   ) {
+     return [printedKey, spaceBeforeColon, ": ", printedValue];
+   }

@@ -1,0 +1,22 @@
+diff --git a/vlib/v/checker/checker.v b/vlib/v/checker/checker.v
+index c2ce720..66f0ed8 100644
+--- a/vlib/v/checker/checker.v
++++ b/vlib/v/checker/checker.v
+@@ -2878,7 +2878,7 @@ fn (mut c Checker) cast_expr(mut node ast.CastExpr) ast.Type {
+ 			tt := c.table.type_to_str(to_type)
+ 			c.error('cannot cast `${ft}` to `${tt}`', node.pos)
+ 		}
+-	} else if to_sym.kind == .interface_ {
++	} else if !from_type.has_flag(.option) && !from_type.has_flag(.result) && to_sym.kind == .interface_ {
+ 		if c.type_implements(from_type, to_type, node.pos) {
+ 			if !from_type.is_ptr() && !from_type.is_pointer() && from_sym.kind != .interface_
+ 				&& !c.inside_unsafe {
+@@ -2904,7 +2904,7 @@ fn (mut c Checker) cast_expr(mut node ast.CastExpr) ast.Type {
+ 	} else if from_type == ast.none_type && !to_type.has_flag(.option) && !to_type.has_flag(.result) {
+ 		type_name := c.table.type_to_str(to_type)
+ 		c.error('cannot cast `none` to `${type_name}`', node.pos)
+-	} else if from_sym.kind == .struct_ && !from_type.is_ptr() {
++	} else if !from_type.has_flag(.option) && !from_type.has_flag(.result) && from_sym.kind == .struct_ && !from_type.is_ptr() {
+ 		if (to_type.is_ptr() || to_sym.kind !in [.sum_type, .interface_]) && !c.is_builtin_mod {
+ 			from_type_name := c.table.type_to_str(from_type)
+ 			type_name := c.table.type_to_str(to_type)

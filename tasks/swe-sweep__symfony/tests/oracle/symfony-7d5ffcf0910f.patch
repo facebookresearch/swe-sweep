@@ -1,0 +1,13 @@
+diff --git a/src/Symfony/Component/Validator/Constraints/LocaleValidator.php b/src/Symfony/Component/Validator/Constraints/LocaleValidator.php
+index 4cd0b120b4f..11045ca95f6 100644
+--- a/src/Symfony/Component/Validator/Constraints/LocaleValidator.php
++++ b/src/Symfony/Component/Validator/Constraints/LocaleValidator.php
+@@ -47,7 +47,7 @@ class LocaleValidator extends ConstraintValidator
+             $value = \Locale::canonicalize($value);
+         }
+ 
+-        if (!Locales::exists($value)) {
++        if (null === $value || !Locales::exists($value)) {
+             $this->context->buildViolation($constraint->message)
+                 ->setParameter('{{ value }}', $this->formatValue($inputValue))
+                 ->setCode(Locale::NO_SUCH_LOCALE_ERROR)

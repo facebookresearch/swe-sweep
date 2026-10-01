@@ -1,0 +1,15 @@
+diff --git a/dateutil/test/test_parser.py b/dateutil/test/test_parser.py
+index 0b75a76..5add2ce 100644
+--- a/dateutil/test/test_parser.py
++++ b/dateutil/test/test_parser.py
+@@ -858,4 +858,10 @@ class ParserTest(unittest.TestCase):
+         dtstr = '2015 09 25'
+         self.assertEqual(parse(dtstr, dayfirst=True, yearfirst=True),
+                          datetime(2015, 9, 25))
++
++    def test_mstridx(self):
++        # See GH408
++        dtstr = '2015-15-May'
++        self.assertEqual(parse(dtstr),
++                         datetime(2015, 5, 15))
+ 

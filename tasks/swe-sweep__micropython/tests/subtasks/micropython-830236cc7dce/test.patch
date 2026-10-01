@@ -1,0 +1,21 @@
+diff --git a/tests/basics/builtin_super.py b/tests/basics/builtin_super.py
+new file mode 100644
+index 000000000..5f7c3ae01
+--- /dev/null
++++ b/tests/basics/builtin_super.py
+@@ -0,0 +1,15 @@
++# Check that super rejects invalid arguments.
++try:
++    super(str, 0)
++except TypeError:
++    print("TypeError")
++
++try:
++    super(str, int)
++except TypeError:
++    print("TypeError")
++
++try:
++    super(0, int)
++except TypeError:
++    print("TypeError")

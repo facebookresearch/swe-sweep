@@ -1,0 +1,33 @@
+diff --git a/crates/swc/tests/fixture/issues-4xxx/4855/input/1/.swcrc b/crates/swc/tests/fixture/issues-4xxx/4855/input/1/.swcrc
+new file mode 100644
+index 0000000000..1707471b6a
+--- /dev/null
++++ b/crates/swc/tests/fixture/issues-4xxx/4855/input/1/.swcrc
+@@ -0,0 +1,18 @@
++{
++    "jsc": {
++        "externalHelpers": true,
++        "parser": {
++            "syntax": "ecmascript",
++            "jsx": false
++        },
++        "target": "es2022",
++        "loose": false,
++        "minify": {
++            "compress": true,
++            "mangle": true
++        }
++    },
++    "module": {
++        "type": "es6"
++    }
++}
+\ No newline at end of file
+diff --git a/crates/swc/tests/fixture/issues-4xxx/4855/input/1/input.js b/crates/swc/tests/fixture/issues-4xxx/4855/input/1/input.js
+new file mode 100644
+index 0000000000..49e98f1f32
+--- /dev/null
++++ b/crates/swc/tests/fixture/issues-4xxx/4855/input/1/input.js
+@@ -0,0 +1,2 @@
++if (typeof process === "undefined") {
++}

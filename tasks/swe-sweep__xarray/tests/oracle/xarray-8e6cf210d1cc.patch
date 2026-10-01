@@ -1,0 +1,15 @@
+diff --git a/xarray/plot/plot.py b/xarray/plot/plot.py
+index 8afd87ea..54f3c657 100644
+--- a/xarray/plot/plot.py
++++ b/xarray/plot/plot.py
+@@ -264,7 +264,9 @@ def plot(
+     --------
+     xarray.DataArray.squeeze
+     """
+-    darray = darray.squeeze().compute()
++    darray = darray.squeeze(
++        d for d, s in darray.sizes.items() if s == 1 and d not in (row, col, hue)
++    ).compute()
+ 
+     plot_dims = set(darray.dims)
+     plot_dims.discard(row)

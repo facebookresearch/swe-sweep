@@ -1,0 +1,47 @@
+diff --git a/compiler/src/dmd/aggregate.d b/compiler/src/dmd/aggregate.d
+index bf98e36e3c..2776216500 100644
+--- a/compiler/src/dmd/aggregate.d
++++ b/compiler/src/dmd/aggregate.d
+@@ -99,7 +99,7 @@ extern (C++) abstract class AggregateDeclaration : ScopeDsymbol
+     StorageClass storage_class; ///
+     uint structsize;            /// size of struct
+     uint alignsize;             /// size of struct for alignment purposes
+-    VarDeclarations fields;     /// VarDeclaration fields
++    VarDeclarations fields;     /// VarDeclaration fields including flattened AnonDeclaration members
+     Dsymbol deferred;           /// any deferred semantic2() or semantic3() symbol
+ 
+     /// specifies whether this is a D, C++, Objective-C or anonymous struct/class/interface
+diff --git a/compiler/src/dmd/dstruct.d b/compiler/src/dmd/dstruct.d
+index bb33a687e5..26a9de5439 100644
+--- a/compiler/src/dmd/dstruct.d
++++ b/compiler/src/dmd/dstruct.d
+@@ -230,8 +230,18 @@ extern (C++) class StructDeclaration : AggregateDeclaration
+ 
+         // Determine if struct is all zeros or not
+         zeroInit = true;
++        auto lastOffset = -1;
+         foreach (vd; fields)
+         {
++            // First skip zero sized fields
++            if (vd.type.size(vd.loc) == 0)
++                continue;
++
++            // only consider first sized member of an (anonymous) union
++            if (vd.overlapped && vd.offset == lastOffset)
++                continue;
++            lastOffset = vd.offset;
++
+             if (vd._init)
+             {
+                 if (vd._init.isVoidInitializer())
+@@ -240,10 +250,6 @@ extern (C++) class StructDeclaration : AggregateDeclaration
+                      */
+                     continue;
+ 
+-                // Zero size fields are zero initialized
+-                if (vd.type.size(vd.loc) == 0)
+-                    continue;
+-
+                 // Examine init to see if it is all 0s.
+                 auto exp = vd.getConstInitializer();
+                 if (!exp || !_isZeroInit(exp))

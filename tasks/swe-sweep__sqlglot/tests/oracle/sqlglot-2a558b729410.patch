@@ -1,0 +1,13 @@
+diff --git a/sqlglot/dialects/trino.py b/sqlglot/dialects/trino.py
+index 2fa4389895..5f95ae29b8 100644
+--- a/sqlglot/dialects/trino.py
++++ b/sqlglot/dialects/trino.py
+@@ -26,6 +26,8 @@ class Trino(Presto):
+             **dict.fromkeys(
+                 ("WITH", "WITHOUT"),
+                 (
++                    ("WRAPPER"),
++                    ("ARRAY", "WRAPPER"),
+                     ("CONDITIONAL", "WRAPPER"),
+                     ("CONDITIONAL", "ARRAY", "WRAPPED"),
+                     ("UNCONDITIONAL", "WRAPPER"),

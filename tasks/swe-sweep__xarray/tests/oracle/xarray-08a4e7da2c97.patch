@@ -1,0 +1,13 @@
+diff --git a/xarray/coding/calendar_ops.py b/xarray/coding/calendar_ops.py
+index ec5a7efb..5fdd106e 100644
+--- a/xarray/coding/calendar_ops.py
++++ b/xarray/coding/calendar_ops.py
+@@ -201,7 +201,7 @@ def convert_calendar(
+         out[dim] = new_times
+ 
+         # Remove NaN that where put on invalid dates in target calendar
+-        out = out.where(out[dim].notnull(), drop=True)
++        out = out.sel(time=out[dim].notnull())
+ 
+     if missing is not None:
+         time_target = date_range_like(time, calendar=calendar, use_cftime=use_cftime)

@@ -1,0 +1,50 @@
+diff --git a/src/Compilers/CSharp/Portable/SymbolDisplay/SymbolDisplayVisitor.Types.cs b/src/Compilers/CSharp/Portable/SymbolDisplay/SymbolDisplayVisitor.Types.cs
+index fe0462cc6d6..bc586c6b8d0 100644
+--- a/src/Compilers/CSharp/Portable/SymbolDisplay/SymbolDisplayVisitor.Types.cs
++++ b/src/Compilers/CSharp/Portable/SymbolDisplay/SymbolDisplayVisitor.Types.cs
+@@ -402,12 +402,16 @@ namespace Microsoft.CodeAnalysis.CSharp
+ 
+             if (Format.CompilerInternalOptions.IncludesOption(SymbolDisplayCompilerInternalOptions.UseArityForGenericTypes))
+             {
+-                // Only the compiler can set the internal option and the compiler doesn't use other implementations of INamedTypeSymbol.
+-                if (underlyingTypeSymbol?.MangleName == true)
++                if (symbol.Arity > 0)
+                 {
+-                    Debug.Assert(symbol.Arity > 0);
+-                    Builder.Add(CreatePart(InternalSymbolDisplayPartKind.Arity, null,
+-                        MetadataHelpers.GetAritySuffix(symbol.Arity)));
++                    string suffix = MetadataHelpers.GetAritySuffix(symbol.Arity);
++
++                    if (underlyingTypeSymbol is not null ? underlyingTypeSymbol.MangleName : (symbol.MetadataName == symbol.Name + suffix))
++                    {
++                        Debug.Assert(symbol.Arity > 0);
++                        Builder.Add(CreatePart(InternalSymbolDisplayPartKind.Arity, null,
++                            suffix));
++                    }
+                 }
+             }
+             else if (symbol.Arity > 0 && Format.GenericsOptions.IncludesOption(SymbolDisplayGenericsOptions.IncludeTypeParameters))
+diff --git a/src/Compilers/VisualBasic/Portable/SymbolDisplay/SymbolDisplayVisitor.Types.vb b/src/Compilers/VisualBasic/Portable/SymbolDisplay/SymbolDisplayVisitor.Types.vb
+index 1f4e0d136a1..fb967447fb6 100644
+--- a/src/Compilers/VisualBasic/Portable/SymbolDisplay/SymbolDisplayVisitor.Types.vb
++++ b/src/Compilers/VisualBasic/Portable/SymbolDisplay/SymbolDisplayVisitor.Types.vb
+@@ -280,11 +280,14 @@ Namespace Microsoft.CodeAnalysis.VisualBasic
+             Dim isMissingMetadataType As Boolean = TypeOf symbol Is MissingMetadataTypeSymbol
+ 
+             If Format.CompilerInternalOptions.IncludesOption(SymbolDisplayCompilerInternalOptions.UseArityForGenericTypes) Then
+-                ' Only the compiler can set the internal option and the compiler doesn't use other implementations of INamedTypeSymbol.
+-                If DirectCast(symbol, NamedTypeSymbol).MangleName Then
+-                    Debug.Assert(symbol.Arity > 0)
+-                    Builder.Add(CreatePart(InternalSymbolDisplayPartKind.Arity, Nothing,
+-                                           MetadataHelpers.GenericTypeNameManglingChar & symbol.Arity.ToString(), False))
++                If symbol.Arity > 0 Then
++                    Dim suffix As String = MetadataHelpers.GetAritySuffix(symbol.Arity)
++                    Dim vbNamedType = TryCast(symbol, NamedTypeSymbol)
++
++                    If If(vbNamedType IsNot Nothing, vbNamedType.MangleName, symbol.MetadataName.Equals(symbol.Name + suffix)) Then
++                        Builder.Add(CreatePart(InternalSymbolDisplayPartKind.Arity, Nothing,
++                                           suffix, False))
++                    End If
+                 End If
+             ElseIf symbol.Arity > 0 AndAlso Format.GenericsOptions.IncludesOption(SymbolDisplayGenericsOptions.IncludeTypeParameters) AndAlso Not skipTypeArguments Then
+                 If isMissingMetadataType OrElse symbol.IsUnboundGenericType Then

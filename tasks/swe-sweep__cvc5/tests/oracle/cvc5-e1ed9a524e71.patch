@@ -1,0 +1,14 @@
+diff --git a/src/preprocessing/passes/int_to_bv.cpp b/src/preprocessing/passes/int_to_bv.cpp
+index f3b6ab4f76..006423a281 100644
+--- a/src/preprocessing/passes/int_to_bv.cpp
++++ b/src/preprocessing/passes/int_to_bv.cpp
+@@ -107,7 +107,8 @@ Node intToBVMakeBinary(TNode n, NodeMap& cache)
+ 
+ Node IntToBV::intToBV(TNode n, NodeMap& cache)
+ {
+-  int size = options().smt.solveIntAsBV;
++  Assert(options().smt.solveIntAsBV <= 4294967295);
++  uint32_t size = options().smt.solveIntAsBV;
+   AlwaysAssert(size > 0);
+   AlwaysAssert(!options().base.incrementalSolving);
+ 

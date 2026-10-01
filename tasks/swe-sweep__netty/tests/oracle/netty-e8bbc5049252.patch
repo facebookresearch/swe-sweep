@@ -1,0 +1,13 @@
+diff --git a/codec/src/main/java/io/netty/handler/codec/LineBasedFrameDecoder.java b/codec/src/main/java/io/netty/handler/codec/LineBasedFrameDecoder.java
+index 305981b762..58f2e85f04 100644
+--- a/codec/src/main/java/io/netty/handler/codec/LineBasedFrameDecoder.java
++++ b/codec/src/main/java/io/netty/handler/codec/LineBasedFrameDecoder.java
+@@ -137,6 +137,8 @@ public class LineBasedFrameDecoder extends ByteToMessageDecoder {
+             } else {
+                 discardedBytes += buffer.readableBytes();
+                 buffer.readerIndex(buffer.writerIndex());
++                // We skip everything in the buffer, we need to set the offset to 0 again.
++                offset = 0;
+             }
+             return null;
+         }

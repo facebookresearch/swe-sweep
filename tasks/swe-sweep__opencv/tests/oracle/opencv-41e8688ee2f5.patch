@@ -1,0 +1,25 @@
+diff --git a/modules/imgproc/src/shapedescr.cpp b/modules/imgproc/src/shapedescr.cpp
+index fe5664abf2..9be6038d9d 100644
+--- a/modules/imgproc/src/shapedescr.cpp
++++ b/modules/imgproc/src/shapedescr.cpp
+@@ -1056,16 +1056,12 @@ static Rect maskBoundingRect( const Mat& img )
+         for( ; j < offset; j++ )
+             if( _ptr[j] )
+             {
++                if( j < xmin )
++                    xmin = j;
++                if( j > xmax )
++                    xmax = j;
+                 have_nz = 1;
+-                break;
+             }
+-        if( j < offset )
+-        {
+-            if( j < xmin )
+-                xmin = j;
+-            if( j > xmax )
+-                xmax = j;
+-        }
+         if( offset < size.width )
+         {
+             xmin -= offset;

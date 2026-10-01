@@ -1,0 +1,35 @@
+diff --git a/autotest/gdrivers/mrf.py b/autotest/gdrivers/mrf.py
+index 63c9fe37de..957c0d6a56 100755
+--- a/autotest/gdrivers/mrf.py
++++ b/autotest/gdrivers/mrf.py
+@@ -33,7 +33,7 @@ import glob
+ import gdaltest
+ import pytest
+ 
+-from osgeo import gdal
++from osgeo import gdal, osr
+ 
+ pytestmark = pytest.mark.require_driver("MRF")
+ 
+@@ -626,6 +626,21 @@ def test_mrf_versioned():
+     cleanup()
+ 
+ 
++def test_mrf_setspatialref():
++
++    filename = "/vsimem/out.mrf"
++    ds = gdal.GetDriverByName("MRF").Create(filename, 1, 1)
++    srs = osr.SpatialReference()
++    srs.ImportFromEPSG(32631)
++    ds.SetSpatialRef(srs)
++    ds = None
++    gdal.Unlink(filename + ".aux.xml")
++    ds = gdal.Open(filename)
++    assert ds.GetSpatialRef().GetAuthorityCode(None) == "32631"
++    ds = None
++    gdal.GetDriverByName("MRF").Delete(filename)
++
++
+ def test_mrf_cleanup():
+ 
+     files = (

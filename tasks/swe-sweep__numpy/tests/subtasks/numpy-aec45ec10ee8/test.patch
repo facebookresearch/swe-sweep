@@ -1,0 +1,13 @@
+diff --git a/numpy/core/tests/test_deprecations.py b/numpy/core/tests/test_deprecations.py
+index 5d66d963fff8..10ef16800d93 100644
+--- a/numpy/core/tests/test_deprecations.py
++++ b/numpy/core/tests/test_deprecations.py
+@@ -504,3 +504,8 @@ class TestGeneratorSum(_DeprecationTestCase):
+     # 2018-02-25, 1.15.0
+     def test_generator_sum(self):
+         self.assert_deprecated(np.sum, args=((i for i in range(5)),))
++
++class TestFromstring(_DeprecationTestCase):
++    # 2017-10-19, 1.14
++    def test_fromstring(self):
++        self.assert_deprecated(np.fromstring, args=('\x00'*80,))

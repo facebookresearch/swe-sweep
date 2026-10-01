@@ -1,0 +1,13 @@
+diff --git a/pandas/io/sas/sas7bdat.py b/pandas/io/sas/sas7bdat.py
+index debd686475..1e071690d3 100644
+--- a/pandas/io/sas/sas7bdat.py
++++ b/pandas/io/sas/sas7bdat.py
+@@ -737,7 +737,7 @@ class SAS7BDATReader(ReaderBase, abc.Iterator):
+             self.close()
+             raise EmptyDataError("No columns to parse from file")
+ 
+-        if self._current_row_in_file_index >= self.row_count:
++        if nrows > 0 and self._current_row_in_file_index >= self.row_count:
+             return None
+ 
+         m = self.row_count - self._current_row_in_file_index

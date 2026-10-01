@@ -1,0 +1,23 @@
+diff --git a/buffer/src/test/java/io/netty/buffer/EmptyByteBufTest.java b/buffer/src/test/java/io/netty/buffer/EmptyByteBufTest.java
+--- a/buffer/src/test/java/io/netty/buffer/EmptyByteBufTest.java
++++ b/buffer/src/test/java/io/netty/buffer/EmptyByteBufTest.java
+@@ -14,6 +14,7 @@
+  * under the License.
+  */package io.netty.buffer;
+ 
++import io.netty.util.CharsetUtil;
+ import org.junit.Test;
+ 
+ import static org.hamcrest.Matchers.*;
+@@ -80,4 +81,11 @@ public class EmptyByteBufTest {
+             }
+         }
+     }
++
++    @Test
++    public void testGetCharSequence() {
++        EmptyByteBuf empty = new EmptyByteBuf(UnpooledByteBufAllocator.DEFAULT);
++        assertEquals("", empty.readCharSequence(0, CharsetUtil.US_ASCII));
++    }
++
+ }

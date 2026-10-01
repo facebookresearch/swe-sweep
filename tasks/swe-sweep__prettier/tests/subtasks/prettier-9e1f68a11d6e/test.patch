@@ -1,0 +1,53 @@
+diff --git a/tests/format/yaml/mapping/long-key/__snapshots__/format.test.js.snap b/tests/format/yaml/mapping/long-key/__snapshots__/format.test.js.snap
+new file mode 100644
+index 000000000..09830db1b
+--- /dev/null
++++ b/tests/format/yaml/mapping/long-key/__snapshots__/format.test.js.snap
+@@ -0,0 +1,32 @@
++// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
++
++exports[`test.yml - {"proseWrap":"always"} format 1`] = `
++====================================options=====================================
++parsers: ["yaml"]
++printWidth: 80
++proseWrap: "always"
++                                                                                | printWidth
++=====================================input======================================
++long long long long long long long long long long long long long long long long long long key: bar
++
++=====================================output=====================================
++? long long long long long long long long long long long long long long long
++  long long long key
++: bar
++
++================================================================================
++`;
++
++exports[`test.yml format 1`] = `
++====================================options=====================================
++parsers: ["yaml"]
++printWidth: 80
++                                                                                | printWidth
++=====================================input======================================
++long long long long long long long long long long long long long long long long long long key: bar
++
++=====================================output=====================================
++long long long long long long long long long long long long long long long long long long key: bar
++
++================================================================================
++`;
+diff --git a/tests/format/yaml/mapping/long-key/format.test.js b/tests/format/yaml/mapping/long-key/format.test.js
+new file mode 100644
+index 000000000..53b7e02d8
+--- /dev/null
++++ b/tests/format/yaml/mapping/long-key/format.test.js
+@@ -0,0 +1,2 @@
++runFormatTest(import.meta, ["yaml"]);
++runFormatTest(import.meta, ["yaml"], { proseWrap: "always" });
+diff --git a/tests/format/yaml/mapping/long-key/test.yml b/tests/format/yaml/mapping/long-key/test.yml
+new file mode 100644
+index 000000000..283259fe2
+--- /dev/null
++++ b/tests/format/yaml/mapping/long-key/test.yml
+@@ -0,0 +1 @@
++long long long long long long long long long long long long long long long long long long key: bar

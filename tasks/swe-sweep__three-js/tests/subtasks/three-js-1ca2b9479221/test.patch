@@ -1,0 +1,58 @@
+diff --git a/test/unit/src/objects/BatchedMesh.tests.js b/test/unit/src/objects/BatchedMesh.tests.js
+new file mode 100644
+index 0000000000..77d36dc3d6
+--- /dev/null
++++ b/test/unit/src/objects/BatchedMesh.tests.js
+@@ -0,0 +1,40 @@
++/* global QUnit */
++
++import { BatchedMesh } from '../../../../src/objects/BatchedMesh.js';
++import { BoxGeometry } from '../../../../src/geometries/BoxGeometry.js';
++import { MeshBasicMaterial } from '../../../../src/materials/MeshBasicMaterial.js';
++
++export default QUnit.module( 'Objects', () => {
++
++	QUnit.module( 'BatchedMesh', () => {
++
++		// PUBLIC
++
++		QUnit.test( 'setInstanceCount', ( assert ) => {
++
++			const box = new BoxGeometry( 1, 1, 1 );
++			const material = new MeshBasicMaterial( { color: 0x00ff00 } );
++			
++			// initialize and add a geometry into the batched mesh
++			const batchedMesh = new BatchedMesh( 4, 5000, 10000, material );
++			const boxGeometryId = batchedMesh.addGeometry( box );
++			
++			// create instances of this geometry
++			let boxInstanceIds = [];
++			for (let i = 0; i < 4; i++){
++				boxInstanceIds.push( batchedMesh.addInstance( boxGeometryId ) );
++			}
++			
++			batchedMesh.deleteInstance( boxInstanceIds[2] );
++			batchedMesh.deleteInstance( boxInstanceIds[3] );
++
++			// shrink the instance count
++			batchedMesh.setInstanceCount(2);
++
++			assert.ok( batchedMesh.instanceCount === 2, 'instance count unequal 2' );
++
++		} );
++
++	} );
++
++} );
+diff --git a/test/unit/three.source.unit.js b/test/unit/three.source.unit.js
+index 22316aa5d2..37ea95329d 100644
+--- a/test/unit/three.source.unit.js
++++ b/test/unit/three.source.unit.js
+@@ -215,6 +215,7 @@ import './src/math/interpolants/QuaternionLinearInterpolant.tests.js';
+ 
+ //src/objects
+ import './src/objects/Bone.tests.js';
++import './src/objects/BatchedMesh.tests.js';
+ import './src/objects/Group.tests.js';
+ import './src/objects/InstancedMesh.tests.js';
+ import './src/objects/Line.tests.js';

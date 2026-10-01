@@ -1,0 +1,52 @@
+diff --git a/modules/openapi-generator/src/main/java/org/openapitools/codegen/languages/AbstractPythonCodegen.java b/modules/openapi-generator/src/main/java/org/openapitools/codegen/languages/AbstractPythonCodegen.java
+index 510cf09b44c..53211951425 100644
+--- a/modules/openapi-generator/src/main/java/org/openapitools/codegen/languages/AbstractPythonCodegen.java
++++ b/modules/openapi-generator/src/main/java/org/openapitools/codegen/languages/AbstractPythonCodegen.java
+@@ -248,6 +248,10 @@ public abstract class AbstractPythonCodegen extends DefaultCodegen implements Co
+             return nameMapping.get(name);
+         }
+ 
++        return toVarNameWithoutNameMapping(name);
++    }
++
++    private String toVarNameWithoutNameMapping(String name) {
+         // sanitize name
+         name = sanitizeName(name); // FIXME: a parameter should not be assigned. Also declare the methods parameters as 'final'.
+ 
+@@ -291,8 +295,8 @@ public abstract class AbstractPythonCodegen extends DefaultCodegen implements Co
+             return "param_callback";
+         }
+ 
+-        // should be the same as variable name
+-        return toVarName(name);
++        // use variable-name normalization without model property mappings
++        return toVarNameWithoutNameMapping(name);
+     }
+ 
+     @Override
+diff --git a/modules/openapi-generator/src/main/java/org/openapitools/codegen/languages/AbstractPythonPydanticV1Codegen.java b/modules/openapi-generator/src/main/java/org/openapitools/codegen/languages/AbstractPythonPydanticV1Codegen.java
+index 297044bfc60..3ad59085e7a 100644
+--- a/modules/openapi-generator/src/main/java/org/openapitools/codegen/languages/AbstractPythonPydanticV1Codegen.java
++++ b/modules/openapi-generator/src/main/java/org/openapitools/codegen/languages/AbstractPythonPydanticV1Codegen.java
+@@ -215,6 +215,10 @@ public abstract class AbstractPythonPydanticV1Codegen extends DefaultCodegen imp
+             return nameMapping.get(name);
+         }
+ 
++        return toVarNameWithoutNameMapping(name);
++    }
++
++    private String toVarNameWithoutNameMapping(String name) {
+         // sanitize name
+         name = sanitizeName(name); // FIXME: a parameter should not be assigned. Also declare the methods parameters as 'final'.
+ 
+@@ -258,8 +262,8 @@ public abstract class AbstractPythonPydanticV1Codegen extends DefaultCodegen imp
+             return "param_callback";
+         }
+ 
+-        // should be the same as variable name
+-        return toVarName(name);
++        // use variable-name normalization without model property mappings
++        return toVarNameWithoutNameMapping(name);
+     }
+ 
+     @Override

@@ -1,0 +1,25 @@
+diff --git a/Zend/tests/try/gh22280.phpt b/Zend/tests/try/gh22280.phpt
+new file mode 100644
+index 00000000000..30944aff59a
+--- /dev/null
++++ b/Zend/tests/try/gh22280.phpt
+@@ -0,0 +1,19 @@
++--TEST--
++GH-22280: goto to label before try/finally after try/catch
++--FILE--
++<?php
++goto d;
++try {
++} catch (Throwable) {
++}
++d: try {
++	echo "try\n";
++} finally {
++	echo "finally\n";
++}
++echo "done\n";
++?>
++--EXPECT--
++try
++finally
++done

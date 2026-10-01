@@ -1,0 +1,26 @@
+diff --git a/lib/helpers/schema/applyWriteConcern.js b/lib/helpers/schema/applyWriteConcern.js
+index 4095bd94b..fcce08f84 100644
+--- a/lib/helpers/schema/applyWriteConcern.js
++++ b/lib/helpers/schema/applyWriteConcern.js
+@@ -3,6 +3,9 @@
+ const get = require('../get');
+ 
+ module.exports = function applyWriteConcern(schema, options) {
++  if (options.writeConcern != null) {
++    return;
++  }
+   const writeConcern = get(schema, 'options.writeConcern', {});
+   if (Object.keys(writeConcern).length != 0) {
+     options.writeConcern = {};
+diff --git a/lib/query.js b/lib/query.js
+index ac2eab0f1..44823cd05 100644
+--- a/lib/query.js
++++ b/lib/query.js
+@@ -1968,7 +1968,6 @@ Query.prototype._optionsForExec = function(model) {
+   if (!model) {
+     return options;
+   }
+-
+   // Apply schema-level `writeConcern` option
+   applyWriteConcern(model.schema, options);
+ 

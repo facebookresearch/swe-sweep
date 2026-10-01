@@ -1,0 +1,62 @@
+diff --git a/scipy/interpolate/fitpack2.py b/scipy/interpolate/fitpack2.py
+index 822ad0c521..d9588da764 100644
+--- a/scipy/interpolate/fitpack2.py
++++ b/scipy/interpolate/fitpack2.py
+@@ -1432,8 +1432,6 @@ class SphereBivariateSpline(_BivariateSplineBase):
+ 
+         if theta.size > 0 and (theta.min() < 0. or theta.max() > np.pi):
+             raise ValueError("requested theta out of bounds.")
+-        if phi.size > 0 and (phi.min() < 0. or phi.max() > 2. * np.pi):
+-            raise ValueError("requested phi out of bounds.")
+ 
+         return _BivariateSplineBase.__call__(self, theta, phi,
+                                              dx=dtheta, dy=dphi, grid=grid)
+@@ -1591,6 +1589,17 @@ class SmoothSphereBivariateSpline(SphereBivariateSpline):
+         self.tck = tt_[:nt_], tp_[:np_], c[:(nt_ - 4) * (np_ - 4)]
+         self.degrees = (3, 3)
+ 
++    def __call__(self, theta, phi, dtheta=0, dphi=0, grid=True):
++
++        theta = np.asarray(theta)
++        phi = np.asarray(phi)
++
++        if phi.size > 0 and (phi.min() < 0. or phi.max() > 2. * np.pi):
++            raise ValueError("requested phi out of bounds.")
++
++        return SphereBivariateSpline.__call__(self, theta, phi, dtheta=dtheta,
++                                              dphi=dphi, grid=grid)
++
+ 
+ class LSQSphereBivariateSpline(SphereBivariateSpline):
+     """
+@@ -1735,6 +1744,17 @@ class LSQSphereBivariateSpline(SphereBivariateSpline):
+         self.tck = tt_, tp_, c
+         self.degrees = (3, 3)
+ 
++    def __call__(self, theta, phi, dtheta=0, dphi=0, grid=True):
++
++        theta = np.asarray(theta)
++        phi = np.asarray(phi)
++
++        if phi.size > 0 and (phi.min() < 0. or phi.max() > 2. * np.pi):
++            raise ValueError("requested phi out of bounds.")
++
++        return SphereBivariateSpline.__call__(self, theta, phi, dtheta=dtheta,
++                                              dphi=dphi, grid=grid)
++
+ 
+ _spfit_messages = _surfit_messages.copy()
+ _spfit_messages[10] = """
+@@ -1989,3 +2009,12 @@ class RectSphereBivariateSpline(SphereBivariateSpline):
+         self.fp = fp
+         self.tck = tu[:nu], tv[:nv], c[:(nu - 4) * (nv-4)]
+         self.degrees = (3, 3)
++        self.v0 = v[0]
++
++    def __call__(self, theta, phi, dtheta=0, dphi=0, grid=True):
++
++        theta = np.asarray(theta)
++        phi = np.asarray(phi)
++
++        return SphereBivariateSpline.__call__(self, theta, phi, dtheta=dtheta,
++                                              dphi=dphi, grid=grid)

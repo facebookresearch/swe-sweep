@@ -1,0 +1,13 @@
+diff --git a/src/Symfony/Bridge/Twig/Mime/WrappedTemplatedEmail.php b/src/Symfony/Bridge/Twig/Mime/WrappedTemplatedEmail.php
+index 1feedc20370..b74769346c5 100644
+--- a/src/Symfony/Bridge/Twig/Mime/WrappedTemplatedEmail.php
++++ b/src/Symfony/Bridge/Twig/Mime/WrappedTemplatedEmail.php
+@@ -92,7 +92,7 @@ final class WrappedTemplatedEmail
+ 
+     public function getReturnPath(): string
+     {
+-        return $this->message->getReturnPath();
++        return $this->message->getReturnPath()?->toString() ?? '';
+     }
+ 
+     /**

@@ -1,0 +1,40 @@
+diff --git a/astropy/units/quantity_helper/function_helpers.py b/astropy/units/quantity_helper/function_helpers.py
+index 17f1438..4a8d060 100644
+--- a/astropy/units/quantity_helper/function_helpers.py
++++ b/astropy/units/quantity_helper/function_helpers.py
+@@ -77,8 +77,7 @@ SUBCLASS_SAFE_FUNCTIONS |= {
+     np.isposinf, np.isneginf, np.isreal, np.iscomplex,
+     np.average, np.mean, np.std, np.var, np.median, np.trace,
+     np.nanmax, np.nanmin, np.nanargmin, np.nanargmax, np.nanmean,
+-    np.nanmedian, np.nansum, np.nancumsum, np.nanstd, np.nanvar,
+-    np.nanprod, np.nancumprod,
++    np.nanmedian, np.nansum, np.nancumsum, np.nanprod, np.nancumprod,
+     np.einsum_path, np.trapz, np.linspace,
+     np.sort, np.msort, np.partition, np.meshgrid,
+     np.common_type, np.result_type, np.can_cast, np.min_scalar_type,
+@@ -169,6 +168,7 @@ dispatched_function = FunctionAssigner(DISPATCHED_FUNCTIONS)
+         np.fft.fft2, np.fft.ifft2, np.fft.rfft2, np.fft.irfft2,
+         np.fft.fftn, np.fft.ifftn, np.fft.rfftn, np.fft.irfftn,
+         np.fft.hfft, np.fft.ihfft,
++        np.nanstd,  # See comment on nanvar helper.
+         np.linalg.eigvals, np.linalg.eigvalsh,
+     }
+ )
+@@ -203,6 +203,17 @@ def like_helper(a, *args, **kwargs):
+     return (a.view(np.ndarray),) + args, kwargs, unit, None
+ 
+ 
++# nanvar is safe for Quantity and was previously in SUBCLASS_FUNCTIONS, but it
++# is not safe for Angle, since the resulting unit is inconsistent with being
++# an Angle. By using FUNCTION_HELPERS, the unit gets passed through
++# _result_as_quantity, which will correctly drop to Quantity.
++# A side effect would be that np.nanstd then also produces Quantity; this
++# is avoided by it being helped by invariant_a_helpers above.
++@function_helper
++def nanvar(a, *args, **kwargs):
++    return (a.view(np.ndarray),) + args, kwargs, a.unit**2, None
++
++
+ @function_helper
+ def sinc(x):
+     from astropy.units.si import radian

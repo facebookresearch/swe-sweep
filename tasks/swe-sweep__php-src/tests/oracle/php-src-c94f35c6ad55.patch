@@ -1,0 +1,24 @@
+diff --git a/ext/phar/phar_object.c b/ext/phar/phar_object.c
+index 8cd13e73177..a84f3c099b2 100644
+--- a/ext/phar/phar_object.c
++++ b/ext/phar/phar_object.c
+@@ -3791,9 +3791,16 @@ PHP_METHOD(Phar, addEmptyDir)
+ 
+ 	PHAR_ARCHIVE_OBJECT();
+ 
+-	if (dirname_len >= sizeof(".phar")-1 && !memcmp(dirname, ".phar", sizeof(".phar")-1)) {
+-		zend_throw_exception_ex(spl_ce_BadMethodCallException, 0, "Cannot create a directory in magic \".phar\" directory");
+-		RETURN_THROWS();
++	if (
++		(dirname_len >= sizeof(".phar")-1 && !memcmp(dirname, ".phar", sizeof(".phar")-1))
++		|| (dirname_len >= sizeof("/.phar")-1 && !memcmp(dirname, "/.phar", sizeof("/.phar")-1))
++	) {
++		size_t prefix_len = (dirname[0] == '/') + sizeof(".phar") - 1;
++		char next_char = dirname[prefix_len];
++		if (next_char == '/' || next_char == '\\' || next_char == '\0') {
++			zend_throw_exception_ex(spl_ce_BadMethodCallException, 0, "Cannot create a directory in magic \".phar\" directory");
++			RETURN_THROWS();
++		}
+ 	}
+ 
+ 	phar_mkdir(&phar_obj->archive, dirname, dirname_len);

@@ -1,0 +1,17 @@
+diff --git a/lib/matplotlib/transforms.py b/lib/matplotlib/transforms.py
+index 9a50e4bf00..e2051a4134 100644
+--- a/lib/matplotlib/transforms.py
++++ b/lib/matplotlib/transforms.py
+@@ -807,6 +807,12 @@ class Bbox(BboxBase):
+             self._check(self._points)
+             super().invalidate()
+ 
++    def frozen(self):
++        # docstring inherited
++        frozen_bbox = super().frozen()
++        frozen_bbox._minpos = self.minpos.copy()
++        return frozen_bbox
++
+     @staticmethod
+     def unit():
+         """Create a new unit `Bbox` from (0, 0) to (1, 1)."""

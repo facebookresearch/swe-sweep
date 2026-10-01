@@ -1,0 +1,13 @@
+diff --git a/src/Symfony/Component/Mailer/Bridge/Sendgrid/Transport/SendgridApiTransport.php b/src/Symfony/Component/Mailer/Bridge/Sendgrid/Transport/SendgridApiTransport.php
+index 08a337ec412..a59255b37ce 100644
+--- a/src/Symfony/Component/Mailer/Bridge/Sendgrid/Transport/SendgridApiTransport.php
++++ b/src/Symfony/Component/Mailer/Bridge/Sendgrid/Transport/SendgridApiTransport.php
+@@ -179,7 +179,7 @@ class SendgridApiTransport extends AbstractApiTransport
+             ];
+ 
+             if ('inline' === $disposition) {
+-                $att['content_id'] = $filename;
++                $att['content_id'] = $attachment->hasContentId() ? $attachment->getContentId() : $filename;
+             }
+ 
+             $attachments[] = $att;

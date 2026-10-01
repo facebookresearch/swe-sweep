@@ -1,0 +1,21 @@
+diff --git a/tests/dialects/test_snowflake.py b/tests/dialects/test_snowflake.py
+index 5f93f85345..05ac13417f 100644
+--- a/tests/dialects/test_snowflake.py
++++ b/tests/dialects/test_snowflake.py
+@@ -966,6 +966,16 @@ class TestSnowflake(Validator):
+         self.validate_identity("SELECT BIT_SHIFTLEFT(a, 1)", "SELECT BITSHIFTLEFT(a, 1)")
+         self.validate_identity("SELECT BIT_SHIFTRIGHT(a, 1)", "SELECT BITSHIFTRIGHT(a, 1)")
+ 
++        self.validate_all(
++            "DAYOFWEEKISO(foo)",
++            read={
++                "trino": "DAY_OF_WEEK(foo)",
++            },
++            write={
++                "snowflake": "DAYOFWEEKISO(foo)",
++            },
++        )
++
+     def test_null_treatment(self):
+         self.validate_all(
+             r"SELECT FIRST_VALUE(TABLE1.COLUMN1) OVER (PARTITION BY RANDOM_COLUMN1, RANDOM_COLUMN2 ROWS BETWEEN UNBOUNDED PRECEDING AND UNBOUNDED FOLLOWING) AS MY_ALIAS FROM TABLE1",

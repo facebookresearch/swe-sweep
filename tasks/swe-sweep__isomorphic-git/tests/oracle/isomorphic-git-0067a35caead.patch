@@ -1,0 +1,12 @@
+diff --git a/src/models/GitWalkerFs.js b/src/models/GitWalkerFs.js
+index 5034975e..2ac40039 100644
+--- a/src/models/GitWalkerFs.js
++++ b/src/models/GitWalkerFs.js
+@@ -50,6 +50,7 @@ export class GitWalkerFs {
+   }
+ 
+   async readdir(entry) {
++    if ((await entry.type()) !== 'tree') return null
+     const filepath = entry._fullpath
+     const { fs, dir } = this
+     const names = await fs.readdir(join(dir, filepath))

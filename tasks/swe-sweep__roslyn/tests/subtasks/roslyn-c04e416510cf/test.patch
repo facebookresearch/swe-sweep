@@ -1,0 +1,21 @@
+diff --git a/src/Compilers/Core/CodeAnalysisTest/Analyzers/AnalyzerConfigTests.cs b/src/Compilers/Core/CodeAnalysisTest/Analyzers/AnalyzerConfigTests.cs
+index 6b2824c26cb..40e58446759 100644
+--- a/src/Compilers/Core/CodeAnalysisTest/Analyzers/AnalyzerConfigTests.cs
++++ b/src/Compilers/Core/CodeAnalysisTest/Analyzers/AnalyzerConfigTests.cs
+@@ -590,6 +590,16 @@ RoOt = TruE");
+             Assert.Null(matcher);
+         }
+ 
++        [Fact]
++        public void ExcessivelyNestedChoiceIsInvalid()
++        {
++            var sectionName = new string('{', 100_000);
++            var config = ParseConfigFile($"[{sectionName}]\nmy_prop = my_val");
++            var configSet = AnalyzerConfigSet.Create(ImmutableArray.Create(config));
++
++            Assert.Empty(configSet.GetOptionsForSourcePath("/test.cs").AnalyzerOptions);
++        }
++
+         [Fact]
+         public void CommaOutsideBraces()
+         {

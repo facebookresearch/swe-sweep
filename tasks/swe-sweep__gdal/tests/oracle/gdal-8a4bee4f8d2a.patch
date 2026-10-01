@@ -1,0 +1,18 @@
+diff --git a/frmts/gtiff/geotiff.cpp b/frmts/gtiff/geotiff.cpp
+index 1f0a1184d3..c71c12c90d 100644
+--- a/frmts/gtiff/geotiff.cpp
++++ b/frmts/gtiff/geotiff.cpp
+@@ -13348,8 +13348,12 @@ static bool IsSRSCompatibleOfGeoTIFF(const OGRSpatialReference *poSRS)
+     {
+         CPLErrorStateBackuper oErrorStateBackuper;
+         CPLErrorHandlerPusher oErrorHandler(CPLQuietErrorHandler);
+-        if (poSRS->IsDerivedGeographic())
++        if (poSRS->IsDerivedGeographic() ||
++            (poSRS->IsProjected() && !poSRS->IsCompound() &&
++             poSRS->GetAxesCount() == 3))
++        {
+             eErr = OGRERR_FAILURE;
++        }
+         else
+         {
+             // Geographic3D CRS can't be exported to WKT1, but are

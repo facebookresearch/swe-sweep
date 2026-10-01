@@ -1,0 +1,19 @@
+diff --git a/sqlglot/dialects/postgres.py b/sqlglot/dialects/postgres.py
+index def7631911..b6de1243d7 100644
+--- a/sqlglot/dialects/postgres.py
++++ b/sqlglot/dialects/postgres.py
+@@ -617,6 +617,14 @@ class Postgres(Dialect):
+             exp.JSONPathSubscript,
+         }
+ 
++        def lateral_sql(self, expression: exp.Lateral) -> str:
++            sql = super().lateral_sql(expression)
++
++            if expression.args.get("cross_apply") is not None:
++                sql = f"{sql} ON TRUE"
++
++            return sql
++
+         TYPE_MAPPING = {
+             **generator.Generator.TYPE_MAPPING,
+             exp.DataType.Type.TINYINT: "SMALLINT",

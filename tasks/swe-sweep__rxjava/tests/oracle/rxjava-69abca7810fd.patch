@@ -1,0 +1,30 @@
+diff --git a/src/main/java/io/reactivex/internal/operators/flowable/FlowableDebounce.java b/src/main/java/io/reactivex/internal/operators/flowable/FlowableDebounce.java
+index 92b1c4825..143e61ec5 100644
+--- a/src/main/java/io/reactivex/internal/operators/flowable/FlowableDebounce.java
++++ b/src/main/java/io/reactivex/internal/operators/flowable/FlowableDebounce.java
+@@ -119,7 +119,9 @@ public final class FlowableDebounce<T, U> extends AbstractFlowableWithUpstream<T
+             if (!DisposableHelper.isDisposed(d)) {
+                 @SuppressWarnings("unchecked")
+                 DebounceInnerSubscriber<T, U> dis = (DebounceInnerSubscriber<T, U>)d;
+-                dis.emit();
++                if (dis != null) {
++                    dis.emit();
++                }
+                 DisposableHelper.dispose(debouncer);
+                 downstream.onComplete();
+             }
+diff --git a/src/main/java/io/reactivex/internal/operators/observable/ObservableDebounce.java b/src/main/java/io/reactivex/internal/operators/observable/ObservableDebounce.java
+index 2c056eb70..db8b9d479 100644
+--- a/src/main/java/io/reactivex/internal/operators/observable/ObservableDebounce.java
++++ b/src/main/java/io/reactivex/internal/operators/observable/ObservableDebounce.java
+@@ -112,7 +112,9 @@ public final class ObservableDebounce<T, U> extends AbstractObservableWithUpstre
+             if (d != DisposableHelper.DISPOSED) {
+                 @SuppressWarnings("unchecked")
+                 DebounceInnerObserver<T, U> dis = (DebounceInnerObserver<T, U>)d;
+-                dis.emit();
++                if (dis != null) {
++                    dis.emit();
++                }
+                 DisposableHelper.dispose(debouncer);
+                 downstream.onComplete();
+             }

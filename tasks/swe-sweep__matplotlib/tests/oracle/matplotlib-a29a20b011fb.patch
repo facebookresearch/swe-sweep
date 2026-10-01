@@ -1,0 +1,51 @@
+diff --git a/lib/matplotlib/backends/backend_svg.py b/lib/matplotlib/backends/backend_svg.py
+index 72354b8186..51eee57a6a 100644
+--- a/lib/matplotlib/backends/backend_svg.py
++++ b/lib/matplotlib/backends/backend_svg.py
+@@ -287,6 +287,7 @@
+         self._groupd = {}
+         self.basename = basename
+         self._image_counter = itertools.count()
++        self._clip_path_ids = {}
+         self._clipd = OrderedDict()
+         self._markers = {}
+         self._path_collection_id = 0
+@@ -311,6 +312,20 @@
+         self._write_metadata(metadata)
+         self._write_default_style()
+ 
++    def _get_clippath_id(self, clippath):
++        """
++        Returns a stable and unique identifier for the *clippath* argument
++        object within the current rendering context.
++
++        This allows plots that include custom clip paths to produce identical
++        SVG output on each render, provided that the :rc:`svg.hashsalt` config
++        setting and the ``SOURCE_DATE_EPOCH`` build-time environment variable
++        are set to fixed values.
++        """
++        if clippath not in self._clip_path_ids:
++            self._clip_path_ids[clippath] = len(self._clip_path_ids)
++        return self._clip_path_ids[clippath]
++
+     @_api.deprecated("3.4")
+     @property
+     def mathtext_parser(self):
+@@ -586,7 +601,7 @@
+         clippath, clippath_trans = gc.get_clip_path()
+         if clippath is not None:
+             clippath_trans = self._make_flip_transform(clippath_trans)
+-            dictkey = (id(clippath), str(clippath_trans))
++            dictkey = (self._get_clippath_id(clippath), str(clippath_trans))
+         elif cliprect is not None:
+             x, y, w, h = cliprect.bounds
+             y = self.height-(y+h)
+@@ -601,7 +616,7 @@
+             else:
+                 self._clipd[dictkey] = (dictkey, oid)
+         else:
+-            clip, oid = clip
++            _, oid = clip
+         return oid
+ 
+     def _write_clips(self):

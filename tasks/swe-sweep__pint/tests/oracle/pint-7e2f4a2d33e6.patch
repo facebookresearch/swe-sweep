@@ -1,0 +1,26 @@
+diff --git a/pint/quantity.py b/pint/quantity.py
+index d70b65c..f11c790 100644
+--- a/pint/quantity.py
++++ b/pint/quantity.py
+@@ -648,7 +648,7 @@ class Quantity(PrettyIPython, SharedRegistryObject, Generic[_MagnitudeType]):
+         -------
+         bool
+         """
+-        if contexts:
++        if contexts or self._REGISTRY._active_ctx:
+             try:
+                 self.to(other, *contexts, **ctx_kwargs)
+                 return True
+diff --git a/pint/unit.py b/pint/unit.py
+index 8651900..367c7fd 100644
+--- a/pint/unit.py
++++ b/pint/unit.py
+@@ -168,7 +168,7 @@ class Unit(PrettyIPython, SharedRegistryObject):
+         -------
+         bool
+         """
+-        if contexts:
++        if contexts or self._REGISTRY._active_ctx:
+             try:
+                 (1 * self).to(other, *contexts, **ctx_kwargs)
+                 return True

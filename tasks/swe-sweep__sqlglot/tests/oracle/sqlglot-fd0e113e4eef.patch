@@ -1,0 +1,196 @@
+diff --git a/sqlglot/dialects/dialect.py b/sqlglot/dialects/dialect.py
+index cdbda39d1e..0c705c0649 100644
+--- a/sqlglot/dialects/dialect.py
++++ b/sqlglot/dialects/dialect.py
+@@ -499,6 +499,9 @@ class Dialect(metaclass=_Dialect):
+     equivalent of CREATE SCHEMA is CREATE DATABASE.
+     """
+ 
++    # Whether ADD is present for each column added by ALTER TABLE
++    ALTER_TABLE_ADD_REQUIRED_FOR_EACH_COLUMN = True
++
+     # --- Autofilled ---
+ 
+     tokenizer_class = Tokenizer
+diff --git a/sqlglot/dialects/oracle.py b/sqlglot/dialects/oracle.py
+index c0be24c7d1..ec2f77f671 100644
+--- a/sqlglot/dialects/oracle.py
++++ b/sqlglot/dialects/oracle.py
+@@ -44,6 +44,7 @@ class Oracle(Dialect):
+     TABLESAMPLE_SIZE_IS_PERCENT = True
+     NULL_ORDERING = "nulls_are_large"
+     ON_CONDITION_EMPTY_BEFORE_ERROR = False
++    ALTER_TABLE_ADD_REQUIRED_FOR_EACH_COLUMN = False
+ 
+     # See section 8: https://docs.oracle.com/cd/A97630_01/server.920/a96540/sql_elements9a.htm
+     NORMALIZATION_STRATEGY = NormalizationStrategy.UPPERCASE
+@@ -104,7 +105,6 @@ class Oracle(Dialect):
+         }
+ 
+     class Parser(parser.Parser):
+-        ALTER_TABLE_ADD_REQUIRED_FOR_EACH_COLUMN = False
+         WINDOW_BEFORE_PAREN_TOKENS = {TokenType.OVER, TokenType.KEEP}
+         VALUES_FOLLOWED_BY_PAREN = False
+ 
+@@ -341,11 +341,8 @@ class Oracle(Dialect):
+         def offset_sql(self, expression: exp.Offset) -> str:
+             return f"{super().offset_sql(expression)} ROWS"
+ 
+-        def add_column_sql(self, expression: exp.Alter) -> str:
+-            actions = self.expressions(expression, key="actions", flat=True)
+-            if len(expression.args.get("actions", [])) > 1:
+-                return f"ADD ({actions})"
+-            return f"ADD {actions}"
++        def add_column_sql(self, expression: exp.Expression) -> str:
++            return f"ADD {self.sql(expression)}"
+ 
+         def queryoption_sql(self, expression: exp.QueryOption) -> str:
+             option = self.sql(expression, "this")
+diff --git a/sqlglot/dialects/tsql.py b/sqlglot/dialects/tsql.py
+index 43d98fa92a..a970812311 100644
+--- a/sqlglot/dialects/tsql.py
++++ b/sqlglot/dialects/tsql.py
+@@ -390,6 +390,7 @@ class TSQL(Dialect):
+     TYPED_DIVISION = True
+     CONCAT_COALESCE = True
+     NORMALIZATION_STRATEGY = NormalizationStrategy.CASE_INSENSITIVE
++    ALTER_TABLE_ADD_REQUIRED_FOR_EACH_COLUMN = False
+ 
+     TIME_FORMAT = "'yyyy-mm-dd hh:mm:ss'"
+ 
+@@ -540,7 +541,6 @@ class TSQL(Dialect):
+     class Parser(parser.Parser):
+         SET_REQUIRES_ASSIGNMENT_DELIMITER = False
+         LOG_DEFAULTS_TO_LN = True
+-        ALTER_TABLE_ADD_REQUIRED_FOR_EACH_COLUMN = False
+         STRING_ALIASES = True
+         NO_PAREN_IF_COMMANDS = False
+ 
+diff --git a/sqlglot/generator.py b/sqlglot/generator.py
+index 8b6b9da16f..c5d6facc2d 100644
+--- a/sqlglot/generator.py
++++ b/sqlglot/generator.py
+@@ -3441,16 +3441,24 @@ class Generator(metaclass=_Generator):
+     def alter_sql(self, expression: exp.Alter) -> str:
+         actions = expression.args["actions"]
+ 
+-        if isinstance(actions[0], exp.ColumnDef):
+-            actions = self.add_column_sql(expression)
+-        elif isinstance(actions[0], exp.Schema):
+-            actions = self.expressions(expression, key="actions", prefix="ADD COLUMNS ")
+-        elif isinstance(actions[0], exp.Delete):
+-            actions = self.expressions(expression, key="actions", flat=True)
+-        elif isinstance(actions[0], exp.Query):
+-            actions = "AS " + self.expressions(expression, key="actions")
++        if not self.dialect.ALTER_TABLE_ADD_REQUIRED_FOR_EACH_COLUMN and isinstance(
++            actions[0], exp.ColumnDef
++        ):
++            actions_sql = self.expressions(expression, key="actions", flat=True)
++            actions_sql = f"ADD {actions_sql}"
+         else:
+-            actions = self.expressions(expression, key="actions", flat=True)
++            actions_list = []
++            for action in actions:
++                if isinstance(action, (exp.ColumnDef, exp.Schema)):
++                    action_sql = self.add_column_sql(action)
++                else:
++                    action_sql = self.sql(action)
++                    if isinstance(action, exp.Query):
++                        action_sql = f"AS {action_sql}"
++
++                actions_list.append(action_sql)
++
++            actions_sql = self.format_args(*actions_list)
+ 
+         exists = " IF EXISTS" if expression.args.get("exists") else ""
+         on_cluster = self.sql(expression, "cluster")
+@@ -3461,17 +3469,18 @@ class Generator(metaclass=_Generator):
+         kind = self.sql(expression, "kind")
+         not_valid = " NOT VALID" if expression.args.get("not_valid") else ""
+ 
+-        return f"ALTER {kind}{exists}{only} {self.sql(expression, 'this')}{on_cluster} {actions}{not_valid}{options}"
++        return f"ALTER {kind}{exists}{only} {self.sql(expression, 'this')}{on_cluster} {actions_sql}{not_valid}{options}"
+ 
+-    def add_column_sql(self, expression: exp.Alter) -> str:
+-        if self.ALTER_TABLE_INCLUDE_COLUMN_KEYWORD:
+-            return self.expressions(
+-                expression,
+-                key="actions",
+-                prefix="ADD COLUMN ",
+-                skip_first=True,
+-            )
+-        return f"ADD {self.expressions(expression, key='actions', flat=True)}"
++    def add_column_sql(self, expression: exp.Expression) -> str:
++        sql = self.sql(expression)
++        if isinstance(expression, exp.Schema):
++            column_text = " COLUMNS"
++        elif isinstance(expression, exp.ColumnDef) and self.ALTER_TABLE_INCLUDE_COLUMN_KEYWORD:
++            column_text = " COLUMN"
++        else:
++            column_text = ""
++
++        return f"ADD{column_text} {sql}"
+ 
+     def droppartition_sql(self, expression: exp.DropPartition) -> str:
+         expressions = self.expressions(expression)
+diff --git a/sqlglot/parser.py b/sqlglot/parser.py
+index 4f4c8604de..a12eb9e614 100644
+--- a/sqlglot/parser.py
++++ b/sqlglot/parser.py
+@@ -1449,9 +1449,6 @@ class Parser(metaclass=_Parser):
+ 
+     LOG_DEFAULTS_TO_LN = False
+ 
+-    # Whether ADD is present for each column added by ALTER TABLE
+-    ALTER_TABLE_ADD_REQUIRED_FOR_EACH_COLUMN = True
+-
+     # Whether the table sample clause expects CSV syntax
+     TABLESAMPLE_CSV = False
+ 
+@@ -7216,7 +7213,7 @@ class Parser(metaclass=_Parser):
+         return self.expression(exp.Refresh, this=self._parse_string() or self._parse_table())
+ 
+     def _parse_add_column(self) -> t.Optional[exp.Expression]:
+-        if not self._match_text_seq("ADD"):
++        if not self._prev.text.upper() == "ADD":
+             return None
+ 
+         self._match(TokenType.COLUMN)
+@@ -7249,26 +7246,22 @@ class Parser(metaclass=_Parser):
+         )
+ 
+     def _parse_alter_table_add(self) -> t.List[exp.Expression]:
+-        index = self._index - 1
+-
+-        if self._match_set(self.ADD_CONSTRAINT_TOKENS, advance=False):
+-            return self._parse_csv(
+-                lambda: self.expression(
++        def _parse_add_column_or_constraint():
++            self._match_text_seq("ADD")
++            if self._match_set(self.ADD_CONSTRAINT_TOKENS, advance=False):
++                return self.expression(
+                     exp.AddConstraint, expressions=self._parse_csv(self._parse_constraint)
+                 )
+-            )
++            return self._parse_add_column()
+ 
+-        self._retreat(index)
+-        if not self.ALTER_TABLE_ADD_REQUIRED_FOR_EACH_COLUMN and self._match_text_seq("ADD"):
+-            return self._parse_wrapped_csv(self._parse_field_def, optional=True)
+-
+-        if self._match_text_seq("ADD", "COLUMNS"):
++        if not self.dialect.ALTER_TABLE_ADD_REQUIRED_FOR_EACH_COLUMN or self._match_text_seq(
++            "COLUMNS"
++        ):
+             schema = self._parse_schema()
+-            if schema:
+-                return [schema]
+-            return []
+ 
+-        return self._parse_wrapped_csv(self._parse_add_column, optional=True)
++            return ensure_list(schema) if schema else self._parse_csv(self._parse_field_def)
++
++        return self._parse_csv(_parse_add_column_or_constraint)
+ 
+     def _parse_alter_table_alter(self) -> t.Optional[exp.Expression]:
+         if self._match_texts(self.ALTER_ALTER_PARSERS):

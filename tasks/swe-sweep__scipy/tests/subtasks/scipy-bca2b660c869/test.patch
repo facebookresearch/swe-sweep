@@ -1,0 +1,24 @@
+diff --git a/scipy/stats/tests/test_distributions.py b/scipy/stats/tests/test_distributions.py
+index 305e4c138a..01ff502a0f 100644
+--- a/scipy/stats/tests/test_distributions.py
++++ b/scipy/stats/tests/test_distributions.py
+@@ -1758,6 +1758,19 @@ class TestLevyStable(object):
+             calc_stats = stats.levy_stable.stats(args[0], args[1], loc=args[2], scale=args[3], moments='mvsk')
+             assert_almost_equal(calc_stats, exp_stats)
+ 
++    @pytest.mark.slow
++    @pytest.mark.parametrize('beta', [0.5, 1])
++    def test_rvs_alpha1(self, beta):
++        np.random.seed(987654321)
++        alpha = 1.0
++        loc = 0.5
++        scale = 1.5
++        x = stats.levy_stable.rvs(alpha, beta, loc=loc, scale=scale,
++                                  size=5000)
++        stat, p = stats.kstest(x, 'levy_stable',
++                               args=(alpha, beta, loc, scale))
++        assert p > 0.01
++
+ class TestArrayArgument(object):  # test for ticket:992
+     def setup_method(self):
+         np.random.seed(1234)

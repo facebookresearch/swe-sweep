@@ -1,0 +1,39 @@
+diff --git a/src/main/java/io/reactivex/internal/operators/observable/ObservableAmb.java b/src/main/java/io/reactivex/internal/operators/observable/ObservableAmb.java
+index 2ed4fcd93..53068e7a9 100644
+--- a/src/main/java/io/reactivex/internal/operators/observable/ObservableAmb.java
++++ b/src/main/java/io/reactivex/internal/operators/observable/ObservableAmb.java
+@@ -36,7 +36,7 @@ public final class ObservableAmb<T> extends Observable<T> {
+         ObservableSource<? extends T>[] sources = this.sources;
+         int count = 0;
+         if (sources == null) {
+-            sources = new Observable[8];
++            sources = new ObservableSource[8];
+             try {
+                 for (ObservableSource<? extends T> p : sourcesIterable) {
+                     if (p == null) {
+diff --git a/src/main/java/io/reactivex/internal/operators/observable/ObservableCombineLatest.java b/src/main/java/io/reactivex/internal/operators/observable/ObservableCombineLatest.java
+index ccbfc8e6d..56b62cdfe 100644
+--- a/src/main/java/io/reactivex/internal/operators/observable/ObservableCombineLatest.java
++++ b/src/main/java/io/reactivex/internal/operators/observable/ObservableCombineLatest.java
+@@ -49,7 +49,7 @@ public final class ObservableCombineLatest<T, R> extends Observable<R> {
+         ObservableSource<? extends T>[] sources = this.sources;
+         int count = 0;
+         if (sources == null) {
+-            sources = new Observable[8];
++            sources = new ObservableSource[8];
+             for (ObservableSource<? extends T> p : sourcesIterable) {
+                 if (count == sources.length) {
+                     ObservableSource<? extends T>[] b = new ObservableSource[count + (count >> 2)];
+diff --git a/src/main/java/io/reactivex/internal/operators/observable/ObservableZip.java b/src/main/java/io/reactivex/internal/operators/observable/ObservableZip.java
+index af465c43c..7f0038383 100644
+--- a/src/main/java/io/reactivex/internal/operators/observable/ObservableZip.java
++++ b/src/main/java/io/reactivex/internal/operators/observable/ObservableZip.java
+@@ -50,7 +50,7 @@ public final class ObservableZip<T, R> extends Observable<R> {
+         ObservableSource<? extends T>[] sources = this.sources;
+         int count = 0;
+         if (sources == null) {
+-            sources = new Observable[8];
++            sources = new ObservableSource[8];
+             for (ObservableSource<? extends T> p : sourcesIterable) {
+                 if (count == sources.length) {
+                     ObservableSource<? extends T>[] b = new ObservableSource[count + (count >> 2)];

@@ -1,0 +1,36 @@
+diff --git a/lib/elixir/test/elixir/kernel/expansion_test.exs b/lib/elixir/test/elixir/kernel/expansion_test.exs
+index 3e650fd3e..1767c6a9b 100644
+--- a/lib/elixir/test/elixir/kernel/expansion_test.exs
++++ b/lib/elixir/test/elixir/kernel/expansion_test.exs
+@@ -948,6 +948,11 @@ defmodule Kernel.ExpansionTest do
+         ~r"when using :reduce with comprehensions, the do block must be written using acc -> expr clauses",
+         fn -> expand(quote(do: for(x <- 1..3, reduce: %{}, do: (acc, x -> x)))) end
+       )
++
++      assert_compile_error(
++        ~r"when using :reduce with comprehensions, the do block must be written using acc -> expr clauses",
++        fn -> expand(quote(do: for(x <- 1..3, reduce: %{}, do: (acc, x when 1 == 1 -> x)))) end
++      )
+     end
+ 
+     test "raise error for unknown options" do
+@@ -2130,6 +2135,19 @@ defmodule Kernel.ExpansionTest do
+ 
+         expand(code)
+       end)
++
++      assert_compile_error(message, fn ->
++        code =
++          quote do
++            try do
++              x
++            catch
++              _, _, _ when 1 == 1 -> :ok
++            end
++          end
++
++        expand(code)
++      end)
+     end
+ 
+     test "expects clauses for rescue, else, catch" do

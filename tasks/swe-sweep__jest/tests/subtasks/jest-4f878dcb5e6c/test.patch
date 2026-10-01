@@ -1,0 +1,25 @@
+diff --git a/packages/expect-utils/src/__tests__/utils.test.ts b/packages/expect-utils/src/__tests__/utils.test.ts
+index baa97a47b9..fd1e2c588e 100644
+--- a/packages/expect-utils/src/__tests__/utils.test.ts
++++ b/packages/expect-utils/src/__tests__/utils.test.ts
+@@ -15,6 +15,7 @@ import {
+   getPath,
+   iterableEquality,
+   subsetEquality,
++  typeEquality,
+ } from '../utils';
+ 
+ describe('getPath()', () => {
+@@ -546,6 +547,12 @@ describe('iterableEquality', () => {
+   });
+ });
+ 
++describe('typeEquality', () => {
++  test('returns undefined if given mock.calls and []', () => {
++    expect(typeEquality(jest.fn().mock.calls, [])).toBeUndefined();
++  });
++});
++
+ describe('arrayBufferEquality', () => {
+   test('returns undefined if given a non instance of ArrayBuffer', () => {
+     expect(arrayBufferEquality(2, 's')).toBeUndefined();

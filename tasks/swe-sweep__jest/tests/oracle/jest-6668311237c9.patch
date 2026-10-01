@@ -1,0 +1,18 @@
+diff --git a/packages/babel-plugin-jest-hoist/src/index.ts b/packages/babel-plugin-jest-hoist/src/index.ts
+index 21af10f6c2..2841036ede 100644
+--- a/packages/babel-plugin-jest-hoist/src/index.ts
++++ b/packages/babel-plugin-jest-hoist/src/index.ts
+@@ -106,7 +106,12 @@ const IDVisitor = {
+   ) {
+     ids.add(path);
+   },
+-  blacklist: ['TypeAnnotation', 'TSTypeAnnotation', 'TSTypeReference'],
++  blacklist: [
++    'TypeAnnotation',
++    'TSTypeAnnotation',
++    'TSTypeQuery',
++    'TSTypeReference',
++  ],
+ };
+ 
+ const FUNCTIONS: Record<

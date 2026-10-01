@@ -1,0 +1,13 @@
+diff --git a/fasthttpadaptor/request.go b/fasthttpadaptor/request.go
+index 6213f28..18c75d5 100644
+--- a/fasthttpadaptor/request.go
++++ b/fasthttpadaptor/request.go
+@@ -62,7 +62,7 @@ func ConvertRequest(ctx *fasthttp.RequestCtx, r *http.Request, forServer bool) e
+ 			if sk == fasthttp.HeaderCookie {
+ 				sv = strings.Clone(sv)
+ 			}
+-			r.Header.Set(sk, sv)
++			r.Header.Add(sk, sv)
+ 		}
+ 	}
+ 

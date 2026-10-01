@@ -1,0 +1,25 @@
+diff --git a/test/optimizer/joins/filter_on_subquery_with_aggregate.test b/test/optimizer/joins/filter_on_subquery_with_aggregate.test
+new file mode 100644
+index 0000000000..4b32762469
+--- /dev/null
++++ b/test/optimizer/joins/filter_on_subquery_with_aggregate.test
+@@ -0,0 +1,19 @@
++# name: test/optimizer/joins/filter_on_subquery_with_aggregate.test
++# description: some fuzzer issues
++# group: [joins]
++
++statement ok
++create table df as select unnest(range(1, 10)) as A, unnest(range(1, 10)) as B;
++
++query II
++WITH cte AS (
++    SELECT A, B
++    FROM df
++    WHERE A >= 7
++)
++SELECT *
++FROM cte
++WHERE A = (SELECT MAX(A) FROM cte);
++----
++9	9
++

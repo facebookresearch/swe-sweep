@@ -1,0 +1,224 @@
+diff --git a/src/iso19111/coordinateoperation.cpp b/src/iso19111/coordinateoperation.cpp
+index 16325423b..63b11761b 100644
+--- a/src/iso19111/coordinateoperation.cpp
++++ b/src/iso19111/coordinateoperation.cpp
+@@ -13850,12 +13850,27 @@ void CoordinateOperationFactory::Private::createOperationsBoundToGeog(
+         auto opsFirst = createOperations(
+             boundSrc->baseCRS(), NN_NO_CHECK(geogCRSOfBaseOfBoundSrc), context);
+         if (!opsFirst.empty()) {
++            CoordinateOperationPtr opIntermediate;
++            if (!geogCRSOfBaseOfBoundSrc->_isEquivalentTo(
++                    boundSrc->transformation()->sourceCRS().get(),
++                    util::IComparable::Criterion::EQUIVALENT)) {
++                auto opsIntermediate = createOperations(
++                    NN_NO_CHECK(geogCRSOfBaseOfBoundSrc),
++                    boundSrc->transformation()->sourceCRS(), context);
++                assert(!opsIntermediate.empty());
++                opIntermediate = opsIntermediate.front();
++            }
+             for (const auto &opFirst : opsFirst) {
+                 try {
++                    std::vector<CoordinateOperationNNPtr> subops;
++                    subops.emplace_back(opFirst);
++                    if (opIntermediate) {
++                        subops.emplace_back(NN_NO_CHECK(opIntermediate));
++                    }
++                    subops.emplace_back(boundSrc->transformation());
+                     res.emplace_back(
+                         ConcatenatedOperation::createComputeMetadata(
+-                            {opFirst, boundSrc->transformation()},
+-                            !allowEmptyIntersection));
++                            subops, !allowEmptyIntersection));
+                 } catch (const InvalidOperationEmptyIntersection &) {
+                 }
+             }
+@@ -13873,13 +13888,29 @@ void CoordinateOperationFactory::Private::createOperationsBoundToGeog(
+             boundSrc->baseCRS(), NN_NO_CHECK(geogCRSOfBaseOfBoundSrc), context);
+         auto opsLast = createOperations(hubSrc, targetCRS, context);
+         if (!opsFirst.empty() && !opsLast.empty()) {
++            CoordinateOperationPtr opIntermediate;
++            if (!geogCRSOfBaseOfBoundSrc->_isEquivalentTo(
++                    boundSrc->transformation()->sourceCRS().get(),
++                    util::IComparable::Criterion::EQUIVALENT)) {
++                auto opsIntermediate = createOperations(
++                    NN_NO_CHECK(geogCRSOfBaseOfBoundSrc),
++                    boundSrc->transformation()->sourceCRS(), context);
++                assert(!opsIntermediate.empty());
++                opIntermediate = opsIntermediate.front();
++            }
+             for (const auto &opFirst : opsFirst) {
+                 for (const auto &opLast : opsLast) {
+                     try {
++                        std::vector<CoordinateOperationNNPtr> subops;
++                        subops.emplace_back(opFirst);
++                        if (opIntermediate) {
++                            subops.emplace_back(NN_NO_CHECK(opIntermediate));
++                        }
++                        subops.emplace_back(boundSrc->transformation());
++                        subops.emplace_back(opLast);
+                         res.emplace_back(
+                             ConcatenatedOperation::createComputeMetadata(
+-                                {opFirst, boundSrc->transformation(), opLast},
+-                                !allowEmptyIntersection));
++                                subops, !allowEmptyIntersection));
+                     } catch (const InvalidOperationEmptyIntersection &) {
+                     }
+                 }
+diff --git a/src/iso19111/crs.cpp b/src/iso19111/crs.cpp
+index dbb68f0ba..45e2309ca 100644
+--- a/src/iso19111/crs.cpp
++++ b/src/iso19111/crs.cpp
+@@ -4525,9 +4525,27 @@ BoundCRS::createFromTOWGS84(const CRSNNPtr &baseCRSIn,
+  */
+ BoundCRSNNPtr BoundCRS::createFromNadgrids(const CRSNNPtr &baseCRSIn,
+                                            const std::string &filename) {
+-    const CRSPtr sourceGeographicCRS = baseCRSIn->extractGeographicCRS();
++    const auto sourceGeographicCRS = baseCRSIn->extractGeographicCRS();
+     auto transformationSourceCRS =
+-        sourceGeographicCRS ? sourceGeographicCRS : baseCRSIn.as_nullable();
++        sourceGeographicCRS
++            ? NN_NO_CHECK(std::static_pointer_cast<CRS>(sourceGeographicCRS))
++            : baseCRSIn;
++    if (sourceGeographicCRS != nullptr &&
++        sourceGeographicCRS->datum() != nullptr &&
++        sourceGeographicCRS->primeMeridian()->longitude().getSIValue() != 0.0) {
++        transformationSourceCRS = GeographicCRS::create(
++            util::PropertyMap().set(common::IdentifiedObject::NAME_KEY,
++                                    sourceGeographicCRS->nameStr() +
++                                        " (with Greenwich prime meridian)"),
++            datum::GeodeticReferenceFrame::create(
++                util::PropertyMap().set(
++                    common::IdentifiedObject::NAME_KEY,
++                    sourceGeographicCRS->datum()->nameStr() +
++                        " (with Greenwich prime meridian)"),
++                sourceGeographicCRS->datum()->ellipsoid(),
++                util::optional<std::string>(), datum::PrimeMeridian::GREENWICH),
++            sourceGeographicCRS->coordinateSystem());
++    }
+     std::string transformationName = transformationSourceCRS->nameStr();
+     transformationName += " to WGS84";
+ 
+@@ -4536,8 +4554,8 @@ BoundCRSNNPtr BoundCRS::createFromNadgrids(const CRSNNPtr &baseCRSIn,
+         operation::Transformation::createNTv2(
+             util::PropertyMap().set(common::IdentifiedObject::NAME_KEY,
+                                     transformationName),
+-            NN_NO_CHECK(transformationSourceCRS), GeographicCRS::EPSG_4326,
+-            filename, std::vector<metadata::PositionalAccuracyNNPtr>()));
++            transformationSourceCRS, GeographicCRS::EPSG_4326, filename,
++            std::vector<metadata::PositionalAccuracyNNPtr>()));
+ }
+ 
+ // ---------------------------------------------------------------------------
+diff --git a/src/iso19111/io.cpp b/src/iso19111/io.cpp
+index 8a8ad5266..5b1227072 100644
+--- a/src/iso19111/io.cpp
++++ b/src/iso19111/io.cpp
+@@ -4060,6 +4060,52 @@ WKTParser::Private::buildCompoundCRS(const WKTNodeNNPtr &node) {
+ 
+ // ---------------------------------------------------------------------------
+ 
++static CRSNNPtr
++createBoundCRSSourceTransformationCRS(const crs::CRSPtr &sourceCRS,
++                                      const crs::CRSPtr &targetCRS) {
++    CRSPtr sourceTransformationCRS;
++    if (dynamic_cast<GeographicCRS *>(targetCRS.get())) {
++        GeographicCRSPtr sourceGeographicCRS =
++            sourceCRS->extractGeographicCRS();
++        sourceTransformationCRS = sourceGeographicCRS;
++        if (sourceGeographicCRS) {
++            if (sourceGeographicCRS->datum() != nullptr &&
++                sourceGeographicCRS->primeMeridian()
++                        ->longitude()
++                        .getSIValue() != 0.0) {
++                sourceTransformationCRS =
++                    GeographicCRS::create(
++                        util::PropertyMap().set(
++                            common::IdentifiedObject::NAME_KEY,
++                            sourceGeographicCRS->nameStr() +
++                                " (with Greenwich prime meridian)"),
++                        datum::GeodeticReferenceFrame::create(
++                            util::PropertyMap().set(
++                                common::IdentifiedObject::NAME_KEY,
++                                sourceGeographicCRS->datum()->nameStr() +
++                                    " (with Greenwich prime meridian)"),
++                            sourceGeographicCRS->datum()->ellipsoid(),
++                            util::optional<std::string>(),
++                            datum::PrimeMeridian::GREENWICH),
++                        sourceGeographicCRS->coordinateSystem())
++                        .as_nullable();
++            }
++        } else {
++            sourceTransformationCRS =
++                std::dynamic_pointer_cast<VerticalCRS>(sourceCRS);
++            if (!sourceTransformationCRS) {
++                throw ParsingException(
++                    "Cannot find GeographicCRS or VerticalCRS in sourceCRS");
++            }
++        }
++    } else {
++        sourceTransformationCRS = sourceCRS;
++    }
++    return NN_NO_CHECK(sourceTransformationCRS);
++}
++
++// ---------------------------------------------------------------------------
++
+ BoundCRSNNPtr WKTParser::Private::buildBoundCRS(const WKTNodeNNPtr &node) {
+     const auto *nodeP = node->GP();
+     auto &abridgedNode =
+@@ -4103,23 +4149,10 @@ BoundCRSNNPtr WKTParser::Private::buildBoundCRS(const WKTNodeNNPtr &node) {
+     consumeParameters(abridgedNode, true, parameters, values, defaultLinearUnit,
+                       defaultAngularUnit);
+ 
+-    CRSPtr sourceTransformationCRS;
+-    if (dynamic_cast<GeographicCRS *>(targetCRS.get())) {
+-        sourceTransformationCRS = sourceCRS->extractGeographicCRS();
+-        if (!sourceTransformationCRS) {
+-            sourceTransformationCRS =
+-                std::dynamic_pointer_cast<VerticalCRS>(sourceCRS);
+-            if (!sourceTransformationCRS) {
+-                throw ParsingException(
+-                    "Cannot find GeographicCRS or VerticalCRS in sourceCRS");
+-            }
+-        }
+-    } else {
+-        sourceTransformationCRS = sourceCRS;
+-    }
+-
++    const auto sourceTransformationCRS(
++        createBoundCRSSourceTransformationCRS(sourceCRS, targetCRS));
+     auto transformation = Transformation::create(
+-        buildProperties(abridgedNode), NN_NO_CHECK(sourceTransformationCRS),
++        buildProperties(abridgedNode), sourceTransformationCRS,
+         NN_NO_CHECK(targetCRS), nullptr, buildProperties(methodNode),
+         parameters, values, std::vector<PositionalAccuracyNNPtr>());
+ 
+@@ -5265,24 +5298,11 @@ BoundCRSNNPtr JSONParser::buildBoundCRS(const json &j) {
+         values.emplace_back(ParameterValue::create(getMeasure(param)));
+     }
+ 
+-    CRSPtr sourceTransformationCRS;
+-    if (dynamic_cast<GeographicCRS *>(targetCRS.get())) {
+-        sourceTransformationCRS = sourceCRS->extractGeographicCRS();
+-        if (!sourceTransformationCRS) {
+-            sourceTransformationCRS =
+-                std::dynamic_pointer_cast<VerticalCRS>(sourceCRS.as_nullable());
+-            if (!sourceTransformationCRS) {
+-                throw ParsingException(
+-                    "Cannot find GeographicCRS or VerticalCRS in sourceCRS");
+-            }
+-        }
+-    } else {
+-        sourceTransformationCRS = sourceCRS;
+-    }
+-
++    const auto sourceTransformationCRS(
++        createBoundCRSSourceTransformationCRS(sourceCRS, targetCRS));
+     auto transformation = Transformation::create(
+-        buildProperties(transformationJ), NN_NO_CHECK(sourceTransformationCRS),
+-        targetCRS, nullptr, buildProperties(methodJ), parameters, values,
++        buildProperties(transformationJ), sourceTransformationCRS, targetCRS,
++        nullptr, buildProperties(methodJ), parameters, values,
+         std::vector<PositionalAccuracyNNPtr>());
+ 
+     return BoundCRS::create(sourceCRS, targetCRS, transformation);

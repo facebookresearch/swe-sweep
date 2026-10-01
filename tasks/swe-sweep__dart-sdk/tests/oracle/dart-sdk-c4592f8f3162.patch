@@ -1,0 +1,13 @@
+diff --git a/pkg/analyzer/lib/src/summary2/top_level_inference.dart b/pkg/analyzer/lib/src/summary2/top_level_inference.dart
+index db1d0e33b50..1d1040f64ef 100644
+--- a/pkg/analyzer/lib/src/summary2/top_level_inference.dart
++++ b/pkg/analyzer/lib/src/summary2/top_level_inference.dart
+@@ -244,7 +244,7 @@ class _PropertyInducingElementTypeInference
+ 
+     final enclosingElement = _element.enclosingElement;
+     final enclosingClassElement =
+-        enclosingElement is ClassElement ? enclosingElement : null;
++        enclosingElement is InterfaceElement ? enclosingElement : null;
+ 
+     var astResolver = AstResolver(_linker, _unitElement, _scope,
+         enclosingClassElement: enclosingClassElement);

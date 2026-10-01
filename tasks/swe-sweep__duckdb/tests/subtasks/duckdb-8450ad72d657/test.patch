@@ -1,0 +1,18 @@
+diff --git a/test/sql/window/test_streaming_window.test b/test/sql/window/test_streaming_window.test
+index 4619303929..a817b57187 100644
+--- a/test/sql/window/test_streaming_window.test
++++ b/test/sql/window/test_streaming_window.test
+@@ -295,3 +295,13 @@ EXECUTE sw1(2);
+ ----
+ 10	1
+ 11	2
++
++# Struct Slicing
++query I
++from (values ({'key': 'A'}), ({'key': 'B'}), ({'key': 'C'}))
++select
++   list(col0) over (rows between unbounded preceding and current row) as result
++----
++[{'key': A}]
++[{'key': A}, {'key': B}]
++[{'key': A}, {'key': B}, {'key': C}]

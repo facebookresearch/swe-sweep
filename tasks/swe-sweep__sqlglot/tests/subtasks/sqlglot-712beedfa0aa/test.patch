@@ -1,0 +1,14 @@
+diff --git a/tests/dialects/test_clickhouse.py b/tests/dialects/test_clickhouse.py
+index 3bff6e2..51d5f88 100644
+--- a/tests/dialects/test_clickhouse.py
++++ b/tests/dialects/test_clickhouse.py
+@@ -78,6 +78,9 @@ class TestClickhouse(Validator):
+         self.validate_identity("SELECT quantilesIf(0.5)(a, a > 1) AS x FROM t")
+         self.validate_identity("SELECT quantileState(0.5)(a) AS x FROM t")
+         self.validate_identity("SELECT deltaSumMerge(a) AS x FROM t")
++        self.validate_identity(
++            "SELECT quantilesExactExclusive(0.25, 0.5, 0.75)(x) AS y FROM (SELECT number AS x FROM num)"
++        )
+         self.validate_identity("SELECT quantiles(0.1, 0.2, 0.3)(a)")
+         self.validate_identity("SELECT quantileTiming(0.5)(RANGE(100))")
+         self.validate_identity("SELECT histogram(5)(a)")

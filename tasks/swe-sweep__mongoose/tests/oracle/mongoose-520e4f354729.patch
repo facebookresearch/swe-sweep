@@ -1,0 +1,11 @@
+diff --git a/lib/helpers/schema/merge.js b/lib/helpers/schema/merge.js
+index edc5175ee..55ed82466 100644
+--- a/lib/helpers/schema/merge.js
++++ b/lib/helpers/schema/merge.js
+@@ -23,5 +23,6 @@ module.exports = function merge(s1, s2, skipConflictingPaths) {
+     s1.virtuals[virtual] = s2.virtuals[virtual].clone();
+   }
+ 
++  s1._indexes = s1._indexes.concat(s2._indexes || []);
+   s1.s.hooks.merge(s2.s.hooks, false);
+ };

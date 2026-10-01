@@ -1,0 +1,31 @@
+diff --git a/activerecord/test/cases/fixtures_test.rb b/activerecord/test/cases/fixtures_test.rb
+index 45e02837f29..c017a54cfba 100644
+--- a/activerecord/test/cases/fixtures_test.rb
++++ b/activerecord/test/cases/fixtures_test.rb
+@@ -1465,6 +1465,10 @@ class FoxyFixturesTest < ActiveRecord::TestCase
+     assert_equal("X marks the spot!", pirates(:mark).catchphrase)
+   end
+ 
++  def test_label_interpolation_inserts_the_label_verbatim
++    assert_equal("back\\&ref", parrots("back\\&ref").name)
++  end
++
+   def test_supports_label_interpolation_for_integer_label
+     assert_equal("#1 pirate!", pirates(1).catchphrase)
+   end
+diff --git a/activerecord/test/fixtures/parrots.yml b/activerecord/test/fixtures/parrots.yml
+index bf4296a03ea..7d5d742d9b9 100644
+--- a/activerecord/test/fixtures/parrots.yml
++++ b/activerecord/test/fixtures/parrots.yml
+@@ -28,6 +28,11 @@ polly:
+   treasures: sapphire, ruby
+   <<: *DEAD_PARROT
+ 
++"back\\&ref":
++  name: $LABEL
++  parrot_sti_class: LiveParrot
++  breed: african
++
+ DEFAULTS: &DEFAULTS
+   treasures: sapphire, ruby
+   parrot_sti_class: LiveParrot

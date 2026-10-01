@@ -1,0 +1,21 @@
+diff --git a/pandas/tests/tools/test_to_timedelta.py b/pandas/tests/tools/test_to_timedelta.py
+index 00910eee1f..8313a15f40 100644
+--- a/pandas/tests/tools/test_to_timedelta.py
++++ b/pandas/tests/tools/test_to_timedelta.py
+@@ -283,3 +283,16 @@ class TestTimedeltas:
+         result = to_timedelta(arg2)
+         assert isinstance(result, pd.Timedelta)
+         assert result.value == dt64.view("i8")
++
++
++def test_to_timedelta_scalar_np_str():
++    # GH#48974 scalar np.str_ should also not break timedelta parsing
++    scalar = np.array(["1 day"])[0]
++    assert isinstance(scalar, np.str_)
++
++    expected = pd.Timedelta("1 day")
++    assert to_timedelta(scalar) == expected
++    assert pd.Timedelta(scalar) == expected
++
++    # ISO format
++    assert pd.Timedelta(np.str_("P1DT1H")) == pd.Timedelta("1 days 01:00:00")

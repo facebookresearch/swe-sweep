@@ -1,0 +1,13 @@
+diff --git a/vlib/v/checker/checker.v b/vlib/v/checker/checker.v
+--- a/vlib/v/checker/checker.v
++++ b/vlib/v/checker/checker.v
+@@ -1811,7 +1811,8 @@ fn (mut c Checker) stmt(mut node ast.Stmt) {
+ 			for i, ident in node.defer_vars {
+ 				mut id := ident
+ 				if mut id.info is ast.IdentVar {
+-					if id.comptime && id.name in constants.valid_comptime_not_user_defined {
++					if id.comptime && (id.tok_kind == .question
++						|| id.name in constants.valid_comptime_not_user_defined) {
+ 						node.defer_vars[i] = ast.Ident{
+ 							scope: 0
+ 							name: ''

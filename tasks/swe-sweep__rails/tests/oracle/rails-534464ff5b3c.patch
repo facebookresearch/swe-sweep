@@ -1,0 +1,18 @@
+diff --git a/activerecord/lib/active_record/associations/preloader/association.rb b/activerecord/lib/active_record/associations/preloader/association.rb
+index 7c23b7fbe26..4ab8ef05588 100644
+--- a/activerecord/lib/active_record/associations/preloader/association.rb
++++ b/activerecord/lib/active_record/associations/preloader/association.rb
+@@ -17,11 +17,12 @@ module ActiveRecord
+           def eql?(other)
+             association_key_name == other.association_key_name &&
+               scope.table_name == other.scope.table_name &&
++              scope.connection_specification_name == other.scope.connection_specification_name &&
+               scope.values_for_queries == other.scope.values_for_queries
+           end
+ 
+           def hash
+-            [association_key_name, scope.table_name, scope.values_for_queries].hash
++            [association_key_name, scope.table_name, scope.connection_specification_name, scope.values_for_queries].hash
+           end
+ 
+           def records_for(loaders)

@@ -1,0 +1,16 @@
+diff --git a/Mathlib/Tactic/Recall.lean b/Mathlib/Tactic/Recall.lean
+index 2966cc704c..47aee550b0 100644
+--- a/Mathlib/Tactic/Recall.lean
++++ b/Mathlib/Tactic/Recall.lean
+@@ -88,7 +88,10 @@ elab_rules : command
+               Term.synthesizeSyntheticMVarsNoPostponing
+               let type ← mkForallFVars xs type
+               let type ← mkForallFVars vars type (usedOnly := true)
+-              unless (← isDefEq info.type type) do
++              let infoType ← do
++                let mvs ← info.levelParams.mapM fun _ => mkFreshLevelMVar
++                pure <| info.type.instantiateLevelParams info.levelParams mvs
++              unless (← isDefEq infoType type) do
+                 throwTypeMismatchError none info.type type declConst
+       else
+         unless binders.getNumArgs == 0 do

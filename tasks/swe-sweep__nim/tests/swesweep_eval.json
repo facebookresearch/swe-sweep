@@ -1,0 +1,1855 @@
+{
+  "build_jobs": 4,
+  "container_repo": "/nim",
+  "evaluation": {
+    "suite": "reproduction",
+    "test_dirs": [
+      "tests"
+    ],
+    "visible_timeout": 21600
+  },
+  "upstream_image": "pandora-maxbug-nim:1.6.0",
+  "n_base_passing": 0,
+  "n_base_test_ignore": 29,
+  "oracle_digest": "134a347c203d46182ec82211acc8a7f1fe067f6c20ab0abf20995a84f5570fc6",
+  "oracle_pristine_paths": [
+    "bin/nim",
+    "testament/testament"
+  ],
+  "upstream_commit": "9f7399e15e6172900e0591deb5a57a45769d8205",
+  "reproduction": {
+    "build_cmd": "nim-build",
+    "build_timeout": 3600,
+    "jobs_env": "SWESWEEP_BUILD_JOBS",
+    "suite": {
+      "type": "testament"
+    },
+    "test_timeout": 900
+  },
+  "schema": 2,
+  "subtasks": [
+    {
+      "f2p": [
+        "tests/js/t21439.nim js"
+      ],
+      "id": "nim-008df6188191",
+      "target_files": [
+        "compiler/jstypes.nim"
+      ]
+    },
+    {
+      "f2p": [
+        "tests/pragmas/t22713.nim c"
+      ],
+      "id": "nim-012272468b6c",
+      "target_files": [
+        "compiler/sizealignoffsetimpl.nim"
+      ]
+    },
+    {
+      "f2p": [
+        "tests/macros/t20067.nim c"
+      ],
+      "id": "nim-026a00afca4d",
+      "target_files": [
+        "lib/core/macros.nim"
+      ]
+    },
+    {
+      "f2p": [
+        "tests/vm/tvmmisc.nim c"
+      ],
+      "id": "nim-05348db2abad",
+      "target_files": [
+        "compiler/semfold.nim"
+      ]
+    },
+    {
+      "f2p": [
+        "tests/template/template_various.nim c"
+      ],
+      "id": "nim-0559994e18d0",
+      "target_files": [
+        "compiler/lookups.nim"
+      ]
+    },
+    {
+      "f2p": [
+        "tests/iter/tclosureiters.nim c"
+      ],
+      "id": "nim-056012865d01",
+      "target_files": [
+        "compiler/lambdalifting.nim",
+        "compiler/lowerings.nim",
+        "compiler/spawn.nim"
+      ]
+    },
+    {
+      "f2p": [
+        "tests/arc/tarcmisc.nim c"
+      ],
+      "id": "nim-070fb71fa2ae",
+      "target_files": [
+        "compiler/ast.nim",
+        "compiler/ccgexprs.nim",
+        "compiler/ccgtypes.nim",
+        "compiler/liftdestructors.nim",
+        "compiler/types.nim"
+      ]
+    },
+    {
+      "f2p": [
+        "tests/ccgbugs/tunioninit.nim c"
+      ],
+      "id": "nim-07f6472eef32",
+      "target_files": [
+        "compiler/ccgexprs.nim"
+      ]
+    },
+    {
+      "f2p": [
+        "tests/stdlib/tstrutils.nim c",
+        "tests/stdlib/tstrutils.nim cpp",
+        "tests/stdlib/tstrutils.nim js"
+      ],
+      "id": "nim-0a43f51f1906",
+      "target_files": [
+        "lib/pure/strutils.nim"
+      ]
+    },
+    {
+      "f2p": [
+        "tests/osproc/twaitforexit.nim c"
+      ],
+      "id": "nim-0b971860dde6",
+      "target_files": [
+        "lib/pure/osproc.nim"
+      ]
+    },
+    {
+      "f2p": [
+        "tests/arc/tarcmisc.nim c"
+      ],
+      "id": "nim-0bdc413cb2a4",
+      "target_files": [
+        "compiler/injectdestructors.nim"
+      ]
+    },
+    {
+      "f2p": [
+        "tests/openarray/topenarray.nim c",
+        "tests/openarray/topenarray.nim cpp"
+      ],
+      "id": "nim-0bfe59128cf7",
+      "target_files": [
+        "compiler/ccgcalls.nim"
+      ]
+    },
+    {
+      "f2p": [
+        "tests/stdlib/ttasks.nim c",
+        "tests/stdlib/ttasks.nim cpp"
+      ],
+      "id": "nim-0c4a34bf020c",
+      "target_files": [
+        "lib/std/tasks.nim"
+      ]
+    },
+    {
+      "f2p": [
+        "tests/iter/titer14.nim c"
+      ],
+      "id": "nim-0ca113d08152",
+      "target_files": [
+        "compiler/semstmts.nim"
+      ]
+    },
+    {
+      "f2p": [
+        "tests/ccgbugs/targ_lefttoright.nim c"
+      ],
+      "id": "nim-0ccc3e3efc88",
+      "target_files": [
+        "compiler/ccgexprs.nim",
+        "compiler/cgen.nim",
+        "compiler/trees.nim"
+      ]
+    },
+    {
+      "f2p": [
+        "tests/misc/tsizeof3.nim c"
+      ],
+      "id": "nim-0e56d2f64b47",
+      "target_files": [
+        "compiler/sizealignoffsetimpl.nim"
+      ]
+    },
+    {
+      "f2p": [
+        "tests/template/tpragma.nim c"
+      ],
+      "id": "nim-0e5ced197b92",
+      "target_files": [
+        "compiler/semtempl.nim",
+        "compiler/trees.nim"
+      ]
+    },
+    {
+      "f2p": [
+        "tests/converter/t18986.nim c"
+      ],
+      "id": "nim-0f4d776033f8",
+      "target_files": [
+        "compiler/importer.nim"
+      ]
+    },
+    {
+      "f2p": [
+        "tests/arc/tarcmisc.nim c"
+      ],
+      "id": "nim-103fe9039da7",
+      "target_files": [
+        "compiler/injectdestructors.nim"
+      ]
+    },
+    {
+      "f2p": [
+        "tests/lent/tlent_from_var.nim c"
+      ],
+      "id": "nim-10960ad0f9c6",
+      "target_files": [
+        "compiler/sigmatch.nim"
+      ]
+    },
+    {
+      "f2p": [
+        "tests/stdlib/tbase64.nim c",
+        "tests/stdlib/tbase64.nim js"
+      ],
+      "id": "nim-111ca8ac4c16",
+      "target_files": [
+        "lib/pure/base64.nim"
+      ]
+    },
+    {
+      "f2p": [
+        "tests/js/tcsymbol.nim js"
+      ],
+      "id": "nim-1a53c72d692e",
+      "target_files": [
+        "compiler/cmdlinehelper.nim",
+        "compiler/commands.nim"
+      ]
+    },
+    {
+      "f2p": [
+        "tests/generics/tgenerics_various.nim c"
+      ],
+      "id": "nim-1adc5d53ce89",
+      "target_files": [
+        "compiler/semtypinst.nim"
+      ]
+    },
+    {
+      "f2p": [
+        "tests/stdlib/trst.nim c"
+      ],
+      "id": "nim-1bd1b26fe3ec",
+      "target_files": [
+        "lib/packages/docutils/rst.nim"
+      ]
+    },
+    {
+      "f2p": [
+        "tests/lent/tlent_tuple_address.nim c"
+      ],
+      "id": "nim-1db6cb39ed5e",
+      "target_files": [
+        "compiler/semexprs.nim"
+      ]
+    },
+    {
+      "f2p": [
+        "tests/proc/trecursivereturntype.nim c"
+      ],
+      "id": "nim-1e3e031e0165",
+      "target_files": [
+        "compiler/ccgtypes.nim"
+      ]
+    },
+    {
+      "f2p": [
+        "tests/vm/tconstprocassignments.nim c"
+      ],
+      "id": "nim-1e915741d2c1",
+      "target_files": [
+        "compiler/semexprs.nim"
+      ]
+    },
+    {
+      "f2p": [
+        "tests/iter/t21242_nested_closure_in_iter.nim c"
+      ],
+      "id": "nim-20ca38c9e71a",
+      "target_files": [
+        "compiler/lambdalifting.nim"
+      ]
+    },
+    {
+      "f2p": [
+        "tests/views/t19986.nim c"
+      ],
+      "id": "nim-2203ae03f645",
+      "target_files": [
+        "compiler/varpartitions.nim"
+      ]
+    },
+    {
+      "f2p": [
+        "tests/ccgbugs/t21995.nim cpp"
+      ],
+      "id": "nim-24efb6e453fe",
+      "target_files": [
+        "compiler/ccgstmts.nim"
+      ]
+    },
+    {
+      "f2p": [
+        "tests/slice/tdistinct.nim c"
+      ],
+      "id": "nim-253ec7b19284",
+      "target_files": [
+        "compiler/semfold.nim"
+      ]
+    },
+    {
+      "f2p": [
+        "tests/metatype/tmetatype_issues.nim c"
+      ],
+      "id": "nim-28a958fa8c27",
+      "target_files": [
+        "compiler/semtypes.nim"
+      ]
+    },
+    {
+      "f2p": [
+        "tests/stdlib/tjsonutils.nim c",
+        "tests/stdlib/tjsonutils.nim cpp",
+        "tests/stdlib/tjsonutils.nim js"
+      ],
+      "id": "nim-29252303b2d1",
+      "target_files": [
+        "lib/std/jsonutils.nim"
+      ]
+    },
+    {
+      "f2p": [
+        "tests/generics/t21760.nim c"
+      ],
+      "id": "nim-297ef0956936",
+      "target_files": [
+        "compiler/seminst.nim"
+      ]
+    },
+    {
+      "f2p": [
+        "tests/pragmas/tinvalid_user_pragma.nim c"
+      ],
+      "id": "nim-2bf1a86ccba7",
+      "target_files": [
+        "compiler/pragmas.nim"
+      ]
+    },
+    {
+      "f2p": [
+        "tests/misc/trfc405.nim c"
+      ],
+      "id": "nim-2e2e90502314",
+      "target_files": [
+        "compiler/sigmatch.nim"
+      ]
+    },
+    {
+      "f2p": [
+        "tests/discard/tdiscardable.nim c"
+      ],
+      "id": "nim-2e891876f07e",
+      "target_files": [
+        "compiler/semstmts.nim"
+      ]
+    },
+    {
+      "f2p": [
+        "tests/macros/t21593.nim c"
+      ],
+      "id": "nim-2f47ca03ec67",
+      "target_files": [
+        "lib/core/macros.nim"
+      ]
+    },
+    {
+      "f2p": [
+        "tests/concepts/t20237.nim c"
+      ],
+      "id": "nim-2fadaabd20fb",
+      "target_files": [
+        "compiler/concepts.nim"
+      ]
+    },
+    {
+      "f2p": [
+        "tests/stdlib/tdeques.nim c",
+        "tests/stdlib/tdeques.nim cpp",
+        "tests/stdlib/tdeques.nim js",
+        "tests/stdlib/theapqueue.nim c",
+        "tests/stdlib/tlists.nim c",
+        "tests/stdlib/tlists.nim js"
+      ],
+      "id": "nim-30008f0da32c",
+      "target_files": [
+        "lib/pure/collections/critbits.nim",
+        "lib/pure/collections/deques.nim",
+        "lib/pure/collections/heapqueue.nim",
+        "lib/pure/collections/lists.nim",
+        "lib/pure/strtabs.nim"
+      ]
+    },
+    {
+      "f2p": [
+        "tests/concepts/tconcepts_issues.nim c"
+      ],
+      "id": "nim-32ca1a09e017",
+      "target_files": [
+        "compiler/concepts.nim",
+        "compiler/lookups.nim"
+      ]
+    },
+    {
+      "f2p": [
+        "tests/stdlib/tsequtils.nim c",
+        "tests/stdlib/tsequtils.nim js"
+      ],
+      "id": "nim-337cb54ddcda",
+      "target_files": [
+        "lib/pure/collections/sequtils.nim"
+      ]
+    },
+    {
+      "f2p": [
+        "tests/stdlib/trationals.nim c"
+      ],
+      "id": "nim-340b19a8f136",
+      "target_files": [
+        "lib/pure/rationals.nim"
+      ]
+    },
+    {
+      "f2p": [
+        "tests/generics/t23790.nim c"
+      ],
+      "id": "nim-35a7a22a8fdd",
+      "target_files": [
+        "compiler/pragmas.nim",
+        "compiler/seminst.nim"
+      ]
+    },
+    {
+      "f2p": [
+        "tests/template/t13515.nim c"
+      ],
+      "id": "nim-35ca52ef5cd4",
+      "target_files": [
+        "compiler/semtempl.nim"
+      ]
+    },
+    {
+      "f2p": [
+        "tests/ccgbugs/tderefblock.nim c"
+      ],
+      "id": "nim-37454e63debd",
+      "target_files": [
+        "compiler/ccgexprs.nim"
+      ]
+    },
+    {
+      "f2p": [
+        "tests/template/template_issues.nim c"
+      ],
+      "id": "nim-37602312df78",
+      "target_files": [
+        "compiler/semtempl.nim"
+      ]
+    },
+    {
+      "f2p": [
+        "tests/js/t21247.nim js"
+      ],
+      "id": "nim-397b9b7773d0",
+      "target_files": [
+        "compiler/sigmatch.nim"
+      ]
+    },
+    {
+      "f2p": [
+        "tests/async/t22210.nim c"
+      ],
+      "id": "nim-3a5331b80ba8",
+      "target_files": [
+        "lib/pure/asyncmacro.nim"
+      ]
+    },
+    {
+      "f2p": [
+        "tests/collections/tseq.nim c"
+      ],
+      "id": "nim-3e188dc3556d",
+      "target_files": [
+        "compiler/sempass2.nim"
+      ]
+    },
+    {
+      "f2p": [
+        "tests/system/tsystem_misc.nim c"
+      ],
+      "id": "nim-3ffeb12cac39",
+      "target_files": [
+        "compiler/ccgexprs.nim"
+      ]
+    },
+    {
+      "f2p": [
+        "tests/generics/t7446.nim c"
+      ],
+      "id": "nim-4166e5f92c5a",
+      "target_files": [
+        "compiler/sigmatch.nim"
+      ]
+    },
+    {
+      "f2p": [
+        "tests/casestmt/tcasestmt.nim c"
+      ],
+      "id": "nim-43df70ab2cfb",
+      "target_files": [
+        "compiler/semstmts.nim"
+      ]
+    },
+    {
+      "f2p": [
+        "tests/stdlib/tstrutils.nim c",
+        "tests/stdlib/tstrutils.nim cpp",
+        "tests/stdlib/tstrutils.nim js"
+      ],
+      "id": "nim-460c31768bcb",
+      "target_files": [
+        "lib/std/enumutils.nim"
+      ]
+    },
+    {
+      "f2p": [
+        "tests/template/tnested.nim c"
+      ],
+      "id": "nim-462c9f18edfe",
+      "target_files": [
+        "compiler/semtempl.nim"
+      ]
+    },
+    {
+      "f2p": [
+        "tests/generics/t17509.nim c"
+      ],
+      "id": "nim-48c732223b4f",
+      "target_files": [
+        "compiler/semtypinst.nim"
+      ]
+    },
+    {
+      "f2p": [
+        "tests/template/tfielduse.nim c"
+      ],
+      "id": "nim-495ea5edfe3b",
+      "target_files": [
+        "compiler/semtempl.nim"
+      ]
+    },
+    {
+      "f2p": [
+        "tests/parser/ttry.nim c"
+      ],
+      "id": "nim-49d6a0254479",
+      "target_files": [
+        "compiler/parser.nim"
+      ]
+    },
+    {
+      "f2p": [
+        "tests/types/tisopr.nim c"
+      ],
+      "id": "nim-4d8157ef184d",
+      "target_files": [
+        "compiler/semexprs.nim"
+      ]
+    },
+    {
+      "f2p": [
+        "tests/stdlib/tsystem.nim c",
+        "tests/stdlib/tsystem.nim cpp"
+      ],
+      "id": "nim-509e9fe90828",
+      "target_files": [
+        "compiler/ccgreset.nim"
+      ]
+    },
+    {
+      "f2p": [
+        "tests/pragmas/tpragmas_reorder.nim c"
+      ],
+      "id": "nim-51fcdaba5d00",
+      "target_files": [
+        "compiler/reorder.nim"
+      ]
+    },
+    {
+      "f2p": [
+        "tests/pragmas/tgenericparamcustompragma.nim c"
+      ],
+      "id": "nim-52248251d256",
+      "target_files": [
+        "compiler/semexprs.nim"
+      ]
+    },
+    {
+      "f2p": [
+        "tests/template/tgenericparam.nim c"
+      ],
+      "id": "nim-5406c38a5ac3",
+      "target_files": [
+        "compiler/sem.nim",
+        "compiler/semcall.nim"
+      ]
+    },
+    {
+      "f2p": [
+        "tests/metatype/tstatic_generic_typeclass.nim c"
+      ],
+      "id": "nim-54343b1fa8f8",
+      "target_files": [
+        "compiler/semtypinst.nim"
+      ]
+    },
+    {
+      "f2p": [
+        "tests/iter/t21737.nim c",
+        "tests/iter/t22548.nim c"
+      ],
+      "id": "nim-5c1e8402ea4d",
+      "target_files": [
+        "compiler/lambdalifting.nim"
+      ]
+    },
+    {
+      "f2p": [
+        "tests/stdlib/tre.nim c"
+      ],
+      "id": "nim-5c75fc64fc58",
+      "target_files": [
+        "lib/impure/re.nim"
+      ]
+    },
+    {
+      "f2p": [
+        "tests/gc/tfinalizers.nim c"
+      ],
+      "id": "nim-5dbba44c0ed7",
+      "target_files": [
+        "lib/system/cellsets.nim",
+        "lib/system/gc.nim"
+      ]
+    },
+    {
+      "f2p": [
+        "tests/lookups/tundeclaredmixin.nim c"
+      ],
+      "id": "nim-5dc742f630d9",
+      "target_files": [
+        "compiler/semgnrc.nim",
+        "compiler/semtempl.nim"
+      ]
+    },
+    {
+      "f2p": [
+        "tests/metatype/ttypetraits.nim c"
+      ],
+      "id": "nim-5edcbfc5c75e",
+      "target_files": [
+        "compiler/semmagic.nim"
+      ]
+    },
+    {
+      "f2p": [
+        "tests/stdlib/tmarshal.nim c"
+      ],
+      "id": "nim-60a8b1c40987",
+      "target_files": [
+        "lib/pure/marshal.nim"
+      ]
+    },
+    {
+      "f2p": [
+        "tests/pragmas/tparamcustompragma.nim c"
+      ],
+      "id": "nim-6324dfbffe8f",
+      "target_files": [
+        "compiler/semtypes.nim"
+      ]
+    },
+    {
+      "f2p": [
+        "tests/js/tjsffi.nim js"
+      ],
+      "id": "nim-63a40b0cc391",
+      "target_files": [
+        "lib/js/jsffi.nim"
+      ]
+    },
+    {
+      "f2p": [
+        "tests/exception/tsetexceptions.nim c",
+        "tests/exception/tsetexceptions.nim cpp"
+      ],
+      "id": "nim-65b4a0e6a3a0",
+      "target_files": [
+        "lib/system/excpt.nim"
+      ]
+    },
+    {
+      "f2p": [
+        "tests/pragmas/tcustom_pragma.nim c"
+      ],
+      "id": "nim-67a3373b78ae",
+      "target_files": [
+        "compiler/pragmas.nim"
+      ]
+    },
+    {
+      "f2p": [
+        "tests/stylecheck/taccept.nim c"
+      ],
+      "id": "nim-6ae05b53d866",
+      "target_files": [
+        "compiler/semtempl.nim"
+      ]
+    },
+    {
+      "f2p": [
+        "tests/parser/t12274.nim c"
+      ],
+      "id": "nim-6d24c49e6276",
+      "target_files": [
+        "compiler/parser.nim"
+      ]
+    },
+    {
+      "f2p": [
+        "tests/misc/tcast.nim c"
+      ],
+      "id": "nim-6d3945541858",
+      "target_files": [
+        "compiler/semfold.nim"
+      ]
+    },
+    {
+      "f2p": [
+        "tests/tools/tctags2.nim c"
+      ],
+      "id": "nim-6def062a525e",
+      "target_files": [
+        "compiler/docgen.nim"
+      ]
+    },
+    {
+      "f2p": [
+        "tests/macros/tgetimpl.nim c"
+      ],
+      "id": "nim-6eaa752a4bc7",
+      "target_files": [
+        "compiler/vmdeps.nim"
+      ]
+    },
+    {
+      "f2p": [
+        "tests/msgs/tresultused.nim c"
+      ],
+      "id": "nim-6ec1e35f7b50",
+      "target_files": [
+        "compiler/semexprs.nim"
+      ]
+    },
+    {
+      "f2p": [
+        "tests/stdlib/tmacros.nim c"
+      ],
+      "id": "nim-6fc818e5d235",
+      "target_files": [
+        "compiler/semexprs.nim",
+        "compiler/vm.nim"
+      ]
+    },
+    {
+      "f2p": [
+        "tests/tuples/ttuples_issues.nim c",
+        "tests/tuples/ttuples_issues.nim cpp",
+        "tests/tuples/ttuples_issues.nim js"
+      ],
+      "id": "nim-7288b9305951",
+      "target_files": [
+        "compiler/semtypinst.nim"
+      ]
+    },
+    {
+      "f2p": [
+        "tests/vm/tconstarrayresem.nim c"
+      ],
+      "id": "nim-72fbc85f3ecb",
+      "target_files": [
+        "compiler/semexprs.nim"
+      ]
+    },
+    {
+      "f2p": [
+        "tests/converter/tdontleak.nim c"
+      ],
+      "id": "nim-75174c4c0e6c",
+      "target_files": [
+        "compiler/importer.nim"
+      ]
+    },
+    {
+      "f2p": [
+        "tests/lexer/tlexerspaces.nim c"
+      ],
+      "id": "nim-75a00b807a38",
+      "target_files": [
+        "compiler/layouter.nim",
+        "compiler/lexer.nim",
+        "compiler/parser.nim"
+      ]
+    },
+    {
+      "f2p": [
+        "tests/stdlib/tpunycode.nim c"
+      ],
+      "id": "nim-77029eb1f487",
+      "target_files": [
+        "lib/pure/punycode.nim"
+      ]
+    },
+    {
+      "f2p": [
+        "tests/template/t19700.nim c"
+      ],
+      "id": "nim-79c276f22266",
+      "target_files": [
+        "compiler/sigmatch.nim"
+      ]
+    },
+    {
+      "f2p": [
+        "tests/generics/t20811.nim c"
+      ],
+      "id": "nim-7dbfa3041d32",
+      "target_files": [
+        "compiler/semgnrc.nim"
+      ]
+    },
+    {
+      "f2p": [
+        "tests/proc/t23874.nim c"
+      ],
+      "id": "nim-7dffa35c6b98",
+      "target_files": [
+        "compiler/semtypes.nim"
+      ]
+    },
+    {
+      "f2p": [
+        "tests/concepts/t18409.nim c",
+        "tests/concepts/t19730.nim c"
+      ],
+      "id": "nim-7e3c0a9e4a0c",
+      "target_files": [
+        "compiler/semexprs.nim"
+      ]
+    },
+    {
+      "f2p": [
+        "tests/whenstmt/t19426.nim c"
+      ],
+      "id": "nim-825fe28a1360",
+      "target_files": [
+        "compiler/semfold.nim"
+      ]
+    },
+    {
+      "f2p": [
+        "tests/parser/tprocexprasstmt.nim c"
+      ],
+      "id": "nim-86e96c272628",
+      "target_files": [
+        "compiler/parser.nim"
+      ]
+    },
+    {
+      "f2p": [
+        "tests/stdlib/tmisc_issues.nim js"
+      ],
+      "id": "nim-87efcd1ca90e",
+      "target_files": [
+        "compiler/jsgen.nim"
+      ]
+    },
+    {
+      "f2p": [
+        "tests/stdlib/tpegs.nim c",
+        "tests/stdlib/tpegs.nim cpp",
+        "tests/stdlib/tpegs.nim js"
+      ],
+      "id": "nim-88a8e82ae19e",
+      "target_files": [
+        "lib/pure/pegs.nim"
+      ]
+    },
+    {
+      "f2p": [
+        "tests/async/t20111.nim c"
+      ],
+      "id": "nim-88b0b7fcbc27",
+      "target_files": [
+        "lib/pure/asyncmacro.nim"
+      ]
+    },
+    {
+      "f2p": [
+        "tests/errmsgs/t23419.nim c"
+      ],
+      "id": "nim-88ce888ce7d2",
+      "target_files": [
+        "compiler/typeallowed.nim"
+      ]
+    },
+    {
+      "f2p": [
+        "tests/errmsgs/treportunused.nim c"
+      ],
+      "id": "nim-89085d26db63",
+      "target_files": [
+        "compiler/ast.nim"
+      ]
+    },
+    {
+      "f2p": [
+        "tests/effects/tnestedprocs.nim c"
+      ],
+      "id": "nim-89cd7cbc4127",
+      "target_files": [
+        "compiler/sempass2.nim",
+        "lib/pure/asyncdispatch.nim",
+        "lib/pure/json.nim",
+        "lib/system/excpt.nim",
+        "lib/system/seqs_v2.nim"
+      ]
+    },
+    {
+      "f2p": [
+        "tests/align/talign.nim c",
+        "tests/align/talign.nim cpp"
+      ],
+      "id": "nim-90438257193a",
+      "target_files": [
+        "compiler/lowerings.nim"
+      ]
+    },
+    {
+      "f2p": [
+        "tests/objvariant/treassign.nim c"
+      ],
+      "id": "nim-90bcf6fa3c53",
+      "target_files": [
+        "compiler/ccgexprs.nim",
+        "compiler/ccgstmts.nim",
+        "compiler/cgendata.nim"
+      ]
+    },
+    {
+      "f2p": [
+        "tests/stdlib/tlists.nim c",
+        "tests/stdlib/tlists.nim js"
+      ],
+      "id": "nim-917ccd8cf610",
+      "target_files": [
+        "lib/pure/collections/lists.nim"
+      ]
+    },
+    {
+      "f2p": [
+        "tests/vm/tquote.nim c"
+      ],
+      "id": "nim-9372ac3f8201",
+      "target_files": [
+        "compiler/vmdef.nim"
+      ]
+    },
+    {
+      "f2p": [
+        "tests/template/t19149.nim c"
+      ],
+      "id": "nim-95978f416755",
+      "target_files": [
+        "compiler/sigmatch.nim"
+      ]
+    },
+    {
+      "f2p": [
+        "tests/generics/tcan.nim c",
+        "tests/types/tinheritref.nim c"
+      ],
+      "id": "nim-9c81e32105b3",
+      "target_files": [
+        "compiler/semstmts.nim"
+      ]
+    },
+    {
+      "f2p": [
+        "tests/arc/t19435.nim c"
+      ],
+      "id": "nim-9e49ff8dc517",
+      "target_files": [
+        "compiler/sempass2.nim"
+      ]
+    },
+    {
+      "f2p": [
+        "tests/concepts/tusertypeclasses2.nim js"
+      ],
+      "id": "nim-9f84611daf55",
+      "target_files": [
+        "compiler/jsgen.nim"
+      ]
+    },
+    {
+      "f2p": [
+        "tests/arc/tarcmisc.nim c"
+      ],
+      "id": "nim-a22026f7cef3",
+      "target_files": [
+        "compiler/injectdestructors.nim"
+      ]
+    },
+    {
+      "f2p": [
+        "tests/misc/tvarious1.nim c"
+      ],
+      "id": "nim-a36feac82c2c",
+      "target_files": [
+        "compiler/vmgen.nim"
+      ]
+    },
+    {
+      "f2p": [
+        "tests/stdlib/tlists.nim c",
+        "tests/stdlib/tlists.nim js"
+      ],
+      "id": "nim-a4da6b139343",
+      "target_files": [
+        "lib/pure/collections/lists.nim"
+      ]
+    },
+    {
+      "f2p": [
+        "tests/ccgbugs/t10964.nim c"
+      ],
+      "id": "nim-a53b155ef9e1",
+      "target_files": [
+        "compiler/ccgexprs.nim"
+      ]
+    },
+    {
+      "f2p": [
+        "tests/stdlib/tdeques.nim c",
+        "tests/stdlib/tdeques.nim cpp",
+        "tests/stdlib/tdeques.nim js"
+      ],
+      "id": "nim-a6b98160a371",
+      "target_files": [
+        "lib/pure/collections/deques.nim"
+      ]
+    },
+    {
+      "f2p": [
+        "tests/statictypes/t20148.nim c"
+      ],
+      "id": "nim-a6c15164b813",
+      "target_files": [
+        "compiler/vm.nim"
+      ]
+    },
+    {
+      "f2p": [
+        "tests/generics/tnestedtemplate.nim c"
+      ],
+      "id": "nim-a964cfe886a0",
+      "target_files": [
+        "compiler/semgnrc.nim"
+      ]
+    },
+    {
+      "f2p": [
+        "tests/parser/tprecedence.nim c"
+      ],
+      "id": "nim-ab0fa5463550",
+      "target_files": [
+        "compiler/lexer.nim"
+      ]
+    },
+    {
+      "f2p": [
+        "tests/distinct/tdistinct.nim c",
+        "tests/distinct/tdistinct.nim js"
+      ],
+      "id": "nim-abc40fba1126",
+      "target_files": [
+        "compiler/vmgen.nim",
+        "lib/pure/json.nim",
+        "lib/std/jsonutils.nim"
+      ]
+    },
+    {
+      "f2p": [
+        "tests/js/t20235.nim js"
+      ],
+      "id": "nim-ac05e884a509",
+      "target_files": [
+        "compiler/jsgen.nim"
+      ]
+    },
+    {
+      "f2p": [
+        "tests/arc/t19862.nim c"
+      ],
+      "id": "nim-ac7e2de1e63c",
+      "target_files": [
+        "lib/system/widestrs.nim"
+      ]
+    },
+    {
+      "f2p": [
+        "tests/metatype/ttypetraits.nim c"
+      ],
+      "id": "nim-accd1f1f5b47",
+      "target_files": [
+        "compiler/semmagic.nim"
+      ]
+    },
+    {
+      "f2p": [
+        "tests/concepts/tconcepts.nim c"
+      ],
+      "id": "nim-ad679cf52834",
+      "target_files": [
+        "compiler/concepts.nim"
+      ]
+    },
+    {
+      "f2p": [
+        "tests/compiler/tcmdlineclib.nim c"
+      ],
+      "id": "nim-add55f0e5be3",
+      "target_files": [
+        "compiler/commands.nim"
+      ]
+    },
+    {
+      "f2p": [
+        "tests/vm/tnoreturn.nim c"
+      ],
+      "id": "nim-afe7a7056ed8",
+      "target_files": [
+        "compiler/vmgen.nim"
+      ]
+    },
+    {
+      "f2p": [
+        "tests/generics/tuninstantiated_failure.nim c"
+      ],
+      "id": "nim-b07631714fc1",
+      "target_files": [
+        "compiler/sigmatch.nim"
+      ]
+    },
+    {
+      "f2p": [
+        "tests/ccgbugs/t15623.nim c"
+      ],
+      "id": "nim-b076c33d51ce",
+      "target_files": [
+        "compiler/semfold.nim",
+        "lib/posix/posix_linux_amd64_consts.nim"
+      ]
+    },
+    {
+      "f2p": [
+        "tests/async/t11558.nim c"
+      ],
+      "id": "nim-b0a0b0386679",
+      "target_files": [
+        "lib/pure/asyncmacro.nim"
+      ]
+    },
+    {
+      "f2p": [
+        "tests/iter/titer_issues.nim c"
+      ],
+      "id": "nim-b2471b05064c",
+      "target_files": [
+        "compiler/closureiters.nim"
+      ]
+    },
+    {
+      "f2p": [
+        "tests/misc/trunner.nim c",
+        "tests/misc/trunner.nim cpp"
+      ],
+      "id": "nim-b2a8fd700191",
+      "target_files": [
+        "compiler/msgs.nim"
+      ]
+    },
+    {
+      "f2p": [
+        "tests/errmsgs/t25732.nim c"
+      ],
+      "id": "nim-b6a7096a0281",
+      "target_files": [
+        "compiler/semexprs.nim",
+        "compiler/semstmts.nim"
+      ]
+    },
+    {
+      "f2p": [
+        "tests/isolate/tisolate2.nim c"
+      ],
+      "id": "nim-b6d12f9dc790",
+      "target_files": [
+        "compiler/ast.nim",
+        "compiler/isolation_check.nim",
+        "compiler/varpartitions.nim"
+      ]
+    },
+    {
+      "f2p": [
+        "tests/iter/titer_issues.nim c"
+      ],
+      "id": "nim-ba02aa5876d5",
+      "target_files": [
+        "compiler/closureiters.nim"
+      ]
+    },
+    {
+      "f2p": [
+        "tests/vm/t19199.nim c"
+      ],
+      "id": "nim-baeb65ab9861",
+      "target_files": [
+        "compiler/semfold.nim"
+      ]
+    },
+    {
+      "f2p": [
+        "tests/generics/t20996.nim c"
+      ],
+      "id": "nim-bb1d106ed65d",
+      "target_files": [
+        "compiler/semstmts.nim",
+        "compiler/semtypes.nim"
+      ]
+    },
+    {
+      "f2p": [
+        "tests/template/t21231.nim c"
+      ],
+      "id": "nim-bc71b0441098",
+      "target_files": [
+        "compiler/lookups.nim"
+      ]
+    },
+    {
+      "f2p": [
+        "tests/vm/tmisc_vm.nim c"
+      ],
+      "id": "nim-c04e488f6127",
+      "target_files": [
+        "compiler/renderer.nim"
+      ]
+    },
+    {
+      "f2p": [
+        "tests/generics/timports.nim c"
+      ],
+      "id": "nim-c1b96f3aa111",
+      "target_files": [
+        "compiler/semgnrc.nim"
+      ]
+    },
+    {
+      "f2p": [
+        "tests/destructor/tgotoexc_leak.nim c"
+      ],
+      "id": "nim-c1e7eeb07151",
+      "target_files": [
+        "compiler/ccgstmts.nim"
+      ]
+    },
+    {
+      "f2p": [
+        "tests/arc/tarcmisc.nim c"
+      ],
+      "id": "nim-c21e22285793",
+      "target_files": [
+        "compiler/injectdestructors.nim"
+      ]
+    },
+    {
+      "f2p": [
+        "tests/metatype/tcisaorb.nim c"
+      ],
+      "id": "nim-c289ad823de5",
+      "target_files": [
+        "compiler/semtypes.nim"
+      ]
+    },
+    {
+      "f2p": [
+        "tests/arc/t18971.nim c"
+      ],
+      "id": "nim-c2926fa3b1ce",
+      "target_files": [
+        "compiler/varpartitions.nim"
+      ]
+    },
+    {
+      "f2p": [
+        "tests/iter/titeropenarray.nim c"
+      ],
+      "id": "nim-c2a5ec7c643e",
+      "target_files": [
+        "compiler/transf.nim"
+      ]
+    },
+    {
+      "f2p": [
+        "tests/stdlib/tstrformat.nim c"
+      ],
+      "id": "nim-c2fa8cafa1c7",
+      "target_files": [
+        "compiler/lexer.nim"
+      ]
+    },
+    {
+      "f2p": [
+        "tests/template/t6217.nim c"
+      ],
+      "id": "nim-c3bd55358072",
+      "target_files": [
+        "compiler/parampatterns.nim"
+      ]
+    },
+    {
+      "f2p": [
+        "tests/async/t21447.nim c"
+      ],
+      "id": "nim-c5264dcd9cd9",
+      "target_files": [
+        "lib/pure/asyncfutures.nim"
+      ]
+    },
+    {
+      "f2p": [
+        "tests/generics/tgenericwhen.nim js"
+      ],
+      "id": "nim-c5f4be00ba23",
+      "target_files": [
+        "compiler/semtypes.nim"
+      ]
+    },
+    {
+      "f2p": [
+        "tests/template/tobjectdeclfield.nim c"
+      ],
+      "id": "nim-c63b51525eec",
+      "target_files": [
+        "compiler/semtempl.nim"
+      ]
+    },
+    {
+      "f2p": [
+        "tests/vm/topenarrays.nim c"
+      ],
+      "id": "nim-c66208b5c4b6",
+      "target_files": [
+        "compiler/vmgen.nim"
+      ]
+    },
+    {
+      "f2p": [
+        "tests/arc/topenarray.nim c"
+      ],
+      "id": "nim-c70598c9e0ca",
+      "target_files": [
+        "compiler/ccgexprs.nim"
+      ]
+    },
+    {
+      "f2p": [
+        "tests/pragmas/tcustom_pragma.nim c"
+      ],
+      "id": "nim-c89d19f38b70",
+      "target_files": [
+        "lib/core/macros.nim"
+      ]
+    },
+    {
+      "f2p": [
+        "tests/statictypes/t5780.nim c"
+      ],
+      "id": "nim-c94e7112ae85",
+      "target_files": [
+        "compiler/sigmatch.nim"
+      ]
+    },
+    {
+      "f2p": [
+        "tests/generics/t22826.nim c"
+      ],
+      "id": "nim-ca80464a305f",
+      "target_files": [
+        "compiler/types.nim"
+      ]
+    },
+    {
+      "f2p": [
+        "tests/stdlib/tlists.nim c",
+        "tests/stdlib/tlists.nim js"
+      ],
+      "id": "nim-cbe4b3c7b733",
+      "target_files": [
+        "lib/pure/collections/lists.nim"
+      ]
+    },
+    {
+      "f2p": [
+        "tests/effects/tnestedcastblocks.nim c"
+      ],
+      "id": "nim-cd9b3573afb1",
+      "target_files": [
+        "compiler/sempass2.nim"
+      ]
+    },
+    {
+      "f2p": [
+        "tests/stdlib/thttpclient_ssl.nim c"
+      ],
+      "id": "nim-ce05384f3c60",
+      "target_files": [
+        "lib/pure/net.nim"
+      ]
+    },
+    {
+      "f2p": [
+        "tests/float/tfloat4.nim c"
+      ],
+      "id": "nim-cf5b27ea0049",
+      "target_files": [
+        "lib/system/strmantle.nim"
+      ]
+    },
+    {
+      "f2p": [
+        "tests/closure/tclosure.nim c"
+      ],
+      "id": "nim-cfbb3b754f87",
+      "target_files": [
+        "compiler/closureiters.nim"
+      ]
+    },
+    {
+      "f2p": [
+        "tests/iter/tyieldintry.nim c",
+        "tests/iter/tyieldintry.nim cpp"
+      ],
+      "id": "nim-d11ac00ef7dc",
+      "target_files": [
+        "compiler/closureiters.nim"
+      ]
+    },
+    {
+      "f2p": [
+        "tests/ccgbugs/t5296.nim c"
+      ],
+      "id": "nim-d319f65ee051",
+      "target_files": [
+        "compiler/sizealignoffsetimpl.nim"
+      ]
+    },
+    {
+      "f2p": [
+        "tests/concepts/tintypesection.nim c"
+      ],
+      "id": "nim-d3e1bdd4c9f5",
+      "target_files": [
+        "compiler/sigmatch.nim"
+      ]
+    },
+    {
+      "f2p": [
+        "tests/vm/tvmmisc.nim c"
+      ],
+      "id": "nim-d3fbe9c7cc0c",
+      "target_files": [
+        "compiler/vmgen.nim"
+      ]
+    },
+    {
+      "f2p": [
+        "tests/iter/t20891.nim c"
+      ],
+      "id": "nim-d78a7a027b5f",
+      "target_files": [
+        "compiler/ast.nim",
+        "compiler/lambdalifting.nim"
+      ]
+    },
+    {
+      "f2p": [
+        "tests/iter/titer.nim c"
+      ],
+      "id": "nim-d909efcd3b14",
+      "target_files": [
+        "compiler/lambdalifting.nim"
+      ]
+    },
+    {
+      "f2p": [
+        "tests/misc/tints.nim c"
+      ],
+      "id": "nim-d94fdf3aaf09",
+      "target_files": [
+        "compiler/vmgen.nim"
+      ]
+    },
+    {
+      "f2p": [
+        "tests/js/tasyncjs.nim js"
+      ],
+      "id": "nim-d9f7e15e428b",
+      "target_files": [
+        "lib/js/asyncjs.nim"
+      ]
+    },
+    {
+      "f2p": [
+        "tests/generics/tpragma.nim c"
+      ],
+      "id": "nim-da1cf90d95b1",
+      "target_files": [
+        "compiler/semgnrc.nim"
+      ]
+    },
+    {
+      "f2p": [
+        "tests/vm/t17121.nim c"
+      ],
+      "id": "nim-dc1942bf4a05",
+      "target_files": [
+        "compiler/vmgen.nim"
+      ]
+    },
+    {
+      "f2p": [
+        "tests/misc/t6549.nim c"
+      ],
+      "id": "nim-dd8c691c505b",
+      "target_files": [
+        "compiler/types.nim"
+      ]
+    },
+    {
+      "f2p": [
+        "tests/cpp/torc.nim cpp"
+      ],
+      "id": "nim-df49e0e3abc4",
+      "target_files": [
+        "compiler/cgen.nim"
+      ]
+    },
+    {
+      "f2p": [
+        "tests/overload/t19737.nim c"
+      ],
+      "id": "nim-e186c1d4396f",
+      "target_files": [
+        "compiler/semcall.nim"
+      ]
+    },
+    {
+      "f2p": [
+        "tests/stdlib/tunicode.nim c"
+      ],
+      "id": "nim-e2c9c2b4b6bc",
+      "target_files": [
+        "lib/pure/includes/unicode_ranges.nim"
+      ]
+    },
+    {
+      "f2p": [
+        "tests/misc/t12869.nim c",
+        "tests/misc/t16244.nim c",
+        "tests/types/t15836.nim c"
+      ],
+      "id": "nim-e3db79e8d582",
+      "target_files": [
+        "compiler/ast.nim",
+        "compiler/docgen.nim",
+        "compiler/lookups.nim",
+        "compiler/sem.nim",
+        "compiler/semexprs.nim",
+        "compiler/semstmts.nim",
+        "compiler/semtypes.nim"
+      ]
+    },
+    {
+      "f2p": [
+        "tests/constr/t18990.nim c"
+      ],
+      "id": "nim-e5dc732968e1",
+      "target_files": [
+        "compiler/semtypes.nim"
+      ]
+    },
+    {
+      "f2p": [
+        "tests/concepts/tconcept_old.nim c"
+      ],
+      "id": "nim-e5e2982be883",
+      "target_files": [
+        "compiler/sigmatch.nim"
+      ]
+    },
+    {
+      "f2p": [
+        "tests/concepts/tuninstantiated.nim c"
+      ],
+      "id": "nim-e687d44e6b7c",
+      "target_files": [
+        "compiler/ast.nim",
+        "compiler/typeallowed.nim"
+      ]
+    },
+    {
+      "f2p": [
+        "tests/stdlib/tjsonutils.nim c",
+        "tests/stdlib/tjsonutils.nim cpp",
+        "tests/stdlib/tjsonutils.nim js"
+      ],
+      "id": "nim-e7a2e9b10f72",
+      "target_files": [
+        "lib/std/jsonutils.nim"
+      ]
+    },
+    {
+      "f2p": [
+        "tests/alias/t19349.nim c"
+      ],
+      "id": "nim-e946f4f4a1b8",
+      "target_files": [
+        "compiler/types.nim"
+      ]
+    },
+    {
+      "f2p": [
+        "tests/arc/tarcmisc.nim c"
+      ],
+      "id": "nim-e9e360bade44",
+      "target_files": [
+        "compiler/sempass2.nim"
+      ]
+    },
+    {
+      "f2p": [
+        "tests/js/t20233.nim js"
+      ],
+      "id": "nim-ebd6f65c219c",
+      "target_files": [
+        "compiler/jsgen.nim"
+      ]
+    },
+    {
+      "f2p": [
+        "tests/macros/t15691.nim c"
+      ],
+      "id": "nim-ed161be0e33f",
+      "target_files": [
+        "compiler/semstmts.nim"
+      ]
+    },
+    {
+      "f2p": [
+        "tests/stdlib/trst.nim c"
+      ],
+      "id": "nim-ee563f944706",
+      "target_files": [
+        "compiler/ic/rodfiles.nim",
+        "lib/packages/docutils/rst.nim"
+      ]
+    },
+    {
+      "f2p": [
+        "tests/whenstmt/twhen_nimvm_push.nim c",
+        "tests/whenstmt/twhen_nimvm_push_pop.nim c"
+      ],
+      "id": "nim-ef31a047978d",
+      "target_files": [
+        "compiler/semexprs.nim"
+      ]
+    },
+    {
+      "f2p": [
+        "tests/stdlib/tparsecfg.nim c",
+        "tests/stdlib/tparsecfg.nim js"
+      ],
+      "id": "nim-ef4894a582a5",
+      "target_files": [
+        "lib/pure/parsecfg.nim"
+      ]
+    },
+    {
+      "f2p": [
+        "tests/borrow/tborrow.nim c"
+      ],
+      "id": "nim-f0269c97bc60",
+      "target_files": [
+        "compiler/semstmts.nim"
+      ]
+    },
+    {
+      "f2p": [
+        "tests/parser/tbinarynotindented.nim c",
+        "tests/parser/tbinarynotsameline.nim c"
+      ],
+      "id": "nim-f1be1b448aeb",
+      "target_files": [
+        "compiler/parser.nim"
+      ]
+    },
+    {
+      "f2p": [
+        "tests/template/template_issues.nim c"
+      ],
+      "id": "nim-f2ffbf97f8b6",
+      "target_files": [
+        "compiler/sem.nim"
+      ]
+    },
+    {
+      "f2p": [
+        "tests/template/tinnerouterproc.nim c"
+      ],
+      "id": "nim-f3c756e543da",
+      "target_files": [
+        "compiler/semtempl.nim"
+      ]
+    },
+    {
+      "f2p": [
+        "tests/overload/tvartypeclass.nim c"
+      ],
+      "id": "nim-f430eddc07c5",
+      "target_files": [
+        "compiler/sigmatch.nim"
+      ]
+    },
+    {
+      "f2p": [
+        "tests/stdlib/tjsonutils.nim c",
+        "tests/stdlib/tjsonutils.nim cpp",
+        "tests/stdlib/tjsonutils.nim js"
+      ],
+      "id": "nim-f4970cb57f02",
+      "target_files": [
+        "lib/std/jsonutils.nim"
+      ]
+    },
+    {
+      "f2p": [
+        "tests/tuples/ttuples_various.nim c"
+      ],
+      "id": "nim-f53599bec9ae",
+      "target_files": [
+        "compiler/sigmatch.nim"
+      ]
+    },
+    {
+      "f2p": [
+        "tests/arc/topenarray.nim c"
+      ],
+      "id": "nim-f707638819c8",
+      "target_files": [
+        "compiler/ccgcalls.nim",
+        "compiler/ccgexprs.nim"
+      ]
+    },
+    {
+      "f2p": [
+        "tests/notnil/tparse.nim c"
+      ],
+      "id": "nim-f7a5abdb0ad2",
+      "target_files": [
+        "compiler/parser.nim"
+      ]
+    },
+    {
+      "f2p": [
+        "tests/generics/t19848.nim c"
+      ],
+      "id": "nim-f8b489d77cb0",
+      "target_files": [
+        "compiler/semtypinst.nim"
+      ]
+    },
+    {
+      "f2p": [
+        "tests/iter/titer.nim c"
+      ],
+      "id": "nim-f909fca63742",
+      "target_files": [
+        "compiler/transf.nim"
+      ]
+    },
+    {
+      "f2p": [
+        "tests/stdlib/tmd5.nim c",
+        "tests/stdlib/tmd5.nim cpp",
+        "tests/stdlib/tmd5.nim js"
+      ],
+      "id": "nim-fc4ed909bd6c",
+      "target_files": [
+        "compiler/md5_old.nim",
+        "compiler/modulegraphs.nim",
+        "compiler/sighashes.nim",
+        "compiler/vmops.nim",
+        "lib/pure/md5.nim"
+      ]
+    }
+  ],
+  "task": "nim",
+  "version": "1.6.0"
+}

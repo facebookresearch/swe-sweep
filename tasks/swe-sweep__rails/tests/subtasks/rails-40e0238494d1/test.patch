@@ -1,0 +1,52 @@
+diff --git a/activerecord/test/cases/store_test.rb b/activerecord/test/cases/store_test.rb
+index 71d23733968..95ddee637e6 100644
+--- a/activerecord/test/cases/store_test.rb
++++ b/activerecord/test/cases/store_test.rb
+@@ -163,6 +163,23 @@ class StoreTest < ActiveRecord::TestCase
+     assert_equal "Dallas", @john.partner_name_before_last_save
+   end
+ 
++  test "saved changes tracking for accessors with json column" do
++    if current_adapter?(:Mysql2Adapter, :TrilogyAdapter) && ActiveRecord::Base.connection.mariadb?
++      skip "MariaDB doesn't support JSON store_accessor"
++    end
++    @john.enable_friend_requests = true
++    assert @john.enable_friend_requests_changed?
++
++    @john.save!
++    assert_not @john.enable_friend_requests_change
++    assert @john.saved_change_to_enable_friend_requests?
++    assert_equal [nil, true], @john.saved_change_to_enable_friend_requests
++    # Make a second change to test key_before_last_save
++    @john.enable_friend_requests = false
++    @john.save
++    assert_equal true, @john.enable_friend_requests_before_last_save
++  end
++
+   test "object initialization with not nullable column" do
+     assert_equal true, @john.remember_login
+   end
+diff --git a/activerecord/test/models/admin/user.rb b/activerecord/test/models/admin/user.rb
+index 691f9f11be7..ffe38d8f300 100644
+--- a/activerecord/test/models/admin/user.rb
++++ b/activerecord/test/models/admin/user.rb
+@@ -28,6 +28,7 @@ class Admin::User < ActiveRecord::Base
+   store :preferences, accessors: [ :remember_login ]
+   store :json_data, accessors: [ :height, :weight ], coder: Coder.new
+   store :json_data_empty, accessors: [ :is_a_good_guy ], coder: Coder.new
++  store_accessor :json_options, :enable_friend_requests
+ 
+   def phone_number
+     read_store_attribute(:settings, :phone_number).gsub(/(\d{3})(\d{3})(\d{4})/, '(\1) \2-\3')
+diff --git a/activerecord/test/schema/schema.rb b/activerecord/test/schema/schema.rb
+index 492236e8c7e..33f229dc435 100644
+--- a/activerecord/test/schema/schema.rb
++++ b/activerecord/test/schema/schema.rb
+@@ -35,6 +35,7 @@ ActiveRecord::Schema.define do
+     t.string :json_data_empty, null: true, default: "", limit: 1024
+     t.text :params
+     t.references :account
++    t.json :json_options
+   end
+ 
+   create_table :aircraft, force: true do |t|

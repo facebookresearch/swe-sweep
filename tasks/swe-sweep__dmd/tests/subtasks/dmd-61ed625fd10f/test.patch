@@ -1,0 +1,26 @@
+diff --git a/compiler/test/runnable/test22489.d b/compiler/test/runnable/test22489.d
+new file mode 100644
+index 0000000000..e0bfee3946
+--- /dev/null
++++ b/compiler/test/runnable/test22489.d
+@@ -0,0 +1,20 @@
++// REQUIRED_ARGS: -inline -O
++
++real f(real r)
++{
++    return r - real.infinity;
++}
++
++void main()
++{
++    assert(f(real.infinity) != f(real.infinity));
++
++    version (D_SIMD)
++    {
++        import core.simd;
++        float4 v1 = float.infinity;
++        float4 v2 = v1 - v1;
++        static foreach (i; 0 .. 4)
++            assert(v2[i] != v2[i]);
++    }
++}

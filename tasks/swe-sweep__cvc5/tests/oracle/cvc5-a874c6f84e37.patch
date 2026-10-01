@@ -1,0 +1,47 @@
+diff --git a/src/theory/quantifiers/ematching/inst_match_generator_simple.cpp b/src/theory/quantifiers/ematching/inst_match_generator_simple.cpp
+index 4125079160..019b2f31d2 100644
+--- a/src/theory/quantifiers/ematching/inst_match_generator_simple.cpp
++++ b/src/theory/quantifiers/ematching/inst_match_generator_simple.cpp
+@@ -55,8 +55,8 @@ InstMatchGeneratorSimple::InstMatchGeneratorSimple(Env& env,
+   {
+     if (d_match_pattern[i].getKind() == INST_CONSTANT)
+     {
+-      if (!options().quantifiers.cegqi
+-          || TermUtil::getInstConstAttr(d_match_pattern[i]) == q)
++      // check independent of options
++      if (TermUtil::getInstConstAttr(d_match_pattern[i]) == q)
+       {
+         d_var_num[i] = d_match_pattern[i].getAttribute(InstVarNumAttribute());
+       }
+diff --git a/src/theory/quantifiers/instantiate.cpp b/src/theory/quantifiers/instantiate.cpp
+index 334729f71d..96354ca5d4 100644
+--- a/src/theory/quantifiers/instantiate.cpp
++++ b/src/theory/quantifiers/instantiate.cpp
+@@ -169,8 +169,12 @@ bool Instantiate::addInstantiationInternal(
+                     << std::endl;
+       bad_inst = true;
+     }
+-    else if (options().quantifiers.cegqi)
++    else
+     {
++      // This checks whether the term represents a "counterexample". It is
++      // model-unsound to instantiate with such terms.
++      // Note we check this even if cegqi is false, since sygusInst also
++      // introduces terms with this attribute.
+       Node icf = TermUtil::getInstConstAttr(terms[i]);
+       if (!icf.isNull())
+       {
+diff --git a/src/theory/quantifiers/quant_conflict_find.cpp b/src/theory/quantifiers/quant_conflict_find.cpp
+index ad08b3c284..284c83b226 100644
+--- a/src/theory/quantifiers/quant_conflict_find.cpp
++++ b/src/theory/quantifiers/quant_conflict_find.cpp
+@@ -2241,7 +2241,8 @@ void QuantConflictFind::reset_round( Theory::Effort level ) {
+     if (tdb->hasTermCurrent(r))
+     {
+       TypeNode rtn = r.getType();
+-      if (!options().quantifiers.cegqi || !TermUtil::hasInstConstAttr(r))
++      // check regardless of options
++      if (!TermUtil::hasInstConstAttr(r))
+       {
+         d_eqcs[rtn].push_back(r);
+       }

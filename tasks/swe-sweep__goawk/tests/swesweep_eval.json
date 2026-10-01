@@ -1,0 +1,198 @@
+{
+  "build_jobs": 4,
+  "container_repo": "/goawk",
+  "evaluation": {
+    "suite": {
+      "eval_roots": [
+        "."
+      ],
+      "type": "go"
+    },
+    "test_dirs": [
+      "testdata"
+    ],
+    "test_timeout": 1800
+  },
+  "upstream_image": "pandora-maxbug-goawk:v1.23.2",
+  "n_base_passing": 3423,
+  "n_base_test_ignore": 114,
+  "oracle_digest": "e0c3fdffac770c84a5671823b02274f8fefba902d788ccafa1a54dd9cf29f1ee",
+  "oracle_pristine_paths": [],
+  "upstream_commit": "9f7399e15e6172900e0591deb5a57a45769d8205",
+  "reproduction": {
+    "needs_build": false,
+    "suite": {
+      "eval_roots": [
+        "."
+      ],
+      "type": "go"
+    },
+    "test_timeout": 900
+  },
+  "schema": 2,
+  "subtasks": [
+    {
+      "f2p": [
+        "interp::TestInterp",
+        "interp::TestInterp/BEGIN_{_print_\"x\"_|_\"cat\";_close(\"cat\");_print_\"y\"_}"
+      ],
+      "id": "goawk-02bb776302a6",
+      "target_files": [
+        "interp/io.go"
+      ]
+    },
+    {
+      "f2p": [
+        "interp::TestExit",
+        "interp::TestExit/BEGIN_{_print_\"x\";_exit_42_}__END_{_print_\"z\";_exit_}"
+      ],
+      "id": "goawk-0f0d7b8d2df3",
+      "target_files": [
+        "internal/compiler/compiler.go",
+        "internal/compiler/opcode_string.go",
+        "internal/compiler/opcodes.go",
+        "interp/vm.go"
+      ]
+    },
+    {
+      "f2p": [
+        "interp::TestInterp",
+        "interp::TestInterp/BEGIN_{_printf_\"%G\",_12345.678_}",
+        "interp::TestInterp/BEGIN_{_printf_\"%g\",_0.666666666666_}",
+        "interp::TestInterp/BEGIN_{_printf_\"%g\",_12345.678_}",
+        "interp::TestInterp/BEGIN_{_printf_\"%g_%g\",_3.14159265358979,_100000_}",
+        "interp::TestInterp/_BEGIN_{__print_CONVFMT,_1.2345678_\"\"__CONVFMT_=_\"%.3g\"__print_CONVFMT",
+        "interp::TestInterp/_BEGIN_{__print_OFMT,_1.2345678__OFMT_=_\"%.3g\"__print_OFMT,_1.234567__"
+      ],
+      "id": "goawk-37ef66112e6c",
+      "target_files": [
+        "interp/functions.go",
+        "interp/interp.go",
+        "interp/io.go",
+        "interp/newexecute.go"
+      ]
+    },
+    {
+      "f2p": [
+        "interp::TestInterp",
+        "interp::TestInterp/{_FS=\",\";_print_$1;_print_$2_}",
+        "interp::TestInterp/{_FS=\"X+\";_print_$1;_print_$2_}"
+      ],
+      "id": "goawk-38f8dc8f793d",
+      "target_files": [
+        "interp/interp.go",
+        "interp/io.go",
+        "interp/newexecute.go"
+      ]
+    },
+    {
+      "f2p": [
+        "interp::TestInterp",
+        "interp::TestInterp/1_{}",
+        "interp::TestInterp/{}"
+      ],
+      "id": "goawk-4653776956ed",
+      "target_files": [
+        "internal/compiler/compiler.go"
+      ]
+    },
+    {
+      "f2p": [
+        "interp::TestInterp",
+        "interp::TestInterp/BEGIN_{;}",
+        "interp::TestInterp/BEGIN_{_while_(0)_{;;}_}"
+      ],
+      "id": "goawk-529c324cf0b3",
+      "target_files": [
+        "parser/parser.go"
+      ]
+    },
+    {
+      "f2p": [
+        "interp::TestInterp",
+        "interp::TestInterp/BEGIN_{FS_=_\"(abc)?\"}_{for_(i=1;i<=NF;i++)_print_i,_\"<\"$i\">\"}",
+        "interp::TestInterp/BEGIN_{FS_=_\"[0-9]*\"}_{for_(i=1;i<=NF;i++)_print_i,_\"<\"$i\">\"}",
+        "interp::TestInterp/BEGIN_{FS_=_\"[^,]*\"}_{for_(i=1;i<=NF;i++)_print_i,_\"<\"$i\">\"}",
+        "interp::TestInterp/BEGIN_{FS_=_\"[^a-z]*\"}_{for_(i=1;i<=NF;i++)_print_i,_\"<\"$i\">\"}"
+      ],
+      "id": "goawk-7a14ad23b91a",
+      "target_files": [
+        "interp/io.go"
+      ]
+    },
+    {
+      "f2p": [
+        "interp::TestInterp",
+        "interp::TestInterp/_function_f1(a)_{_if_(0)_f5(z1);_f2(a)_}_function_f2(b)_{_if_(0)_f4(z2"
+      ],
+      "id": "goawk-7ca1bb110d39",
+      "target_files": [
+        "internal/resolver/resolve.go"
+      ]
+    },
+    {
+      "f2p": [
+        "interp::TestInterp",
+        "interp::TestInterp/BEGIN_{_s_=_srand(srand());_print_(s_>_1700000000)_}"
+      ],
+      "id": "goawk-8af831dd4f5d",
+      "target_files": [
+        "interp/vm.go"
+      ]
+    },
+    {
+      "f2p": [
+        "interp::TestInterp",
+        "interp::TestInterp/{_print_2_==_$1_}__#_+posix"
+      ],
+      "id": "goawk-8fcaed8ca6b9",
+      "target_files": [
+        "interp/value.go"
+      ]
+    },
+    {
+      "f2p": [
+        "interp::TestInterp",
+        "interp::TestInterp/BEGIN_{_RS=\"\\\\.+\"_}_NR==2_{_RS=\"x+\"_}_{_print_NR,_$0_}__#_!posix_!awk",
+        "interp::TestInterp/_#_Regression_test_for_https://github.com/benhoyt/goawk/issues/143_BEG"
+      ],
+      "id": "goawk-c86f6d4d8d7b",
+      "target_files": [
+        "interp/interp.go",
+        "interp/io.go"
+      ]
+    },
+    {
+      "f2p": [
+        "interp::TestInterp",
+        "interp::TestInterp/BEGIN_{_do_{_print_1_}_while_(0)_}"
+      ],
+      "id": "goawk-dfc4b669c0a9",
+      "target_files": [
+        "parser/parser.go"
+      ]
+    },
+    {
+      "f2p": [
+        "interp::TestInterp",
+        "interp::TestInterp/BEGIN_{_s_=_\"#!a\";_sub(/(#|#!)/,_\"\",_s);_print_s_}"
+      ],
+      "id": "goawk-e7748433cfdf",
+      "target_files": [
+        "internal/compiler/compiler.go",
+        "interp/interp.go"
+      ]
+    },
+    {
+      "f2p": [
+        "interp::TestENDConsumesInput"
+      ],
+      "id": "goawk-f7b57c7292bb",
+      "target_files": [
+        "internal/compiler/compiler.go"
+      ]
+    }
+  ],
+  "task": "goawk",
+  "version": "v1.23.2"
+}

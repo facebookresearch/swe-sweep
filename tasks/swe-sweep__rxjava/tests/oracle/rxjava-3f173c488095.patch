@@ -1,0 +1,26 @@
+diff --git a/src/main/java/io/reactivex/internal/operators/flowable/FlowableObserveOn.java b/src/main/java/io/reactivex/internal/operators/flowable/FlowableObserveOn.java
+index 2a7d499d1..3431f3a50 100644
+--- a/src/main/java/io/reactivex/internal/operators/flowable/FlowableObserveOn.java
++++ b/src/main/java/io/reactivex/internal/operators/flowable/FlowableObserveOn.java
+@@ -154,7 +154,7 @@ final Scheduler scheduler;
+             upstream.cancel();
+             worker.dispose();
+ 
+-            if (getAndIncrement() == 0) {
++            if (!outputFused && getAndIncrement() == 0) {
+                 queue.clear();
+             }
+         }
+diff --git a/src/main/java/io/reactivex/internal/operators/observable/ObservableObserveOn.java b/src/main/java/io/reactivex/internal/operators/observable/ObservableObserveOn.java
+index abf1f0bb8..56de30041 100644
+--- a/src/main/java/io/reactivex/internal/operators/observable/ObservableObserveOn.java
++++ b/src/main/java/io/reactivex/internal/operators/observable/ObservableObserveOn.java
+@@ -145,7 +145,7 @@ public final class ObservableObserveOn<T> extends AbstractObservableWithUpstream
+                 disposed = true;
+                 upstream.dispose();
+                 worker.dispose();
+-                if (getAndIncrement() == 0) {
++                if (!outputFused && getAndIncrement() == 0) {
+                     queue.clear();
+                 }
+             }

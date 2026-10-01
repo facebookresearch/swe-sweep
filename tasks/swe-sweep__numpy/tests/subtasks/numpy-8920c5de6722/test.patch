@@ -1,0 +1,27 @@
+diff --git a/numpy/polynomial/tests/test_polynomial.py b/numpy/polynomial/tests/test_polynomial.py
+index a0be94c3a6a..162cb0a9bea 100644
+--- a/numpy/polynomial/tests/test_polynomial.py
++++ b/numpy/polynomial/tests/test_polynomial.py
+@@ -5,8 +5,9 @@ from __future__ import division, absolute_import, print_function
+ 
+ import numpy as np
+ import numpy.polynomial.polynomial as poly
++import numpy.polynomial.polyutils as pu
+ from numpy.testing import (
+-    assert_almost_equal, assert_raises, assert_equal, assert_,
++    assert_almost_equal, assert_raises, assert_equal, assert_, assert_warns,
+     )
+ 
+ 
+@@ -565,3 +566,11 @@ class TestMisc(object):
+ 
+     def test_polyline(self):
+         assert_equal(poly.polyline(3, 4), [3, 4])
++
++    def test_fit_degenerate_domain(self):
++        p = poly.Polynomial.fit([1], [2], deg=0)
++        assert_equal(p.coef, [2.])
++        p = poly.Polynomial.fit([1, 1], [2, 2.1], deg=0)
++        assert_almost_equal(p.coef, [2.05])
++        with assert_warns(pu.RankWarning):
++            p = poly.Polynomial.fit([1, 1], [2, 2.1], deg=1)

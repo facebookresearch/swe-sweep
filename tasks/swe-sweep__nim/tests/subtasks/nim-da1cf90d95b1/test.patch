@@ -1,0 +1,37 @@
+diff --git a/tests/generics/mpragma1.nim b/tests/generics/mpragma1.nim
+new file mode 100644
+index 000000000..138d035df
+--- /dev/null
++++ b/tests/generics/mpragma1.nim
+@@ -0,0 +1,3 @@
++macro aMacro*(u:untyped):untyped =
++  echo "in macro"
++  result = u
+diff --git a/tests/generics/mpragma2.nim b/tests/generics/mpragma2.nim
+new file mode 100644
+index 000000000..3c7251daf
+--- /dev/null
++++ b/tests/generics/mpragma2.nim
+@@ -0,0 +1,6 @@
++import mpragma1
++proc p*[T]() =
++  proc inner() {.aMacro.} =
++    discard
++  inner()
++  discard
+diff --git a/tests/generics/tpragma.nim b/tests/generics/tpragma.nim
+new file mode 100644
+index 000000000..e83ef9cf4
+--- /dev/null
++++ b/tests/generics/tpragma.nim
+@@ -0,0 +1,10 @@
++discard """
++  nimout: '''
++in macro
++'''
++"""
++
++# issue #18649
++
++import mpragma2
++p[string]()

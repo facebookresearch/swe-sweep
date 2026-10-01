@@ -1,0 +1,15 @@
+diff --git a/packages/expect-utils/src/utils.ts b/packages/expect-utils/src/utils.ts
+index 2af87aa95d..0b8b53d3ae 100644
+--- a/packages/expect-utils/src/utils.ts
++++ b/packages/expect-utils/src/utils.ts
+@@ -282,7 +282,9 @@ const isObjectWithKeys = (a: any) =>
+   isObject(a) &&
+   !(a instanceof Error) &&
+   !(a instanceof Array) &&
+-  !(a instanceof Date);
++  !(a instanceof Date) &&
++  !(a instanceof Set) &&
++  !(a instanceof Map);
+ 
+ export const subsetEquality = (
+   object: unknown,

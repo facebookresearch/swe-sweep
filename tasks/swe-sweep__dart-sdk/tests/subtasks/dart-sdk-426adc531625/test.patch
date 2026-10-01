@@ -1,0 +1,19 @@
+diff --git a/pkg/analyzer/test/src/dart/ast/to_source_visitor_test.dart b/pkg/analyzer/test/src/dart/ast/to_source_visitor_test.dart
+index 09e1ef78e22..3aee6359db5 100644
+--- a/pkg/analyzer/test/src/dart/ast/to_source_visitor_test.dart
++++ b/pkg/analyzer/test/src/dart/ast/to_source_visitor_test.dart
+@@ -3661,6 +3661,14 @@ $code
+     _assertSource(code, findNode.topLevelVariableDeclaration(code));
+   }
+ 
++  void test_visitTopLevelVariableDeclaration_withMetadata() {
++    final code = '@deprecated var a;';
++    final findNode = _parseStringToFindNode('''
++$code
++''');
++    _assertSource(code, findNode.topLevelVariableDeclaration(code));
++  }
++
+   void test_visitTryStatement_catch() {
+     final code = 'try {} on E {}';
+     final findNode = _parseStringToFindNode('''

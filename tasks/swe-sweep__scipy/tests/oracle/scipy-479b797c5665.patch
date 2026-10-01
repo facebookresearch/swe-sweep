@@ -1,0 +1,22 @@
+diff --git a/scipy/odr/odrpack.py b/scipy/odr/odrpack.py
+index 4d91ca76e2..881c251e9d 100644
+--- a/scipy/odr/odrpack.py
++++ b/scipy/odr/odrpack.py
+@@ -509,7 +509,7 @@ class Model(object):
+     """
+ 
+     def __init__(self, fcn, fjacb=None, fjacd=None,
+-        extra_args=None, estimate=None, implicit=0, meta=None):
++                 extra_args=None, estimate=None, implicit=0, meta=None):
+ 
+         self.fcn = fcn
+         self.fjacb = fjacb
+@@ -521,7 +521,7 @@ class Model(object):
+         self.extra_args = extra_args
+         self.estimate = estimate
+         self.implicit = implicit
+-        self.meta = meta
++        self.meta = meta if meta is not None else {}
+ 
+     def set_meta(self, **kwds):
+         """ Update the metadata dictionary with the keywords and data provided

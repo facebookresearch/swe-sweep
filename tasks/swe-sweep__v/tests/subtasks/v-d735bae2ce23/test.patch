@@ -1,0 +1,19 @@
+diff --git a/vlib/v/tests/alias_to_sum_with_enum_test.v b/vlib/v/tests/alias_to_sum_with_enum_test.v
+new file mode 100644
+index 000000000..c17267912
+--- /dev/null
++++ b/vlib/v/tests/alias_to_sum_with_enum_test.v
+@@ -0,0 +1,13 @@
++enum Test {
++	abc
++}
++
++type SumTest = Test | u8
++
++type TestAlias = Test
++
++fn test_main() {
++	a := TestAlias.abc
++	b := SumTest(a)
++	assert b is Test
++}

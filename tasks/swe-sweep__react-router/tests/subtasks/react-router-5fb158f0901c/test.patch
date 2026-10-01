@@ -1,0 +1,61 @@
+diff --git a/packages/react-router/__tests__/matchPath-test.tsx b/packages/react-router/__tests__/matchPath-test.tsx
+index 338b8b732..1595e4091 100644
+--- a/packages/react-router/__tests__/matchPath-test.tsx
++++ b/packages/react-router/__tests__/matchPath-test.tsx
+@@ -290,6 +290,41 @@ describe("matchPath optional dynamic segments", () => {
+     const match = matchPath("/:lang?/user/:id?", "/en/user/123");
+     expect(match).toMatchObject({ params: { lang: "en", id: "123" } });
+   });
++
++  it("should NOT match when pathname extends base path without separator", () => {
++    expect(matchPath("/test_route/:part?", "/test_route_more")).toBeNull();
++  });
++
++  it("should NOT match when pathname extends base path without separator (middle optional param)", () => {
++    expect(matchPath("/test_route/:part?/edit", "/test_route_more/edit")).toBeNull();
++  });
++
++  it("should NOT match optional param when pathname has extra characters after base", () => {
++    expect(matchPath("/users/:id?", "/usersblah")).toBeNull();
++    expect(matchPath("/api/:version?", "/api123")).toBeNull();
++    expect(matchPath("/home/:section?", "/homepage")).toBeNull();
++  });
++
++  it("should still match optional param with proper path separator", () => {
++    expect(matchPath("/test_route/:part?", "/test_route/more")).toMatchObject({
++      params: { part: "more" },
++    });
++    expect(matchPath("/test_route/:part?", "/test_route")).toMatchObject({
++      params: { part: undefined },
++    });
++    expect(matchPath("/test_route/:part?", "/test_route/")).toMatchObject({
++      params: { part: undefined },
++    });
++  });
++
++  it("should match a middle optional param with proper path separators", () => {
++    expect(matchPath("/test_route/:part?/edit", "/test_route/more/edit")).toMatchObject({
++      params: { part: "more" },
++    });
++    expect(matchPath("/test_route/:part?/edit", "/test_route/edit")).toMatchObject({
++      params: { part: undefined },
++    });
++  });
+ });
+ 
+ describe("matchPath *", () => {
+diff --git a/packages/react-router/__tests__/path-matching-test.tsx b/packages/react-router/__tests__/path-matching-test.tsx
+index 337b99673..d0a240d17 100644
+--- a/packages/react-router/__tests__/path-matching-test.tsx
++++ b/packages/react-router/__tests__/path-matching-test.tsx
+@@ -185,6 +185,10 @@ describe("path matching", () => {
+     expect(
+       matchPath("/sitemap/:lang?.xml", "/sitemap/.xml")?.params,
+     ).toStrictEqual({ lang: undefined });
++    expect(matchPath("/sitemap/:lang?.xml", "/sitemap/en.xml")?.params).toStrictEqual(
++      { lang: "en" },
++    );
++    expect(matchPath("/sitemap/:lang?.xml", "/sitemap.xml")).toBeNull();
+   });
+ });
+ 

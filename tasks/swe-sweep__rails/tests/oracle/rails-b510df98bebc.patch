@@ -1,0 +1,68 @@
+diff --git a/activestorage/lib/active_storage/attached/changes/create_many.rb b/activestorage/lib/active_storage/attached/changes/create_many.rb
+index fb7c2a4a302..7c25f4a1f07 100644
+--- a/activestorage/lib/active_storage/attached/changes/create_many.rb
++++ b/activestorage/lib/active_storage/attached/changes/create_many.rb
+@@ -2,11 +2,12 @@
+ 
+ module ActiveStorage
+   class Attached::Changes::CreateMany # :nodoc:
+-    attr_reader :name, :record, :attachables
++    attr_reader :name, :record, :attachables, :pending_uploads
+ 
+-    def initialize(name, record, attachables)
++    def initialize(name, record, attachables, pending_uploads: [])
+       @name, @record, @attachables = name, record, Array(attachables)
+       blobs.each(&:identify_without_saving)
++      @pending_uploads = Array(pending_uploads) + subchanges_without_blobs
+       attachments
+     end
+ 
+@@ -19,7 +20,7 @@ module ActiveStorage
+     end
+ 
+     def upload
+-      subchanges.each(&:upload)
++      pending_uploads.each(&:upload)
+     end
+ 
+     def save
+@@ -36,6 +37,10 @@ module ActiveStorage
+         ActiveStorage::Attached::Changes::CreateOneOfMany.new(name, record, attachable)
+       end
+ 
++      def subchanges_without_blobs
++        subchanges.reject { |subchange| subchange.attachable.is_a?(ActiveStorage::Blob) }
++      end
++
+       def assign_associated_attachments
+         record.public_send("#{name}_attachments=", persisted_or_new_attachments)
+       end
+diff --git a/activestorage/lib/active_storage/attached/model.rb b/activestorage/lib/active_storage/attached/model.rb
+index 13fe96ef8ed..27e3e15bfd9 100644
+--- a/activestorage/lib/active_storage/attached/model.rb
++++ b/activestorage/lib/active_storage/attached/model.rb
+@@ -138,13 +138,14 @@ module ActiveStorage
+ 
+           def #{name}=(attachables)
+             attachables = Array(attachables).compact_blank
++            pending_uploads = attachment_changes["#{name}"].try(:pending_uploads)
+ 
+             if ActiveStorage.replace_on_assign_to_many
+               attachment_changes["#{name}"] =
+                 if attachables.none?
+                   ActiveStorage::Attached::Changes::DeleteMany.new("#{name}", self)
+                 else
+-                  ActiveStorage::Attached::Changes::CreateMany.new("#{name}", self, attachables)
++                  ActiveStorage::Attached::Changes::CreateMany.new("#{name}", self, attachables, pending_uploads: pending_uploads)
+                 end
+             else
+               ActiveSupport::Deprecation.warn \
+@@ -155,7 +156,7 @@ module ActiveStorage
+ 
+               if attachables.any?
+                 attachment_changes["#{name}"] =
+-                  ActiveStorage::Attached::Changes::CreateMany.new("#{name}", self, #{name}.blobs + attachables)
++                  ActiveStorage::Attached::Changes::CreateMany.new("#{name}", self, #{name}.blobs + attachables, pending_uploads: pending_uploads)
+               end
+             end
+           end

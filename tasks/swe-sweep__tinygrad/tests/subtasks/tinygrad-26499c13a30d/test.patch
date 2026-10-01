@@ -1,0 +1,16 @@
+diff --git a/test/test_uops.py b/test/test_uops.py
+index 64459fab3..0226024ff 100644
+--- a/test/test_uops.py
++++ b/test/test_uops.py
+@@ -209,6 +209,11 @@ class TestExecALU(TestUOps):
+   def test_sqrt(self):
+     self.assertEqual(exec_alu(Ops.SQRT, dtypes.float, (0.0,)), 0.0)
+ 
++  def test_trunc_nonfinite(self):
++    self.assertEqual(exec_alu(Ops.TRUNC, dtypes.float, (math.inf,)), math.inf)
++    self.assertEqual(exec_alu(Ops.TRUNC, dtypes.float, (-math.inf,)), -math.inf)
++    self.assertTrue(math.isnan(exec_alu(Ops.TRUNC, dtypes.float, (math.nan,))))
++
+   def test_div(self):
+     self.assertEqual(exec_alu(Ops.IDIV, dtypes.int8, (8, 2)), 4)
+     self.assertEqual(exec_alu(Ops.IDIV, dtypes.int8, (7, 3)), 2)

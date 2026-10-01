@@ -1,0 +1,27 @@
+diff --git a/test/plugins/cleanupIds.25.svg b/test/plugins/cleanupIds.25.svg
+new file mode 100644
+index 0000000..db67844
+--- /dev/null
++++ b/test/plugins/cleanupIds.25.svg
+@@ -0,0 +1,21 @@
++Should handle non-ASCII IDs and resolve URI encoded references.
++
++See: https://github.com/svg/svgo/issues/1696
++
++===
++
++<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 9 9">
++  <defs>
++    <path id="人口" d="M1 1l2 2" stroke="black"/>
++  </defs>
++  <use href="#%E4%BA%BA%E5%8F%A3"/>
++</svg>
++
++@@@
++
++<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 9 9">
++    <defs>
++        <path id="a" d="M1 1l2 2" stroke="black"/>
++    </defs>
++    <use href="#a"/>
++</svg>

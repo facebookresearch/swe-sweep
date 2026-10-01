@@ -1,0 +1,385 @@
+diff --git a/extensions/amazon-lambda/deployment/src/test/java/io/quarkus/amazon/lambda/deployment/testing/AbstractInputCollectionOutputCollection.java b/extensions/amazon-lambda/deployment/src/test/java/io/quarkus/amazon/lambda/deployment/testing/AbstractInputCollectionOutputCollection.java
+new file mode 100644
+index 00000000000..26edbfe29cb
+--- /dev/null
++++ b/extensions/amazon-lambda/deployment/src/test/java/io/quarkus/amazon/lambda/deployment/testing/AbstractInputCollectionOutputCollection.java
+@@ -0,0 +1,20 @@
++package io.quarkus.amazon.lambda.deployment.testing;
++
++import java.util.ArrayList;
++import java.util.List;
++
++import com.amazonaws.services.lambda.runtime.Context;
++import com.amazonaws.services.lambda.runtime.RequestHandler;
++
++import io.quarkus.amazon.lambda.deployment.testing.model.InputPerson;
++import io.quarkus.amazon.lambda.deployment.testing.model.OutputPerson;
++
++public abstract class AbstractInputCollectionOutputCollection implements RequestHandler<List<InputPerson>, List<OutputPerson>> {
++
++    @Override
++    public List<OutputPerson> handleRequest(List<InputPerson> inputPeronList, Context context) {
++        List<OutputPerson> personList = new ArrayList<>();
++        inputPeronList.forEach(person -> personList.add(new OutputPerson(person.getName())));
++        return personList;
++    }
++}
+diff --git a/extensions/amazon-lambda/deployment/src/test/java/io/quarkus/amazon/lambda/deployment/testing/AbstractInputCollectionOutputCollectionLambdaImpl.java b/extensions/amazon-lambda/deployment/src/test/java/io/quarkus/amazon/lambda/deployment/testing/AbstractInputCollectionOutputCollectionLambdaImpl.java
+new file mode 100644
+index 00000000000..6b8aff7356e
+--- /dev/null
++++ b/extensions/amazon-lambda/deployment/src/test/java/io/quarkus/amazon/lambda/deployment/testing/AbstractInputCollectionOutputCollectionLambdaImpl.java
+@@ -0,0 +1,5 @@
++package io.quarkus.amazon.lambda.deployment.testing;
++
++public class AbstractInputCollectionOutputCollectionLambdaImpl extends AbstractInputCollectionOutputCollection {
++
++}
+diff --git a/extensions/amazon-lambda/deployment/src/test/java/io/quarkus/amazon/lambda/deployment/testing/AbstractInputCollectionOutputCollectionLambdaImplTest.java b/extensions/amazon-lambda/deployment/src/test/java/io/quarkus/amazon/lambda/deployment/testing/AbstractInputCollectionOutputCollectionLambdaImplTest.java
+new file mode 100644
+index 00000000000..ce5f9843936
+--- /dev/null
++++ b/extensions/amazon-lambda/deployment/src/test/java/io/quarkus/amazon/lambda/deployment/testing/AbstractInputCollectionOutputCollectionLambdaImplTest.java
+@@ -0,0 +1,46 @@
++package io.quarkus.amazon.lambda.deployment.testing;
++
++import static io.restassured.RestAssured.given;
++import static org.hamcrest.CoreMatchers.hasItem;
++import static org.hamcrest.CoreMatchers.not;
++import static org.hamcrest.Matchers.hasEntry;
++
++import java.util.ArrayList;
++import java.util.List;
++
++import org.jboss.shrinkwrap.api.ShrinkWrap;
++import org.jboss.shrinkwrap.api.spec.JavaArchive;
++import org.junit.jupiter.api.Test;
++import org.junit.jupiter.api.extension.RegisterExtension;
++
++import io.quarkus.amazon.lambda.deployment.testing.model.InputPerson;
++import io.quarkus.amazon.lambda.deployment.testing.model.OutputPerson;
++import io.quarkus.test.QuarkusUnitTest;
++
++public class AbstractInputCollectionOutputCollectionLambdaImplTest {
++
++    @RegisterExtension
++    static final QuarkusUnitTest test = new QuarkusUnitTest().setArchiveProducer(() -> ShrinkWrap
++            .create(JavaArchive.class)
++            .addClasses(AbstractInputCollectionOutputCollectionLambdaImpl.class, AbstractInputCollectionOutputCollection.class,
++                    InputPerson.class, OutputPerson.class));
++
++    @Test
++    void abstractRequestHandler_InputCollectionInputPerson_OutputCollectionOutputPerson() {
++
++        List<InputPerson> personList = new ArrayList<>();
++        personList.add(new InputPerson("Chris"));
++        personList.add(new InputPerson("Fred"));
++
++        given()
++                .body(personList)
++                .when()
++                .post()
++                .then()
++                .statusCode(200)
++                .body("", hasItem(hasEntry("outputname", "Chris"))) // OutputPerson serializes name with key outputname
++                .body("", hasItem(hasEntry("outputname", "Fred")))
++                .body("", not(hasItem(hasEntry("name", "Chris")))) // make sure that there is no key name
++                .body("", not(hasItem(hasEntry("name", "Fred"))));
++    }
++}
+diff --git a/extensions/amazon-lambda/deployment/src/test/java/io/quarkus/amazon/lambda/deployment/testing/GreetingLambda.java b/extensions/amazon-lambda/deployment/src/test/java/io/quarkus/amazon/lambda/deployment/testing/GreetingLambda.java
+index f62a7ef7eef..7b2ed22d57b 100644
+--- a/extensions/amazon-lambda/deployment/src/test/java/io/quarkus/amazon/lambda/deployment/testing/GreetingLambda.java
++++ b/extensions/amazon-lambda/deployment/src/test/java/io/quarkus/amazon/lambda/deployment/testing/GreetingLambda.java
+@@ -3,10 +3,12 @@ package io.quarkus.amazon.lambda.deployment.testing;
+ import com.amazonaws.services.lambda.runtime.Context;
+ import com.amazonaws.services.lambda.runtime.RequestHandler;
+ 
+-public class GreetingLambda implements RequestHandler<Person, String> {
++import io.quarkus.amazon.lambda.deployment.testing.model.InputPerson;
++
++public class GreetingLambda implements RequestHandler<InputPerson, String> {
+ 
+     @Override
+-    public String handleRequest(Person input, Context context) {
++    public String handleRequest(InputPerson input, Context context) {
+         return "Hey " + input.getName();
+     }
+ }
+diff --git a/extensions/amazon-lambda/deployment/src/test/java/io/quarkus/amazon/lambda/deployment/testing/GreetingLambdaTest.java b/extensions/amazon-lambda/deployment/src/test/java/io/quarkus/amazon/lambda/deployment/testing/GreetingLambdaTest.java
+new file mode 100644
+index 00000000000..899e2febbff
+--- /dev/null
++++ b/extensions/amazon-lambda/deployment/src/test/java/io/quarkus/amazon/lambda/deployment/testing/GreetingLambdaTest.java
+@@ -0,0 +1,38 @@
++package io.quarkus.amazon.lambda.deployment.testing;
++
++import static io.restassured.RestAssured.given;
++import static org.hamcrest.CoreMatchers.containsString;
++
++import org.jboss.shrinkwrap.api.ShrinkWrap;
++import org.jboss.shrinkwrap.api.spec.JavaArchive;
++import org.junit.jupiter.api.Test;
++import org.junit.jupiter.api.extension.RegisterExtension;
++
++import io.quarkus.amazon.lambda.deployment.testing.model.InputPerson;
++import io.quarkus.test.QuarkusUnitTest;
++
++class GreetingLambdaTest {
++
++    @RegisterExtension
++    static final QuarkusUnitTest test = new QuarkusUnitTest().setArchiveProducer(() -> ShrinkWrap
++            .create(JavaArchive.class)
++            .addClasses(GreetingLambda.class, InputPerson.class));
++
++    @Test
++    public void requestHandler_InputPerson_OutputString() throws Exception {
++        // you test your lambdas by invoking on http://localhost:8081
++        // this works in dev mode too
++
++        InputPerson in = new InputPerson("Stu");
++        given()
++                .contentType("application/json")
++                .accept("application/json")
++                .body(in)
++                .when()
++                .post()
++                .then()
++                .statusCode(200)
++                .body(containsString("Hey Stu"));
++    }
++
++}
+diff --git a/extensions/amazon-lambda/deployment/src/test/java/io/quarkus/amazon/lambda/deployment/testing/InputCollectionOutputCollectionLambda.java b/extensions/amazon-lambda/deployment/src/test/java/io/quarkus/amazon/lambda/deployment/testing/InputCollectionOutputCollectionLambda.java
+new file mode 100644
+index 00000000000..437cc4e6fcb
+--- /dev/null
++++ b/extensions/amazon-lambda/deployment/src/test/java/io/quarkus/amazon/lambda/deployment/testing/InputCollectionOutputCollectionLambda.java
+@@ -0,0 +1,24 @@
++package io.quarkus.amazon.lambda.deployment.testing;
++
++import java.util.ArrayList;
++import java.util.List;
++
++import com.amazonaws.services.lambda.runtime.Context;
++import com.amazonaws.services.lambda.runtime.RequestHandler;
++
++import io.quarkus.amazon.lambda.deployment.testing.model.InputPerson;
++import io.quarkus.amazon.lambda.deployment.testing.model.OutputPerson;
++
++public class InputCollectionOutputCollectionLambda implements RequestHandler<List<InputPerson>, List<OutputPerson>> {
++
++    @Override
++    public List<OutputPerson> handleRequest(List<InputPerson> people, Context context) {
++
++        List<OutputPerson> outputPeople = new ArrayList<>();
++        people.stream().parallel().forEach((person) -> {
++            outputPeople.add(new OutputPerson(person.getName()));
++        });
++
++        return outputPeople;
++    }
++}
+diff --git a/extensions/amazon-lambda/deployment/src/test/java/io/quarkus/amazon/lambda/deployment/testing/InputCollectionOutputCollectionLambdaTest.java b/extensions/amazon-lambda/deployment/src/test/java/io/quarkus/amazon/lambda/deployment/testing/InputCollectionOutputCollectionLambdaTest.java
+new file mode 100644
+index 00000000000..907827ece86
+--- /dev/null
++++ b/extensions/amazon-lambda/deployment/src/test/java/io/quarkus/amazon/lambda/deployment/testing/InputCollectionOutputCollectionLambdaTest.java
+@@ -0,0 +1,45 @@
++package io.quarkus.amazon.lambda.deployment.testing;
++
++import static io.restassured.RestAssured.given;
++import static org.hamcrest.CoreMatchers.hasItem;
++import static org.hamcrest.CoreMatchers.not;
++import static org.hamcrest.Matchers.hasEntry;
++
++import java.util.ArrayList;
++import java.util.List;
++
++import org.jboss.shrinkwrap.api.ShrinkWrap;
++import org.jboss.shrinkwrap.api.spec.JavaArchive;
++import org.junit.jupiter.api.Test;
++import org.junit.jupiter.api.extension.RegisterExtension;
++
++import io.quarkus.amazon.lambda.deployment.testing.model.InputPerson;
++import io.quarkus.amazon.lambda.deployment.testing.model.OutputPerson;
++import io.quarkus.test.QuarkusUnitTest;
++
++public class InputCollectionOutputCollectionLambdaTest {
++
++    @RegisterExtension
++    static final QuarkusUnitTest test = new QuarkusUnitTest().setArchiveProducer(() -> ShrinkWrap
++            .create(JavaArchive.class)
++            .addClasses(InputCollectionOutputCollectionLambda.class, InputPerson.class, OutputPerson.class));
++
++    @Test
++    void requestHandler_InputCollectionInputPerson_OutputCollectionOutputPerson() {
++
++        List<InputPerson> personList = new ArrayList<>();
++        personList.add(new InputPerson("Chris"));
++        personList.add(new InputPerson("Fred"));
++
++        given()
++                .body(personList)
++                .when()
++                .post()
++                .then()
++                .statusCode(200)
++                .body("", hasItem(hasEntry("outputname", "Chris"))) // OutputPerson serializes name with key outputname
++                .body("", hasItem(hasEntry("outputname", "Fred")))
++                .body("", not(hasItem(hasEntry("name", "Chris")))) // make sure that there is no key name
++                .body("", not(hasItem(hasEntry("name", "Fred"))));
++    }
++}
+diff --git a/extensions/amazon-lambda/deployment/src/test/java/io/quarkus/amazon/lambda/deployment/testing/LambdaDevServicesContinuousTestingTestCase.java b/extensions/amazon-lambda/deployment/src/test/java/io/quarkus/amazon/lambda/deployment/testing/LambdaDevServicesContinuousTestingTestCase.java
+index cef9a2bda67..60b108b89b0 100644
+--- a/extensions/amazon-lambda/deployment/src/test/java/io/quarkus/amazon/lambda/deployment/testing/LambdaDevServicesContinuousTestingTestCase.java
++++ b/extensions/amazon-lambda/deployment/src/test/java/io/quarkus/amazon/lambda/deployment/testing/LambdaDevServicesContinuousTestingTestCase.java
+@@ -10,6 +10,8 @@ import org.junit.jupiter.api.Disabled;
+ import org.junit.jupiter.api.RepeatedTest;
+ import org.junit.jupiter.api.extension.RegisterExtension;
+ 
++import io.quarkus.amazon.lambda.deployment.testing.model.InputPerson;
++import io.quarkus.amazon.lambda.deployment.testing.model.OutputPerson;
+ import io.quarkus.test.ContinuousTestingTestUtils;
+ import io.quarkus.test.QuarkusDevModeTest;
+ 
+@@ -21,7 +23,7 @@ public class LambdaDevServicesContinuousTestingTestCase {
+                 @Override
+                 public JavaArchive get() {
+                     return ShrinkWrap.create(JavaArchive.class)
+-                            .addClasses(GreetingLambda.class, Person.class)
++                            .addClasses(GreetingLambda.class, InputPerson.class, OutputPerson.class)
+                             .addAsResource(
+                                     new StringAsset(ContinuousTestingTestUtils.appProperties(
+                                             "quarkus.log.category.\"io.quarkus.amazon.lambda.runtime\".level=DEBUG")),
+@@ -30,7 +32,7 @@ public class LambdaDevServicesContinuousTestingTestCase {
+             }).setTestArchiveProducer(new Supplier<>() {
+                 @Override
+                 public JavaArchive get() {
+-                    return ShrinkWrap.create(JavaArchive.class).addClass(LambdaHandlerET.class);
++                    return ShrinkWrap.create(JavaArchive.class).addClass(GreetingLambdaTest.class);
+                 }
+             });
+ 
+@@ -45,7 +47,7 @@ public class LambdaDevServicesContinuousTestingTestCase {
+         result = utils.waitForNextCompletion();
+         Assertions.assertEquals(0, result.getTotalTestsPassed());
+         Assertions.assertEquals(1, result.getTotalTestsFailed());
+-        test.modifyTestSourceFile(LambdaHandlerET.class, s -> s.replace("Hey", "Yo"));
++        test.modifyTestSourceFile(GreetingLambdaTest.class, s -> s.replace("Hey", "Yo"));
+         result = utils.waitForNextCompletion();
+         Assertions.assertEquals(1, result.getTotalTestsPassed());
+         Assertions.assertEquals(0, result.getTotalTestsFailed());
+diff --git a/extensions/amazon-lambda/deployment/src/test/java/io/quarkus/amazon/lambda/deployment/testing/LambdaHandlerET.java b/extensions/amazon-lambda/deployment/src/test/java/io/quarkus/amazon/lambda/deployment/testing/LambdaHandlerET.java
+deleted file mode 100644
+index 135b02bac05..00000000000
+--- a/extensions/amazon-lambda/deployment/src/test/java/io/quarkus/amazon/lambda/deployment/testing/LambdaHandlerET.java
++++ /dev/null
+@@ -1,31 +0,0 @@
+-package io.quarkus.amazon.lambda.deployment.testing;
+-
+-import static io.restassured.RestAssured.given;
+-import static org.hamcrest.CoreMatchers.containsString;
+-
+-import org.junit.jupiter.api.Test;
+-
+-import io.quarkus.test.junit.QuarkusTest;
+-
+-@QuarkusTest
+-class LambdaHandlerET {
+-
+-    @Test
+-    public void testSimpleLambdaSuccess() throws Exception {
+-        // you test your lambdas by invoking on http://localhost:8081
+-        // this works in dev mode too
+-
+-        Person in = new Person();
+-        in.setName("Stu");
+-        given()
+-                .contentType("application/json")
+-                .accept("application/json")
+-                .body(in)
+-                .when()
+-                .post()
+-                .then()
+-                .statusCode(200)
+-                .body(containsString("Hey Stu"));
+-    }
+-
+-}
+diff --git a/extensions/amazon-lambda/deployment/src/test/java/io/quarkus/amazon/lambda/deployment/testing/Person.java b/extensions/amazon-lambda/deployment/src/test/java/io/quarkus/amazon/lambda/deployment/testing/Person.java
+deleted file mode 100644
+index d2a4066a77d..00000000000
+--- a/extensions/amazon-lambda/deployment/src/test/java/io/quarkus/amazon/lambda/deployment/testing/Person.java
++++ /dev/null
+@@ -1,15 +0,0 @@
+-package io.quarkus.amazon.lambda.deployment.testing;
+-
+-public class Person {
+-
+-    private String name;
+-
+-    public String getName() {
+-        return name;
+-    }
+-
+-    public Person setName(String name) {
+-        this.name = name;
+-        return this;
+-    }
+-}
+diff --git a/extensions/amazon-lambda/deployment/src/test/java/io/quarkus/amazon/lambda/deployment/testing/model/InputPerson.java b/extensions/amazon-lambda/deployment/src/test/java/io/quarkus/amazon/lambda/deployment/testing/model/InputPerson.java
+new file mode 100644
+index 00000000000..b74c9482d8c
+--- /dev/null
++++ b/extensions/amazon-lambda/deployment/src/test/java/io/quarkus/amazon/lambda/deployment/testing/model/InputPerson.java
+@@ -0,0 +1,22 @@
++package io.quarkus.amazon.lambda.deployment.testing.model;
++
++public class InputPerson {
++
++    public InputPerson() {
++    }
++
++    public InputPerson(String name) {
++        this.name = name;
++    }
++
++    private String name;
++
++    public String getName() {
++        return name;
++    }
++
++    public InputPerson setName(String name) {
++        this.name = name;
++        return this;
++    }
++}
+diff --git a/extensions/amazon-lambda/deployment/src/test/java/io/quarkus/amazon/lambda/deployment/testing/model/OutputPerson.java b/extensions/amazon-lambda/deployment/src/test/java/io/quarkus/amazon/lambda/deployment/testing/model/OutputPerson.java
+new file mode 100644
+index 00000000000..f448321ffdd
+--- /dev/null
++++ b/extensions/amazon-lambda/deployment/src/test/java/io/quarkus/amazon/lambda/deployment/testing/model/OutputPerson.java
+@@ -0,0 +1,20 @@
++package io.quarkus.amazon.lambda.deployment.testing.model;
++
++import com.fasterxml.jackson.annotation.JsonProperty;
++
++public class OutputPerson {
++
++    public OutputPerson() {
++    }
++
++    public OutputPerson(String name) {
++        this.name = name;
++    }
++
++    @JsonProperty("outputname")
++    private String name;
++
++    public String getName() {
++        return name;
++    }
++}

@@ -1,0 +1,41 @@
+diff --git a/activerecord/lib/active_record/encryption/encryptable_record.rb b/activerecord/lib/active_record/encryption/encryptable_record.rb
+index cf7cede8ee0..04e84c44c88 100644
+--- a/activerecord/lib/active_record/encryption/encryptable_record.rb
++++ b/activerecord/lib/active_record/encryption/encryptable_record.rb
+@@ -82,7 +82,7 @@ module ActiveRecord
+           def encrypt_attribute(name, attribute_scheme)
+             encrypted_attributes << name.to_sym
+ 
+-            attribute name do |cast_type|
++            attribute name, default: -> { columns_hash[name.to_s]&.default } do |cast_type|
+               ActiveRecord::Encryption::EncryptedAttributeType.new scheme: attribute_scheme, cast_type: cast_type
+             end
+ 
+diff --git a/activerecord/lib/active_record/encryption/encrypted_attribute_type.rb b/activerecord/lib/active_record/encryption/encrypted_attribute_type.rb
+index e0979ca987b..0dfb8e356ab 100644
+--- a/activerecord/lib/active_record/encryption/encrypted_attribute_type.rb
++++ b/activerecord/lib/active_record/encryption/encrypted_attribute_type.rb
+@@ -40,7 +40,7 @@ module ActiveRecord
+       end
+ 
+       def changed_in_place?(raw_old_value, new_value)
+-        old_value = raw_old_value.nil? ? nil : deserialize(raw_old_value)
++        old_value = raw_old_value.nil? ? nil : deserialize_previous_value_to_determine_change(raw_old_value)
+         old_value != new_value
+       end
+ 
+@@ -135,6 +135,14 @@ module ActiveRecord
+         def clean_text_scheme
+           @clean_text_scheme ||= ActiveRecord::Encryption::Scheme.new(downcase: downcase?, encryptor: ActiveRecord::Encryption::NullEncryptor.new)
+         end
++
++        def deserialize_previous_value_to_determine_change(raw_old_value)
++          deserialize(raw_old_value)
++          # We tolerate unencrypted data when determining if a column changed
++          # to support default DB values in encrypted attributes
++        rescue ActiveRecord::Encryption::Errors::Decryption
++          nil
++        end
+     end
+   end
+ end

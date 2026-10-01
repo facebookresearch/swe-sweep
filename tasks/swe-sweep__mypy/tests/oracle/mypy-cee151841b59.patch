@@ -1,0 +1,16 @@
+diff --git a/mypy/semanal.py b/mypy/semanal.py
+index bebabfd32..ebd9515d8 100644
+--- a/mypy/semanal.py
++++ b/mypy/semanal.py
+@@ -5162,9 +5162,11 @@ class SemanticAnalyzer(
+     def visit_return_stmt(self, s: ReturnStmt) -> None:
++        old = self.statement
+         self.statement = s
+         if not self.is_func_scope():
+             self.fail('"return" outside function', s)
+         if s.expr:
+             s.expr.accept(self)
++        self.statement = old
+ 
+     def visit_raise_stmt(self, s: RaiseStmt) -> None:
+         self.statement = s

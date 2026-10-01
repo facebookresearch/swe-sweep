@@ -1,0 +1,12 @@
+diff --git a/parser/parser.go b/parser/parser.go
+index 33b1e5f..c5db54a 100644
+--- a/parser/parser.go
++++ b/parser/parser.go
+@@ -379,6 +379,7 @@ func (p *parser) stmt() ast.Stmt {
+ 		p.next()
+ 		p.optionalNewlines()
+ 		body := p.loopStmts()
++		p.optionalNewlines()
+ 		p.expect(WHILE)
+ 		p.expect(LPAREN)
+ 		cond := p.expr()

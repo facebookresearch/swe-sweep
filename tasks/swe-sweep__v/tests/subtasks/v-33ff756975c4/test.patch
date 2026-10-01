@@ -1,0 +1,55 @@
+diff --git a/vlib/v/checker/tests/shared_param_err.out b/vlib/v/checker/tests/shared_param_err.out
+new file mode 100644
+index 000000000..70bf5eb5f
+--- /dev/null
++++ b/vlib/v/checker/tests/shared_param_err.out
+@@ -0,0 +1,14 @@
++vlib/v/checker/tests/shared_param_err.vv:23:12: error: method `g` parameter `c` is `shared`, so use `shared a` instead
++   21 |         x: 10
++   22 |     }
++   23 |     spawn a.g(a)
++      |               ^
++   24 |     spawn foo(a)
++   25 |
++vlib/v/checker/tests/shared_param_err.vv:24:12: error: function `foo` parameter `b` is `shared`, so use `shared a` instead
++   22 |     }
++   23 |     spawn a.g(a)
++   24 |     spawn foo(a)
++      |               ^
++   25 | 
++   26 |     rlock a {
+diff --git a/vlib/v/checker/tests/shared_param_err.vv b/vlib/v/checker/tests/shared_param_err.vv
+new file mode 100644
+index 000000000..da587b990
+--- /dev/null
++++ b/vlib/v/checker/tests/shared_param_err.vv
+@@ -0,0 +1,29 @@
++struct St {
++mut:
++	x int
++	// data to be shared
++}
++
++fn (shared b St) g(shared c St) {
++	lock b {
++		b.x = 100
++	}
++}
++
++fn foo(shared b St) {
++	lock b {
++		b.x = 101
++	}
++}
++
++fn main() {
++	shared a := St{
++		x: 10
++	}
++	spawn a.g(a)
++	spawn foo(a)
++
++	rlock a {
++		println(a.x)
++	}
++}

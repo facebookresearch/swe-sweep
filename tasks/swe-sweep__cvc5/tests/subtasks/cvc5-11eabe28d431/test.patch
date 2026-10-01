@@ -1,0 +1,39 @@
+diff --git a/test/regress/cli/CMakeLists.txt b/test/regress/cli/CMakeLists.txt
+index 1c37ffa980..bc05fec371 100644
+--- a/test/regress/cli/CMakeLists.txt
++++ b/test/regress/cli/CMakeLists.txt
+@@ -2140,6 +2140,7 @@ set(regress_1_tests
+   regress1/issue9057-block-m-lit.smt2
+   regress1/issue9112-bv2nat-cg.smt2
+   regress1/issue9544-difficulty-refcount.smt2
++  regress1/issue9573-lr-rewrite.smt2
+   regress1/lemmas/clocksynchro_5clocks.main_invar.base.smtv1.smt2
+   regress1/lemmas/pursuit-safety-8.smtv1.smt2
+   regress1/minimal_unsat_core.smt2
+diff --git a/test/regress/cli/regress1/issue9573-lr-rewrite.smt2 b/test/regress/cli/regress1/issue9573-lr-rewrite.smt2
+new file mode 100644
+index 0000000000..e4d2ab0351
+--- /dev/null
++++ b/test/regress/cli/regress1/issue9573-lr-rewrite.smt2
+@@ -0,0 +1,21 @@
++; COMMAND-LINE: --learned-rewrite
++; EXPECT: sat
++(set-logic QF_ABV)
++(declare-const __ (_ BitVec 1))
++(define-fun x () (_ BitVec 16) ((_ zero_extend 15) __))
++(declare-const x1 Bool)
++(declare-fun x2 () (Array (_ BitVec 5) (_ BitVec 32)))
++(declare-fun x22 () (_ BitVec 768))
++(declare-fun p () Bool)
++(assert (= (select x2 (_ bv0 5)) ((_ extract 415 384) x22)))
++(assert (= (select x2 (_ bv0 5)) ((_ extract 383 352) x22)))
++(assert (= (select x2 (_ bv0 5)) ((_ extract 351 320) x22)))
++(assert (= (select x2 (_ bv0 5)) ((_ extract 319 288) x22)))
++(assert (= (select x2 (_ bv0 5)) (_ bv1 32)))
++(assert (= (select x2 (_ bv0 5)) ((_ extract 255 224) x22)))
++(assert (= (select x2 (_ bv0 5)) ((_ extract 223 192) x22)))
++(assert (= (_ bv0 32) (select x2 (_ bv1 5))))
++(assert (= x1 (and p (bvsle (_ bv1 32) ((_ zero_extend 16) x)))))
++(assert x1)
++(assert (= p (bvsle (_ bv0 32) ((_ zero_extend 16) ((_ zero_extend 15) __)))))
++(check-sat)

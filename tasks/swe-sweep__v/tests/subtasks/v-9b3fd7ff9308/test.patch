@@ -1,0 +1,25 @@
+diff --git a/vlib/v/tests/tmpl/dot_var.txt b/vlib/v/tests/tmpl/dot_var.txt
+new file mode 100644
+index 000000000..bec446c26
+--- /dev/null
++++ b/vlib/v/tests/tmpl/dot_var.txt
+@@ -0,0 +1,2 @@
++.@one
++.${two}
+diff --git a/vlib/v/tests/tmpl_dot_var_test.v b/vlib/v/tests/tmpl_dot_var_test.v
+new file mode 100644
+index 000000000..8bc2c675c
+--- /dev/null
++++ b/vlib/v/tests/tmpl_dot_var_test.v
+@@ -0,0 +1,11 @@
++fn template() string {
++	one := 1
++	two := 2
++	return $tmpl('tmpl/dot_var.txt')
++}
++
++fn test_tmpl_with_dot_var() {
++	assert template() == '.1
++.2
++'
++}

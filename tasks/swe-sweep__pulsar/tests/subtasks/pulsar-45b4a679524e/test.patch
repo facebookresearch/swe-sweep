@@ -1,0 +1,33 @@
+diff --git a/pulsar-client/src/test/java/org/apache/pulsar/client/impl/schema/generic/GenericProtobufNativeReaderTest.java b/pulsar-client/src/test/java/org/apache/pulsar/client/impl/schema/generic/GenericProtobufNativeReaderTest.java
+index 4cbb325c82f..c358f30ccae 100644
+--- a/pulsar-client/src/test/java/org/apache/pulsar/client/impl/schema/generic/GenericProtobufNativeReaderTest.java
++++ b/pulsar-client/src/test/java/org/apache/pulsar/client/impl/schema/generic/GenericProtobufNativeReaderTest.java
+@@ -18,6 +18,7 @@
+  */
+ package org.apache.pulsar.client.impl.schema.generic;
+ 
++import com.google.protobuf.Descriptors;
+ import com.google.protobuf.DynamicMessage;
+ import lombok.extern.slf4j.Slf4j;
+ import org.apache.pulsar.client.api.schema.GenericRecord;
+@@ -29,6 +30,7 @@ import org.testng.annotations.BeforeMethod;
+ import org.testng.annotations.Test;
+ 
+ import static org.testng.Assert.assertEquals;
++import static org.testng.Assert.assertTrue;
+ 
+ @Slf4j
+ public class GenericProtobufNativeReaderTest {
+@@ -79,6 +81,12 @@ public class GenericProtobufNativeReaderTest {
+         assertEquals(nativeRecord.getField(nativeRecord.getDescriptorForType().findFieldByName("doubleField")), DOUBLE_FIELD_VLUE);
+     }
+ 
++    @Test
++    public void testGetNativeSchema() {
++        assertTrue(genericProtobufNativeSchema.getNativeSchema().isPresent());
++        assertTrue(genericProtobufNativeSchema.getNativeSchema().get() instanceof Descriptors.Descriptor);
++    }
++
+     private static final String STRING_FIELD_VLUE = "stringFieldValue";
+     private static final double DOUBLE_FIELD_VLUE = 0.2D;
+ 

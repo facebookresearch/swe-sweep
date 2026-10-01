@@ -1,0 +1,91 @@
+diff --git a/compiler/ast.nim b/compiler/ast.nim
+index 9086860b9..4286f940f 100644
+--- a/compiler/ast.nim
++++ b/compiler/ast.nim
+@@ -673,7 +673,7 @@ type
+     mSwap, mIsNil, mArrToSeq,
+     mNewString, mNewStringOfCap, mParseBiggestFloat,
+     mMove, mWasMoved, mDestroy, mTrace,
+-    mDefault, mUnown, mFinished, mIsolate, mAccessEnv, mReset,
++    mDefault, mUnown, mFinished, mIsolate, mAccessEnv, mAccessTypeField, mReset,
+     mArray, mOpenArray, mRange, mSet, mSeq, mVarargs,
+     mRef, mPtr, mVar, mDistinct, mVoid, mTuple,
+     mOrdinal, mIterableType,
+diff --git a/compiler/ccgexprs.nim b/compiler/ccgexprs.nim
+index fc09fefc3..1f1035115 100644
+--- a/compiler/ccgexprs.nim
++++ b/compiler/ccgexprs.nim
+@@ -1741,6 +1741,13 @@ proc genGetTypeInfoV2(p: BProc, e: PNode, d: var TLoc) =
+     # use the dynamic type stored at offset 0:
+     putIntoDest(p, d, e, rdMType(p, a, nilCheck))
+ 
++proc genAccessTypeField(p: BProc; e: PNode; d: var TLoc) =
++  var a: TLoc
++  initLocExpr(p, e[1], a)
++  var nilCheck = Rope(nil)
++  # use the dynamic type stored at offset 0:
++  putIntoDest(p, d, e, rdMType(p, a, nilCheck))
++
+ template genDollar(p: BProc, n: PNode, d: var TLoc, frmt: string) =
+   var a: TLoc
+   initLocExpr(p, n[1], a)
+@@ -2449,6 +2456,7 @@ proc genMagicExpr(p: BProc, e: PNode, d: var TLoc, op: TMagic) =
+   of mMove: genMove(p, e, d)
+   of mDestroy: genDestroy(p, e)
+   of mAccessEnv: unaryExpr(p, e, d, "$1.ClE_0")
++  of mAccessTypeField: genAccessTypeField(p, e, d)
+   of mSlice: genSlice(p, e, d)
+   of mTrace: discard "no code to generate"
+   else:
+diff --git a/compiler/ccgtypes.nim b/compiler/ccgtypes.nim
+index e7e099659..740ce5f19 100644
+--- a/compiler/ccgtypes.nim
++++ b/compiler/ccgtypes.nim
+@@ -583,7 +583,7 @@ proc getRecordDesc(m: BModule, typ: PType, name: Rope,
+ 
+   if typ.kind == tyObject:
+     if typ[0] == nil:
+-      if (typ.sym != nil and sfPure in typ.sym.flags) or tfFinal in typ.flags:
++      if lacksMTypeField(typ):
+         appcg(m, result, " {$n", [])
+       else:
+         if optTinyRtti in m.config.globalOptions:
+diff --git a/compiler/liftdestructors.nim b/compiler/liftdestructors.nim
+index cc7e36cdb..51b4ddfb0 100644
+--- a/compiler/liftdestructors.nim
++++ b/compiler/liftdestructors.nim
+@@ -941,6 +941,12 @@ proc symPrototype(g: ModuleGraph; typ: PType; owner: PSym; kind: TTypeAttachedOp
+   incl result.flags, sfFromGeneric
+   incl result.flags, sfGeneratedOp
+ 
++proc genTypeFieldCopy(c: var TLiftCtx; t: PType; body, x, y: PNode) =
++  let xx = genBuiltin(c, mAccessTypeField, "accessTypeField", x)
++  let yy = genBuiltin(c, mAccessTypeField, "accessTypeField", y)
++  xx.typ = getSysType(c.g, c.info, tyPointer)
++  yy.typ = xx.typ
++  body.add newAsgnStmt(xx, yy)
+ 
+ proc produceSym(g: ModuleGraph; c: PContext; typ: PType; kind: TTypeAttachedOp;
+               info: TLineInfo; idgen: IdGenerator): PSym =
+@@ -980,6 +986,10 @@ proc produceSym(g: ModuleGraph; c: PContext; typ: PType; kind: TTypeAttachedOp;
+       fillStrOp(a, typ, result.ast[bodyPos], d, src)
+     else:
+       fillBody(a, typ, result.ast[bodyPos], d, src)
++      if tk == tyObject and a.kind in {attachedAsgn, attachedSink, attachedDeepCopy} and not lacksMTypeField(typ):
++        # bug #19205: Do not forget to also copy the hidden type field:
++        genTypeFieldCopy(a, typ, result.ast[bodyPos], d, src)
++
+   if not a.canRaise: incl result.flags, sfNeverRaises
+   completePartialOp(g, idgen.module, typ, kind, result)
+ 
+diff --git a/compiler/types.nim b/compiler/types.nim
+index 7cf02c240..007a61356 100644
+--- a/compiler/types.nim
++++ b/compiler/types.nim
+@@ -1705,3 +1705,6 @@ proc isCharArrayPtr*(t: PType; allowPointerToChar: bool): bool =
+       result = allowPointerToChar
+     else:
+       discard
++
++proc lacksMTypeField*(typ: PType): bool {.inline.} =
++  (typ.sym != nil and sfPure in typ.sym.flags) or tfFinal in typ.flags

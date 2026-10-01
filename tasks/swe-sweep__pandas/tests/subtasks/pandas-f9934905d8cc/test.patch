@@ -1,0 +1,23 @@
+diff --git a/pandas/tests/reshape/test_pivot.py b/pandas/tests/reshape/test_pivot.py
+index 5df23ec26d..6ca6fde7c1 100644
+--- a/pandas/tests/reshape/test_pivot.py
++++ b/pandas/tests/reshape/test_pivot.py
+@@ -2276,3 +2276,18 @@ class TestPivot:
+ 
+         assert index == ["lev1", "lev2"]
+         assert columns == ["lev3"]
++
++    def test_pivot_table_with_margins_and_numeric_column_names(self):
++        # GH#26568
++        df = DataFrame([["a", "x", 1], ["a", "y", 2], ["b", "y", 3], ["b", "z", 4]])
++
++        result = df.pivot_table(
++            index=0, columns=1, values=2, aggfunc="sum", fill_value=0, margins=True
++        )
++
++        expected = DataFrame(
++            [[1, 2, 0, 3], [0, 3, 4, 7], [1, 5, 4, 10]],
++            columns=Index(["x", "y", "z", "All"], name=1),
++            index=Index(["a", "b", "All"], name=0),
++        )
++        tm.assert_frame_equal(result, expected)

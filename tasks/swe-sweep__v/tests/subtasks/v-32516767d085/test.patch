@@ -1,0 +1,25 @@
+diff --git a/vlib/v/tests/match_with_comptime_if_expr_in_branch_test.v b/vlib/v/tests/match_with_comptime_if_expr_in_branch_test.v
+new file mode 100644
+index 000000000..9ce934c2c
+--- /dev/null
++++ b/vlib/v/tests/match_with_comptime_if_expr_in_branch_test.v
+@@ -0,0 +1,19 @@
++fn test_match_with_comptime_if_expr_in_branch() {
++	x := match 'green' {
++		'red' {
++			'color is red'
++		}
++		'green' {
++			$if windows {
++				'color is green windows'
++			} $else {
++				'color is green unix'
++			}
++		}
++		else {
++			'nothing to say'
++		}
++	}
++	println(x)
++	assert true
++}

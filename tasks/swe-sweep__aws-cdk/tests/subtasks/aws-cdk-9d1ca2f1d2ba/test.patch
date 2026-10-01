@@ -1,0 +1,25 @@
+diff --git a/packages/@aws-cdk/aws-ec2/test/volume.test.ts b/packages/@aws-cdk/aws-ec2/test/volume.test.ts
+index 308e1ad4fa..af88164fcc 100644
+--- a/packages/@aws-cdk/aws-ec2/test/volume.test.ts
++++ b/packages/@aws-cdk/aws-ec2/test/volume.test.ts
+@@ -32,6 +32,7 @@ describe('volume', () => {
+     new Volume(stack, 'Volume', {
+       availabilityZone: 'us-east-1a',
+       size: cdk.Size.gibibytes(8),
++      volumeName: 'MyVolume',
+     });
+ 
+     // THEN
+@@ -40,6 +41,12 @@ describe('volume', () => {
+       MultiAttachEnabled: false,
+       Size: 8,
+       VolumeType: 'gp2',
++      Tags: [
++        {
++          Key: 'Name',
++          Value: 'MyVolume',
++        },
++      ],
+     }, ResourcePart.Properties));
+ 
+     cdkExpect(stack).to(haveResource('AWS::EC2::Volume', {

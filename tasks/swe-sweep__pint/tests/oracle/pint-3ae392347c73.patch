@@ -1,0 +1,23 @@
+diff --git a/pint/pint_eval.py b/pint/pint_eval.py
+index 0d16c63..77fe243 100644
+--- a/pint/pint_eval.py
++++ b/pint/pint_eval.py
+@@ -20,7 +20,9 @@ _OP_PRIORITY = {
+     "unary": 2,
+     "*": 1,
+     "": 1,  # operator for implicit ops
++    "//": 1,
+     "/": 1,
++    "%": 1,
+     "+": 0,
+     "-": 0,
+ }
+@@ -48,6 +50,8 @@ _BINARY_OPERATOR_MAP = {
+     "/": operator.truediv,
+     "+": operator.add,
+     "-": operator.sub,
++    "%": operator.mod,
++    "//": operator.floordiv,
+ }
+ 
+ _UNARY_OPERATOR_MAP = {"+": lambda x: x, "-": lambda x: x * -1}

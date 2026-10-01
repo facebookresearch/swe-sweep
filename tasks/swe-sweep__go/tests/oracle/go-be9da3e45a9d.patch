@@ -1,0 +1,17 @@
+diff --git a/src/encoding/json/decode.go b/src/encoding/json/decode.go
+index 69a1013b85..19d4563e33 100644
+--- a/src/encoding/json/decode.go
++++ b/src/encoding/json/decode.go
+@@ -255,7 +255,11 @@ func (d *decodeState) addErrorContext(err error) error {
+ 		switch err := err.(type) {
+ 		case *UnmarshalTypeError:
+ 			err.Struct = d.errorContext.Struct.Name()
+-			err.Field = strings.Join(d.errorContext.FieldStack, ".")
++			fieldStack := d.errorContext.FieldStack
++			if err.Field != "" {
++				fieldStack = append(fieldStack, err.Field)
++			}
++			err.Field = strings.Join(fieldStack, ".")
+ 		}
+ 	}
+ 	return err

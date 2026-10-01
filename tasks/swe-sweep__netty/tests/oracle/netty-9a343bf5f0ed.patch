@@ -1,0 +1,13 @@
+diff --git a/codec-http2/src/main/java/io/netty/handler/codec/http2/HpackDecoder.java b/codec-http2/src/main/java/io/netty/handler/codec/http2/HpackDecoder.java
+index 07b1e30b53..ca7610816d 100644
+--- a/codec-http2/src/main/java/io/netty/handler/codec/http2/HpackDecoder.java
++++ b/codec-http2/src/main/java/io/netty/handler/codec/http2/HpackDecoder.java
+@@ -429,7 +429,7 @@ final class HpackDecoder {
+ 
+     private long addHeader(int streamId, Http2Headers headers, CharSequence name, CharSequence value,
+                            long headersLength) throws Http2Exception {
+-        headersLength += name.length() + value.length();
++        headersLength += HpackHeaderField.sizeOf(name, value);
+         if (headersLength > maxHeaderListSizeGoAway) {
+             headerListSizeExceeded(maxHeaderListSizeGoAway);
+         }

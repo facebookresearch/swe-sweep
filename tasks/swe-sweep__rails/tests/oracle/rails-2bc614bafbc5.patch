@@ -1,0 +1,46 @@
+diff --git a/activerecord/lib/active_record/encryption/extended_deterministic_queries.rb b/activerecord/lib/active_record/encryption/extended_deterministic_queries.rb
+index bf2fef53bd6..e99ca944629 100644
+--- a/activerecord/lib/active_record/encryption/extended_deterministic_queries.rb
++++ b/activerecord/lib/active_record/encryption/extended_deterministic_queries.rb
+@@ -35,7 +35,6 @@ module ActiveRecord
+         ActiveRecord::Relation.prepend(RelationQueries)
+         ActiveRecord::Base.include(CoreQueries)
+         ActiveRecord::Encryption::EncryptedAttributeType.prepend(ExtendedEncryptableType)
+-        Arel::Nodes::HomogeneousIn.prepend(InWithAdditionalValues)
+       end
+ 
+       module EncryptedQueryArgumentProcessor
+@@ -143,20 +142,6 @@ module ActiveRecord
+           end
+         end
+       end
+-
+-      module InWithAdditionalValues
+-        def proc_for_binds
+-          -> value { ActiveModel::Attribute.with_cast_value(attribute.name, value, encryption_aware_type_caster) }
+-        end
+-
+-        def encryption_aware_type_caster
+-          if attribute.type_caster.is_a?(ActiveRecord::Encryption::EncryptedAttributeType)
+-            attribute.type_caster.cast_type
+-          else
+-            attribute.type_caster
+-          end
+-        end
+-      end
+     end
+   end
+ end
+diff --git a/activerecord/lib/arel/nodes/homogeneous_in.rb b/activerecord/lib/arel/nodes/homogeneous_in.rb
+index 08f5088d9b8..c67d9acf9f9 100644
+--- a/activerecord/lib/arel/nodes/homogeneous_in.rb
++++ b/activerecord/lib/arel/nodes/homogeneous_in.rb
+@@ -55,7 +55,7 @@ module Arel # :nodoc: all
+       end
+ 
+       def proc_for_binds
+-        -> value { ActiveModel::Attribute.with_cast_value(attribute.name, value, attribute.type_caster) }
++        -> value { ActiveModel::Attribute.with_cast_value(attribute.name, value, ActiveModel::Type.default_value) }
+       end
+ 
+       def fetch_attribute(&block)

@@ -1,0 +1,13 @@
+diff --git a/vlib/v/fmt/tests/struct_decl_with_nested_struct_keep.vv b/vlib/v/fmt/tests/struct_decl_with_nested_struct_keep.vv
+new file mode 100644
+index 000000000..d93057ced
+--- /dev/null
++++ b/vlib/v/fmt/tests/struct_decl_with_nested_struct_keep.vv
+@@ -0,0 +1,7 @@
++pub struct Node {
++	parent ?Node
++}
++
++pub struct NodeWrapper {
++	node Node
++}

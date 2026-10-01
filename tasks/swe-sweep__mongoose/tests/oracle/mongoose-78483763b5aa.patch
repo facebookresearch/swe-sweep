@@ -1,0 +1,68 @@
+diff --git a/lib/cursor/QueryCursor.js b/lib/cursor/QueryCursor.js
+--- a/lib/cursor/QueryCursor.js
++++ b/lib/cursor/QueryCursor.js
+@@ -4,10 +4,12 @@
+ 
+ 'use strict';
+ 
++const MongooseError = require('../error/mongooseError');
+ const Readable = require('stream').Readable;
+ const promiseOrCallback = require('../helpers/promiseOrCallback');
+ const eachAsync = require('../helpers/cursor/eachAsync');
+ const helpers = require('../queryhelpers');
++const kareem = require('kareem');
+ const immediate = require('../helpers/immediate');
+ const util = require('util');
+ 
+@@ -37,6 +39,7 @@ function QueryCursor(query, options) {
+   Readable.call(this, { autoDestroy: true, objectMode: true });
+ 
+   this.cursor = null;
++  this.skipped = false;
+   this.query = query;
+   const _this = this;
+   const model = query.model;
+@@ -47,6 +50,23 @@ function QueryCursor(query, options) {
+ 
+   model.hooks.execPre('find', query, (err) => {
+     if (err != null) {
++      if (err instanceof kareem.skipWrappedFunction) {
++        const resultValue = err.args[0];
++        if (resultValue != null && (!Array.isArray(resultValue) || resultValue.length)) {
++          const err = new MongooseError(
++            'Cannot `skipMiddlewareFunction()` with a value when using ' +
++            '`.find().cursor()`, value must be nullish or empty array, got "' +
++            util.inspect(resultValue) +
++            '".'
++          );
++          _this._markError(err);
++          _this.listeners('error').length > 0 && _this.emit('error', err);
++          return;
++        }
++        this.skipped = true;
++        _this.emit('cursor', null);
++        return;
++      }
+       _this._markError(err);
+       _this.listeners('error').length > 0 && _this.emit('error', err);
+       return;
+@@ -372,6 +392,9 @@ function _next(ctx, cb) {
+       callback(ctx._error);
+     });
+   }
++  if (ctx.skipped) {
++    return immediate(() => callback(null, null));
++  }
+ 
+   if (ctx.cursor) {
+     if (ctx.query._mongooseOptions.populate && !ctx._pop) {
+@@ -420,6 +443,9 @@ function _next(ctx, cb) {
+     ctx.once('cursor', function(cursor) {
+       ctx.removeListener('error', cb);
+       if (cursor == null) {
++        if (ctx.skipped) {
++          return cb(null, null);
++        }
+         return;
+       }
+       _next(ctx, cb);

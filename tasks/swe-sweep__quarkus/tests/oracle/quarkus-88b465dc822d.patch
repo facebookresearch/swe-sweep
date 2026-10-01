@@ -1,0 +1,17 @@
+diff --git a/independent-projects/resteasy-reactive/common/runtime/src/main/java/org/jboss/resteasy/reactive/common/util/Encode.java b/independent-projects/resteasy-reactive/common/runtime/src/main/java/org/jboss/resteasy/reactive/common/util/Encode.java
+index 17726659e41..2d3c7499635 100644
+--- a/independent-projects/resteasy-reactive/common/runtime/src/main/java/org/jboss/resteasy/reactive/common/util/Encode.java
++++ b/independent-projects/resteasy-reactive/common/runtime/src/main/java/org/jboss/resteasy/reactive/common/util/Encode.java
+@@ -389,6 +389,12 @@ public class Encode {
+                 result.append(currentChar);
+                 continue;
+             }
++            if (Character.isHighSurrogate(currentChar)) {
++                String part = segment.substring(i, i + 2);
++                result.append(URLEncoder.encode(part, StandardCharsets.UTF_8));
++                ++i;
++                continue;
++            }
+             String encoding = encode(currentChar, encodingMap);
+             if (encoding == null) {
+                 result.append(currentChar);

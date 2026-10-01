@@ -1,0 +1,14 @@
+diff --git a/extension/excel/numformat/nf_calendar.cpp b/extension/excel/numformat/nf_calendar.cpp
+index 5a22690e83..c33c795c2b 100644
+--- a/extension/excel/numformat/nf_calendar.cpp
++++ b/extension/excel/numformat/nf_calendar.cpp
+@@ -185,8 +185,7 @@ std::wstring Calendar::getDisplayName(sal_Int16 displayIndex, sal_Int16 idx, sal
+ 			return L"";
+ 		break;
+ 	case CalendarDisplayIndex::CDI_DAY:
+-		if (idx >= pFormatter->getDayOfWeekSize())
+-			return L"";
++		idx %= pFormatter->getDayOfWeekSize();
+ 		if (nameType == 0)
+ 			aStr = pFormatter->getDayOfWeekAbbrvName(idx);
+ 		else if (nameType == 1)

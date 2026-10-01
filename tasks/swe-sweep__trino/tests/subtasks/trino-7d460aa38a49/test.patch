@@ -1,0 +1,22 @@
+diff --git a/core/trino-main/src/test/java/io/trino/type/TestDecimalCasts.java b/core/trino-main/src/test/java/io/trino/type/TestDecimalCasts.java
+index 0999db175ba..5bb13607fdb 100644
+--- a/core/trino-main/src/test/java/io/trino/type/TestDecimalCasts.java
++++ b/core/trino-main/src/test/java/io/trino/type/TestDecimalCasts.java
+@@ -417,6 +417,16 @@ public class TestDecimalCasts
+         assertFunction("CAST(DECIMAL '99999999999999999999999999999999999999' AS REAL)", REAL, 1.0E38f);
+     }
+ 
++    @Test
++    public void testShortDecimalToRealDoubleRounding()
++    {
++        assertFunction("CAST(DECIMAL '999999.00' AS REAL)", REAL, 999999.0f);
++        assertFunction("CAST(DECIMAL '-999999.00' AS REAL)", REAL, -999999.0f);
++        assertFunction("CAST(CAST(1000001.00 AS DECIMAL(13,2)) AS REAL)", REAL, 1000001.0f);
++        assertFunction("CAST(CAST(16777217.0 AS DECIMAL(13,1)) AS REAL)", REAL, 16777217.0f);
++        assertFunction("CAST(CAST(-16777217.0 AS DECIMAL(13,1)) AS REAL)", REAL, -16777217.0f);
++    }
++
+     @Test
+     public void testVarcharToDecimalCasts()
+     {
+         assertDecimalFunction("CAST('234.0' AS DECIMAL(4,1))", decimal("234.0"));

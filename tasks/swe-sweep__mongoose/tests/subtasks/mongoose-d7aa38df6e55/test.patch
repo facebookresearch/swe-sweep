@@ -1,0 +1,36 @@
+diff --git a/test/schema.test.js b/test/schema.test.js
+index 21fbd423f..ab636acfb 100644
+--- a/test/schema.test.js
++++ b/test/schema.test.js
+@@ -2864,4 +2864,31 @@ describe('schema', function() {
+     assert.equal(doc1.domain, mongooseDomain);
+     assert.equal(doc1.domain, doc2.domain);
+   });
++  it('should allow timestamps on a sub document when having _id field in the main document gh-13343', async function() {
++    const ImageSchema = new Schema({
++      dimensions: {
++        type: new Schema({
++          width: { type: Number, required: true },
++          height: { type: Number, required: true }
++        }, { timestamps: true }),
++        required: true
++      }
++    }, { timestamps: true });
++
++    const DataSchema = new Schema({
++      tags: { type: ImageSchema, required: false, _id: false }
++    });
++
++    const Test = db.model('gh13343', DataSchema);
++    const res = await Test.insertMany([
++      {
++        tags: {
++          dimensions: { width: 960, height: 589 }
++        }
++      }
++    ]);
++    assert.ok(res);
++    assert.ok(res[0].tags.createdAt);
++    assert.ok(res[0].tags.updatedAt);
++  });
+ });

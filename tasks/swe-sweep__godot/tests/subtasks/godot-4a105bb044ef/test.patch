@@ -1,0 +1,163 @@
+diff --git a/modules/gdscript/tests/scripts/runtime/features/self_destruction.gd b/modules/gdscript/tests/scripts/runtime/features/self_destruction.gd
+new file mode 100644
+index 0000000000..442335faeb
+--- /dev/null
++++ b/modules/gdscript/tests/scripts/runtime/features/self_destruction.gd
+@@ -0,0 +1,50 @@
++# https://github.com/godotengine/godot/issues/75658
++
++class MyObj:
++	var callable: Callable
++
++	func run():
++		callable.call()
++
++	var prop:
++		set(value):
++			callable.call()
++		get:
++			callable.call()
++			return 0
++
++	func _on_some_signal():
++		callable.call()
++
++	func _init(p_callable: Callable):
++		self.callable = p_callable
++
++signal some_signal
++
++var obj: MyObj
++
++func test():
++	# Call.
++	obj = MyObj.new(nullify_obj)
++	obj.run()
++	print(obj)
++
++	# Get.
++	obj = MyObj.new(nullify_obj)
++	var _aux = obj.prop
++	print(obj)
++
++	# Set.
++	obj = MyObj.new(nullify_obj)
++	obj.prop = 1
++	print(obj)
++
++	# Signal handling.
++	obj = MyObj.new(nullify_obj)
++	@warning_ignore("return_value_discarded")
++	some_signal.connect(obj._on_some_signal)
++	some_signal.emit()
++	print(obj)
++
++func nullify_obj():
++	obj = null
+diff --git a/modules/gdscript/tests/scripts/runtime/features/self_destruction.out b/modules/gdscript/tests/scripts/runtime/features/self_destruction.out
+new file mode 100644
+index 0000000000..ee4024a524
+--- /dev/null
++++ b/modules/gdscript/tests/scripts/runtime/features/self_destruction.out
+@@ -0,0 +1,5 @@
++GDTEST_OK
++<null>
++<null>
++<null>
++<null>
+diff --git a/tests/core/object/test_object.h b/tests/core/object/test_object.h
+index f1bb62cb70..e703698ec6 100644
+--- a/tests/core/object/test_object.h
++++ b/tests/core/object/test_object.h
+@@ -37,6 +37,16 @@
+ 
+ #include "tests/test_macros.h"
+ 
++#ifdef SANITIZERS_ENABLED
++#ifdef __has_feature
++#if __has_feature(address_sanitizer) || __has_feature(thread_sanitizer)
++#define ASAN_OR_TSAN_ENABLED
++#endif
++#elif defined(__SANITIZE_ADDRESS__) || defined(__SANITIZE_THREAD__)
++#define ASAN_OR_TSAN_ENABLED
++#endif
++#endif
++
+ // Declared in global namespace because of GDCLASS macro warning (Windows):
+ // "Unqualified friend declaration referring to type outside of the nearest enclosing namespace
+ // is a Microsoft extension; add a nested name specifier".
+@@ -524,6 +534,74 @@ TEST_CASE("[Object] Notification order") { // GH-52325
+ 	memdelete(test_notification_object);
+ }
+ 
++TEST_CASE("[Object] Destruction at the end of the call chain is safe") {
++	Object *object = memnew(Object);
++	ObjectID obj_id = object->get_instance_id();
++
++	class _SelfDestroyingScriptInstance : public _MockScriptInstance {
++		Object *self = nullptr;
++
++		// This has to be static because ~Object() also destroys the script instance.
++		static void free_self(Object *p_self) {
++#if defined(ASAN_OR_TSAN_ENABLED)
++			// Regular deletion is enough becausa asan/tsan will catch a potential heap-after-use.
++			memdelete(p_self);
++#else
++			// Without asan/tsan, try at least to force a crash by replacing the otherwise seemingly good data with garbage.
++			// Operations such as dereferencing pointers or decreasing a refcount would fail.
++			// Unfortunately, we may not poison the memory after the deletion, because the memory would no longer belong to us
++			// and on doing so we may cause a more generalized crash on some platforms (allocator implementations).
++			p_self->~Object();
++			memset((void *)p_self, 0, sizeof(Object));
++			Memory::free_static(p_self, false);
++#endif
++		}
++
++	public:
++		Variant callp(const StringName &p_method, const Variant **p_args, int p_argcount, Callable::CallError &r_error) override {
++			free_self(self);
++			return Variant();
++		}
++		Variant call_const(const StringName &p_method, const Variant **p_args, int p_argcount, Callable::CallError &r_error) override {
++			free_self(self);
++			return Variant();
++		}
++		bool has_method(const StringName &p_method) const override {
++			return p_method == "some_method";
++		}
++
++	public:
++		_SelfDestroyingScriptInstance(Object *p_self) :
++				self(p_self) {}
++	};
++
++	_SelfDestroyingScriptInstance *script_instance = memnew(_SelfDestroyingScriptInstance(object));
++	object->set_script_instance(script_instance);
++
++	SUBCASE("Within callp()") {
++		SUBCASE("Through call()") {
++			object->call("some_method");
++		}
++		SUBCASE("Through callv()") {
++			object->callv("some_method", Array());
++		}
++	}
++	SUBCASE("Within call_const()") {
++		Callable::CallError call_error;
++		object->call_const("some_method", nullptr, 0, call_error);
++	}
++	SUBCASE("Within signal handling (from emit_signalp(), through emit_signal())") {
++		Object emitter;
++		emitter.add_user_signal(MethodInfo("some_signal"));
++		emitter.connect("some_signal", Callable(object, "some_method"));
++		emitter.emit_signal("some_signal");
++	}
++
++	CHECK_MESSAGE(
++			ObjectDB::get_instance(obj_id) == nullptr,
++			"Object was tail-deleted without crashes.");
++}
++
+ } // namespace TestObject
+ 
+ #endif // TEST_OBJECT_H

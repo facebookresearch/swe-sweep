@@ -1,0 +1,12 @@
+diff --git a/crates/ruff_linter/resources/test/fixtures/pylint/import_private_name/submodule/__main__.py b/crates/ruff_linter/resources/test/fixtures/pylint/import_private_name/submodule/__main__.py
+index deb4bdd009..17e5cc7d3d 100644
+--- a/crates/ruff_linter/resources/test/fixtures/pylint/import_private_name/submodule/__main__.py
++++ b/crates/ruff_linter/resources/test/fixtures/pylint/import_private_name/submodule/__main__.py
+@@ -43,3 +43,7 @@ class Class:
+ 
+     def __init__(self, arg: vv) -> "zz":
+         pass
++
++
++def generic[T: _nn](arg: T) -> T:
++    return arg

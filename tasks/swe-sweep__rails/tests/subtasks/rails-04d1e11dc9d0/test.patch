@@ -1,0 +1,17 @@
+diff --git a/activerecord/test/cases/relation_test.rb b/activerecord/test/cases/relation_test.rb
+index 9914cd71bf8..6f43a850313 100644
+--- a/activerecord/test/cases/relation_test.rb
++++ b/activerecord/test/cases/relation_test.rb
+@@ -430,6 +430,12 @@ module ActiveRecord
+       end
+     end
+ 
++    test "runs queries when using pick with expression column and empty IN" do
++      assert_queries(1) do
++        assert_equal 0, Post.where(id: []).pick(Arel.sql("COUNT(*)"))
++      end
++    end
++
+     test "can unscope empty IN" do
+       assert_queries(1) do
+         Post.where(id: []).unscope(where: :id).load

@@ -1,0 +1,23 @@
+diff --git a/lib/schema.js b/lib/schema.js
+index 25b04d4f0..e82c3fd3b 100644
+--- a/lib/schema.js
++++ b/lib/schema.js
+@@ -1122,15 +1122,14 @@ Schema.prototype.path = function(path, obj) {
+       if (_schemaType.$isMongooseDocumentArray) {
+         _schemaType.$embeddedSchemaType._arrayPath = arrayPath;
+         _schemaType.$embeddedSchemaType._arrayParentPath = path;
+-        _schemaType = _schemaType.$embeddedSchemaType.clone();
++        _schemaType = _schemaType.$embeddedSchemaType;
+       } else {
+         _schemaType.caster._arrayPath = arrayPath;
+         _schemaType.caster._arrayParentPath = path;
+-        _schemaType = _schemaType.caster.clone();
++        _schemaType = _schemaType.caster;
+       }
+ 
+-      _schemaType.path = arrayPath;
+-      toAdd.push(_schemaType);
++      this.subpaths[arrayPath] = _schemaType;
+     }
+ 
+     for (const _schemaType of toAdd) {

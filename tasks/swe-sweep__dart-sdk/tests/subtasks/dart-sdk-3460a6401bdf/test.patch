@@ -1,0 +1,33 @@
+diff --git a/pkg/analysis_server/test/src/services/correction/fix/convert_to_map_literal_test.dart b/pkg/analysis_server/test/src/services/correction/fix/convert_to_map_literal_test.dart
+index f29794a7c9a..3b1ea9f76b1 100644
+--- a/pkg/analysis_server/test/src/services/correction/fix/convert_to_map_literal_test.dart
++++ b/pkg/analysis_server/test/src/services/correction/fix/convert_to_map_literal_test.dart
+@@ -85,6 +85,28 @@ var m = Map<String, int>();
+ ''');
+     await assertHasFix('''
+ var m = <String, int>{};
++''');
++  }
++
++  Future<void> test_typedef() async {
++    await resolveTestCode('''
++typedef M = Map<String, int>;
++var m = M();
++''');
++    await assertHasFix('''
++typedef M = Map<String, int>;
++var m = <String, int>{};
++''');
++  }
++
++  Future<void> test_typedef_declaredType() async {
++    await resolveTestCode('''
++typedef M = Map<String, int>;
++Map<String, int> m = M();
++''');
++    await assertHasFix('''
++typedef M = Map<String, int>;
++Map<String, int> m = {};
+ ''');
+   }
+ }

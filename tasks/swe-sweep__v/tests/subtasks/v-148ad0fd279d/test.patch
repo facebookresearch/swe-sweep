@@ -1,0 +1,46 @@
+diff --git a/vlib/v/checker/tests/interface_option_cast_err.out b/vlib/v/checker/tests/interface_option_cast_err.out
+new file mode 100644
+index 000000000..ca19d73de
+--- /dev/null
++++ b/vlib/v/checker/tests/interface_option_cast_err.out
+@@ -0,0 +1,19 @@
++vlib/v/checker/tests/interface_option_cast_err.vv:12:2: warning: unused variable: `b`
++   10 |     a := ?Foo{}
++   11 |     dump(a)
++   12 |     b := IFoo(a?)
++      |     ^
++   13 |     c := IFoo(a)
++   14 | }
++vlib/v/checker/tests/interface_option_cast_err.vv:13:2: warning: unused variable: `c`
++   11 |     dump(a)
++   12 |     b := IFoo(a?)
++   13 |     c := IFoo(a)
++      |     ^
++   14 | }
++vlib/v/checker/tests/interface_option_cast_err.vv:13:7: error: cannot type cast an Option
++   11 |     dump(a)
++   12 |     b := IFoo(a?)
++   13 |     c := IFoo(a)
++      |          ~~~~~~~
++   14 | }
+diff --git a/vlib/v/checker/tests/interface_option_cast_err.vv b/vlib/v/checker/tests/interface_option_cast_err.vv
+new file mode 100644
+index 000000000..0fb0fbfed
+--- /dev/null
++++ b/vlib/v/checker/tests/interface_option_cast_err.vv
+@@ -0,0 +1,14 @@
++interface IFoo {
++	a int
++}
++
++struct Foo {
++	a int
++}
++
++fn main() {
++	a := ?Foo{}
++	dump(a)
++	b := IFoo(a?)
++	c := IFoo(a)
++}
+\ No newline at end of file

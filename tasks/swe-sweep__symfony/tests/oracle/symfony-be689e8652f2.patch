@@ -1,0 +1,13 @@
+diff --git a/src/Symfony/Component/Mime/Email.php b/src/Symfony/Component/Mime/Email.php
+index 346618cf252..797e0028f6c 100644
+--- a/src/Symfony/Component/Mime/Email.php
++++ b/src/Symfony/Component/Mime/Email.php
+@@ -416,7 +416,7 @@ class Email extends Message
+ 
+     private function ensureBodyValid(): void
+     {
+-        if (null === $this->text && null === $this->html && !$this->attachments) {
++        if (null === $this->text && null === $this->html && !$this->attachments && null === parent::getBody()) {
+             throw new LogicException('A message must have a text or an HTML part or attachments.');
+         }
+     }

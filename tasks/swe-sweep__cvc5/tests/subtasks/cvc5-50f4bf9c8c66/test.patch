@@ -1,0 +1,27 @@
+diff --git a/test/regress/cli/CMakeLists.txt b/test/regress/cli/CMakeLists.txt
+index bbe763b6b6..4cd2a71729 100644
+--- a/test/regress/cli/CMakeLists.txt
++++ b/test/regress/cli/CMakeLists.txt
+@@ -1946,6 +1946,7 @@ set(regress_0_tests
+   regress0/sets/abt-min.smt2
+   regress0/sets/abt-te-exh.smt2
+   regress0/sets/abt-te-exh2.smt2
++  regress0/sets/bug_setfold_union.smt2
+   regress0/sets/card-2.smt2
+   regress0/sets/card-3sets.cvc.smt2
+   regress0/sets/card.smt2
+diff --git a/test/regress/cli/regress0/sets/bug_setfold_union.smt2 b/test/regress/cli/regress0/sets/bug_setfold_union.smt2
+new file mode 100644
+index 0000000000..5ee8b6cf5e
+--- /dev/null
++++ b/test/regress/cli/regress0/sets/bug_setfold_union.smt2
+@@ -0,0 +1,9 @@
++(set-logic HO_ALL)
++(set-info :status unsat)
++(declare-fun f (Int Int) Int)
++(declare-const A (Set Int))
++(declare-const B (Set Int))
++(assert (= A (set.singleton 1)))
++(assert (= B (set.singleton 1)))
++(assert (distinct (set.fold f 0 (set.union A B)) (set.fold f 0 A)))
++(check-sat)

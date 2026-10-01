@@ -1,0 +1,100 @@
+diff --git a/src/Compilers/CSharp/Portable/Binder/Binder_Crefs.cs b/src/Compilers/CSharp/Portable/Binder/Binder_Crefs.cs
+index 148146b5054..b721b66851a 100644
+--- a/src/Compilers/CSharp/Portable/Binder/Binder_Crefs.cs
++++ b/src/Compilers/CSharp/Portable/Binder/Binder_Crefs.cs
+@@ -341,6 +341,7 @@ namespace Microsoft.CodeAnalysis.CSharp
+ 
+                         if (result.Kind == LookupResultKind.Viable)
+                         {
++                            Debug.Assert(result.Symbol is not null);
+                             sortedSymbolsBuilder ??= ArrayBuilder<Symbol>.GetInstance();
+                             sortedSymbolsBuilder.Add(result.Symbol);
+                         }
+diff --git a/src/Compilers/CSharp/Portable/Binder/Binder_Expressions.cs b/src/Compilers/CSharp/Portable/Binder/Binder_Expressions.cs
+index 8ee4e477c64..e537a030214 100644
+--- a/src/Compilers/CSharp/Portable/Binder/Binder_Expressions.cs
++++ b/src/Compilers/CSharp/Portable/Binder/Binder_Expressions.cs
+@@ -10873,7 +10873,8 @@ namespace Microsoft.CodeAnalysis.CSharp
+ 
+                     foreach (SingleLookupResult singleLookupResult in singleLookupResults)
+                     {
+-                        Symbol extensionMember = singleLookupResult.Symbol;
++                        var extensionMember = singleLookupResult.Symbol;
++                        Debug.Assert(extensionMember is not null);
+                         if (IsStaticInstanceMismatchForUniqueSignatureFromMethodGroup(receiver, extensionMember))
+                         {
+                             // Remove static/instance mismatches
+@@ -11086,7 +11087,8 @@ namespace Microsoft.CodeAnalysis.CSharp
+                     var methods = ArrayBuilder<MethodSymbol>.GetInstance(capacity: singleLookupResults.Count);
+                     foreach (SingleLookupResult singleLookupResult in singleLookupResults)
+                     {
+-                        Symbol extensionMember = singleLookupResult.Symbol;
++                        var extensionMember = singleLookupResult.Symbol;
++                        Debug.Assert(extensionMember is not null);
+                         if (IsStaticInstanceMismatchForUniqueSignatureFromMethodGroup(receiver, extensionMember))
+                         {
+                             // Remove static/instance mismatches
+diff --git a/src/Compilers/CSharp/Portable/Binder/Binder_Lookup.cs b/src/Compilers/CSharp/Portable/Binder/Binder_Lookup.cs
+index 7af9279a53f..cdd431bda99 100644
+--- a/src/Compilers/CSharp/Portable/Binder/Binder_Lookup.cs
++++ b/src/Compilers/CSharp/Portable/Binder/Binder_Lookup.cs
+@@ -217,6 +217,12 @@ namespace Microsoft.CodeAnalysis.CSharp
+                 foreach (var candidate in candidates)
+                 {
+                     SingleLookupResult resultOfThisMember = originalBinder.CheckViability(candidate, arity, options, null, diagnose: true, useSiteInfo: ref useSiteInfo);
++                    if (resultOfThisMember.Kind == LookupResultKind.Empty)
++                    {
++                        continue;
++                    }
++
++                    Debug.Assert(resultOfThisMember.Symbol is not null);
+                     result.Add(resultOfThisMember);
+ 
+                     if (candidate is MethodSymbol { IsStatic: false } shadows &&
+@@ -240,7 +246,10 @@ namespace Microsoft.CodeAnalysis.CSharp
+                 if (implementationsToShadow is null || !implementationsToShadow.Remove(method.OriginalDefinition))
+                 {
+                     SingleLookupResult resultOfThisMember = originalBinder.CheckViability(method, arity, options, null, diagnose: true, useSiteInfo: ref classicExtensionUseSiteInfo);
+-                    result.Add(resultOfThisMember);
++                    if (resultOfThisMember.Kind != LookupResultKind.Empty)
++                    {
++                        result.Add(resultOfThisMember);
++                    }
+                 }
+             }
+ 
+diff --git a/src/Compilers/CSharp/Portable/Binder/SingleLookupResult.cs b/src/Compilers/CSharp/Portable/Binder/SingleLookupResult.cs
+index f130b3dced1..24844788a42 100644
+--- a/src/Compilers/CSharp/Portable/Binder/SingleLookupResult.cs
++++ b/src/Compilers/CSharp/Portable/Binder/SingleLookupResult.cs
+@@ -2,11 +2,10 @@
+ // The .NET Foundation licenses this file to you under the MIT license.
+ // See the LICENSE file in the project root for more information.
+ 
+-#nullable disable
+-
+ using Microsoft.CodeAnalysis.CSharp.Symbols;
+ using Microsoft.CodeAnalysis.CSharp.Syntax;
+ using Microsoft.CodeAnalysis.Text;
++using System.Diagnostics;
+ 
+ namespace Microsoft.CodeAnalysis.CSharp
+ {
+@@ -22,13 +21,14 @@ namespace Microsoft.CodeAnalysis.CSharp
+         internal readonly LookupResultKind Kind;
+ 
+         // the symbol or null.
+-        internal readonly Symbol Symbol;
++        internal readonly Symbol? Symbol;
+ 
+         // the error of the result, if it is NonViable or Inaccessible
+-        internal readonly DiagnosticInfo Error;
++        internal readonly DiagnosticInfo? Error;
+ 
+-        internal SingleLookupResult(LookupResultKind kind, Symbol symbol, DiagnosticInfo error)
++        internal SingleLookupResult(LookupResultKind kind, Symbol? symbol, DiagnosticInfo? error)
+         {
++            Debug.Assert(symbol is not null || kind == LookupResultKind.Empty);
+             this.Kind = kind;
+             this.Symbol = symbol;
+             this.Error = error;

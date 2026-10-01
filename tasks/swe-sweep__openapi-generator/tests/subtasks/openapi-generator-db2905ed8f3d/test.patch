@@ -1,0 +1,42 @@
+diff --git a/modules/openapi-generator/src/test/java/org/openapitools/codegen/python/PythonClientCodegenTest.java b/modules/openapi-generator/src/test/java/org/openapitools/codegen/python/PythonClientCodegenTest.java
+index 63b3d0f..5b58318 100644
+--- a/modules/openapi-generator/src/test/java/org/openapitools/codegen/python/PythonClientCodegenTest.java
++++ b/modules/openapi-generator/src/test/java/org/openapitools/codegen/python/PythonClientCodegenTest.java
+@@ -530,4 +530,16 @@ public class PythonClientCodegenTest {
+         assertNotNull(apiFile);
+         assertFileContains(apiFile.toPath(), "_header_params['X-CUSTOM_CONSTANT_HEADER'] = 'CONSTANT_VALUE'");
+     }
++
++    @Test
++    public void testModelNameMappingDoesNotRenameParameters() {
++        final PythonClientCodegen codegen = new PythonClientCodegen();
++        codegen.nameMapping().put("some-value", "model_value");
++
++        Assert.assertEquals(codegen.toVarName("some-value"), "model_value");
++        Assert.assertEquals(codegen.toParamName("some-value"), "some_value");
++
++        codegen.parameterNameMapping().put("some-value", "parameter_value");
++        Assert.assertEquals(codegen.toParamName("some-value"), "parameter_value");
++    }
+ }
+diff --git a/modules/openapi-generator/src/test/java/org/openapitools/codegen/python/PythonPydanticV1ClientCodegenTest.java b/modules/openapi-generator/src/test/java/org/openapitools/codegen/python/PythonPydanticV1ClientCodegenTest.java
+index 837c7ad..85a3429 100644
+--- a/modules/openapi-generator/src/test/java/org/openapitools/codegen/python/PythonPydanticV1ClientCodegenTest.java
++++ b/modules/openapi-generator/src/test/java/org/openapitools/codegen/python/PythonPydanticV1ClientCodegenTest.java
+@@ -501,4 +501,16 @@ public class PythonPydanticV1ClientCodegenTest {
+         CodegenProperty property = vars.get(0);
+         Assert.assertEquals(property.name, "dollar_value");
+     }
++
++    @Test
++    public void testModelNameMappingDoesNotRenameParameters() {
++        final PythonPydanticV1ClientCodegen codegen = new PythonPydanticV1ClientCodegen();
++        codegen.nameMapping().put("some-value", "model_value");
++
++        Assert.assertEquals(codegen.toVarName("some-value"), "model_value");
++        Assert.assertEquals(codegen.toParamName("some-value"), "some_value");
++
++        codegen.parameterNameMapping().put("some-value", "parameter_value");
++        Assert.assertEquals(codegen.toParamName("some-value"), "parameter_value");
++    }
+ }

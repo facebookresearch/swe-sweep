@@ -1,0 +1,18 @@
+diff --git a/dask/dataframe/tests/test_utils_dataframe.py b/dask/dataframe/tests/test_utils_dataframe.py
+index 5ce68aecd..f5e46a229 100644
+--- a/dask/dataframe/tests/test_utils_dataframe.py
++++ b/dask/dataframe/tests/test_utils_dataframe.py
+@@ -97,6 +97,13 @@ def test_make_meta():
+     assert len(meta.cat.categories) == 1
+     assert meta.cat.categories[0] == UNKNOWN_CATEGORIES
+ 
++    # Categorials with Index
++    idx = pd.Int64Index([1, 2], name="foo")
++    meta = make_meta({"a": "category", "b": "int64"}, index=idx)
++    assert len(meta.a.cat.categories) == 1
++    assert meta.index.dtype == "int64"
++    assert meta.index.empty
++
+     # Numpy scalar
+     meta = make_meta(np.float64(1.0))
+     assert isinstance(meta, np.float64)

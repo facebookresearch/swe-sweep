@@ -1,0 +1,70 @@
+diff --git a/compiler/test/runnable/extra-files/link20802a.d b/compiler/test/runnable/extra-files/link20802a.d
+new file mode 100644
+index 0000000000..3c52258ca4
+--- /dev/null
++++ b/compiler/test/runnable/extra-files/link20802a.d
+@@ -0,0 +1,8 @@
++import link20802b;
++void main()
++{
++     // First test from https://issues.dlang.org/show_bug.cgi?id=20802#c3
++     CodepointSet('a', 'z');
++     dstring s;
++     decodeGrapheme(s);
++}
+diff --git a/compiler/test/runnable/extra-files/link20802b.d b/compiler/test/runnable/extra-files/link20802b.d
+new file mode 100644
+index 0000000000..333e8a29fc
+--- /dev/null
++++ b/compiler/test/runnable/extra-files/link20802b.d
+@@ -0,0 +1,30 @@
++module link20802b;
++
++// First test from https://issues.dlang.org/show_bug.cgi?id=20802#c3
++
++enum TransformRes { goOn }
++
++void writeAligned()()
++{
++    final switch (TransformRes.goOn) { case TransformRes.goOn: break; }
++}
++
++struct GcPolicy {}
++alias CodepointSet = InversionList!GcPolicy;
++struct InversionList(SP=GcPolicy)
++{
++    this()(uint[] intervals...)
++    {
++        sanitize();
++    }
++
++    void sanitize()
++    {
++        writeAligned();
++    }
++}
++
++void decodeGrapheme(Input)(ref Input inp)
++{
++    final switch (TransformRes.goOn) { case TransformRes.goOn: break; }
++}
+diff --git a/compiler/test/runnable/link20802.sh b/compiler/test/runnable/link20802.sh
+new file mode 100755
+index 0000000000..f0a6674fbf
+--- /dev/null
++++ b/compiler/test/runnable/link20802.sh
+@@ -0,0 +1,14 @@
++#!/usr/bin/env bash
++
++
++dir=${RESULTS_DIR}${SEP}runnable
++
++libname=${OUTPUT_BASE}${LIBEXT}
++exename=${OUTPUT_BASE}${EXE}
++
++$DMD -m${MODEL} -I${EXTRA_FILES} -lib -release -of${libname} ${EXTRA_FILES}${SEP}link20802b.d
++$DMD -m${MODEL} -I${EXTRA_FILES} -of${exename} ${EXTRA_FILES}${SEP}link20802a.d ${libname}
++
++${exename}
++
++rm_retry ${OUTPUT_BASE}{${LIBEXT},${EXE},${OBJ}}

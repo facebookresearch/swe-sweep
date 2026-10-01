@@ -1,0 +1,32 @@
+diff --git a/numpy/f2py/tests/src/common/gh19161.f90 b/numpy/f2py/tests/src/common/gh19161.f90
+new file mode 100644
+index 0000000000..a2f40735ad
+--- /dev/null
++++ b/numpy/f2py/tests/src/common/gh19161.f90
+@@ -0,0 +1,10 @@
++module typedefmod
++  use iso_fortran_env, only: real32
++end module typedefmod
++
++module data
++  use typedefmod, only: real32
++  implicit none
++  real(kind=real32) :: x
++  common/test/x
++end module data
+diff --git a/numpy/f2py/tests/test_common.py b/numpy/f2py/tests/test_common.py
+--- a/numpy/f2py/tests/test_common.py
++++ b/numpy/f2py/tests/test_common.py
+@@ -25,3 +25,12 @@ class TestCommonBlock(util.F2PyTest):
+                            np.array('2', dtype='|S1'))
+         assert_array_equal(self.module.block.ok,
+                            np.array(3, dtype=np.int32))
++
++
++class TestCommonWithUse(util.F2PyTest):
++    sources = [_path('src', 'common', 'gh19161.f90')]
++
++    @pytest.mark.skipif(sys.platform == "win32",
++                        reason="Fails with MinGW64 Gfortran (Issue #9673)")
++    def test_common_gh19161(self):
++        assert self.module.data.x == 0

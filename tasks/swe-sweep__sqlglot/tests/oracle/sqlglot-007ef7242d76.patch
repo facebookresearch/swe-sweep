@@ -1,0 +1,14 @@
+diff --git a/sqlglot/optimizer/simplify.py b/sqlglot/optimizer/simplify.py
+index 70cced3799..6d446f4b6f 100644
+--- a/sqlglot/optimizer/simplify.py
++++ b/sqlglot/optimizer/simplify.py
+@@ -772,7 +772,8 @@ def _is_nonnull_constant(expression: exp.Expression) -> bool:
+ 
+ 
+ def _is_constant(expression: exp.Expression) -> bool:
+-    return isinstance(expression, exp.CONSTANTS) or _is_date_literal(expression)
++    expr = expression.this if isinstance(expression, exp.Neg) else expression
++    return isinstance(expr, exp.CONSTANTS) or _is_date_literal(expr)
+ 
+ 
+ def simplify_coalesce(expression):

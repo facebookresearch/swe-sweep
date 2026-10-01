@@ -1,0 +1,200 @@
+diff --git a/compiler/src/dmd/constfold.d b/compiler/src/dmd/constfold.d
+index 79bbd5dead..e4be63cda3 100644
+--- a/compiler/src/dmd/constfold.d
++++ b/compiler/src/dmd/constfold.d
+@@ -845,20 +845,8 @@ UnionExp Identity(EXP op, const ref Loc loc, Type type, Expression e1, Expressio
+     }
+     else
+     {
+-        if (e1.type.isreal())
+-        {
+-            cmp = CTFloat.isIdentical(e1.toReal(), e2.toReal());
+-        }
+-        else if (e1.type.isimaginary())
+-        {
+-            cmp = RealIdentical(e1.toImaginary(), e2.toImaginary());
+-        }
+-        else if (e1.type.iscomplex())
+-        {
+-            complex_t v1 = e1.toComplex();
+-            complex_t v2 = e2.toComplex();
+-            cmp = RealIdentical(creall(v1), creall(v2)) && RealIdentical(cimagl(v1), cimagl(v1));
+-        }
++        if (e1.type.isfloating())
++            cmp = e1.isIdentical(e2);
+         else
+         {
+             ue = Equal((op == EXP.identity) ? EXP.equal : EXP.notEqual, loc, type, e1, e2);
+diff --git a/compiler/src/dmd/ctfeexpr.d b/compiler/src/dmd/ctfeexpr.d
+index c902149e2b..8109e12d43 100644
+--- a/compiler/src/dmd/ctfeexpr.d
++++ b/compiler/src/dmd/ctfeexpr.d
+@@ -1281,12 +1281,12 @@ private int ctfeRawCmp(const ref Loc loc, Expression e1, Expression e2, bool ide
+     {
+         return e1.toInteger() != e2.toInteger();
+     }
++    if (identity && e1.type.isfloating())
++        return !e1.isIdentical(e2);
+     if (e1.type.isreal() || e1.type.isimaginary())
+     {
+         real_t r1 = e1.type.isreal() ? e1.toReal() : e1.toImaginary();
+         real_t r2 = e1.type.isreal() ? e2.toReal() : e2.toImaginary();
+-        if (identity)
+-            return !CTFloat.isIdentical(r1, r2);
+         if (CTFloat.isNaN(r1) || CTFloat.isNaN(r2)) // if unordered
+         {
+             return 1;   // they are not equal
+@@ -1298,13 +1298,7 @@ private int ctfeRawCmp(const ref Loc loc, Expression e1, Expression e2, bool ide
+     }
+     else if (e1.type.iscomplex())
+     {
+-        auto c1 = e1.toComplex();
+-        auto c2 = e2.toComplex();
+-        if (identity)
+-        {
+-            return !RealIdentical(c1.re, c2.re) && !RealIdentical(c1.im, c2.im);
+-        }
+-        return c1 != c2;
++        return e1.toComplex() != e2.toComplex();
+     }
+     if (e1.op == EXP.structLiteral && e2.op == EXP.structLiteral)
+     {
+@@ -1415,16 +1409,8 @@ bool ctfeIdentity(const ref Loc loc, EXP op, Expression e1, Expression e2)
+         SymOffExp es2 = e2.isSymOffExp();
+         cmp = (es1.var == es2.var && es1.offset == es2.offset);
+     }
+-    else if (e1.type.isreal())
+-        cmp = CTFloat.isIdentical(e1.toReal(), e2.toReal());
+-    else if (e1.type.isimaginary())
+-        cmp = RealIdentical(e1.toImaginary(), e2.toImaginary());
+-    else if (e1.type.iscomplex())
+-    {
+-        complex_t v1 = e1.toComplex();
+-        complex_t v2 = e2.toComplex();
+-        cmp = RealIdentical(creall(v1), creall(v2)) && RealIdentical(cimagl(v1), cimagl(v1));
+-    }
++    else if (e1.type.isfloating())
++        cmp = e1.isIdentical(e2);
+     else
+     {
+         cmp = !ctfeRawCmp(loc, e1, e2, true);
+diff --git a/compiler/src/dmd/e2ir.d b/compiler/src/dmd/e2ir.d
+index ce2e3188f5..1d00c2123e 100644
+--- a/compiler/src/dmd/e2ir.d
++++ b/compiler/src/dmd/e2ir.d
+@@ -4382,7 +4382,7 @@ elem *ExpressionsToStaticArray(IRState* irs, const ref Loc loc, Expressions *exp
+                 Expression en = (*exps)[j];
+                 if (!en)
+                     en = basis;
+-                if (!el.equals(en))
++                if (!el.isIdentical(en))
+                     break;
+                 j++;
+             }
+diff --git a/compiler/src/dmd/expression.d b/compiler/src/dmd/expression.d
+index e0f258c5a5..39fc12d54d 100644
+--- a/compiler/src/dmd/expression.d
++++ b/compiler/src/dmd/expression.d
+@@ -1647,6 +1647,15 @@ extern (C++) abstract class Expression : ASTNode
+         return .isConst(this);
+     }
+ 
++    /******
++     * Identical, not just equal. I.e. NaNs with different bit patterns are not identical
++     */
++    bool isIdentical(const Expression e) const
++    {
++        return equals(e);
++    }
++
++
+     /// Statically evaluate this expression to a `bool` if possible
+     /// Returns: an optional thath either contains the value or is empty
+     Optional!bool toBool()
+@@ -2137,6 +2146,13 @@ extern (C++) final class RealExp : Expression
+         return false;
+     }
+ 
++    override bool isIdentical(const Expression e) const
++    {
++        if (!equals(e))
++            return false;
++        return CTFloat.isIdentical(value, e.isRealExp().value);
++    }
++
+     override dinteger_t toInteger()
+     {
+         return cast(sinteger_t)toReal();
+@@ -2213,6 +2229,16 @@ extern (C++) final class ComplexExp : Expression
+         return false;
+     }
+ 
++    override bool isIdentical(const Expression e) const
++    {
++        if (!equals(e))
++            return false;
++        // equals() regards different NaN values as 'equals'
++        auto c = e.isComplexExp();
++        return CTFloat.isIdentical(creall(value), creall(c.value)) &&
++               CTFloat.isIdentical(cimagl(value), cimagl(c.value));
++    }
++
+     override dinteger_t toInteger()
+     {
+         return cast(sinteger_t)toReal();
+diff --git a/compiler/src/dmd/expression.h b/compiler/src/dmd/expression.h
+index 7202960af6..b809ffe6df 100644
+--- a/compiler/src/dmd/expression.h
++++ b/compiler/src/dmd/expression.h
+@@ -123,6 +123,7 @@ public:
+     // A compile-time result is required. Give an error if not possible
+     Expression *ctfeInterpret();
+     int isConst();
++    virtual bool isIdentical(const Expression *e) const;
+     virtual Optional<bool> toBool();
+     virtual bool hasCode()
+     {
+@@ -281,6 +282,7 @@ public:
+     static RealExp *create(const Loc &loc, real_t value, Type *type);
+     static void emplace(UnionExp *pue, const Loc &loc, real_t value, Type *type);
+     bool equals(const RootObject * const o) const override;
++    bool isIdentical(const Expression *e) const override;
+     dinteger_t toInteger() override;
+     uinteger_t toUInteger() override;
+     real_t toReal() override;
+@@ -298,6 +300,7 @@ public:
+     static ComplexExp *create(const Loc &loc, complex_t value, Type *type);
+     static void emplace(UnionExp *pue, const Loc &loc, complex_t value, Type *type);
+     bool equals(const RootObject * const o) const override;
++    bool isIdentical(const Expression *e) const override;
+     dinteger_t toInteger() override;
+     uinteger_t toUInteger() override;
+     real_t toReal() override;
+diff --git a/compiler/src/dmd/frontend.h b/compiler/src/dmd/frontend.h
+index ade3ef001f..e6a91e513a 100644
+--- a/compiler/src/dmd/frontend.h
++++ b/compiler/src/dmd/frontend.h
+@@ -1026,6 +1026,7 @@ public:
+     Expression* optimize(int32_t result, bool keepLvalue = false);
+     Expression* ctfeInterpret();
+     int32_t isConst();
++    virtual bool isIdentical(const Expression* const e) const;
+     virtual Optional<bool > toBool();
+     virtual bool hasCode();
+     IntegerExp* isIntegerExp();
+@@ -6955,6 +6956,7 @@ public:
+     static RealExp* create(const Loc& loc, _d_real value, Type* type);
+     static void emplace(UnionExp* pue, const Loc& loc, _d_real value, Type* type);
+     bool equals(const RootObject* const o) const override;
++    bool isIdentical(const Expression* const e) const override;
+     dinteger_t toInteger() override;
+     uinteger_t toUInteger() override;
+     _d_real toReal() override;
+@@ -6971,6 +6973,7 @@ public:
+     static ComplexExp* create(const Loc& loc, complex_t value, Type* type);
+     static void emplace(UnionExp* pue, const Loc& loc, complex_t value, Type* type);
+     bool equals(const RootObject* const o) const override;
++    bool isIdentical(const Expression* const e) const override;
+     dinteger_t toInteger() override;
+     uinteger_t toUInteger() override;
+     _d_real toReal() override;

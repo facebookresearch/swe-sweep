@@ -1,0 +1,27 @@
+diff --git a/vlib/v/tests/builtin_arrays/array_sumtype_init_test.v b/vlib/v/tests/builtin_arrays/array_sumtype_init_test.v
+new file mode 100644
+index 000000000..73e418ece
+--- /dev/null
++++ b/vlib/v/tests/builtin_arrays/array_sumtype_init_test.v
+@@ -0,0 +1,21 @@
++type SumFoo = int | string
++
++struct Foo {
++	bar []SumFoo
++}
++
++struct Bar {
++	foo []Foo
++}
++
++fn test_main() {
++	str := 'foobar'
++	f := Bar{
++		foo: [Foo{
++			bar: [str]
++		}]
++	}
++	assert f.foo.len == 1
++	assert f.foo[0].bar.len == 1
++	assert f.foo[0].bar[0] as string == str
++}

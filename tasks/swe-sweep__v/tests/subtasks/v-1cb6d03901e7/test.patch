@@ -1,0 +1,12 @@
+diff --git a/vlib/v/fmt/tests/comptime_if_expr_script_keep.vv b/vlib/v/fmt/tests/comptime_if_expr_script_keep.vv
+new file mode 100644
+index 000000000..a9e64e9d6
+--- /dev/null
++++ b/vlib/v/fmt/tests/comptime_if_expr_script_keep.vv
+@@ -0,0 +1,6 @@
++mut pre_built_str := ''
++$if prebuilt ? {
++	the_date := if $env('DATE') != '' { $env('DATE') } else { '##DATE##' }
++	pre_built_str = '[pre-built binary release (${the_date})]\n'
++}
++dump(pre_built_str)

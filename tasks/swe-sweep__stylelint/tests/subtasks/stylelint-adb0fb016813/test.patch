@@ -1,0 +1,53 @@
+diff --git a/lib/rules/block-no-empty/__tests__/index.mjs b/lib/rules/block-no-empty/__tests__/index.mjs
+index 20db7b3c1..739ac9027 100644
+--- a/lib/rules/block-no-empty/__tests__/index.mjs
++++ b/lib/rules/block-no-empty/__tests__/index.mjs
+@@ -153,6 +153,14 @@ testRule({
+ 			endLine: 1,
+ 			endColumn: 20,
+ 		},
++		{
++			code: '@media print /*comment*/, screen {}',
++			message: messages.rejected,
++			line: 1,
++			column: 34,
++			endLine: 1,
++			endColumn: 36,
++		},
+ 		{
+ 			code: 'a { /* stylelint-disable foo */ }',
+ 			message: messages.rejected,
+diff --git a/lib/utils/__tests__/beforeBlockString.test.mjs b/lib/utils/__tests__/beforeBlockString.test.mjs
+index 5a0b5a43d..e696c09ad 100644
+--- a/lib/utils/__tests__/beforeBlockString.test.mjs
++++ b/lib/utils/__tests__/beforeBlockString.test.mjs
+@@ -14,9 +14,18 @@ describe('beforeBlockString', () => {
+ 	it('runs on rules', () => {
+ 		expect(postcssCheck('a {}')).toBe('a ');
+ 		expect(postcssCheck('\na\n{}')).toBe('\na\n');
++
+ 		css = '\n\na,\nb,\n\tspan > .foo\n{}';
+ 		res = '\n\na,\nb,\n\tspan > .foo\n';
+ 		expect(postcssCheck(css)).toBe(res);
++
++		css = 'a, b {}';
++		res = 'a, b ';
++		expect(postcssCheck(css)).toBe(res);
++
++		css = 'a /* comment */, b {}';
++		res = 'a /* comment */, b ';
++		expect(postcssCheck(css)).toBe(res);
+ 	});
+ 
+ 	it('runs on at-rules', () => {
+@@ -26,6 +35,10 @@ describe('beforeBlockString', () => {
+ 		res = '\n@media print, screen\n\t';
+ 		expect(postcssCheck(css)).toBe(res);
+ 
++		css = '\n@media print /* comment */, screen\n\t{}';
++		res = '\n@media print /* comment */, screen\n\t';
++		expect(postcssCheck(css)).toBe(res);
++
+ 		css = '@supports (animation-name: test) {}';
+ 		res = '@supports (animation-name: test) ';
+ 		expect(postcssCheck(css)).toBe(res);

@@ -1,0 +1,14 @@
+diff --git a/plumbing/object/commit_walker_path.go b/plumbing/object/commit_walker_path.go
+index aa0ca15f..e0549669 100644
+--- a/plumbing/object/commit_walker_path.go
++++ b/plumbing/object/commit_walker_path.go
+@@ -115,7 +115,8 @@ func (c *commitPathIter) hasFileChange(changes Changes, parent *Commit) bool {
+ 
+ 		// filename matches, now check if source iterator contains all commits (from all refs)
+ 		if c.checkParent {
+-			if parent != nil && isParentHash(parent.Hash, c.currentCommit) {
++			// Check if parent is beyond the initial commit
++			if parent == nil || isParentHash(parent.Hash, c.currentCommit) {
+ 				return true
+ 			}
+ 			continue

@@ -1,0 +1,13 @@
+diff --git a/lib/mix/lib/mix/dep/loader.ex b/lib/mix/lib/mix/dep/loader.ex
+index 5e988d8c0..d2c6624b9 100644
+--- a/lib/mix/lib/mix/dep/loader.ex
++++ b/lib/mix/lib/mix/dep/loader.ex
+@@ -358,7 +358,7 @@ defmodule Mix.Dep.Loader do
+   end
+ 
+   defp mix_children(config, locked?, opts) do
+-    from = Path.absname("mix.exs")
++    from = Mix.Project.project_file()
+ 
+     (config[:deps] || [])
+     |> Enum.map(&to_dep(&1, from, _manager = nil, locked?))

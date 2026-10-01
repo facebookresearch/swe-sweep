@@ -1,0 +1,514 @@
+{
+  "build_jobs": 4,
+  "container_repo": "/arrow",
+  "evaluation": {
+    "build_timeout": 3600,
+    "suite": {
+      "bin_dir": "/build/release",
+      "binary_fmt": "opencv_test_%s",
+      "binary_glob": "*-test",
+      "binary_re": "^cpp/src/.*_test\\.cc$",
+      "build_dir": "/build",
+      "type": "gtest"
+    }
+  },
+  "upstream_image": "pandora-maxbug-arrow:11.0.0",
+  "n_base_passing": 9650,
+  "n_base_test_ignore": 38,
+  "oracle_digest": "b076d58a7d80ff906246b3fe5161bd0a66691ae9480d7abb5714a9b000fdb781",
+  "oracle_pristine_paths": [],
+  "upstream_commit": "9f7399e15e6172900e0591deb5a57a45769d8205",
+  "reproduction": {
+    "build_cmd": "cmake --build /build -j $SWESWEEP_BUILD_JOBS",
+    "jobs_env": "SWESWEEP_BUILD_JOBS",
+    "suite": {
+      "bin_dir": "/build/release",
+      "binary_fmt": "opencv_test_%s",
+      "binary_glob": "*-test",
+      "binary_re": "^cpp/src/.*_test\\.cc$",
+      "build_dir": "/build",
+      "type": "gtest"
+    },
+    "test_timeout": 1800
+  },
+  "schema": 2,
+  "subtasks": [
+    {
+      "f2p": [
+        "TestScan/TestParquetFileFormatScan.PredicatePushdownRowGroupFragmentsUsingDurationColumn/0Threaded16b1024r",
+        "TestScan/TestParquetFileFormatScan.PredicatePushdownRowGroupFragmentsUsingDurationColumn/1Serial16b1024r"
+      ],
+      "id": "arrow-0cc9fb2dd29f",
+      "target_files": [
+        "cpp/src/arrow/dataset/file_parquet.cc"
+      ]
+    },
+    {
+      "f2p": [
+        "TestListScalar/0.TestHashing",
+        "TestListScalar/1.TestHashing",
+        "TestListScalar/2.TestHashing"
+      ],
+      "id": "arrow-121fb8b54251",
+      "target_files": [
+        "cpp/src/arrow/scalar.cc"
+      ]
+    },
+    {
+      "f2p": [
+        "Expression.ExecuteCallWithNoArguments"
+      ],
+      "id": "arrow-19465d9c4aac",
+      "target_files": [
+        "cpp/src/arrow/compute/expression.cc"
+      ]
+    },
+    {
+      "f2p": [
+        "TaskScheduler.AbortContOnTaskErrorSerial"
+      ],
+      "id": "arrow-1a3fe19e8bf0",
+      "target_files": [
+        "cpp/src/arrow/acero/task_util.cc"
+      ]
+    },
+    {
+      "f2p": [
+        "TestDeltaBitPackEncoding/0.NonZeroPaddedMiniblockBitWidth",
+        "TestDeltaBitPackEncoding/1.NonZeroPaddedMiniblockBitWidth"
+      ],
+      "id": "arrow-264e1ebbe40c",
+      "target_files": [
+        "cpp/src/arrow/util/bit_stream_utils.h",
+        "cpp/src/parquet/encoding.cc"
+      ]
+    },
+    {
+      "f2p": [
+        "StatisticsTest.TruncateOnlyHalfMinMax"
+      ],
+      "id": "arrow-26f5542e1be5",
+      "target_files": [
+        "cpp/src/parquet/metadata.cc",
+        "cpp/src/parquet/statistics.h"
+      ]
+    },
+    {
+      "f2p": [
+        "Expression.BindWithAliasCasts"
+      ],
+      "id": "arrow-2cdadc752c2e",
+      "target_files": [
+        "cpp/src/arrow/compute/expression_internal.h",
+        "cpp/src/arrow/compute/registry.cc",
+        "cpp/src/arrow/compute/registry.h"
+      ]
+    },
+    {
+      "f2p": [
+        "TestTensor.MakeFailureCases"
+      ],
+      "id": "arrow-2fd06f68a200",
+      "target_files": [
+        "cpp/src/arrow/tensor.cc"
+      ]
+    },
+    {
+      "f2p": [
+        "TestIn.TestInDecimal"
+      ],
+      "id": "arrow-369f913202de",
+      "target_files": [
+        "cpp/src/gandiva/llvm_generator.cc"
+      ]
+    },
+    {
+      "f2p": [
+        "ResultTest.MatcherExplanations",
+        "ResultTest.ValueOrGeneratedMoveOnlyGenerator"
+      ],
+      "id": "arrow-3d2dc9c86ad0",
+      "target_files": [
+        "cpp/src/arrow/result.h"
+      ]
+    },
+    {
+      "f2p": [
+        "TestChunkedArray.EqualsSameAddressWithNaNs"
+      ],
+      "id": "arrow-3e14973c5f12",
+      "target_files": [
+        "cpp/src/arrow/chunked_array.cc"
+      ]
+    },
+    {
+      "f2p": [
+        "TestFileFormat.WriteAfterClose",
+        "TestStreamFormat.WriteAfterClose"
+      ],
+      "id": "arrow-40583d085a58",
+      "target_files": [
+        "cpp/src/arrow/ipc/writer.cc"
+      ]
+    },
+    {
+      "f2p": [
+        "TestTime.TimeStampTrunc"
+      ],
+      "id": "arrow-479fccb220cc",
+      "target_files": [
+        "cpp/src/gandiva/precompiled/time.cc"
+      ]
+    },
+    {
+      "f2p": [
+        "TestStringKernels/0.StrptimeZoneOffset",
+        "TestStringKernels/1.StrptimeZoneOffset"
+      ],
+      "id": "arrow-48d0b45c48f0",
+      "target_files": [
+        "cpp/src/arrow/compute/kernels/scalar_temporal_unary.cc"
+      ]
+    },
+    {
+      "f2p": [
+        "TestPartitioning.HivePartitioningFormat"
+      ],
+      "id": "arrow-4bbc9f6cd795",
+      "target_files": [
+        "cpp/src/arrow/scalar.cc"
+      ]
+    },
+    {
+      "f2p": [
+        "TestMapArray.FromArrays"
+      ],
+      "id": "arrow-4c84f1faa214",
+      "target_files": [
+        "cpp/src/arrow/array/array_nested.cc"
+      ]
+    },
+    {
+      "f2p": [
+        "TestDecimal.TestCastDecimalVarCharInvalidInputInvalidOutput",
+        "TestDecimal.TestSha"
+      ],
+      "id": "arrow-4e8d0cead54f",
+      "target_files": [
+        "cpp/src/gandiva/precompiled/decimal_wrapper.cc"
+      ]
+    },
+    {
+      "f2p": [
+        "TestUnionType.MaxTypeCode"
+      ],
+      "id": "arrow-5a279df3fd5a",
+      "target_files": [
+        "cpp/src/arrow/type.cc",
+        "cpp/src/arrow/util/range.h"
+      ]
+    },
+    {
+      "f2p": [
+        "TestArrayView.ExtensionType",
+        "TestArrayView.ExtensionTypeNestedStorage",
+        "TestArrayView.NonZeroOffset",
+        "TestArrayView.StructAsStructWithExtensionField"
+      ],
+      "id": "arrow-5abdc0d1a217",
+      "target_files": [
+        "cpp/src/arrow/array/data.cc"
+      ]
+    },
+    {
+      "f2p": [
+        "RecordReaderTest.BasicReadRepeatedField"
+      ],
+      "id": "arrow-60dfbaf3519c",
+      "target_files": [
+        "cpp/src/parquet/column_reader.cc"
+      ]
+    },
+    {
+      "f2p": [
+        "ExpressionUtils.MakeExecBatch"
+      ],
+      "id": "arrow-624e0738ed5f",
+      "target_files": [
+        "cpp/src/arrow/compute/expression.cc"
+      ]
+    },
+    {
+      "f2p": [
+        "TestToDateHolder.TestMakeFromFunctionNode",
+        "TestToDateHolder.TestMakeFromInvalidSurpressParamFunctionNode",
+        "TestToDateHolder.TestSimpleDateTimeMakeError"
+      ],
+      "id": "arrow-67205dcd9782",
+      "target_files": [
+        "cpp/src/gandiva/to_date_holder.cc"
+      ]
+    },
+    {
+      "f2p": [
+        "TestArrowReadWrite.DictionaryIndexBitwidthRoundtrip"
+      ],
+      "id": "arrow-6cc9de91ea5e",
+      "target_files": [
+        "cpp/src/parquet/arrow/reader_internal.cc",
+        "cpp/src/parquet/arrow/schema.cc"
+      ]
+    },
+    {
+      "f2p": [
+        "TestGdvFnStubs.TestTranslate"
+      ],
+      "id": "arrow-836fa5c90cf9",
+      "target_files": [
+        "cpp/src/gandiva/gdv_string_function_stubs.cc"
+      ]
+    },
+    {
+      "f2p": [
+        "TestReplaceBoolean.ReplaceWithMask",
+        "TestReplaceBoolean.ReplaceWithMaskErrors",
+        "TestReplaceNull.ReplaceWithMask"
+      ],
+      "id": "arrow-8a41d3fa0ac8",
+      "target_files": [
+        "cpp/src/arrow/compute/kernels/vector_replace.cc"
+      ]
+    },
+    {
+      "f2p": [
+        "TestSchemaMetadata.MapField",
+        "TestSchemaMetadata.NestedFieldsWithKeyValueMetadata"
+      ],
+      "id": "arrow-8a6d1850de5a",
+      "target_files": [
+        "cpp/src/arrow/ipc/metadata_internal.cc"
+      ]
+    },
+    {
+      "f2p": [
+        "TestConvertRoundTrip.FieldIdPreserveAllColumnTypes"
+      ],
+      "id": "arrow-8c472a2596ce",
+      "target_files": [
+        "cpp/src/parquet/arrow/schema.cc"
+      ]
+    },
+    {
+      "f2p": [
+        "GroupBy.MeanOverflow"
+      ],
+      "id": "arrow-97c0b6198f30",
+      "target_files": [
+        "cpp/src/arrow/compute/kernels/hash_aggregate.cc"
+      ]
+    },
+    {
+      "f2p": [
+        "TestToDateHolder.TestSimpleDateYear",
+        "TestToDateHolder.TestSimpleDateYearMonth"
+      ],
+      "id": "arrow-97ed55fe5885",
+      "target_files": [
+        "cpp/src/arrow/util/value_parsing.h"
+      ]
+    },
+    {
+      "f2p": [
+        "TestPageSerde.PageSizeResetWhenRead"
+      ],
+      "id": "arrow-98c930cfb2f6",
+      "target_files": [
+        "cpp/src/parquet/column_reader.cc"
+      ]
+    },
+    {
+      "f2p": [
+        "TestArrowReadWrite.OperationsOnClosedWriter",
+        "TestReadWriteArrow.WriteAndReadRecordBatch"
+      ],
+      "id": "arrow-9a0cb740d8ac",
+      "target_files": [
+        "cpp/src/parquet/arrow/writer.cc",
+        "cpp/src/parquet/file_writer.cc"
+      ]
+    },
+    {
+      "f2p": [
+        "TestStringKernels/0.SliceCodeunitsNegNeg",
+        "TestStringKernels/0.SliceCodeunitsPosPos",
+        "TestStringKernels/1.SliceCodeunitsNegNeg",
+        "TestStringKernels/1.SliceCodeunitsPosPos"
+      ],
+      "id": "arrow-9f952a8a44b5",
+      "target_files": [
+        "cpp/src/arrow/compute/kernels/scalar_string_utf8.cc"
+      ]
+    },
+    {
+      "f2p": [
+        "TestArray.ExtensionSpanRoundTrip",
+        "TestArray.TestAppendArraySlice",
+        "TestArray.TestMakeArrayFromMapScalar",
+        "TestArray.TestMakeEmptyArray"
+      ],
+      "id": "arrow-a642ccf7200e",
+      "target_files": [
+        "cpp/src/arrow/array/data.cc"
+      ]
+    },
+    {
+      "f2p": [
+        "TestIfElseBaseBinary/0.IfElseBaseBinaryNonZeroFirst",
+        "TestIfElseBaseBinary/0.IfElseBaseBinarySliced",
+        "TestIfElseBaseBinary/1.IfElseBaseBinaryNonZeroFirst",
+        "TestIfElseBaseBinary/1.IfElseBaseBinarySliced",
+        "TestIfElseBaseBinary/2.IfElseBaseBinaryNonZeroFirst",
+        "TestIfElseBaseBinary/2.IfElseBaseBinarySliced",
+        "TestIfElseBaseBinary/3.IfElseBaseBinaryNonZeroFirst",
+        "TestIfElseBaseBinary/3.IfElseBaseBinarySliced"
+      ],
+      "id": "arrow-a7cd3ba57ac2",
+      "target_files": [
+        "cpp/src/arrow/compute/kernels/scalar_if_else.cc"
+      ]
+    },
+    {
+      "f2p": [
+        "TestDictionaryBuilderOrdered.FinishPreservesOrderedFlag",
+        "TestDictionaryBuilderOrdered.ListOfOrderedDictionary",
+        "TestDictionaryBuilderOrdered.MakeDictionaryBuilderPreservesOrdered",
+        "TestDictionaryBuilderOrdered.TypePreservesOrderedFlag"
+      ],
+      "id": "arrow-b4b15ce0d6ab",
+      "target_files": [
+        "cpp/src/arrow/array/builder_dict.h",
+        "cpp/src/arrow/builder.cc"
+      ]
+    },
+    {
+      "f2p": [
+        "DatasetWriterTestFixture.BatchGreaterThanMaxRowsQueued",
+        "DatasetWriterTestFixture.DirectoryCreateFails",
+        "DatasetWriterTestFixture.MaxRowsOneWrite"
+      ],
+      "id": "arrow-b831ede509b4",
+      "target_files": [
+        "cpp/src/arrow/dataset/dataset_writer.cc"
+      ]
+    },
+    {
+      "f2p": [
+        "TestTime.castVarcharTimestamp"
+      ],
+      "id": "arrow-be576c6bbb37",
+      "target_files": [
+        "cpp/src/gandiva/precompiled/time.cc"
+      ]
+    },
+    {
+      "f2p": [
+        "Cast.FixedSizeBinaryToBinaryOrString",
+        "Cast.FixedSizeBinaryToBinaryOrStringWithSlice",
+        "Cast.IntToString"
+      ],
+      "id": "arrow-c1cc8abccb1b",
+      "target_files": [
+        "cpp/src/arrow/compute/kernels/scalar_cast_string.cc"
+      ]
+    },
+    {
+      "f2p": [
+        "TestExecSpanIterator.ZeroLengthInputs"
+      ],
+      "id": "arrow-c844b43f97c5",
+      "target_files": [
+        "cpp/src/arrow/array/data.cc"
+      ]
+    },
+    {
+      "f2p": [
+        "TestStringOps.TestBinaryStringNull"
+      ],
+      "id": "arrow-d0cd5512a992",
+      "target_files": [
+        "cpp/src/gandiva/function_registry_string.cc",
+        "cpp/src/gandiva/precompiled/string_ops.cc"
+      ]
+    },
+    {
+      "f2p": [
+        "KeyColumnArray.FromExecBatch",
+        "KeyColumnArray.SliceBinaryTest",
+        "ResizableArrayData.Basic"
+      ],
+      "id": "arrow-d4e732abe1d1",
+      "target_files": [
+        "cpp/src/arrow/compute/light_array.cc",
+        "cpp/src/arrow/compute/light_array.h"
+      ]
+    },
+    {
+      "f2p": [
+        "Expression.ExecuteChunkedArray"
+      ],
+      "id": "arrow-d7a1dcf3bafd",
+      "target_files": [
+        "cpp/src/arrow/compute/expression.cc"
+      ]
+    },
+    {
+      "f2p": [
+        "TestBooleanArray.TrueCountFalseCount"
+      ],
+      "id": "arrow-db58ca99eaa0",
+      "target_files": [
+        "cpp/src/arrow/array/array_primitive.cc"
+      ]
+    },
+    {
+      "f2p": [
+        "TestMultiRowGroupStreamReader.SkipRows"
+      ],
+      "id": "arrow-e4fc3a8e2c13",
+      "target_files": [
+        "cpp/src/parquet/stream_reader.cc"
+      ]
+    },
+    {
+      "f2p": [
+        "TestColumnWriter.WriteDataPageV2Header"
+      ],
+      "id": "arrow-eb9c7276cf24",
+      "target_files": [
+        "cpp/src/parquet/column_writer.cc"
+      ]
+    },
+    {
+      "f2p": [
+        "TestArrowReadWrite.AllNulls",
+        "TestReadWriteArrow.WriteAndReadRecordBatch"
+      ],
+      "id": "arrow-eef26b83f5e8",
+      "target_files": [
+        "cpp/src/parquet/column_writer.cc"
+      ]
+    },
+    {
+      "f2p": [
+        "TestStringOps.TestPadMalformedUtf8KeepsValidGlyph",
+        "TestStringOps.TestPadMalformedUtf8NoOverread"
+      ],
+      "id": "arrow-f5b99cc3814b",
+      "target_files": [
+        "cpp/src/gandiva/precompiled/string_ops.cc"
+      ]
+    }
+  ],
+  "task": "arrow",
+  "version": "11.0.0"
+}

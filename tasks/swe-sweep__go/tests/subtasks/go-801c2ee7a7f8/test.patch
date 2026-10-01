@@ -1,0 +1,14 @@
+diff --git a/src/go/constant/value_test.go b/src/go/constant/value_test.go
+index e41315ee27..0f50281ee2 100644
+--- a/src/go/constant/value_test.go
++++ b/src/go/constant/value_test.go
+@@ -617,6 +617,9 @@ func TestUnknown(t *testing.T) {
+ 			if got := Compare(x, token.EQL, y); got {
+ 				t.Errorf("%s == %s: got true; want false", x, y)
+ 			}
++			if got := Compare(x, token.NEQ, y); got {
++				t.Errorf("%s != %s: got true; want false", x, y)
++			}
+ 		}
+ 	}
+ }

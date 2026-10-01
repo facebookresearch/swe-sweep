@@ -1,0 +1,25 @@
+diff --git a/Mathlib/Tactic/FunProp/Elab.lean b/Mathlib/Tactic/FunProp/Elab.lean
+--- a/Mathlib/Tactic/FunProp/Elab.lean
++++ b/Mathlib/Tactic/FunProp/Elab.lean
+@@ -4,6 +4,7 @@ Released under Apache 2.0 license as described in the file LICENSE.
+ Authors: Tomáš Skřivan
+ -/
+ import Mathlib.Tactic.FunProp.Core
++import Lean.Elab.InfoTree.Main
+ 
+ /-!
+ ## `funProp` tactic syntax
+@@ -59,10 +60,10 @@ def funPropTac : Tactic
+           | `(discharger| (discharger:=$tac)) => pure <| tacticToDischarge (← `(tactic| ($tac)))
+           | _ => pure emptyDischarge
+ 
+-      let namesToUnfold : Array Name :=
++      let namesToUnfold ← show CoreM (Array Name) from
+         match names with
+-        | none => #[]
+-        | some ns => ns.getElems.map (fun n => n.getId)
++        | none => pure #[]
++        | some ns => ns.getElems.mapM Elab.realizeGlobalConstNoOverloadWithInfo
+ 
+       let namesToUnfold := namesToUnfold.append defaultNamesToUnfold
+ 

@@ -1,0 +1,74 @@
+diff --git a/tests/dialects/test_hive.py b/tests/dialects/test_hive.py
+index c01f689181..e436692ca9 100644
+--- a/tests/dialects/test_hive.py
++++ b/tests/dialects/test_hive.py
+@@ -518,15 +518,6 @@ class TestHive(Validator):
+                 "spark": "CREATE TABLE test_table2 (1a_1a STRING)",
+             },
+         )
+-        self.validate_all(
+-            "PERCENTILE(x, 0.5)",
+-            write={
+-                "duckdb": "QUANTILE(x, 0.5)",
+-                "presto": "APPROX_PERCENTILE(x, 0.5)",
+-                "hive": "PERCENTILE(x, 0.5)",
+-                "spark": "PERCENTILE(x, 0.5)",
+-            },
+-        )
+         self.validate_all(
+             "PERCENTILE_APPROX(x, 0.5)",
+             read={
+@@ -820,7 +811,53 @@ class TestHive(Validator):
+     def test_data_type(self):
+         self.validate_all(
+             "CAST(a AS BIT)",
+             write={
+                 "hive": "CAST(a AS BOOLEAN)",
+             },
+         )
++
++    def test_percentile(self):
++        self.validate_all(
++            "PERCENTILE(x, 0.5)",
++            write={
++                "duckdb": "QUANTILE(x, 0.5)",
++                "presto": "APPROX_PERCENTILE(x, 0.5)",
++                "hive": "PERCENTILE(x, 0.5)",
++                "spark2": "PERCENTILE(x, 0.5)",
++                "spark": "PERCENTILE(x, 0.5)",
++                "databricks": "PERCENTILE(x, 0.5)",
++            },
++        )
++
++        self.validate_all(
++            "PERCENTILE(DISTINCT x, 0.5)",
++            read={
++                "hive": "PERCENTILE(DISTINCT x, 0.5)",
++                "spark": "PERCENTILE(DISTINCT x, 0.5)",
++                "databricks": "PERCENTILE(DISTINCT x, 0.5)",
++            },
++            write={
++                "spark": "PERCENTILE(DISTINCT x, 0.5)",
++                "databricks": "PERCENTILE(DISTINCT x, 0.5)",
++            },
++        )
++
++        self.validate_all(
++            "PERCENTILE(x, 0.5)",
++            read={
++                "hive": "PERCENTILE(ALL x, 0.5)",
++                "spark2": "PERCENTILE(ALL x, 0.5)",
++                "spark": "PERCENTILE(ALL x, 0.5)",
++                "databricks": "PERCENTILE(ALL x, 0.5)",
++            },
++        )
++
++        quantile_expr = self.validate_identity("PERCENTILE(DISTINCT x, 0.5)")
++        quantile_expr.assert_is(exp.Quantile)
++        quantile_expr.this.assert_is(exp.Distinct)
++        quantile_expr.args.get("quantile").assert_is(exp.Literal)
++
++        quantile_expr = self.validate_identity("PERCENTILE(ALL x, 0.5)", "PERCENTILE(x, 0.5)")
++        quantile_expr.assert_is(exp.Quantile)
++        quantile_expr.this.assert_is(exp.Column)
++        quantile_expr.args.get("quantile").assert_is(exp.Literal)

@@ -1,0 +1,25 @@
+diff --git a/testsuite/integration-arquillian/tests/base/src/test/java/org/keycloak/testsuite/sessionlimits/UserSessionLimitsTest.java b/testsuite/integration-arquillian/tests/base/src/test/java/org/keycloak/testsuite/sessionlimits/UserSessionLimitsTest.java
+index c851c0e32f..0e1ae1ae11 100644
+--- a/testsuite/integration-arquillian/tests/base/src/test/java/org/keycloak/testsuite/sessionlimits/UserSessionLimitsTest.java
++++ b/testsuite/integration-arquillian/tests/base/src/test/java/org/keycloak/testsuite/sessionlimits/UserSessionLimitsTest.java
+@@ -135,6 +135,20 @@ public class UserSessionLimitsTest extends AbstractTestRealmKeycloakTest {
+         assertEquals(ERROR_TO_DISPLAY, errorPage.getError());
+     }
+ 
++    @Test
++    public void testClientSessionCountNotExceededOnReAuthentication() throws Exception {
++        // Login and verify login was successful
++        loginPage.open();
++        loginPage.login("test-user@localhost", "password");
++        events.expectLogin().assertEvent();
++
++        // Re-authenticate the user with prompt=login
++        oauth.prompt("login");
++        loginPage.open();
++        loginPage.login("test-user@localhost", "password");
++        events.expectLogin().assertEvent();
++    }
++
+     @Test
+     public void testClientSessionCountExceededAndOldestSessionRemovedBrowserFlow() throws Exception {
+         try {

@@ -1,0 +1,22 @@
+diff --git a/vlib/v/tests/generics_array_append_test.v b/vlib/v/tests/generics_array_append_test.v
+index f6eaf3107..26d85ded2 100644
+--- a/vlib/v/tests/generics_array_append_test.v
++++ b/vlib/v/tests/generics_array_append_test.v
+@@ -8,4 +8,17 @@ fn test_generic_array_append() {
+ 	g([1, 2, 3])
+ 	g([1.1, 2.2, 3.3])
+ 	g(['aa', 'bb', 'cc'])
++	gs[[]string]()!
++}
++
++fn gs[T]() !T {
++	mut typ := T{
++		cap: 10
++	}
++	if T.name == '[]string' {
++		typ << 'strings'
++	} else {
++		return error('only string arrays are supported')
++	}
++	return typ
+ }

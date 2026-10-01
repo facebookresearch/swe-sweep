@@ -1,0 +1,64 @@
+diff --git a/testsuite/integration-arquillian/tests/base/src/test/java/org/keycloak/testsuite/authz/admin/AbstractAuthorizationTest.java b/testsuite/integration-arquillian/tests/base/src/test/java/org/keycloak/testsuite/authz/admin/AbstractAuthorizationTest.java
+index b39a10c281..bb6595b65c 100644
+--- a/testsuite/integration-arquillian/tests/base/src/test/java/org/keycloak/testsuite/authz/admin/AbstractAuthorizationTest.java
++++ b/testsuite/integration-arquillian/tests/base/src/test/java/org/keycloak/testsuite/authz/admin/AbstractAuthorizationTest.java
+@@ -132,6 +132,13 @@ public abstract class AbstractAuthorizationTest extends AbstractClientTest {
+                         .authorizationServicesEnabled(true)
+                         .redirectUris("http://localhost/" + RESOURCE_SERVER_CLIENT_ID)
+                         .defaultRoles("uma_protection")
++                        .directAccessGrants())
++                .client(ClientBuilder.create().clientId("another-resource-server-other")
++                        .name("another-resource-server-other")
++                        .secret("secret")
++                        .authorizationServicesEnabled(true)
++                        .redirectUris("http://localhost/" + "another-resource-server-other")
++                        .defaultRoles("uma_protection")
+                         .directAccessGrants());
+     }
+ }
+diff --git a/testsuite/integration-arquillian/tests/base/src/test/java/org/keycloak/testsuite/authz/admin/ResourceManagementTest.java b/testsuite/integration-arquillian/tests/base/src/test/java/org/keycloak/testsuite/authz/admin/ResourceManagementTest.java
+index d36d31adcc..5329048469 100644
+--- a/testsuite/integration-arquillian/tests/base/src/test/java/org/keycloak/testsuite/authz/admin/ResourceManagementTest.java
++++ b/testsuite/integration-arquillian/tests/base/src/test/java/org/keycloak/testsuite/authz/admin/ResourceManagementTest.java
+@@ -341,6 +341,22 @@ public class ResourceManagementTest extends AbstractAuthorizationTest {
+         assertEquals(0, updated.getScopes().size());
+     }
+ 
++    @Test
++    public void testFindResourceById() {
++        ResourceRepresentation resource = createResourceWithDefaultScopes();
++        resource.setId(null);
++        resource.setName("Another Resource");
++        resource.setOwner((String) null);
++        resource.setScopes(Set.of());
++        ResourceRepresentation anotherResource = doCreateResource(resource, findClientResource("another-resource-server-other").authorization().resources());
++
++        try {
++            getClientResource().authorization().resources().resource(anotherResource.getId()).toRepresentation();
++            fail("Should not find resource from another resource server");
++        } catch (NotFoundException ignore) {
++        }
++    }
++
+     private ResourceRepresentation createResourceWithDefaultScopes() {
+         ResourceRepresentation resource = createResource();
+ 
+@@ -395,8 +411,10 @@ public class ResourceManagementTest extends AbstractAuthorizationTest {
+     }
+ 
+     protected ResourceRepresentation doCreateResource(ResourceRepresentation newResource) {
+-        ResourcesResource resources = getClientResource().authorization().resources();
++        return doCreateResource(newResource, getClientResource().authorization().resources());
++    }
+ 
++    private ResourceRepresentation doCreateResource(ResourceRepresentation newResource, ResourcesResource resources) {
+         try (Response response = resources.create(newResource)) {
+ 
+             int status = response.getStatus();
+@@ -424,4 +442,4 @@ public class ResourceManagementTest extends AbstractAuthorizationTest {
+         ResourcesResource resources = getClientResource().authorization().resources();
+         resources.resource(resource.getId()).remove();
+     }
+-}
+\ No newline at end of file
++}

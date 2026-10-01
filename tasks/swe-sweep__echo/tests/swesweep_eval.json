@@ -1,0 +1,93 @@
+{
+  "build_jobs": 4,
+  "container_repo": "/echo",
+  "evaluation": {
+    "suite": {
+      "eval_roots": [
+        "."
+      ],
+      "type": "go"
+    },
+    "test_dirs": [
+      "_fixture"
+    ],
+    "test_timeout": 600
+  },
+  "upstream_image": "pandora-maxbug-echo:v4.2.1",
+  "n_base_passing": 976,
+  "n_base_test_ignore": 1,
+  "oracle_digest": "014f14d6910fe9b08939860e19cf46de2a3bec70566cb1b71f8fd33f5a77b5ce",
+  "oracle_pristine_paths": [],
+  "upstream_commit": "9f7399e15e6172900e0591deb5a57a45769d8205",
+  "reproduction": {
+    "needs_build": false,
+    "suite": {
+      "eval_roots": [
+        "."
+      ],
+      "type": "go"
+    }
+  },
+  "schema": 2,
+  "subtasks": [
+    {
+      "f2p": [
+        "middleware::TestProxyBalancerWithNoTargets"
+      ],
+      "id": "echo-0508b348e5e8",
+      "target_files": [
+        "middleware/proxy.go"
+      ]
+    },
+    {
+      "f2p": [
+        "middleware::TestGzipEmpty"
+      ],
+      "id": "echo-5910c0014885",
+      "target_files": [
+        "middleware/compress.go"
+      ]
+    },
+    {
+      "f2p": [
+        ".::TestContext_Scheme",
+        ".::TestContext_Scheme/ignores_invalid_X-Forwarded-Proto_and_uses_X-Forwarded-Protocol",
+        ".::TestContext_Scheme/ignores_invalid_forwarded_headers_and_falls_back_to_http"
+      ],
+      "id": "echo-5fe899e9002a",
+      "target_files": [
+        "context.go"
+      ]
+    },
+    {
+      "f2p": [
+        ".::TestDefaultBinder_bindDataToMap",
+        ".::TestDefaultBinder_bindDataToMap/ok,_bind_to_map[string][]string"
+      ],
+      "id": "echo-91d2b5077dbf",
+      "target_files": [
+        "bind.go"
+      ]
+    },
+    {
+      "f2p": [
+        ".::TestMultipleGroupSamePathMiddleware"
+      ],
+      "id": "echo-b5ecaf8d2018",
+      "target_files": [
+        "group.go"
+      ]
+    },
+    {
+      "f2p": [
+        ".::TestRouterNoRoutablePath"
+      ],
+      "id": "echo-c84540d03771",
+      "target_files": [
+        "router.go"
+      ]
+    }
+  ],
+  "task": "echo",
+  "version": "v4.2.1"
+}

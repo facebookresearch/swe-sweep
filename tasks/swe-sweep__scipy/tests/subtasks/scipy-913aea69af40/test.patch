@@ -1,0 +1,72 @@
+diff --git a/scipy/optimize/tests/test__numdiff.py b/scipy/optimize/tests/test__numdiff.py
+index 627a88a37b..a2ff2e4646 100644
+--- a/scipy/optimize/tests/test__numdiff.py
++++ b/scipy/optimize/tests/test__numdiff.py
+@@ -10,7 +10,7 @@ from scipy.sparse import csr_matrix, csc_matrix, lil_matrix
+ 
+ from scipy.optimize._numdiff import (
+     _adjust_scheme_to_bounds, approx_derivative, check_derivative,
+-    group_columns)
++    group_columns, _compute_absolute_step)
+ 
+ 
+ def test_group_columns():
+@@ -595,3 +595,46 @@ class TestApproxDerivativeLinearOperator(object):
+         assert_raises(ValueError, approx_derivative,
+                       self.fun_vector_vector, x0,
+                       method='2-point', bounds=(1, np.inf))
++
++
++def test__compute_absolute_step():
++    # tests calculation of absolute step from rel_step
++    methods = ['2-point', '3-point', 'cs']
++
++    x0 = np.array([1e-5, 0, 1, 1e5])
++
++    EPS = np.finfo(np.float64).eps
++    relative_step = {
++        "2-point": EPS**0.5,
++        "3-point": EPS**(1/3),
++        "cs": EPS**0.5
++    }
++    f0 = np.array(1.0)
++
++    for method in methods:
++        rel_step = relative_step[method]
++        correct_step = np.array([rel_step,
++                                 rel_step * 1.,
++                                 rel_step * 1.,
++                                 rel_step * np.abs(x0[3])])
++
++        abs_step = _compute_absolute_step(None, x0, method)
++        assert_allclose(abs_step, correct_step)
++
++        sign_x0 = (-x0 >= 0).astype(float) * 2 - 1
++        abs_step = _compute_absolute_step(None, -x0, method)
++        assert_allclose(abs_step, sign_x0 * correct_step)
++
++    # if a relative step is provided it should be used
++    rel_step = np.array([0.1, 1, 10, 100])
++    correct_step = np.array([rel_step[0] * x0[0],
++                             relative_step['2-point'],
++                             rel_step[2] * 1.,
++                             rel_step[3] * np.abs(x0[3])])
++
++    abs_step = _compute_absolute_step(rel_step, x0, '2-point')
++    assert_allclose(abs_step, correct_step)
++
++    sign_x0 = (-x0 >= 0).astype(float) * 2 - 1
++    abs_step = _compute_absolute_step(rel_step, -x0, '2-point')
++    assert_allclose(abs_step, sign_x0 * correct_step)
+diff --git a/scipy/optimize/tests/test_least_squares.py b/scipy/optimize/tests/test_least_squares.py
+index 1c3ad43033..6a494e8017 100644
+--- a/scipy/optimize/tests/test_least_squares.py
++++ b/scipy/optimize/tests/test_least_squares.py
+@@ -245,7 +245,6 @@ class BaseMixin:
+         assert_allclose(res3.x, 0, atol=1e-4)
+         assert_equal(res1.x, res2.x)
+         assert_equal(res1.nfev, res2.nfev)
+-        assert_(res2.nfev != res3.nfev)
+ 
+     def test_incorrect_options_usage(self):
+         assert_raises(TypeError, least_squares, fun_trivial, 2.0,

@@ -1,0 +1,18 @@
+diff --git a/src/optimizer/rule/distributivity.cpp b/src/optimizer/rule/distributivity.cpp
+index b1b18617c0..149557eacb 100644
+--- a/src/optimizer/rule/distributivity.cpp
++++ b/src/optimizer/rule/distributivity.cpp
+@@ -42,9 +42,10 @@ unique_ptr<Expression> DistributivityRule::ExtractExpression(BoundConjunctionExp
+ 		if (and_expr.children.size() == 1) {
+ 			conj.children[idx] = std::move(and_expr.children[0]);
+ 		}
+-	} else {
+-		// not an AND node! remove the entire expression
+-		// this happens in the case of e.g. (X AND B) OR X
++	}
++	// not an AND node(e.g. (X AND B) OR X) or this is the last expr,
++	// remove the entire expression
++	if (!result) {
+ 		D_ASSERT(child->Equals(expr));
+ 		result = std::move(child);
+ 		conj.children[idx] = nullptr;

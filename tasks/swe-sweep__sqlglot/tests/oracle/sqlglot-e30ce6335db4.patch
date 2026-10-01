@@ -1,0 +1,49 @@
+diff --git a/sqlglot/expressions.py b/sqlglot/expressions.py
+index e3cc94e158..f6202b54a7 100644
+--- a/sqlglot/expressions.py
++++ b/sqlglot/expressions.py
+@@ -1577,7 +1577,7 @@ class With(Expression):
+ 
+ 
+ class WithinGroup(Expression):
+-    arg_types = {"this": True, "expression": False}
++    arg_types = {"this": True, "expression": False, "filter": False}
+ 
+ 
+ # clickhouse supports scalar ctes
+diff --git a/sqlglot/generator.py b/sqlglot/generator.py
+index c427581261..2ba7cb08b0 100644
+--- a/sqlglot/generator.py
++++ b/sqlglot/generator.py
+@@ -2724,7 +2724,11 @@ class Generator(metaclass=_Generator):
+     def withingroup_sql(self, expression: exp.WithinGroup) -> str:
+         this = self.sql(expression, "this")
+         expression_sql = self.sql(expression, "expression")[1:]  # order has a leading space
+-        return f"{this} WITHIN GROUP ({expression_sql})"
++        filter_sql = self.sql(expression, "filter")[1:]
++        result = f"{this} WITHIN GROUP ({expression_sql})"
++        if filter_sql:
++            result = f"{result} FILTER ({filter_sql})"
++        return result
+ 
+     def between_sql(self, expression: exp.Between) -> str:
+         this = self.sql(expression, "this")
+diff --git a/sqlglot/parser.py b/sqlglot/parser.py
+index 54407ee3ac..726cc616e5 100644
+--- a/sqlglot/parser.py
++++ b/sqlglot/parser.py
+@@ -6614,7 +6614,13 @@ class Parser(metaclass=_Parser):
+         # https://learn.microsoft.com/en-us/sql/t-sql/functions/percentile-disc-transact-sql?view=sql-server-ver16
+         if self._match_text_seq("WITHIN", "GROUP"):
+             order = self._parse_wrapped(self._parse_order)
+-            this = self.expression(exp.WithinGroup, this=this, expression=order)
++            if self._match(TokenType.FILTER):
++                where_clause = self._parse_wrapped(self._parse_where)
++                this = self.expression(
++                    exp.WithinGroup, this=this, expression=order, filter=where_clause
++                )
++            else:
++                this = self.expression(exp.WithinGroup, this=this, expression=order)
+ 
+         # SQL spec defines an optional [ { IGNORE | RESPECT } NULLS ] OVER
+         # Some dialects choose to implement and some do not.

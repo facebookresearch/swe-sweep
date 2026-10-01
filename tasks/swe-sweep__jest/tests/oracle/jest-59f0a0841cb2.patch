@@ -1,0 +1,13 @@
+diff --git a/packages/jest-mock/src/index.ts b/packages/jest-mock/src/index.ts
+index b74d14f53f..4b6a1c82b5 100644
+--- a/packages/jest-mock/src/index.ts
++++ b/packages/jest-mock/src/index.ts
+@@ -426,7 +426,7 @@ function getType(ref?: unknown): MockMetadataType | null {
+     return 'function';
+   } else if (Array.isArray(ref)) {
+     return 'array';
+-  } else if (typeName === 'Object') {
++  } else if (typeName === 'Object' || typeName === 'Module') {
+     return 'object';
+   } else if (
+     typeName === 'Number' ||

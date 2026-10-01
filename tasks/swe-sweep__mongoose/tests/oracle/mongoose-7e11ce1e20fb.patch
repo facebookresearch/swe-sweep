@@ -1,0 +1,13 @@
+diff --git a/lib/model.js b/lib/model.js
+index da0570cf0..d9ed0cbba 100644
+--- a/lib/model.js
++++ b/lib/model.js
+@@ -532,7 +532,7 @@ Model.prototype.$__save = function(options, callback) {
+           this.$__undoReset();
+           const err = this.$__.$versionError ||
+             new VersionError(this, version, this.$__.modifiedPaths);
+-          return callback(err);
++          return callback(err, this);
+         }
+ 
+         // increment version if was successful

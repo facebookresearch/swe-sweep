@@ -1,0 +1,32 @@
+diff --git a/vlib/v/checker/struct.v b/vlib/v/checker/struct.v
+index 2e5a8d513..01c634c4e 100644
+--- a/vlib/v/checker/struct.v
++++ b/vlib/v/checker/struct.v
+@@ -163,6 +163,10 @@ fn (mut c Checker) struct_decl(mut node ast.StructDecl) {
+ 								field.default_expr.pos)
+ 						}
+ 					}
++					if field.typ.has_flag(.option) && field.default_expr is ast.None {
++						c.warn('unnecessary default value of `none`: struct fields are zeroed by default',
++							field.default_expr.pos)
++					}
+ 					continue
+ 				}
+ 				if field.typ in ast.unsigned_integer_type_idxs {
+diff --git a/vlib/v/gen/c/struct.v b/vlib/v/gen/c/struct.v
+index e903adfb5..72004521e 100644
+--- a/vlib/v/gen/c/struct.v
++++ b/vlib/v/gen/c/struct.v
+@@ -346,7 +346,11 @@ fn (mut g Gen) zero_struct_field(field ast.StructField) bool {
+ 			return true
+ 		}
+ 
+-		if field.typ.has_flag(.option) {
++		if field.default_expr is ast.None {
++			tmp_var := g.new_tmp_var()
++			g.expr_with_tmp_var(ast.None{}, ast.none_type, field.typ, tmp_var)
++			return true
++		} else if field.typ.has_flag(.option) {
+ 			tmp_var := g.new_tmp_var()
+ 			g.expr_with_tmp_var(field.default_expr, field.default_expr_typ, field.typ,
+ 				tmp_var)

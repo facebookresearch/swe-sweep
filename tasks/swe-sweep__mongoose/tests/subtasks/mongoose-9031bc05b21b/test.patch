@@ -1,0 +1,72 @@
+diff --git a/test/document.test.js b/test/document.test.js
+index 139db9c1b..0fb074f5e 100644
+--- a/test/document.test.js
++++ b/test/document.test.js
+@@ -5633,6 +5633,7 @@ describe('document', function() {
+       const Test = db.model('Test', testSchema);
+ 
+       const doc = new Test({ arr: [new mongoose.Types.ObjectId()] });
++      assert.equal(called, 0);
+       assert.deepEqual(doc.toObject({ getters: true }).arr, [42]);
+       assert.equal(called, 1);
+     });
+@@ -5651,7 +5652,6 @@ describe('document', function() {
+ 
+       const Test = db.model('Test', testSchema);
+ 
+-
+       let doc = await Test.create({ arr: [new mongoose.Types.ObjectId()] });
+       assert.equal(called, 1);
+ 
+@@ -11865,6 +11866,51 @@ describe('document', function() {
+     assert.strictEqual(called, 1);
+   });
+ 
++  it('does not modify array when calling getters (gh-13748)', async function() {
++    // create simple setter to add a sufix
++    const addSufix = (name) => {
++      return name + '-sufix';
++    };
++
++    // create simple gettrer to remove last 6 letters (should be "-sufix")
++    const removeSufix = (name) => {
++      return ('' + name).slice(0, -6);
++    };
++
++    const userSchema = new mongoose.Schema(
++      {
++        name: String,
++        age: Number,
++        profession: {
++          type: String,
++          get: removeSufix,
++          set: addSufix
++        },
++        hobbies: [{ type: String, get: removeSufix, set: addSufix }]
++      },
++      {
++        toObject: { getters: true },
++        toJSON: { getters: true }
++      }
++    );
++    const User = db.model('User', userSchema);
++
++    const usr = await User.create({
++      name: 'John',
++      age: 18,
++      profession: 'teacher',
++      hobbies: ['swimming', 'football']
++    });
++
++    const oneUser = await User.findById(usr._id).orFail();
++    assert.equal(oneUser.profession, 'teacher');
++    assert.equal(oneUser.profession, 'teacher');
++    assert.equal(oneUser.profession, 'teacher');
++    assert.equal(oneUser.hobbies[0], 'swimming');
++    assert.equal(oneUser.hobbies[0], 'swimming');
++    assert.equal(oneUser.hobbies[0], 'swimming');
++  });
++
+   it('If the field does not exist, $inc should create it and set is value to the specified one (gh-12435)', async function() {
+     const schema = new mongoose.Schema({
+       name: String,

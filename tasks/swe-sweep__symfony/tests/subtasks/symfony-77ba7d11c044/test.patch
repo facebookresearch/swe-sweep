@@ -1,0 +1,50 @@
+diff --git a/src/Symfony/Component/HttpFoundation/Tests/UriSignerTest.php b/src/Symfony/Component/HttpFoundation/Tests/UriSignerTest.php
+index dfbe81e8827..7d706401fb5 100644
+--- a/src/Symfony/Component/HttpFoundation/Tests/UriSignerTest.php
++++ b/src/Symfony/Component/HttpFoundation/Tests/UriSignerTest.php
+@@ -41,6 +41,23 @@ class UriSignerTest extends TestCase
+         $this->assertSame($signer->sign('http://example.com/foo?foo=bar&bar=foo'), $signer->sign('http://example.com/foo?bar=foo&foo=bar'));
+     }
+ 
++    public function testCheckWithNonStringHash()
++    {
++        $signer = new UriSigner('foobar');
++
++        $this->assertFalse($signer->check('http://example.com/foo?_hash[]=y'));
++        $this->assertFalse($signer->check('http://example.com/foo?_hash[k]=y'));
++        $this->assertFalse($signer->check('http://example.com/foo?foo=bar&_hash[]='));
++    }
++
++    public function testCheckRequestWithNonStringHash()
++    {
++        $signer = new UriSigner('foobar');
++
++        $this->assertFalse($signer->checkRequest(Request::create('http://example.com/foo?_path=x&_hash[]=y')));
++        $this->assertFalse($signer->checkRequest(Request::create('http://example.com/foo?_hash[k]=y')));
++    }
++
+     public function testCheckWithDifferentArgSeparator()
+     {
+         $this->iniSet('arg_separator.output', '&amp;');
+diff --git a/src/Symfony/Component/HttpKernel/Tests/EventListener/FragmentListenerTest.php b/src/Symfony/Component/HttpKernel/Tests/EventListener/FragmentListenerTest.php
+index e4a055ae646..162234caf81 100644
+--- a/src/Symfony/Component/HttpKernel/Tests/EventListener/FragmentListenerTest.php
++++ b/src/Symfony/Component/HttpKernel/Tests/EventListener/FragmentListenerTest.php
+@@ -73,6 +73,17 @@ class FragmentListenerTest extends TestCase
+         $listener->onKernelRequest($event);
+     }
+ 
++    public function testAccessDeniedWithNonStringSignature()
++    {
++        $this->expectException(AccessDeniedHttpException::class);
++        $request = Request::create('http://example.com/_fragment?_path=x&_hash[]=y', 'GET', [], [], [], ['REMOTE_ADDR' => '10.0.0.1']);
++
++        $listener = new FragmentListener(new UriSigner('foo'));
++        $event = $this->createRequestEvent($request);
++
++        $listener->onKernelRequest($event);
++    }
++
+     public function testWithSignature()
+     {
+         $signer = new UriSigner('foo');

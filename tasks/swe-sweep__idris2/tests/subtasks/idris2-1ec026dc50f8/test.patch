@@ -1,0 +1,79 @@
+diff --git a/tests/Main.idr b/tests/Main.idr
+index 3b908f36c..bd64f69f2 100644
+--- a/tests/Main.idr
++++ b/tests/Main.idr
+@@ -41,7 +41,8 @@ idrisTestsBasic = MkTestPool "Fundamental language features" [] Nothing
+        "basic046", "basic047",             "basic049", "basic050",
+        "basic051", "basic052", "basic053", "basic054", "basic055",
+        "basic056", "basic057", "basic058", "basic059", "basic060",
+        "basic061",
++       "rewrite001",
+        "interpolation001", "interpolation002"]
+ 
+ idrisTestsCoverage : TestPool
+@@ -180,7 +181,12 @@ idrisTestsTotality = MkTestPool "Totality checking" [] Nothing
+        "total006", "total007", "total008", "total009", "total010",
+        "total011", "total012"
+       ]
+ 
++idrisTestsIPKG : TestPool
++idrisTestsIPKG = MkTestPool "Package and .ipkg files" [] Nothing
++      ["pkg001", "pkg002", "pkg003", "pkg004", "pkg005", "pkg006", "pkg007",
++       "pkg008", "pkg009", "pkg010", "pkg011", "pkg012"]
++
+ idrisTests : TestPool
+ idrisTests = MkTestPool "Misc" [] Nothing
+        -- Documentation strings
+@@ -195,9 +201,6 @@ idrisTests = MkTestPool "Misc" [] Nothing
+        "namespace001", "namespace002",
+        -- Parameters blocks
+        "params001", "params002", "params003",
+-       -- Packages and ipkg files
+-       "pkg001", "pkg002", "pkg003", "pkg004", "pkg005", "pkg006", "pkg007",
+-       "pkg008", "pkg009", "pkg010",
+        -- Larger programs arising from real usage. Typically things with
+        -- interesting interactions between features
+        "real001", "real002",
+@@ -320,6 +323,7 @@ main = runner $
+   , testPaths "idris2" idrisTestsBuiltin
+   , testPaths "idris2" idrisTestsEvaluator
+   , testPaths "idris2" idrisTestsTotality
++  , testPaths "idris2" idrisTestsIPKG
+   , testPaths "idris2" idrisTests
+   , !typeddTests
+   , !ideModeTests
+diff --git a/tests/idris2/rewrite001/Issue2573.idr b/tests/idris2/rewrite001/Issue2573.idr
+new file mode 100644
+index 000000000..c53f25f8c
+--- /dev/null
++++ b/tests/idris2/rewrite001/Issue2573.idr
+@@ -0,0 +1,13 @@
++module Issue2573
++
++||| Define foo, the identity function in disguise
++foo : Ord a => (x : a) -> a
++foo x = if x < x then x else x
++
++||| Assume that foo x = x
++eq : Ord a => (a -> a) -> (x : a) -> Issue2573.foo x = x
++eq f x = believe_me ()
++
++||| Prove that if x < y then (foo x) < y
++prf : Ord a => (a -> a) -> (x, y : a) -> x < y = True -> Issue2573.foo x < y = True
++prf f x y lt = rewrite (eq f x) in lt
+diff --git a/tests/idris2/rewrite001/expected b/tests/idris2/rewrite001/expected
+new file mode 100644
+index 000000000..c63a7f969
+--- /dev/null
++++ b/tests/idris2/rewrite001/expected
+@@ -0,0 +1 @@
++1/1: Building Issue2573 (Issue2573.idr)
+diff --git a/tests/idris2/rewrite001/run b/tests/idris2/rewrite001/run
+new file mode 100755
+index 000000000..40284ee22
+--- /dev/null
++++ b/tests/idris2/rewrite001/run
+@@ -0,0 +1,3 @@
++rm -rf build
++
++$1 --no-color --console-width 0 --no-banner --check Issue2573.idr

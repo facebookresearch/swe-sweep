@@ -1,0 +1,24 @@
+diff --git a/shapely/geometry/collection.py b/shapely/geometry/collection.py
+index cb7cc6e1..51879a07 100644
+--- a/shapely/geometry/collection.py
++++ b/shapely/geometry/collection.py
+@@ -35,9 +35,6 @@ class GeometryCollection(BaseMultipartGeometry):
+     __slots__ = []
+ 
+     def __new__(self, geoms=None):
+-        if not geoms:
+-            # TODO better empty constructor
+-            return shapely.from_wkt("GEOMETRYCOLLECTION EMPTY")
+         if isinstance(geoms, BaseGeometry):
+             # TODO(shapely-2.0) do we actually want to split Multi-part geometries?
+             # this is needed for the split() tests
+@@ -45,6 +42,9 @@ class GeometryCollection(BaseMultipartGeometry):
+                 geoms = geoms.geoms
+             else:
+                 geoms = [geoms]
++        elif geoms is None or len(geoms) == 0:
++            # TODO better empty constructor
++            return shapely.from_wkt("GEOMETRYCOLLECTION EMPTY")
+ 
+         return shapely.geometrycollections(geoms)
+ 

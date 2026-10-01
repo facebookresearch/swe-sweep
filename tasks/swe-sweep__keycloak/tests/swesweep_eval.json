@@ -1,0 +1,666 @@
+{
+  "build_jobs": 4,
+  "container_repo": "/keycloak",
+  "evaluation": {
+    "suite": "reproduction",
+    "visible_timeout": 14400
+  },
+  "upstream_image": "pandora-maxbug-keycloak:25.0.0",
+  "n_base_passing": 49,
+  "n_base_test_ignore": 74,
+  "oracle_digest": "40ce98104ed2039ae527c72d92553a84bfda56e010f32272aa3c2b8f6ebdec3a",
+  "oracle_pristine_paths": [],
+  "upstream_commit": "9f7399e15e6172900e0591deb5a57a45769d8205",
+  "reproduction": {
+    "jobs_env": "SWESWEEP_BUILD_JOBS",
+    "needs_build": false,
+    "suite": {
+      "goal": "install",
+      "mvn_args": [
+        "-Dcheckstyle.skip=true",
+        "-Dformat.skip=true",
+        "-Dmaven.javadoc.skip=true",
+        "-Denforcer.skip=true",
+        "-Dmaven.source.skip=true",
+        "-Dskip.installnodenpm=true",
+        "-Dskip.npm=true",
+        "-Dskip.pnpm=true",
+        "-Dskip.yarn=true"
+      ],
+      "type": "maven"
+    },
+    "test_timeout": 2400
+  },
+  "schema": 2,
+  "subtasks": [
+    {
+      "f2p": [
+        "org.keycloak.testsuite.federation.ldap.LDAPUserProfileTest.testUpdateEmailWhenEmailAsUsernameEnabledAndEditUsernameDisabled"
+      ],
+      "id": "keycloak-0138bee0a4ec",
+      "target_files": [
+        "federation/ldap/src/main/java/org/keycloak/storage/ldap/mappers/UserAttributeLDAPStorageMapper.java"
+      ]
+    },
+    {
+      "f2p": [
+        "org.keycloak.testsuite.federation.ldap.LDAPGroupMapperTest.test13_registrationWithDefaultGroupsAndDeferredLdapCreation"
+      ],
+      "id": "keycloak-061d690fc170",
+      "target_files": [
+        "federation/ldap/src/main/java/org/keycloak/storage/ldap/LDAPStorageProvider.java"
+      ]
+    },
+    {
+      "f2p": [
+        "org.keycloak.testsuite.federation.ldap.LDAPGroupMapperTest.test05_getGroupsFromUserMemberOfStrategyTest",
+        "org.keycloak.testsuite.federation.ldap.LDAPGroupMapperTest.test06_addingUserToNewKeycloakGroup",
+        "org.keycloak.testsuite.federation.ldap.LDAPGroupMapperTest.test08_ldapOnlyGroupMappingsRanged",
+        "org.keycloak.testsuite.federation.ldap.LDAPGroupMapperTest.test09_emptyMemberOnDeletionWorks"
+      ],
+      "id": "keycloak-079a4d4f8c2c",
+      "target_files": [
+        "federation/ldap/src/main/java/org/keycloak/storage/ldap/mappers/membership/UserRolesRetrieveStrategy.java",
+        "federation/ldap/src/main/java/org/keycloak/storage/ldap/mappers/membership/group/GroupLDAPStorageMapper.java",
+        "federation/ldap/src/main/java/org/keycloak/storage/ldap/mappers/membership/role/RoleLDAPStorageMapper.java"
+      ]
+    },
+    {
+      "f2p": [
+        "org.keycloak.testsuite.oauth.LogoutTest.logoutBackchannelTwoClientsSpecificConfigurationIsUsed"
+      ],
+      "id": "keycloak-0a279291b408",
+      "target_files": [
+        "services/src/main/java/org/keycloak/services/managers/ResourceAdminManager.java"
+      ]
+    },
+    {
+      "f2p": [
+        "org.keycloak.testsuite.actions.AppInitiatedActionTest.executeUnknownActionAfterBeingAuthenticated"
+      ],
+      "id": "keycloak-0ffa892227cd",
+      "target_files": [
+        "services/src/main/java/org/keycloak/protocol/oidc/OIDCLoginProtocol.java"
+      ]
+    },
+    {
+      "f2p": [
+        "org.keycloak.protocol.oidc.utils.RedirectUtilsTest.testUserInfo"
+      ],
+      "id": "keycloak-13f62c06a687",
+      "target_files": [
+        "services/src/main/java/org/keycloak/protocol/oidc/utils/RedirectUtils.java"
+      ]
+    },
+    {
+      "f2p": [
+        "org.keycloak.testsuite.forms.RegisterTest.registerUserNotContainsUsernamePasswordPolicy",
+        "org.keycloak.testsuite.forms.RegisterTest.registerUserNotEmailPasswordPolicy",
+        "org.keycloak.testsuite.forms.RegisterTest.registerUserNotUsernamePasswordPolicy"
+      ],
+      "id": "keycloak-1714674e6bd0",
+      "target_files": [
+        "server-spi-private/src/main/java/org/keycloak/policy/NotContainsUsernamePasswordPolicyProvider.java",
+        "server-spi-private/src/main/java/org/keycloak/policy/NotEmailPasswordPolicyProvider.java",
+        "server-spi-private/src/main/java/org/keycloak/policy/NotUsernamePasswordPolicyProvider.java"
+      ]
+    },
+    {
+      "f2p": [
+        "org.keycloak.testsuite.authz.admin.ResourceManagementTest.testFindResourceById"
+      ],
+      "id": "keycloak-17549cf7ddbf",
+      "target_files": [
+        "model/infinispan/src/main/java/org/keycloak/models/cache/infinispan/authorization/StoreFactoryCacheSession.java",
+        "model/jpa/src/main/java/org/keycloak/authorization/jpa/store/JPAPermissionTicketStore.java",
+        "model/jpa/src/main/java/org/keycloak/authorization/jpa/store/JPAPolicyStore.java",
+        "model/jpa/src/main/java/org/keycloak/authorization/jpa/store/JPAResourceStore.java",
+        "model/jpa/src/main/java/org/keycloak/authorization/jpa/store/JPAScopeStore.java",
+        "services/src/main/java/org/keycloak/authorization/admin/PolicyResourceService.java",
+        "services/src/main/java/org/keycloak/authorization/admin/ResourceSetService.java",
+        "services/src/main/java/org/keycloak/authorization/protection/permission/PermissionTicketService.java"
+      ]
+    },
+    {
+      "f2p": [
+        "org.keycloak.testsuite.client.ClientSecretRotationTest.createExecutorConfigurationWithMissingConfigDoesNotCauseNPE"
+      ],
+      "id": "keycloak-17819ea33fda",
+      "target_files": [
+        "services/src/main/java/org/keycloak/services/clientpolicy/executor/ClientSecretRotationExecutor.java"
+      ]
+    },
+    {
+      "f2p": [
+        "org.keycloak.testsuite.forms.BruteForceTest.testPermanentLockoutWithTempLockoutParamsSet"
+      ],
+      "id": "keycloak-1f1e7287bd1b",
+      "target_files": [
+        "services/src/main/java/org/keycloak/services/managers/DefaultBruteForceProtector.java"
+      ]
+    },
+    {
+      "f2p": [
+        "org.keycloak.testsuite.oidc.NonceBackwardsCompatibleMapperTest.testOfflineSessionNonceWithMapper"
+      ],
+      "id": "keycloak-2096b11fcc21",
+      "target_files": [
+        "services/src/main/java/org/keycloak/protocol/oidc/TokenManager.java"
+      ]
+    },
+    {
+      "f2p": [
+        "org.keycloak.testsuite.account.AccountRestServiceReadOnlyAttributesTest.testUpdateProfileCannotUpdateReadOnlyAttributesUnmanagedEnabled"
+      ],
+      "id": "keycloak-2195abdd122f",
+      "target_files": [
+        "server-spi-private/src/main/java/org/keycloak/userprofile/DefaultAttributes.java"
+      ]
+    },
+    {
+      "f2p": [
+        "org.keycloak.testsuite.admin.ClientTest.testInvalidLengthClientIdValidation"
+      ],
+      "id": "keycloak-23a67b8852b1",
+      "target_files": [
+        "model/jpa/src/main/java/org/keycloak/models/jpa/JpaRealmProvider.java",
+        "model/jpa/src/main/java/org/keycloak/models/jpa/entities/ClientEntity.java",
+        "services/src/main/java/org/keycloak/services/resources/admin/ClientsResource.java"
+      ]
+    },
+    {
+      "f2p": [
+        "org.keycloak.models.ModelVersionTest.testVersion"
+      ],
+      "id": "keycloak-2a5f6b4f4bf0",
+      "target_files": [
+        "server-spi-private/src/main/java/org/keycloak/migration/ModelVersion.java"
+      ]
+    },
+    {
+      "f2p": [
+        "org.keycloak.protocol.oidc.utils.RedirectUtilsTest.testEncodedRedirectUri"
+      ],
+      "id": "keycloak-2ab4ce04c3ef",
+      "target_files": [
+        "services/src/main/java/org/keycloak/protocol/oidc/utils/RedirectUtils.java"
+      ]
+    },
+    {
+      "f2p": [
+        "org.keycloak.testsuite.account.custom.CustomAuthFlowOTPTest.conditionalOTPEmptyConfiguration"
+      ],
+      "id": "keycloak-32b2e54ef6c5",
+      "target_files": [
+        "services/src/main/java/org/keycloak/authentication/authenticators/browser/ConditionalOtpFormAuthenticator.java"
+      ]
+    },
+    {
+      "f2p": [
+        "org.keycloak.testsuite.events.EventStoreProviderTest.lengthExceedLimit"
+      ],
+      "id": "keycloak-3656c2395f37",
+      "target_files": [
+        "server-spi-private/src/main/java/org/keycloak/events/Event.java"
+      ]
+    },
+    {
+      "f2p": [
+        "org.keycloak.testsuite.theme.ThemeResourceProviderTest.notFoundOnInvalidThemeType"
+      ],
+      "id": "keycloak-38a465384d29",
+      "target_files": [
+        "services/src/main/java/org/keycloak/services/resources/ThemeResource.java"
+      ]
+    },
+    {
+      "f2p": [
+        "org.keycloak.testsuite.oauth.LogoutTest.backChannelWithPairwiseLogout"
+      ],
+      "id": "keycloak-4023c9c6a132",
+      "target_files": [
+        "services/src/main/java/org/keycloak/jose/jws/DefaultTokenManager.java",
+        "services/src/main/java/org/keycloak/protocol/oidc/mappers/AbstractPairwiseSubMapper.java",
+        "services/src/main/java/org/keycloak/protocol/oidc/mappers/LogoutTokenMapper.java"
+      ]
+    },
+    {
+      "f2p": [
+        "org.keycloak.testsuite.i18n.LoginPageTest.realmLocalizationMessagesUsedDuringErrorHandling"
+      ],
+      "id": "keycloak-42073f7d2baf",
+      "target_files": [
+        "services/src/main/java/org/keycloak/services/error/KeycloakErrorHandler.java"
+      ]
+    },
+    {
+      "f2p": [
+        "org.keycloak.testsuite.actions.RequiredActionEmailVerificationTest.testVerifyEmailWithNoEmailAndVerifyProfile",
+        "org.keycloak.testsuite.actions.RequiredActionPriorityTest.skipToNextRequiredActionWithCustomPriority"
+      ],
+      "id": "keycloak-44e22a303726",
+      "target_files": [
+        "services/src/main/java/org/keycloak/services/managers/AuthenticationManager.java"
+      ]
+    },
+    {
+      "f2p": [
+        "org.keycloak.testsuite.actions.RequiredActionEmailVerificationTest.verifyEmailRegisterSetLocale"
+      ],
+      "id": "keycloak-4985f42cc1c3",
+      "target_files": [
+        "services/src/main/java/org/keycloak/authentication/actiontoken/verifyemail/VerifyEmailActionTokenHandler.java"
+      ]
+    },
+    {
+      "f2p": [
+        "org.keycloak.testsuite.cli.admin.KcAdmTest.testEnvPasswordWithRegularCommand"
+      ],
+      "id": "keycloak-49a21c95357e",
+      "target_files": [
+        "integration/client-cli/admin-cli/src/main/java/org/keycloak/client/cli/common/BaseAuthOptionsCmd.java",
+        "integration/client-cli/admin-cli/src/main/java/org/keycloak/client/cli/common/BaseConfigCredentialsCmd.java"
+      ]
+    },
+    {
+      "f2p": [
+        "org.keycloak.testsuite.organization.admin.OrganizationExportTest.testExportImportEmptyOrg"
+      ],
+      "id": "keycloak-4a2644765e70",
+      "target_files": [
+        "model/storage-private/src/main/java/org/keycloak/storage/datastore/DefaultExportImportManager.java"
+      ]
+    },
+    {
+      "f2p": [
+        "org.keycloak.testsuite.model.UserSessionProviderTest.testOnUserRemovedLazyUserAttributesAreLoaded"
+      ],
+      "id": "keycloak-4c57dba1d063",
+      "target_files": [
+        "model/infinispan/src/main/java/org/keycloak/models/cache/infinispan/UserCacheSession.java"
+      ]
+    },
+    {
+      "f2p": [
+        "org.keycloak.crypto.def.test.BCCertificateUtilsProviderTest.testV1SelfSignedCertificateWithSpecialCharactersInSubject",
+        "org.keycloak.crypto.def.test.BCCertificateUtilsProviderTest.testV3CertificateWithSpecialCharactersInSubject",
+        "org.keycloak.crypto.elytron.test.ElytronCertificateUtilsProviderTest.testV1SelfSignedCertificateWithCommaInSubject",
+        "org.keycloak.crypto.elytron.test.ElytronCertificateUtilsProviderTest.testV1SelfSignedCertificateWithPlusAndQuoteInSubject"
+      ],
+      "id": "keycloak-54346549d46a",
+      "target_files": [
+        "crypto/default/src/main/java/org/keycloak/crypto/def/BCCertificateUtilsProvider.java",
+        "crypto/elytron/src/main/java/org/keycloak/crypto/elytron/ElytronCertificateUtilsProvider.java",
+        "crypto/fips1402/src/main/java/org/keycloak/crypto/fips/BCFIPSCertificateUtilsProvider.java"
+      ]
+    },
+    {
+      "f2p": [
+        "org.keycloak.testsuite.forms.ResetPasswordTest.resetPasswordLinkOpenedInNewBrowserWithDifferentLcoales"
+      ],
+      "id": "keycloak-56529061782d",
+      "target_files": [
+        "services/src/main/java/org/keycloak/services/resources/LoginActionsService.java"
+      ]
+    },
+    {
+      "f2p": [
+        "org.keycloak.testsuite.broker.KcOidcBrokerLogoutTest.testFrontChannelLogoutRequestsSendingOnlyClientIdWithFrontChannelLogoutApp"
+      ],
+      "id": "keycloak-6041642f1660",
+      "target_files": [
+        "services/src/main/java/org/keycloak/services/managers/AuthenticationManager.java"
+      ]
+    },
+    {
+      "f2p": [
+        "org.keycloak.testsuite.authz.RolePolicyTest.testFetchRolesUsingServiceAccount"
+      ],
+      "id": "keycloak-60ad1e4a4c0d",
+      "target_files": [
+        "authz/policy/common/src/main/java/org/keycloak/authorization/policy/provider/role/RolePolicyProvider.java"
+      ]
+    },
+    {
+      "f2p": [
+        "org.keycloak.testsuite.admin.ClientTest.updateClient"
+      ],
+      "id": "keycloak-683702dd3935",
+      "target_files": [
+        "server-spi-private/src/main/java/org/keycloak/models/utils/RepresentationToModel.java"
+      ]
+    },
+    {
+      "f2p": [
+        "org.keycloak.testsuite.model.ImportTest.importLdapWithReferenceToGroupBeingImported"
+      ],
+      "id": "keycloak-6ab94ceb2729",
+      "target_files": [
+        "model/storage-private/src/main/java/org/keycloak/storage/datastore/DefaultExportImportManager.java"
+      ]
+    },
+    {
+      "f2p": [
+        "org.keycloak.testsuite.oauth.par.ParTest.testSuccessfulParWithRequiredRequestUri"
+      ],
+      "id": "keycloak-721ccceaf9cb",
+      "target_files": [
+        "services/src/main/java/org/keycloak/protocol/oidc/par/endpoints/request/ParEndpointRequestParserProcessor.java"
+      ]
+    },
+    {
+      "f2p": [
+        "org.keycloak.testsuite.organization.admin.OrganizationExportTest.testExport"
+      ],
+      "id": "keycloak-76d733814e7a",
+      "target_files": [
+        "model/jpa/src/main/java/org/keycloak/organization/jpa/JpaOrganizationProviderFactory.java",
+        "server-spi-private/src/main/java/org/keycloak/models/utils/DefaultAuthenticationFlows.java"
+      ]
+    },
+    {
+      "f2p": [
+        "org.keycloak.testsuite.client.ClientRegistrationPoliciesTest.testMapperTypeSwap"
+      ],
+      "id": "keycloak-82c616991ce5",
+      "target_files": [
+        "services/src/main/java/org/keycloak/services/clientregistration/policy/impl/ProtocolMappersClientRegistrationPolicy.java"
+      ]
+    },
+    {
+      "f2p": [
+        "org.keycloak.protocol.oidc.utils.RedirectUtilsTest.testVerifyRedirectUriNative"
+      ],
+      "id": "keycloak-8817f4ac434f",
+      "target_files": [
+        "server-spi-private/src/main/java/org/keycloak/models/Constants.java",
+        "services/src/main/java/org/keycloak/protocol/oidc/utils/RedirectUtils.java"
+      ]
+    },
+    {
+      "f2p": [
+        "org.keycloak.quarkus.runtime.configuration.ConfigArgsConfigSourceTest.testArgEndingInSemiColon"
+      ],
+      "id": "keycloak-8daa15aa2cb5",
+      "target_files": [
+        "quarkus/runtime/src/main/java/org/keycloak/quarkus/runtime/cli/command/ShowConfig.java",
+        "quarkus/runtime/src/main/java/org/keycloak/quarkus/runtime/configuration/ConfigArgsConfigSource.java",
+        "quarkus/runtime/src/main/java/org/keycloak/quarkus/runtime/configuration/mappers/PropertyMappers.java"
+      ]
+    },
+    {
+      "f2p": [
+        "org.keycloak.testsuite.client.policies.ClientPoliciesTest.testConsentRequiredExecutorWithClientRolesCondition"
+      ],
+      "id": "keycloak-99c58defd13c",
+      "target_files": [
+        "services/src/main/java/org/keycloak/services/clientpolicy/condition/ClientRolesCondition.java"
+      ]
+    },
+    {
+      "f2p": [
+        "org.keycloak.testsuite.broker.KcOidcBrokerLogoutTest.testFrontChannelLogoutRequestsSendingOnlyClientIdWithFrontChannelLogoutApp"
+      ],
+      "id": "keycloak-a329efead44a",
+      "target_files": [
+        "services/src/main/java/org/keycloak/services/managers/AuthenticationManager.java"
+      ]
+    },
+    {
+      "f2p": [
+        "org.keycloak.testsuite.oauth.ClientAuthSecretSignedJWTTest.testCodeToTokenRequestFailureWhenClientHasPrivateKeyJWT",
+        "org.keycloak.testsuite.oauth.ClientAuthSecretSignedJWTTest.testCodeToTokenRequestSuccessWhenClientHasGeneratedKeys"
+      ],
+      "id": "keycloak-af52fa69d650",
+      "target_files": [
+        "services/src/main/java/org/keycloak/authentication/authenticators/client/JWTClientAuthenticator.java",
+        "services/src/main/java/org/keycloak/authentication/authenticators/client/JWTClientSecretAuthenticator.java",
+        "services/src/main/java/org/keycloak/authentication/authenticators/client/JWTClientValidator.java"
+      ]
+    },
+    {
+      "f2p": [
+        "org.keycloak.testsuite.events.EventStoreProviderTest.query"
+      ],
+      "id": "keycloak-b203538a57d8",
+      "target_files": [
+        "model/jpa/src/main/java/org/keycloak/events/jpa/JpaEventQuery.java"
+      ]
+    },
+    {
+      "f2p": [
+        "org.keycloak.testsuite.federation.ldap.LDAPGroupMapperTest.test13_registrationWithDefaultGroupsAndDeferredLdapCreation"
+      ],
+      "id": "keycloak-b34c18869b14",
+      "target_files": [
+        "federation/ldap/src/main/java/org/keycloak/storage/ldap/LDAPStorageProvider.java"
+      ]
+    },
+    {
+      "f2p": [
+        "org.keycloak.test.broker.oidc.OIDCIdentityProviderTest.extractIdentity_sidInIdToken_noSessionState_usesSid",
+        "org.keycloak.test.broker.oidc.OIDCIdentityProviderTest.extractIdentity_sidInIdToken_sessionStateInTokenResponse_prefersSid"
+      ],
+      "id": "keycloak-b37d02621350",
+      "target_files": [
+        "services/src/main/java/org/keycloak/broker/oidc/OIDCIdentityProvider.java"
+      ]
+    },
+    {
+      "f2p": [
+        "org.keycloak.testsuite.federation.ldap.LDAPGroupMapperTest.test05_getGroupsFromUserMemberOfStrategyTest",
+        "org.keycloak.testsuite.federation.ldap.LDAPGroupMapperTest.test06_addingUserToNewKeycloakGroup",
+        "org.keycloak.testsuite.federation.ldap.LDAPGroupMapperTest.test08_ldapOnlyGroupMappingsRanged",
+        "org.keycloak.testsuite.federation.ldap.LDAPGroupMapperTest.test09_emptyMemberOnDeletionWorks"
+      ],
+      "id": "keycloak-b509a4dd1295",
+      "target_files": [
+        "federation/ldap/src/main/java/org/keycloak/storage/ldap/mappers/membership/UserRolesRetrieveStrategy.java",
+        "federation/ldap/src/main/java/org/keycloak/storage/ldap/mappers/membership/group/GroupLDAPStorageMapper.java",
+        "federation/ldap/src/main/java/org/keycloak/storage/ldap/mappers/membership/role/RoleLDAPStorageMapper.java"
+      ]
+    },
+    {
+      "f2p": [
+        "org.keycloak.testsuite.client.ClientRegistrationTest.registerMultipleClients"
+      ],
+      "id": "keycloak-bd6082fb710e",
+      "target_files": [
+        "model/jpa/src/main/java/org/keycloak/models/jpa/RealmAdapter.java"
+      ]
+    },
+    {
+      "f2p": [
+        "org.keycloak.testsuite.i18n.LoginPageTest.realmLocalizationMessagesUsedDuringErrorHandling"
+      ],
+      "id": "keycloak-c1b61c72402a",
+      "target_files": [
+        "services/src/main/java/org/keycloak/services/error/KeycloakErrorHandler.java"
+      ]
+    },
+    {
+      "f2p": [
+        "org.keycloak.testsuite.model.ImportTest.importAcrToLoaMappingWithDefaultAcrValues"
+      ],
+      "id": "keycloak-c21f98d17b36",
+      "target_files": [
+        "model/storage-private/src/main/java/org/keycloak/storage/datastore/DefaultExportImportManager.java"
+      ]
+    },
+    {
+      "f2p": [
+        "org.keycloak.testsuite.actions.AppInitiatedActionResetPasswordTest.checkLogoutSessionsBackchannelLogout"
+      ],
+      "id": "keycloak-c3831a056fd0",
+      "target_files": [
+        "services/src/main/java/org/keycloak/services/managers/AuthenticationManager.java"
+      ]
+    },
+    {
+      "f2p": [
+        "org.keycloak.testsuite.client.policies.ClientPoliciesExtendedEventTest.testExtendedClientPolicyIntefacesForTokenRefreshResponseWithOffline"
+      ],
+      "id": "keycloak-c4f421945572",
+      "target_files": [
+        "services/src/main/java/org/keycloak/protocol/oidc/TokenManager.java"
+      ]
+    },
+    {
+      "f2p": [
+        "org.keycloak.testsuite.oauth.ClientAuthSecretSignedJWTTest.testCodeToTokenRequestFailureWhenClientHasPrivateKeyJWT",
+        "org.keycloak.testsuite.oauth.ClientAuthSecretSignedJWTTest.testCodeToTokenRequestSuccessWhenClientHasGeneratedKeys"
+      ],
+      "id": "keycloak-c693b8f48ed5",
+      "target_files": [
+        "services/src/main/java/org/keycloak/authentication/authenticators/client/JWTClientAuthenticator.java",
+        "services/src/main/java/org/keycloak/authentication/authenticators/client/JWTClientSecretAuthenticator.java",
+        "services/src/main/java/org/keycloak/authentication/authenticators/client/JWTClientValidator.java"
+      ]
+    },
+    {
+      "f2p": [
+        "org.keycloak.testsuite.oauth.ClientAuthSecretSignedJWTTest.testCodeToTokenRequestFailureWhenClientHasPrivateKeyJWT",
+        "org.keycloak.testsuite.oauth.ClientAuthSecretSignedJWTTest.testCodeToTokenRequestSuccessWhenClientHasGeneratedKeys"
+      ],
+      "id": "keycloak-c99dfd11df19",
+      "target_files": [
+        "services/src/main/java/org/keycloak/authentication/authenticators/client/JWTClientAuthenticator.java",
+        "services/src/main/java/org/keycloak/authentication/authenticators/client/JWTClientSecretAuthenticator.java",
+        "services/src/main/java/org/keycloak/authentication/authenticators/client/JWTClientValidator.java"
+      ]
+    },
+    {
+      "f2p": [
+        "org.keycloak.testsuite.saml.SOAPBindingTest.soapBindingErrorHandlingEmptyBody",
+        "org.keycloak.testsuite.saml.SOAPBindingTest.soapBindingErrorHandlingMalformedXml"
+      ],
+      "id": "keycloak-cf80b5d88db6",
+      "target_files": [
+        "services/src/main/java/org/keycloak/protocol/saml/profile/ecp/SamlEcpProfileService.java"
+      ]
+    },
+    {
+      "f2p": [
+        "org.keycloak.testsuite.sessionlimits.UserSessionLimitsTest.testClientSessionCountNotExceededOnReAuthentication"
+      ],
+      "id": "keycloak-d482d8ec9bf9",
+      "target_files": [
+        "services/src/main/java/org/keycloak/authentication/authenticators/sessionlimits/UserSessionLimitsAuthenticator.java"
+      ]
+    },
+    {
+      "f2p": [
+        "org.keycloak.testsuite.oauth.OfflineTokenMigrationTest.testOfflineTokenMigrationFromKeycloak14"
+      ],
+      "id": "keycloak-d5ab4da880a4",
+      "target_files": [
+        "core/src/main/java/org/keycloak/representations/IDToken.java",
+        "core/src/main/java/org/keycloak/representations/RefreshToken.java"
+      ]
+    },
+    {
+      "f2p": [
+        "org.keycloak.testsuite.organization.admin.OrganizationInvitationLinkTest.testInviteNewUserRegistration"
+      ],
+      "id": "keycloak-e218d0a78c8d",
+      "target_files": [
+        "services/src/main/java/org/keycloak/organization/admin/resource/OrganizationInvitationResource.java"
+      ]
+    },
+    {
+      "f2p": [
+        "org.keycloak.testsuite.cli.admin.KcAdmUpdateTest.testUpdateThoroughly"
+      ],
+      "id": "keycloak-e315f08f7d98",
+      "target_files": [
+        "integration/client-cli/admin-cli/src/main/java/org/keycloak/client/admin/cli/commands/AbstractRequestCmd.java"
+      ]
+    },
+    {
+      "f2p": [
+        "org.keycloak.testsuite.admin.PermissionsTest.flows"
+      ],
+      "id": "keycloak-e49e3e2d3ed1",
+      "target_files": [
+        "services/src/main/java/org/keycloak/services/resources/admin/AuthenticationManagementResource.java"
+      ]
+    },
+    {
+      "f2p": [
+        "org.keycloak.theme.beans.MessageFormatterMethodTest.test"
+      ],
+      "id": "keycloak-e6d37df9e570",
+      "target_files": [
+        "services/src/main/java/org/keycloak/theme/beans/MessageFormatterMethod.java"
+      ]
+    },
+    {
+      "f2p": [
+        "org.keycloak.common.util.KeycloakUriBuilderTest.testEmptyHostname"
+      ],
+      "id": "keycloak-ebb4443dcd20",
+      "target_files": [
+        "common/src/main/java/org/keycloak/common/util/KeycloakUriBuilder.java"
+      ]
+    },
+    {
+      "f2p": [
+        "org.keycloak.testsuite.federation.ldap.LDAPSyncTest.testSyncAfterDeletingUserInLDAPWithSameEmail"
+      ],
+      "id": "keycloak-f2cfd84dd0f4",
+      "target_files": [
+        "federation/ldap/src/main/java/org/keycloak/storage/ldap/mappers/UserAttributeLDAPStorageMapper.java"
+      ]
+    },
+    {
+      "f2p": [
+        "org.keycloak.testsuite.admin.realm.RealmTest.testFieldNotErased"
+      ],
+      "id": "keycloak-f3e5f3f86425",
+      "target_files": [
+        "model/storage-private/src/main/java/org/keycloak/storage/datastore/DefaultExportImportManager.java"
+      ]
+    },
+    {
+      "f2p": [
+        "org.keycloak.testsuite.admin.ComponentsTest.testUpdate"
+      ],
+      "id": "keycloak-f660e302b9ae",
+      "target_files": [
+        "server-spi-private/src/main/java/org/keycloak/models/utils/RepresentationToModel.java"
+      ]
+    },
+    {
+      "f2p": [
+        "org.keycloak.testsuite.oidc.OIDCAdvancedRequestParamsTest.testJweWithUnsignedJsonShouldBeRejectedWhenSignatureRequired"
+      ],
+      "id": "keycloak-fd5801e426cd",
+      "target_files": [
+        "services/src/main/java/org/keycloak/jose/jws/DefaultTokenManager.java"
+      ]
+    },
+    {
+      "f2p": [
+        "org.keycloak.testsuite.model.ImportTest.importAcrToLoaMappingWithDefaultAcrValues"
+      ],
+      "id": "keycloak-fd9dfa0407ad",
+      "target_files": [
+        "model/storage-private/src/main/java/org/keycloak/storage/datastore/DefaultExportImportManager.java"
+      ]
+    },
+    {
+      "f2p": [
+        "org.keycloak.testsuite.organization.member.OrganizationBruteForceTest.testExceedMaxTemporaryLockouts",
+        "org.keycloak.testsuite.organization.member.OrganizationBruteForceTest.testNoFailureResetForPermanentLockout",
+        "org.keycloak.testsuite.organization.member.OrganizationBruteForceTest.testNumberOfFailuresForPermanentlyDisabledUsersWithPasswordGrantType",
+        "org.keycloak.testsuite.organization.member.OrganizationBruteForceTest.testPermanentLockout"
+      ],
+      "id": "keycloak-ffc58911fb07",
+      "target_files": [
+        "services/src/main/java/org/keycloak/services/managers/DefaultBruteForceProtector.java"
+      ]
+    }
+  ],
+  "task": "keycloak",
+  "version": "25.0.0"
+}

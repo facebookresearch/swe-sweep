@@ -1,0 +1,15 @@
+diff --git a/cpp/src/arrow/compute/exec/expression.cc b/cpp/src/arrow/compute/exec/expression.cc
+index b1d914ce87..33e5928c28 100644
+--- a/cpp/src/arrow/compute/exec/expression.cc
++++ b/cpp/src/arrow/compute/exec/expression.cc
+@@ -587,9 +587,7 @@ Result<Datum> ExecuteScalarExpression(const Expression& expr, const ExecBatch& i
+   for (size_t i = 0; i < arguments.size(); ++i) {
+     ARROW_ASSIGN_OR_RAISE(
+         arguments[i], ExecuteScalarExpression(call->arguments[i], input, exec_context));
+-    if (arguments[i].is_array()) {
+-      all_scalar = false;
+-    }
++    all_scalar &= arguments[i].is_scalar();
+   }
+ 
+   auto executor = compute::detail::KernelExecutor::MakeScalar();

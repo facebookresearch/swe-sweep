@@ -1,0 +1,11 @@
+diff --git a/lib/system/widestrs.nim b/lib/system/widestrs.nim
+index 8b08959b5..bb348fd67 100644
+--- a/lib/system/widestrs.nim
++++ b/lib/system/widestrs.nim
+@@ -224,3 +224,6 @@ when defined(nimv2):
+ 
+   proc `$`*(s: WideCStringObj): string =
+     $(s.data)
++
++  proc len*(w: WideCStringObj): int {.inline.} =
++    len(w.data)

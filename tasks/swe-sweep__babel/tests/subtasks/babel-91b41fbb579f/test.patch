@@ -1,0 +1,230 @@
+diff --git a/packages/babel-parser/test/fixtures/typescript/regression/destructuring-in-function-type/input.js b/packages/babel-parser/test/fixtures/typescript/regression/destructuring-in-function-type/input.js
+new file mode 100644
+index 0000000000..8b22756932
+--- /dev/null
++++ b/packages/babel-parser/test/fixtures/typescript/regression/destructuring-in-function-type/input.js
+@@ -0,0 +1 @@
++type MyType = ({ theme }: any) => any
+diff --git a/packages/babel-parser/test/fixtures/typescript/regression/destructuring-in-function-type/output.json b/packages/babel-parser/test/fixtures/typescript/regression/destructuring-in-function-type/output.json
+new file mode 100644
+index 0000000000..c93fa7945f
+--- /dev/null
++++ b/packages/babel-parser/test/fixtures/typescript/regression/destructuring-in-function-type/output.json
+@@ -0,0 +1,216 @@
++{
++  "type": "File",
++  "start": 0,
++  "end": 37,
++  "loc": {
++    "start": {
++      "line": 1,
++      "column": 0
++    },
++    "end": {
++      "line": 1,
++      "column": 37
++    }
++  },
++  "program": {
++    "type": "Program",
++    "start": 0,
++    "end": 37,
++    "loc": {
++      "start": {
++        "line": 1,
++        "column": 0
++      },
++      "end": {
++        "line": 1,
++        "column": 37
++      }
++    },
++    "sourceType": "module",
++    "interpreter": null,
++    "body": [
++      {
++        "type": "TSTypeAliasDeclaration",
++        "start": 0,
++        "end": 37,
++        "loc": {
++          "start": {
++            "line": 1,
++            "column": 0
++          },
++          "end": {
++            "line": 1,
++            "column": 37
++          }
++        },
++        "id": {
++          "type": "Identifier",
++          "start": 5,
++          "end": 11,
++          "loc": {
++            "start": {
++              "line": 1,
++              "column": 5
++            },
++            "end": {
++              "line": 1,
++              "column": 11
++            },
++            "identifierName": "MyType"
++          },
++          "name": "MyType"
++        },
++        "typeAnnotation": {
++          "type": "TSFunctionType",
++          "start": 14,
++          "end": 37,
++          "loc": {
++            "start": {
++              "line": 1,
++              "column": 14
++            },
++            "end": {
++              "line": 1,
++              "column": 37
++            }
++          },
++          "parameters": [
++            {
++              "type": "ObjectPattern",
++              "start": 15,
++              "end": 29,
++              "loc": {
++                "start": {
++                  "line": 1,
++                  "column": 15
++                },
++                "end": {
++                  "line": 1,
++                  "column": 29
++                }
++              },
++              "properties": [
++                {
++                  "type": "ObjectProperty",
++                  "start": 17,
++                  "end": 22,
++                  "loc": {
++                    "start": {
++                      "line": 1,
++                      "column": 17
++                    },
++                    "end": {
++                      "line": 1,
++                      "column": 22
++                    }
++                  },
++                  "method": false,
++                  "key": {
++                    "type": "Identifier",
++                    "start": 17,
++                    "end": 22,
++                    "loc": {
++                      "start": {
++                        "line": 1,
++                        "column": 17
++                      },
++                      "end": {
++                        "line": 1,
++                        "column": 22
++                      },
++                      "identifierName": "theme"
++                    },
++                    "name": "theme"
++                  },
++                  "computed": false,
++                  "shorthand": true,
++                  "value": {
++                    "type": "Identifier",
++                    "start": 17,
++                    "end": 22,
++                    "loc": {
++                      "start": {
++                        "line": 1,
++                        "column": 17
++                      },
++                      "end": {
++                        "line": 1,
++                        "column": 22
++                      },
++                      "identifierName": "theme"
++                    },
++                    "name": "theme"
++                  },
++                  "extra": {
++                    "shorthand": true
++                  }
++                }
++              ],
++              "typeAnnotation": {
++                "type": "TSTypeAnnotation",
++                "start": 24,
++                "end": 29,
++                "loc": {
++                  "start": {
++                    "line": 1,
++                    "column": 24
++                  },
++                  "end": {
++                    "line": 1,
++                    "column": 29
++                  }
++                },
++                "typeAnnotation": {
++                  "type": "TSAnyKeyword",
++                  "start": 26,
++                  "end": 29,
++                  "loc": {
++                    "start": {
++                      "line": 1,
++                      "column": 26
++                    },
++                    "end": {
++                      "line": 1,
++                      "column": 29
++                    }
++                  }
++                }
++              }
++            }
++          ],
++          "typeAnnotation": {
++            "type": "TSTypeAnnotation",
++            "start": 31,
++            "end": 37,
++            "loc": {
++              "start": {
++                "line": 1,
++                "column": 31
++              },
++              "end": {
++                "line": 1,
++                "column": 37
++              }
++            },
++            "typeAnnotation": {
++              "type": "TSAnyKeyword",
++              "start": 34,
++              "end": 37,
++              "loc": {
++                "start": {
++                  "line": 1,
++                  "column": 34
++                },
++                "end": {
++                  "line": 1,
++                  "column": 37
++                }
++              }
++            }
++          }
++        }
++      }
++    ],
++    "directives": []
++  }
++}
+\ No newline at end of file

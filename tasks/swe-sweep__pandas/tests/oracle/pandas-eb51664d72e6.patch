@@ -1,0 +1,12 @@
+diff --git a/pandas/_libs/tslibs/offsets.pyx b/pandas/_libs/tslibs/offsets.pyx
+index 991f155847..db35cc0c93 100644
+--- a/pandas/_libs/tslibs/offsets.pyx
++++ b/pandas/_libs/tslibs/offsets.pyx
+@@ -3465,6 +3465,7 @@ prefix_mapping = {
+         Hour,  # 'H'
+         Day,  # 'D'
+         WeekOfMonth,  # 'WOM'
++        LastWeekOfMonth,  # 'LWOM'
+         FY5253,
+         FY5253Quarter,
+     ]

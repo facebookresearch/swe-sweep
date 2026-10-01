@@ -1,0 +1,35 @@
+diff --git a/pandas/io/formats/format.py b/pandas/io/formats/format.py
+index a5ef9a58cf..3e3e26bb5c 100644
+--- a/pandas/io/formats/format.py
++++ b/pandas/io/formats/format.py
+@@ -1326,6 +1326,17 @@ class GenericArrayFormatter:
+         if leading_space is None:
+             leading_space = is_float_type.any()
+ 
++        if leading_space is False:
++            # False specifically, so that the default is
++            # to include a space if we get here.
++            tpl = "{v}"
++        else:
++            tpl = " {v}"
++
++        # shortcut
++        if self.formatter is not None:
++            return [tpl.format(v=self.formatter(x)) for x in self.values]
++
+         fmt_values = []
+         for i, v in enumerate(vals):
+             if not is_float_type[i] and leading_space:
+@@ -1333,12 +1344,6 @@ class GenericArrayFormatter:
+             elif is_float_type[i]:
+                 fmt_values.append(float_format(v))
+             else:
+-                if leading_space is False:
+-                    # False specifically, so that the default is
+-                    # to include a space if we get here.
+-                    tpl = "{v}"
+-                else:
+-                    tpl = " {v}"
+                 fmt_values.append(tpl.format(v=_format(v)))
+ 
+         return fmt_values

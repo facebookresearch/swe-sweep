@@ -1,0 +1,26 @@
+diff --git a/compiler/test/compilable/imports/imp23662.c b/compiler/test/compilable/imports/imp23662.c
+new file mode 100644
+index 0000000000..1556bc9e3d
+--- /dev/null
++++ b/compiler/test/compilable/imports/imp23662.c
+@@ -0,0 +1,6 @@
++// https://issues.dlang.org/show_bug.cgi?id=23662
++typedef enum {A} E;
++
++E func(E v) {
++    return v;
++}
+diff --git a/compiler/test/compilable/test23662.d b/compiler/test/compilable/test23662.d
+new file mode 100644
+index 0000000000..884c399592
+--- /dev/null
++++ b/compiler/test/compilable/test23662.d
+@@ -0,0 +1,8 @@
++// https://issues.dlang.org/show_bug.cgi?id=23662
++// EXTRA_FILES: imports/imp23662.c
++import imports.imp23662;
++
++void main(string[] args) {
++    auto r = func(A);
++    assert(r == A);
++}

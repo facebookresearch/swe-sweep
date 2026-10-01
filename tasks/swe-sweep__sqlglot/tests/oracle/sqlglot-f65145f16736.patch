@@ -1,0 +1,13 @@
+diff --git a/sqlglot/dialects/snowflake.py b/sqlglot/dialects/snowflake.py
+index b52eb9dcff..ac69994470 100644
+--- a/sqlglot/dialects/snowflake.py
++++ b/sqlglot/dialects/snowflake.py
+@@ -357,8 +357,6 @@ class Snowflake(Dialect):
+         "mi": "%M",
+         "SS": "%S",
+         "ss": "%S",
+-        "FF": "%f",
+-        "ff": "%f",
+         "FF6": "%f",
+         "ff6": "%f",
+     }

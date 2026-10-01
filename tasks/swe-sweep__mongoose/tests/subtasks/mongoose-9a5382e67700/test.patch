@@ -1,0 +1,28 @@
+diff --git a/test/connection.test.js b/test/connection.test.js
+--- a/test/connection.test.js
++++ b/test/connection.test.js
+@@ -1465,5 +1465,24 @@
+     const Test2 = m.connection.model('Test2', new Schema({ name: String }));
+ 
+     assert.equal(m.connection.model('Test2'), Test2);
+   });
++
++  it('with autoCreate = false after schema create (gh-12940)', async function() {
++    const m = new mongoose.Mongoose();
++
++    const schema = new Schema({ name: String }, {
++      collation: { locale: 'en_US', strength: 1 },
++      collection: 'gh12940_Conn'
++    });
++    const Model = m.model('gh12940_Conn', schema);
++
++    await m.connect(start.uri, {
++      autoCreate: false
++    });
++
++    await Model.init();
++
++    const res = await m.connection.db.listCollections().toArray();
++    assert.ok(!res.map(c => c.name).includes('gh12940_Conn'));
++  });
+ });

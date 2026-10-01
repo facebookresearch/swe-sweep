@@ -1,0 +1,13 @@
+diff --git a/packages/@aws-cdk/cloudformation-diff/lib/network/security-group-rule.ts b/packages/@aws-cdk/cloudformation-diff/lib/network/security-group-rule.ts
+index fda8cb0404..4992dffc77 100644
+--- a/packages/@aws-cdk/cloudformation-diff/lib/network/security-group-rule.ts
++++ b/packages/@aws-cdk/cloudformation-diff/lib/network/security-group-rule.ts
+@@ -28,7 +28,7 @@ export class SecurityGroupRule {
+   public readonly peer?: RulePeer;
+ 
+   constructor(ruleObject: any, groupRef?: string) {
+-    this.ipProtocol = ruleObject.IpProtocol || '*unknown*';
++    this.ipProtocol = ruleObject.IpProtocol?.toString() || '*unknown*';
+     this.fromPort = ruleObject.FromPort;
+     this.toPort = ruleObject.ToPort;
+     this.groupId = ruleObject.GroupId || groupRef || '*unknown*'; // In case of an inline rule

@@ -1,0 +1,23 @@
+diff --git a/packages/@aws-cdk/aws-iam/test/saml-provider.test.ts b/packages/@aws-cdk/aws-iam/test/saml-provider.test.ts
+index 424d14a443..83ade3741f 100644
+--- a/packages/@aws-cdk/aws-iam/test/saml-provider.test.ts
++++ b/packages/@aws-cdk/aws-iam/test/saml-provider.test.ts
+@@ -17,6 +17,18 @@ test('SAML provider', () => {
+   });
+ });
+ 
++test('SAML provider name', () => {
++  new SamlProvider(stack, 'Provider', {
++    metadataDocument: SamlMetadataDocument.fromXml('document'),
++    name: 'provider-name',
++  });
++
++  expect(stack).toHaveResource('AWS::IAM::SAMLProvider', {
++    SamlMetadataDocument: 'document',
++    Name: 'provider-name',
++  });
++});
++
+ test('throws with invalid name', () => {
+   expect(() => new SamlProvider(stack, 'Provider', {
+     name: 'invalid name',

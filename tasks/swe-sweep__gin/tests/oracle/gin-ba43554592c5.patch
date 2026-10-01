@@ -1,0 +1,11 @@
+diff --git a/context.go b/context.go
+--- a/context.go
++++ b/context.go
+@@ -120,6 +120,7 @@ func (c *Context) Copy() *Context {
+ 	cp.Writer = &cp.writermem
+ 	cp.index = abortIndex
+ 	cp.handlers = nil
++	cp.fullPath = c.fullPath
+ 	cp.Keys = map[string]any{}
+ 	for k, v := range c.Keys {
+ 		cp.Keys[k] = v

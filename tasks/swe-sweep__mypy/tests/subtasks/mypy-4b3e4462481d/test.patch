@@ -1,0 +1,49 @@
+diff --git a/test-data/unit/check-typeguard.test b/test-data/unit/check-typeguard.test
+index c43eead67..fdcfcc969 100644
+--- a/test-data/unit/check-typeguard.test
++++ b/test-data/unit/check-typeguard.test
+@@ -721,3 +721,20 @@ x: object
+ assert a(x=x)
+ reveal_type(x)  # N: Revealed type is "builtins.int"
+ [builtins fixtures/tuple.pyi]
++
++[case testTypeGuardWithDefer]
++from typing import Union
++from typing_extensions import TypeGuard
++
++class A: ...
++class B: ...
++
++def is_a(x: object) -> TypeGuard[A]:
++    return defer_not_defined()  # E: Name "defer_not_defined" is not defined
++
++def main(x: Union[A, B]) -> None:
++    if is_a(x):
++        reveal_type(x)  # N: Revealed type is "__main__.A"
++    else:
++        reveal_type(x)  # N: Revealed type is "Union[__main__.A, __main__.B]"
++[builtins fixtures/tuple.pyi]
+diff --git a/test-data/unit/check-typeis.test b/test-data/unit/check-typeis.test
+index 997cc7474..2f54ac5bf 100644
+--- a/test-data/unit/check-typeis.test
++++ b/test-data/unit/check-typeis.test
+@@ -808,2 +808,19 @@ accept_typeguard(typeguard)
+ 
+ [builtins fixtures/tuple.pyi]
++
++[case testTypeIsWithDefer]
++from typing import Union
++from typing_extensions import TypeIs
++
++class A: ...
++class B: ...
++
++def is_a(x: object) -> TypeIs[A]:
++    return defer_not_defined()  # E: Name "defer_not_defined" is not defined
++
++def main(x: Union[A, B]) -> None:
++    if is_a(x):
++        reveal_type(x)  # N: Revealed type is "__main__.A"
++    else:
++        reveal_type(x)  # N: Revealed type is "__main__.B"
++[builtins fixtures/tuple.pyi]

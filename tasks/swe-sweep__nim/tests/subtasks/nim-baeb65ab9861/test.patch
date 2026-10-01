@@ -1,0 +1,12 @@
+diff --git a/tests/vm/t19199.nim b/tests/vm/t19199.nim
+new file mode 100644
+index 000000000..6ae48cb54
+--- /dev/null
++++ b/tests/vm/t19199.nim
+@@ -0,0 +1,6 @@
++# bug #19199
++proc mikasa(x: float) = doAssert x == 42
++
++static:
++  mikasa 42.uint.float
++mikasa 42.uint.float

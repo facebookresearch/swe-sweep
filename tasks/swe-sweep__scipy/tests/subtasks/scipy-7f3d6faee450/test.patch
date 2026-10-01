@@ -1,0 +1,16 @@
+diff --git a/scipy/special/tests/test_logsumexp.py b/scipy/special/tests/test_logsumexp.py
+index 5d9848062d..f675215e1f 100644
+--- a/scipy/special/tests/test_logsumexp.py
++++ b/scipy/special/tests/test_logsumexp.py
+@@ -6,6 +6,11 @@ from scipy.special import logsumexp, softmax
+ 
+ 
+ def test_logsumexp():
++    # Test with zero-size array
++    a = []
++    desired = -np.inf
++    assert_equal(logsumexp(a), desired)
++
+     # Test whether logsumexp() function correctly handles large inputs.
+     a = np.arange(200)
+     desired = np.log(np.sum(np.exp(a)))

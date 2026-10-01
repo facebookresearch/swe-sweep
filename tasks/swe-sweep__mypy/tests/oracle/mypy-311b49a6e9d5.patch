@@ -1,0 +1,36 @@
+diff --git a/mypy/constraints.py b/mypy/constraints.py
+index d88b722aa..e76f6cd63 100644
+--- a/mypy/constraints.py
++++ b/mypy/constraints.py
+@@ -53,6 +53,7 @@ from mypy.types import (
+     UnionType,
+     UnpackType,
+     find_unpack_in_list,
++    flatten_nested_tuples,
+     get_proper_type,
+     has_recursive_types,
+     has_type_vars,
+@@ -1347,7 +1348,9 @@ class ConstraintBuilderVisitor(TypeVisitor[list[Constraint]]):
+ 
+     def infer_against_any(self, types: Iterable[Type], any_type: AnyType) -> list[Constraint]:
+         res: list[Constraint] = []
+-        for t in types:
++        # Some items may be things like `*Tuple[*Ts, T]` for example from callable types with
++        # suffix after *arg, so flatten them.
++        for t in flatten_nested_tuples(types):
+             if isinstance(t, UnpackType):
+                 if isinstance(t.type, TypeVarTupleType):
+                     res.append(Constraint(t.type, self.direction, any_type))
+diff --git a/mypy/types.py b/mypy/types.py
+index f9749945d..9dd0ef855 100644
+--- a/mypy/types.py
++++ b/mypy/types.py
+@@ -3726,7 +3726,7 @@ def find_unpack_in_list(items: Sequence[Type]) -> int | None:
+     return unpack_index
+ 
+ 
+-def flatten_nested_tuples(types: Sequence[Type]) -> list[Type]:
++def flatten_nested_tuples(types: Iterable[Type]) -> list[Type]:
+     """Recursively flatten TupleTypes nested with Unpack.
+ 
+     For example this will transform

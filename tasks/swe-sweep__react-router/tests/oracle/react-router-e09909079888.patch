@@ -1,0 +1,20 @@
+diff --git a/packages/react-router/lib/dom/lib.tsx b/packages/react-router/lib/dom/lib.tsx
+index 94ad1aae6..f779abea6 100644
+--- a/packages/react-router/lib/dom/lib.tsx
++++ b/packages/react-router/lib/dom/lib.tsx
+@@ -2421,6 +2421,7 @@ export function useSubmit(): SubmitFunction {
+         let key = options.fetcherKey || getUniqueFetcherId();
+         await router.fetch(key, currentRouteId, options.action || action, {
+           preventScrollReset: options.preventScrollReset,
++          relative: options.relative,
+           formData,
+           body,
+           formMethod: options.method || (method as HTMLFormMethod),
+@@ -2430,6 +2431,7 @@ export function useSubmit(): SubmitFunction {
+       } else {
+         await router.navigate(options.action || action, {
+           preventScrollReset: options.preventScrollReset,
++          relative: options.relative,
+           formData,
+           body,
+           formMethod: options.method || (method as HTMLFormMethod),
