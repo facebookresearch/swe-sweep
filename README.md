@@ -12,7 +12,7 @@ Agents are not given any hint about the type of bug or its location.
 <!-- TODO: fill in the public links once available (kept as placeholders to avoid publishing unverified URLs). -->
 
 - Website: https://swesweep.com
-- Paper: <!-- TODO: https://arxiv.org/abs/... -->
+- Paper: https://swesweep.com/paper
 
 ## Quickstart
 

@@ -61,10 +61,7 @@ def score_paths(roots: Sequence[Path]) -> dict[str, Any]:
         trials = per_task[name]
         n_subtasks = int(trials[0]["n_subtasks"])
         resolved = [int(trial["n_resolved"]) for trial in trials]
-        counted = [
-            value if trial["visible_ok"] >= 1 else 0
-            for value, trial in zip(resolved, trials, strict=True)
-        ]
+        counted = [value if trial["visible_ok"] >= 1 else 0 for value, trial in zip(resolved, trials, strict=True)]
         tasks.append(
             {
                 "task": name,
@@ -85,9 +82,7 @@ def score_paths(roots: Sequence[Path]) -> dict[str, Any]:
         "graded_bugs": graded_bugs,
         "resolved_bugs": resolved_bugs,
         "score": resolved_bugs / graded_bugs if graded_bugs else 0.0,
-        "score_ignoring_regressions": (
-            resolved_ignoring_regressions / graded_bugs if graded_bugs else 0.0
-        ),
+        "score_ignoring_regressions": (resolved_ignoring_regressions / graded_bugs if graded_bugs else 0.0),
         "evaluation_failures": failures,
     }
     return {"summary": summary, "tasks": tasks}
@@ -108,11 +103,7 @@ def format_report(report: dict[str, Any], *, per_task: bool, as_json: bool) -> s
         (
             f"SWE-sweep score over {summary['graded_tasks']} graded tasks, "
             f"{summary['graded_bugs']} graded bugs"
-            + (
-                f"; {len(failures)} evaluation failure(s) excluded: {', '.join(failures)}"
-                if failures
-                else ""
-            )
+            + (f"; {len(failures)} evaluation failure(s) excluded: {', '.join(failures)}" if failures else "")
         ),
         (
             "  bugs resolved in regression-free tasks: "
@@ -135,16 +126,14 @@ def format_report(report: dict[str, Any], *, per_task: bool, as_json: bool) -> s
         lines.extend(
             [
                 "",
-                f"{'task':40s} {'trials':>6s} {'bugs':>5s} "
-                f"{'resolved':>8s} {'counted':>8s} {'reward':>7s}",
+                f"{'task':40s} {'trials':>6s} {'bugs':>5s} {'resolved':>8s} {'counted':>8s} {'reward':>7s}",
             ]
         )
         for task in tasks:
             lines.append(
                 f"{task['task']:40s} {task['trials']:>6d} {task['n_subtasks']:>5d} "
                 f"{task['n_resolved']:>8g} {task['resolved_counted']:>8g} "
-                f"{task['reward']:>7.3f}"
-                + ("  regressed" if task["regressed"] else "")
+                f"{task['reward']:>7.3f}" + ("  regressed" if task["regressed"] else "")
             )
     return "\n".join(lines)
 
