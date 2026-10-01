@@ -139,15 +139,16 @@ sweep info path/to/graded-solutions --json
 
 ## Citation
 
-<!-- TODO: add the citation once the paper is public. Kept as a placeholder to preserve
-the anonymous-submission status; do not fill in author names before release. -->
-
 ```bibtex
-@misc{swesweep,
-  title  = {SWE-sweep},
-  author = {TODO},
-  year   = {TODO},
-  url    = {TODO}
+@misc{lieret2026swesweep,
+  title  = {{SWE-sweep}: Can Agents Autonomously Find and Fix Bugs?},
+  author = {Kilian Lieret and Jeffrey Jian Ma and Rahul Kindi and
+            Yuxiang Wei and Jeremy Ma and Sten Sootla and
+            Parth Thakkar and Chao Beyond Zhou and Pengcheng Yin and
+            Rui Hou and Ofir Press and John Yang},
+  year   = {2026},
+  note   = {Preprint},
+  url    = {https://github.com/facebookresearch/swe-sweep}
 }
 ```
 
