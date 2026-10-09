@@ -25,7 +25,9 @@ def is_test_file(path, test_dirs=()):
     whose suite is a top-level tree, like igraph's ``tests/unit/…``, has no leading slash
     to match, and a substring test would leave those edits in place. ``test_dirs`` adds
     the repos whose test tree is not called ``test``/``tests`` at all (gdal: ``autotest``)
-    — the same names its crawler's ``test_globs`` claim.
+    — the same names its crawler's ``test_globs`` claim. ``Tests`` is symfony's convention
+    (``src/Symfony/Component/*/Tests/``); singular ``Test/`` there is shipped library code
+    (PHPUnit constraints) and must stay editable.
 
     The suffix list is per *framework convention*, which is why V and Elixir are in it:
     both keep their test files inline beside the code (``strings/builder_test.v``), so no
@@ -35,7 +37,7 @@ def is_test_file(path, test_dirs=()):
     parts = path.split("/")
     base = parts[-1]
     dirs = set(parts[:-1])
-    return (bool(dirs & (set(test_dirs) | {"test", "tests", "__tests__"}))
+    return (bool(dirs & (set(test_dirs) | {"test", "tests", "Tests", "__tests__"}))
             or base.startswith("test_")
             or base.endswith(("_test.py", "_test.go", "_test.c", "_test.cc", "_test.cpp", "Test.java",
                               "_test.v", "_test.exs", ".vv"))
