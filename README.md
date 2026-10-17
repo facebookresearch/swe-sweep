@@ -79,7 +79,7 @@ sweep eval <task> <path/to/submission.diff>  # see raw harbor command below
 
   ```bash
   uv run harbor run \
-  --path tasks/pandora-bench__dateutil \
+  --path tasks/swe-sweep__dateutil \
   --agent swesweep.patch_agent:PatchAgent \
   --agent-kwarg "patch_path=$(realpath /path/to/model.patch)" \
   --jobs-dir jobs \
