@@ -91,7 +91,7 @@ function main()
         for (k, v) in out
             first || print(io, ", "); first = false
             # strip the synthetic root so names read as the repo writes them
-            key = startswith(k, "swesweep/") ? k[9:end] : k
+            key = startswith(k, "swesweep/") ? k[10:end] : k
             print(io, "\"", escape_string(key), "\": \"", v, "\"")
         end
         print(io, "}}")
