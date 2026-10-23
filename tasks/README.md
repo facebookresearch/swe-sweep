@@ -26,6 +26,7 @@ evaluator modules its test suites need, adapted for the Harbor runtime.
       solution/solve.sh          oracle: asks the grader to score every bug on its own gold fix
     check_shared.py              CI check: every file under tests/shared/ has the same bytes in
                                  every task that ships it (`python3 check_shared.py`)
+    check_base_lists.py          must-pass list checks (empty, placeholder, counts, volatile names)
     score.py                     benchmark score from a directory of graded trials
                                  (`python3 score.py <harbor job dir>`)
 
