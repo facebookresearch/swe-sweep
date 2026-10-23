@@ -79,8 +79,20 @@ ENV RUSTFLAGS="--cap-lints warn"
 # `--all-features` is what syn's own CI runs: `full`, `extra-traits`, `visit`, `fold` and
 # friends are off by default, and most of the syntax-tree code a bug lives in is behind
 # `full`. Without it the majority of the corpus does not even compile.
-RUN cargo test --no-run --all-features --tests
-RUN cargo build --benches --all-features 2>/dev/null || true
+#
+# --- SWE-sweep: pinned dependency graph ---
+# Resolving the newest releases at build time pulled syn 2.x and 3.x into the registry
+# (through ref-cast-impl, serde_derive, pin-project, openssl-macros and the icu derive
+# crates): full sources holding 10 of the 13 fixes and all 13 hidden test functions, and a
+# different graph on every rebuild. This Cargo.lock holds every syn user to a release that
+# accepts syn 1.0.36, so the only syn in the registry is the version under test. syn's own
+# .gitignore lists Cargo.lock, so the baseline commit is unchanged. pin-project 0.4.26 is a
+# yanked release; a lockfile may still select it, and every later 0.4.x needs a newer syn.
+COPY Cargo.lock /syn/Cargo.lock
+RUN cargo test --no-run --all-features --tests --locked
+RUN cargo build --benches --all-features --locked 2>/dev/null || true
+RUN if ls "$CARGO_HOME"/registry/src/*/ | grep -E '^syn-[0-9]' | grep -vx 'syn-1\.0\.36'; then \
+      echo "a registry syn other than 1.0.36 was fetched" >&2; exit 1; fi
 
 # Prove the suite is green *before* any patch is applied. A pristine failure reads as
 # `fails_pre_gold` for every subtask and would quietly inflate the whole census.
