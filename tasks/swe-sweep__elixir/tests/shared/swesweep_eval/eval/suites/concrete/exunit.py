@@ -35,9 +35,14 @@ class ExUnitSuite(FullSuite):
     fails to *compile* is likewise a failing test, which for a language repository is the
     commonest pre-gold state there is.
 
-    ``node_name`` runs the application's suite as a distributed node (upstream does this
-    for the standard library, whose ``Node`` tests need it). Left unset, no name is
-    passed and those tests are the ones that fail.
+    ``node_name`` runs a suite as a distributed node. Upstream does this for the
+    standard library, whose ``Node`` tests need it — and only for it: on a named node
+    the iex prompt reads ``iex(primary@host)1>`` and logger's reports carry
+    ``on node :primary@host``, which those applications' own tests assert against the
+    unnamed form. ``node_apps`` lists the applications the visible gate runs as a named
+    node; unset, every application runs named (the historical behaviour). Targeted and
+    reproduction runs keep ``node_name`` for every file, the way the hidden results were
+    recorded.
     """
 
     no_targets = "test patch touched no ExUnit test file"
@@ -49,6 +54,7 @@ class ExUnitSuite(FullSuite):
         test_subdir="test",
         helper="test_helper.exs",
         node_name=None,
+        node_apps=None,
         eval_apps=(),
     ):
         self.apps_root = apps_root.strip("/")
@@ -56,6 +62,7 @@ class ExUnitSuite(FullSuite):
         self.test_subdir = test_subdir.strip("/")
         self.helper = helper
         self.node_name = node_name
+        self.node_apps = None if node_apps is None else set(node_apps)
         self.eval_apps = list(eval_apps)
 
     # --- resolving the diff --------------------------------------------------
@@ -103,15 +110,15 @@ class ExUnitSuite(FullSuite):
                 return None
             directory = posixpath.dirname(directory)
 
-    def _run(self, targets, env, repo, timeout):
+    def _run(self, targets, env, repo, timeout, node_name):
         outcomes = {}
         commands = []
         output = []
         returncode = 0
         for app, inside in targets:
             argv = [self._driver()]
-            if self.node_name:
-                argv += ["--sname", self.node_name]
+            if node_name:
+                argv += ["--sname", node_name]
             helper = self._helper_for(env, repo, app, inside)
             if helper is not None:
                 argv += ["-r", helper]
@@ -132,49 +139,69 @@ class ExUnitSuite(FullSuite):
 
     def run_tests(self, env, repo, files, names, timeout, jobs):
         del names, jobs
-        outcomes, timed_out, _commands, _rc, _output = self._run(files or [], env, repo, timeout)
+        outcomes, timed_out, _commands, _rc, _output = self._run(files or [], env, repo, timeout, self.node_name)
         n = len([value for value in outcomes.values() if value != "skipped"])
         return outcomes, n, False, timed_out
 
     # --- the visible regression gate -----------------------------------------
 
+    def _test_files(self, env, repo, app):
+        """Every ``*_test.exs`` of one application, as paths relative to the app directory.
+
+        ``find`` rather than the shell's glob: the driver is exec'd with an argv, no
+        shell expands a ``**`` for us, and the application's own listing is what the
+        whole-app run would have picked up.
+        """
+        result = env.execute(
+            ["find", self.test_subdir, "-type", "f", "-name", "*_test.exs"],
+            cwd=self._app_dir(repo, app),
+            merge_stderr=True,
+        )
+        if result.returncode != 0:
+            log(
+                "find %s/%s rc=%d: %s"
+                % (self._app_dir(repo, app), self.test_subdir, result.returncode, result.stdout[-500:])
+            )
+            return []
+        return sorted(line.strip() for line in result.stdout.splitlines() if line.strip())
+
     def run_all(self, env, repo, timeout, cap, jobs):
-        """One whole-application run per configured application — the ``-pr`` glob the
-        repository's own makefile uses. Outcomes are per application: the console output
-        is a summary, not a per-file report."""
+        """Every test file of every configured application, one run per file.
+
+        The process exit status is ExUnit's only verdict, and one failing file fails a
+        whole-application run — which would drop every sibling file in that application
+        from the regression gate with it. So the visible suite runs at the granularity
+        the hidden runs already use: per file, with the same ``app::test/...`` ids, the
+        same helper resolution and the same driver command as ``_run``. A file that
+        cannot pass standalone on the pristine tree belongs on the task's ignore list,
+        not in the gate.
+        """
         del jobs
         outcomes = {}
         commands = []
         output = []
         returncode = 0
         for app in self.eval_apps:
-            argv = [self._driver()]
-            if self.node_name:
-                argv += ["--sname", self.node_name]
-            for candidate in (
-                posixpath.join(self.test_subdir, self.helper),
-                posixpath.join(self.test_subdir, app, self.helper),
-            ):
-                if env.is_file(posixpath.join(self._app_dir(repo, app), candidate)):
-                    argv += ["-r", candidate, "-pr", posixpath.join(posixpath.dirname(candidate), "**", "*_test.exs")]
-                    break
-            else:
-                argv += ["-pr", posixpath.join(self.test_subdir, "**", "*_test.exs")]
-            cwd = self._app_dir(repo, app)
-            commands.append("cd %s && %s" % (cwd, " ".join(argv)))
-            try:
-                result = env.execute(argv, cwd=cwd, timeout=timeout, merge_stderr=True)
-            except subprocess.TimeoutExpired:
-                log("%s TIMEOUT after %ds" % (commands[-1], timeout))
+            node_name = (
+                self.node_name
+                if self.node_apps is None or app in self.node_apps
+                else None
+            )
+            files = self._test_files(env, repo, app)
+            app_outcomes, timed_out, app_commands, app_rc, app_output = self._run(
+                [(app, inside) for inside in files], env, repo, timeout, node_name
+            )
+            outcomes.update(app_outcomes)
+            commands.extend(app_commands)
+            output.append(app_output)
+            returncode = max(returncode, app_rc)
+            if timed_out:
                 return None, True, self._capture(commands, returncode, "\n".join(output), cap)
-            output.append(result.stdout)
-            returncode = max(returncode, result.returncode)
-            outcomes[app] = "passed" if result.returncode == 0 else "failed"
         return outcomes, False, self._capture(commands, returncode, "\n".join(output), cap)
 
     def run_selected(self, env, repo, files, names, timeout, cap, jobs):
         del names, jobs
-        outcomes, timed_out, commands, returncode, output = self._run(files or [], env, repo, timeout)
+        outcomes, timed_out, commands, returncode, output = self._run(files or [], env, repo, timeout, self.node_name)
         return outcomes, timed_out, self._capture(commands, returncode, output, cap)
 
     @staticmethod

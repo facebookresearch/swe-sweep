@@ -12,13 +12,16 @@
         "mix"
       ],
       "node_name": "primary",
-      "type": "exunit"
+      "type": "exunit",
+      "node_apps": [
+        "elixir"
+      ]
     },
     "test_dirs": [],
     "visible_timeout": 10800
   },
   "upstream_image": "pandora-maxbug-elixir:1.15.7",
-  "n_base_passing": 3,
+  "n_base_passing": 196,
   "n_base_test_ignore": 3,
   "oracle_digest": "67d76eddb490ffed3678db6802f8311351c80cde23cf73db4e7ef77ad03332cc",
   "oracle_pristine_paths": [],
