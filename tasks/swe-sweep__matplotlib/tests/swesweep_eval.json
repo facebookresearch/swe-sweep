@@ -120,24 +120,6 @@
     },
     {
       "f2p": [
-        "lib.matplotlib.tests.test_axes::test_eventplot_units_list[png]"
-      ],
-      "id": "matplotlib-2fa4b01f898c",
-      "target_files": [
-        "lib/matplotlib/axes/_axes.py"
-      ]
-    },
-    {
-      "f2p": [
-        "lib.matplotlib.tests.test_collections::test_set_offset_units"
-      ],
-      "id": "matplotlib-35c5be141977",
-      "target_files": [
-        "lib/matplotlib/collections.py"
-      ]
-    },
-    {
-      "f2p": [
         "lib.matplotlib.tests.test_axes::test_bar_datetime_start"
       ],
       "id": "matplotlib-368ff3a14416",
@@ -188,15 +170,6 @@
       "id": "matplotlib-4c8f8e8aa8b3",
       "target_files": [
         "lib/matplotlib/pyplot.py"
-      ]
-    },
-    {
-      "f2p": [
-        "lib.matplotlib.tests.test_axes::test_acorr_integers[png]"
-      ],
-      "id": "matplotlib-4db7467db1b5",
-      "target_files": [
-        "lib/matplotlib/axes/_axes.py"
       ]
     },
     {
@@ -340,15 +313,6 @@
       "id": "matplotlib-7b009e1457e3",
       "target_files": [
         "lib/matplotlib/colors.py"
-      ]
-    },
-    {
-      "f2p": [
-        "lib.matplotlib.tests.test_axes::test_errorbar_dashes[png]"
-      ],
-      "id": "matplotlib-7e987883cacb",
-      "target_files": [
-        "lib/matplotlib/axes/_axes.py"
       ]
     },
     {
@@ -505,15 +469,6 @@
     },
     {
       "f2p": [
-        "lib.matplotlib.tests.test_legend::test_setting_alpha_keeps_polycollection_color"
-      ],
-      "id": "matplotlib-af47147ae3ef",
-      "target_files": [
-        "lib/matplotlib/legend_handler.py"
-      ]
-    },
-    {
-      "f2p": [
         "lib.matplotlib.tests.test_simplification::test_simplify_closepoly"
       ],
       "id": "matplotlib-afd2f6bd5791",
@@ -542,29 +497,11 @@
     },
     {
       "f2p": [
-        "lib.matplotlib.tests.test_axes::test_label_shift"
-      ],
-      "id": "matplotlib-b392186c281e",
-      "target_files": [
-        "lib/matplotlib/axes/_base.py"
-      ]
-    },
-    {
-      "f2p": [
         "__process_level_failure__"
       ],
       "id": "matplotlib-b46d17fd3815",
       "target_files": [
         "src/_backend_agg.h"
-      ]
-    },
-    {
-      "f2p": [
-        "lib.matplotlib.tests.test_backend_bases::test_grab_clear"
-      ],
-      "id": "matplotlib-b52f608f8957",
-      "target_files": [
-        "lib/matplotlib/figure.py"
       ]
     },
     {
@@ -609,29 +546,11 @@
     },
     {
       "f2p": [
-        "lib.matplotlib.tests.test_contour::test_subfigure_clabel"
-      ],
-      "id": "matplotlib-bfeb5ab7bcfa",
-      "target_files": [
-        "lib/matplotlib/figure.py"
-      ]
-    },
-    {
-      "f2p": [
         "lib.matplotlib.tests.test_table::test_table_bbox[png]"
       ],
       "id": "matplotlib-c12a018461a9",
       "target_files": [
         "lib/matplotlib/table.py"
-      ]
-    },
-    {
-      "f2p": [
-        "lib.matplotlib.tests.test_lines::test_no_subslice_with_transform[png]"
-      ],
-      "id": "matplotlib-c5fd021cd0f6",
-      "target_files": [
-        "lib/matplotlib/lines.py"
       ]
     },
     {
@@ -719,15 +638,6 @@
     },
     {
       "f2p": [
-        "lib.matplotlib.tests.test_axes::test_errorbar_remove"
-      ],
-      "id": "matplotlib-ef222029baed",
-      "target_files": [
-        "lib/matplotlib/axes/_axes.py"
-      ]
-    },
-    {
-      "f2p": [
         "lib.matplotlib.tests.test_backend_ps::test_colored_hatch_zero_linewidth[eps]"
       ],
       "id": "matplotlib-f715bbcedc62",
@@ -743,15 +653,6 @@
       "id": "matplotlib-f96d9c6f27f1",
       "target_files": [
         "lib/matplotlib/lines.py"
-      ]
-    },
-    {
-      "f2p": [
-        "lib.matplotlib.tests.test_image::test_imsave_python_sequences"
-      ],
-      "id": "matplotlib-fec3b4ad0278",
-      "target_files": [
-        "lib/matplotlib/image.py"
       ]
     },
     {
