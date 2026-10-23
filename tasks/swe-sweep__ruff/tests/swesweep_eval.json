@@ -6,7 +6,7 @@
     "visible_timeout": 14400
   },
   "upstream_image": "pandora-maxbug-ruff:0.8.1",
-  "n_base_passing": 519,
+  "n_base_passing": 3175,
   "n_base_test_ignore": 1,
   "oracle_digest": "9ad389bc636535eb51813909f097702d72261f7b8624ba55bd71e9d5b1aad45e",
   "oracle_pristine_paths": [],
@@ -26,7 +26,10 @@
           "prefix": "crates/ruff_linter/src/rules"
         }
       ],
-      "type": "cargo-snapshot"
+      "type": "cargo-snapshot",
+      "cargo_args": [
+        "--no-fail-fast"
+      ]
     },
     "test_timeout": 3600
   },
