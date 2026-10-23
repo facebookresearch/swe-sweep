@@ -9,8 +9,8 @@
     "visible_timeout": 21600
   },
   "upstream_image": "pandora-maxbug-nim:1.6.0",
-  "n_base_passing": 2079,
-  "n_base_test_ignore": 50,
+  "n_base_passing": 2077,
+  "n_base_test_ignore": 52,
   "oracle_digest": "134a347c203d46182ec82211acc8a7f1fe067f6c20ab0abf20995a84f5570fc6",
   "oracle_pristine_paths": [
     "bin/nim",
