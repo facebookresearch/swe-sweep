@@ -29,14 +29,21 @@ class MavenSuite(ReproductionSuite):
     Only maven is redirected: the working directory stays the repository root, because
     that is what a patch path is relative to, and the module ids handed to ``-pl`` are
     made relative to the reactor. A test class outside the reactor belongs to the other
-    language's half of the repo and selects nothing."""
+    language's half of the repo and selects nothing.
+
+    ``visible_args`` apply only to the whole-suite (visible) run: the reactor scope and
+    failure tolerance (``-pl``, ``-fae``) of a repository whose image pre-builds a subset
+    of its modules, where a full-reactor run dies on the unwarmed modules and a fail-fast
+    run stops at the first red one. Targeted runs keep their own ``-pl ... -am``
+    arguments untouched."""
 
     no_targets = "test patch touched no JUnit test class"
 
-    def __init__(self, mvn_args=(), goal="test", reactor="."):
+    def __init__(self, mvn_args=(), goal="test", reactor=".", visible_args=()):
         self.mvn_args = list(mvn_args)
         self.goal = goal
         self.reactor = reactor.strip("/")
+        self.visible_args = list(visible_args)
 
     def _module(self, module):
         """``module`` (repo-relative, as ``maven_class_of`` reports it) the way maven
@@ -115,6 +122,8 @@ class MavenSuite(ReproductionSuite):
                 "-Dtest=" + self.selector(files, names),
                 "-DfailIfNoTests=false", "-Dsurefire.failIfNoSpecifiedTests=false",
             ]
+        elif self.visible_args:
+            cmd += self.visible_args
         cmd += self.mvn_args + [self.goal]
         r = _run(env, cmd, timeout=timeout, cwd=self._cwd(repo))
         if r is None:

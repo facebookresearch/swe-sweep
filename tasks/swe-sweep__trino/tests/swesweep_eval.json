@@ -6,8 +6,8 @@
     "visible_timeout": 14400
   },
   "upstream_image": "pandora-maxbug-trino:361",
-  "n_base_passing": 50,
-  "n_base_test_ignore": 0,
+  "n_base_passing": 11288,
+  "n_base_test_ignore": 11,
   "oracle_digest": "85a3ac89dcc9d312e5cb046e21d1a7946347022c29de9aef7b5ec09bcbc5a14c",
   "oracle_pristine_paths": [],
   "upstream_commit": "9f7399e15e6172900e0591deb5a57a45769d8205",
@@ -21,6 +21,13 @@
         "-Dmaven.javadoc.skip=true",
         "-Denforcer.skip=true",
         "-Dmaven.source.skip=true"
+      ],
+      "visible_args": [
+        "-fae",
+        "-Dmaven.test.failure.ignore=true",
+        "-pl",
+        "core/trino-main,core/trino-parser,core/trino-spi,client/trino-jdbc,client/trino-client,lib/trino-geospatial-toolkit,lib/trino-orc,lib/trino-parquet,plugin/trino-hive,plugin/trino-iceberg,plugin/trino-base-jdbc,plugin/trino-geospatial,plugin/trino-kudu,plugin/trino-pinot,plugin/trino-tpcds,plugin/trino-memory,testing/trino-testing,testing/trino-tests",
+        "-am"
       ],
       "type": "maven"
     },
