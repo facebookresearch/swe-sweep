@@ -46,8 +46,7 @@ index f131bdf314..a96c5afa2c 100644
  
      public static final Set<String> SHORT_OPTIONS_ACCEPTING_VALUE = Set.of(Main.PROFILE_SHORT_NAME, Main.CONFIG_FILE_SHORT_NAME);
  
--    public static final String CLI_ARGS = "kc.config.args";
-+    private static final String CLI_ARGS = "kc.config.args";
+     public static final String CLI_ARGS = "kc.config.args";
      public static final String NAME = "CliConfigSource";
 -    private static final String ARG_SEPARATOR = ";;";
      private static final Pattern ARG_KEY_VALUE_SPLIT = Pattern.compile("=");

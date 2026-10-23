@@ -1,16 +1,3 @@
-diff --git a/server-spi-private/src/main/java/org/keycloak/models/Constants.java b/server-spi-private/src/main/java/org/keycloak/models/Constants.java
-index 6fd1188276..fb2b29faf8 100755
---- a/server-spi-private/src/main/java/org/keycloak/models/Constants.java
-+++ b/server-spi-private/src/main/java/org/keycloak/models/Constants.java
-@@ -43,8 +43,6 @@ public final class Constants {
-     public static final Collection<String> defaultClients = Arrays.asList(ACCOUNT_MANAGEMENT_CLIENT_ID, ADMIN_CLI_CLIENT_ID, BROKER_SERVICE_CLIENT_ID, REALM_MANAGEMENT_CLIENT_ID, ADMIN_CONSOLE_CLIENT_ID);
- 
-     public static final String INSTALLED_APP_URN = "urn:ietf:wg:oauth:2.0:oob";
--    public static final String INSTALLED_APP_URL = "http://localhost";
--    public static final String INSTALLED_APP_LOOPBACK = "http://127.0.0.1";
- 
-     public static final String READ_TOKEN_ROLE = "read-token";
-     public static final String[] BROKER_SERVICE_ROLES = {READ_TOKEN_ROLE};
 diff --git a/services/src/main/java/org/keycloak/protocol/oidc/utils/RedirectUtils.java b/services/src/main/java/org/keycloak/protocol/oidc/utils/RedirectUtils.java
 index 500cc2bb80..e2be2a8355 100644
 --- a/services/src/main/java/org/keycloak/protocol/oidc/utils/RedirectUtils.java
