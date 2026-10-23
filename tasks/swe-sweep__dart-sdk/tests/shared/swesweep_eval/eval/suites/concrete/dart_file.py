@@ -9,8 +9,11 @@ from ..base import ReproductionSuite
 from ..utils.compiled import _patched_files, _run
 from ..utils.logging import log
 
-# Where `tools/test.py --write-results` is told to put its one-JSON-object-per-line report.
-_RESULTS = "/tmp/swesweep-dart-results.json"
+# In SDK 2.19.6 `--write-results` is a boolean flag (pkg/test_runner/lib/src/options.dart),
+# not a path option: the report always lands at `<output-directory>/results.json`. The suite
+# therefore picks the directory and reads the fixed file name back out of it.
+_OUT_DIR = "/tmp/swesweep-dart-out"
+_RESULTS = _OUT_DIR + "/results.json"
 
 # The flags a Dart test file declares for itself, in a comment marker the SDK's own runner
 # reads. Without them a `tests/language/` file that exercises an in-progress language
@@ -102,9 +105,10 @@ class DartFileSuite(ReproductionSuite):
     def _run_all(self, env, repo, timeout):
         """The repository's own runner over the configured selectors, read back from the
         JSON report it writes (one object per line, ``{"name": …, "result": "Pass"|…}``)."""
-        env.remove(_RESULTS)
+        env.execute(["rm", "-rf", _OUT_DIR])
         cmd = ["python3", self.test_py, "--mode", self.mode, "--arch", self.arch,
-               "--progress", "status", "--write-results", _RESULTS] + self.visible_selectors
+               "--progress", "status", "--write-results", "--output-directory", _OUT_DIR,
+               ] + self.visible_selectors
         res = _run(env, cmd, timeout=timeout, cwd=repo)
         if res is None:
             log("tools/test.py TIMEOUT after %ds" % timeout)
