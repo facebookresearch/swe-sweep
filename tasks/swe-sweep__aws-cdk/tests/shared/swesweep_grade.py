@@ -686,9 +686,22 @@ def _run_hidden_tests(
         drop_bytecode_caches(env, config.repo)
         if config.needs_build:
             prepare_incremental_build(repo, suite, [test_diff])
-        output = _run_targets(
-            env, suite, config, files, names, capture, jobs, result, f2p=f2p
-        )
+            if getattr(config, "rebuild_hidden_tests", False):
+                # Hidden tests that are compiled (tarantool's C unit tests and luatest
+                # .so modules) need the tree rebuilt after the test patch, the way
+                # _grade_on_gold builds after test + gold; without it the run executes
+                # stale binaries and can never pass. Off by default: for every other
+                # task the incremental build is a per-subtask cost with no effect.
+                built, build_error, build_output = _build(repo, config, jobs)
+                result["detail"]["hidden_build_output"] = build_output[-20000:]
+                if not built:
+                    result["detail"]["error"] = (
+                        "build failed after hidden test patch: " + build_error[-1500:]
+                    )
+        if "error" not in result["detail"]:
+            output = _run_targets(
+                env, suite, config, files, names, capture, jobs, result, f2p=f2p
+            )
     repo.restore_files(touched_files(test_diff))
     if config.needs_build:
         refresh_build_graph(repo, suite)

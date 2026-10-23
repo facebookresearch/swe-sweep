@@ -27,6 +27,10 @@ class EvalRunnerConfig:
     test_timeout: int = 900
     build_timeout: int = 7200
     needs_build: bool = True
+    # Rebuild after applying each subtask's hidden test patch in agent mode, not only
+    # after test + gold: needed when the hidden tests are themselves compiled (tarantool's
+    # C unit tests and luatest .so modules run from stale binaries otherwise).
+    rebuild_hidden_tests: bool = False
     visible_args: tuple[str, ...] | list[str] = ()
     suite: EvaluationSuite | None = None
     test_dirs: tuple[str, ...] | list[str] = ()
