@@ -295,16 +295,6 @@
     },
     {
       "f2p": [
-        "test/optimizer/joins/filter_on_subquery_with_aggregate.test"
-      ],
-      "id": "duckdb-36c38199ce20",
-      "target_files": [
-        "src/include/duckdb/optimizer/join_order/relation_manager.hpp",
-        "src/optimizer/join_order/relation_manager.cpp"
-      ]
-    },
-    {
-      "f2p": [
         "test/sql/types/hugeint/test_hugeint_exponent.test"
       ],
       "id": "duckdb-37580a29144b",
