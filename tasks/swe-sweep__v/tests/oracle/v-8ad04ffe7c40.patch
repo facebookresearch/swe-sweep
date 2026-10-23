@@ -9,7 +9,7 @@ index 548c7c944..f145be405 100644
  	mut typ_pos := p.tok.pos()
  	lang := p.parse_language()
 -	typ := p.parse_any_type(lang, false, false)
-+	typ := p.parse_any_type(lang, false, true)
++	typ := p.parse_any_type(lang, false, p.known_import(p.tok.lit))
  	typ_pos = typ_pos.extend(p.prev_tok.pos())
  	p.check(.dot)
 diff --git a/vlib/v/parser/parse_type.v b/vlib/v/parser/parse_type.v
