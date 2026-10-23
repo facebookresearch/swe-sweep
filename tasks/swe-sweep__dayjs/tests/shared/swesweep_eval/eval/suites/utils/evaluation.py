@@ -35,9 +35,16 @@ def is_test_file(path, test_dirs=(), source_files=()):
     ``source_files`` names the exceptions the name rules get wrong: real source files that
     an official fix edits, such as rails' ``action_controller/test_case.rb`` (a library
     module) or duckdb's ``test_all_types.cpp`` (a table function). They are never reverted.
+
+    A ``test_dirs`` entry that contains ``/`` is an exact path or path prefix, for the
+    hidden-test files no name rule can reach: ruff registers its rule tests in the rule's
+    own ``mod.rs`` (``crates/ruff_linter/src/rules/<rule>/mod.rs``), v lists its test files
+    in ``cmd/tools/vtest-self.v``.
     """
     if path in source_files:
         return False
+    if any("/" in d and (path == d or path.startswith(d.rstrip("/") + "/")) for d in test_dirs):
+        return True
     parts = path.split("/")
     base = parts[-1]
     dirs = set(parts[:-1])

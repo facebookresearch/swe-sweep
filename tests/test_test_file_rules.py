@@ -22,9 +22,9 @@ OFFICIAL_FIX_TEST_FILES = {
     ("dart-sdk", "runtime/vm/object_test.cc"),
     ("datafusion", "datafusion/expr-common/src/type_coercion/binary/tests/arithmetic.rs"),
 }
-# Hidden-test files no path rule can tell from source: ruff's inline `mod tests` in mod.rs,
-# v's test-runner list.
-HIDDEN_FILES_NOT_TESTS = {"ruff": "/mod.rs", "v": "cmd/tools/vtest-self.v"}
+# Hidden-test files no path rule can tell from source (none left: ruff's per-rule mod.rs and
+# v's vtest-self.v are declared by exact path in their test_dirs).
+HIDDEN_FILES_NOT_TESTS: dict[str, str] = {}
 
 
 def _patch_files(path: Path) -> set[str]:
@@ -87,3 +87,12 @@ def test_jest_name_patterns_can_be_anchored():
 def test_babel_selects_fixture_tests_exactly():
     bundle = json.loads((ROOT / "tasks" / "swe-sweep__babel" / "tests" / "swesweep_eval.json").read_text())
     assert bundle["reproduction"]["suite"]["anchor_names"] is True
+
+
+def test_a_test_dirs_entry_with_a_slash_is_an_exact_path_or_prefix():
+    ruff_dirs = ("snapshots", "crates/ruff_linter/src/rules/isort/mod.rs")
+    assert is_test_file("crates/ruff_linter/src/rules/isort/mod.rs", ruff_dirs)
+    assert not is_test_file("crates/ruff_linter/src/rules/isort/rules/mod.rs", ruff_dirs)
+    assert not is_test_file("crates/ruff_linter/src/rules/pylint/mod.rs", ruff_dirs)
+    assert is_test_file("cmd/tools/vtest-self.v", ("cmd/tools/vtest-self.v",))
+    assert is_test_file("vendor/fixtures/a.c", ("vendor/fixtures/",))
