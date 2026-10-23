@@ -16,6 +16,7 @@ from pathlib import Path
 
 from swesweep.constants import HARBOR_SOURCE_REVISION, TASK_PREFIX, TASKS_DIR
 from swesweep.scoring import print_score
+from swesweep.validate import read_verdict, validation_report
 
 
 def task_directories() -> tuple[Path, ...]:
@@ -113,6 +114,69 @@ def harbor_eval_command(
     if dry_run:
         command.append("--dry-run")
     return command
+
+
+def harbor_fix_command(task_dir: Path, fixes: str, output: Path, *, dry_run: bool) -> list[str]:
+    """`harbor run` that submits a set of the task's own official fixes (see OfficialFixAgent)."""
+    command = [
+        sys.executable,
+        "-m",
+        "harbor.cli.main",
+        "run",
+        "--path",
+        str(task_dir),
+        "--agent",
+        "swesweep.patch_agent:OfficialFixAgent",
+        "--agent-kwarg",
+        f"oracle_dir={task_dir / 'tests' / 'oracle'}",
+        "--agent-kwarg",
+        f"fixes={fixes}",
+        "--jobs-dir",
+        str(output),
+        "--n-concurrent",
+        "1",
+    ]
+    if dry_run:
+        command.append("--dry-run")
+    return command
+
+
+def _skipped_fixes(job_dir: Path) -> list[str]:
+    for result in sorted(job_dir.rglob("result.json")):
+        try:
+            metadata = (json.loads(result.read_text()).get("agent_result") or {}).get("metadata") or {}
+        except (OSError, ValueError):
+            continue
+        if "official_fixes_skipped" in metadata:
+            return list(metadata["official_fixes_skipped"])
+    return []
+
+
+def _validate(args: argparse.Namespace) -> int:
+    task_dir = resolve_task(args.task)
+    bugs = [
+        subtask["id"] for subtask in json.loads((task_dir / "tests" / "swesweep_eval.json").read_text())["subtasks"]
+    ]
+    output = args.output.expanduser().resolve() / task_dir.name
+    cases = [("empty", ""), ("stacked", "all")] + ([(f"alone-{bug}", bug) for bug in bugs] if args.each else [])
+    for name, fixes in cases:
+        command = harbor_fix_command(task_dir, fixes, output / name, dry_run=args.dry_run)
+        if subprocess.run(command, check=False).returncode and not args.dry_run:
+            print(f"harbor run failed for {name}; its result is reported as missing", file=sys.stderr)
+    if args.dry_run:
+        return 0
+    report = validation_report(
+        bugs,
+        read_verdict(output / "empty"),
+        read_verdict(output / "stacked"),
+        _skipped_fixes(output / "stacked"),
+        {bug: read_verdict(output / f"alone-{bug}") for bug in bugs} if args.each else {},
+    )
+    (output / "validation.json").write_text(json.dumps(report, indent=1) + "\n")
+    for finding in report["findings"]:
+        print(json.dumps(finding))
+    print(f"{task_dir.name}: {len(report['findings'])} finding(s); report in {output / 'validation.json'}")
+    return 1 if report["findings"] else 0
 
 
 def _eval(args: argparse.Namespace) -> int:
@@ -244,6 +308,17 @@ def _parser() -> argparse.ArgumentParser:
     evaluate.add_argument("--timeout", type=float, help="verifier timeout in seconds")
     evaluate.add_argument("--dry-run", action="store_true", help="validate without running containers")
     evaluate.set_defaults(func=_eval)
+
+    validate = commands.add_parser(
+        "validate", help="grade a task's official fixes like a submission (empty, all stacked, each alone)"
+    )
+    validate.add_argument("task", help="task name, for example dateutil")
+    validate.add_argument(
+        "-o", "--output", type=Path, default=Path("validation"), help="output directory (default: validation/)"
+    )
+    validate.add_argument("--each", action="store_true", help="also grade every official fix alone")
+    validate.add_argument("--dry-run", action="store_true", help="validate without running containers")
+    validate.set_defaults(func=_validate)
 
     info = commands.add_parser("info", help="summarize graded SWE-sweep trials")
     info.add_argument("paths", nargs="+", type=Path, help="graded trial directories")
