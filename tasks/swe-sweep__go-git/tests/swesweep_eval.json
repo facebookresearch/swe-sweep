@@ -6,8 +6,8 @@
     "visible_timeout": 14400
   },
   "upstream_image": "pandora-maxbug-go-git:v5.5.0",
-  "n_base_passing": 54,
-  "n_base_test_ignore": 3,
+  "n_base_passing": 1607,
+  "n_base_test_ignore": 52,
   "oracle_digest": "bbf6ed697a94fe483b2380735f899e3ec0bd8f547a70739380012fd8cad64d8f",
   "oracle_pristine_paths": [],
   "upstream_commit": "9f7399e15e6172900e0591deb5a57a45769d8205",

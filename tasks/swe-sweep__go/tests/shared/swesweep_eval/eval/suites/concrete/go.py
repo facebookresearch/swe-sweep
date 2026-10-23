@@ -2,16 +2,57 @@
 
 import json
 import os
+import re
 
 from ..base import FullSuite
 from ..utils.compiled import _patched_files, _run
 from ..utils.logging import log
 from ..utils.managed import _GO_TEST_FN_RE, _GOCHECK_TEST_METHOD_RE, go_package_of
 
+# A gocheck case line in `-check.v` output: `PASS: worktree_test.go:64: WorktreeSuite.TestCheckout`.
+# gocheck hangs a whole suite off a single `func Test`, so these lines are the only per-case
+# signal a whole-suite run carries. `MISS` is an expected-failure case that unexpectedly
+# passed — noteworthy, but not a failing test, so it folds with `SKIP`.
+_GOCHECK_CASE_RE = re.compile(
+    r"^(PASS|FAIL|SKIP|MISS|PANIC):\s+\S+?:\d+:\s+([A-Za-z_]\w*)\.([A-Za-z_]\w*)"
+)
+_GOCHECK_CASE_STATUS = {
+    "PASS": "passed",
+    "FAIL": "failed",
+    "PANIC": "failed",
+    "SKIP": "skipped",
+    "MISS": "skipped",
+}
+_GOCHECK_IMPORT = "gopkg.in/check.v1"
+
+
+def _links_gocheck(pkgdir):
+    """Whether any test file in the package directory imports gocheck.
+
+    gocheck registers its `-check.*` flags in a package-level var, so any test binary that
+    links it accepts `-check.v`; one that does not exits with "flag provided but not
+    defined" and the whole run is lost. The scan is what keeps the flag off the binaries
+    that cannot take it."""
+    try:
+        names = os.listdir(pkgdir)
+    except OSError:
+        return False
+    for name in names:
+        if not name.endswith("_test.go"):
+            continue
+        try:
+            with open(os.path.join(pkgdir, name), encoding="utf-8", errors="replace") as f:
+                if _GOCHECK_IMPORT in f.read():
+                    return True
+        except OSError:
+            continue
+    return False
+
+
 class GoSuite(FullSuite):
     """``go test``, one invocation per package directory the patch touches.
 
-    Two things are Go's own.
+    Three things are Go's own.
 
     **The test cache has to be off.** ``go test`` caches a package's result keyed on the
     package's own inputs, and replays it verbatim — so a post-gold run whose only change is
@@ -31,6 +72,15 @@ class GoSuite(FullSuite):
     registers ``-check.f`` on the test binary for exactly this, and the flag is only ever
     passed when the test patch actually added a gocheck method — so a repo that does not use
     gocheck never sees it.
+
+    **The whole-suite gate reads gocheck's per-case lines.** The same aggregation bites the
+    visible gate: one network-dependent case fails the package's single ``pkg::Test`` id and
+    every other case in the package leaves the gate. Whole-suite runs therefore split the
+    module into the packages that link gocheck (run once together with ``-check.v``, their
+    ``PASS:``/``FAIL: file:line: Suite.Method`` lines parsed into per-case ids such as
+    ``pkg::WorktreeSuite.TestCheckout``) and the packages that do not (run without the flag,
+    which a non-gocheck binary would reject). A repo with no gocheck package keeps the
+    historical single ``./...`` invocation.
 
     ``go_args`` are the repo's own test flags (build tags, ``-tags sqlite``)."""
 
@@ -67,6 +117,40 @@ class GoSuite(FullSuite):
         self.check_names = dict((k, sorted(v)) for k, v in self.check_names.items())
         return sorted(set(found)), sorted(set(names))
 
+    def _visible_runs(self, env, cwd, cmd, check_pkgs):
+        """The whole-suite invocations for one eval root: ``[(argv, cwd), ...]``.
+
+        Splits ``./...`` into gocheck and non-gocheck packages as the class docstring
+        describes, recording the gocheck import paths in ``check_pkgs`` so the event parse
+        knows whose output lines to read. Falls back to the single ``./...`` invocation
+        when the repo has no gocheck package or the package list cannot be enumerated (the
+        go repo itself is not a module)."""
+        listed = _run(
+            env,
+            ["go", "list", "-f", "{{.ImportPath}}|{{.Dir}}", "./..."],
+            timeout=120,
+            cwd=cwd,
+        )
+        if listed is None or listed.returncode != 0:
+            return [(cmd + ["./..."], cwd)]
+        check, plain = [], []
+        for line in listed.stdout.splitlines():
+            imp, _, pkgdir = line.partition("|")
+            if not imp or not pkgdir:
+                continue
+            (check if _links_gocheck(pkgdir) else plain).append(imp)
+        if not check:
+            return [(cmd + ["./..."], cwd)]
+        check_pkgs.update(check)
+        runs = []
+        if plain:
+            runs.append((cmd + sorted(plain), cwd))
+        # The test-binary flag comes last: the go tool ends package-name collection at the
+        # first flag it does not know, so a `-check.v` placed before the packages swallows
+        # them and the run silently tests the current directory instead.
+        runs.append((cmd + sorted(check) + ["-check.v"], cwd))
+        return runs
+
     def _run(self, env, repo, packages, names, timeout, recursive=False):
         """Run one ``go test -json`` invocation per package/root.
 
@@ -77,51 +161,67 @@ class GoSuite(FullSuite):
         not passing post-gold, exactly like a pytest collection error.
 
         ``recursive`` is the eval gate's whole-suite mode: each entry is a module root and
-        the command names ``./...`` instead of just that one package."""
+        the command names ``./...`` instead of just that one package — or, for a module
+        with gocheck packages, the split runs `_visible_runs` computes."""
         outcomes = {}
         error = False
         output = []
         commands = []
         returncode = 0
+        check_pkgs = set()
         for pkg in packages:
-            cmd = ["go", "test", "-json", "-count=1"] + self.go_args
-            if names:
-                cmd += ["-run", "^(" + "|".join(names) + ")$"]
-            elif not recursive and self.check_names.get(pkg):
-                # No `func Test…` was added but gocheck methods were: select those instead
-                # of falling back to the whole package. `-check.f` is the test binary's own
-                # flag, so it is passed only to the package the methods were added to.
-                cmd += ["-check.f", "^(" + "|".join(self.check_names[pkg]) + ")$"]
-            cmd += ["./..." if recursive else "."]
             cwd = os.path.join(repo, pkg) if pkg != "." else repo
-            commands.append("cd %s && %s" % (cwd, " ".join(cmd)))
-            r = _run(env, cmd, timeout=timeout, cwd=cwd)
-            if r is None:
-                log("go test TIMEOUT after %ds (%s)" % (timeout, pkg))
-                return outcomes, 0, False, True, commands, returncode, "\n".join(output)
-            log("go test %s rc=%d" % (pkg, r.returncode))
-            log(r.stdout[-2000:])
-            output.append(r.stdout)
-            returncode = max(returncode, r.returncode)
-            seen = 0
-            for line in r.stdout.splitlines():
-                if not line.startswith("{"):
-                    continue  # a build error is printed as plain text, not as an event
-                try:
-                    ev = json.loads(line)
-                except ValueError:
-                    continue
-                name = ev.get("Test")
-                action = ev.get("Action")
-                if not name or action not in ("pass", "fail", "skip"):
-                    continue
-                seen += 1
-                prefix = ev.get("Package", pkg) if recursive else pkg
-                outcomes[prefix + "::" + name] = {
-                    "pass": "passed", "fail": "failed", "skip": "skipped",
-                }[action]
-            if r.returncode != 0 and seen == 0:
-                error = True
+            cmd = ["go", "test", "-json", "-count=1"] + self.go_args
+            if recursive:
+                runs = self._visible_runs(env, cwd, cmd, check_pkgs)
+            else:
+                if names:
+                    cmd += ["-run", "^(" + "|".join(names) + ")$"]
+                elif self.check_names.get(pkg):
+                    # No `func Test…` was added but gocheck methods were: select those
+                    # instead of falling back to the whole package. `-check.f` is the test
+                    # binary's own flag, so it is passed only to the package the methods
+                    # were added to.
+                    cmd += ["-check.f", "^(" + "|".join(self.check_names[pkg]) + ")$"]
+                runs = [(cmd + ["."], cwd)]
+            for run_cmd, run_cwd in runs:
+                commands.append("cd %s && %s" % (run_cwd, " ".join(run_cmd)))
+                r = _run(env, run_cmd, timeout=timeout, cwd=run_cwd)
+                if r is None:
+                    log("go test TIMEOUT after %ds (%s)" % (timeout, " ".join(run_cmd)))
+                    return outcomes, 0, False, True, commands, returncode, "\n".join(output)
+                log("go test rc=%d (%s)" % (r.returncode, " ".join(run_cmd)))
+                log(r.stdout[-2000:])
+                output.append(r.stdout)
+                returncode = max(returncode, r.returncode)
+                seen = 0
+                for line in r.stdout.splitlines():
+                    if not line.startswith("{"):
+                        continue  # a build error is printed as plain text, not as an event
+                    try:
+                        ev = json.loads(line)
+                    except ValueError:
+                        continue
+                    name = ev.get("Test")
+                    action = ev.get("Action")
+                    if name and action in ("pass", "fail", "skip"):
+                        seen += 1
+                        prefix = ev.get("Package", pkg) if recursive else pkg
+                        outcomes[prefix + "::" + name] = {
+                            "pass": "passed", "fail": "failed", "skip": "skipped",
+                        }[action]
+                        continue
+                    if recursive and action == "output" and ev.get("Package") in check_pkgs:
+                        m = _GOCHECK_CASE_RE.match(ev.get("Output", ""))
+                        if m:
+                            # gocheck prints one status line per case, and the tested code
+                            # writes to the same stream: a later line for a case is not
+                            # trusted to clear a failure already reported for it.
+                            key = "%s::%s.%s" % (ev["Package"], m.group(2), m.group(3))
+                            if outcomes.get(key) != "failed":
+                                outcomes[key] = _GOCHECK_CASE_STATUS[m.group(1)]
+                if r.returncode != 0 and seen == 0:
+                    error = True
         n = len([o for o in outcomes.values() if o != "skipped"])
         return outcomes, n, error, False, commands, returncode, "\n".join(output)
 
