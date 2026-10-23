@@ -9,8 +9,8 @@
     "visible_timeout": 3600
   },
   "upstream_image": "pandora-maxbug-syn:1.0.36",
-  "n_base_passing": 0,
-  "n_base_test_ignore": 1,
+  "n_base_passing": 104,
+  "n_base_test_ignore": 11,
   "oracle_digest": "e2ebc20615c5f0cf1e49101a64f1a961853e87812658371aa2e6d00b1a94ce25",
   "oracle_pristine_paths": [],
   "upstream_commit": "9f7399e15e6172900e0591deb5a57a45769d8205",
@@ -20,7 +20,16 @@
       "cargo_args": [
         "--all-features"
       ],
-      "type": "cargo"
+      "type": "cargo",
+      "eval_args": [
+        "--all-features",
+        "--exclude",
+        "syn-codegen",
+        "--exclude",
+        "syn-dev",
+        "--tests",
+        "--no-fail-fast"
+      ]
     },
     "test_timeout": 900
   },
