@@ -49,7 +49,9 @@ class JestFixtureSuite(JestSuite):
     fail→pass signal.
 
     Selection stays a narrowing, exactly as in :class:`JestSuite`: two cases whose directory
-    names share a substring both match, which costs runtime rather than correctness.
+    names share a substring both match. That costs runtime, and correctness when the other
+    case is another bug's still-failing test; a task whose case names are the title's last
+    segment (babel) sets ``anchor_names`` to select them exactly.
     """
 
     no_targets = "test patch touched no JavaScript test file and no known fixture corpus"
@@ -73,8 +75,8 @@ class JestFixtureSuite(JestSuite):
             )
         return cls(fixture_roots=roots, **values)
 
-    def __init__(self, fixture_roots, config=None, spec_patterns=()):
-        super().__init__(config=config, spec_patterns=spec_patterns)
+    def __init__(self, fixture_roots, config=None, spec_patterns=(), anchor_names=False):
+        super().__init__(config=config, spec_patterns=spec_patterns, anchor_names=anchor_names)
         roots = []
         for root in fixture_roots:
             pat, drivers, depth = root[:3]

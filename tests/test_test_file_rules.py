@@ -61,3 +61,29 @@ def test_source_files_are_never_test_files():
     assert not is_test_file(
         "actionpack/lib/action_controller/test_case.rb", (), ("actionpack/lib/action_controller/test_case.rb",)
     )
+
+
+def _load_shared_module(task: str, relpath: str):
+    """Load one shared module by path (tasks ship different subsets of the shared tree)."""
+    import importlib.util
+
+    path = ROOT / "tasks" / task / "tests" / "shared" / relpath
+    spec = importlib.util.spec_from_file_location(path.stem + "_under_test", path)
+    module = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(module)
+    return module
+
+
+def test_jest_name_patterns_can_be_anchored():
+    javascript = _load_shared_module("swe-sweep__babel", "swesweep_eval/eval/suites/utils/javascript.py")
+    loose = re.compile(javascript._pattern(["duplicate proto"]))
+    exact = re.compile(javascript._pattern(["duplicate proto"], anchored=True))
+    title = "es2015/destructuring/duplicate proto 4"
+    assert loose.search(title)  # the default narrows, it does not select exactly
+    assert not exact.search(title)
+    assert exact.search("es2015/destructuring/duplicate proto")
+
+
+def test_babel_selects_fixture_tests_exactly():
+    bundle = json.loads((ROOT / "tasks" / "swe-sweep__babel" / "tests" / "swesweep_eval.json").read_text())
+    assert bundle["reproduction"]["suite"]["anchor_names"] is True
