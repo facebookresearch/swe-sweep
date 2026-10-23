@@ -1,11 +1,19 @@
 """ClippyUiSuite suite adapter."""
 
+import re
 import subprocess
 
 from ..base import ReproductionSuite
 from ..utils.compiled import _patched_files
 from ..utils.logging import log
 from ..utils.managed import _UI_DIR_RE
+
+# ui_test (0.29.2) reports one line per case directly to stdout, independent of cargo's own
+# `-q`: "<path>[ (revision `<name>`)] ... ok|FAILED|ignored[ (<reason>)]". Lines for building
+# an auxiliary helper ("Building aux file tests/ui/auxiliary/foo.rs ... ok") do not start at
+# column 0 with "tests/", so anchoring on that prefix tells a real case apart from one.
+_UI_CASE_RESULT_RE = re.compile(r"^(?P<name>tests/\S.*?) \.\.\. (?P<status>ok|FAILED|ignored)\b")
+_UI_CASE_STATUS = {"ok": "passed", "FAILED": "failed", "ignored": "skipped"}
 
 class ClippyUiSuite(ReproductionSuite):
     """clippy's ``tests/ui`` corpus, driven by ``ui_test`` through one cargo test target.
@@ -40,6 +48,15 @@ class ClippyUiSuite(ReproductionSuite):
 
     def run_tests(self, env, repo, files, names, timeout, jobs):
         if files is None:
+            # The whole corpus, run once: this is both how the baseline (the population that
+            # base_tests.json.gz's `passing` is built from) and every grading run's regression
+            # check are computed, so an id here must mean the same case every time. Collapsing
+            # this to a single aggregate id (the previous behaviour) means ANY pre-existing,
+            # unrelated failure in the corpus (e.g. toolchain drift) makes the aggregate fail
+            # on the untouched tree forever, so `passing` is permanently empty and no patch can
+            # ever be caught regressing a sibling test (audit case C04COLL). Parsing ui_test's
+            # own per-case lines from one non-aggregated invocation keeps the harness's internal
+            # parallelism (no external per-stem looping) while reporting one outcome per case.
             cmd = ["cargo", "test", "-q", "--test", "compile-test"]
             log("$ " + " ".join(cmd))
             try:
@@ -48,7 +65,17 @@ class ClippyUiSuite(ReproductionSuite):
                 log("cargo test TIMEOUT after %ds" % timeout)
                 return {}, 0, False, True
             log(r.stdout[-1500:])
-            return {"clippy-ui::<suite>": "passed" if r.returncode == 0 else "failed"}, 1, False, False
+            outcomes = {}
+            for line in r.stdout.splitlines():
+                m = _UI_CASE_RESULT_RE.match(line)
+                if m:
+                    outcomes["clippy-ui::" + m.group("name")] = _UI_CASE_STATUS[m.group("status")]
+            if not outcomes:
+                # No case line at all means the crate did not even build far enough for
+                # ui_test to run anything (a real harness/build error, not a test failure).
+                return {}, 0, True, False
+            n = len([o for o in outcomes.values() if o != "skipped"])
+            return outcomes, n, False, False
         outcomes = {}
         had_error = False
         deadline_hit = False
