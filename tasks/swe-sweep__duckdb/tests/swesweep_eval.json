@@ -241,21 +241,6 @@
     },
     {
       "f2p": [
-        "test/sql/storage/concurrent_table_insertion.test_slow"
-      ],
-      "id": "duckdb-24278e9ffd28",
-      "target_files": [
-        "src/include/duckdb/storage/data_table.hpp",
-        "src/include/duckdb/storage/table/append_state.hpp",
-        "src/include/duckdb/storage/table/row_group_collection.hpp",
-        "src/storage/data_table.cpp",
-        "src/storage/local_storage.cpp",
-        "src/storage/table/row_group.cpp",
-        "src/storage/table/row_group_collection.cpp"
-      ]
-    },
-    {
-      "f2p": [
         "test/optimizer/issue_12181.test"
       ],
       "id": "duckdb-282d562aa395",
