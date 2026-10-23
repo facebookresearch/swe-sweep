@@ -241,15 +241,6 @@
     },
     {
       "f2p": [
-        "io.netty.handler.codec.dns.AbstractDnsRecordTest.testEqualsAndHashCodeIgnoreCase"
-      ],
-      "id": "netty-2cb78930daa8",
-      "target_files": [
-        "codec-dns/src/main/java/io/netty5/handler/codec/dns/AbstractDnsRecord.java"
-      ]
-    },
-    {
-      "f2p": [
         "io.netty.handler.codec.http2.Http2StreamFrameToHttpObjectCodecTest.testIsSharableBetweenChannels"
       ],
       "id": "netty-2f6d932c12d6",
@@ -310,15 +301,6 @@
       "id": "netty-3c02484e5e61",
       "target_files": [
         "codec-http/src/main/java/io/netty/handler/codec/http/multipart/HttpPostRequestDecoder.java"
-      ]
-    },
-    {
-      "f2p": [
-        "io.netty.handler.codec.dns.DefaultDnsRecordEncoderTest.testEncodePtr"
-      ],
-      "id": "netty-3ea067d1bbc4",
-      "target_files": [
-        "codec-dns/src/main/java/io/netty/handler/codec/dns/DefaultDnsRecordEncoder.java"
       ]
     },
     {
@@ -878,18 +860,6 @@
       "id": "netty-e8bbc5049252",
       "target_files": [
         "codec/src/main/java/io/netty/handler/codec/LineBasedFrameDecoder.java"
-      ]
-    },
-    {
-      "f2p": [
-        "io.netty.handler.traffic.TrafficShapingHandlerTest.testQueuedWritesReleasedAndFailedOnClose"
-      ],
-      "id": "netty-e8cb60dd8faa",
-      "target_files": [
-        "handler/src/main/java/io/netty/handler/traffic/AbstractTrafficShapingHandler.java",
-        "handler/src/main/java/io/netty/handler/traffic/ChannelTrafficShapingHandler.java",
-        "handler/src/main/java/io/netty/handler/traffic/GlobalChannelTrafficShapingHandler.java",
-        "handler/src/main/java/io/netty/handler/traffic/GlobalTrafficShapingHandler.java"
       ]
     },
     {
