@@ -95,14 +95,31 @@ RUN git init -q -b 6.4 \
 # census repeatable; the pristine check below is what says the set is usable.
 # `--no-plugins` for the same reason as the other PHP tasks: the tree does not list every
 # plugin under `allow-plugins`, and the ones involved only wire up linters.
+#
+# --- SWE-sweep: pinned dependency set ---
+# Resolving at build time picked development branches of 2026 (doctrine/orm 3.8.x-dev, twig
+# 3.x-dev, symfony/phpunit-bridge 7.4.x-dev, ...): the bridge's 7.4 copy carries bug
+# ca88299a31a7's fix verbatim, newer twig and cache test suites made 32 visible test files fatal
+# at load, and every rebuild differed. This composer.lock was resolved as of v6.4.0's release
+# (2023-11-29): every package is a release from before that date, cache/integration-tests is
+# its 2021 master commit, and symfony/phpunit-bridge is v6.4.0. symfony's .gitignore lists
+# composer.lock, so the baseline commit is unchanged.
+COPY composer.lock /symfony/composer.lock
 RUN composer install --no-interaction --no-progress --prefer-dist --no-plugins
+RUN if grep -q 'findRoot' vendor/symfony/phpunit-bridge/bin/simple-phpunit.php; then \
+      echo "vendor/symfony/phpunit-bridge is not the pinned v6.4.0" >&2; exit 1; fi
 
 # Symfony does not depend on phpunit directly. `./phpunit` is a wrapper around
 # `simple-phpunit` from the in-tree PhpUnit bridge, which *downloads and installs* the
 # requested PHPUnit into `SYMFONY_PHPUNIT_DIR` on first use. The grading container has no
 # network, so that install has to happen here, at build time. 9.6 is the version the wrapper
 # itself defaults to on this branch.
-ENV SYMFONY_PHPUNIT_VERSION=9.6
+#
+# --- SWE-sweep: PHPUnit 9.6.13 ---
+# Held to the last 9.6 release before v6.4.0 (2023-09-19), like the composer.lock above. 9.6.14
+# (2023-12-01) began shipping its own composer.lock, which the v6.4.0 bridge's install step
+# cannot handle: it adds itself to PHPUnit's project and the locked install stops (exit 4).
+ENV SYMFONY_PHPUNIT_VERSION=9.6.13
 ENV SYMFONY_PHPUNIT_DIR=/symfony/.phpunit
 RUN php ./phpunit install
 
