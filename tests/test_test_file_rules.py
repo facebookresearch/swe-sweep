@@ -23,8 +23,8 @@ OFFICIAL_FIX_TEST_FILES = {
     ("datafusion", "datafusion/expr-common/src/type_coercion/binary/tests/arithmetic.rs"),
 }
 # Hidden-test files no path rule can tell from source: ruff's inline `mod tests` in mod.rs,
-# duckdb's hidden patch that edits the SQL grammar (a task defect), v's test-runner list.
-HIDDEN_FILES_NOT_TESTS = {"ruff": "/mod.rs", "duckdb": "third_party/libpg_query/", "v": "cmd/tools/vtest-self.v"}
+# v's test-runner list.
+HIDDEN_FILES_NOT_TESTS = {"ruff": "/mod.rs", "v": "cmd/tools/vtest-self.v"}
 
 
 def _patch_files(path: Path) -> set[str]:
