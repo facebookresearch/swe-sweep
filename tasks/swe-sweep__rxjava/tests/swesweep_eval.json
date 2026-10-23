@@ -42,17 +42,6 @@
     },
     {
       "f2p": [
-        "io.reactivex.internal.operators.maybe.MaybeAmbTest.noWinnerSuccessDispose"
-      ],
-      "id": "rxjava-1c8f5821ed8a",
-      "target_files": [
-        "src/main/java/io/reactivex/internal/operators/completable/CompletableAmb.java",
-        "src/main/java/io/reactivex/internal/operators/maybe/MaybeAmb.java",
-        "src/main/java/io/reactivex/internal/operators/single/SingleAmb.java"
-      ]
-    },
-    {
-      "f2p": [
         "io.reactivex.internal.operators.observable.ObservableTakeLastTimedTest.lastWindowIsFixedInTime"
       ],
       "id": "rxjava-32868fd52d7a",
@@ -185,15 +174,6 @@
       "id": "rxjava-9419632fd11a",
       "target_files": [
         "src/main/java/io/reactivex/internal/operators/flowable/FlowablePublish.java"
-      ]
-    },
-    {
-      "f2p": [
-        "io.reactivex.internal.operators.single.SingleTimeoutTest.timeoutWithZero"
-      ],
-      "id": "rxjava-a2157bd71de8",
-      "target_files": [
-        "src/main/java/io/reactivex/rxjava3/internal/operators/single/SingleTimeout.java"
       ]
     },
     {
