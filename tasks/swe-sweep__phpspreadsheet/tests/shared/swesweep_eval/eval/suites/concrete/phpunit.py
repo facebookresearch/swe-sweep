@@ -26,16 +26,37 @@ class PhpUnitSuite(ReproductionSuite):
     shared reader. ``--filter`` narrows within the selected files by method name, the same
     narrowing (not identity) the JS suites' ``-t`` gives.
 
+    ``qualified`` keys outcomes by ``classname.name`` instead of the bare method name:
+    PHPUnit runs are merged across files, and two files can hold a same-named method —
+    with bare keys the later file's outcome silently overwrites the earlier one. The
+    class name is read from the report's ``classname`` attribute (PHPUnit 9 writes it
+    Java-style, backslashes replaced by dots).
+
+    ``nested`` reads the report's nested suites (PHPUnit 9 nests each class and each
+    data-provider method; see ``_parse_junit``).
+
     ``phpunit_args`` are the repo's own flags, and ``config`` names its ``phpunit.xml`` when
     the default lookup does not find one.
+
+    ``visible_globs`` splits the visible (pathless) run into one invocation per matched
+    directory: a single whole-suite invocation keeps every result in one process and is
+    OOM-killed on suites past a few tens of thousands of cases (symfony's is ~44k), and
+    PHPUnit 9 executes only the first positional path, so the directories cannot share one
+    invocation. The globs should mirror the configuration's own ``<directory>`` entries so
+    the split selects exactly the same test files the pathless run would.
     """
 
     no_targets = "test patch touched no PHPUnit test file"
 
-    def __init__(self, phpunit_args=(), config=None, binary="vendor/bin/phpunit"):
+    def __init__(
+        self, phpunit_args=(), config=None, binary="vendor/bin/phpunit", qualified=False, visible_globs=(), nested=False
+    ):
         self.phpunit_args = list(phpunit_args)
         self.config = config
         self.binary = binary
+        self.qualified = qualified
+        self.visible_globs = list(visible_globs)
+        self.nested = nested
 
     def targets(self, diff, env=None):
         del env
@@ -87,9 +108,19 @@ class PhpUnitSuite(ReproductionSuite):
             cmd += ["--filter", test_filter]
 
         # PHPUnit 9 accepts several positional paths but silently executes only the first.
-        # Keep the visible-suite call as one pathless invocation and run selected files one
-        # at a time, merging their reports on the host.
+        # Run selected files one at a time, merging their reports on the host. The
+        # visible-suite call is one pathless invocation, unless `visible_globs` splits it
+        # into one invocation per matched directory (see the class docstring).
         targets = [None] if files is None else list(files)
+        if files is None and self.visible_globs:
+            probe = _run(
+                env,
+                ["sh", "-c", "ls -d " + " ".join(self.visible_globs) + " 2>/dev/null"],
+                cwd=repo,
+            )
+            if probe is not None and probe.stdout.split():
+                targets = sorted(set(probe.stdout.split()))
+                log(f"phpunit visible run split into {len(targets)} directories")
         outcomes = {}
         n = 0
         error = False
@@ -111,7 +142,7 @@ class PhpUnitSuite(ReproductionSuite):
             if not env.exists(_PHPUNIT_XML):
                 error = True
                 continue
-            found, ran = _parse_junit(env, _PHPUNIT_XML)
+            found, ran = _parse_junit(env, _PHPUNIT_XML, qualified=self.qualified, nested=self.nested)
             outcomes.update(found)
             n += ran
             error = error or (r.returncode != 0 and not found)

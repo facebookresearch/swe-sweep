@@ -89,7 +89,7 @@ def died_running(res):
     return res.returncode < 0 or any(marker in res.stdout for marker in _STARTED_A_CASE)
 
 
-def _parse_junit(env, path, qualified=False):
+def _parse_junit(env, path, qualified=False, nested=False):
     """``(outcomes, n_run)`` from a JUnit XML report — the format CTest
     (``--output-junit``), gtest (``--gtest_output=xml``) and pytest all write, so the
     verdict shape stays identical across suites. A skipped test is recorded but not
@@ -98,6 +98,12 @@ def _parse_junit(env, path, qualified=False):
     ``qualified`` joins the case's ``classname`` to its name. CTest's names are already
     whole (``test::foo``); gtest splits them, and only the joined ``Suite.Name`` is the id
     a ``--gtest_filter`` and a reader would recognize.
+
+    ``nested`` reads every ``<testcase>`` in the tree (``root.iter``) instead of only the
+    direct children of the top-level suites. CTest and gtest put each case directly under
+    its ``<testsuite>``; PHPUnit 9 wraps each class in a nested suite and each data-provider
+    method in another below that, so a direct-child read of a PHPUnit whole-suite report
+    sees zero cases. Off by default, so every other reader is unchanged.
 
     A report that does not parse is an *unreadable* report, not a broken evaluation: a test
     binary that dies mid-run leaves the XML unterminated. It reads as no outcomes, which is
@@ -109,21 +115,24 @@ def _parse_junit(env, path, qualified=False):
     except ET.ParseError as exc:
         log(f"unparseable JUnit report {path}: {exc}")
         return {}, 0
-    suites = [root] if root.tag == "testsuite" else list(root)
-    for suite in suites:
-        for tc in suite.findall("testcase"):
-            outcome = "passed"
-            for kid in list(tc):
-                if kid.tag == "failure":
-                    outcome = "failed"
-                elif kid.tag == "error":
-                    outcome = "error"
-                elif kid.tag == "skipped":
-                    outcome = "skipped"
-            name = tc.get("name", "")
-            if qualified:
-                name = (tc.get("classname", "") + "." + name).strip(".")
-            outcomes[name] = outcome
+    if nested:
+        cases = list(root.iter("testcase"))
+    else:
+        suites = [root] if root.tag == "testsuite" else list(root)
+        cases = [tc for suite in suites for tc in suite.findall("testcase")]
+    for tc in cases:
+        outcome = "passed"
+        for kid in list(tc):
+            if kid.tag == "failure":
+                outcome = "failed"
+            elif kid.tag == "error":
+                outcome = "error"
+            elif kid.tag == "skipped":
+                outcome = "skipped"
+        name = tc.get("name", "")
+        if qualified:
+            name = (tc.get("classname", "") + "." + name).strip(".")
+        outcomes[name] = outcome
     return outcomes, len([o for o in outcomes.values() if o != "skipped"])
 
 
