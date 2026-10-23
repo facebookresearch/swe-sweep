@@ -3,7 +3,10 @@
   "container_repo": "/jest",
   "evaluation": {
     "suite": "reproduction",
-    "visible_timeout": 14400
+    "visible_timeout": 14400,
+    "test_dirs": [
+      "e2e"
+    ]
   },
   "upstream_image": "pandora-maxbug-jest:29.0.0",
   "n_base_passing": 0,

@@ -3,7 +3,10 @@
   "container_repo": "/react-router",
   "evaluation": {
     "suite": "reproduction",
-    "visible_timeout": 7200
+    "visible_timeout": 7200,
+    "test_dirs": [
+      "integration"
+    ]
   },
   "upstream_image": "pandora-maxbug-react-router:7.7.1",
   "n_base_passing": 2271,

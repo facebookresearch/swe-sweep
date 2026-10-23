@@ -3,7 +3,10 @@
   "container_repo": "/repo",
   "evaluation": {
     "suite": "reproduction",
-    "visible_timeout": 14400
+    "visible_timeout": 14400,
+    "test_dirs": [
+      "test_files"
+    ]
   },
   "upstream_image": "pandora-maxbug-datafusion:52.0.0",
   "n_base_passing": 0,

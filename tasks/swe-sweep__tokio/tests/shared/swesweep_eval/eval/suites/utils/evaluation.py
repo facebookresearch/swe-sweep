@@ -17,7 +17,7 @@ _INVALID_XML_CHARS_RE = re.compile("[\x00-\x08\x0b\x0c\x0e-\x1f\ud800-\udfff\uff
 
 
 
-def is_test_file(path, test_dirs=()):
+def is_test_file(path, test_dirs=(), source_files=()):
     """Whether the agent's edit to ``path`` is an edit to a *test*, which eval reverts
     before scoring (an agent must not be allowed to grade itself).
 
@@ -31,7 +31,13 @@ def is_test_file(path, test_dirs=()):
     both keep their test files inline beside the code (``strings/builder_test.v``), so no
     directory rule can reach them. ``.vv`` is there for the same reason — it is V's
     extension for a program that exists only as test data.
+
+    ``source_files`` names the exceptions the name rules get wrong: real source files that
+    an official fix edits, such as rails' ``action_controller/test_case.rb`` (a library
+    module) or duckdb's ``test_all_types.cpp`` (a table function). They are never reverted.
     """
+    if path in source_files:
+        return False
     parts = path.split("/")
     base = parts[-1]
     dirs = set(parts[:-1])

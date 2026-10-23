@@ -579,7 +579,7 @@ def _apply_agent_patch(
                 [
                     p
                     for p in touched_files(agent_diff)
-                    if is_test_file(p, config.test_dirs)
+                    if is_test_file(p, config.test_dirs, config.source_files)
                 ]
             )
         else:

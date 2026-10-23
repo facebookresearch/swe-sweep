@@ -3,7 +3,10 @@
   "container_repo": "/ruff",
   "evaluation": {
     "suite": "reproduction",
-    "visible_timeout": 14400
+    "visible_timeout": 14400,
+    "test_dirs": [
+      "snapshots"
+    ]
   },
   "upstream_image": "pandora-maxbug-ruff:0.8.1",
   "n_base_passing": 519,

@@ -4,6 +4,7 @@
   "evaluation": {
     "suite": "reproduction",
     "test_dirs": [
+      "testament",
       "tests"
     ],
     "visible_timeout": 21600

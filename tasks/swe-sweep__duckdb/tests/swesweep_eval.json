@@ -3,7 +3,10 @@
   "container_repo": "/repo",
   "evaluation": {
     "suite": "reproduction",
-    "visible_timeout": 14400
+    "visible_timeout": 14400,
+    "source_files": [
+      "src/function/table/system/test_all_types.cpp"
+    ]
   },
   "upstream_image": "pandora-maxbug-duckdb:v0.10.0",
   "n_base_passing": 2828,

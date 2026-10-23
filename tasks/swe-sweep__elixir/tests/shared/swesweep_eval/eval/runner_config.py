@@ -30,6 +30,8 @@ class EvalRunnerConfig:
     visible_args: tuple[str, ...] | list[str] = ()
     suite: EvaluationSuite | None = None
     test_dirs: tuple[str, ...] | list[str] = ()
+    # Repo-relative paths that are source code although their names look like tests.
+    source_files: tuple[str, ...] | list[str] = ()
 
     def resolved_suite(self) -> EvaluationSuite:
         return self.suite or PytestEvaluationSuite(self.paths, self.visible_args)
