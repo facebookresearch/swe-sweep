@@ -62,6 +62,29 @@ RUN set -eux; \
 COPY --from=swesweep-src /src /trino
 WORKDIR /trino
 
+# --- SWE-sweep task fix (trino-165617cc376a) ---
+# The official fix replaces RemoveRedundantTableScanPredicate's 2-arg constructor with a
+# 3-arg one. The shared visible test TestRemoveRedundantTableScanPredicate calls that
+# constructor, and an agent's test edits are reverted at grading time, so a correct
+# upstream-style fix would leave the visible test uncompilable and fail the trino-main
+# test compile for 38 other subtasks' hidden runs. Ship the developers' updated test
+# (the setUp hunk of this subtask's hidden test.patch, which is therefore removed from
+# the patch) together with a delegating 3-arg constructor in the base tree: the tree
+# compiles and behaves identically before and after an upstream-style fix.
+RUN set -eux; \
+    RULE=core/trino-main/src/main/java/io/trino/sql/planner/iterative/rule/RemoveRedundantTableScanPredicate.java; \
+    VISTEST=core/trino-main/src/test/java/io/trino/sql/planner/iterative/rule/TestRemoveRedundantTableScanPredicate.java; \
+    grep -q 'new RemoveRedundantTableScanPredicate(tester().getMetadata(), new TypeOperators())' "$VISTEST"; \
+    sed -i 's/new RemoveRedundantTableScanPredicate(tester()\.getMetadata(), new TypeOperators())/new RemoveRedundantTableScanPredicate(tester().getMetadata(), new TypeOperators(), tester().getTypeAnalyzer())/' "$VISTEST"; \
+    grep -q 'new RemoveRedundantTableScanPredicate(tester().getMetadata(), new TypeOperators(), tester().getTypeAnalyzer())' "$VISTEST"; \
+    grep -q '^import io\.trino\.sql\.planner\.Symbol;$' "$RULE"; \
+    sed -i 's/^import io\.trino\.sql\.planner\.Symbol;$/import io.trino.sql.planner.Symbol;\nimport io.trino.sql.planner.TypeAnalyzer;/' "$RULE"; \
+    grep -q '^import io\.trino\.sql\.planner\.TypeAnalyzer;$' "$RULE"; \
+    grep -q '        this.domainTranslator = new DomainTranslator(metadata);' "$RULE"; \
+    awk '{ print; if (prev == "        this.domainTranslator = new DomainTranslator(metadata);" && $0 == "    }") { print ""; print "    public RemoveRedundantTableScanPredicate(Metadata metadata, TypeOperators typeOperators, TypeAnalyzer typeAnalyzer)"; print "    {"; print "        this(metadata, typeOperators);"; print "    }" } prev = $0 }' "$RULE" > "$RULE.tmp"; \
+    mv "$RULE.tmp" "$RULE"; \
+    grep -q 'public RemoveRedundantTableScanPredicate(Metadata metadata, TypeOperators typeOperators, TypeAnalyzer typeAnalyzer)' "$RULE"
+
 # Make the exported tree a git repo (the export carries no .git), commit the sources and tag
 # them `baseline` — a SOURCE-ONLY tag. The repo's own .gitignore covers `target/`, so the
 # runner's `git reset --hard baseline && git clean -fdq` (no -x) resets the sources between
