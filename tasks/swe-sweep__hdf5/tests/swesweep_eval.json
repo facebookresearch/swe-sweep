@@ -150,15 +150,6 @@
     },
     {
       "f2p": [
-        "H5TEST-dtypes"
-      ],
-      "id": "hdf5-46ec0c6c502b",
-      "target_files": [
-        "src/H5Aint.c"
-      ]
-    },
-    {
-      "f2p": [
         "H5TEST-testhdf5-base"
       ],
       "id": "hdf5-50b75316c1c9",
@@ -218,36 +209,9 @@
       "f2p": [
         "H5TEST-testhdf5-base"
       ],
-      "id": "hdf5-aefd1d02488b",
-      "target_files": [
-        "src/H5Shyper.c"
-      ]
-    },
-    {
-      "f2p": [
-        "H5TEST-testhdf5-base"
-      ],
-      "id": "hdf5-bcc7226672c8",
-      "target_files": [
-        "src/H5Shyper.c"
-      ]
-    },
-    {
-      "f2p": [
-        "H5TEST-testhdf5-base"
-      ],
       "id": "hdf5-cd22c0502f29",
       "target_files": [
         "src/H5Shyper.c"
-      ]
-    },
-    {
-      "f2p": [
-        "H5TEST-testhdf5-base"
-      ],
-      "id": "hdf5-fe3e4ec13a61",
-      "target_files": [
-        "src/H5Aint.c"
       ]
     }
   ],
