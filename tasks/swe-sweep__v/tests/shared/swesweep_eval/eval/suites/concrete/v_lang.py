@@ -2,11 +2,48 @@
 
 import os
 import posixpath
+import re
 import subprocess
 
 from ..base import FullSuite
 from ..utils.compiled import _patched_files
 from ..utils.logging import log
+
+
+# One per-file status line of `v test <root>`, e.g. `OK    [  12/1424]     5.1 ms vlib/x/y_test.v`.
+# Lines printed by golden runners for their own cases name a quoted command, not a test file, so
+# they do not match.
+_V_STATUS_RE = re.compile(r"^\s*(OK|FAIL|SKIP)\s+\[\s*(\d+)/(\d+)\]\s+[\d.]+ ms\s+(\S+_test(?:\.\w+)?\.v)\s*$")
+_V_STATUS = {"OK": "passed", "FAIL": "failed", "SKIP": "skipped"}
+
+
+def _per_file_outcomes(text):
+    """``{test file: outcome}`` from the runner's status lines, or ``{}`` if they cannot be trusted.
+
+    A failing test's own output goes to the same stream, so code under test could print a status
+    line of its own. The runner prints exactly one line per file, numbered 1..N once each; a
+    repeated file or number, more than one total, or a count other than N means not every line
+    is the runner's, and the caller falls back to one outcome for the root."""
+    out = {}
+    seen = set()
+    totals = set()
+    for line in text.splitlines():
+        m = _V_STATUS_RE.match(line)
+        if not m:
+            continue
+        idx, path = int(m.group(2)), m.group(4)
+        if path in out or idx in seen:
+            return {}
+        seen.add(idx)
+        totals.add(int(m.group(3)))
+        out[path] = _V_STATUS[m.group(1)]
+    if out:
+        # with no index repeated, N lines whose indices run from 1 to N are exactly 1..N; checked
+        # without building that range, since N comes from the (untrusted) output
+        total = totals.pop() if len(totals) == 1 else -1
+        if len(seen) != total or min(seen) != 1 or max(seen) != total:
+            return {}
+    return out
 
 
 class VSuite(FullSuite):
@@ -183,7 +220,10 @@ class VSuite(FullSuite):
     def run_all(self, env, repo, timeout, cap, jobs):
         """``v test <root>`` per configured root — V's own recursive runner, which walks
         the tree for ``_test.v`` files itself, golden runners included. One outcome per
-        root: the runner prints a summary, not a machine-readable per-file report."""
+        test file, read from the runner's per-file status lines: a single outcome per root
+        fails as soon as any file fails on the untouched tree, which left the must-pass
+        list empty. A root whose output has no status line, or status lines that cannot all be the
+        runner's (see :func:`_per_file_outcomes`), keeps one outcome for the root."""
         del jobs
         outcomes = {}
         commands = []
@@ -201,7 +241,11 @@ class VSuite(FullSuite):
                 return None, True, self._capture(commands, returncode, "\n".join(output), cap)
             output.append(result.stdout)
             returncode = max(returncode, result.returncode)
-            outcomes[root] = "passed" if result.returncode == 0 else "failed"
+            per_file = _per_file_outcomes(result.stdout)
+            if per_file:
+                outcomes.update(per_file)
+            else:
+                outcomes[root] = "passed" if result.returncode == 0 else "failed"
         return outcomes, False, self._capture(commands, returncode, "\n".join(output), cap)
 
     def run_selected(self, env, repo, files, names, timeout, cap, jobs):
