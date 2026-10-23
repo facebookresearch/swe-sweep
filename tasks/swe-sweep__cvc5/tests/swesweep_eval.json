@@ -2,12 +2,53 @@
   "build_jobs": 4,
   "container_repo": "/cvc5",
   "evaluation": {
-    "suite": "reproduction",
+    "suite": {
+      "all_args": [
+        "-L",
+        "regress0"
+      ],
+      "all_target": "cvc5",
+      "build_dir": "/build",
+      "corpora": [
+        {
+          "dir": "test/regress/cli",
+          "exts": [
+            ".smt2",
+            ".sy",
+            ".p"
+          ],
+          "prefix": "",
+          "strip_ext": false,
+          "target": "cvc5"
+        },
+        {
+          "dir": "test/regress",
+          "exts": [
+            ".smt2",
+            ".sy",
+            ".p"
+          ],
+          "prefix": "",
+          "strip_ext": false,
+          "target": "cvc5"
+        },
+        {
+          "dir": "test/unit",
+          "exts": [
+            ".cpp"
+          ],
+          "prefix": "unit/",
+          "strip_ext": true,
+          "target": "{stem}"
+        }
+      ],
+      "type": "ctest-path"
+    },
     "visible_timeout": 7200
   },
   "upstream_image": "pandora-maxbug-cvc5:1.0.5",
-  "n_base_passing": 0,
-  "n_base_test_ignore": 1,
+  "n_base_passing": 1771,
+  "n_base_test_ignore": 0,
   "oracle_digest": "d4d5840e1bdf9f0c4877d54613a8cef9916e7b07fa18d5e2ad06f4756cd805bf",
   "oracle_pristine_paths": [],
   "upstream_commit": "9f7399e15e6172900e0591deb5a57a45769d8205",
