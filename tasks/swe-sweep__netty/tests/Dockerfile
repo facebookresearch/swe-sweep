@@ -86,9 +86,7 @@ WORKDIR /netty
 # consumers' `git reset --hard baseline && git clean -fdq` (no -x) resets the sources
 # between subtasks while keeping the compiled output below.
 # --- SWE-sweep v1.1: whole-suite run (must-pass list) ---
-# resolver-dns's DnsNameResolverTest resolves real host names and hangs without a network, so
-# the whole-suite run never finishes. No subtask touches resolver-dns. Exclude that one class from
-# surefire (appended to the parent's excludes); the module's other tests still run.
+# resolver-dns's DnsNameResolverTest hangs without a network, so exclude that one class from surefire (no subtask touches it).
 RUN perl -0pi -e 's|</dependencies>\n</project>|</dependencies>\n\n  <build>\n    <plugins>\n      <plugin>\n        <groupId>org.apache.maven.plugins</groupId>\n        <artifactId>maven-surefire-plugin</artifactId>\n        <configuration>\n          <excludes combine.children="append">\n            <exclude>**/DnsNameResolverTest.java</exclude>\n          </excludes>\n        </configuration>\n      </plugin>\n    </plugins>\n  </build>\n</project>|' resolver-dns/pom.xml \
  && grep -q "<exclude>\*\*/DnsNameResolverTest.java</exclude>" resolver-dns/pom.xml
 

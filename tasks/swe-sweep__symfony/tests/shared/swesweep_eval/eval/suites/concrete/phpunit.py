@@ -26,24 +26,14 @@ class PhpUnitSuite(ReproductionSuite):
     shared reader. ``--filter`` narrows within the selected files by method name, the same
     narrowing (not identity) the JS suites' ``-t`` gives.
 
-    ``qualified`` keys outcomes by ``classname.name`` instead of the bare method name:
-    PHPUnit runs are merged across files, and two files can hold a same-named method —
-    with bare keys the later file's outcome silently overwrites the earlier one. The
-    class name is read from the report's ``classname`` attribute (PHPUnit 9 writes it
-    Java-style, backslashes replaced by dots).
-
-    ``nested`` reads the report's nested suites (PHPUnit 9 nests each class and each
-    data-provider method; see ``_parse_junit``).
+    ``qualified`` keys outcomes by ``classname.name``, so same-named methods in two merged files do not overwrite each other.
+    ``nested`` reads PHPUnit 9's nested suites (see ``_parse_junit``).
 
     ``phpunit_args`` are the repo's own flags, and ``config`` names its ``phpunit.xml`` when
     the default lookup does not find one.
 
-    ``visible_globs`` splits the visible (pathless) run into one invocation per matched
-    directory: a single whole-suite invocation keeps every result in one process and is
-    OOM-killed on suites past a few tens of thousands of cases (symfony's is ~44k), and
-    PHPUnit 9 executes only the first positional path, so the directories cannot share one
-    invocation. The globs should mirror the configuration's own ``<directory>`` entries so
-    the split selects exactly the same test files the pathless run would.
+    ``visible_globs`` splits the visible run into one invocation per matched directory (one process for symfony's ~44k
+    cases is OOM-killed); the globs should mirror the configuration's own ``<directory>`` entries.
     """
 
     no_targets = "test patch touched no PHPUnit test file"
@@ -108,9 +98,8 @@ class PhpUnitSuite(ReproductionSuite):
             cmd += ["--filter", test_filter]
 
         # PHPUnit 9 accepts several positional paths but silently executes only the first.
-        # Run selected files one at a time, merging their reports on the host. The
-        # visible-suite call is one pathless invocation, unless `visible_globs` splits it
-        # into one invocation per matched directory (see the class docstring).
+        # Run selected files one at a time and merge their reports on the host.
+        # The visible call is one pathless invocation, unless `visible_globs` splits it per directory (class docstring).
         targets = [None] if files is None else list(files)
         if files is None and self.visible_globs:
             probe = _run(

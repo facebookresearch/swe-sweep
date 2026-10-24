@@ -8,10 +8,8 @@ from ..utils.compiled import _patched_files
 from ..utils.logging import log
 from ..utils.managed import _UI_DIR_RE
 
-# ui_test (0.29.2) reports one line per case directly to stdout, independent of cargo's own
-# `-q`: "<path>[ (revision `<name>`)] ... ok|FAILED|ignored[ (<reason>)]". Lines for building
-# an auxiliary helper ("Building aux file tests/ui/auxiliary/foo.rs ... ok") do not start at
-# column 0 with "tests/", so anchoring on that prefix tells a real case apart from one.
+# ui_test prints one line per case: "<path>[ (revision `<name>`)] ... ok|FAILED|ignored[ (<reason>)]".
+# Aux-file build lines do not start at column 0 with "tests/", so anchoring on that prefix skips them.
 _UI_CASE_RESULT_RE = re.compile(r"^(?P<name>tests/\S.*?) \.\.\. (?P<status>ok|FAILED|ignored)\b")
 _UI_CASE_STATUS = {"ok": "passed", "FAILED": "failed", "ignored": "skipped"}
 
@@ -48,15 +46,8 @@ class ClippyUiSuite(ReproductionSuite):
 
     def run_tests(self, env, repo, files, names, timeout, jobs):
         if files is None:
-            # The whole corpus, run once: this is both how the baseline (the population that
-            # base_tests.json.gz's `passing` is built from) and every grading run's regression
-            # check are computed, so an id here must mean the same case every time. Collapsing
-            # this to a single aggregate id (the previous behaviour) means ANY pre-existing,
-            # unrelated failure in the corpus (e.g. toolchain drift) makes the aggregate fail
-            # on the untouched tree forever, so `passing` is permanently empty and no patch can
-            # ever be caught regressing a sibling test (audit case C04COLL). Parsing ui_test's
-            # own per-case lines from one non-aggregated invocation keeps the harness's internal
-            # parallelism (no external per-stem looping) while reporting one outcome per case.
+            # Run the whole corpus once and parse ui_test's per-case lines: one outcome per case (was one aggregate id).
+            # One aggregate id fails on any unrelated failure, which left `passing` empty and caught no regression.
             cmd = ["cargo", "test", "-q", "--test", "compile-test"]
             log("$ " + " ".join(cmd))
             try:

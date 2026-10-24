@@ -35,14 +35,8 @@ class ExUnitSuite(FullSuite):
     fails to *compile* is likewise a failing test, which for a language repository is the
     commonest pre-gold state there is.
 
-    ``node_name`` runs a suite as a distributed node. Upstream does this for the
-    standard library, whose ``Node`` tests need it — and only for it: on a named node
-    the iex prompt reads ``iex(primary@host)1>`` and logger's reports carry
-    ``on node :primary@host``, which those applications' own tests assert against the
-    unnamed form. ``node_apps`` lists the applications the visible gate runs as a named
-    node; unset, every application runs named (the historical behaviour). Targeted and
-    reproduction runs keep ``node_name`` for every file, the way the hidden results were
-    recorded.
+    ``node_name`` runs a suite as a distributed node, as upstream does for the standard library's ``Node`` tests.
+    ``node_apps`` limits that to the listed apps in the visible gate (others assert the unnamed prompt); unset, all run named.
     """
 
     no_targets = "test patch touched no ExUnit test file"
@@ -146,12 +140,7 @@ class ExUnitSuite(FullSuite):
     # --- the visible regression gate -----------------------------------------
 
     def _test_files(self, env, repo, app):
-        """Every ``*_test.exs`` of one application, as paths relative to the app directory.
-
-        ``find`` rather than the shell's glob: the driver is exec'd with an argv, no
-        shell expands a ``**`` for us, and the application's own listing is what the
-        whole-app run would have picked up.
-        """
+        """Every ``*_test.exs`` of one application, relative to the app directory (``find``: no shell expands ``**``)."""
         result = env.execute(
             ["find", self.test_subdir, "-type", "f", "-name", "*_test.exs"],
             cwd=self._app_dir(repo, app),
@@ -167,15 +156,7 @@ class ExUnitSuite(FullSuite):
 
     def run_all(self, env, repo, timeout, cap, jobs):
         """Every test file of every configured application, one run per file.
-
-        The process exit status is ExUnit's only verdict, and one failing file fails a
-        whole-application run — which would drop every sibling file in that application
-        from the regression gate with it. So the visible suite runs at the granularity
-        the hidden runs already use: per file, with the same ``app::test/...`` ids, the
-        same helper resolution and the same driver command as ``_run``. A file that
-        cannot pass standalone on the pristine tree belongs on the task's ignore list,
-        not in the gate.
-        """
+        A whole-app run fails if any file fails, dropping its siblings from the gate, so the visible suite runs per file."""
         del jobs
         outcomes = {}
         commands = []

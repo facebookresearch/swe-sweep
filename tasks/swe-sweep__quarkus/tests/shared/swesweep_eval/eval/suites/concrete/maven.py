@@ -31,11 +31,8 @@ class MavenSuite(ReproductionSuite):
     made relative to the reactor. A test class outside the reactor belongs to the other
     language's half of the repo and selects nothing.
 
-    ``visible_args`` apply only to the whole-suite (visible) run: the reactor scope and
-    failure tolerance (``-pl``, ``-fae``) of a repository whose image pre-builds a subset
-    of its modules, where a full-reactor run dies on the unwarmed modules and a fail-fast
-    run stops at the first red one. Targeted runs keep their own ``-pl ... -am``
-    arguments untouched."""
+    ``visible_args`` (e.g. ``-pl``, ``-fae``) apply only to the whole-suite run, for images that pre-build some modules;
+    targeted runs keep their own ``-pl ... -am``."""
 
     no_targets = "test patch touched no JUnit test class"
 

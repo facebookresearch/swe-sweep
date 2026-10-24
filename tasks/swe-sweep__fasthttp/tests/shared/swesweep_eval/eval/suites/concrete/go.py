@@ -9,10 +9,8 @@ from ..utils.compiled import _patched_files, _run
 from ..utils.logging import log
 from ..utils.managed import _GO_TEST_FN_RE, _GOCHECK_TEST_METHOD_RE, go_package_of
 
-# A gocheck case line in `-check.v` output: `PASS: worktree_test.go:64: WorktreeSuite.TestCheckout`.
-# gocheck hangs a whole suite off a single `func Test`, so these lines are the only per-case
-# signal a whole-suite run carries. `MISS` is an expected-failure case that unexpectedly
-# passed — noteworthy, but not a failing test, so it folds with `SKIP`.
+# A gocheck case line in `-check.v` output, e.g. `PASS: worktree_test.go:64: WorktreeSuite.TestCheckout`.
+# These lines are a whole-suite run's only per-case signal; `MISS` (unexpected pass) folds with `SKIP`.
 _GOCHECK_CASE_RE = re.compile(
     r"^(PASS|FAIL|SKIP|MISS|PANIC):\s+\S+?:\d+:\s+([A-Za-z_]\w*)\.([A-Za-z_]\w*)"
 )
@@ -27,12 +25,8 @@ _GOCHECK_IMPORT = "gopkg.in/check.v1"
 
 
 def _links_gocheck(pkgdir):
-    """Whether any test file in the package directory imports gocheck.
-
-    gocheck registers its `-check.*` flags in a package-level var, so any test binary that
-    links it accepts `-check.v`; one that does not exits with "flag provided but not
-    defined" and the whole run is lost. The scan is what keeps the flag off the binaries
-    that cannot take it."""
+    """Whether any test file in the package imports gocheck, i.e. whether its test binary accepts `-check.v`.
+    A binary without gocheck exits on the unknown flag and the whole run is lost."""
     try:
         names = os.listdir(pkgdir)
     except OSError:
@@ -73,14 +67,8 @@ class GoSuite(FullSuite):
     passed when the test patch actually added a gocheck method — so a repo that does not use
     gocheck never sees it.
 
-    **The whole-suite gate reads gocheck's per-case lines.** The same aggregation bites the
-    visible gate: one network-dependent case fails the package's single ``pkg::Test`` id and
-    every other case in the package leaves the gate. Whole-suite runs therefore split the
-    module into the packages that link gocheck (run once together with ``-check.v``, their
-    ``PASS:``/``FAIL: file:line: Suite.Method`` lines parsed into per-case ids such as
-    ``pkg::WorktreeSuite.TestCheckout``) and the packages that do not (run without the flag,
-    which a non-gocheck binary would reject). A repo with no gocheck package keeps the
-    historical single ``./...`` invocation.
+    **The whole-suite gate reads gocheck's per-case lines**, so one failing case no longer drops its whole package.
+    Packages linking gocheck run once with ``-check.v`` (ids like ``pkg::WorktreeSuite.TestCheckout``); others run without.
 
     ``go_args`` are the repo's own test flags (build tags, ``-tags sqlite``)."""
 
@@ -118,13 +106,8 @@ class GoSuite(FullSuite):
         return sorted(set(found)), sorted(set(names))
 
     def _visible_runs(self, env, cwd, cmd, check_pkgs):
-        """The whole-suite invocations for one eval root: ``[(argv, cwd), ...]``.
-
-        Splits ``./...`` into gocheck and non-gocheck packages as the class docstring
-        describes, recording the gocheck import paths in ``check_pkgs`` so the event parse
-        knows whose output lines to read. Falls back to the single ``./...`` invocation
-        when the repo has no gocheck package or the package list cannot be enumerated (the
-        go repo itself is not a module)."""
+        """The whole-suite invocations for one eval root, ``[(argv, cwd), ...]``, gocheck packages run apart.
+        Records gocheck import paths in ``check_pkgs``; falls back to one ``./...`` run when there is no gocheck package."""
         listed = _run(
             env,
             ["go", "list", "-f", "{{.ImportPath}}|{{.Dir}}", "./..."],
@@ -145,9 +128,8 @@ class GoSuite(FullSuite):
         runs = []
         if plain:
             runs.append((cmd + sorted(plain), cwd))
-        # The test-binary flag comes last: the go tool ends package-name collection at the
-        # first flag it does not know, so a `-check.v` placed before the packages swallows
-        # them and the run silently tests the current directory instead.
+        # The test-binary flag goes last: `go` stops reading package names at the first flag it does not know.
+        # A `-check.v` placed earlier would swallow the packages and silently test the current directory.
         runs.append((cmd + sorted(check) + ["-check.v"], cwd))
         return runs
 
@@ -178,10 +160,8 @@ class GoSuite(FullSuite):
                 if names:
                     cmd += ["-run", "^(" + "|".join(names) + ")$"]
                 elif self.check_names.get(pkg):
-                    # No `func Test…` was added but gocheck methods were: select those
-                    # instead of falling back to the whole package. `-check.f` is the test
-                    # binary's own flag, so it is passed only to the package the methods
-                    # were added to.
+                    # No `func Test…` was added but gocheck methods were: select those instead of the whole package.
+                    # `-check.f` is a test-binary flag, so it goes only to the package the methods were added to.
                     cmd += ["-check.f", "^(" + "|".join(self.check_names[pkg]) + ")$"]
                 runs = [(cmd + ["."], cwd)]
             for run_cmd, run_cwd in runs:
@@ -214,9 +194,7 @@ class GoSuite(FullSuite):
                     if recursive and action == "output" and ev.get("Package") in check_pkgs:
                         m = _GOCHECK_CASE_RE.match(ev.get("Output", ""))
                         if m:
-                            # gocheck prints one status line per case, and the tested code
-                            # writes to the same stream: a later line for a case is not
-                            # trusted to clear a failure already reported for it.
+                            # Tested code shares this stream, so a later line never clears a failure already reported.
                             key = "%s::%s.%s" % (ev["Package"], m.group(2), m.group(3))
                             if outcomes.get(key) != "failed":
                                 outcomes[key] = _GOCHECK_CASE_STATUS[m.group(1)]

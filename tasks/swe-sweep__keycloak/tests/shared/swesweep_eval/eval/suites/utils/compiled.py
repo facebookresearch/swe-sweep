@@ -99,11 +99,8 @@ def _parse_junit(env, path, qualified=False, nested=False):
     whole (``test::foo``); gtest splits them, and only the joined ``Suite.Name`` is the id
     a ``--gtest_filter`` and a reader would recognize.
 
-    ``nested`` reads every ``<testcase>`` in the tree (``root.iter``) instead of only the
-    direct children of the top-level suites. CTest and gtest put each case directly under
-    its ``<testsuite>``; PHPUnit 9 wraps each class in a nested suite and each data-provider
-    method in another below that, so a direct-child read of a PHPUnit whole-suite report
-    sees zero cases. Off by default, so every other reader is unchanged.
+    ``nested`` reads every ``<testcase>`` in the tree (``root.iter``), for PHPUnit 9's nested class and
+    data-provider suites; CTest and gtest put cases directly under their suite. Off by default.
 
     A report that does not parse is an *unreadable* report, not a broken evaluation: a test
     binary that dies mid-run leaves the XML unterminated. It reads as no outcomes, which is

@@ -98,20 +98,13 @@ WORKDIR /v
 
 # Make the exported tree a git repo, commit the source and tag it `baseline`. `-f` is
 # mandatory here — see the header.
-# --- SWE-sweep v1.1: stale vfmt input updated in the base (v-3e8a56669d36) ---
-# The v-3e8a56669d36 fix rejects a struct embedding placed after `pub:`, which
-# vlib/v/fmt/tests/structs_input.vv does; fmt_test.v then errors for every other vfmt subtask.
-# Upstream moved the embedding above `pub:` in the same commit. That layout is valid on the
-# unfixed tree too and formats to the same structs_expected.vv, so it lives in the base.
+# SWE-sweep v1.1: v-3e8a56669d36's fix rejects the struct embedding after `pub:` in structs_input.vv, breaking fmt_test.v.
+# Upstream moved it above `pub:` in the same commit; that layout is valid unfixed too, so it lives in the base.
 RUN perl -0pi -e 's/^struct FamousUser \{\npub:\n\tUser\n/struct FamousUser {\n\tUser\npub:\n/m' vlib/v/fmt/tests/structs_input.vv \
  && perl -0ne 'exit(!/^struct FamousUser \{\n\tUser\npub:\n/m)' vlib/v/fmt/tests/structs_input.vv
 
-# --- SWE-sweep v1.1: v's test runner path fix (must-pass list) ---
-# cmd/tools/modules/testing/common.v makes paths root-relative with
-# `replace(ts.vroot + os.path_separator, '')`. The repo lives at /v, so that removes EVERY "/v/"
-# in a path (vlib/v/util/x_test.v -> vlibutil/x_test.v) and `v test vlib` fails 1,089 of 1,424
-# files, which is why the must-pass list was empty. Strip the prefix once instead
-# (trim_string_left); `v test vlib` then passes 1,374 files offline. No subtask touches this file.
+# SWE-sweep v1.1: v's runner removed every "/v/" from test paths, so `v test vlib` failed 1,089 of 1,424 files (empty list).
+# Strip the prefix once instead (trim_string_left): 1,374 files pass offline. No subtask touches this file.
 RUN sed -i "s|relative_file.replace(ts.vroot + os.path_separator, '')|relative_file.trim_string_left(ts.vroot + os.path_separator)|" cmd/tools/modules/testing/common.v \
  && grep -qF "relative_file.trim_string_left(ts.vroot + os.path_separator)" cmd/tools/modules/testing/common.v
 

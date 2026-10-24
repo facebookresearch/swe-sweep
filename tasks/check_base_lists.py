@@ -1,16 +1,7 @@
 #!/usr/bin/env python3
-"""Check every task's stored must-pass list (tests/base_tests.json.gz) for defects that make the
-regression gate empty, vacuous or unreproducible.
-
-Usage: python3 check_base_lists.py [dataset_dir]   (default: the directory of this script)
-Prints one line per finding and exits 1 when any task has one. Stdlib only.
-
-A list is checked for: no passing tests at all; a placeholder entry (`<suite>`) standing in for
-a whole suite that could not run; counts in swesweep_eval.json that disagree with the list; and
-names that embed values which change from run to run (temporary paths with numbers, process
-ids). Hex values that look like memory addresses are reported separately as a note. Rebuilding a list needs the task image: grade an
-empty patch at least three times and keep only the tests that passed every time.
-"""
+"""Check every task's must-pass list (tests/base_tests.json.gz): empty, placeholder (`<suite>`), counts off, volatile names.
+Usage: python3 check_base_lists.py [dataset_dir]  (prints one line per finding, exits 1 if any; stdlib only)
+Rebuild a list in the task image: grade an empty patch at least three times and keep the tests that always pass."""
 
 import gzip
 import json

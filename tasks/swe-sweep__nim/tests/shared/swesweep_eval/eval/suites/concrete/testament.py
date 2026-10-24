@@ -14,22 +14,11 @@ from ..utils.logging import log
 _RESULT_RE = re.compile(r"^(?P<verdict>PASS|FAIL|SKIP|NOTINBATCH|JOINED):\s+(?P<name>\S.*?)\s*$")
 # The duration testament appends to a non-skipped result.
 _DURATION_RE = re.compile(r"\(\s*[\d.]+ sec\)$")
-# Testament 1.6's `all` re-spawns itself once per category and forwards only --targets,
-# --nim, --batch and --skipFrom, so the children that actually print the verdicts run with
-# `useColors = true` even when the parent was given --colors:off. terminal.nim writes the
-# SGR escapes unconditionally, pipe or not, so every verdict line arrives wrapped like
-# `\e[32mPASS: \e[36mtests/... \e[0m`. Strip them before the verdict regex sees the line.
+# Testament's `all` re-spawns per category without --colors:off, so verdict lines arrive wrapped in SGR escapes.
+# Strip them (`\e[32mPASS: ...`) before the verdict regex sees the line.
 _ANSI_RE = re.compile(r"\x1b\[[0-9;]*m")
-# Testament's own progress lines are printed without a newline, so the 60-column-padded
-# name of one case can arrive glued to the NEXT case's verdict marker with no line break
-# between them (visible as `\x1b[PASS:` in the middle of a "line"). After the escapes are
-# stripped that still reads as one line, and _RESULT_RE would swallow the whole thing into
-# the first case's name. Split at every embedded verdict marker instead: each fragment is
-# a complete verdict record of its own.
-# The glue is not always whitespace-separated: interleaving can also cut the preceding
-# text mid-token (`( 1.75 sePASS: ...`, `-d:rePASS: ...`). A verdict marker with a space
-# after the colon can never appear inside a testament id (paths and options carry no such
-# token), so splitting at EVERY embedded marker is safe, whitespace or not.
+# Testament prints progress without a newline, so one case's name can arrive glued to the next case's verdict marker.
+# Split at every embedded marker (`PASS: ` etc. never occurs inside a testament id): each fragment is a full record.
 _GLUE_RE = re.compile(r"(?<!^)(?=(?:PASS|FAIL|SKIP|NOTINBATCH|JOINED): )")
 # Byte-level interleaving can also truncate an SGR sequence, leaving an introducer that
 # _ANSI_RE cannot match (`\x1b[PASS:` with the color bytes lost). Drop those leftovers.
@@ -63,10 +52,8 @@ class TestamentSuite(ReproductionSuite):
       one generated program and run that instead. A joined case then reports ``JOINED:``
       and its real outcome is buried in the megatest's, which is unusable when the point is
       one case's verdict.
-    - ``--colors:off``. The verdict markers are otherwise wrapped in ANSI escapes. The
-      flag does not reach the per-category children of ``testament all`` (see
-      ``_ANSI_RE`` above), so ``_parse`` strips escapes itself; the flag still covers the
-      direct ``testament r`` runs.
+    - ``--colors:off``, or verdict markers come wrapped in ANSI escapes. It does not reach ``testament all``'s
+      per-category children (see ``_ANSI_RE``), so ``_parse`` also strips escapes itself.
 
     ``targets`` only accepts files testament itself would run: a case's basename starts
     with ``t``. Everything else under ``tests/`` is a helper module a case imports, and
@@ -154,10 +141,8 @@ class TestamentSuite(ReproductionSuite):
                 if match is None:
                     continue
                 name = _DURATION_RE.sub("", match.group("name")).strip()
-                # A fragment whose own line was truncated mid-duration keeps the partial
-                # tail (`... c ( 1.75 se`); options never contain "(", so cutting there
-                # recovers the real id. A name truncated mid-option stays as-is — it can
-                # never match a recorded id, which is the safe direction.
+                # A fragment truncated mid-duration keeps a tail like `... c ( 1.75 se`; ids never contain "(", so cut there.
+                # A name truncated mid-option stays as is: it can never match a recorded id, which is the safe direction.
                 name = name.split(" (", 1)[0].strip()
                 if ".nim" not in name.split(" ")[0]:
                     continue

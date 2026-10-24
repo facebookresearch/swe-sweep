@@ -11,19 +11,14 @@ from ..utils.logging import log
 
 
 # One per-file status line of `v test <root>`, e.g. `OK    [  12/1424]     5.1 ms vlib/x/y_test.v`.
-# Lines printed by golden runners for their own cases name a quoted command, not a test file, so
-# they do not match.
+# Golden runners' own lines name a quoted command, not a test file, so they do not match.
 _V_STATUS_RE = re.compile(r"^\s*(OK|FAIL|SKIP)\s+\[\s*(\d+)/(\d+)\]\s+[\d.]+ ms\s+(\S+_test(?:\.\w+)?\.v)\s*$")
 _V_STATUS = {"OK": "passed", "FAIL": "failed", "SKIP": "skipped"}
 
 
 def _per_file_outcomes(text):
-    """``{test file: outcome}`` from the runner's status lines, or ``{}`` if they cannot be trusted.
-
-    A failing test's own output goes to the same stream, so code under test could print a status
-    line of its own. The runner prints exactly one line per file, numbered 1..N once each; a
-    repeated file or number, more than one total, or a count other than N means not every line
-    is the runner's, and the caller falls back to one outcome for the root."""
+    """``{test file: outcome}`` from the runner's status lines, or ``{}`` when they cannot all be the runner's own.
+    The runner prints each file once, numbered 1..N; anything else means the tested code printed such lines too."""
     out = {}
     seen = set()
     totals = set()
@@ -220,10 +215,8 @@ class VSuite(FullSuite):
     def run_all(self, env, repo, timeout, cap, jobs):
         """``v test <root>`` per configured root — V's own recursive runner, which walks
         the tree for ``_test.v`` files itself, golden runners included. One outcome per
-        test file, read from the runner's per-file status lines: a single outcome per root
-        fails as soon as any file fails on the untouched tree, which left the must-pass
-        list empty. A root whose output has no status line, or status lines that cannot all be the
-        runner's (see :func:`_per_file_outcomes`), keeps one outcome for the root."""
+        test file, read from the runner's per-file status lines (one outcome per root left the must-pass list empty).
+        A root without trustworthy status lines (see :func:`_per_file_outcomes`) keeps one outcome."""
         del jobs
         outcomes = {}
         commands = []

@@ -119,12 +119,8 @@ RUN gclient sync --no-history --shallow -D
 WORKDIR /dart/sdk
 RUN ./tools/build.py --mode release --arch x64 create_sdk
 
-# The analysis_server integration tests (pkg/analysis_server_client) locate the SDK two
-# directories above Platform.resolvedExecutable; test.py runs them with
-# out/ReleaseX64/dart, so that resolves to out/. Without these links the server snapshot
-# cannot find lib/_internal or version, the tests exit 1, and test.py treats an
-# unrecognized exit code as an infrastructure failure that aborts the whole run
-# (pkg/test_runner/lib/src/command_output.dart `realResult`, `io.exit(5)`).
+# analysis_server's integration tests find the SDK two levels above out/ReleaseX64/dart, i.e. out/; without these links
+# they exit 1, which test.py treats as an infrastructure failure that aborts the whole run.
 RUN ln -s ReleaseX64/dart-sdk/lib /dart/sdk/out/lib     && ln -s ReleaseX64/dart-sdk/version /dart/sdk/out/version
 
 CMD ["/dart/sdk/out/ReleaseX64/dart-sdk/bin/dart", "--version"]

@@ -9,9 +9,7 @@ from ..base import ReproductionSuite
 from ..utils.compiled import _patched_files, _run
 from ..utils.logging import log
 
-# In SDK 2.19.6 `--write-results` is a boolean flag (pkg/test_runner/lib/src/options.dart),
-# not a path option: the report always lands at `<output-directory>/results.json`. The suite
-# therefore picks the directory and reads the fixed file name back out of it.
+# In SDK 2.19.6 `--write-results` is a boolean flag, not a path: the report always lands at `<output-directory>/results.json`.
 _OUT_DIR = "/tmp/swesweep-dart-out"
 _RESULTS = _OUT_DIR + "/results.json"
 
