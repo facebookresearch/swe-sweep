@@ -72,6 +72,11 @@ WORKDIR /babel
 #
 # `--ignore-engines` because a transitive dependency declares an engine range this Node 10
 # does not satisfy; babel's own bootstrap passes the same flag on both halves.
+# GitHub's replies now carry about 10.6 KB of headers and Node 10's HTTP parser stops at
+# 8 KB (HPE_HEADER_OVERFLOW, reported as "Parse Error"), so yarn's request to github.com
+# for the git dependency kangax/compat-table fails. Raise the limit for the install steps;
+# the NODE_OPTIONS set below for the build replaces it.
+ENV NODE_OPTIONS=--max-http-header-size=81920
 RUN yarn install --frozen-lockfile --ignore-engines --network-timeout 600000 \
     && ./node_modules/.bin/lerna bootstrap -- --ignore-engines --network-timeout 600000
 
