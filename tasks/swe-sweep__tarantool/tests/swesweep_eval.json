@@ -298,15 +298,6 @@
     },
     {
       "f2p": [
-        "unit/fiber.test"
-      ],
-      "id": "tarantool-c2e562efa2e4",
-      "target_files": [
-        "src/lib/core/fiber.c"
-      ]
-    },
-    {
-      "f2p": [
         "box-luatest/gh_6647_yield_gc_hook_test.lua"
       ],
       "id": "tarantool-c8612c63469d",
