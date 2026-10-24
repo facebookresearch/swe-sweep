@@ -49,9 +49,8 @@ class JestFixtureSuite(JestSuite):
     fail→pass signal.
 
     Selection stays a narrowing, exactly as in :class:`JestSuite`: two cases whose directory
-    names share a substring both match. That costs runtime, and correctness when the other
-    case is another bug's still-failing test; a task whose case names are the title's last
-    segment (babel) sets ``anchor_names`` to select them exactly.
+    names share a substring both match (costing runtime, and correctness when the other is another bug's failing test).
+    A task whose case names are the title's last segment (babel) sets ``anchor_names`` to select them exactly.
     """
 
     no_targets = "test patch touched no JavaScript test file and no known fixture corpus"

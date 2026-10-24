@@ -20,9 +20,7 @@ def _load_suite_module(task: str, name: str):
 
 
 def test_cargo_rebuilds_a_fixture_target_before_running_it(monkeypatch):
-    """`testing_macros::fixture!` globs its corpus when the driver compiles and cargo does not
-    track that directory, so a fixture target's driver is touched before each run; any other
-    target is left alone."""
+    """A fixture target's driver is touched before each run (cargo does not track the globbed corpus); others are not."""
     cargo = _load_suite_module("swe-sweep__swc", "cargo")
     calls = []
 

@@ -62,15 +62,8 @@ RUN set -eux; \
 COPY --from=swesweep-src /src /trino
 WORKDIR /trino
 
-# --- SWE-sweep task fix (trino-165617cc376a) ---
-# The official fix replaces RemoveRedundantTableScanPredicate's 2-arg constructor with a
-# 3-arg one. The shared visible test TestRemoveRedundantTableScanPredicate calls that
-# constructor, and an agent's test edits are reverted at grading time, so a correct
-# upstream-style fix would leave the visible test uncompilable and fail the trino-main
-# test compile for 38 other subtasks' hidden runs. Ship the developers' updated test
-# (the setUp hunk of this subtask's hidden test.patch, which is therefore removed from
-# the patch) together with a delegating 3-arg constructor in the base tree: the tree
-# compiles and behaves identically before and after an upstream-style fix.
+# SWE-sweep task fix (trino-165617cc376a): the official fix changes a constructor the visible test calls, and test edits
+# are reverted, so ship upstream's updated test and a delegating 3-arg constructor: the tree compiles with or without it.
 RUN set -eux; \
     RULE=core/trino-main/src/main/java/io/trino/sql/planner/iterative/rule/RemoveRedundantTableScanPredicate.java; \
     VISTEST=core/trino-main/src/test/java/io/trino/sql/planner/iterative/rule/TestRemoveRedundantTableScanPredicate.java; \

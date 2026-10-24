@@ -32,14 +32,8 @@ def is_test_file(path, test_dirs=(), source_files=()):
     directory rule can reach them. ``.vv`` is there for the same reason — it is V's
     extension for a program that exists only as test data.
 
-    ``source_files`` names the exceptions the name rules get wrong: real source files that
-    an official fix edits, such as rails' ``action_controller/test_case.rb`` (a library
-    module) or duckdb's ``test_all_types.cpp`` (a table function). They are never reverted.
-
-    A ``test_dirs`` entry that contains ``/`` is an exact path or path prefix, for the
-    hidden-test files no name rule can reach: ruff registers its rule tests in the rule's
-    own ``mod.rs`` (``crates/ruff_linter/src/rules/<rule>/mod.rs``), v lists its test files
-    in ``cmd/tools/vtest-self.v``.
+    ``source_files`` are source files the name rules mistake for tests (rails' ``test_case.rb``); they are never reverted.
+    A ``test_dirs`` entry containing ``/`` is an exact path or prefix (ruff's per-rule ``mod.rs``, v's ``vtest-self.v``).
     """
     if path in source_files:
         return False

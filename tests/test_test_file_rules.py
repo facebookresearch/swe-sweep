@@ -14,10 +14,7 @@ from swesweep_eval.eval.suites.utils.evaluation import is_test_file  # noqa: E40
 
 _PATCH_FILE_RE = re.compile(r"^(?:\+\+\+ b/|--- a/)(.+)$", re.MULTILINE)
 
-# Known, reviewed exceptions to the scan below.
-# Official fixes that also edit a real test file next to their source change (the revert of
-# the test part is correct): dart-sdk object_test.cc (+ object.cc), datafusion tests/arithmetic.rs
-# (+ binary.rs).
+# Reviewed exceptions: official fixes that also edit a real test file next to their source change (reverting it is correct).
 OFFICIAL_FIX_TEST_FILES = {
     ("dart-sdk", "runtime/vm/object_test.cc"),
     ("datafusion", "datafusion/expr-common/src/type_coercion/binary/tests/arithmetic.rs"),

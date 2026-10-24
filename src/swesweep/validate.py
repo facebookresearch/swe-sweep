@@ -1,15 +1,5 @@
-"""Grade a task's official fixes the way a submission is graded, and report what fails (W8).
-
-The release validated every official fix on its own, against its own bug, with the must-pass
-tests run only on the untouched tree. That misses official fixes that break a must-pass test,
-fixes that only work alone, bugs credited with no fix, and one bug's fix crediting another's.
-`sweep validate` grades, through the same Harbor route as `sweep eval`:
-
-- the empty submission (nothing should be credited);
-- every official fix stacked, as one complete submission (everything should be credited, with
-  no regression); fixes that do not apply on top of the others are reported;
-- with ``--each``, every official fix alone (its own bug only, no regression).
-"""
+"""Grade a task's official fixes the way a submission is graded (W8), through the same Harbor route as `sweep eval`.
+Grades the empty submission, all fixes stacked and, with ``--each``, each fix alone, and reports what fails."""
 
 from __future__ import annotations
 
@@ -17,9 +7,8 @@ import json
 from pathlib import Path
 from typing import Any
 
-# Apply one fix on top of the fixes applied so far: plainly, else with a 3-way merge; if both
-# fail, put back exactly the paths this fix touched as they were before it (the snapshot tree),
-# so a conflicting fix never undoes or half-applies on top of the earlier ones.
+# Apply one fix on top of the earlier ones: plainly, else with a 3-way merge.
+# If both fail, restore the paths it touched from the snapshot, so a conflicting fix never undoes earlier fixes.
 APPLY_ONE = """set -u
 snap=$(git add -A && git write-tree) || exit 2
 git apply --binary --whitespace=nowarn {patch} && exit 0

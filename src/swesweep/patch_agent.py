@@ -68,13 +68,8 @@ class OfficialFixAgentOptions(AgentOptions):
 
 
 class OfficialFixAgent(BaseAgent):
-    """Apply a set of the task's official fixes to the checkout, as a submission would edit it.
-
-    ``fixes`` is a comma-separated list of bug ids, ``all`` for every official fix (applied in
-    sorted order), or empty for no edit at all (the empty submission). A fix that does not apply
-    is tried with ``git apply --3way`` and otherwise skipped; skipped fixes are recorded in the
-    trial metadata, since they are part of what the validation measured.
-    """
+    """Apply the official fixes (``fixes``: comma-separated bug ids, ``all``, or empty) as a submission would.
+    A fix that does not apply is retried with ``git apply --3way``, else skipped and recorded in the trial metadata."""
 
     options_model = OfficialFixAgentOptions
 

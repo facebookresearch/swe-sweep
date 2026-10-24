@@ -687,11 +687,8 @@ def _run_hidden_tests(
         if config.needs_build:
             prepare_incremental_build(repo, suite, [test_diff])
             if getattr(config, "rebuild_hidden_tests", False):
-                # Hidden tests that are compiled (tarantool's C unit tests and luatest
-                # .so modules) need the tree rebuilt after the test patch, the way
-                # _grade_on_gold builds after test + gold; without it the run executes
-                # stale binaries and can never pass. Off by default: for every other
-                # task the incremental build is a per-subtask cost with no effect.
+                # Compiled hidden tests (tarantool's C unit tests, luatest .so modules) need a rebuild after the test patch.
+                # Off by default: for other tasks it is a per-subtask build cost with no effect.
                 built, build_error, build_output = _build(repo, config, jobs)
                 result["detail"]["hidden_build_output"] = build_output[-20000:]
                 if not built:

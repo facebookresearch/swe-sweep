@@ -207,10 +207,8 @@ class CargoSuite(ReproductionSuite):
             unfiltered = ["cargo", "test"] + self.target_cmd(crate, target, [])
             cwd = os.path.join(repo, crate) if crate != "." else repo
             if (crate, target) in self._fixture_ids:
-                # `testing_macros::fixture!` globs the corpus when the driver compiles, and
-                # cargo does not track that directory: a corpus file a hidden test patch adds
-                # (or a reset removes) leaves the binary built for an earlier subtask, so the
-                # new case never runs. Touching the driver makes cargo rebuild the target.
+                # `testing_macros::fixture!` globs the corpus at compile time, untracked by cargo, so new fixtures never run.
+                # Touching the driver makes cargo rebuild the target.
                 _run(env, ["touch", "-c", "tests/%s.rs" % target, "tests/%s/main.rs" % target],
                      timeout=60, cwd=cwd)
             attempts = [selected]

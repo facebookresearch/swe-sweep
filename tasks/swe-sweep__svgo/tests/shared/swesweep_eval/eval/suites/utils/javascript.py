@@ -98,10 +98,8 @@ def _pattern(names, anchored=False):
     escaping are the same in both dialects. A name containing a slash is fine — neither
     treats it specially inside a pattern built from a plain string.
 
-    ``anchored`` ends the alternation with ``$`` (the runners match against the full title,
-    whose last segment is the name), for suites whose names are always that last segment:
-    unanchored, a name that is a prefix of another ("duplicate proto" / "duplicate proto 4")
-    also runs the other test, so one bug's run depends on another bug's fix.
+    ``anchored`` ends the alternation with ``$``, so a name that prefixes another ("duplicate proto" / "duplicate proto 4")
+    does not also run the other test and tie one bug's run to another bug's fix.
     """
     return "(" + "|".join(re.escape(n) for n in names) + ")" + ("$" if anchored else "")
 
