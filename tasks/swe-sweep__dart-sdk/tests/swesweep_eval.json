@@ -10,8 +10,8 @@
     "visible_timeout": 21600
   },
   "upstream_image": "pandora-maxbug-dart-sdk:2.19.6",
-  "n_base_passing": 6713,
-  "n_base_test_ignore": 18,
+  "n_base_passing": 6712,
+  "n_base_test_ignore": 19,
   "oracle_digest": "4be6dec1bc33fbc3790e11c75c7a896ba877502d72af1d420241d06c96704b3e",
   "oracle_pristine_paths": [],
   "upstream_commit": "9f7399e15e6172900e0591deb5a57a45769d8205",
