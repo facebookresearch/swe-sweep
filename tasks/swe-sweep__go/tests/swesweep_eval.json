@@ -10,7 +10,7 @@
   },
   "upstream_image": "pandora-maxbug-go:go1.17.5",
   "n_base_passing": 8250,
-  "n_base_test_ignore": 270,
+  "n_base_test_ignore": 274,
   "oracle_digest": "7be811ba0f12010d4b00eec920ef7cec26232c5c5c41bd6b819142874b4a8cdf",
   "oracle_pristine_paths": [],
   "upstream_commit": "9f7399e15e6172900e0591deb5a57a45769d8205",
@@ -160,8 +160,7 @@
     {
       "f2p": [
         "src/net/http::TestCloneOrMakeHeader",
-        "src/net/http::TestCloneOrMakeHeader/nil_value",
-        "src/net/http::TestOmitHTTP2"
+        "src/net/http::TestCloneOrMakeHeader/nil_value"
       ],
       "id": "go-2a8829527dd6",
       "target_files": [
@@ -194,8 +193,7 @@
         "src/net/http::TestFileServerNotDirError",
         "src/net/http::TestFileServerNotDirError/FS",
         "src/net/http::TestFileServerNotDirError/FS/AbsolutePath",
-        "src/net/http::TestFileServerNotDirError/FS/RelativePath",
-        "src/net/http::TestOmitHTTP2"
+        "src/net/http::TestFileServerNotDirError/FS/RelativePath"
       ],
       "id": "go-2fa943aaeb2f",
       "target_files": [
@@ -377,7 +375,6 @@
     },
     {
       "f2p": [
-        "src/net/http::TestOmitHTTP2",
         "src/net/http::TestWriteResponse"
       ],
       "id": "go-5aea6102f6ae",
@@ -443,8 +440,7 @@
     },
     {
       "f2p": [
-        "src/net/http::TestHeaderWrite",
-        "src/net/http::TestOmitHTTP2"
+        "src/net/http::TestHeaderWrite"
       ],
       "id": "go-6b1a6dfcae56",
       "target_files": [
