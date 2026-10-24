@@ -13,6 +13,12 @@ from ..utils.logging import log
 _OUT_DIR = "/tmp/swesweep-dart-out"
 _RESULTS = _OUT_DIR + "/results.json"
 
+# tools/test.py stops each test after 60 s by default, and many `pkg/` tests (analysis_server,
+# analyzer, compiler, front_end) take 50-65 s even when run alone. With the runner's default of
+# one test per CPU at once, hundreds of them end as `Timeout` on an untouched tree, so the whole
+# visible run reads as regressions. A test that really hangs is still stopped, just later.
+_TEST_TIMEOUT = 300
+
 # The flags a Dart test file declares for itself, in a comment marker the SDK's own runner
 # reads. Without them a `tests/language/` file that exercises an in-progress language
 # feature does not fail — it does not *compile*, before and after the gold patch alike.
@@ -105,6 +111,7 @@ class DartFileSuite(ReproductionSuite):
         JSON report it writes (one object per line, ``{"name": …, "result": "Pass"|…}``)."""
         env.execute(["rm", "-rf", _OUT_DIR])
         cmd = ["python3", self.test_py, "--mode", self.mode, "--arch", self.arch,
+               "--timeout", str(_TEST_TIMEOUT),
                "--progress", "status", "--write-results", "--output-directory", _OUT_DIR,
                ] + self.visible_selectors
         res = _run(env, cmd, timeout=timeout, cwd=repo)
