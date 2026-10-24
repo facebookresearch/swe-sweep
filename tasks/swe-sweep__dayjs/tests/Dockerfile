@@ -49,9 +49,8 @@ RUN if [ -r /etc/os-release ]; then . /etc/os-release; case "${VERSION_CODENAME:
 
 # ICU data for node 10's small-icu build: without it the whole `timezone`/`utc` plugin
 # suite fails before any patch is applied, which would read as `fails_pre_gold`.
-# GitHub's replies now carry about 10.6 KB of headers and Node 10's HTTP parser stops at
-# 8 KB (HPE_HEADER_OVERFLOW, reported as "Parse Error"), so full-icu's download of the ICU
-# data from a GitHub release fails. Raise the limit for this install step only.
+# GitHub's replies now carry ~10.6 KB of headers, over Node 10's 8 KB limit, so full-icu's ICU download fails.
+# Raise the limit for this install step only.
 RUN NODE_OPTIONS=--max-http-header-size=81920 npm install --no-save --prefix / full-icu@1.4.0
 ENV NODE_ICU_DATA=/node_modules/full-icu
 

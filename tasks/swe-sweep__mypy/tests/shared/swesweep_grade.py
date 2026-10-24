@@ -404,10 +404,8 @@ def _compare_visible(
         return ""
     post = {normalize_test_id(k): v for k, v in post.items()}
     passed = passed_set(post)
-    # A stored name that did not run at all is matched again with memory addresses masked: any
-    # edit that changes the code size renames those tests, which is not a regression. A name
-    # that ran and did not pass is a regression even if a sibling with the same masked name
-    # passed (go's math/big::TestFillBytes/0x... subtests mask to one name).
+    # A stored name that did not run is matched again with memory addresses masked (code-size changes rename it).
+    # A name that ran and failed is still a regression, even if a sibling with the same masked name passed.
     passed_stable = {stable_test_id(t) for t in passed}
     regressions = sorted(
         t for t in base_pass - passed if t in post or stable_test_id(t) not in passed_stable
