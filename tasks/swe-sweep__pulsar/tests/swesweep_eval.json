@@ -6,8 +6,8 @@
     "visible_timeout": 14400
   },
   "upstream_image": "pandora-maxbug-pulsar:v2.10.1",
-  "n_base_passing": 553,
-  "n_base_test_ignore": 503,
+  "n_base_passing": 543,
+  "n_base_test_ignore": 513,
   "oracle_digest": "004c246b5a29b6961cc65b359779a4c89420cb4b14acf9adaf464f6ea43a91c7",
   "oracle_pristine_paths": [],
   "upstream_commit": "9f7399e15e6172900e0591deb5a57a45769d8205",
