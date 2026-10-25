@@ -127,6 +127,9 @@ def load_base_tests(tests_dir: Path) -> frozenset[str]:
 # `canonical_test_id`, never by the bare test name: go-git names every gocheck suite `Test`,
 # so a name match on three ignored packages swallowed all 23 golds' `.::Test`.
 _IGNORED_TESTS: set[str] = set()
+# Per bug, the ignored tests its own hidden patch rewrites (`base_tests.json.gz` `checked_for`): stale in every other
+# run, so ignored there, but that bug's own run checks its updated copy.
+_CHECKED_FOR: dict[str, frozenset[str]] = {}
 _GO_MODULE_ROOT: str | None = None
 
 
@@ -134,6 +137,12 @@ def load_ignored_tests(tests_dir: Path) -> frozenset[str]:
     """The task's unreliable test ids (`base_tests.json.gz` `ignored`)."""
     with gzip.open(tests_dir / BASE_TESTS_FILENAME, "rt") as f:
         return frozenset(json.load(f).get("ignored", []))
+
+
+def load_checked_for(tests_dir: Path) -> dict[str, frozenset[str]]:
+    """`base_tests.json.gz` `checked_for`: bug id -> ignored ids that bug's own targeted run still checks."""
+    with gzip.open(tests_dir / BASE_TESTS_FILENAME, "rt") as f:
+        return {bug: frozenset(ids) for bug, ids in json.load(f).get("checked_for", {}).items()}
 
 
 def normalize_test_id(test_id: str) -> str:
@@ -276,6 +285,8 @@ def run_evaluation(
     base_pass = load_base_tests(tests_dir)
     _IGNORED_TESTS.clear()
     _IGNORED_TESTS.update(load_ignored_tests(tests_dir))
+    _CHECKED_FOR.clear()
+    _CHECKED_FOR.update(load_checked_for(tests_dir))
     global _GO_MODULE_ROOT
     _GO_MODULE_ROOT = go_module_root(base_pass | _IGNORED_TESTS)
     started = time.monotonic()
@@ -702,7 +713,7 @@ def _run_hidden_tests(
         if config.needs_build:
             prepare_incremental_build(repo, suite, [test_diff])
         output = _run_targets(
-            env, suite, config, files, names, capture, jobs, result, f2p=f2p
+            env, suite, config, files, names, capture, jobs, result, f2p=f2p, checked=_CHECKED_FOR.get(sid, frozenset())
         )
     repo.restore_files(touched_files(test_diff))
     if config.needs_build:
@@ -721,6 +732,7 @@ def _run_targets(
     jobs: str,
     result: dict[str, Any],
     f2p: frozenset[str] = frozenset(),
+    checked: frozenset[str] = frozenset(),
 ) -> Any:
     """Run a subtask's targeted tests once and fold the outcomes into `result`; returns the output."""
     from swesweep_eval.eval.suites.utils.evaluation import (  # pyrefly: ignore[missing-import]
@@ -738,11 +750,12 @@ def _run_targets(
     # A targeted run that covers a whole package (go's `-count=1 .`) also reports the tests
     # the task declares unreliable; they cannot fail a subtask any more than the visible run.
     # A subtask's own F2P tests are exempt: quarkus's upstream ignore list names two of them.
-    f2p_canonical = {canonical_test_id(x) for x in f2p}
+    # ...and so are the ignored tests this subtask's own hidden patch rewrites (`checked`).
+    kept = {canonical_test_id(x) for x in f2p | checked}
     outcomes = {
         normalize_test_id(k): v
         for k, v in outcomes.items()
-        if canonical_test_id(k) in f2p_canonical or not _is_ignored(k)
+        if canonical_test_id(k) in kept or not _is_ignored(k)
     }
     failed = {k for k, v in outcomes.items() if v in ("failed", "error")}
     passed = passed_set(outcomes)
@@ -828,7 +841,7 @@ def _grade_on_gold(
         result["detail"]["error"] = error
     else:
         output = _run_targets(
-            env, suite, config, files, names, capture, jobs, result, f2p=f2p
+            env, suite, config, files, names, capture, jobs, result, f2p=f2p, checked=_CHECKED_FOR.get(sid, frozenset())
         )
     result["duration_s"] = round(time.monotonic() - started, 3)
     return result, output
