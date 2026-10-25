@@ -6,8 +6,8 @@
     "visible_timeout": 14400
   },
   "upstream_image": "pandora-maxbug-swc:1.2.184",
-  "n_base_passing": 59813,
-  "n_base_test_ignore": 0,
+  "n_base_passing": 59903,
+  "n_base_test_ignore": 489,
   "oracle_digest": "8d840e818b53a485fea0259c9053d1e12068e82511e7d4a6dcd51bdc921a6ab6",
   "oracle_pristine_paths": [],
   "upstream_commit": "9f7399e15e6172900e0591deb5a57a45769d8205",
@@ -392,7 +392,8 @@
         "--exclude",
         "swc_plugin_proxy",
         "--no-fail-fast"
-      ]
+      ],
+      "qualified": true
     },
     "test_timeout": 2400
   },
