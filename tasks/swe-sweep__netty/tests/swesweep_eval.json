@@ -6,8 +6,8 @@
     "visible_timeout": 14400
   },
   "upstream_image": "pandora-maxbug-netty:4.1.18",
-  "n_base_passing": 12064,
-  "n_base_test_ignore": 12,
+  "n_base_passing": 12024,
+  "n_base_test_ignore": 52,
   "oracle_digest": "add4df5565ba8897c05a032c444d7f61df9ec57bfe7b243e5ace4973a918e2cb",
   "oracle_pristine_paths": [],
   "upstream_commit": "9f7399e15e6172900e0591deb5a57a45769d8205",
