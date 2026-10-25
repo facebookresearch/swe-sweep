@@ -32,6 +32,9 @@ def check_task(task: Path) -> tuple[list[str], list[str]]:
         findings.append(f"n_base_passing {bundle.get('n_base_passing')} != {len(passing)} listed")
     if bundle.get("n_base_test_ignore") != len(ignored):
         findings.append(f"n_base_test_ignore {bundle.get('n_base_test_ignore')} != {len(ignored)} listed")
+    runs = lists.get("environment_runs")
+    if passing and not (isinstance(runs, list) and runs and all(isinstance(r, str) and r for r in runs)):
+        findings.append(f"environment_runs should list the runs the list was recorded from, got {runs!r:.60}")
     for label, pattern in VOLATILE:
         hits = [name for name in passing if pattern.search(name)]
         if hits:
