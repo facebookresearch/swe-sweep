@@ -97,3 +97,29 @@ def test_nested_junit_suites_are_read_only_when_asked():
     assert flat == {} and ran == 0  # the default reader sees only direct children
     nested, ran = compiled._parse_junit(Env(), "r.xml", qualified=True, nested=True)
     assert nested == {"A.FooTest.testA": "passed", "A.FooTest.testB with data set #0": "failed"} and ran == 2
+
+
+def test_a_whole_workspace_cargo_run_keys_each_case_by_its_test_binary():
+    """Bare case names collide across test binaries; the workspace run keys them as a targeted run does."""
+    cargo = _load_suite_module("swe-sweep__syn", "cargo")
+    out = "\n".join(
+        [
+            "     Running unittests src/lib.rs (target/debug/deps/syn-af9baf24406c65cd)",
+            "test parse::tests::x ... ok",
+            "     Running tests/test_lit.rs (target/debug/deps/test_lit-b311748c7abcbc34)",
+            "test floats ... ok",
+            "test bytes ... FAILED",
+            "     Running tests/test_expr.rs (target/debug/deps/test_expr-47007c69f622b102)",
+            "test floats ... FAILED",
+            "     Running tests/all/main.rs (target/debug/deps/all-0011aabb22cc33dd)",
+            "test traps::backtrace ... ignored",
+        ]
+    )
+    assert cargo.CargoSuite().workspace_outcomes(out)["floats"] == "failed"  # unqualified: the last binary read wins
+    assert cargo.CargoSuite(qualified=True).workspace_outcomes(out) == {
+        "syn::parse::tests::x": "passed",
+        "test_lit::floats": "passed",
+        "test_lit::bytes": "failed",
+        "test_expr::floats": "failed",
+        "all::traps::backtrace": "skipped",
+    }

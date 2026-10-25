@@ -8,6 +8,10 @@ from ..utils.compiled import _patched_files, _run
 from ..utils.logging import log
 from ..utils.managed import _CARGO_RESULT_RE, _CARGO_STATUS, _FN_RE, _TEST_ATTR_RE, cargo_target_of
 
+# cargo's banner before each test binary: `Running tests/test_lit.rs (target/debug/deps/test_lit-<hash>)`,
+# or `Running unittests src/lib.rs (target/debug/deps/syn-<hash>)` for a crate's own unit tests.
+_CARGO_RUNNING_RE = re.compile(r"^\s+Running (unittests )?(\S+) \((?:\S*/)?([^/()]+?)-[0-9a-f]+\)\s*$")
+
 
 class CargoSuite(ReproductionSuite):
     """``cargo test``, one invocation per integration-test target.
@@ -59,6 +63,9 @@ class CargoSuite(ReproductionSuite):
     (raft-rs: ``tests/integration_cases/`` and ``tests/failpoint_cases/`` are both part of
     target ``tests``). Nothing in the diff distinguishes the two, so the crate says which
     is which — ``{integration_cases: tests}``.
+
+    ``qualified`` keys a whole-workspace run's outcomes ``<target>::<case>``, as a targeted run keys them,
+    so same-named cases in two test binaries do not overwrite each other.
     """
 
     no_targets = "test patch touched no cargo integration-test file"
@@ -71,8 +78,10 @@ class CargoSuite(ReproductionSuite):
         exact=True,
         target_aliases=None,
         fixture_case_names=False,
+        qualified=False,
     ):
         self.cargo_args = cargo_args
+        self.qualified = qualified
         self.eval_args = eval_args
         self.target_aliases = dict(target_aliases or {})
         self.exact = exact
@@ -90,6 +99,23 @@ class CargoSuite(ReproductionSuite):
             for _, (crate, target) in self.fixture_targets
             if "\\" not in crate and "\\" not in target
         }
+
+    def workspace_outcomes(self, stdout):
+        """Outcomes of a whole-workspace run; with ``qualified``, keyed `<target>::<case>` (bare names
+        collide across test binaries: syn's `floats` is in two, and the last one read won)."""
+        outcomes = {}
+        prefix = ""
+        for line in stdout.splitlines():
+            m = _CARGO_RUNNING_RE.match(line) if self.qualified else None
+            if m:
+                t = None if m.group(1) else cargo_target_of(m.group(2))
+                name = self.target_aliases.get(t[1], t[1]) if t else m.group(3)
+                prefix = name + "::"
+                continue
+            m = _CARGO_RESULT_RE.match(line)
+            if m:
+                outcomes[prefix + m.group(1)] = _CARGO_STATUS[m.group(2)]
+        return outcomes
 
     def args_for(self, crate):
         if isinstance(self.cargo_args, dict):
@@ -196,10 +222,7 @@ class CargoSuite(ReproductionSuite):
                 return {}, 0, False, True
             log("cargo test whole workspace rc=%d" % r.returncode)
             log(r.stdout[-2000:])
-            for line in r.stdout.splitlines():
-                m = _CARGO_RESULT_RE.match(line)
-                if m:
-                    outcomes[m.group(1)] = _CARGO_STATUS[m.group(2)]
+            outcomes = self.workspace_outcomes(r.stdout)
             n = len([o for o in outcomes.values() if o != "skipped"])
             return outcomes, n, r.returncode != 0 and not outcomes, False
         for crate, target in files:
