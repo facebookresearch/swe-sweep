@@ -225,15 +225,6 @@
     },
     {
       "f2p": [
-        "gdrivers.png::test_png_read_interlace_16_bit"
-      ],
-      "id": "gdal-3bd8d57ad655",
-      "target_files": [
-        "frmts/png/pngdataset.cpp"
-      ]
-    },
-    {
-      "f2p": [
         "gcore.bmp_write::test_bmp_create_empty"
       ],
       "id": "gdal-424d521138b6",
@@ -293,15 +284,6 @@
       "id": "gdal-5ce400c64f69",
       "target_files": [
         "ogr/ogr2gmlgeometry.cpp"
-      ]
-    },
-    {
-      "f2p": [
-        "ogr.ogr_gml_read::test_ogr_gml_SWAP_COORDINATES_no_srs"
-      ],
-      "id": "gdal-5f6e44b21f5f",
-      "target_files": [
-        "ogr/ogrsf_frmts/gmlutils/gmlutils.cpp"
       ]
     },
     {
@@ -578,15 +560,6 @@
       "id": "gdal-d8a8cd51d51b",
       "target_files": [
         "frmts/gtiff/gtiffdataset_read.cpp"
-      ]
-    },
-    {
-      "f2p": [
-        "utilities.test_gdalwarp_lib::test_gdalwarp_lib_average_ten_ten_to_one_one"
-      ],
-      "id": "gdal-df22e12654b3",
-      "target_files": [
-        "alg/gdalwarpkernel.cpp"
       ]
     },
     {
