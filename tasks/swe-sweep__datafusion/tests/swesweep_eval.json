@@ -263,15 +263,6 @@
     },
     {
       "f2p": [
-        "slt::dynamic_filter_pushdown_config.slt"
-      ],
-      "id": "datafusion-81250ea52705",
-      "target_files": [
-        "datafusion/physical-plan/src/aggregates/mod.rs"
-      ]
-    },
-    {
-      "f2p": [
         "slt::expr.slt"
       ],
       "id": "datafusion-8dfeefac14d8",
@@ -363,15 +354,6 @@
       "id": "datafusion-e9c4509049de",
       "target_files": [
         "datafusion/sql/src/select.rs"
-      ]
-    },
-    {
-      "f2p": [
-        "slt::window.slt"
-      ],
-      "id": "datafusion-fdbb4f4d736f",
-      "target_files": [
-        "datafusion/physical-plan/src/filter.rs"
       ]
     }
   ],
