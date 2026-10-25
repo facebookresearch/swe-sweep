@@ -64,7 +64,10 @@ behind rather than a pristine checkout plus the patch.
 One verifier session per task: the task's setup command once; reset to the base commit; apply
 the patch and revert any test files it touched; build if the repository needs it; run the
 visible suite once. Every test in `base_tests.json.gz` that does not pass now is a regression
-(there is no pre-patch visible run: upstream's recorded base runs are the reference). Then, for
+(there is no pre-patch visible run: upstream's recorded base runs are the reference). A stored name
+that did not run at all is matched again with memory addresses masked, because Go subtest names
+built from a function value embed its address (`(func()_int)(0x5fc7e0)`), which moves whenever the
+code size changes; a name that ran and did not pass is still a regression. Then, for
 each accepted bug, apply its hidden `test.patch`, run the tests it targets once, revert it.
 
 One run decides each check, as in the paper: the base list already excludes every visible test
@@ -96,17 +99,32 @@ The regression reference is upstream's recorded base list; the per-bug oracle's 
 Reviewed environment-dependent tests, out of the base list and never a regression or a subtask failure (`swesweep_ignored_tests.json`):
 
 - `aws-cdk` (1): custom-resources provider test that symlinks the SDK under a fixed `/tmp/node_modules/aws-sdk` path and times the install; failed on 2 of 5 pristine runs of the 20 min suite (2026-09-29 v2 and v5), passed in upstream's ten.
-- `dayjs` (1): badMutable `week()` on today's date mutates the instance only for some dates; passed in upstream's September runs, failed 2026-09-29 on the pristine tree.
+- `arrow` (1): `ExecPlanExecution.StressSourceSinkStopped` races; it fails in a share of gradings of an untouched tree, more often under load.
+- `dayjs` (3): badMutable `week()` on today's date mutates the instance only for some dates; passed in upstream's September runs, failed 2026-09-29 on the pristine tree. Two `DST, a time that never existed Fall Back 2012-11-04` tests fail whenever the grading date is in winter time.
 - `duckdb` (2): Read the machine's CPU count.
 - `fasthttp` (7): Deadline / pipelining timing tests; a different one fails on each pristine run at any concurrency.
+- `go` (1): `net::TestTCPSpuriousConnSetupCompletionWithCancel` expects a dial to `golang.org:3` to fail; whether it does depends on the grading container's network, so in some environments the test fails on every grading.
 - `fsharp` (1): `#r nuget` restore of a nonexistent package: the offline failure shape differs between upstream's `--network=none` (no interface) and Daytona's egress block (resolver present, timeouts), and the diagnostic assertion trips.
 - `opencv` (2): FFMPEG-decoded .avi whose frame count follows the decoder build.
-- `pulsar` (80): Never run here: Pulsar's fail-fast TestNG listener skips every test after the first failure in the `pulsar-client-original` fork, and the class order (surefire `runOrder=filesystem`) makes the offline `ConnectionTimeoutTest.testLowTimeout` trip first in our sandboxes where upstream tripped later; all 80 pass whenever they run (upstream 10/10). Two independent runs, identical set.
+- `pulsar` (97): the fail-fast listener is now off in every run (`-DtestFailFast=false` in `mvn_args`), and the list was re-recorded from 3 untouched runs. Ignored: the 80 below that upstream reviewed (they run now, and stay ignored until re-checked), and 17 `org.apache.pulsar.client.impl` tests: 7 that fail in every untouched run (`ClientCnxRequestTimeoutQueueTest` and others) and 10 (`AcknowledgementsGroupingTrackerTest` 7, `ClientCnxTest` 3) that passed in the recording runs and failed in 4 later untouched gradings.
+  Upstream's note on the 80: Pulsar's fail-fast TestNG listener skips every test after the first failure in the `pulsar-client-original` fork, and the class order (surefire `runOrder=filesystem`) makes the offline `ConnectionTimeoutTest.testLowTimeout` trip first in our sandboxes where upstream tripped later; all 80 pass whenever they run (upstream 10/10).
 - `quarkus` (170): Never run here: the whole-reactor `mvn -o -T 4 test` is fail-fast and three unrelated module failures (offline `surefire-junit4` provider, Kotlin under `-T`, `AnalyticsServiceTest`) race with these modules; upstream's own ten runs report 465-947 of 984 ids. All 170 pass whenever they run.
 - `qutip` (1): Unseeded `rand_ket(4)` plus random GRAPE initial pulses with no retry; failed 1 of 2 pristine runs here.
+- `roslyn` (1): a VB parser test (`ParseExpressionTest.ParseNullableAfterOpenGeneric`) that fails in some gradings of an untouched tree.
 - `scipy` (2): `@pytest.mark.xfail(reason='Fails with ATLAS')` tests that XPASS on upstream's host and XFAIL here (BLAS/CPU-dependent sparse interior-point numerics).
+- `tarantool` (1): `box-luatest/gh_6260_add_builtin_events_test.lua` failed in 2 of 5 empty-patch gradings.
 - `webpack` (2): `asset-modules/http-url` fetches over HTTP when its lockfile entries are stale; the verifier has no network. Failed on 3 of 3 pristine runs of `drydock-pandora-oracle-perbug-full100-v5` (2026-09-29, confirmed by the second visible run) after passing in v3 and v4, so the flip is time-based, not code.
 
+
+Tests a correct fix legitimately changes, also ignored. Where a bug's hidden test patch ships the updated copy, the
+stored copy would fail against a correct fix, so it is ignored everywhere except that bug's own run, which checks the
+updated copy (`checked_for` in `base_tests.json.gz`):
+- `duckdb` (3): `test/sql/attach/attach_did_you_mean.test`, `attach_nested_types.test`, `attach_table_info.test` (duckdb-96cd6f4c49c4).
+- `go` (3, each under its `net/http::` and `src/net/http::` spellings): `TestTimeoutHandler_h1`, `TestTimeoutHandler_h2`, `TestTimeoutHandlerRaceHeaderTimeout` (go-c4cef047d3ce).
+- `numpy` (1): `TestUfunclike::test_fix_with_subclass` (numpy-3746aeb78e18).
+No hidden patch updates these, so they are ignored everywhere:
+- `go` (1, both spellings): `TestOmitHTTP2`, which reruns the `net/http` suite and so fails with go-c4cef047d3ce's fix.
+- `matplotlib` (1): `test_contour::test_contourf_log_extension[png]`, whose baseline image matplotlib-46b97150fdfe's `LogLocator` change alters.
 
 ## Reading results
 
