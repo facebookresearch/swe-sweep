@@ -19,9 +19,9 @@ OFFICIAL_FIX_TEST_FILES = {
     ("dart-sdk", "runtime/vm/object_test.cc"),
     ("datafusion", "datafusion/expr-common/src/type_coercion/binary/tests/arithmetic.rs"),
 }
-# Hidden-test files no path rule can tell from source (none left: ruff's per-rule mod.rs and
-# v's vtest-self.v are declared by exact path in their test_dirs).
-HIDDEN_FILES_NOT_TESTS: dict[str, str] = {}
+# Hidden-test files kept as source on purpose: ruff's isort/mod.rs is formatter code (lines 1-279) with inline tests
+# after it, and revert works per file, so reverting it would throw away an agent's fix there.
+HIDDEN_FILES_NOT_TESTS: dict[str, str] = {"ruff": "crates/ruff_linter/src/rules/isort/mod.rs"}
 
 
 def _patch_files(path: Path) -> set[str]:

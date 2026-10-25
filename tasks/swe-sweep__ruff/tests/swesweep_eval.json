@@ -8,7 +8,6 @@
       "snapshots",
       "crates/ruff_linter/src/rules/flake8_comprehensions/mod.rs",
       "crates/ruff_linter/src/rules/flake8_type_checking/mod.rs",
-      "crates/ruff_linter/src/rules/isort/mod.rs",
       "crates/ruff_linter/src/rules/pandas_vet/mod.rs",
       "crates/ruff_linter/src/rules/pyflakes/mod.rs",
       "crates/ruff_linter/src/rules/pylint/mod.rs",
