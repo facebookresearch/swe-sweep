@@ -519,15 +519,6 @@
     },
     {
       "f2p": [
-        "numpy.core.tests.test_multiarray::test_array_interface_offset"
-      ],
-      "id": "numpy-52ae8250b4e8",
-      "target_files": [
-        "numpy/core/src/multiarray/ctors.c"
-      ]
-    },
-    {
-      "f2p": [
         "numpy.core.tests.test_multiarray.TestChoose::test_output_dtype[ops0]",
         "numpy.core.tests.test_multiarray.TestChoose::test_output_dtype[ops1]"
       ],
@@ -1201,15 +1192,6 @@
     },
     {
       "f2p": [
-        "__process_level_failure__"
-      ],
-      "id": "numpy-aec45ec10ee8",
-      "target_files": [
-        "numpy/core/src/multiarray/multiarraymodule.c"
-      ]
-    },
-    {
-      "f2p": [
         "numpy.core.tests.test_multiarray.TestZeroRank::test_constructor"
       ],
       "id": "numpy-b0a0d056c97d",
@@ -1217,15 +1199,6 @@
         "numpy/core/src/multiarray/arrayobject.c",
         "numpy/core/src/multiarray/conversion_utils.c",
         "numpy/core/src/multiarray/conversion_utils.h"
-      ]
-    },
-    {
-      "f2p": [
-        "__process_level_failure__"
-      ],
-      "id": "numpy-b1505c6f730f",
-      "target_files": [
-        "numpy/core/src/multiarray/mapping.c"
       ]
     },
     {
