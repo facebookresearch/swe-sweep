@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import json
 import subprocess
 from pathlib import Path
 
@@ -59,9 +60,10 @@ def test_a_conflicting_fix_is_skipped_without_undoing_earlier_fixes(tmp_path):
     assert "<<<<<<<" not in (repo / "a.txt").read_text()
 
 
-def verdict(resolved, visible_ok=True, regressions=()):
+def verdict(resolved, visible_ok=None, regressions=(), **extra):
     return {
-        "visible_ok": visible_ok,
+        **extra,
+        "visible_ok": not regressions if visible_ok is None else visible_ok,
         "regressions": list(regressions),
         "subtasks": [{"subtask_id": bug, "resolved": True} for bug in resolved],
     }
@@ -102,3 +104,44 @@ def test_validate_runs_the_official_fix_agent(tmp_path):
     assert "swesweep.patch_agent:OfficialFixAgent" in command
     assert "fixes=all" in command
     assert command[-1] == "--dry-run"
+
+
+def test_a_grading_that_measured_nothing_is_reported_not_read_as_unresolved():
+    from swesweep.validate import validation_report
+
+    report = validation_report(
+        ["a", "b"],
+        empty=verdict([], agent_build_ok=False, build_error="compile error"),
+        stacked=verdict([], agent_patch_applied=False, agent_patch_error="hunk failed"),
+        skipped=[],
+        each={"a": verdict([], error="timeout")},
+    )
+    assert [f["problem"] for f in report["findings"]] == [
+        "not graded: build failed: compile error",
+        "not graded: patch did not apply: hunk failed",
+        "not graded: grader error: timeout",
+    ]
+
+
+def test_nothing_counts_as_credited_when_a_must_pass_test_fails():
+    from swesweep.validate import resolved
+
+    assert resolved(verdict(["a"])) == {"a"}
+    assert resolved(verdict(["a"], regressions=["t::green"])) == set()
+
+
+def test_a_rerun_reads_the_newest_job(tmp_path):
+    import os
+
+    from swesweep.validate import read_verdict
+
+    for name, stamp, bug in (("2026-10-01__a", 100, "old"), ("2026-10-02__b", 200, "new")):
+        path = tmp_path / name / "trial" / "verifier" / "eval.json"
+        path.parent.mkdir(parents=True)
+        path.write_text(json.dumps(verdict([bug])))
+        os.utime(path, (stamp, stamp))
+    assert resolved_ids(read_verdict(tmp_path)) == {"new"}
+
+
+def resolved_ids(v):
+    return {s["subtask_id"] for s in v["subtasks"] if s["resolved"]}

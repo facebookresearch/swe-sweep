@@ -1,4 +1,4 @@
-"""Grade a task's official fixes the way a submission is graded (W8), through the same Harbor route as `sweep eval`.
+"""Grade a task's official fixes the way a submission is graded, through the same Harbor route as `sweep eval`.
 Grades the empty submission, all fixes stacked and, with ``--each``, each fix alone, and reports what fails."""
 
 from __future__ import annotations
@@ -21,20 +21,33 @@ exit 1
 """
 
 
+def newest_first(paths: list[Path]) -> list[Path]:
+    """A rerun adds a job next to the old one; the newest result is the one that counts."""
+    return sorted(paths, key=lambda path: path.stat().st_mtime, reverse=True)
+
+
 def read_verdict(job_dir: Path) -> dict[str, Any] | None:
-    """The single trial's eval.json below a Harbor job directory, or None."""
-    found = sorted(job_dir.rglob("verifier/eval.json"))
+    """The newest trial's eval.json below a Harbor job directory, or None."""
+    found = newest_first(list(job_dir.rglob("verifier/eval.json")))
     return json.loads(found[0].read_text()) if found else None
 
 
-def credited(verdict: dict[str, Any]) -> set[str]:
+def resolved(verdict: dict[str, Any]) -> set[str]:
+    """Bugs a submission is credited with: none when a must-pass test failed (the task then scores 0)."""
     if not verdict.get("visible_ok"):
         return set()
     return {s["subtask_id"] for s in verdict.get("subtasks", []) if s.get("resolved")}
 
 
-def resolved(verdict: dict[str, Any]) -> set[str]:
-    return {s["subtask_id"] for s in verdict.get("subtasks", []) if s.get("resolved")}
+def not_graded(verdict: dict[str, Any]) -> str | None:
+    """Why a grading measured nothing (the patch did not apply, the build failed, the grader errored), or None."""
+    if verdict.get("agent_patch_applied") is False:
+        return f"patch did not apply: {verdict.get('agent_patch_error') or 'no detail'}"
+    if verdict.get("agent_build_ok") is False:
+        return f"build failed: {verdict.get('build_error') or 'no detail'}"
+    if verdict.get("error"):
+        return f"grader error: {verdict['error']}"
+    return None
 
 
 def validation_report(
@@ -49,6 +62,8 @@ def validation_report(
     findings = report["findings"]
     if empty is None:
         findings.append({"check": "empty", "problem": "no result"})
+    elif not_graded(empty):
+        findings.append({"check": "empty", "problem": f"not graded: {not_graded(empty)}"})
     else:
         free = sorted(resolved(empty))
         report["empty"] = {"resolved": free, "regressions": empty.get("regressions", [])}
@@ -58,8 +73,11 @@ def validation_report(
             findings.append({"check": "empty", "problem": "must-pass tests fail on the untouched tree"})
     if stacked is None:
         findings.append({"check": "stacked", "problem": "no result"})
+    elif not_graded(stacked):
+        findings.append({"check": "stacked", "problem": f"not graded: {not_graded(stacked)}"})
     else:
-        missing = sorted(set(bugs) - resolved(stacked) - set(skipped))
+        # with a must-pass test failing nothing is credited; that finding says why, not one entry per bug
+        missing = sorted(set(bugs) - resolved(stacked) - set(skipped)) if stacked.get("visible_ok") else []
         report["stacked"] = {
             "resolved": len(resolved(stacked)),
             "skipped_fixes": skipped,
@@ -82,14 +100,23 @@ def validation_report(
         if verdict is None:
             findings.append({"check": "alone", "bug": bug, "problem": "no result"})
             continue
+        if not_graded(verdict):
+            findings.append({"check": "alone", "bug": bug, "problem": f"not graded: {not_graded(verdict)}"})
+            continue
+        if not verdict.get("visible_ok"):
+            findings.append(
+                {
+                    "check": "alone",
+                    "bug": bug,
+                    "problem": "fix breaks must-pass tests",
+                    "tests": verdict.get("regressions", []),
+                }
+            )
+            continue
         got = resolved(verdict)
         if bug not in got:
             findings.append({"check": "alone", "bug": bug, "problem": "own fix does not resolve it"})
         others = sorted(got - {bug})
         if others:
             findings.append({"check": "alone", "bug": bug, "problem": "fix also credits other bugs", "bugs": others})
-        if verdict.get("regressions"):
-            findings.append(
-                {"check": "alone", "bug": bug, "problem": "fix breaks must-pass tests", "tests": verdict["regressions"]}
-            )
     return report

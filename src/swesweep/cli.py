@@ -16,7 +16,7 @@ from pathlib import Path
 
 from swesweep.constants import HARBOR_SOURCE_REVISION, TASK_PREFIX, TASKS_DIR
 from swesweep.scoring import print_score
-from swesweep.validate import read_verdict, validation_report
+from swesweep.validate import newest_first, read_verdict, validation_report
 
 
 def task_directories() -> tuple[Path, ...]:
@@ -142,7 +142,7 @@ def harbor_fix_command(task_dir: Path, fixes: str, output: Path, *, dry_run: boo
 
 
 def _skipped_fixes(job_dir: Path) -> list[str]:
-    for result in sorted(job_dir.rglob("result.json")):
+    for result in newest_first(list(job_dir.rglob("result.json"))):
         try:
             metadata = (json.loads(result.read_text()).get("agent_result") or {}).get("metadata") or {}
         except (OSError, ValueError):
