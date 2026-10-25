@@ -6,8 +6,8 @@
     "visible_timeout": 14400
   },
   "upstream_image": "pandora-maxbug-keycloak:25.0.0",
-  "n_base_passing": 797,
-  "n_base_test_ignore": 75,
+  "n_base_passing": 796,
+  "n_base_test_ignore": 76,
   "oracle_digest": "40ce98104ed2039ae527c72d92553a84bfda56e010f32272aa3c2b8f6ebdec3a",
   "oracle_pristine_paths": [],
   "upstream_commit": "9f7399e15e6172900e0591deb5a57a45769d8205",
