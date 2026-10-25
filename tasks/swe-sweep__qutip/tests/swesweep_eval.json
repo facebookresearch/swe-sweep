@@ -92,15 +92,6 @@
     },
     {
       "f2p": [
-        "test_spmath::test_zcsr_isherm_structure_detection"
-      ],
-      "id": "qutip-f8203159401b",
-      "target_files": [
-        "qutip/core/data/properties.pyx"
-      ]
-    },
-    {
-      "f2p": [
         "test_transfertensor::test_ttmsolve_jc_model"
       ],
       "id": "qutip-faa81dd725a6",
