@@ -76,7 +76,7 @@ the grader should absorb; the grader has no re-run.
 
 Per task, `reward = n_resolved / n_subtasks`, or 0 if the visible suite regressed. The
 benchmark score is resolved bugs over all accepted bugs, i.e. the average of the task rewards
-weighted by their `n_subtasks`: `sum(reward * n_subtasks) / sum(n_subtasks)` (4,068 bugs over
+weighted by their `n_subtasks`: `sum(reward * n_subtasks) / sum(n_subtasks)` (3,932 bugs over
 the 100 tasks). The unweighted mean of the rewards is a different number. A task whose visible
 suite regressed contributes 0 to that sum even if some bugs were resolved; its raw count stays
 available as `n_resolved`.
