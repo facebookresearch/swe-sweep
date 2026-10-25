@@ -12,11 +12,11 @@
 # by the 2.0 line it is down to 2-3 and by 3.0 it is zero. See
 # docs/ai/040-experiments/syn/260824-seed-funnel.md.
 #
-# Why a modern toolchain and not a period-correct one. syn commits no Cargo.lock, so cargo
-# resolves the *newest* semver-compatible release of everything at build time. Only the
+# Why a modern toolchain and not a period-correct one. Upstream syn commits no Cargo.lock, so cargo
+# resolves the *newest* semver-compatible release of everything (the lock this image ships keeps such a graph). Only the
 # direct dev-dependencies are held back by their minor-version requirements (`reqwest =
-# "0.10"`, `insta = "0.16"`); everything reached transitively — `idna`, `icu_*`, `libc`,
-# `rustix` — resolves to a 2026 release. Those are edition-2024 crates, so an older cargo
+# "0.10"`, `insta = "0.16"`); much of what is reached transitively — `libc`,
+# `rustix` — is a 2026 release, and some (`encoding_rs`) are edition-2024 crates, so an older cargo
 # refuses to parse their manifests before it compiles a single line, and a period-correct
 # 1.45 is hopeless. The toolchain is therefore pinned forward and `--cap-lints warn` (below)
 # is what carries the 2020 half of the graph.
@@ -36,7 +36,7 @@ RUN apk add --no-cache curl \
  && echo "269b2c99e4db15b242bf01832f4fea1e8f1a664f273cff519393f296e9820b41  /pbs.tgz" | sha256sum -c - \
  && mkdir -p /opt/swesweep && tar -xzf /pbs.tgz -C /opt/swesweep && rm /pbs.tgz
 
-# --- upstream Dockerfile, unchanged below ---
+# --- upstream Dockerfile below; SWE-sweep changes are marked `# SWE-sweep:` ---
 FROM docker.io/library/rust:1.97.1-slim-bookworm
 # --- SWE-sweep Harbor port: apt repositories of EOL Debian suites ---
 RUN if [ -r /etc/os-release ]; then . /etc/os-release; case "${VERSION_CODENAME:-}" in \
@@ -72,7 +72,7 @@ RUN git init -q \
 # same flags.
 ENV RUSTFLAGS="--cap-lints warn"
 
-# Warm the build: resolve the whole dependency graph into Cargo.lock, download it into the
+# Warm the build: download the dependency graph pinned in Cargo.lock into the
 # registry cache, and compile every test target. This is what makes a per-subtask run an
 # incremental recompile rather than a cold build.
 #

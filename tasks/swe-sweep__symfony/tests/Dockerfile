@@ -25,7 +25,7 @@ RUN apk add --no-cache curl \
  && echo "269b2c99e4db15b242bf01832f4fea1e8f1a664f273cff519393f296e9820b41  /pbs.tgz" | sha256sum -c - \
  && mkdir -p /opt/swesweep && tar -xzf /pbs.tgz -C /opt/swesweep && rm /pbs.tgz
 
-# --- upstream Dockerfile, unchanged below ---
+# --- upstream Dockerfile below; SWE-sweep changes are marked `# SWE-sweep:` ---
 FROM php:8.2-cli-bookworm
 # --- SWE-sweep Harbor port: apt repositories of EOL Debian suites ---
 RUN if [ -r /etc/os-release ]; then . /etc/os-release; case "${VERSION_CODENAME:-}" in \
@@ -96,9 +96,8 @@ RUN git init -q -b 6.4 \
     && git add -A && git commit -q -m "symfony maxbug source (pre-vendor)"
 
 # symfony/symfony ships no composer.lock — it is a library, and `minimum-stability: dev`, so
-# the resolver decides the dependency set and picks development branches for some of it.
-# That set is frozen the moment this image is built and pushed, which is what makes the
-# census repeatable; the pristine check below is what says the set is usable.
+# unpinned the resolver picks development branches for some of the set, differently on each build.
+# The composer.lock copied below fixes the set; the pristine check below is what says it is usable.
 # `--no-plugins` for the same reason as the other PHP tasks: the tree does not list every
 # plugin under `allow-plugins`, and the ones involved only wire up linters.
 # SWE-sweep: composer.lock pinned as of v6.4.0's release (2023-11-29); resolving at build time picked 2026 dev branches,
