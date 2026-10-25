@@ -5,10 +5,18 @@
     "suite": "reproduction",
     "visible_timeout": 7200,
     "source_files": [
-      "actionmailer/lib/action_mailer/test_helper.rb",
-      "actionpack/lib/action_controller/test_case.rb",
-      "actionpack/lib/action_dispatch/testing/test_request.rb",
-      "activejob/lib/active_job/test_helper.rb"
+      "actioncable/lib/",
+      "actionmailbox/lib/",
+      "actionmailer/lib/",
+      "actionpack/lib/",
+      "actiontext/lib/",
+      "actionview/lib/",
+      "activejob/lib/",
+      "activemodel/lib/",
+      "activerecord/lib/",
+      "activestorage/lib/",
+      "activesupport/lib/",
+      "railties/lib/"
     ]
   },
   "upstream_image": "pandora-maxbug-rails:v7.0.0",
