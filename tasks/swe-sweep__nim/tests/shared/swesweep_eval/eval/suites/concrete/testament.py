@@ -1,5 +1,6 @@
 """TestamentSuite suite adapter."""
 
+import json
 import os
 import re
 
@@ -23,6 +24,8 @@ _GLUE_RE = re.compile(r"(?<!^)(?=(?:PASS|FAIL|SKIP|NOTINBATCH|JOINED): )")
 # Byte-level interleaving can also truncate an SGR sequence, leaving an introducer that
 # _ANSI_RE cannot match (`\x1b[PASS:` with the color bytes lost). Drop those leftovers.
 _STRAY_ANSI_RE = re.compile(r"\x1b\[?")
+# Verdicts in testament's results JSON (`TResultEnum`): anything but success, disabled or joined is a failure.
+_JSON_SKIPPED = ("reDisabled", "reJoined")
 _VERDICTS = {
     "PASS": "passed",
     "FAIL": "failed",
@@ -61,6 +64,9 @@ class TestamentSuite(ReproductionSuite):
 
     ``nim`` is the compiler binary the cases are compiled with, relative to the repo — the
     per-subtask rebuild refreshes exactly that path.
+
+    The whole-suite run reads verdicts from the ``testresults/<category>.json`` each per-category child writes,
+    because the children share one stdout and their lines interleave; stdout is the fallback when no file was written.
     """
 
     no_targets = "test patch touched no testament case"
@@ -110,14 +116,23 @@ class TestamentSuite(ReproductionSuite):
         cases = [None] if files is None else list(files)
         outcomes = {}
         error = False
+        results_dir = os.path.join(repo, "testresults")
         for case in cases:
+            if case is None:  # git-ignored, so `git clean` keeps a previous run's files
+                for path in env.find_files(results_dir):
+                    env.remove(path)
             result = _run(env, self._command(case), timeout=timeout, cwd=repo)
             if result is None:
                 log("testament %s TIMEOUT after %ds" % (case or "all", timeout))
                 return outcomes, 0, False, True
             log("testament %s rc=%d" % (case or "all", result.returncode))
             log(result.stdout[-2500:])
-            seen = self._parse(case, result.stdout, outcomes)
+            found = self._json_outcomes(env, results_dir) if case is None else {}
+            if found:
+                outcomes.update(found)
+                seen = len(found)
+            else:
+                seen = self._parse(case, result.stdout, outcomes)
             # No verdict at all means testament never got as far as the case — a missing
             # compiler, a broken spec parse. That is the `error` flag, not a failure:
             # "the harness did not run" and "the test failed" differ post-gold.
@@ -125,6 +140,33 @@ class TestamentSuite(ReproductionSuite):
                 error = True
         n = len([value for value in outcomes.values() if value != "skipped"])
         return outcomes, n, error, False
+
+    @staticmethod
+    def _id(name):
+        """The id `_parse` keys on: the printed name up to any ` (` (`(allowed to fail)`, a duration); None if not a case."""
+        name = name.split(" (", 1)[0].strip()
+        return name if ".nim" in name.split(" ")[0] else None
+
+    @classmethod
+    def _json_outcomes(cls, env, results_dir):
+        """Verdicts from every ``testresults/*.json``; an entry per line, so a file a crashed child left unclosed still reads."""
+        outcomes = {}
+        for path in env.find_files(results_dir):
+            if not path.endswith(".json"):
+                continue
+            for line in env.read_text(path).splitlines():
+                line = line.strip().lstrip("[,").rstrip("],")  # the closing `]` follows the last entry on its line
+                if not line.startswith("{"):
+                    continue
+                try:
+                    entry = json.loads(line)
+                except ValueError:
+                    continue
+                key = cls._id(str(entry.get("name", "")))
+                if key:
+                    result = entry.get("result")
+                    outcomes[key] = "passed" if result == "reSuccess" else "skipped" if result in _JSON_SKIPPED else "failed"
+        return outcomes
 
     @staticmethod
     def _parse(case, text, outcomes):

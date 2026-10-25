@@ -123,3 +123,29 @@ def test_a_whole_workspace_cargo_run_keys_each_case_by_its_test_binary():
         "test_expr::floats": "failed",
         "all::traps::backtrace": "skipped",
     }
+
+
+def test_testament_reads_the_per_category_results_files_not_the_shared_stdout():
+    """`testament all`'s children interleave on one stdout; each writes its own results file, read line by line."""
+    testament = _load_suite_module("swe-sweep__nim", "testament")
+    files = {
+        "/nim/testresults/stdlib.json": "[\n"
+        + '{"name": "tests/stdlib/tmarshal.nim c --mm:orc", "result": "reSuccess"},\n'
+        + '{"name": "tests/stdlib/tmarshal.nim c --mm:refc", "result": "reOutputsDiffer"},\n'
+        + '{"name": "tests/stdlib/tos.nim c (allowed to fail) ", "result": "reDisabled"}]\n',  # testament's close
+        "/nim/testresults/gc.json": '[\n{"name": "tests/gc/tgc.nim c", "result": "reSuccess"},\n',  # a crashed child: unclosed
+    }
+
+    class Env:
+        def find_files(self, root):
+            return [p for p in files if p.startswith(root + "/")]
+
+        def read_text(self, path):
+            return files[path]
+
+    assert testament.TestamentSuite._json_outcomes(Env(), "/nim/testresults") == {
+        "tests/stdlib/tmarshal.nim c --mm:orc": "passed",
+        "tests/stdlib/tmarshal.nim c --mm:refc": "failed",
+        "tests/stdlib/tos.nim c": "skipped",
+        "tests/gc/tgc.nim c": "passed",
+    }
