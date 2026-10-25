@@ -16,7 +16,7 @@
   "oracle_pristine_paths": [],
   "upstream_commit": "9f7399e15e6172900e0591deb5a57a45769d8205",
   "reproduction": {
-    "build_cmd": "if git diff --name-only baseline | grep -qE '^(runtime|sdk)/|^pkg/(vm|front_end|kernel|_fe_analyzer_shared)/'; then ./tools/build.py --mode release --arch x64 create_sdk; fi",
+    "build_cmd": "if git diff --name-only baseline | grep -q '^runtime/'; then ./tools/build.py --mode release --arch x64 create_sdk; fi",
     "build_timeout": 3600,
     "suite": {
       "dart": "out/ReleaseX64/dart-sdk/bin/dart",
