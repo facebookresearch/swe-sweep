@@ -29,7 +29,8 @@
         "syn-dev",
         "--tests",
         "--no-fail-fast"
-      ]
+      ],
+      "qualified": true
     },
     "test_timeout": 900
   },
