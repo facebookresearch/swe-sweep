@@ -6,8 +6,8 @@
     "visible_timeout": 14400
   },
   "upstream_image": "pandora-maxbug-tokio:1.33.0",
-  "n_base_passing": 1121,
-  "n_base_test_ignore": 0,
+  "n_base_passing": 1182,
+  "n_base_test_ignore": 2,
   "oracle_digest": "c631dbff21c2064a813b3d8dbbce3e3e8297d08ced2e4310229b9cfb0c87a50c",
   "oracle_pristine_paths": [],
   "upstream_commit": "9f7399e15e6172900e0591deb5a57a45769d8205",
@@ -38,7 +38,8 @@
         "--all-features",
         "--tests",
         "--no-fail-fast"
-      ]
+      ],
+      "qualified": true
     },
     "test_timeout": 900
   },
