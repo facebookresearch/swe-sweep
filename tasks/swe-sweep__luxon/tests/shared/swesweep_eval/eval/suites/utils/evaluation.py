@@ -33,9 +33,10 @@ def is_test_file(path, test_dirs=(), source_files=()):
     extension for a program that exists only as test data.
 
     ``source_files`` are source files the name rules mistake for tests (rails' ``test_case.rb``); they are never reverted.
+    An entry ending in ``/`` is a source root: nothing under it is a test (rails' ``activesupport/lib/``, duckdb's ``src/``).
     A ``test_dirs`` entry containing ``/`` is an exact path or prefix (ruff's per-rule ``mod.rs``, v's ``vtest-self.v``).
     """
-    if path in source_files:
+    if path in source_files or any(s.endswith("/") and path.startswith(s) for s in source_files):
         return False
     if any("/" in d and (path == d or path.startswith(d.rstrip("/") + "/")) for d in test_dirs):
         return True

@@ -58,6 +58,8 @@ def test_source_files_are_never_test_files():
     assert not is_test_file(
         "actionpack/lib/action_controller/test_case.rb", (), ("actionpack/lib/action_controller/test_case.rb",)
     )
+    assert not is_test_file("railties/lib/rails/commands/test/test_command.rb", (), ("railties/lib/",))
+    assert is_test_file("railties/test/commands/test_test.rb", (), ("railties/lib/",))
 
 
 def _load_shared_module(task: str, relpath: str):
