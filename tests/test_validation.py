@@ -142,6 +142,21 @@ def test_credit_with_no_fix_is_reported_when_must_pass_tests_also_fail():
     ]
 
 
+def test_a_must_pass_run_that_timed_out_is_reported():
+    """The grader scores 0 with no regression listed when the must-pass run times out or writes no report."""
+    from swesweep.validate import validation_report
+
+    timed_out = verdict(["a"], visible_ok=False)
+    report = validation_report(
+        ["a"], empty=verdict([], visible_ok=False), stacked=timed_out, skipped=[], each={"a": timed_out}
+    )
+    assert [(f["check"], f["problem"]) for f in report["findings"]] == [
+        ("empty", "must-pass run timed out or wrote no report"),
+        ("stacked", "must-pass run timed out or wrote no report"),
+        ("alone", "must-pass run timed out or wrote no report"),
+    ]
+
+
 def write_job(job_dir: Path, name: str, resolved) -> None:
     path = job_dir / name / "trial" / "verifier" / "eval.json"
     path.parent.mkdir(parents=True)

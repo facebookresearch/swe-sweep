@@ -64,6 +64,14 @@ def not_graded(verdict: dict[str, Any]) -> str | None:
     return None
 
 
+NO_REPORT = "must-pass run timed out or wrote no report"
+
+
+def no_must_pass_report(verdict: dict[str, Any]) -> bool:
+    """The must-pass run timed out or wrote no report: the task scores 0, but no regression is listed."""
+    return not verdict.get("visible_ok") and not verdict.get("regressions")
+
+
 def validation_report(
     bugs: list[str],
     empty: dict[str, Any] | None,
@@ -86,6 +94,8 @@ def validation_report(
             findings.append({"check": "empty", "problem": "credited with no fix", "bugs": free})
         if empty.get("regressions"):
             findings.append({"check": "empty", "problem": "must-pass tests fail on the untouched tree"})
+        if no_must_pass_report(empty):
+            findings.append({"check": "empty", "problem": NO_REPORT})
     if stacked is None:
         findings.append({"check": "stacked", "problem": "no result"})
     elif not_graded(stacked):
@@ -111,12 +121,17 @@ def validation_report(
                     "tests": stacked["regressions"],
                 }
             )
+        if no_must_pass_report(stacked):
+            findings.append({"check": "stacked", "problem": NO_REPORT})
     for bug, verdict in sorted(each.items()):
         if verdict is None:
             findings.append({"check": "alone", "bug": bug, "problem": "no result"})
             continue
         if not_graded(verdict):
             findings.append({"check": "alone", "bug": bug, "problem": f"not graded: {not_graded(verdict)}"})
+            continue
+        if no_must_pass_report(verdict):
+            findings.append({"check": "alone", "bug": bug, "problem": NO_REPORT})
             continue
         if not verdict.get("visible_ok"):
             findings.append(
