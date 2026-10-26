@@ -1,7 +1,7 @@
 """MinitestSuite suite adapter."""
 
 from ..base import ReproductionSuite
-from ..utils.minitest import minitest_targets, run_minitest, run_minitest_all
+from ..utils.minitest import minitest_targets, run_minitest, run_minitest_all, run_minitest_per_test
 
 class MinitestSuite(ReproductionSuite):
     """minitest over the ``*_test.rb`` files a test patch touches.
@@ -16,15 +16,17 @@ class MinitestSuite(ReproductionSuite):
     adds a handful of tests, so this is a handful of processes.
 
     ``runner`` is the per-gem entry point and ``bundler`` prefixes ``bundle exec`` so the
-    gems resolve to the versions the image installed.
+    gems resolve to the versions the image installed. ``per_test`` runs the visible suite as
+    ``runner -v`` in each gem, one outcome per test, in place of ``all_command``.
     """
 
     no_targets = "test patch touched no _test.rb file"
 
-    def __init__(self, runner="bin/test", bundler=True, all_command=None):
+    def __init__(self, runner="bin/test", bundler=True, all_command=None, per_test=False):
         self.runner = runner
         self.bundler = bundler
         self.all_command = list(all_command or ())
+        self.per_test = bool(per_test)
 
     def targets(self, diff, env=None):
         del env
@@ -33,6 +35,8 @@ class MinitestSuite(ReproductionSuite):
     def run_tests(self, env, repo, files, names, timeout, jobs):
         del jobs
         if files is None:
+            if self.per_test:
+                return run_minitest_per_test(env, repo, timeout, runner=self.runner, bundler=self.bundler)
             if not self.all_command:
                 raise ValueError("minitest evaluation requires an all_command for the visible suite")
             return run_minitest_all(env, repo, self.all_command, timeout)

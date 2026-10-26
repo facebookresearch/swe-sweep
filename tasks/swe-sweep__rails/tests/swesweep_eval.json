@@ -14,15 +14,10 @@
   "reproduction": {
     "needs_build": false,
     "suite": {
-      "all_command": [
-        "bundle",
-        "exec",
-        "rake",
-        "test"
-      ],
       "bundler": true,
       "runner": "bin/test",
-      "type": "minitest"
+      "type": "minitest",
+      "per_test": true
     },
     "test_timeout": 1200
   },

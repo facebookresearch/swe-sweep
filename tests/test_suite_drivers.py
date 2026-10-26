@@ -149,3 +149,54 @@ def test_testament_reads_the_per_category_results_files_not_the_shared_stdout():
         "tests/stdlib/tos.nim c": "skipped",
         "tests/gc/tgc.nim c": "passed",
     }
+
+
+def test_minitest_per_test_reads_verbose_lines_only_when_they_add_up_to_the_summary():
+    """The tested code prints into the same stream as `bin/test -v`'s result lines, so a gem's lines count only
+    when there are as many as its summary's runs; a gem that leaves no report is skipped, not fatal."""
+    path = (
+        ROOT
+        / "tasks"
+        / "swe-sweep__rails"
+        / "tests"
+        / "shared"
+        / "swesweep_eval"
+        / "eval"
+        / "suites"
+        / "utils"
+        / "minitest.py"
+    )
+    minitest = _load(path, "swesweep_eval.eval.suites.utils.minitest")
+    real = "\n".join(
+        [
+            "FooTest#test_a = 0.00 s = .",
+            "exists#test_0001_makes sql = 0.01 s = .",
+            "exists#test_0001_makes sql = 0.00 s = F",  # spec-style names repeat across files
+            "BarTest#test_b = 0.12 s = S",
+            "",
+            "4 runs, 7 assertions, 1 failures, 0 errors, 1 skips",
+        ]
+    )
+    assert minitest.verbose_outcomes(real) == {
+        "FooTest#test_a": "passed",
+        "exists#test_0001_makes sql": "failed",
+        "BarTest#test_b": "skipped",
+    }
+    assert minitest.verbose_outcomes(real.replace("4 runs", "3 runs")) is None  # a forged extra line
+    assert minitest.verbose_outcomes("FooTest#test_a = 0.00 s = .") is None  # no summary: the run died
+
+    class Result:
+        def __init__(self, stdout, returncode=0):
+            self.stdout, self.returncode = stdout, returncode
+
+    class Env:
+        def execute(self, argv, cwd=None, timeout=None, merge_stderr=False):
+            if argv[0] == "find":
+                return Result("/rails/activemodel/bin/test\n/rails/railties/bin/test\n")
+            assert argv == ["bundle", "exec", "bin/test", "-v"]
+            return Result(real) if cwd == "/rails/activemodel" else Result("LoadError: yarn", 1)
+
+    outcomes, n, error, timed_out = minitest.run_minitest_per_test(Env(), "/rails", 600)
+    assert (n, error, timed_out) == (3, False, False)
+    assert outcomes["activemodel::FooTest#test_a"] == "passed"
+    assert not any(k.startswith("railties::") for k in outcomes)

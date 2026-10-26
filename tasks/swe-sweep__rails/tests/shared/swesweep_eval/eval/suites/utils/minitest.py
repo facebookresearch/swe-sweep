@@ -7,6 +7,7 @@ gem to the image: run each requested test on its own and read the counts line. P
 a handful of tests, so that is a handful of processes, not hundreds.
 """
 import re
+import time
 
 from swesweep_eval.eval.suites.utils.compiled import _patched_files, _run
 from swesweep_eval.eval.suites.utils.logging import log
@@ -28,6 +29,12 @@ _MINITEST_MACRO_HUNK_RE = re.compile(r"^@@ .*@@.*\btest\s+(['\"])(?P<desc>.+?)\1
 _MINITEST_COUNTS_RE = re.compile(
     r"(\d+)\s+runs?,\s*\d+\s+assertions?,\s*(\d+)\s+failures?,\s*(\d+)\s+errors?,\s*(\d+)\s+skips?"
 )
+
+
+# One line per test from `bin/test -v`: "Class#test_name = 0.01 s = ." (. F E S).
+_MINITEST_VERBOSE_RE = re.compile(r"^(?P<id>\S.*) = \d+\.\d+ s = (?P<result>[.FES])$")
+_VERBOSE_OUTCOMES = {".": "passed", "S": "skipped", "F": "failed", "E": "error"}
+_VERBOSE_RANK = ("passed", "skipped", "failed", "error")
 
 
 def macro_method_name(description):
@@ -162,6 +169,50 @@ def run_minitest(env, repo, files, names, timeout, runner="bin/test", bundler=Tr
                 return {}, 0, True, False
             outcomes[key] = "failed" if bad else "passed"
     return outcomes, total or len(outcomes), False, False
+
+
+def verbose_outcomes(text):
+    """``{"Class#test_name": outcome}`` from one ``runner -v`` run, or ``None`` if the lines cannot be trusted.
+
+    The tested code prints into the same stream, so the result lines count only when there are exactly as many
+    as the summary's runs; an id seen twice (spec-style names repeat across files) keeps its worse outcome.
+    """
+    counts = _MINITEST_COUNTS_RE.findall(text)
+    lines = [m for m in map(_MINITEST_VERBOSE_RE.match, text.splitlines()) if m]
+    if not counts or len(lines) != int(counts[-1][0]):
+        return None
+    outcomes = {}
+    for m in lines:
+        previous = outcomes.get(m.group("id"), "passed")
+        outcomes[m.group("id")] = max(previous, _VERBOSE_OUTCOMES[m.group("result")], key=_VERBOSE_RANK.index)
+    return outcomes
+
+
+def run_minitest_per_test(env, repo, timeout, runner="bin/test", bundler=True):
+    """The visible suite as one verbose ``runner`` run per gem, keyed ``component::Class#test_name``.
+
+    A gem whose run leaves no trustworthy report (it failed to load, or its lines do not add up) contributes no
+    outcomes, so its must-pass tests count as missing; only a run in which no gem reported is an error.
+    """
+    deadline = time.monotonic() + timeout
+    prefix = ["bundle", "exec"] if bundler else []
+    outcomes = {}
+    for component in all_components(env, repo, runner):
+        left = int(deadline - time.monotonic())
+        result = _run(env, prefix + [runner, "-v"], timeout=left, cwd="%s/%s" % (repo, component)) if left > 0 else None
+        if result is None:
+            log("minitest visible suite TIMEOUT after %ds (in %s)" % (timeout, component))
+            return {}, 0, False, True
+        per_test = verbose_outcomes(result.stdout)
+        found = "no report" if per_test is None else "%d tests" % len(per_test)
+        log("minitest %s -v rc=%d: %s" % (component, result.returncode, found))
+        if per_test is None:
+            log(result.stdout[-2000:])
+            continue
+        outcomes.update(("%s::%s" % (component, name), outcome) for name, outcome in per_test.items())
+    if not outcomes:
+        return {}, 0, True, False
+    return outcomes, len(outcomes), False, False
 
 
 def run_minitest_all(env, repo, command, timeout):
