@@ -62,6 +62,16 @@ def test_source_files_are_never_test_files():
     assert is_test_file("railties/test/commands/test_test.rb", (), ("railties/lib/",))
 
 
+def test_a_test_path_inside_a_source_root_is_still_a_test():
+    """rails' test harness lives under its lib/ source roots; an agent's edit to it must still be reverted."""
+    roots = ("activesupport/lib/", "railties/lib/")
+    harness = ("activesupport/lib/active_support/test_case.rb", "railties/lib/rails/test_help.rb")
+    for path in harness:
+        assert is_test_file(path, harness, roots)
+    assert not is_test_file("railties/lib/rails/commands/test/test_command.rb", harness, roots)
+    assert not is_test_file("activesupport/lib/active_support/test_case.rb", harness, harness[:1])  # exact source wins
+
+
 def _load_shared_module(task: str, relpath: str):
     """Load one shared module by path (tasks ship different subsets of the shared tree)."""
     import importlib.util
