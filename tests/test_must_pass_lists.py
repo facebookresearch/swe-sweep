@@ -39,7 +39,7 @@ def test_the_check_passes_with_only_the_known_tasks_and_fails_on_a_new_one(tmp_p
             json.dump({"passing": passing, "ignored": [], "environment_runs": ["run-1"]}, f)
         (tests / "swesweep_eval.json").write_text(json.dumps({"n_base_passing": len(passing), "n_base_test_ignore": 0}))
 
-    task("rails", [])
+    task("dmd", [])
     task("good", ["pkg::TestA"])
     sys.argv = ["check_base_lists.py", str(tmp_path)]
     assert checker.main() == 0

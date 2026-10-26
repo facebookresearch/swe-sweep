@@ -17,7 +17,7 @@ VOLATILE = (
 # `TestFillBytes/0xffffffff`, symfony's URL data sets) are not addresses.
 ADDRESS = re.compile(r"\)\(0x[0-9a-fA-F]{6,}\)")
 # Tasks whose must-pass list is still empty or a placeholder; reported, but they do not fail the check.
-KNOWN_WITHOUT_LIST = frozenset({"datafusion", "dmd", "jest", "oxc", "phpspreadsheet", "rails", "sunpy"})
+KNOWN_WITHOUT_LIST = frozenset({"datafusion", "dmd", "jest", "oxc", "phpspreadsheet", "sunpy"})
 
 
 def check_task(task: Path) -> tuple[list[str], list[str]]:
