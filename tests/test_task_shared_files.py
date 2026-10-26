@@ -90,3 +90,21 @@ def test_shared_files_are_identical_across_tasks():
 
     assert result.returncode == 0, result.stdout + result.stderr
     assert result.stdout.startswith("100 tasks, ")
+
+
+def test_shared_file_check_ignores_bytecode_caches(tmp_path):
+    """A test run leaves __pycache__ in whichever copy it imported; that is not a difference between tasks."""
+    for task, cache in (("swe-sweep__a", b"one"), ("swe-sweep__b", b"two")):
+        shared = tmp_path / task / "tests" / "shared"
+        (shared / "__pycache__").mkdir(parents=True)
+        (shared / "cargo.py").write_text("X = 1\n")
+        (shared / "__pycache__" / "cargo.cpython-312.pyc").write_bytes(cache)
+
+    def check():
+        return subprocess.run(
+            [sys.executable, str(ROOT / "tasks" / "check_shared.py"), str(tmp_path)], capture_output=True, text=True
+        )
+
+    assert check().returncode == 0
+    (tmp_path / "swe-sweep__b" / "tests" / "shared" / "cargo.py").write_text("X = 2\n")
+    assert check().returncode == 1

@@ -18,7 +18,8 @@ def main() -> int:
     mismatches: list[str] = []
     for task in tasks:
         shared = task / "tests" / "shared"
-        for path in sorted(p for p in shared.rglob("*") if p.is_file()):
+        # Bytecode caches are per-machine build output, written wherever a test imported the module, never shipped.
+        for path in sorted(p for p in shared.rglob("*") if p.is_file() and "__pycache__" not in p.parts and p.suffix != ".pyc"):
             rel = path.relative_to(shared).as_posix()
             digest = hashlib.sha256(path.read_bytes()).hexdigest()
             if rel not in first:
