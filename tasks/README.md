@@ -116,15 +116,15 @@ Reviewed environment-dependent tests, out of the base list and never a regressio
 - `webpack` (2): `asset-modules/http-url` fetches over HTTP when its lockfile entries are stale; the verifier has no network. Failed on 3 of 3 pristine runs of `drydock-pandora-oracle-perbug-full100-v5` (2026-09-29, confirmed by the second visible run) after passing in v3 and v4, so the flip is time-based, not code.
 
 
-Tests a correct fix legitimately changes, also ignored. Where a bug's hidden test patch ships the updated copy, the
-stored copy would fail against a correct fix, so it is ignored everywhere except that bug's own run, which checks the
-updated copy (`checked_for` in `base_tests.json.gz`):
+Tests a correct fix legitimately changes, also ignored. Where a bug's hidden test patch ships the updated copy and that
+bug's own run executes it, it is ignored everywhere except that run, which checks the updated copy (`checked_for` in
+`base_tests.json.gz`):
 - `duckdb` (3): `test/sql/attach/attach_did_you_mean.test`, `attach_nested_types.test`, `attach_table_info.test` (duckdb-96cd6f4c49c4).
-- `go` (3, each under its `net/http::` and `src/net/http::` spellings): `TestTimeoutHandler_h1`, `TestTimeoutHandler_h2`, `TestTimeoutHandlerRaceHeaderTimeout` (go-c4cef047d3ce).
 - `numpy` (1): `TestUfunclike::test_fix_with_subclass` (numpy-3746aeb78e18).
-No hidden patch updates these, so they are ignored everywhere:
-- `go` (1, both spellings): `TestOmitHTTP2`, which reruns the `net/http` suite and so fails with go-c4cef047d3ce's fix.
+Ignored everywhere (no hidden patch updates them, or the bug's own run does not execute them):
+- `go` (4, each under its `net/http::` and `src/net/http::` spellings): `TestTimeoutHandler_h1`, `TestTimeoutHandler_h2`, `TestTimeoutHandlerRaceHeaderTimeout` (rewritten by go-c4cef047d3ce's hidden patch; its own run selects only its fail-to-pass test) and `TestOmitHTTP2`, which reruns the `net/http` suite.
 - `matplotlib` (1): `test_contour::test_contourf_log_extension[png]`, whose baseline image matplotlib-46b97150fdfe's `LogLocator` change alters.
+- `rxjava` (1): `CompletableAmbTest.ambRace`, which rxjava-1c8f5821ed8a's official fix changes (its hidden patch carries the updated test).
 
 ## Reading results
 
