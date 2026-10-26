@@ -17,6 +17,10 @@
       "activestorage/lib/",
       "activesupport/lib/",
       "railties/lib/"
+    ],
+    "test_dirs": [
+      "activesupport/lib/active_support/test_case.rb",
+      "railties/lib/rails/test_help.rb"
     ]
   },
   "upstream_image": "pandora-maxbug-rails:v7.0.0",
