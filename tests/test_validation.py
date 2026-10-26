@@ -1,4 +1,4 @@
-"""Validation tooling: official fixes applied as a submission would be (W8)."""
+"""Validation tooling: official fixes applied as a submission would be."""
 
 from __future__ import annotations
 
@@ -157,6 +157,61 @@ def test_a_must_pass_run_that_timed_out_is_reported():
     ]
 
 
+def test_hidden_test_results_are_reported_when_must_pass_tests_fail():
+    """duckdb's stack breaks 5 must-pass tests: it scores 0, but the report still shows its 105/109."""
+    from swesweep.validate import validation_report
+
+    report = validation_report(
+        ["a", "b", "c", "d"],
+        empty=verdict([]),
+        stacked=verdict(["a", "b", "c"], regressions=["t::broken"]),
+        skipped=[],
+        each={"d": verdict([], regressions=["t::other"])},
+    )
+    assert report["stacked"]["resolved"] == 0
+    assert report["stacked"]["hidden_tests_pass"] == 3
+    assert report["stacked"]["unresolved"] == ["d"]
+    assert [(f["check"], f["problem"]) for f in report["findings"]] == [
+        ("stacked", "not resolved by all fixes together"),
+        ("stacked", "all fixes together break must-pass tests"),
+        ("alone", "fix breaks must-pass tests"),
+        ("alone", "own fix does not resolve it"),
+    ]
+
+
+def test_validate_takes_bugs_build_jobs_and_timeout(tmp_path, monkeypatch):
+    import argparse
+
+    from swesweep import cli
+
+    task = tmp_path / "swe-sweep__x"
+    (task / "tests").mkdir(parents=True)
+    (task / "task.toml").write_text("[verifier]\ntimeout_sec = 600\n")
+    bundle = {"build_jobs": 4, "subtasks": [{"id": "a"}, {"id": "b"}, {"id": "c"}]}
+    (task / "tests" / "swesweep_eval.json").write_text(json.dumps(bundle))
+    runs = []
+
+    def harbor(command, check=False):
+        graded = json.loads((Path(command[command.index("--path") + 1]) / "tests" / "swesweep_eval.json").read_text())
+        fixes = next(arg for arg in command if arg.startswith("fixes="))
+        multiplier = command[command.index("--verifier-timeout-multiplier") + 1]
+        runs.append((fixes, [s["id"] for s in graded["subtasks"]], graded["build_jobs"], multiplier))
+        return subprocess.CompletedProcess(command, 0)
+
+    monkeypatch.setattr(cli.subprocess, "run", harbor)
+    args = argparse.Namespace(
+        task=str(task), output=tmp_path / "out", each=True, bugs="a,c", build_jobs=2, timeout=1200.0, dry_run=True
+    )
+    assert cli._validate(args) == 0
+    assert runs == [
+        ("fixes=", ["a", "c"], 2, "2.0"),
+        ("fixes=all", ["a", "c"], 2, "2.0"),
+        ("fixes=a", ["a", "c"], 2, "2.0"),
+        ("fixes=c", ["a", "c"], 2, "2.0"),
+    ]
+    assert json.loads((task / "tests" / "swesweep_eval.json").read_text()) == bundle  # the task itself is untouched
+
+
 def write_job(job_dir: Path, name: str, resolved) -> None:
     path = job_dir / name / "trial" / "verifier" / "eval.json"
     path.parent.mkdir(parents=True)
@@ -195,7 +250,9 @@ def test_a_failed_rerun_is_reported_as_missing_not_as_the_old_result(tmp_path, m
         return subprocess.CompletedProcess(command, 1)  # the rerun fails before writing anything
 
     monkeypatch.setattr(cli.subprocess, "run", harbor)
-    args = argparse.Namespace(task=str(task), output=tmp_path / "out", each=False, dry_run=False)
+    args = argparse.Namespace(
+        task=str(task), output=tmp_path / "out", each=False, bugs=None, build_jobs=4, timeout=None, dry_run=False
+    )
     assert cli._validate(args) == 0
     assert cli._validate(args) == 1
     report = json.loads((tmp_path / "out" / "swe-sweep__x" / "validation.json").read_text())

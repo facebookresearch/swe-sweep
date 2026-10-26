@@ -104,19 +104,27 @@ def harbor_eval_command(
         "--n-concurrent",
         "1",
     ]
-    if timeout is not None:
-        with (task_dir / "task.toml").open("rb") as stream:
-            task_config = tomllib.load(stream)
-        configured_timeout = float(task_config.get("verifier", {}).get("timeout_sec", timeout))
-        if configured_timeout <= 0:
-            raise ValueError(f"{task_dir / 'task.toml'} has an invalid verifier timeout")
-        command.extend(("--verifier-timeout-multiplier", str(timeout / configured_timeout)))
+    command.extend(_timeout_arguments(task_dir, timeout))
     if dry_run:
         command.append("--dry-run")
     return command
 
 
-def harbor_fix_command(task_dir: Path, fixes: str, output: Path, *, dry_run: bool) -> list[str]:
+def _timeout_arguments(task_dir: Path, timeout: float | None) -> list[str]:
+    """Harbor scales the task's verifier timeout, so a timeout in seconds becomes a multiplier."""
+    if timeout is None:
+        return []
+    with (task_dir / "task.toml").open("rb") as stream:
+        task_config = tomllib.load(stream)
+    configured_timeout = float(task_config.get("verifier", {}).get("timeout_sec", timeout))
+    if configured_timeout <= 0:
+        raise ValueError(f"{task_dir / 'task.toml'} has an invalid verifier timeout")
+    return ["--verifier-timeout-multiplier", str(timeout / configured_timeout)]
+
+
+def harbor_fix_command(
+    task_dir: Path, fixes: str, output: Path, *, timeout: float | None = None, dry_run: bool
+) -> list[str]:
     """`harbor run` that submits a set of the task's own official fixes (see OfficialFixAgent)."""
     command = [
         sys.executable,
@@ -136,6 +144,7 @@ def harbor_fix_command(task_dir: Path, fixes: str, output: Path, *, dry_run: boo
         "--n-concurrent",
         "1",
     ]
+    command.extend(_timeout_arguments(task_dir, timeout))
     if dry_run:
         command.append("--dry-run")
     return command
@@ -154,18 +163,20 @@ def _skipped_fixes(job: Path | None) -> list[str]:
 
 def _validate(args: argparse.Namespace) -> int:
     task_dir = resolve_task(args.task)
-    bugs = [
-        subtask["id"] for subtask in json.loads((task_dir / "tests" / "swesweep_eval.json").read_text())["subtasks"]
-    ]
     output = args.output.expanduser().resolve() / task_dir.name
-    cases = [("empty", ""), ("stacked", "all")] + ([(f"alone-{bug}", bug) for bug in bugs] if args.each else [])
     jobs: dict[str, Path | None] = {}
-    for name, fixes in cases:
-        before = set((output / name).iterdir()) if (output / name).is_dir() else set()
-        command = harbor_fix_command(task_dir, fixes, output / name, dry_run=args.dry_run)
-        if subprocess.run(command, check=False).returncode and not args.dry_run:
-            print(f"harbor run failed for {name}; its result is reported as missing", file=sys.stderr)
-        jobs[name] = new_job(output / name, before)
+    # --bugs narrows which bugs are graded (and, with --each, which fixes run alone); the stack still has every fix
+    with configured_task(task_dir, bug_ids=_selected_bug_ids(args.bugs), build_jobs=args.build_jobs) as selected:
+        bugs = [
+            subtask["id"] for subtask in json.loads((selected / "tests" / "swesweep_eval.json").read_text())["subtasks"]
+        ]
+        cases = [("empty", ""), ("stacked", "all")] + ([(f"alone-{bug}", bug) for bug in bugs] if args.each else [])
+        for name, fixes in cases:
+            before = set((output / name).iterdir()) if (output / name).is_dir() else set()
+            command = harbor_fix_command(selected, fixes, output / name, timeout=args.timeout, dry_run=args.dry_run)
+            if subprocess.run(command, check=False).returncode and not args.dry_run:
+                print(f"harbor run failed for {name}; its result is reported as missing", file=sys.stderr)
+            jobs[name] = new_job(output / name, before)
     if args.dry_run:
         return 0
     report = validation_report(
@@ -320,6 +331,11 @@ def _parser() -> argparse.ArgumentParser:
         "-o", "--output", type=Path, default=Path("validation"), help="output directory (default: validation/)"
     )
     validate.add_argument("--each", action="store_true", help="also grade every official fix alone")
+    validate.add_argument(
+        "--bugs", help="comma-separated bug ids to grade, and with --each to run alone (default: all)"
+    )
+    validate.add_argument("--build-jobs", type=int, default=4, help="build parallelism (default: 4)")
+    validate.add_argument("--timeout", type=float, help="verifier timeout in seconds")
     validate.add_argument("--dry-run", action="store_true", help="validate without running containers")
     validate.set_defaults(func=_validate)
 

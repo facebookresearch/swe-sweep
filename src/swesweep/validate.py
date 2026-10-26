@@ -101,10 +101,12 @@ def validation_report(
     elif not_graded(stacked):
         findings.append({"check": "stacked", "problem": f"not graded: {not_graded(stacked)}"})
     else:
-        # with a must-pass test failing nothing is credited; that finding says why, not one entry per bug
-        missing = sorted(set(bugs) - resolved(stacked) - set(skipped)) if stacked.get("visible_ok") else []
+        # with a must-pass test failing nothing is credited, but the hidden tests still show what the fixes resolve
+        passed = hidden_tests_pass(stacked)
+        missing = sorted(set(bugs) - passed - set(skipped))
         report["stacked"] = {
             "resolved": len(resolved(stacked)),
+            "hidden_tests_pass": len(passed),
             "skipped_fixes": skipped,
             "unresolved": missing,
             "regressions": stacked.get("regressions", []),
@@ -132,8 +134,7 @@ def validation_report(
             continue
         if no_must_pass_report(verdict):
             findings.append({"check": "alone", "bug": bug, "problem": NO_REPORT})
-            continue
-        if not verdict.get("visible_ok"):
+        elif not verdict.get("visible_ok"):
             findings.append(
                 {
                     "check": "alone",
@@ -142,8 +143,8 @@ def validation_report(
                     "tests": verdict.get("regressions", []),
                 }
             )
-            continue
-        got = resolved(verdict)
+        # checked even when the must-pass run failed, so a fix that breaks tests and misses its bug shows both
+        got = hidden_tests_pass(verdict)
         if bug not in got:
             findings.append({"check": "alone", "bug": bug, "problem": "own fix does not resolve it"})
         others = sorted(got - {bug})
