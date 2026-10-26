@@ -48,8 +48,10 @@ RUN apk add --no-cache curl \
  && echo "269b2c99e4db15b242bf01832f4fea1e8f1a664f273cff519393f296e9820b41  /pbs.tgz" | sha256sum -c - \
  && mkdir -p /opt/swesweep && tar -xzf /pbs.tgz -C /opt/swesweep && rm /pbs.tgz
 
-# --- upstream Dockerfile, unchanged below ---
-FROM golang:1.17-bullseye AS bootstrap
+# --- upstream Dockerfile below; SWE-sweep changes are marked `# SWE-sweep:` ---
+# SWE-sweep: bootstrap from the task's own release. golang:1.17-bullseye is now go1.17.13, and its standard library,
+# kept below as /usr/local/go-bootstrap, holds some of this task's official fixes verbatim.
+FROM golang:1.17.5-bullseye AS bootstrap
 
 FROM debian:bullseye
 # --- SWE-sweep Harbor port: apt repositories of EOL Debian suites ---
@@ -70,6 +72,8 @@ RUN set -eux; \
     rm -rf /var/lib/apt/lists/*
 
 COPY --from=bootstrap /usr/local/go /usr/local/go-bootstrap
+RUN if [ "$(head -n1 /usr/local/go-bootstrap/VERSION)" != go1.17.5 ]; then \
+      echo "the bootstrap Go is not go1.17.5" >&2; exit 1; fi
 ENV GOROOT_BOOTSTRAP=/usr/local/go-bootstrap
 
 # Go source tree at the anchor tag, exported from the local clone into the build context
