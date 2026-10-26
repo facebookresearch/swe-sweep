@@ -113,6 +113,7 @@ Reviewed environment-dependent tests, out of the base list and never a regressio
 - `roslyn` (1): a VB parser test (`ParseExpressionTest.ParseNullableAfterOpenGeneric`) that fails in some gradings of an untouched tree.
 - `scipy` (2): `@pytest.mark.xfail(reason='Fails with ATLAS')` tests that XPASS on upstream's host and XFAIL here (BLAS/CPU-dependent sparse interior-point numerics).
 - `tarantool` (1): `box-luatest/gh_6260_add_builtin_events_test.lua` failed in 2 of 5 empty-patch gradings.
+- `testify` (1): `assert::TestEventuallyIssue805` races: `Eventually` waits 1 ms for a condition that itself takes 1 ms and expects it to time out, so it passes on a quiet machine and fails under load.
 - `webpack` (2): `asset-modules/http-url` fetches over HTTP when its lockfile entries are stale; the verifier has no network. Failed on 3 of 3 pristine runs of `drydock-pandora-oracle-perbug-full100-v5` (2026-09-29, confirmed by the second visible run) after passing in v3 and v4, so the flip is time-based, not code.
 
 
