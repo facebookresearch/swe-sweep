@@ -373,7 +373,6 @@
       ],
       "id": "keycloak-8817f4ac434f",
       "target_files": [
-        "server-spi-private/src/main/java/org/keycloak/models/Constants.java",
         "services/src/main/java/org/keycloak/protocol/oidc/utils/RedirectUtils.java"
       ]
     },
