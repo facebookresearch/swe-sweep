@@ -7,7 +7,7 @@
   },
   "upstream_image": "pandora-maxbug-trino:361",
   "n_base_passing": 11270,
-  "n_base_test_ignore": 29,
+  "n_base_test_ignore": 51,
   "oracle_digest": "85a3ac89dcc9d312e5cb046e21d1a7946347022c29de9aef7b5ec09bcbc5a14c",
   "oracle_pristine_paths": [],
   "upstream_commit": "9f7399e15e6172900e0591deb5a57a45769d8205",
