@@ -36,6 +36,8 @@ def check_task(task: Path) -> tuple[list[str], list[str]]:
         findings.append(f"n_base_passing {bundle.get('n_base_passing')} != {len(passing)} listed")
     if bundle.get("n_base_test_ignore") != len(ignored):
         findings.append(f"n_base_test_ignore {bundle.get('n_base_test_ignore')} != {len(ignored)} listed")
+    if not isinstance(lists.get("environment_failed", []), list):
+        findings.append(f"environment_failed should be a list of tests, got {lists['environment_failed']!r:.40}")
     runs = lists.get("environment_runs")
     if passing and not (isinstance(runs, list) and runs and all(isinstance(r, str) and r for r in runs)):
         findings.append(f"environment_runs should list the runs the list was recorded from, got {runs!r:.60}")
