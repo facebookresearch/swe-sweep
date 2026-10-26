@@ -100,6 +100,13 @@ Instead, you should simply ignore these kinds of bugs.
 
 You are in a container. The REPOSITORY is checked out at `/cvc5`.
 
+A warm out-of-tree build already exists at `/build` (outside the repository; this is the task's prebuilt artifact tree, not another source tree). Prefer incremental rebuilds and tests against `/build`, for example:
+
+- `cmake --build /build -j $(nproc) --target cvc5`
+- `ctest --test-dir /build -j $(nproc) --output-on-failure -L 'regress0|unit'`
+
+Do NOT re-run configure (`./configure.sh`, `cmake -S … -B …`, wiping `/build`, or creating a fresh in-tree build directory) unless build-system inputs changed or `/build` is demonstrably broken. Full reconfigure/rebuild is extremely expensive and unnecessary for ordinary source edits.
+
 ## Fairplay
 
 This is a large task, but it IS (!) possible to solve.
