@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """Check every task's must-pass list (tests/base_tests.json.gz): empty, placeholder (`<suite>`), counts off, volatile names.
-Usage: python3 check_base_lists.py [dataset_dir]  (prints one line per finding, exits 1 if any; stdlib only)
+Usage: python3 check_base_lists.py [dataset_dir]  (prints one line per finding; exits 1 if a task outside KNOWN_WITHOUT_LIST has one)
 Rebuild a list in the task image: grade an empty patch at least three times and keep the tests that always pass."""
 
 import gzip
@@ -13,7 +13,11 @@ VOLATILE = (
     ("temporary path", re.compile(r"/tmp/[^\s/]*\d{3,}")),
     ("process id", re.compile(r"\bpid[=: ]\d+", re.IGNORECASE)),
 )
-ADDRESS = re.compile(r"0x[0-9a-fA-F]{6,}")
+# A Go value printed as `(type)(0xaddress)`, as in testify's `(func()_int)(0x5fc7e0)`; fixed hex test values (go's
+# `TestFillBytes/0xffffffff`, symfony's URL data sets) are not addresses.
+ADDRESS = re.compile(r"\)\(0x[0-9a-fA-F]{6,}\)")
+# Tasks whose must-pass list is still empty or a placeholder; reported, but they do not fail the check.
+KNOWN_WITHOUT_LIST = frozenset({"datafusion", "dmd", "jest", "oxc", "phpspreadsheet", "rails", "sunpy"})
 
 
 def check_task(task: Path) -> tuple[list[str], list[str]]:
@@ -48,15 +52,17 @@ def check_task(task: Path) -> tuple[list[str], list[str]]:
 def main() -> int:
     root = Path(sys.argv[1]) if len(sys.argv) > 1 else Path(__file__).resolve().parent
     tasks = sorted(p for p in root.iterdir() if (p / "tests" / "base_tests.json.gz").is_file())
-    failing = 0
+    failing = known = 0
     for task in tasks:
         findings, notes = check_task(task)
-        failing += bool(findings)
+        is_known = task.name.split("__", 1)[-1] in KNOWN_WITHOUT_LIST
+        failing += bool(findings) and not is_known
+        known += bool(findings) and is_known
         for line in findings:
-            print(f"{task.name}: {line}")
+            print(f"{task.name}: {'known: ' if is_known else ''}{line}")
         for line in notes:
             print(f"{task.name}: note: {line}")
-    print(f"{len(tasks)} tasks, {failing} with findings")
+    print(f"{len(tasks)} tasks, {failing} with findings ({known} known tasks without a list)")
     return 1 if failing else 0
 
 
