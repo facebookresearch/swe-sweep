@@ -22,21 +22,35 @@ exit 1
 
 
 def newest_first(paths: list[Path]) -> list[Path]:
-    """A rerun adds a job next to the old one; the newest result is the one that counts."""
     return sorted(paths, key=lambda path: path.stat().st_mtime, reverse=True)
 
 
-def read_verdict(job_dir: Path) -> dict[str, Any] | None:
-    """The newest trial's eval.json below a Harbor job directory, or None."""
-    found = newest_first(list(job_dir.rglob("verifier/eval.json")))
+def new_job(job_dir: Path, before: set[Path]) -> Path | None:
+    """The job a run added under `job_dir` (not in `before`), or None if it added none.
+
+    A rerun adds a job next to the old ones. If it fails before writing a result, the newest result there
+    is the old job's, so only the job this run made may be read. Harbor names jobs by start time.
+    """
+    if not job_dir.is_dir():
+        return None
+    jobs = sorted(path for path in job_dir.iterdir() if path.is_dir() and path not in before)
+    return jobs[-1] if jobs else None
+
+
+def read_verdict(job: Path | None) -> dict[str, Any] | None:
+    """The newest trial's eval.json in one Harbor job, or None."""
+    found = newest_first(list(job.rglob("verifier/eval.json"))) if job is not None else []
     return json.loads(found[0].read_text()) if found else None
+
+
+def hidden_tests_pass(verdict: dict[str, Any]) -> set[str]:
+    """Bugs whose hidden tests pass, whatever the must-pass tests did."""
+    return {s["subtask_id"] for s in verdict.get("subtasks", []) if s.get("resolved")}
 
 
 def resolved(verdict: dict[str, Any]) -> set[str]:
     """Bugs a submission is credited with: none when a must-pass test failed (the task then scores 0)."""
-    if not verdict.get("visible_ok"):
-        return set()
-    return {s["subtask_id"] for s in verdict.get("subtasks", []) if s.get("resolved")}
+    return hidden_tests_pass(verdict) if verdict.get("visible_ok") else set()
 
 
 def not_graded(verdict: dict[str, Any]) -> str | None:
@@ -65,7 +79,8 @@ def validation_report(
     elif not_graded(empty):
         findings.append({"check": "empty", "problem": f"not graded: {not_graded(empty)}"})
     else:
-        free = sorted(resolved(empty))
+        # a bug credited with no fix is a defect even when must-pass tests also fail on the untouched tree
+        free = sorted(hidden_tests_pass(empty))
         report["empty"] = {"resolved": free, "regressions": empty.get("regressions", [])}
         if free:
             findings.append({"check": "empty", "problem": "credited with no fix", "bugs": free})

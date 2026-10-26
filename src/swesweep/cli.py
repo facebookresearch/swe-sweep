@@ -16,7 +16,7 @@ from pathlib import Path
 
 from swesweep.constants import HARBOR_SOURCE_REVISION, TASK_PREFIX, TASKS_DIR
 from swesweep.scoring import print_score
-from swesweep.validate import newest_first, read_verdict, validation_report
+from swesweep.validate import new_job, newest_first, read_verdict, validation_report
 
 
 def task_directories() -> tuple[Path, ...]:
@@ -141,8 +141,8 @@ def harbor_fix_command(task_dir: Path, fixes: str, output: Path, *, dry_run: boo
     return command
 
 
-def _skipped_fixes(job_dir: Path) -> list[str]:
-    for result in newest_first(list(job_dir.rglob("result.json"))):
+def _skipped_fixes(job: Path | None) -> list[str]:
+    for result in newest_first(list(job.rglob("result.json"))) if job is not None else []:
         try:
             metadata = (json.loads(result.read_text()).get("agent_result") or {}).get("metadata") or {}
         except (OSError, ValueError):
@@ -159,18 +159,21 @@ def _validate(args: argparse.Namespace) -> int:
     ]
     output = args.output.expanduser().resolve() / task_dir.name
     cases = [("empty", ""), ("stacked", "all")] + ([(f"alone-{bug}", bug) for bug in bugs] if args.each else [])
+    jobs: dict[str, Path | None] = {}
     for name, fixes in cases:
+        before = set((output / name).iterdir()) if (output / name).is_dir() else set()
         command = harbor_fix_command(task_dir, fixes, output / name, dry_run=args.dry_run)
         if subprocess.run(command, check=False).returncode and not args.dry_run:
             print(f"harbor run failed for {name}; its result is reported as missing", file=sys.stderr)
+        jobs[name] = new_job(output / name, before)
     if args.dry_run:
         return 0
     report = validation_report(
         bugs,
-        read_verdict(output / "empty"),
-        read_verdict(output / "stacked"),
-        _skipped_fixes(output / "stacked"),
-        {bug: read_verdict(output / f"alone-{bug}") for bug in bugs} if args.each else {},
+        read_verdict(jobs["empty"]),
+        read_verdict(jobs["stacked"]),
+        _skipped_fixes(jobs["stacked"]),
+        {bug: read_verdict(jobs[f"alone-{bug}"]) for bug in bugs} if args.each else {},
     )
     (output / "validation.json").write_text(json.dumps(report, indent=1) + "\n")
     for finding in report["findings"]:

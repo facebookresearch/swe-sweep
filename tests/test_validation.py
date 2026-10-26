@@ -130,17 +130,64 @@ def test_nothing_counts_as_credited_when_a_must_pass_test_fails():
     assert resolved(verdict(["a"], regressions=["t::green"])) == set()
 
 
-def test_a_rerun_reads_the_newest_job(tmp_path):
-    import os
+def test_credit_with_no_fix_is_reported_when_must_pass_tests_also_fail():
+    from swesweep.validate import validation_report
 
-    from swesweep.validate import read_verdict
+    report = validation_report(
+        ["a"], empty=verdict(["a"], regressions=["t::flaky"]), stacked=verdict(["a"]), skipped=[], each={}
+    )
+    assert [f["problem"] for f in report["findings"]] == [
+        "credited with no fix",
+        "must-pass tests fail on the untouched tree",
+    ]
 
-    for name, stamp, bug in (("2026-10-01__a", 100, "old"), ("2026-10-02__b", 200, "new")):
-        path = tmp_path / name / "trial" / "verifier" / "eval.json"
-        path.parent.mkdir(parents=True)
-        path.write_text(json.dumps(verdict([bug])))
-        os.utime(path, (stamp, stamp))
-    assert resolved_ids(read_verdict(tmp_path)) == {"new"}
+
+def write_job(job_dir: Path, name: str, resolved) -> None:
+    path = job_dir / name / "trial" / "verifier" / "eval.json"
+    path.parent.mkdir(parents=True)
+    path.write_text(json.dumps(verdict(resolved)))
+
+
+def test_a_rerun_reads_only_the_job_it_made(tmp_path):
+    from swesweep.validate import new_job, read_verdict
+
+    write_job(tmp_path, "2026-10-01__10-00-00", ["old"])
+    before = set(tmp_path.iterdir())
+    assert new_job(tmp_path, before) is None  # the rerun failed before Harbor made a job
+    (tmp_path / "2026-10-02__10-00-00").mkdir()
+    assert read_verdict(new_job(tmp_path, before)) is None  # it made a job but wrote no result
+    write_job(tmp_path, "2026-10-03__10-00-00", ["new"])
+    assert resolved_ids(read_verdict(new_job(tmp_path, before))) == {"new"}
+
+
+def test_a_failed_rerun_is_reported_as_missing_not_as_the_old_result(tmp_path, monkeypatch):
+    import argparse
+
+    from swesweep import cli
+
+    task = tmp_path / "swe-sweep__x"
+    (task / "tests").mkdir(parents=True)
+    (task / "task.toml").write_text("")
+    (task / "tests" / "swesweep_eval.json").write_text(json.dumps({"subtasks": [{"id": "a"}]}))
+    runs = []
+
+    def harbor(command, check=False):
+        runs.append(command)
+        if len(runs) <= 2:  # the first validate: both gradings write a clean result
+            jobs_dir = Path(command[command.index("--jobs-dir") + 1])
+            write_job(jobs_dir, "2026-10-01__10-00-00", ["a"] if jobs_dir.name == "stacked" else [])
+            return subprocess.CompletedProcess(command, 0)
+        return subprocess.CompletedProcess(command, 1)  # the rerun fails before writing anything
+
+    monkeypatch.setattr(cli.subprocess, "run", harbor)
+    args = argparse.Namespace(task=str(task), output=tmp_path / "out", each=False, dry_run=False)
+    assert cli._validate(args) == 0
+    assert cli._validate(args) == 1
+    report = json.loads((tmp_path / "out" / "swe-sweep__x" / "validation.json").read_text())
+    assert report["findings"] == [
+        {"check": "empty", "problem": "no result"},
+        {"check": "stacked", "problem": "no result"},
+    ]
 
 
 def resolved_ids(v):
