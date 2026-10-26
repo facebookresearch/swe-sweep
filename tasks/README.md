@@ -98,15 +98,15 @@ The regression reference is upstream's recorded base list; the per-bug oracle's 
 
 Reviewed environment-dependent tests, out of the base list and never a regression or a subtask failure (`swesweep_ignored_tests.json`):
 
-- `aws-cdk` (1): custom-resources provider test that symlinks the SDK under a fixed `/tmp/node_modules/aws-sdk` path and times the install; failed on 2 of 5 pristine runs of the 20 min suite (2026-09-29 v2 and v5), passed in upstream's ten.
 - `arrow` (1): `ExecPlanExecution.StressSourceSinkStopped` races; it fails in a share of gradings of an untouched tree, more often under load.
+- `aws-cdk` (1): custom-resources provider test that symlinks the SDK under a fixed `/tmp/node_modules/aws-sdk` path and times the install; failed on 2 of 5 pristine runs of the 20 min suite (2026-09-29 v2 and v5), passed in upstream's ten.
 - `dayjs` (3): badMutable `week()` on today's date mutates the instance only for some dates; passed in upstream's September runs, failed 2026-09-29 on the pristine tree. Two `DST, a time that never existed Fall Back 2012-11-04` tests fail whenever the grading date is in winter time.
 - `duckdb` (2): Read the machine's CPU count.
 - `fasthttp` (7): Deadline / pipelining timing tests; a different one fails on each pristine run at any concurrency.
-- `go` (1): `net::TestTCPSpuriousConnSetupCompletionWithCancel` expects a dial to `golang.org:3` to fail; whether it does depends on the grading container's network, so in some environments the test fails on every grading.
 - `fsharp` (1): `#r nuget` restore of a nonexistent package: the offline failure shape differs between upstream's `--network=none` (no interface) and Daytona's egress block (resolver present, timeouts), and the diagnostic assertion trips.
+- `go` (1): `net::TestTCPSpuriousConnSetupCompletionWithCancel` expects a dial to `golang.org:3` to fail; whether it does depends on the grading container's network, so in some environments the test fails on every grading.
 - `opencv` (2): FFMPEG-decoded .avi whose frame count follows the decoder build.
-- `pulsar` (97): the fail-fast listener is now off in every run (`-DtestFailFast=false` in `mvn_args`), and the list was re-recorded from 3 untouched runs. Ignored: the 80 below that upstream reviewed (they run now, and stay ignored until re-checked), and 17 `org.apache.pulsar.client.impl` tests: 7 that fail in every untouched run (`ClientCnxRequestTimeoutQueueTest` and others) and 10 (`AcknowledgementsGroupingTrackerTest` 7, `ClientCnxTest` 3) that passed in the recording runs and failed in 4 later untouched gradings.
+- `pulsar` (97): the fail-fast listener is now off in every run (`-DtestFailFast=false` in `mvn_args`), and the list was re-recorded from 3 untouched runs. Ignored: the 80 below that upstream reviewed (they run now, and stay ignored until re-checked), and 17 `org.apache.pulsar.client.impl` tests that do not pass in every untouched run: 7 `ClientCnxRequestTimeoutQueueTest` tests, skipped whenever the class setup `setupClientCnx` fails, and 10 (`AcknowledgementsGroupingTrackerTest` 7, `ClientCnxTest` 3) that passed in the recording runs and failed in 4 later untouched gradings.
   Upstream's note on the 80: Pulsar's fail-fast TestNG listener skips every test after the first failure in the `pulsar-client-original` fork, and the class order (surefire `runOrder=filesystem`) makes the offline `ConnectionTimeoutTest.testLowTimeout` trip first in our sandboxes where upstream tripped later; all 80 pass whenever they run (upstream 10/10).
 - `quarkus` (170): Never run here: the whole-reactor `mvn -o -T 4 test` is fail-fast and three unrelated module failures (offline `surefire-junit4` provider, Kotlin under `-T`, `AnalyticsServiceTest`) race with these modules; upstream's own ten runs report 465-947 of 984 ids. All 170 pass whenever they run.
 - `qutip` (1): Unseeded `rand_ket(4)` plus random GRAPE initial pulses with no retry; failed 1 of 2 pristine runs here.
@@ -121,6 +121,7 @@ bug's own run executes it, it is ignored everywhere except that run, which check
 `base_tests.json.gz`):
 - `duckdb` (3): `test/sql/attach/attach_did_you_mean.test`, `attach_nested_types.test`, `attach_table_info.test` (duckdb-96cd6f4c49c4).
 - `numpy` (1): `TestUfunclike::test_fix_with_subclass` (numpy-3746aeb78e18).
+
 Ignored everywhere (no hidden patch updates them, or the bug's own run does not execute them):
 - `go` (4, each under its `net/http::` and `src/net/http::` spellings): `TestTimeoutHandler_h1`, `TestTimeoutHandler_h2`, `TestTimeoutHandlerRaceHeaderTimeout` (rewritten by go-c4cef047d3ce's hidden patch; its own run selects only its fail-to-pass test) and `TestOmitHTTP2`, which reruns the `net/http` suite.
 - `matplotlib` (1): `test_contour::test_contourf_log_extension[png]`, whose baseline image matplotlib-46b97150fdfe's `LogLocator` change alters.
