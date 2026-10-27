@@ -124,6 +124,7 @@ bug's own run executes it, it is ignored everywhere except that run, which check
 - `numpy` (1): `TestUfunclike::test_fix_with_subclass` (numpy-3746aeb78e18).
 
 Ignored everywhere (no hidden patch updates them, or the bug's own run does not execute them):
+- `duckdb` (1): `test/sql/filter/test_struct_pushdown.test`, whose `OR` query has no `ORDER BY` and expects its rows in the order the bug returns them; duckdb-99482115caaa's official fix returns them in table order (upstream has since added `ORDER BY` to that query).
 - `go` (4, each under its `net/http::` and `src/net/http::` spellings): `TestTimeoutHandler_h1`, `TestTimeoutHandler_h2`, `TestTimeoutHandlerRaceHeaderTimeout` (rewritten by go-c4cef047d3ce's hidden patch; its own run selects only its fail-to-pass test) and `TestOmitHTTP2`, which reruns the `net/http` suite.
 - `matplotlib` (1): `test_contour::test_contourf_log_extension[png]`, whose baseline image matplotlib-46b97150fdfe's `LogLocator` change alters.
 - `rxjava` (1): `CompletableAmbTest.ambRace`, which rxjava-1c8f5821ed8a's official fix changes (its hidden patch carries the updated test).
