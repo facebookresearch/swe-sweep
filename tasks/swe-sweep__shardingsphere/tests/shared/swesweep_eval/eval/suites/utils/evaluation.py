@@ -158,6 +158,11 @@ def run_pytest(env, repo, paths, names, timeout, cap, extra_args=()):
     log(r.stdout[-1200:])
     captured["returncode"] = r.returncode
     captured["text"], captured["truncated"] = cap.clip(r.stdout)
+    # Internal/usage failures can leave a partial report with passing cases.
+    # Preserve the existing test/collection-failure handling for statuses 0/1/2.
+    if r.returncode not in (0, 1, 2):
+        log("pytest runner failed before producing a trustworthy report")
+        return None, False, captured
     if not env.exists(xml):
         return None, False, captured
     return parse_junit(env, xml), False, captured
