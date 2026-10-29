@@ -79,9 +79,7 @@ def test_directory_case_alias_preserves_native_filesystem_identity(tmp_path):
 
 @pytest.mark.parametrize("directory", ["agent_dir", "user_agent_dir", "artifacts_dir"])
 @pytest.mark.parametrize("query_nested_root", [False, True])
-def test_nested_verifier_logs_below_a_known_trial_are_not_attempts(
-    tmp_path, directory, query_nested_root
-):
+def test_nested_verifier_logs_below_a_known_trial_are_not_attempts(tmp_path, directory, query_nested_root):
     paths = trial_paths(tmp_path)
     nested = getattr(paths, directory) / "nested" / "verifier"
     nested.mkdir(parents=True)
@@ -106,7 +104,7 @@ def test_config_free_trial_still_uses_directory_name(tmp_path):
 def test_unrelated_ancestor_verifier_directory_does_not_hide_trials(tmp_path):
     project = tmp_path / "project"
     (project / "verifier").mkdir(parents=True)
-    paths = trial_paths(project / "jobs")
+    trial_paths(project / "jobs")
     assert score_paths([project / "jobs"])["tasks"][0]["trials"] == 1
 
 
