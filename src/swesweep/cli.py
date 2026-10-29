@@ -5,6 +5,7 @@ from __future__ import annotations
 import argparse
 import importlib.metadata
 import json
+import math
 import shutil
 import subprocess
 import sys
@@ -104,12 +105,19 @@ def harbor_eval_command(
         "1",
     ]
     if timeout is not None:
+        from harbor.models.task.config import VerifierConfig
+
+        if not math.isfinite(timeout) or timeout <= 0:
+            raise ValueError("--timeout must be finite and greater than 0")
         with (task_dir / "task.toml").open("rb") as stream:
             task_config = tomllib.load(stream)
-        configured_timeout = float(task_config.get("verifier", {}).get("timeout_sec", timeout))
-        if configured_timeout <= 0:
+        configured_timeout = float(task_config.get("verifier", {}).get("timeout_sec", VerifierConfig().timeout_sec))
+        if not math.isfinite(configured_timeout) or configured_timeout <= 0:
             raise ValueError(f"{task_dir / 'task.toml'} has an invalid verifier timeout")
-        command.extend(("--verifier-timeout-multiplier", str(timeout / configured_timeout)))
+        multiplier = timeout / configured_timeout
+        if not math.isfinite(multiplier) or multiplier <= 0:
+            raise ValueError("--timeout produces an invalid verifier timeout multiplier")
+        command.extend(("--verifier-timeout-multiplier", str(multiplier)))
     if dry_run:
         command.append("--dry-run")
     return command
@@ -272,8 +280,9 @@ def main(argv: Sequence[str] | None = None) -> int:
     args = parser.parse_args(argv)
     if getattr(args, "build_jobs", 1) < 1:
         parser.error("--build-jobs must be at least 1")
-    if getattr(args, "timeout", 1) is not None and getattr(args, "timeout", 1) <= 0:
-        parser.error("--timeout must be greater than 0")
+    timeout = getattr(args, "timeout", None)
+    if timeout is not None and (not math.isfinite(timeout) or timeout <= 0):
+        parser.error("--timeout must be finite and greater than 0")
     try:
         return args.func(args)
     except (FileNotFoundError, ValueError) as exc:
