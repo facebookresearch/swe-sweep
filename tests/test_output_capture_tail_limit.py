@@ -5,9 +5,12 @@ from pathlib import Path
 
 import pytest
 
+# Keep interpreter caches out of the vendored-source synchronization check.
+sys.dont_write_bytecode = True
+
 SHARED = Path(__file__).resolve().parents[1] / "tasks/swe-sweep__gson/tests/shared"
 sys.path.insert(0, str(SHARED))
-from swesweep_eval.eval.suites.utils.evaluation import OutputCapture
+from swesweep_eval.eval.suites.utils.evaluation import OutputCapture  # noqa: E402
 
 
 @pytest.mark.parametrize("limit,text_length", [(1, 5000), (100, 101), (100, 5000), (2000, 5000)])
