@@ -9,6 +9,9 @@ from types import SimpleNamespace
 import pytest
 
 
+# Keep interpreter caches out of the vendored-source synchronization check.
+sys.dont_write_bytecode = True
+
 ROOT = Path(__file__).resolve().parents[1]
 
 
