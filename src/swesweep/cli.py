@@ -63,7 +63,9 @@ def configured_task(
 
     with tempfile.TemporaryDirectory(prefix="swe-sweep-task-") as temporary:
         copied = Path(temporary) / task_dir.name
-        shutil.copytree(task_dir, copied, symlinks=True)
+        # Materialize links so evaluation-only writes cannot modify shared source
+        # files, and relative links remain usable after moving to the temp directory.
+        shutil.copytree(task_dir, copied)
         copied_bundle_path = copied / "tests" / "swesweep_eval.json"
         copied_bundle = json.loads(copied_bundle_path.read_text())
         copied_bundle["build_jobs"] = build_jobs
