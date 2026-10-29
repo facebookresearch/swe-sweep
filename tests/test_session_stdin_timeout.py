@@ -10,6 +10,10 @@ from pathlib import Path
 import pytest
 
 
+# Keep interpreter caches out of the vendored-source synchronization check.
+sys.dont_write_bytecode = True
+
+
 @pytest.mark.skipif(os.name != "posix", reason="verifier process groups require POSIX")
 def test_timeout_bounds_writing_to_a_child_that_does_not_read(tmp_path):
     shared = Path(__file__).resolve().parents[1] / "tasks/swe-sweep__click/tests/shared"
