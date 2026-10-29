@@ -93,9 +93,7 @@ def format_report(report: dict[str, Any], *, per_task: bool, as_json: bool) -> s
     zeroed = [task for task in tasks if task["regressed"]]
     raw_resolved = sum(task["n_resolved"] for task in tasks)
     trial_count = sum(task["trials"] for task in tasks)
-    mean_trial_reward = (
-        sum(task["reward"] * task["trials"] for task in tasks) / trial_count if trial_count else 0.0
-    )
+    mean_trial_reward = sum(task["reward"] * task["trials"] for task in tasks) / trial_count if trial_count else 0.0
     lines = [
         (
             f"SWE-sweep score over {summary['graded_tasks']} graded tasks, "
