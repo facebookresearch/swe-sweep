@@ -27,9 +27,16 @@ class ContainerRepository:
     def git(self, *args: str):
         return self.env.execute(["git", "-C", self.path, *args])
 
+    def _checked_git(self, *args: str):
+        result = self.git(*args)
+        if result.returncode != 0:
+            detail = (result.stderr or result.stdout).strip()
+            raise RuntimeError(f"git {' '.join(args)} failed (exit {result.returncode}): {detail}")
+        return result
+
     def reset(self) -> None:
-        self.git("reset", "--hard", "baseline", "-q")
-        self.git("clean", "-fdq")
+        self._checked_git("reset", "--hard", "baseline", "-q")
+        self._checked_git("clean", "-fdq")
 
     def patch_applies(self, patch: str) -> bool:
         return self.git("apply", "--check", "--whitespace=nowarn", patch).returncode == 0
@@ -42,7 +49,7 @@ class ContainerRepository:
         existing = [path for path in files if self.git("cat-file", "-e", f"baseline:{path}").returncode == 0]
         added = [path for path in files if path not in existing]
         if existing:
-            self.git("checkout", "baseline", "--", *existing)
+            self._checked_git("checkout", "baseline", "--", *existing)
         for path in added:
             self.env.remove(str(PurePosixPath(self.path) / path))
 
