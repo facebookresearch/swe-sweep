@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """Shared visible-suite policy, pytest execution, and output capture."""
+import codecs
 import os
 import re
 import subprocess
@@ -10,7 +11,7 @@ from io import StringIO
 from swesweep_eval.eval.suites.utils.logging import log
 from swesweep_eval.eval.suites.utils.pytest import target_tests
 
-ANYFILE_RE = re.compile(r"^(?:\+\+\+ b/|--- a/)(.+)$", re.M)
+ANYFILE_RE = re.compile(r"^(?:\+\+\+ |--- )(.+)$", re.M)
 
 OVER_BUDGET_TAIL = 2000
 _INVALID_XML_CHARS_RE = re.compile("[\x00-\x08\x0b\x0c\x0e-\x1f\ud800-\udfff\ufffe\uffff]")
@@ -43,13 +44,25 @@ def is_test_file(path, test_dirs=()):
             or base == "conftest.py")
 
 
+def _diff_file_path(header):
+    """Decode Git's C-quoted header bytes, then strip its a/ or b/ prefix."""
+    if header.startswith('"'):
+        end = header.rfind('"')
+        if end <= 0:
+            return None
+        try:
+            raw = header[1:end].encode("utf-8", errors="surrogateescape")
+            path = codecs.escape_decode(raw)[0].decode("utf-8", errors="surrogateescape")
+        except ValueError:
+            return None
+    else:
+        path = header.split("\t", 1)[0]
+    return path[2:] if path.startswith(("a/", "b/")) else None
+
+
 def touched_files(diff):
-    files = set()
-    for m in ANYFILE_RE.finditer(diff):
-        f = m.group(1)
-        if f != "/dev/null":
-            files.add(f)
-    return sorted(files)
+    files = {_diff_file_path(match.group(1)) for match in ANYFILE_RE.finditer(diff)}
+    return sorted(path for path in files if path is not None)
 
 
 
