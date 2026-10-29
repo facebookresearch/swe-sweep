@@ -75,3 +75,29 @@ def test_directory_case_alias_preserves_native_filesystem_identity(tmp_path):
         alias.mkdir()
         (alias / "reward.json").write_text(json.dumps(FULL))
         assert score_paths([tmp_path])["summary"]["score"] == 0.0
+
+
+@pytest.mark.parametrize("directory", ["agent_dir", "user_agent_dir", "artifacts_dir"])
+@pytest.mark.parametrize("query_nested_root", [False, True])
+def test_nested_verifier_logs_below_a_known_trial_are_not_attempts(
+    tmp_path, directory, query_nested_root
+):
+    paths = trial_paths(tmp_path)
+    nested = getattr(paths, directory) / "nested" / "verifier"
+    nested.mkdir(parents=True)
+    (nested / "reward.json").write_text(json.dumps(FULL))
+    if query_nested_root:
+        with pytest.raises(ValueError, match="no SWE-sweep reward.json"):
+            score_paths([nested])
+    else:
+        report = score_paths([tmp_path])
+        assert report["summary"]["score"] == 0.0
+        assert report["tasks"][0]["trials"] == 1
+
+
+def test_config_free_trial_still_uses_directory_name(tmp_path):
+    paths = trial_paths(tmp_path)
+    paths.config_path.unlink()
+    report = score_paths([tmp_path])
+    assert report["tasks"][0]["task"] == paths.trial_dir.name
+    assert report["tasks"][0]["trials"] == 1

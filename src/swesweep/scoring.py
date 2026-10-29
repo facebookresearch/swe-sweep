@@ -37,6 +37,12 @@ def score_paths(roots: Sequence[Path]) -> dict[str, Any]:
             try:
                 if path.parent.name != "verifier" and not path.parent.samefile(path.parent.parent / "verifier"):
                     continue
+                # A trial is a boundary: agent logs and collected artifacts may
+                # themselves contain verifier-shaped trees, but cannot add trials.
+                # Check ancestors even when the user queried a nested log root.
+                trial_dir = path.parent.parent
+                if any((ancestor / "verifier").is_dir() for ancestor in trial_dir.parents):
+                    continue
                 data = json.loads(path.read_text())
             except (OSError, ValueError):
                 continue
