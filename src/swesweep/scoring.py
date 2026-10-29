@@ -32,7 +32,11 @@ def score_paths(roots: Sequence[Path]) -> dict[str, Any]:
     rows: list[tuple[str, dict[str, Any]]] = []
     for root in roots:
         for path in sorted(root.expanduser().rglob("reward.json")):
+            # Harbor's graded result belongs to verifier/, not agent logs or
+            # collected artifacts that happen to share the same filename.
             try:
+                if path.parent.name != "verifier" and not path.parent.samefile(path.parent.parent / "verifier"):
+                    continue
                 data = json.loads(path.read_text())
             except (OSError, ValueError):
                 continue
