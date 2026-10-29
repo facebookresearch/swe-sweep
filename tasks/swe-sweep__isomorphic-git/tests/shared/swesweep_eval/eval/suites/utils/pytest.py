@@ -33,6 +33,9 @@ def run_pytest(env, repo, files, names, timeout):
 
     ``files=None`` is the runner protocol's whole-suite call (the eval driver's visible
     baseline): pass no paths and let pytest discover from the repo root."""
+    # Import at call time: evaluation also exposes pytest's target discovery.
+    from swesweep_eval.eval.suites.utils.evaluation import record_outcome
+
     xml = "/tmp/report.xml"
     if env.exists(xml):
         env.remove(xml)
@@ -78,6 +81,6 @@ def run_pytest(env, repo, files, names, timeout):
                     coll_err = True
                 elif k.tag == "skipped":
                     outcome = "skipped"
-            outcomes[key] = outcome
+            record_outcome(outcomes, key, outcome)
     n = len([o for o in outcomes.values() if o != "skipped"])
     return outcomes, n, coll_err, False

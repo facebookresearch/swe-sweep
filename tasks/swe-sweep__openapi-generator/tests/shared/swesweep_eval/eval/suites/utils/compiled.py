@@ -5,7 +5,7 @@ import re
 import subprocess
 import xml.etree.ElementTree as ET
 
-from swesweep_eval.eval.suites.utils.evaluation import parse_xml
+from swesweep_eval.eval.suites.utils.evaluation import parse_xml, record_outcome
 from swesweep_eval.eval.suites.utils.logging import log
 from swesweep_eval.eval.suites.utils.pytest import PLUSFILE_RE
 
@@ -123,7 +123,7 @@ def _parse_junit(env, path, qualified=False):
             name = tc.get("name", "")
             if qualified:
                 name = (tc.get("classname", "") + "." + name).strip(".")
-            outcomes[name] = outcome
+            record_outcome(outcomes, name, outcome)
     return outcomes, len([o for o in outcomes.values() if o != "skipped"])
 
 
