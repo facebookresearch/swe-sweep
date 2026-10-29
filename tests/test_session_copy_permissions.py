@@ -51,3 +51,20 @@ def test_staging_does_not_chmod_symlink_targets_outside_the_tree(tmp_path):
     assert stat.S_IMODE(external.stat().st_mode) == 0o600
     assert (destination / "link.txt").is_symlink()
     assert (destination / "link.txt").readlink() == external
+
+
+@pytest.mark.skipif(os.name != "posix", reason="Unix staging permissions")
+def test_merge_preserves_permissions_of_unrelated_destination_files(tmp_path):
+    source = tmp_path / "source"
+    source.mkdir()
+    (source / "staged.txt").write_text("copied")
+    destination = tmp_path / "destination"
+    destination.mkdir()
+    unrelated = destination / "unrelated.txt"
+    unrelated.write_text("not part of this staging operation")
+    unrelated.chmod(0o600)
+    with session_class()() as session:
+        session.copy_dir(source, str(destination))
+    assert stat.S_IMODE(unrelated.stat().st_mode) == 0o600
+    assert unrelated.read_text() == "not part of this staging operation"
+    assert (destination / "staged.txt").read_text() == "copied"
