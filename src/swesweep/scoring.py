@@ -30,8 +30,18 @@ def task_name(reward_path: Path) -> str:
 def score_paths(roots: Sequence[Path]) -> dict[str, Any]:
     """Collect reward files below roots and return their aggregate report."""
     rows: list[tuple[str, dict[str, Any]]] = []
+    seen: set[Path] = set()
     for root in roots:
         for path in sorted(root.expanduser().rglob("reward.json")):
+            try:
+                path = path.resolve()
+            except (OSError, RuntimeError):
+                # A symlink loop or unreadable path follows the existing policy
+                # for unreadable reward files; keep collecting other trials.
+                continue
+            if path in seen:
+                continue
+            seen.add(path)
             try:
                 data = json.loads(path.read_text())
             except (OSError, ValueError):
