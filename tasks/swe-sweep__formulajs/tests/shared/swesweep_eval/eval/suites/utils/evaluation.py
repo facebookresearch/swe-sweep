@@ -64,6 +64,19 @@ def parse_xml(text):
         return ET.fromstring(cleaned)
 
 
+def junit_outcome(testcase):
+    """Classify one JUnit case, including GoogleTest's non-executed records."""
+    tags = {child.tag for child in testcase}
+    if "error" in tags:
+        return "error"
+    if "failure" in tags:
+        return "failed"
+    if ("skipped" in tags or testcase.get("status") == "notrun"
+            or testcase.get("result") in ("suppressed", "skipped")):
+        return "skipped"
+    return "passed"
+
+
 def parse_junit(env, xml):
     outcomes = {}
     if not env.exists(xml):
@@ -73,14 +86,7 @@ def parse_junit(env, xml):
     for suite in suites:
         for tc in suite.findall("testcase"):
             key = (tc.get("classname", "") + "::" + tc.get("name", "")).strip(":")
-            outcome = "passed"
-            for k in list(tc):
-                if k.tag == "failure":
-                    outcome = "failed"
-                elif k.tag == "error":
-                    outcome = "error"
-                elif k.tag == "skipped":
-                    outcome = "skipped"
+            outcome = junit_outcome(tc)
             outcomes[key] = outcome
     return outcomes
 
