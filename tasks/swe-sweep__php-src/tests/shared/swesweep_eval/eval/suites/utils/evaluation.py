@@ -107,10 +107,12 @@ class OutputCapture:
     def clip(self, text):
         text = text or ""
         if self.spent >= self.budget:
-            if len(text) <= OVER_BUDGET_TAIL:
+            # A spent total budget must not enlarge a positive per-invocation cap.
+            tail_limit = min(self.limit, OVER_BUDGET_TAIL) if self.limit > 0 else OVER_BUDGET_TAIL
+            if len(text) <= tail_limit:
                 return text, False
-            return ("[... output budget for this eval is spent; last %d chars ...]\n" % OVER_BUDGET_TAIL
-                    + text[-OVER_BUDGET_TAIL:], True)
+            return ("[... output budget for this eval is spent; last %d chars ...]\n" % tail_limit
+                    + text[-tail_limit:], True)
         if len(text) > self.limit:
             head, tail = self.limit // 2, self.limit - self.limit // 2
             cut = len(text) - self.limit
