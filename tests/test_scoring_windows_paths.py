@@ -14,17 +14,19 @@ from test_scoring import write_trial
 
 def windows_trial(root, name, source_path, solved):
     task = PureWindowsPath(source_path).name
-    write_trial(root, name, task,
-                {"n_subtasks": 10, "n_resolved": solved, "visible_ok": 1, "reward": solved / 10})
+    write_trial(root, name, task, {"n_subtasks": 10, "n_resolved": solved, "visible_ok": 1, "reward": solved / 10})
     # Use the pinned producer schema for the actual serialized task configuration.
     task_config = TaskConfig(path=source_path).model_dump(mode="json")
     (root / name / "config.json").write_text(json.dumps({"task": task_config}))
 
 
-@pytest.mark.parametrize("first,second", [
-    (r"C:\checkout\tasks", r"D:\worker\tasks"),
-    (r"\\host-one\share\tasks", r"\\host-two\share\tasks"),
-])
+@pytest.mark.parametrize(
+    "first,second",
+    [
+        (r"C:\checkout\tasks", r"D:\worker\tasks"),
+        (r"\\host-one\share\tasks", r"\\host-two\share\tasks"),
+    ],
+)
 def test_windows_reports_group_one_task_across_checkout_roots(tmp_path, first, second):
     windows_trial(tmp_path, "alpha-1", first + r"\synthetic-alpha", 0)
     windows_trial(tmp_path, "alpha-2", second + r"\synthetic-alpha", 10)
@@ -35,7 +37,9 @@ def test_windows_reports_group_one_task_across_checkout_roots(tmp_path, first, s
     assert report["summary"]["score"] == float(Fraction(3, 4))
     assert report["summary"]["graded_tasks"] == 2
     assert [(task["task"], task["trials"]) for task in report["tasks"]] == [
-        ("synthetic-alpha", 2), ("synthetic-beta", 1)]
+        ("synthetic-alpha", 2),
+        ("synthetic-beta", 1),
+    ]
 
 
 def test_info_json_uses_portable_names_for_serialized_windows_paths(tmp_path, capsys):
@@ -47,7 +51,8 @@ def test_info_json_uses_portable_names_for_serialized_windows_paths(tmp_path, ca
 
 
 def test_posix_basename_with_literal_backslash_is_not_reinterpreted(tmp_path):
-    write_trial(tmp_path, "one", r"synthetic\alpha",
-                {"n_subtasks": 10, "n_resolved": 5, "visible_ok": 1, "reward": 0.5})
+    write_trial(
+        tmp_path, "one", r"synthetic\alpha", {"n_subtasks": 10, "n_resolved": 5, "visible_ok": 1, "reward": 0.5}
+    )
     report = score_paths([tmp_path])
     assert report["tasks"][0]["task"] == r"synthetic\alpha"
