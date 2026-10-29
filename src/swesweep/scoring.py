@@ -33,7 +33,12 @@ def score_paths(roots: Sequence[Path]) -> dict[str, Any]:
     seen: set[Path] = set()
     for root in roots:
         for path in sorted(root.expanduser().rglob("reward.json")):
-            path = path.resolve()
+            try:
+                path = path.resolve()
+            except (OSError, RuntimeError):
+                # A symlink loop or unreadable path follows the existing policy
+                # for unreadable reward files; keep collecting other trials.
+                continue
             if path in seen:
                 continue
             seen.add(path)

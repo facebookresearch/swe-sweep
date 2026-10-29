@@ -36,3 +36,14 @@ def test_info_json_is_unchanged_when_a_trial_root_is_repeated(tmp_path, capsys):
     report = json.loads(capsys.readouterr().out)
     assert report["summary"]["score"] == float(Fraction(6, 15))
     assert [task["trials"] for task in report["tasks"]] == [2, 1]
+
+
+def test_unreadable_symlink_loop_does_not_hide_other_valid_trials(tmp_path):
+    first, second = graded_roots(tmp_path)
+    broken = tmp_path / "broken" / "verifier"
+    broken.mkdir(parents=True)
+    try:
+        (broken / "reward.json").symlink_to("reward.json")
+    except (OSError, NotImplementedError) as error:
+        pytest.skip(f"symlinks unavailable: {error}")
+    assert score_paths([tmp_path]) == score_paths([first, second])
