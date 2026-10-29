@@ -101,3 +101,27 @@ def test_config_free_trial_still_uses_directory_name(tmp_path):
     report = score_paths([tmp_path])
     assert report["tasks"][0]["task"] == paths.trial_dir.name
     assert report["tasks"][0]["trials"] == 1
+
+
+def test_unrelated_ancestor_verifier_directory_does_not_hide_trials(tmp_path):
+    project = tmp_path / "project"
+    (project / "verifier").mkdir(parents=True)
+    paths = trial_paths(project / "jobs")
+    assert score_paths([project / "jobs"])["tasks"][0]["trials"] == 1
+
+
+@pytest.mark.parametrize("outer_metadata", ["config_only", "reward_only"])
+def test_nested_verifier_is_excluded_with_either_outer_trial_marker(tmp_path, outer_metadata):
+    paths = trial_paths(tmp_path)
+    nested = paths.agent_dir / "nested" / "verifier"
+    nested.mkdir(parents=True)
+    (nested / "reward.json").write_text(json.dumps(FULL))
+    if outer_metadata == "config_only":
+        paths.reward_json_path.unlink()
+        with pytest.raises(ValueError, match="no SWE-sweep reward.json"):
+            score_paths([tmp_path])
+    else:
+        paths.config_path.unlink()
+        report = score_paths([tmp_path])
+        assert report["summary"]["score"] == 0.0
+        assert report["tasks"][0]["trials"] == 1
