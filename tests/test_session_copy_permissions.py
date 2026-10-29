@@ -9,6 +9,10 @@ from pathlib import Path
 import pytest
 
 
+# Keep interpreter caches out of the vendored-source synchronization check.
+sys.dont_write_bytecode = True
+
+
 def session_class():
     path = Path(__file__).resolve().parents[1] / (
         "tasks/swe-sweep__click/tests/shared/swesweep_eval/infra/container_session.py"
