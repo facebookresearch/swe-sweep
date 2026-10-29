@@ -69,7 +69,7 @@ def parse_junit(env, xml):
     if not env.exists(xml):
         return outcomes
     root = parse_xml(env.read_text(xml))
-    suites = [root] if root.tag == "testsuite" else list(root)
+    suites = root.iter("testsuite")
     for suite in suites:
         for tc in suite.findall("testcase"):
             key = (tc.get("classname", "") + "::" + tc.get("name", "")).strip(":")

@@ -147,7 +147,7 @@ def _parse_junit(env, path):
         return {}, 0, True
     outcomes = {}
     had_error = False
-    suites = [root] if root.tag == "testsuite" else root.iter("testsuite")
+    suites = root.iter("testsuite")
     for suite in suites:
         for tc in suite.findall("testcase"):
             key = (tc.get("classname", "") + " " + tc.get("name", "")).strip()

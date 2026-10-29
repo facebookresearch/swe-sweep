@@ -109,7 +109,7 @@ def _parse_junit(env, path, qualified=False):
     except ET.ParseError as exc:
         log(f"unparseable JUnit report {path}: {exc}")
         return {}, 0
-    suites = [root] if root.tag == "testsuite" else list(root)
+    suites = root.iter("testsuite")
     for suite in suites:
         for tc in suite.findall("testcase"):
             outcome = "passed"
