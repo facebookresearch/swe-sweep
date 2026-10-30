@@ -17,7 +17,7 @@ verifier image).
 from __future__ import annotations
 
 import os
-import select
+import selectors
 import shutil
 import signal
 import stat
@@ -96,9 +96,7 @@ class ContainerSession:
         try:
             shutil.copytree(host_dir, container_dir, symlinks=True, dirs_exist_ok=True)
         except OSError as exc:
-            raise ContainerSessionError(
-                f"staging {container_dir} failed: {exc}"
-            ) from exc
+            raise ContainerSessionError(f"staging {container_dir} failed: {exc}") from exc
 
     def execute(
         self,
@@ -163,9 +161,7 @@ class ContainerSession:
         try:
             if proc.stdin is not None:
                 try:
-                    proc.stdin.write(
-                        (input or "").encode("utf-8", errors="surrogateescape")
-                    )
+                    proc.stdin.write((input or "").encode("utf-8", errors="surrogateescape"))
                 except BrokenPipeError:
                     pass
                 proc.stdin.close()
@@ -175,17 +171,13 @@ class ContainerSession:
                 _kill_process_group(proc)
                 proc.wait()
                 stdout, stderr = _read_captures(out_drain, err_drain, merge_stderr)
-                raise subprocess.TimeoutExpired(
-                    args, effective_timeout or 0, output=stdout, stderr=stderr
-                ) from exc
+                raise subprocess.TimeoutExpired(args, effective_timeout or 0, output=stdout, stderr=stderr) from exc
             stdout, stderr = _read_captures(out_drain, err_drain, merge_stderr)
         finally:
             out_drain.close()
             if not merge_stderr:
                 err_drain.close()
-        return CommandResult(
-            args=args, returncode=proc.returncode, stdout=stdout, stderr=stderr
-        )
+        return CommandResult(args=args, returncode=proc.returncode, stdout=stdout, stderr=stderr)
 
     def exists(self, path: str) -> bool:
         return self.execute(["test", "-e", path]).returncode == 0
@@ -210,9 +202,7 @@ class ContainerSession:
         made = self.execute(["mkdir", "-p", parent])
         if made.returncode != 0:
             raise OSError(made.stderr or f"cannot create {parent}")
-        result = self.execute(
-            ["/bin/sh", "-c", 'cat > "$1"', "swesweep-write", path], input=content
-        )
+        result = self.execute(["/bin/sh", "-c", 'cat > "$1"', "swesweep-write", path], input=content)
         if result.returncode != 0:
             raise OSError(result.stderr or f"cannot write {path}")
 
@@ -266,14 +256,17 @@ class _PipeDrain:
 
     def _pump(self) -> None:
         try:
-            while not self._stop.is_set():
-                ready, _, _ = select.select([self.read_fd], [], [], 0.1)
-                if not ready:
-                    continue
-                chunk = os.read(self.read_fd, 1 << 16)
-                if not chunk:
-                    return
-                self.file.write(chunk)
+            # select.select() rejects descriptors above FD_SETSIZE even when the
+            # process can open them. Use the platform's scalable polling backend.
+            with selectors.DefaultSelector() as selector:
+                selector.register(self.read_fd, selectors.EVENT_READ)
+                while not self._stop.is_set():
+                    if not selector.select(0.1):
+                        continue
+                    chunk = os.read(self.read_fd, 1 << 16)
+                    if not chunk:
+                        return
+                    self.file.write(chunk)
         except OSError:
             return
 
