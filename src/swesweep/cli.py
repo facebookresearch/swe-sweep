@@ -17,6 +17,8 @@ from pathlib import Path
 from swesweep.constants import HARBOR_SOURCE_REVISION, TASK_PREFIX, TASKS_DIR
 from swesweep.scoring import print_score
 
+_DOCKER_INFO_TIMEOUT_SEC = 30
+
 
 def task_directories() -> tuple[Path, ...]:
     if not TASKS_DIR.is_dir():
@@ -136,12 +138,16 @@ def _docker_info() -> tuple[bool, str]:
     docker = shutil.which("docker")
     if docker is None:
         return False, "docker executable not found"
-    result = subprocess.run(
-        [docker, "info", "--format", "{{.OSType}}/{{.Architecture}}"],
-        check=False,
-        capture_output=True,
-        text=True,
-    )
+    try:
+        result = subprocess.run(
+            [docker, "info", "--format", "{{.OSType}}/{{.Architecture}}"],
+            check=False,
+            capture_output=True,
+            text=True,
+            timeout=_DOCKER_INFO_TIMEOUT_SEC,
+        )
+    except subprocess.TimeoutExpired:
+        return False, f"Docker daemon did not respond within {_DOCKER_INFO_TIMEOUT_SEC} seconds"
     if result.returncode:
         return False, (result.stderr or result.stdout or "Docker daemon unavailable").strip()
     return True, result.stdout.strip()
