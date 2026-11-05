@@ -38,7 +38,7 @@ container; a hosted model's endpoint is opened with the run-level allowlist:
 
     harbor run -p swe-sweep__dayjs -a oracle
     harbor run -p swe-sweep__dayjs -a mini-swe-agent -m anthropic/claude-opus-5 \
-        --extra-allowed-hosts api.anthropic.com
+        --allow-agent-host api.anthropic.com
 
 Tasks declare the paper's 16 vCPU / 64 GiB / 100 GiB per sandbox; `--override-cpus` and
 `--override-memory-mb` fit smaller machines. Building an agent image from its Dockerfile takes
