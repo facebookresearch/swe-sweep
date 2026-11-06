@@ -3,8 +3,10 @@
   "container_repo": "/tarantool",
   "evaluation": {
     "suite": "reproduction",
+    "rebuild_hidden_tests": true,
     "test_dirs": [
-      "test"
+      "test",
+      "test-run"
     ],
     "visible_timeout": 28800
   },

@@ -206,6 +206,11 @@ class CargoSuite(ReproductionSuite):
             selected = ["cargo", "test"] + self.target_cmd(crate, target, names)
             unfiltered = ["cargo", "test"] + self.target_cmd(crate, target, [])
             cwd = os.path.join(repo, crate) if crate != "." else repo
+            if (crate, target) in self._fixture_ids:
+                # `testing_macros::fixture!` globs the corpus at compile time, untracked by cargo, so new fixtures never run.
+                # Touching the driver makes cargo rebuild the target.
+                _run(env, ["touch", "-c", "tests/%s.rs" % target, "tests/%s/main.rs" % target],
+                     timeout=60, cwd=cwd)
             attempts = [selected]
             # **The name filter is a best effort, not the contract.** libtest's `--exact`
             # matches the case's *full path* — `parse::bare_url`, not `bare_url` — so a

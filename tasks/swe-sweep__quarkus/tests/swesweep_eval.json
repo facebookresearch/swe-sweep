@@ -3,7 +3,10 @@
   "container_repo": "/quarkus",
   "evaluation": {
     "suite": "reproduction",
-    "visible_timeout": 14400
+    "visible_timeout": 14400,
+    "test_dirs": [
+      "integration-tests"
+    ]
   },
   "upstream_image": "pandora-maxbug-quarkus:3.2.0",
   "n_base_passing": 293,

@@ -62,6 +62,22 @@ RUN set -eux; \
 COPY --from=swesweep-src /src /trino
 WORKDIR /trino
 
+# SWE-sweep task fix (trino-165617cc376a): the official fix changes a constructor the visible test calls, and test edits
+# are reverted, so ship upstream's updated test and a delegating 3-arg constructor: the tree compiles with or without it.
+RUN set -eux; \
+    RULE=core/trino-main/src/main/java/io/trino/sql/planner/iterative/rule/RemoveRedundantTableScanPredicate.java; \
+    VISTEST=core/trino-main/src/test/java/io/trino/sql/planner/iterative/rule/TestRemoveRedundantTableScanPredicate.java; \
+    grep -q 'new RemoveRedundantTableScanPredicate(tester().getMetadata(), new TypeOperators())' "$VISTEST"; \
+    sed -i 's/new RemoveRedundantTableScanPredicate(tester()\.getMetadata(), new TypeOperators())/new RemoveRedundantTableScanPredicate(tester().getMetadata(), new TypeOperators(), tester().getTypeAnalyzer())/' "$VISTEST"; \
+    grep -q 'new RemoveRedundantTableScanPredicate(tester().getMetadata(), new TypeOperators(), tester().getTypeAnalyzer())' "$VISTEST"; \
+    grep -q '^import io\.trino\.sql\.planner\.Symbol;$' "$RULE"; \
+    sed -i 's/^import io\.trino\.sql\.planner\.Symbol;$/import io.trino.sql.planner.Symbol;\nimport io.trino.sql.planner.TypeAnalyzer;/' "$RULE"; \
+    grep -q '^import io\.trino\.sql\.planner\.TypeAnalyzer;$' "$RULE"; \
+    grep -q '        this.domainTranslator = new DomainTranslator(metadata);' "$RULE"; \
+    awk '{ print; if (prev == "        this.domainTranslator = new DomainTranslator(metadata);" && $0 == "    }") { print ""; print "    public RemoveRedundantTableScanPredicate(Metadata metadata, TypeOperators typeOperators, TypeAnalyzer typeAnalyzer)"; print "    {"; print "        this(metadata, typeOperators);"; print "    }" } prev = $0 }' "$RULE" > "$RULE.tmp"; \
+    mv "$RULE.tmp" "$RULE"; \
+    grep -q 'public RemoveRedundantTableScanPredicate(Metadata metadata, TypeOperators typeOperators, TypeAnalyzer typeAnalyzer)' "$RULE"
+
 # Make the exported tree a git repo (the export carries no .git), commit the sources and tag
 # them `baseline` — a SOURCE-ONLY tag. The repo's own .gitignore covers `target/`, so the
 # runner's `git reset --hard baseline && git clean -fdq` (no -x) resets the sources between

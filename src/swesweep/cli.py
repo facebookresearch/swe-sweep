@@ -16,6 +16,7 @@ from pathlib import Path
 
 from swesweep.constants import HARBOR_SOURCE_REVISION, TASK_PREFIX, TASKS_DIR
 from swesweep.scoring import print_score
+from swesweep.validate import new_job, newest_first, read_verdict, validation_report
 
 
 def task_directories() -> tuple[Path, ...]:
@@ -103,16 +104,93 @@ def harbor_eval_command(
         "--n-concurrent",
         "1",
     ]
-    if timeout is not None:
-        with (task_dir / "task.toml").open("rb") as stream:
-            task_config = tomllib.load(stream)
-        configured_timeout = float(task_config.get("verifier", {}).get("timeout_sec", timeout))
-        if configured_timeout <= 0:
-            raise ValueError(f"{task_dir / 'task.toml'} has an invalid verifier timeout")
-        command.extend(("--verifier-timeout-multiplier", str(timeout / configured_timeout)))
+    command.extend(_timeout_arguments(task_dir, timeout))
     if dry_run:
         command.append("--dry-run")
     return command
+
+
+def _timeout_arguments(task_dir: Path, timeout: float | None) -> list[str]:
+    """Harbor scales the task's verifier timeout, so a timeout in seconds becomes a multiplier."""
+    if timeout is None:
+        return []
+    with (task_dir / "task.toml").open("rb") as stream:
+        task_config = tomllib.load(stream)
+    configured_timeout = float(task_config.get("verifier", {}).get("timeout_sec", timeout))
+    if configured_timeout <= 0:
+        raise ValueError(f"{task_dir / 'task.toml'} has an invalid verifier timeout")
+    return ["--verifier-timeout-multiplier", str(timeout / configured_timeout)]
+
+
+def harbor_fix_command(
+    task_dir: Path, fixes: str, output: Path, *, timeout: float | None = None, dry_run: bool
+) -> list[str]:
+    """`harbor run` that submits a set of the task's own official fixes (see OfficialFixAgent)."""
+    command = [
+        sys.executable,
+        "-m",
+        "harbor.cli.main",
+        "run",
+        "--path",
+        str(task_dir),
+        "--agent",
+        "swesweep.patch_agent:OfficialFixAgent",
+        "--agent-kwarg",
+        f"oracle_dir={task_dir / 'tests' / 'oracle'}",
+        "--agent-kwarg",
+        f"fixes={fixes}",
+        "--jobs-dir",
+        str(output),
+        "--n-concurrent",
+        "1",
+    ]
+    command.extend(_timeout_arguments(task_dir, timeout))
+    if dry_run:
+        command.append("--dry-run")
+    return command
+
+
+def _skipped_fixes(job: Path | None) -> list[str]:
+    for result in newest_first(list(job.rglob("result.json"))) if job is not None else []:
+        try:
+            metadata = (json.loads(result.read_text()).get("agent_result") or {}).get("metadata") or {}
+        except (OSError, ValueError):
+            continue
+        if "official_fixes_skipped" in metadata:
+            return list(metadata["official_fixes_skipped"])
+    return []
+
+
+def _validate(args: argparse.Namespace) -> int:
+    task_dir = resolve_task(args.task)
+    output = args.output.expanduser().resolve() / task_dir.name
+    jobs: dict[str, Path | None] = {}
+    # --bugs narrows which bugs are graded (and, with --each, which fixes run alone); the stack still has every fix
+    with configured_task(task_dir, bug_ids=_selected_bug_ids(args.bugs), build_jobs=args.build_jobs) as selected:
+        bugs = [
+            subtask["id"] for subtask in json.loads((selected / "tests" / "swesweep_eval.json").read_text())["subtasks"]
+        ]
+        cases = [("empty", ""), ("stacked", "all")] + ([(f"alone-{bug}", bug) for bug in bugs] if args.each else [])
+        for name, fixes in cases:
+            before = set((output / name).iterdir()) if (output / name).is_dir() else set()
+            command = harbor_fix_command(selected, fixes, output / name, timeout=args.timeout, dry_run=args.dry_run)
+            if subprocess.run(command, check=False).returncode and not args.dry_run:
+                print(f"harbor run failed for {name}; its result is reported as missing", file=sys.stderr)
+            jobs[name] = new_job(output / name, before)
+    if args.dry_run:
+        return 0
+    report = validation_report(
+        bugs,
+        read_verdict(jobs["empty"]),
+        read_verdict(jobs["stacked"]),
+        _skipped_fixes(jobs["stacked"]),
+        {bug: read_verdict(jobs[f"alone-{bug}"]) for bug in bugs} if args.each else {},
+    )
+    (output / "validation.json").write_text(json.dumps(report, indent=1) + "\n")
+    for finding in report["findings"]:
+        print(json.dumps(finding))
+    print(f"{task_dir.name}: {len(report['findings'])} finding(s); report in {output / 'validation.json'}")
+    return 1 if report["findings"] else 0
 
 
 def _eval(args: argparse.Namespace) -> int:
@@ -244,6 +322,22 @@ def _parser() -> argparse.ArgumentParser:
     evaluate.add_argument("--timeout", type=float, help="verifier timeout in seconds")
     evaluate.add_argument("--dry-run", action="store_true", help="validate without running containers")
     evaluate.set_defaults(func=_eval)
+
+    validate = commands.add_parser(
+        "validate", help="grade a task's official fixes like a submission (empty, all stacked, each alone)"
+    )
+    validate.add_argument("task", help="task name, for example dateutil")
+    validate.add_argument(
+        "-o", "--output", type=Path, default=Path("validation"), help="output directory (default: validation/)"
+    )
+    validate.add_argument("--each", action="store_true", help="also grade every official fix alone")
+    validate.add_argument(
+        "--bugs", help="comma-separated bug ids to grade, and with --each to run alone (default: all)"
+    )
+    validate.add_argument("--build-jobs", type=int, default=4, help="build parallelism (default: 4)")
+    validate.add_argument("--timeout", type=float, help="verifier timeout in seconds")
+    validate.add_argument("--dry-run", action="store_true", help="validate without running containers")
+    validate.set_defaults(func=_validate)
 
     info = commands.add_parser("info", help="summarize graded SWE-sweep trials")
     info.add_argument("paths", nargs="+", type=Path, help="graded trial directories")

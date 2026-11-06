@@ -3,7 +3,10 @@
   "container_repo": "/repo",
   "evaluation": {
     "suite": "reproduction",
-    "visible_timeout": 14400
+    "visible_timeout": 14400,
+    "test_dirs": [
+      "snapshots"
+    ]
   },
   "upstream_image": "pandora-maxbug-oxc:crates_v0.93.0",
   "n_base_passing": 0,

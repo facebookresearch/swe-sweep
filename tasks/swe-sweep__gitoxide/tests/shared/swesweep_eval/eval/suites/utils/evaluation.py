@@ -17,7 +17,7 @@ _INVALID_XML_CHARS_RE = re.compile("[\x00-\x08\x0b\x0c\x0e-\x1f\ud800-\udfff\uff
 
 
 
-def is_test_file(path, test_dirs=()):
+def is_test_file(path, test_dirs=(), source_files=()):
     """Whether the agent's edit to ``path`` is an edit to a *test*, which eval reverts
     before scoring (an agent must not be allowed to grade itself).
 
@@ -31,7 +31,18 @@ def is_test_file(path, test_dirs=()):
     both keep their test files inline beside the code (``strings/builder_test.v``), so no
     directory rule can reach them. ``.vv`` is there for the same reason — it is V's
     extension for a program that exists only as test data.
+
+    ``source_files`` are source files the name rules mistake for tests (rails' ``test_case.rb``); they are never reverted.
+    An entry ending in ``/`` is a source root: nothing under it is a test (rails' ``activesupport/lib/``, duckdb's ``src/``)
+    unless a ``test_dirs`` path names it (rails' harness ``active_support/test_case.rb``).
+    A ``test_dirs`` entry containing ``/`` is an exact path or prefix (ruff's per-rule ``mod.rs``, v's ``vtest-self.v``).
     """
+    if path in source_files:
+        return False
+    if any("/" in d and (path == d or path.startswith(d.rstrip("/") + "/")) for d in test_dirs):
+        return True
+    if any(s.endswith("/") and path.startswith(s) for s in source_files):
+        return False
     parts = path.split("/")
     base = parts[-1]
     dirs = set(parts[:-1])

@@ -30,9 +30,11 @@ class JestSuite(ReproductionSuite):
 
     no_targets = "test patch touched no JavaScript test files"
 
-    def __init__(self, config=None, spec_patterns=()):
+    def __init__(self, config=None, spec_patterns=(), anchor_names=False):
         self.config = config
         self.spec_res = tuple(re.compile(p) for p in spec_patterns)
+        # opt-in per task: only where every selected name is the title's last segment
+        self.anchor_names = anchor_names
 
     def targets(self, diff, env=None):
         del env
@@ -55,7 +57,7 @@ class JestSuite(ReproductionSuite):
             "--coverage=false",
         ]
         if names:
-            cmd += ["-t", _pattern(names)]
+            cmd += ["-t", _pattern(names, self.anchor_names)]
         rc, timed_out = _run(env, cmd, repo, timeout, command_env=command_env)
         if timed_out:
             return {}, 0, False, True

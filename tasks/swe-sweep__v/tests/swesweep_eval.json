@@ -68,7 +68,8 @@
     },
     "test_dirs": [
       "slow_tests",
-      "testdata"
+      "testdata",
+      "cmd/tools/vtest-self.v"
     ],
     "visible_timeout": 21600
   },
