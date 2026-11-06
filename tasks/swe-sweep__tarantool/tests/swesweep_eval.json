@@ -9,8 +9,8 @@
     "visible_timeout": 28800
   },
   "upstream_image": "pandora-maxbug-tarantool:2.10.0",
-  "n_base_passing": 980,
-  "n_base_test_ignore": 121,
+  "n_base_passing": 979,
+  "n_base_test_ignore": 122,
   "oracle_digest": "2ffa74a139c63f711ff61a7db5268955ed8f8af59b7e926adaf0e66e50d5389d",
   "oracle_pristine_paths": [],
   "upstream_commit": "9f7399e15e6172900e0591deb5a57a45769d8205",

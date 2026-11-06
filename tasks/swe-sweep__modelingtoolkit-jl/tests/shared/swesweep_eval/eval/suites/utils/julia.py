@@ -91,7 +91,9 @@ function main()
         for (k, v) in out
             first || print(io, ", "); first = false
             # strip the synthetic root so names read as the repo writes them
-            key = startswith(k, "swesweep/") ? k[9:end] : k
+            # (1-based: the name starts right after the prefix; a fixed index broke when the
+            # prefix was renamed from "pandora/" and left every name with a leading "/")
+            key = startswith(k, "swesweep/") ? k[(length("swesweep/") + 1):end] : k
             print(io, "\"", escape_string(key), "\": \"", v, "\"")
         end
         print(io, "}}")
