@@ -107,15 +107,6 @@
     },
     {
       "f2p": [
-        "crs.promoteTo3D_and_demoteTo2D"
-      ],
-      "id": "proj-4831a51d8731",
-      "target_files": [
-        "src/iso19111/io.cpp"
-      ]
-    },
-    {
-      "f2p": [
         "wkt_parse.LOCAL_CS_long_three_axis"
       ],
       "id": "proj-54e0eae5c2da",
@@ -139,15 +130,6 @@
       "id": "proj-5ea62cb8daa4",
       "target_files": [
         "src/iso19111/datum.cpp"
-      ]
-    },
-    {
-      "f2p": [
-        "factory.AuthorityFactory_createUnitOfMeasure_linear_us_survey_foot"
-      ],
-      "id": "proj-6e4ea9d02a9a",
-      "target_files": [
-        "src/iso19111/factory.cpp"
       ]
     },
     {
@@ -179,41 +161,12 @@
     },
     {
       "f2p": [
-        "operation.nadgrids_with_pm"
-      ],
-      "id": "proj-a289af9c5fe7",
-      "target_files": [
-        "src/iso19111/coordinateoperation.cpp",
-        "src/iso19111/crs.cpp",
-        "src/iso19111/io.cpp"
-      ]
-    },
-    {
-      "f2p": [
         "test/gie/builtins.gie"
       ],
       "id": "proj-a2dc13a77ea7",
       "target_files": [
         "src/projections/stere.cpp",
         "src/projections/tmerc.cpp"
-      ]
-    },
-    {
-      "f2p": [
-        "operation.compoundCRS_to_compoundCRS_context_helmert_noop"
-      ],
-      "id": "proj-b6a07d893aa2",
-      "target_files": [
-        "src/iso19111/coordinateoperation.cpp"
-      ]
-    },
-    {
-      "f2p": [
-        "crs.promoteTo3D_and_demoteTo2D"
-      ],
-      "id": "proj-bfab0375ca89",
-      "target_files": [
-        "src/iso19111/io.cpp"
       ]
     },
     {
@@ -232,17 +185,6 @@
       "id": "proj-ccce4196bb18",
       "target_files": [
         "src/projections/moll.cpp"
-      ]
-    },
-    {
-      "f2p": [
-        "operation.nadgrids_with_pm"
-      ],
-      "id": "proj-d1e39e45b0a6",
-      "target_files": [
-        "src/iso19111/coordinateoperation.cpp",
-        "src/iso19111/crs.cpp",
-        "src/iso19111/io.cpp"
       ]
     },
     {

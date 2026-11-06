@@ -808,15 +808,6 @@
     },
     {
       "f2p": [
-        "activerecord::test_uniqueness_on_custom_relation_primary_key"
-      ],
-      "id": "rails-8bad2ce0e534",
-      "target_files": [
-        "activerecord/lib/active_record/relation.rb"
-      ]
-    },
-    {
-      "f2p": [
         "actionpack::test_setting_cookie_with_specific_same_site_nil"
       ],
       "id": "rails-8bfe2c79e712",
@@ -1043,15 +1034,6 @@
       "id": "rails-c07165796b30",
       "target_files": [
         "actionview/lib/action_view/helpers/form_tag_helper.rb"
-      ]
-    },
-    {
-      "f2p": [
-        "activesupport/test/encrypted_configuration_test.rb"
-      ],
-      "id": "rails-c2cd8794eee5",
-      "target_files": [
-        "activesupport/lib/active_support/encrypted_configuration.rb"
       ]
     },
     {

@@ -399,15 +399,6 @@
     },
     {
       "f2p": [
-        "org.keycloak.testsuite.broker.KcOidcBrokerLogoutTest.testFrontChannelLogoutRequestsSendingOnlyClientIdWithFrontChannelLogoutApp"
-      ],
-      "id": "keycloak-a329efead44a",
-      "target_files": [
-        "services/src/main/java/org/keycloak/services/managers/AuthenticationManager.java"
-      ]
-    },
-    {
-      "f2p": [
         "org.keycloak.testsuite.oauth.ClientAuthSecretSignedJWTTest.testCodeToTokenRequestFailureWhenClientHasPrivateKeyJWT",
         "org.keycloak.testsuite.oauth.ClientAuthSecretSignedJWTTest.testCodeToTokenRequestSuccessWhenClientHasGeneratedKeys"
       ],
@@ -429,15 +420,6 @@
     },
     {
       "f2p": [
-        "org.keycloak.testsuite.federation.ldap.LDAPGroupMapperTest.test13_registrationWithDefaultGroupsAndDeferredLdapCreation"
-      ],
-      "id": "keycloak-b34c18869b14",
-      "target_files": [
-        "federation/ldap/src/main/java/org/keycloak/storage/ldap/LDAPStorageProvider.java"
-      ]
-    },
-    {
-      "f2p": [
         "org.keycloak.test.broker.oidc.OIDCIdentityProviderTest.extractIdentity_sidInIdToken_noSessionState_usesSid",
         "org.keycloak.test.broker.oidc.OIDCIdentityProviderTest.extractIdentity_sidInIdToken_sessionStateInTokenResponse_prefersSid"
       ],
@@ -448,34 +430,11 @@
     },
     {
       "f2p": [
-        "org.keycloak.testsuite.federation.ldap.LDAPGroupMapperTest.test05_getGroupsFromUserMemberOfStrategyTest",
-        "org.keycloak.testsuite.federation.ldap.LDAPGroupMapperTest.test06_addingUserToNewKeycloakGroup",
-        "org.keycloak.testsuite.federation.ldap.LDAPGroupMapperTest.test08_ldapOnlyGroupMappingsRanged",
-        "org.keycloak.testsuite.federation.ldap.LDAPGroupMapperTest.test09_emptyMemberOnDeletionWorks"
-      ],
-      "id": "keycloak-b509a4dd1295",
-      "target_files": [
-        "federation/ldap/src/main/java/org/keycloak/storage/ldap/mappers/membership/UserRolesRetrieveStrategy.java",
-        "federation/ldap/src/main/java/org/keycloak/storage/ldap/mappers/membership/group/GroupLDAPStorageMapper.java",
-        "federation/ldap/src/main/java/org/keycloak/storage/ldap/mappers/membership/role/RoleLDAPStorageMapper.java"
-      ]
-    },
-    {
-      "f2p": [
         "org.keycloak.testsuite.client.ClientRegistrationTest.registerMultipleClients"
       ],
       "id": "keycloak-bd6082fb710e",
       "target_files": [
         "model/jpa/src/main/java/org/keycloak/models/jpa/RealmAdapter.java"
-      ]
-    },
-    {
-      "f2p": [
-        "org.keycloak.testsuite.i18n.LoginPageTest.realmLocalizationMessagesUsedDuringErrorHandling"
-      ],
-      "id": "keycloak-c1b61c72402a",
-      "target_files": [
-        "services/src/main/java/org/keycloak/services/error/KeycloakErrorHandler.java"
       ]
     },
     {
@@ -503,30 +462,6 @@
       "id": "keycloak-c4f421945572",
       "target_files": [
         "services/src/main/java/org/keycloak/protocol/oidc/TokenManager.java"
-      ]
-    },
-    {
-      "f2p": [
-        "org.keycloak.testsuite.oauth.ClientAuthSecretSignedJWTTest.testCodeToTokenRequestFailureWhenClientHasPrivateKeyJWT",
-        "org.keycloak.testsuite.oauth.ClientAuthSecretSignedJWTTest.testCodeToTokenRequestSuccessWhenClientHasGeneratedKeys"
-      ],
-      "id": "keycloak-c693b8f48ed5",
-      "target_files": [
-        "services/src/main/java/org/keycloak/authentication/authenticators/client/JWTClientAuthenticator.java",
-        "services/src/main/java/org/keycloak/authentication/authenticators/client/JWTClientSecretAuthenticator.java",
-        "services/src/main/java/org/keycloak/authentication/authenticators/client/JWTClientValidator.java"
-      ]
-    },
-    {
-      "f2p": [
-        "org.keycloak.testsuite.oauth.ClientAuthSecretSignedJWTTest.testCodeToTokenRequestFailureWhenClientHasPrivateKeyJWT",
-        "org.keycloak.testsuite.oauth.ClientAuthSecretSignedJWTTest.testCodeToTokenRequestSuccessWhenClientHasGeneratedKeys"
-      ],
-      "id": "keycloak-c99dfd11df19",
-      "target_files": [
-        "services/src/main/java/org/keycloak/authentication/authenticators/client/JWTClientAuthenticator.java",
-        "services/src/main/java/org/keycloak/authentication/authenticators/client/JWTClientSecretAuthenticator.java",
-        "services/src/main/java/org/keycloak/authentication/authenticators/client/JWTClientValidator.java"
       ]
     },
     {
@@ -637,15 +572,6 @@
       "id": "keycloak-fd5801e426cd",
       "target_files": [
         "services/src/main/java/org/keycloak/jose/jws/DefaultTokenManager.java"
-      ]
-    },
-    {
-      "f2p": [
-        "org.keycloak.testsuite.model.ImportTest.importAcrToLoaMappingWithDefaultAcrValues"
-      ],
-      "id": "keycloak-fd9dfa0407ad",
-      "target_files": [
-        "model/storage-private/src/main/java/org/keycloak/storage/datastore/DefaultExportImportManager.java"
       ]
     },
     {

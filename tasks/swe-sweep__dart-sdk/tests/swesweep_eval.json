@@ -72,16 +72,6 @@
     },
     {
       "f2p": [
-        "tests/corelib/bigint_test.dart"
-      ],
-      "id": "dart-sdk-2546381b56b3",
-      "target_files": [
-        "runtime/vm/compiler/asm_intrinsifier_ia32.cc",
-        "runtime/vm/compiler/asm_intrinsifier_x64.cc"
-      ]
-    },
-    {
-      "f2p": [
         "pkg/analysis_server/test/src/services/correction/fix/convert_to_map_literal_test.dart"
       ],
       "id": "dart-sdk-3460a6401bdf",

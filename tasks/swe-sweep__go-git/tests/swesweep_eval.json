@@ -89,15 +89,6 @@
     },
     {
       "f2p": [
-        "__process_level_failure__"
-      ],
-      "id": "go-git-529339ebd22f",
-      "target_files": [
-        "plumbing/format/idxfile/idxfile.go"
-      ]
-    },
-    {
-      "f2p": [
         ".::Test"
       ],
       "id": "go-git-581fa05443c7",

@@ -135,18 +135,6 @@
     },
     {
       "f2p": [
-        "astropy.table.tests.test_operations.TestVStack::test_vstack_one_table[QTable-False]",
-        "astropy.table.tests.test_operations.TestVStack::test_vstack_one_table[QTable-True]",
-        "astropy.table.tests.test_operations.TestVStack::test_vstack_one_table[Table-False]",
-        "astropy.table.tests.test_operations.TestVStack::test_vstack_one_table[Table-True]"
-      ],
-      "id": "astropy-1d9cb61c2494",
-      "target_files": [
-        "astropy/table/operations.py"
-      ]
-    },
-    {
-      "f2p": [
         "astropy.coordinates.tests.test_spectral_coordinate::test_spectralcoord_with_spectral_equivalency"
       ],
       "id": "astropy-246bfc42668f",
@@ -233,25 +221,6 @@
     },
     {
       "f2p": [
-        "astropy.utils.masked.tests.test_function_helpers.TestReductionLikeFunctions::test_ptp[kwargs0]",
-        "astropy.utils.masked.tests.test_function_helpers.TestReductionLikeFunctions::test_ptp[kwargs1]"
-      ],
-      "id": "astropy-3a1abd2eee66",
-      "target_files": [
-        "astropy/utils/masked/core.py"
-      ]
-    },
-    {
-      "f2p": [
-        "astropy.table.tests.test_table::test_meta_writes_npstr_ecsv"
-      ],
-      "id": "astropy-3f588a207501",
-      "target_files": [
-        "astropy/io/misc/yaml.py"
-      ]
-    },
-    {
-      "f2p": [
         "astropy.coordinates.tests.test_frames::test_itrs_earth_location"
       ],
       "id": "astropy-4c1ab7821cac",
@@ -293,15 +262,6 @@
       "id": "astropy-503b84677f5c",
       "target_files": [
         "astropy/units/si.py"
-      ]
-    },
-    {
-      "f2p": [
-        "astropy.io.fits.tests.test_connect::test_keep_masked_state_integer_columns"
-      ],
-      "id": "astropy-57a2c038817f",
-      "target_files": [
-        "astropy/io/fits/convenience.py"
       ]
     },
     {
@@ -376,15 +336,6 @@
     },
     {
       "f2p": [
-        "astropy.table.tests.test_table::test_group_by_empty_table"
-      ],
-      "id": "astropy-70750b571269",
-      "target_files": [
-        "astropy/table/groups.py"
-      ]
-    },
-    {
-      "f2p": [
         "astropy.visualization.tests.test_stretch::test_linearstretch_clip"
       ],
       "id": "astropy-72fa772d92a0",
@@ -444,15 +395,6 @@
     },
     {
       "f2p": [
-        "astropy.io.fits.tests.test_connect::test_keep_masked_state_integer_columns"
-      ],
-      "id": "astropy-89fee00f53dd",
-      "target_files": [
-        "astropy/io/fits/convenience.py"
-      ]
-    },
-    {
-      "f2p": [
         "astropy.stats.tests.test_sigma_clipping::test_sigma_clipped_stats_masked_col"
       ],
       "id": "astropy-8acb78fe5a8a",
@@ -498,15 +440,6 @@
     },
     {
       "f2p": [
-        "astropy.units.tests.test_format::test_ogip_sqrt[sqrt(m)**3]"
-      ],
-      "id": "astropy-9cd8e0263508",
-      "target_files": [
-        "astropy/units/format/ogip.py"
-      ]
-    },
-    {
-      "f2p": [
         "astropy.io.votable.tests.resource_test::test_roundtrip"
       ],
       "id": "astropy-9e38e004ae8f",
@@ -537,29 +470,6 @@
     },
     {
       "f2p": [
-        "astropy.utils.masked.tests.test_functions.TestMaskedArrayUfuncs::test_2op_ufunc_outer[ma-b-outer0]",
-        "astropy.utils.masked.tests.test_functions.TestMaskedArrayUfuncs::test_2op_ufunc_outer[ma-b-outer1]",
-        "astropy.utils.masked.tests.test_functions.TestMaskedLongitudeUfuncs::test_2op_ufunc_outer[ma-b-outer0]",
-        "astropy.utils.masked.tests.test_functions.TestMaskedLongitudeUfuncs::test_2op_ufunc_outer[ma-b-outer1]",
-        "astropy.utils.masked.tests.test_functions.TestMaskedQuantityUfuncs::test_2op_ufunc_outer[ma-b-outer0]",
-        "astropy.utils.masked.tests.test_functions.TestMaskedQuantityUfuncs::test_2op_ufunc_outer[ma-b-outer1]"
-      ],
-      "id": "astropy-a0edf34aad27",
-      "target_files": [
-        "astropy/utils/masked/core.py"
-      ]
-    },
-    {
-      "f2p": [
-        "astropy.wcs.wcsapi.tests.test_high_level_api::test_minimal_mixin_subclass"
-      ],
-      "id": "astropy-a581fd2109d9",
-      "target_files": [
-        "astropy/wcs/wcsapi/high_level_api.py"
-      ]
-    },
-    {
-      "f2p": [
         "astropy.coordinates.tests.test_regression::test_regression_17008",
         "astropy.utils.iers.tests.test_iers::test_empty_mjd[False-jd0-pm_xy]",
         "astropy.utils.iers.tests.test_iers::test_empty_mjd[False-jd1-pm_xy]",
@@ -571,15 +481,6 @@
       "id": "astropy-a5a29787e12e",
       "target_files": [
         "astropy/utils/iers/iers.py"
-      ]
-    },
-    {
-      "f2p": [
-        "astropy.units.tests.test_equivalencies::test_find_equivalent_units"
-      ],
-      "id": "astropy-a641a13b0870",
-      "target_files": [
-        "astropy/units/core.py"
       ]
     },
     {
@@ -598,26 +499,6 @@
       "id": "astropy-baddef93ec5f",
       "target_files": [
         "astropy/table/table.py"
-      ]
-    },
-    {
-      "f2p": [
-        "astropy.io.fits.tests.test_header.TestHeaderFunctions::test_long_string_value_with_quotes"
-      ],
-      "id": "astropy-bef92f19679d",
-      "target_files": [
-        "astropy/io/fits/card.py"
-      ]
-    },
-    {
-      "f2p": [
-        "astropy.utils.masked.tests.test_functions.TestMaskedArrayUfuncs::test_multi_op_ufunc",
-        "astropy.utils.masked.tests.test_functions.TestMaskedLongitudeUfuncs::test_multi_op_ufunc",
-        "astropy.utils.masked.tests.test_functions.TestMaskedQuantityUfuncs::test_multi_op_ufunc"
-      ],
-      "id": "astropy-c18793c1b883",
-      "target_files": [
-        "astropy/utils/masked/core.py"
       ]
     },
     {
@@ -643,15 +524,6 @@
       "id": "astropy-c50f5ddd8a2b",
       "target_files": [
         "astropy/modeling/fitting.py"
-      ]
-    },
-    {
-      "f2p": [
-        "astropy.table.tests.test_init_table::test_init_QTable_and_set_units"
-      ],
-      "id": "astropy-cca0ff3cee59",
-      "target_files": [
-        "astropy/table/table.py"
       ]
     },
     {
@@ -711,90 +583,11 @@
     },
     {
       "f2p": [
-        "astropy.io.fits.tests.test_diff.TestDiff::test_different_table_data",
-        "astropy.io.fits.tests.test_diff.TestDiff::test_identical_tables"
-      ],
-      "id": "astropy-e254967a4df7",
-      "target_files": [
-        "astropy/io/fits/diff.py"
-      ]
-    },
-    {
-      "f2p": [
-        "astropy.wcs.wcsapi.tests.test_high_level_api::test_minimal_mixin_subclass"
-      ],
-      "id": "astropy-e3b15e9a45f6",
-      "target_files": [
-        "astropy/wcs/wcsapi/high_level_api.py"
-      ]
-    },
-    {
-      "f2p": [
-        "astropy.units.tests.test_format::test_ogip_ohm"
-      ],
-      "id": "astropy-e84c31b1bdbd",
-      "target_files": [
-        "astropy/units/si.py"
-      ]
-    },
-    {
-      "f2p": [
         "astropy.io.fits.tests.test_convenience.TestConvenience::test_masked_integer_arrays"
       ],
       "id": "astropy-e8d6e93d799d",
       "target_files": [
         "astropy/io/fits/convenience.py"
-      ]
-    },
-    {
-      "f2p": [
-        "astropy.table.tests.test_table::test_table_from_records_nd_quantity"
-      ],
-      "id": "astropy-eca6d865405c",
-      "target_files": [
-        "astropy/table/column.py"
-      ]
-    },
-    {
-      "f2p": [
-        "astropy.modeling.tests.test_fitters::test_non_finite_filter_1D[weights0-DogBoxLSQFitter]",
-        "astropy.modeling.tests.test_fitters::test_non_finite_filter_1D[weights0-LMLSQFitter]",
-        "astropy.modeling.tests.test_fitters::test_non_finite_filter_1D[weights0-LevMarLSQFitter]",
-        "astropy.modeling.tests.test_fitters::test_non_finite_filter_1D[weights0-TRFLSQFitter]",
-        "astropy.modeling.tests.test_fitters::test_non_finite_filter_2D[weights0-DogBoxLSQFitter]",
-        "astropy.modeling.tests.test_fitters::test_non_finite_filter_2D[weights0-LMLSQFitter]",
-        "astropy.modeling.tests.test_fitters::test_non_finite_filter_2D[weights0-LevMarLSQFitter]",
-        "astropy.modeling.tests.test_fitters::test_non_finite_filter_2D[weights0-TRFLSQFitter]"
-      ],
-      "id": "astropy-effbf779b103",
-      "target_files": [
-        "astropy/modeling/fitting.py"
-      ]
-    },
-    {
-      "f2p": [
-        "astropy.utils.masked.tests.test_functions.TestMaskedArrayUfuncs::test_2op_ufunc_outer[ma-b-outer0]",
-        "astropy.utils.masked.tests.test_functions.TestMaskedArrayUfuncs::test_2op_ufunc_outer[ma-b-outer1]",
-        "astropy.utils.masked.tests.test_functions.TestMaskedLongitudeUfuncs::test_2op_ufunc_outer[ma-b-outer0]",
-        "astropy.utils.masked.tests.test_functions.TestMaskedLongitudeUfuncs::test_2op_ufunc_outer[ma-b-outer1]",
-        "astropy.utils.masked.tests.test_functions.TestMaskedQuantityUfuncs::test_2op_ufunc_outer[ma-b-outer0]",
-        "astropy.utils.masked.tests.test_functions.TestMaskedQuantityUfuncs::test_2op_ufunc_outer[ma-b-outer1]"
-      ],
-      "id": "astropy-f31e9e6f14d7",
-      "target_files": [
-        "astropy/utils/masked/core.py"
-      ]
-    },
-    {
-      "f2p": [
-        "astropy.units.tests.test_format::test_cds_grammar[strings4-unit4]",
-        "astropy.units.tests.test_format::test_cds_grammar[strings6-unit6]",
-        "astropy.units.tests.test_format::test_cds_grammar_fail[km/s.Mpc-1]"
-      ],
-      "id": "astropy-f78b85ad961c",
-      "target_files": [
-        "astropy/units/format/cds.py",
-        "astropy/units/format/cds_parsetab.py"
       ]
     },
     {

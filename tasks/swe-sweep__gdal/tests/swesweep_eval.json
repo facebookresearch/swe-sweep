@@ -225,29 +225,11 @@
     },
     {
       "f2p": [
-        "gdrivers.png::test_png_read_interlace_16_bit"
-      ],
-      "id": "gdal-3bd8d57ad655",
-      "target_files": [
-        "frmts/png/pngdataset.cpp"
-      ]
-    },
-    {
-      "f2p": [
         "gcore.bmp_write::test_bmp_create_empty"
       ],
       "id": "gdal-424d521138b6",
       "target_files": [
         "frmts/bmp/bmpdataset.cpp"
-      ]
-    },
-    {
-      "f2p": [
-        "__process_level_failure__"
-      ],
-      "id": "gdal-44e37a15a6cf",
-      "target_files": [
-        "ogr/ogrsf_frmts/mitab/mitab_feature.cpp"
       ]
     },
     {
@@ -288,16 +270,6 @@
     },
     {
       "f2p": [
-        "utilities.test_gdalwarp_lib::test_gdalwarp_lib_135"
-      ],
-      "id": "gdal-504022e1901c",
-      "target_files": [
-        "alg/gdalwarpkernel.cpp",
-        "apps/gdalwarp_lib.cpp"
-      ]
-    },
-    {
-      "f2p": [
         "utilities.test_gdalinfo_lib::test_gdalinfo_lib_json_proj_shape"
       ],
       "id": "gdal-539e9769dc6c",
@@ -307,29 +279,11 @@
     },
     {
       "f2p": [
-        "utilities.test_gdalwarp_lib::test_gdalwarp_lib_working_data_type_with_source_dataset_of_different_types"
-      ],
-      "id": "gdal-57efa1e4b4ab",
-      "target_files": [
-        "alg/gdalwarper.cpp"
-      ]
-    },
-    {
-      "f2p": [
         "ogr.ogr_gml_geom::test_gml_export_compound_crs"
       ],
       "id": "gdal-5ce400c64f69",
       "target_files": [
         "ogr/ogr2gmlgeometry.cpp"
-      ]
-    },
-    {
-      "f2p": [
-        "ogr.ogr_gml_read::test_ogr_gml_SWAP_COORDINATES_no_srs"
-      ],
-      "id": "gdal-5f6e44b21f5f",
-      "target_files": [
-        "ogr/ogrsf_frmts/gmlutils/gmlutils.cpp"
       ]
     },
     {
@@ -428,25 +382,6 @@
     },
     {
       "f2p": [
-        "ogr.ogr_xlsx::test_ogr_xlsx_write_sheet_without_row"
-      ],
-      "id": "gdal-7ccad1918967",
-      "target_files": [
-        "ogr/ogrsf_frmts/xlsx/ogr_xlsx.h",
-        "ogr/ogrsf_frmts/xlsx/ogrxlsxdatasource.cpp"
-      ]
-    },
-    {
-      "f2p": [
-        "ogr.ogr_gpkg::test_ogr_gpkg_creation_fid"
-      ],
-      "id": "gdal-829fbcf7cf22",
-      "target_files": [
-        "ogr/ogrsf_frmts/gpkg/ogrgeopackagetablelayer.cpp"
-      ]
-    },
-    {
-      "f2p": [
         "utilities.test_gdalwarp_lib::test_gdalwarp_lib_average_ten_ten_to_one_one"
       ],
       "id": "gdal-83c5ce57a20c",
@@ -456,31 +391,11 @@
     },
     {
       "f2p": [
-        "gdrivers.mrf::test_mrf_setspatialref"
-      ],
-      "id": "gdal-8726ac905a3f",
-      "target_files": [
-        "frmts/mrf/marfa.h"
-      ]
-    },
-    {
-      "f2p": [
         "gcore.tiff_srs::test_tiff_srs_write_projected_3d_built_as_pseudo_compound"
       ],
       "id": "gdal-8a4bee4f8d2a",
       "target_files": [
         "frmts/gtiff/gtiffdataset_write.cpp"
-      ]
-    },
-    {
-      "f2p": [
-        "ogr.ogr_shape::test_ogr_shape_75"
-      ],
-      "id": "gdal-8deb4e1a2bc1",
-      "target_files": [
-        "ogr/ogrsf_frmts/shape/ogrshape.h",
-        "ogr/ogrsf_frmts/shape/ogrshapedatasource.cpp",
-        "ogr/ogrsf_frmts/shape/ogrshapelayer.cpp"
       ]
     },
     {
@@ -589,15 +504,6 @@
     },
     {
       "f2p": [
-        "__process_level_failure__"
-      ],
-      "id": "gdal-c38033143519",
-      "target_files": [
-        "apps/gdal_translate_lib.cpp"
-      ]
-    },
-    {
-      "f2p": [
         "ogr.ogr_geom::test_ogr_geomtransfomer_wrapdateline_geometrycollection",
         "ogr.ogr_geom::test_ogr_geomtransfomer_wrapdateline_multipoint"
       ],
@@ -639,15 +545,6 @@
     },
     {
       "f2p": [
-        "ogr.ogr_openfilegdb_write::test_ogr_openfilegdb_write_freelist_scenario_issue_7504"
-      ],
-      "id": "gdal-d424863f5f51",
-      "target_files": [
-        "ogr/ogrsf_frmts/openfilegdb/filegdbtable_write.cpp"
-      ]
-    },
-    {
-      "f2p": [
         "gdrivers.wmts::test_wmts_clip_extent_with_union_of_tile_matrix_extent"
       ],
       "id": "gdal-d49547f1a1be",
@@ -667,15 +564,6 @@
     },
     {
       "f2p": [
-        "utilities.test_gdalwarp_lib::test_gdalwarp_lib_average_ten_ten_to_one_one"
-      ],
-      "id": "gdal-df22e12654b3",
-      "target_files": [
-        "alg/gdalwarpkernel.cpp"
-      ]
-    },
-    {
-      "f2p": [
         "gdrivers.jpeg::test_jpeg_read_arcgis_metadata_geodataxform_gcp"
       ],
       "id": "gdal-e6d023672560",
@@ -690,25 +578,6 @@
       "id": "gdal-eff6ab423ab1",
       "target_files": [
         "ogr/ogrsf_frmts/sqlite/ogrsqliteutility.cpp"
-      ]
-    },
-    {
-      "f2p": [
-        "ogr.ogr_gpkg::test_ogr_gpkg_arrow_stream_numpy"
-      ],
-      "id": "gdal-f079f407aa45",
-      "target_files": [
-        "ogr/ogrsf_frmts/gpkg/ogrgeopackagelayer.cpp",
-        "ogr/ogrsf_frmts/gpkg/ogrgeopackagetablelayer.cpp"
-      ]
-    },
-    {
-      "f2p": [
-        "gcore.vsizip::test_vsizip_4"
-      ],
-      "id": "gdal-f72f1eda99e3",
-      "target_files": [
-        "port/cpl_vsil.cpp"
       ]
     }
   ],

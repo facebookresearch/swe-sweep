@@ -430,15 +430,6 @@
     },
     {
       "f2p": [
-        "pandas.tests.io.parser.dtypes.test_dtypes_basic::test_dtype_mangle_dup_cols[python-dtypes0-1]"
-      ],
-      "id": "pandas-2f6439771264",
-      "target_files": [
-        "pandas/io/parsers/python_parser.py"
-      ]
-    },
-    {
-      "f2p": [
         "pandas.tests.indexes.multi.test_duplicates::test_midx_unique_ea_dtype"
       ],
       "id": "pandas-32472c3ebd31",
@@ -477,15 +468,6 @@
       "id": "pandas-338331d39d73",
       "target_files": [
         "pandas/io/json/_normalize.py"
-      ]
-    },
-    {
-      "f2p": [
-        "pandas.tests.groupby.test_grouping.TestGrouping::test_groupby_series_named_with_tuple[Series-index2]"
-      ],
-      "id": "pandas-33eda73b5d27",
-      "target_files": [
-        "pandas/core/groupby/grouper.py"
       ]
     },
     {
@@ -855,15 +837,6 @@
     },
     {
       "f2p": [
-        "pandas.tests.frame.methods.test_shift.TestDataFrameShift::test_shift_other_axis_with_freq"
-      ],
-      "id": "pandas-6244ff27600a",
-      "target_files": [
-        "pandas/core/frame.py"
-      ]
-    },
-    {
-      "f2p": [
         "pandas.tests.tseries.offsets.test_month.TestCustomBusinessMonthBegin::test_apply_with_extra_offset[case0]",
         "pandas.tests.tseries.offsets.test_month.TestCustomBusinessMonthBegin::test_apply_with_extra_offset[case1]",
         "pandas.tests.tseries.offsets.test_month.TestCustomBusinessMonthBegin::test_apply_with_extra_offset[case2]",
@@ -928,15 +901,6 @@
         "pandas.tests.series.accessors.test_dt_accessor.TestSeriesDatetimeValues::test_strftime_all_nat[data0]"
       ],
       "id": "pandas-6b4525af7b57",
-      "target_files": [
-        "pandas/core/indexes/datetimes.py"
-      ]
-    },
-    {
-      "f2p": [
-        "pandas.tests.series.accessors.test_dt_accessor.TestSeriesDatetimeValues::test_strftime_all_nat[data0]"
-      ],
-      "id": "pandas-6be2382e4c9e",
       "target_files": [
         "pandas/core/indexes/datetimes.py"
       ]
@@ -1306,15 +1270,6 @@
     },
     {
       "f2p": [
-        "pandas.tests.series.methods.test_equals::test_equals_None_vs_float"
-      ],
-      "id": "pandas-8fcda51af538",
-      "target_files": [
-        "pandas/_libs/missing.pyx"
-      ]
-    },
-    {
-      "f2p": [
         "pandas.tests.io.json.test_normalize.TestJSONNormalize::test_fields_list_type_normalize"
       ],
       "id": "pandas-9009cfd8363b",
@@ -1378,25 +1333,6 @@
       "id": "pandas-955d9d57a8d1",
       "target_files": [
         "pandas/core/indexes/range.py"
-      ]
-    },
-    {
-      "f2p": [
-        "pandas.tests.series.indexing.test_setitem::test_setitem_with_bool_indexer"
-      ],
-      "id": "pandas-965719d4f18c",
-      "target_files": [
-        "pandas/core/series.py"
-      ]
-    },
-    {
-      "f2p": [
-        "pandas.tests.util.test_assert_almost_equal::test_assert_almost_equal_array_nested[a6-b6]",
-        "pandas.tests.util.test_assert_almost_equal::test_assert_almost_equal_array_nested[a7-b7]"
-      ],
-      "id": "pandas-966baafe99d2",
-      "target_files": [
-        "pandas/core/dtypes/missing.py"
       ]
     },
     {
@@ -1467,15 +1403,6 @@
     },
     {
       "f2p": [
-        "pandas.tests.frame.indexing.test_indexing.TestDataFrameIndexing::test_setitem_array_as_cell_value"
-      ],
-      "id": "pandas-9f6ee877511b",
-      "target_files": [
-        "pandas/core/dtypes/cast.py"
-      ]
-    },
-    {
-      "f2p": [
         "pandas.tests.indexes.multi.test_get_set::test_set_empty_level"
       ],
       "id": "pandas-a032eff6a321",
@@ -1508,19 +1435,6 @@
       "id": "pandas-a254a6026988",
       "target_files": [
         "pandas/core/common.py"
-      ]
-    },
-    {
-      "f2p": [
-        "pandas.tests.computation.test_eval.TestScope::test_empty_globals[python-pandas]",
-        "pandas.tests.computation.test_eval.TestScope::test_empty_globals[python-python]",
-        "pandas.tests.computation.test_eval.TestScope::test_empty_locals[python-pandas]",
-        "pandas.tests.computation.test_eval.TestScope::test_empty_locals[python-python]"
-      ],
-      "id": "pandas-a3c6c833f493",
-      "target_files": [
-        "pandas/core/computation/pytables.py",
-        "pandas/core/computation/scope.py"
       ]
     },
     {
@@ -1624,15 +1538,6 @@
       "id": "pandas-af5275e5e101",
       "target_files": [
         "pandas/core/reshape/pivot.py"
-      ]
-    },
-    {
-      "f2p": [
-        "pandas.tests.test_downstream::test_oo_optimized_datetime_index_unpickle"
-      ],
-      "id": "pandas-b084dde320b8",
-      "target_files": [
-        "pandas/core/indexes/datetimes.py"
       ]
     },
     {
@@ -1944,16 +1849,6 @@
     },
     {
       "f2p": [
-        "pandas.tests.frame.methods.test_drop.TestDataFrameDrop::test_drop_tuple_with_non_unique_multiindex[indexer0]",
-        "pandas.tests.frame.methods.test_drop.TestDataFrameDrop::test_drop_tuple_with_non_unique_multiindex[indexer1]"
-      ],
-      "id": "pandas-d5511c70cdc7",
-      "target_files": [
-        "pandas/core/generic.py"
-      ]
-    },
-    {
-      "f2p": [
         "pandas.tests.reshape.merge.test_merge::test_merge_different_index_names"
       ],
       "id": "pandas-d6b94f3efa4d",
@@ -1969,15 +1864,6 @@
       "id": "pandas-d8d1fc760dff",
       "target_files": [
         "pandas/_libs/window/aggregations.pyx"
-      ]
-    },
-    {
-      "f2p": [
-        "pandas.tests.reshape.merge.test_merge::test_merge_series_multilevel"
-      ],
-      "id": "pandas-dac5bd93fb8c",
-      "target_files": [
-        "pandas/core/reshape/merge.py"
       ]
     },
     {
@@ -2186,41 +2072,11 @@
     },
     {
       "f2p": [
-        "pandas.tests.apply.test_series_apply::test_agg_args[args1-kwargs1-1]",
-        "pandas.tests.apply.test_series_apply::test_agg_args[args2-kwargs2-32]",
-        "pandas.tests.apply.test_series_apply::test_agg_args[args3-kwargs3-201]"
-      ],
-      "id": "pandas-ef9c1a9799cd",
-      "target_files": [
-        "pandas/core/apply.py"
-      ]
-    },
-    {
-      "f2p": [
-        "pandas.tests.io.parser.test_encoding::test_chunk_splits_multibyte_char[c_high]",
-        "pandas.tests.io.parser.test_encoding::test_chunk_splits_multibyte_char[c_low]"
-      ],
-      "id": "pandas-f089f7da08b6",
-      "target_files": [
-        "pandas/io/common.py"
-      ]
-    },
-    {
-      "f2p": [
         "pandas.tests.indexes.interval.test_interval_range.TestIntervalRange::test_float_freq"
       ],
       "id": "pandas-f0a3d976b2d6",
       "target_files": [
         "pandas/core/indexes/interval.py"
-      ]
-    },
-    {
-      "f2p": [
-        "pandas.tests.frame.indexing.test_getitem.TestGetitemSlice::test_getitem_datetime_slice"
-      ],
-      "id": "pandas-f2d22a64775f",
-      "target_files": [
-        "pandas/core/frame.py"
       ]
     },
     {
@@ -2350,60 +2206,11 @@
     },
     {
       "f2p": [
-        "pandas.tests.io.xml.test_to_xml::test_index_false_with_offset_input_index[etree-offset_index0]",
-        "pandas.tests.io.xml.test_to_xml::test_index_false_with_offset_input_index[etree-offset_index1]"
-      ],
-      "id": "pandas-faa245ddcf73",
-      "target_files": [
-        "pandas/io/formats/xml.py"
-      ]
-    },
-    {
-      "f2p": [
-        "pandas.tests.window.test_groupby.TestRolling::test_rolling_corr_cov_unordered[corr-expected_values1]",
-        "pandas.tests.window.test_groupby.TestRolling::test_rolling_corr_cov_unordered[cov-expected_values0]",
-        "pandas.tests.window.test_rolling::test_iter_rolling_on_dataframe_unordered"
-      ],
-      "id": "pandas-fad49433a7a3",
-      "target_files": [
-        "pandas/core/window/rolling.py"
-      ]
-    },
-    {
-      "f2p": [
-        "pandas.tests.resample.test_resampler_grouper::test_resample_groupby_agg_listlike"
-      ],
-      "id": "pandas-fb5db7dd67d5",
-      "target_files": [
-        "pandas/core/resample.py"
-      ]
-    },
-    {
-      "f2p": [
-        "pandas.tests.io.parser.test_encoding::test_not_readable[c_high]",
-        "pandas.tests.io.parser.test_encoding::test_not_readable[c_low]"
-      ],
-      "id": "pandas-fb80c58564e4",
-      "target_files": [
-        "pandas/io/common.py"
-      ]
-    },
-    {
-      "f2p": [
         "__process_level_failure__"
       ],
       "id": "pandas-fbb928a2e786",
       "target_files": [
         "pandas/_libs/tslibs/timestamps.pyx"
-      ]
-    },
-    {
-      "f2p": [
-        "pandas.tests.apply.test_frame_apply::test_apply_nested_result_axis_1[agg]"
-      ],
-      "id": "pandas-fe5134dc57ba",
-      "target_files": [
-        "pandas/core/apply.py"
       ]
     }
   ],

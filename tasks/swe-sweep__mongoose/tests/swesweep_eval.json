@@ -380,15 +380,6 @@
     },
     {
       "f2p": [
-        "utils merge should not skip schema merge when isDiscriminatorSchemaMerge is false (gh-9534)"
-      ],
-      "id": "mongoose-8f961d9afc05",
-      "target_files": [
-        "lib/utils.js"
-      ]
-    },
-    {
-      "f2p": [
         "document does not modify array when calling getters (gh-13748)"
       ],
       "id": "mongoose-9031bc05b21b",
@@ -603,16 +594,6 @@
       "id": "mongoose-dcebecf3c1ff",
       "target_files": [
         "lib/cast.js"
-      ]
-    },
-    {
-      "f2p": [
-        "document should allow storing keys with dots in name in mixed under nested (gh-13530)"
-      ],
-      "id": "mongoose-e390dcae63c4",
-      "target_files": [
-        "lib/document.js",
-        "lib/helpers/path/flattenObjectWithDottedPaths.js"
       ]
     },
     {

@@ -73,16 +73,6 @@
     },
     {
       "f2p": [
-        "org.apache.shardingsphere.readwritesplitting.algorithm.loadbalance.WeightReadQueryLoadBalanceAlgorithmTest.assertGetDataSourceWhenReadDataSourceChanged"
-      ],
-      "id": "shardingsphere-59c8fa498cbc",
-      "target_files": [
-        "features/readwrite-splitting/core/src/main/java/org/apache/shardingsphere/readwritesplitting/algorithm/loadbalance/FixedReplicaWeightReadQueryLoadBalanceAlgorithm.java",
-        "features/readwrite-splitting/core/src/main/java/org/apache/shardingsphere/readwritesplitting/algorithm/loadbalance/WeightReadQueryLoadBalanceAlgorithm.java"
-      ]
-    },
-    {
-      "f2p": [
         "org.apache.shardingsphere.sharding.rewrite.token.pojo.ConstraintTokenTest.assertUpperCaseToString"
       ],
       "id": "shardingsphere-5da870d89eea",

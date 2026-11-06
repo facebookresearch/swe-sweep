@@ -123,16 +123,6 @@
     {
       "f2p": [
         "interp::TestInterp",
-        "interp::TestInterp/_function_f1(a)_{_if_(0)_f5(z1);_f2(a)_}_function_f2(b)_{_if_(0)_f4(z2"
-      ],
-      "id": "goawk-7ca1bb110d39",
-      "target_files": [
-        "internal/resolver/resolve.go"
-      ]
-    },
-    {
-      "f2p": [
-        "interp::TestInterp",
         "interp::TestInterp/BEGIN_{_s_=_srand(srand());_print_(s_>_1700000000)_}"
       ],
       "id": "goawk-8af831dd4f5d",

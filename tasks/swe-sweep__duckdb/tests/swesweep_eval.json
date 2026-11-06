@@ -241,21 +241,6 @@
     },
     {
       "f2p": [
-        "test/sql/storage/concurrent_table_insertion.test_slow"
-      ],
-      "id": "duckdb-24278e9ffd28",
-      "target_files": [
-        "src/include/duckdb/storage/data_table.hpp",
-        "src/include/duckdb/storage/table/append_state.hpp",
-        "src/include/duckdb/storage/table/row_group_collection.hpp",
-        "src/storage/data_table.cpp",
-        "src/storage/local_storage.cpp",
-        "src/storage/table/row_group.cpp",
-        "src/storage/table/row_group_collection.cpp"
-      ]
-    },
-    {
-      "f2p": [
         "test/optimizer/issue_12181.test"
       ],
       "id": "duckdb-282d562aa395",
@@ -291,16 +276,6 @@
       "id": "duckdb-35212bbdc849",
       "target_files": [
         "src/planner/binder/expression/bind_window_expression.cpp"
-      ]
-    },
-    {
-      "f2p": [
-        "test/optimizer/joins/filter_on_subquery_with_aggregate.test"
-      ],
-      "id": "duckdb-36c38199ce20",
-      "target_files": [
-        "src/include/duckdb/optimizer/join_order/relation_manager.hpp",
-        "src/optimizer/join_order/relation_manager.cpp"
       ]
     },
     {
