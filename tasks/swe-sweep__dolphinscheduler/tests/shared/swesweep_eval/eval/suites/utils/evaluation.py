@@ -36,7 +36,7 @@ def is_test_file(path, test_dirs=()):
     base = parts[-1]
     dirs = set(parts[:-1])
     return (bool(dirs & (set(test_dirs) | {"test", "tests", "__tests__"}))
-            or base.startswith("test_")
+            or (base.startswith("test_") and base.endswith(".py"))
             or base.endswith(("_test.py", "_test.go", "_test.c", "_test.cc", "_test.cpp", "Test.java",
                               "_test.v", "_test.exs", ".vv"))
             or re.search(r"\.(?:test|spec|tests)\.[cm]?[jt]sx?$", base) is not None
