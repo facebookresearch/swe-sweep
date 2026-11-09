@@ -9,7 +9,7 @@ from swesweep_eval.eval.suites.utils.logging import log
 
 ADD_TEST_RE = re.compile(r"^\+\s*def\s+(test_[A-Za-z0-9_]+)")
 HUNK_FN_RE = re.compile(r"^@@ .*@@.*\bdef\s+(test_[A-Za-z0-9_]+)")
-PLUSFILE_RE = re.compile(r"^\+\+\+ b/(.+)$", re.M)
+PLUSFILE_RE = re.compile(r"^\+\+\+ b/(.+?)(?:\t.*)?$", re.M)
 
 
 def target_tests(diff):

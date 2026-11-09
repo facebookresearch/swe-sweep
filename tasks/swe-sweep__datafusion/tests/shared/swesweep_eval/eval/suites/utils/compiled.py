@@ -48,7 +48,7 @@ def _per_file_hunks(diff):
                 out.append(_FileHunks(path, "".join(lines)))
             path, lines = None, []
         elif line.startswith("+++ b/"):
-            candidate = line[6:].rstrip("\n")
+            candidate = line[6:].split("\t", 1)[0].strip("\r\n")
             path = None if candidate == "/dev/null" else candidate
         elif path:
             lines.append(line)
