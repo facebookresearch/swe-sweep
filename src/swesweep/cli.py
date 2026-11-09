@@ -102,6 +102,7 @@ def harbor_eval_command(
         str(output),
         "--n-concurrent",
         "1",
+        "--yes",
     ]
     if timeout is not None:
         with (task_dir / "task.toml").open("rb") as stream:
