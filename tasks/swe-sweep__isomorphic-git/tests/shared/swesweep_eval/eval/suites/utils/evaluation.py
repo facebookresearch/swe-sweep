@@ -8,7 +8,7 @@ from contextlib import redirect_stderr
 from io import StringIO
 
 from swesweep_eval.eval.suites.utils.logging import log
-from swesweep_eval.eval.suites.utils.pytest import target_tests
+from swesweep_eval.eval.suites.utils.pytest import keyword_expression, target_tests
 
 ANYFILE_RE = re.compile(r"^(?:\+\+\+ b/|--- a/)(.+)$", re.M)
 
@@ -139,8 +139,9 @@ def run_pytest(env, repo, paths, names, timeout, cap, extra_args=()):
         "-p", "no:cacheprovider", "-o", "addopts=", "-q",
         "--continue-on-collection-errors", "--junitxml=" + xml,
     ] + list(extra_args)
-    if names:
-        cmd += ["-k", " or ".join(names)]
+    expression = keyword_expression(names)
+    if expression:
+        cmd += ["-k", expression]
     captured = {"command": " ".join(cmd), "returncode": None, "text": "", "truncated": False}
     try:
         # stderr folded into stdout so the captured text reads like the real console, in
