@@ -161,19 +161,16 @@ class ContainerSession:
         if not merge_stderr:
             err_drain.close_writer()
         try:
-            if proc.stdin is not None:
-                try:
-                    proc.stdin.write(
-                        (input or "").encode("utf-8", errors="surrogateescape")
-                    )
-                except BrokenPipeError:
-                    pass
-                proc.stdin.close()
             try:
-                proc.wait(timeout=effective_timeout)
+                proc.communicate(
+                    input=input.encode("utf-8", errors="surrogateescape") if input is not None else None,
+                    timeout=effective_timeout,
+                )
             except subprocess.TimeoutExpired as exc:
                 _kill_process_group(proc)
                 proc.wait()
+                if proc.stdin is not None:
+                    proc.stdin.close()
                 stdout, stderr = _read_captures(out_drain, err_drain, merge_stderr)
                 raise subprocess.TimeoutExpired(
                     args, effective_timeout or 0, output=stdout, stderr=stderr
