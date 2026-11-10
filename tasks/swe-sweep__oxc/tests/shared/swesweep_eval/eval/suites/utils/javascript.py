@@ -8,7 +8,7 @@ import xml.etree.ElementTree as ET
 
 from swesweep_eval.eval.suites.utils.logging import log
 from swesweep_eval.eval.suites.utils.pytest import PLUSFILE_RE
-from swesweep_eval.eval.suites.utils.evaluation import parse_xml
+from swesweep_eval.eval.suites.utils.evaluation import parse_xml, junit_outcome
 
 # What a JavaScript test file is called. Both ecosystems mark specs by suffix rather than by
 # directory, and both TypeScript and plain JS appear in the same repo (nuxt's suite is .ts,
@@ -151,15 +151,8 @@ def _parse_junit(env, path):
     for suite in suites:
         for tc in suite.findall("testcase"):
             key = (tc.get("classname", "") + " " + tc.get("name", "")).strip()
-            outcome = "passed"
-            for k in list(tc):
-                if k.tag == "failure":
-                    outcome = "failed"
-                elif k.tag == "error":
-                    outcome = "error"
-                    had_error = True
-                elif k.tag == "skipped":
-                    outcome = "skipped"
+            outcome = junit_outcome(tc)
+            had_error = had_error or outcome == "error"
             outcomes[key] = outcome
     n = len([o for o in outcomes.values() if o != "skipped"])
     return outcomes, n, had_error

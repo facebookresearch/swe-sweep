@@ -5,7 +5,7 @@ import re
 import subprocess
 import xml.etree.ElementTree as ET
 
-from swesweep_eval.eval.suites.utils.evaluation import parse_xml
+from swesweep_eval.eval.suites.utils.evaluation import parse_xml, junit_outcome
 from swesweep_eval.eval.suites.utils.logging import log
 from swesweep_eval.eval.suites.utils.pytest import PLUSFILE_RE
 
@@ -112,14 +112,7 @@ def _parse_junit(env, path, qualified=False):
     suites = [root] if root.tag == "testsuite" else list(root)
     for suite in suites:
         for tc in suite.findall("testcase"):
-            outcome = "passed"
-            for kid in list(tc):
-                if kid.tag == "failure":
-                    outcome = "failed"
-                elif kid.tag == "error":
-                    outcome = "error"
-                elif kid.tag == "skipped":
-                    outcome = "skipped"
+            outcome = junit_outcome(tc)
             name = tc.get("name", "")
             if qualified:
                 name = (tc.get("classname", "") + "." + name).strip(".")

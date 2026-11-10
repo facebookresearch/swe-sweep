@@ -33,6 +33,8 @@ def run_pytest(env, repo, files, names, timeout):
 
     ``files=None`` is the runner protocol's whole-suite call (the eval driver's visible
     baseline): pass no paths and let pytest discover from the repo root."""
+    from swesweep_eval.eval.suites.utils.evaluation import junit_outcome
+
     xml = "/tmp/report.xml"
     if env.exists(xml):
         env.remove(xml)
@@ -69,15 +71,8 @@ def run_pytest(env, repo, files, names, timeout):
     for suite in suites:
         for tc in suite.findall("testcase"):
             key = (tc.get("classname", "") + "::" + tc.get("name", "")).strip(":")
-            outcome = "passed"
-            for k in list(tc):
-                if k.tag == "failure":
-                    outcome = "failed"
-                elif k.tag == "error":
-                    outcome = "error"
-                    coll_err = True
-                elif k.tag == "skipped":
-                    outcome = "skipped"
+            outcome = junit_outcome(tc)
+            coll_err = coll_err or outcome == "error"
             outcomes[key] = outcome
     n = len([o for o in outcomes.values() if o != "skipped"])
     return outcomes, n, coll_err, False
