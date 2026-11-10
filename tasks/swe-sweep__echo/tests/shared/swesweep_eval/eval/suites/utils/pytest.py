@@ -65,7 +65,7 @@ def run_pytest(env, repo, files, names, timeout):
         # unmeasurable outcome as never writing one — not a reason to sink the whole eval.
         log(f"unparseable pytest report {xml}: {exc}")
         return {}, 0, True, False
-    suites = [root] if root.tag == "testsuite" else list(root)
+    suites = root.iter("testsuite")
     for suite in suites:
         for tc in suite.findall("testcase"):
             key = (tc.get("classname", "") + "::" + tc.get("name", "")).strip(":")
