@@ -27,12 +27,38 @@ def task_name(reward_path: Path) -> str:
     return trial_dir.name
 
 
+def _is_trial_directory(directory: Path) -> bool:
+    """Recognize a trial from stored task metadata or a SWE-sweep result."""
+    try:
+        config = json.loads((directory / "config.json").read_text())
+        task = config.get("task") if isinstance(config, dict) else None
+        if isinstance(task, dict) and (task.get("path") or task.get("name")):
+            return True
+    except (OSError, ValueError):
+        pass
+    try:
+        reward = json.loads((directory / "verifier" / "reward.json").read_text())
+        return isinstance(reward, dict) and all(key in reward for key in REWARD_KEYS)
+    except (OSError, ValueError):
+        return False
+
+
 def score_paths(roots: Sequence[Path]) -> dict[str, Any]:
     """Collect reward files below roots and return their aggregate report."""
     rows: list[tuple[str, dict[str, Any]]] = []
     for root in roots:
         for path in sorted(root.expanduser().rglob("reward.json")):
+            # Harbor's graded result belongs to verifier/, not agent logs or
+            # collected artifacts that happen to share the same filename.
             try:
+                if path.parent.name != "verifier" and not path.parent.samefile(path.parent.parent / "verifier"):
+                    continue
+                # A trial is a boundary: agent logs and collected artifacts may
+                # themselves contain verifier-shaped trees, but cannot add trials.
+                # Check ancestors even when the user queried a nested log root.
+                trial_dir = path.parent.parent
+                if any(_is_trial_directory(ancestor) for ancestor in trial_dir.parents):
+                    continue
                 data = json.loads(path.read_text())
             except (OSError, ValueError):
                 continue
