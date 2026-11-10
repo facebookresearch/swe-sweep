@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import math
 from collections import defaultdict
 from collections.abc import Sequence
 from pathlib import Path
@@ -25,6 +26,17 @@ def task_name(reward_path: Path) -> str:
         except (OSError, ValueError):
             pass
     return trial_dir.name
+
+
+def _bug_count(value: Any, *, task: str, field: str) -> int:
+    """Read an exact count, rather than silently truncating a fractional metric."""
+    if (
+        type(value) not in (int, float)
+        or value < 0
+        or (isinstance(value, float) and (not math.isfinite(value) or not value.is_integer()))
+    ):
+        raise ValueError(f"{task}: {field} must be a non-negative whole number")
+    return int(value)
 
 
 def score_paths(roots: Sequence[Path]) -> dict[str, Any]:
@@ -53,8 +65,15 @@ def score_paths(roots: Sequence[Path]) -> dict[str, Any]:
     tasks: list[dict[str, Any]] = []
     for name in sorted(per_task):
         trials = per_task[name]
-        n_subtasks = int(trials[0]["n_subtasks"])
-        resolved = [int(trial["n_resolved"]) for trial in trials]
+        totals = [_bug_count(trial["n_subtasks"], task=name, field="n_subtasks") for trial in trials]
+        if len(set(totals)) != 1:
+            raise ValueError(
+                f"{name}: inconsistent n_subtasks {sorted(set(totals))}; score different task definitions separately"
+            )
+        n_subtasks = totals[0]
+        resolved = [_bug_count(trial["n_resolved"], task=name, field="n_resolved") for trial in trials]
+        if any(value > n_subtasks for value in resolved):
+            raise ValueError(f"{name}: n_resolved cannot exceed n_subtasks")
         counted = [value if trial["visible_ok"] >= 1 else 0 for value, trial in zip(resolved, trials, strict=True)]
         tasks.append(
             {
