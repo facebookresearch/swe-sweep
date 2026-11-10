@@ -6,7 +6,7 @@ import argparse
 import json
 from collections import defaultdict
 from collections.abc import Sequence
-from pathlib import Path
+from pathlib import Path, PureWindowsPath
 from typing import Any
 
 REWARD_KEYS = ("n_subtasks", "n_resolved", "visible_ok", "reward")
@@ -21,7 +21,9 @@ def task_name(reward_path: Path) -> str:
             task = json.loads(config.read_text()).get("task") or {}
             path = task.get("path") or task.get("name")
             if path:
-                return Path(str(path)).name
+                serialized_path = str(path)
+                windows_path = PureWindowsPath(serialized_path)
+                return windows_path.name if windows_path.is_absolute() else Path(serialized_path).name
         except (OSError, ValueError):
             pass
     return trial_dir.name
