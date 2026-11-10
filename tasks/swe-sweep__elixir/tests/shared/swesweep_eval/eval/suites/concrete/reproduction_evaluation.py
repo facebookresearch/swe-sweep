@@ -39,10 +39,9 @@ class ReproductionEvaluationSuite(EvaluationSuite):
         with redirect_stderr(transcript):
             outcomes, _n, error, timed_out = self.suite.run_tests(
                 env, repo, files, names, timeout, jobs)
-        if error and not outcomes:
-            keys = list(names) or ["<suite>"]
-            outcomes = dict((key, "error") for key in keys)
         text = transcript.getvalue()
+        if error:
+            text += "\n[reproduction suite reported an error; outcome report is incomplete]\n"
         clipped, truncated = cap.clip(text)
         captured = {
             "command": "suite.run_tests (whole suite)" if files is None else "suite.run_tests (selected)",
@@ -52,7 +51,7 @@ class ReproductionEvaluationSuite(EvaluationSuite):
             "text": clipped,
             "truncated": truncated,
         }
-        return (None if timed_out else outcomes), timed_out, captured
+        return (None if timed_out or error else outcomes), timed_out, captured
 
     def run_all(self, env, repo, timeout, cap, jobs):
         return self._run(env, repo, None, [], timeout, cap, jobs)
