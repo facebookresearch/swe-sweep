@@ -140,7 +140,7 @@ def normalize_test_id(test_id: str) -> str:
     """Spell a test id the way upstream's recorded lists do.
 
     jest cuts long titles in the middle of a surrogate pair and writes the lone surrogate as a
-    JSON escape (webpack's `BinaryMiddleware ... 😀😀\ud83d ... `); upstream stored those ids
+    JSON escape (webpack's `BinaryMiddleware ... 😀😀\\ud83d ... `); upstream stored those ids
     through a UTF-8 round trip that turns the lone surrogate into three replacement characters.
     A valid string is unchanged.
     """
@@ -731,12 +731,22 @@ def _run_targets(
     }
     failed = {k for k, v in outcomes.items() if v in ("failed", "error")}
     passed = passed_set(outcomes)
+    # An unrelated passing case cannot stand in for a declared regression test.
+    # Process-level reproductions have no concrete F2P identity to require.
+    expected = (
+        set()
+        if PROCESS_LEVEL_FAILURE_NODE in f2p
+        else {canonical_test_id(normalize_test_id(test)) for test in f2p}
+    )
+    not_passed = sorted(expected - {canonical_test_id(test) for test in passed})
+    if not_passed:
+        result["detail"]["f2p_not_passed"] = not_passed
     result.update(
         n_passed=len(passed),
         n_failed=len(failed),
         passed=sorted(passed),
         failed=sorted(failed),
-        resolved=not failed and bool(passed),
+        resolved=not failed and bool(passed) and not not_passed,
     )
     return output
 
