@@ -64,6 +64,14 @@ def parse_xml(text):
         return ET.fromstring(cleaned)
 
 
+def record_outcome(outcomes, key, outcome):
+    """Combine ordinary observations of one identity without hiding a non-pass."""
+    priority = {"passed": 0, "skipped": 1, "failed": 2, "error": 3}
+    previous = outcomes.get(key)
+    if previous is None or priority[outcome] > priority[previous]:
+        outcomes[key] = outcome
+
+
 def parse_junit(env, xml):
     outcomes = {}
     if not env.exists(xml):
@@ -81,7 +89,7 @@ def parse_junit(env, xml):
                     outcome = "error"
                 elif k.tag == "skipped":
                     outcome = "skipped"
-            outcomes[key] = outcome
+            record_outcome(outcomes, key, outcome)
     return outcomes
 
 

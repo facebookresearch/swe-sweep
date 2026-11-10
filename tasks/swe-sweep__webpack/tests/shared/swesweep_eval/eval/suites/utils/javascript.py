@@ -8,7 +8,7 @@ import xml.etree.ElementTree as ET
 
 from swesweep_eval.eval.suites.utils.logging import log
 from swesweep_eval.eval.suites.utils.pytest import PLUSFILE_RE
-from swesweep_eval.eval.suites.utils.evaluation import parse_xml
+from swesweep_eval.eval.suites.utils.evaluation import parse_xml, record_outcome
 
 # What a JavaScript test file is called. Both ecosystems mark specs by suffix rather than by
 # directory, and both TypeScript and plain JS appear in the same repo (nuxt's suite is .ts,
@@ -160,7 +160,7 @@ def _parse_junit(env, path):
                     had_error = True
                 elif k.tag == "skipped":
                     outcome = "skipped"
-            outcomes[key] = outcome
+            record_outcome(outcomes, key, outcome)
     n = len([o for o in outcomes.values() if o != "skipped"])
     return outcomes, n, had_error
 
@@ -190,13 +190,13 @@ def _parse_jest_json(env, path):
     for suite in report.get("testResults", []):
         assertions = suite.get("assertionResults", []) or []
         if not assertions and suite.get("status") == "failed":
-            outcomes[suite.get("name", "<unknown file>")] = "error"
+            record_outcome(outcomes, suite.get("name", "<unknown file>"), "error")
             had_error = True
             continue
         for a in assertions:
             key = " ".join((a.get("ancestorTitles") or []) + [a.get("title", "")]).strip()
             status = a.get("status", "failed")
-            outcomes[key] = {
+            outcome = {
                 "passed": "passed",
                 "failed": "failed",
                 "pending": "skipped",
@@ -204,6 +204,7 @@ def _parse_jest_json(env, path):
                 "skipped": "skipped",
                 "disabled": "skipped",
             }.get(status, "failed")
+            record_outcome(outcomes, key, outcome)
     n = len([o for o in outcomes.values() if o != "skipped"])
     return outcomes, n, had_error
 
