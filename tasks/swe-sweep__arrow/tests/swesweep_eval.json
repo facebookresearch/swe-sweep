@@ -13,8 +13,8 @@
     }
   },
   "upstream_image": "pandora-maxbug-arrow:11.0.0",
-  "n_base_passing": 9650,
-  "n_base_test_ignore": 38,
+  "n_base_passing": 9649,
+  "n_base_test_ignore": 39,
   "oracle_digest": "b076d58a7d80ff906246b3fe5161bd0a66691ae9480d7abb5714a9b000fdb781",
   "oracle_pristine_paths": [],
   "upstream_commit": "9f7399e15e6172900e0591deb5a57a45769d8205",

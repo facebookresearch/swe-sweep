@@ -43,7 +43,9 @@ RUN if [ -r /etc/os-release ]; then . /etc/os-release; case "${VERSION_CODENAME:
 
 # ICU data for node 10's small-icu build: without it the whole `timezone`/`utc` plugin
 # suite fails before any patch is applied, which would read as `fails_pre_gold`.
-RUN npm install --no-save --prefix / full-icu@1.4.0
+# GitHub's replies now carry ~10.6 KB of headers, over Node 10's 8 KB limit, so full-icu's ICU download fails.
+# Raise the limit for this install step only.
+RUN NODE_OPTIONS=--max-http-header-size=81920 npm install --no-save --prefix / full-icu@1.4.0
 ENV NODE_ICU_DATA=/node_modules/full-icu
 
 # dayjs' `npm test` runs the suite four times under four zones and then once more under

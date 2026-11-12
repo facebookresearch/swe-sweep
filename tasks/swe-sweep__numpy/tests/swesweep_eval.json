@@ -5,8 +5,8 @@
     "paths": "numpy"
   },
   "upstream_image": "pandora-maxbug-numpy:1.15.0",
-  "n_base_passing": 4834,
-  "n_base_test_ignore": 40,
+  "n_base_passing": 4833,
+  "n_base_test_ignore": 41,
   "oracle_digest": "8d619634e4f7d588c5eccd37c66b5b4c4f4525df5d72dc74e9fd070f8933ad75",
   "oracle_pristine_paths": [],
   "upstream_commit": "9f7399e15e6172900e0591deb5a57a45769d8205",
