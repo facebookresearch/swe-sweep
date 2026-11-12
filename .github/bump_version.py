@@ -2,6 +2,7 @@
 """Bump the swe-sweep version in pyproject.toml."""
 
 import re
+import shutil
 import subprocess
 import sys
 from pathlib import Path
@@ -25,12 +26,18 @@ def main() -> None:
         print("No version entered, aborting.")
         sys.exit(1)
 
+    uv = shutil.which("uv")
+    if uv is None:
+        print("Error: uv is required to update the committed lockfile", file=sys.stderr)
+        sys.exit(1)
+
     updated = text[: match.start(1)] + new + text[match.end(1) :]
     PYPROJECT.write_text(updated)
     print(f"Updated {PYPROJECT.relative_to(ROOT)}: {current} -> {new}")
+    subprocess.run([uv, "lock"], cwd=ROOT, check=True)
 
     tag = f"v{new}"
-    subprocess.run(["git", "add", str(PYPROJECT)], check=True)
+    subprocess.run(["git", "add", str(PYPROJECT), str(ROOT / "uv.lock")], check=True)
     subprocess.run(["git", "commit", "-m", f"Bump version to {new}"], check=True)
     subprocess.run(["git", "tag", tag], check=True)
 
