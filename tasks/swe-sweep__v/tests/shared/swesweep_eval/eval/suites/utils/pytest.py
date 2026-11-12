@@ -11,6 +11,27 @@ ADD_TEST_RE = re.compile(r"^\+\s*def\s+(test_[A-Za-z0-9_]+)")
 HUNK_FN_RE = re.compile(r"^@@ .*@@.*\bdef\s+(test_[A-Za-z0-9_]+)")
 PLUSFILE_RE = re.compile(r"^\+\+\+ b/(.+)$", re.M)
 
+_K_KEYWORDS = frozenset({"and", "or", "not"})
+
+
+def keyword_expression(names):
+    """A pytest ``-k`` expression matching ``names`` literally.
+
+    ``-k`` is a Python expression, so a hyphen is subtraction. ``testFoo-skip``
+    becomes ``True - True`` and selects nothing. A non-identifier is split into
+    the identifier pieces pytest can match; boolean keywords are dropped.
+    """
+    terms = []
+    for name in names:
+        if re.fullmatch(r"[A-Za-z_][A-Za-z0-9_]*", name) and name not in _K_KEYWORDS:
+            terms.append(name)
+            continue
+        bits = [bit for bit in re.split(r"[^A-Za-z0-9_]+", name) if bit and bit not in _K_KEYWORDS]
+        if not bits:
+            continue
+        terms.append(bits[0] if len(bits) == 1 else "(" + " and ".join(bits) + ")")
+    return " or ".join(terms)
+
 
 def target_tests(diff):
     """Test files the patch touches + the added/enclosing test function names."""
@@ -45,8 +66,9 @@ def run_pytest(env, repo, files, names, timeout):
         "--continue-on-collection-errors",
         "--junitxml=" + xml,
     ]
-    if names:
-        cmd += ["-k", " or ".join(names)]
+    expression = keyword_expression(names)
+    if expression:
+        cmd += ["-k", expression]
     try:
         r = env.execute(cmd, cwd=repo, timeout=timeout)
     except subprocess.TimeoutExpired:
