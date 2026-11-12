@@ -12,6 +12,20 @@ from typing import Any
 REWARD_KEYS = ("n_subtasks", "n_resolved", "visible_ok", "reward")
 
 
+def _is_infrastructure_failure(data: dict[str, Any]) -> bool:
+    """True when the grader marked the trial as an infrastructure failure.
+
+    ``write_failure`` emits ``grader_failed`` as a number. A JSON boolean is the same
+    marker. Anything else is not a failure flag, and must not abort the whole report.
+    """
+    marker = data.get("grader_failed", 0)
+    if isinstance(marker, bool):
+        return marker
+    if isinstance(marker, (int, float)):
+        return marker >= 1
+    return False
+
+
 def task_name(reward_path: Path) -> str:
     """Return the task named by a trial config, or fall back to its directory name."""
     trial_dir = reward_path.parent.parent
@@ -36,7 +50,14 @@ def score_paths(roots: Sequence[Path]) -> dict[str, Any]:
                 data = json.loads(path.read_text())
             except (OSError, ValueError):
                 continue
-            if not isinstance(data, dict) or not all(key in data for key in REWARD_KEYS):
+            if not isinstance(data, dict):
+                continue
+            # An infrastructure failure is still a trial. ``write_failure`` records only
+            # ``reward`` and ``grader_failed``, and dropping that file makes the crash
+            # disappear from ``evaluation_failures`` instead of being excluded on purpose.
+            if not all(key in data for key in REWARD_KEYS):
+                if _is_infrastructure_failure(data):
+                    rows.append((task_name(path), data))
                 continue
             rows.append((task_name(path), data))
 
@@ -44,10 +65,10 @@ def score_paths(roots: Sequence[Path]) -> dict[str, Any]:
         locations = ", ".join(str(root) for root in roots)
         raise ValueError(f"no SWE-sweep reward.json found under {locations}")
 
-    failures = sorted({name for name, data in rows if data.get("grader_failed", 0) >= 1})
+    failures = sorted({name for name, data in rows if _is_infrastructure_failure(data)})
     per_task: defaultdict[str, list[dict[str, Any]]] = defaultdict(list)
     for name, data in rows:
-        if data.get("grader_failed", 0) < 1:
+        if not _is_infrastructure_failure(data):
             per_task[name].append(data)
 
     tasks: list[dict[str, Any]] = []
