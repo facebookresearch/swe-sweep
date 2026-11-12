@@ -41,6 +41,7 @@ def test_eval_wraps_harbor_with_reference_arguments(tmp_path, monkeypatch):
     assert command[command.index("--agent-kwarg") + 1] == f"patch_path={patch.resolve()}"
     assert command[command.index("--jobs-dir") + 1] == str(output.resolve())
     assert "--dry-run" in command
+    assert "--yes" in command
 
 
 def test_eval_subset_uses_temporary_harbor_task(tmp_path, monkeypatch):
