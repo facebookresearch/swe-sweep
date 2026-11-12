@@ -159,8 +159,12 @@ class AgdaTastySuite(ReproductionSuite):
         agda ships change between versions, and several of the ones it does ship have no
         cases in an image without TeX or a backend runtime.
         """
+        try:
+            listing = self._run(env, repo, ["-l"], timeout)
+        except subprocess.TimeoutExpired:
+            return None
         by_suite = {}
-        for line in self._run(env, repo, ["-l"], timeout).stdout.splitlines():
+        for line in listing.stdout.splitlines():
             parts = line.strip().split(".")
             if len(parts) < 3 or parts[0] != "all" or parts[1] not in self.suites:
                 continue
@@ -210,8 +214,12 @@ class AgdaTastySuite(ReproductionSuite):
         walk thousands of times over.
         """
         del jobs
+        population = self._population(env, repo, timeout)
+        if population is None:
+            log("agda-tests listing TIMEOUT after %ds" % timeout)
+            return {}, 0, False, True
         outcomes = {}
-        for suite, cases in sorted(self._population(env, repo, timeout).items()):
+        for suite, cases in sorted(population.items()):
             try:
                 r = self._run(env, repo, ["--regex-include", "all/%s/" % self._ere(suite),
                                           "--hide-successes"], timeout)
