@@ -127,7 +127,7 @@ The benchmark score is calculated as
 
 ```
 total number of bugs solved across tasks / total number of bugs =
-    = mean(number of bugs in task * task score)
+    = sum(number of bugs in task * task score) / sum(number of bugs in task)
 ```
 
 Summarize one or more directories containing graded Harbor trials:
