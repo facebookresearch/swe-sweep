@@ -49,7 +49,7 @@ class PytestInlineCaseSuite(PytestSuite):
         cases = []
         for line in diff.splitlines():
             if line.startswith("+++ b/"):
-                path = line[6:]
+                path = line[6:].split("\t", 1)[0].strip()
                 continue
             if path is None or not self.corpus_re.match(path) or not line.startswith("@@ "):
                 continue
