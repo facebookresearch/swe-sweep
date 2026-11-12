@@ -140,7 +140,7 @@ def normalize_test_id(test_id: str) -> str:
     """Spell a test id the way upstream's recorded lists do.
 
     jest cuts long titles in the middle of a surrogate pair and writes the lone surrogate as a
-    JSON escape (webpack's `BinaryMiddleware ... 😀😀\ud83d ... `); upstream stored those ids
+    JSON escape (webpack's `BinaryMiddleware ... 😀😀\\ud83d ... `); upstream stored those ids
     through a UTF-8 round trip that turns the lone surrogate into three replacement characters.
     A valid string is unchanged.
     """
