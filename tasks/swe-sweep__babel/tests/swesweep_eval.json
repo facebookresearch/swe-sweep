@@ -33,7 +33,8 @@
           "pattern": "(packages/babel-parser)/test/expressions/"
         }
       ],
-      "type": "jest-fixture"
+      "type": "jest-fixture",
+      "anchor_names": true
     },
     "test_timeout": 1200
   },

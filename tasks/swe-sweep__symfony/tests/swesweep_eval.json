@@ -4,7 +4,10 @@
   "evaluation": {
     "suite": "reproduction",
     "test_timeout": 3600,
-    "visible_timeout": 14400
+    "visible_timeout": 14400,
+    "test_dirs": [
+      "Tests"
+    ]
   },
   "upstream_image": "pandora-maxbug-symfony:v6.4.0",
   "n_base_passing": 0,

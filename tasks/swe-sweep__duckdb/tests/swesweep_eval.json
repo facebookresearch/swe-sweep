@@ -3,7 +3,10 @@
   "container_repo": "/repo",
   "evaluation": {
     "suite": "reproduction",
-    "visible_timeout": 14400
+    "visible_timeout": 14400,
+    "source_files": [
+      "src/"
+    ]
   },
   "upstream_image": "pandora-maxbug-duckdb:v0.10.0",
   "n_base_passing": 2828,
@@ -853,7 +856,10 @@
       ],
       "id": "duckdb-ab8e5666b8b2",
       "target_files": [
-        "src/parser/transform/statement/transform_select_node.cpp"
+        "src/parser/transform/statement/transform_select_node.cpp",
+        "third_party/libpg_query/grammar/statements/select.y",
+        "third_party/libpg_query/include/nodes/parsenodes.hpp",
+        "third_party/libpg_query/src_backend_parser_gram.cpp"
       ]
     },
     {

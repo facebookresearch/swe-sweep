@@ -137,6 +137,14 @@ sweep info path/to/graded-solutions --per-task
 sweep info path/to/graded-solutions --json
 ```
 
+Check that a task's official fixes pass as a submission would: an empty patch credits nothing,
+all fixes together resolve every bug with no regression, and with `--each`, each fix resolves
+only its own bug:
+
+```bash
+sweep validate dateutil --each
+```
+
 ## Citation
 
 ```bibtex

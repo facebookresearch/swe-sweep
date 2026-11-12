@@ -27,9 +27,14 @@ class EvalRunnerConfig:
     test_timeout: int = 900
     build_timeout: int = 7200
     needs_build: bool = True
+    # Rebuild after each hidden test patch in agent mode, not only after test + gold.
+    # Needed when hidden tests are compiled (tarantool's C unit tests, luatest .so modules), or stale binaries run.
+    rebuild_hidden_tests: bool = False
     visible_args: tuple[str, ...] | list[str] = ()
     suite: EvaluationSuite | None = None
     test_dirs: tuple[str, ...] | list[str] = ()
+    # Repo-relative paths that are source code although their names look like tests.
+    source_files: tuple[str, ...] | list[str] = ()
 
     def resolved_suite(self) -> EvaluationSuite:
         return self.suite or PytestEvaluationSuite(self.paths, self.visible_args)

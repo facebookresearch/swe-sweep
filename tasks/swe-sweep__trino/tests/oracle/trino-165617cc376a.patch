@@ -1,8 +1,8 @@
 diff --git a/core/trino-main/src/main/java/io/trino/sql/planner/PlanOptimizers.java b/core/trino-main/src/main/java/io/trino/sql/planner/PlanOptimizers.java
-index ac6e4146163..00ac0f6fb77 100644
+index 410ab84..57d883a 100644
 --- a/core/trino-main/src/main/java/io/trino/sql/planner/PlanOptimizers.java
 +++ b/core/trino-main/src/main/java/io/trino/sql/planner/PlanOptimizers.java
-@@ -897,7 +897,7 @@ public class PlanOptimizers
+@@ -892,7 +892,7 @@ public class PlanOptimizers
                  costCalculator,
                  ImmutableSet.<Rule<?>>builder()
                          .addAll(simplifyOptimizerRules) // Should be always run after PredicatePushDown
@@ -12,7 +12,7 @@ index ac6e4146163..00ac0f6fb77 100644
          builder.add(pushProjectionIntoTableScanOptimizer);
          // Projection pushdown rules may push reducing projections (e.g. dereferences) below filters for potential
 diff --git a/core/trino-main/src/main/java/io/trino/sql/planner/iterative/rule/PushPredicateIntoTableScan.java b/core/trino-main/src/main/java/io/trino/sql/planner/iterative/rule/PushPredicateIntoTableScan.java
-index 5c0ba7d780a..d65c793212a 100644
+index 5c0ba7d..d65c793 100644
 --- a/core/trino-main/src/main/java/io/trino/sql/planner/iterative/rule/PushPredicateIntoTableScan.java
 +++ b/core/trino-main/src/main/java/io/trino/sql/planner/iterative/rule/PushPredicateIntoTableScan.java
 @@ -34,8 +34,10 @@ import io.trino.spi.predicate.TupleDomain;
@@ -108,20 +108,20 @@ index 5c0ba7d780a..d65c793212a 100644
  
      private static class LayoutConstraintEvaluator
 diff --git a/core/trino-main/src/main/java/io/trino/sql/planner/iterative/rule/RemoveRedundantTableScanPredicate.java b/core/trino-main/src/main/java/io/trino/sql/planner/iterative/rule/RemoveRedundantTableScanPredicate.java
-index 2b97724c1fa..2093f64df0f 100644
+index a434a15..2093f64 100644
 --- a/core/trino-main/src/main/java/io/trino/sql/planner/iterative/rule/RemoveRedundantTableScanPredicate.java
 +++ b/core/trino-main/src/main/java/io/trino/sql/planner/iterative/rule/RemoveRedundantTableScanPredicate.java
-@@ -28,7 +28,8 @@ import io.trino.spi.type.TypeOperators;
+@@ -28,8 +28,8 @@ import io.trino.spi.type.TypeOperators;
  import io.trino.sql.planner.DomainTranslator;
  import io.trino.sql.planner.PlanNodeIdAllocator;
  import io.trino.sql.planner.Symbol;
--import io.trino.sql.planner.TypeProvider;
 +import io.trino.sql.planner.SymbolAllocator;
-+import io.trino.sql.planner.TypeAnalyzer;
+ import io.trino.sql.planner.TypeAnalyzer;
+-import io.trino.sql.planner.TypeProvider;
  import io.trino.sql.planner.iterative.Rule;
  import io.trino.sql.planner.plan.FilterNode;
  import io.trino.sql.planner.plan.PlanNode;
-@@ -61,13 +62,15 @@ public class RemoveRedundantTableScanPredicate
+@@ -62,18 +62,15 @@ public class RemoveRedundantTableScanPredicate
  
      private final Metadata metadata;
      private final DomainTranslator domainTranslator;
@@ -134,11 +134,16 @@ index 2b97724c1fa..2093f64df0f 100644
          this.metadata = requireNonNull(metadata, "metadata is null");
          this.typeOperators = requireNonNull(typeOperators, "typeOperators is null");
          this.domainTranslator = new DomainTranslator(metadata);
+-    }
+-
+-    public RemoveRedundantTableScanPredicate(Metadata metadata, TypeOperators typeOperators, TypeAnalyzer typeAnalyzer)
+-    {
+-        this(metadata, typeOperators);
 +        this.typeAnalyzer = requireNonNull(typeAnalyzer, "typeAnalyzer is null");
      }
  
      @Override
-@@ -85,7 +88,7 @@ public class RemoveRedundantTableScanPredicate
+@@ -91,7 +88,7 @@ public class RemoveRedundantTableScanPredicate
                  tableScan,
                  filterNode.getPredicate(),
                  context.getSession(),
@@ -147,7 +152,7 @@ index 2b97724c1fa..2093f64df0f 100644
                  context.getIdAllocator(),
                  typeOperators);
  
-@@ -101,7 +104,7 @@ public class RemoveRedundantTableScanPredicate
+@@ -107,7 +104,7 @@ public class RemoveRedundantTableScanPredicate
              TableScanNode node,
              Expression predicate,
              Session session,
@@ -156,7 +161,7 @@ index 2b97724c1fa..2093f64df0f 100644
              PlanNodeIdAllocator idAllocator,
              TypeOperators typeOperators)
      {
-@@ -113,7 +116,7 @@ public class RemoveRedundantTableScanPredicate
+@@ -119,7 +116,7 @@ public class RemoveRedundantTableScanPredicate
                  typeOperators,
                  session,
                  deterministicPredicate,
@@ -165,7 +170,7 @@ index 2b97724c1fa..2093f64df0f 100644
  
          TupleDomain<ColumnHandle> predicateDomain = decomposedPredicate.getTupleDomain()
                  .transformKeys(node.getAssignments()::get);
-@@ -145,6 +148,9 @@ public class RemoveRedundantTableScanPredicate
+@@ -151,6 +148,9 @@ public class RemoveRedundantTableScanPredicate
          Map<ColumnHandle, Symbol> assignments = ImmutableBiMap.copyOf(node.getAssignments()).inverse();
          Expression resultingPredicate = createResultingPredicate(
                  metadata,
@@ -176,7 +181,7 @@ index 2b97724c1fa..2093f64df0f 100644
                  nonDeterministicPredicate,
                  decomposedPredicate.getRemainingExpression());
 diff --git a/core/trino-main/src/main/java/io/trino/sql/planner/iterative/rule/SimplifyExpressions.java b/core/trino-main/src/main/java/io/trino/sql/planner/iterative/rule/SimplifyExpressions.java
-index 63483512a4d..63acefaae8b 100644
+index 6348351..63acefa 100644
 --- a/core/trino-main/src/main/java/io/trino/sql/planner/iterative/rule/SimplifyExpressions.java
 +++ b/core/trino-main/src/main/java/io/trino/sql/planner/iterative/rule/SimplifyExpressions.java
 @@ -13,7 +13,6 @@
@@ -198,7 +203,7 @@ index 63483512a4d..63acefaae8b 100644
          requireNonNull(metadata, "metadata is null");
          requireNonNull(typeAnalyzer, "typeAnalyzer is null");
 diff --git a/core/trino-main/src/main/java/io/trino/sql/planner/optimizations/AddExchanges.java b/core/trino-main/src/main/java/io/trino/sql/planner/optimizations/AddExchanges.java
-index 67a83ec5c4f..1f8e4b3da38 100644
+index 67a83ec..1f8e4b3 100644
 --- a/core/trino-main/src/main/java/io/trino/sql/planner/optimizations/AddExchanges.java
 +++ b/core/trino-main/src/main/java/io/trino/sql/planner/optimizations/AddExchanges.java
 @@ -565,7 +565,7 @@ public class AddExchanges

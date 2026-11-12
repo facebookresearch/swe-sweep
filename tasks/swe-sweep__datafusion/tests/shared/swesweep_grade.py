@@ -579,7 +579,7 @@ def _apply_agent_patch(
                 [
                     p
                     for p in touched_files(agent_diff)
-                    if is_test_file(p, config.test_dirs)
+                    if is_test_file(p, config.test_dirs, config.source_files)
                 ]
             )
         else:
@@ -686,9 +686,19 @@ def _run_hidden_tests(
         drop_bytecode_caches(env, config.repo)
         if config.needs_build:
             prepare_incremental_build(repo, suite, [test_diff])
-        output = _run_targets(
-            env, suite, config, files, names, capture, jobs, result, f2p=f2p
-        )
+            if getattr(config, "rebuild_hidden_tests", False):
+                # Compiled hidden tests (tarantool's C unit tests, luatest .so modules) need a rebuild after the test patch.
+                # Off by default: for other tasks it is a per-subtask build cost with no effect.
+                built, build_error, build_output = _build(repo, config, jobs)
+                result["detail"]["hidden_build_output"] = build_output[-20000:]
+                if not built:
+                    result["detail"]["error"] = (
+                        "build failed after hidden test patch: " + build_error[-1500:]
+                    )
+        if "error" not in result["detail"]:
+            output = _run_targets(
+                env, suite, config, files, names, capture, jobs, result, f2p=f2p
+            )
     repo.restore_files(touched_files(test_diff))
     if config.needs_build:
         refresh_build_graph(repo, suite)
