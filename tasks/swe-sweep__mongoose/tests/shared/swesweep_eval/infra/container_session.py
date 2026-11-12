@@ -92,9 +92,9 @@ class ContainerSession:
     def copy_dir(self, host_dir: str | Path, container_dir: str) -> None:
         """Copy a directory into place, world-readable like upstream's `docker cp` staging."""
         self._require_started()
-        _make_world_readable(host_dir)
         try:
             shutil.copytree(host_dir, container_dir, symlinks=True, dirs_exist_ok=True)
+            _make_world_readable(container_dir, copied_from=host_dir)
         except OSError as exc:
             raise ContainerSessionError(
                 f"staging {container_dir} failed: {exc}"
@@ -323,11 +323,15 @@ def _kill_process_group(proc: subprocess.Popen) -> None:
         proc.kill()
 
 
-def _make_world_readable(path: str | Path) -> None:
-    """`a+rX` over a tree: read for everything, plus traverse for directories."""
+def _make_world_readable(path: str | Path, *, copied_from: str | Path) -> None:
+    """Apply `a+rX` only to copied entries, leaving unrelated destination files alone."""
     root = Path(path)
-    for p in (root, *root.rglob("*")):
+    source = Path(copied_from)
+    for entry in (source, *source.rglob("*")):
+        p = root / entry.relative_to(source)
         try:
+            if p.is_symlink():
+                continue
             mode = p.stat().st_mode
             extra = stat.S_IRGRP | stat.S_IROTH
             if stat.S_ISDIR(mode):
