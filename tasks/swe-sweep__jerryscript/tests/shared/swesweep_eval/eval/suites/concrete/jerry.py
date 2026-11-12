@@ -2,6 +2,7 @@
 
 import os
 import posixpath
+import time
 
 from ..base import FullSuite
 from ..utils.compiled import _all_error, _patched_files, _run
@@ -162,8 +163,13 @@ class JerrySuite(FullSuite):
         drivers read as the harness not finishing."""
         outcomes = {}
         output = []
+        started = time.monotonic()
         for case in cases:
-            outcome, text = self._run_case(env, repo, case, timeout)
+            remaining = None if timeout is None else timeout - (time.monotonic() - started)
+            if remaining is not None and remaining <= 0:
+                log("jerry budget exhausted after %ds" % timeout)
+                return outcomes, True, "\n".join(output)
+            outcome, text = self._run_case(env, repo, case, timeout if remaining is None else remaining)
             if outcome is None:
                 return outcomes, True, "\n".join(output + [text])
             outcomes[case] = outcome
