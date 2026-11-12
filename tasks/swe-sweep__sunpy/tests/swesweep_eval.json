@@ -46,24 +46,6 @@
     },
     {
       "f2p": [
-        "sunpy.coordinates.tests.test_wcs_utils::test_sunpybaseframe_external"
-      ],
-      "id": "sunpy-486af3491297",
-      "target_files": [
-        "sunpy/coordinates/wcs_utils.py"
-      ]
-    },
-    {
-      "f2p": [
-        "sunpy.coordinates.tests.test_transformations::test_hee_earth"
-      ],
-      "id": "sunpy-4d8d39cbaee6",
-      "target_files": [
-        "sunpy/coordinates/_transformations.py"
-      ]
-    },
-    {
-      "f2p": [
         "sunpy.coordinates.tests.test_frameattributes::test_observer_in_heeq[Heliocentric]",
         "sunpy.coordinates.tests.test_frameattributes::test_observer_in_heeq[HeliographicCarrington]",
         "sunpy.coordinates.tests.test_frameattributes::test_observer_in_heeq[Helioprojective]",
@@ -95,22 +77,6 @@
         "sunpy.map.tests.test_map_factory.TestMap::test_mapsequence_sortby"
       ],
       "id": "sunpy-783546d9943b",
-      "target_files": [
-        "sunpy/map/mapbase.py"
-      ]
-    },
-    {
-      "f2p": [
-        "sunpy.map.tests.test_mapbase::test_rotation_matrix_defaults[1-1-CD]",
-        "sunpy.map.tests.test_mapbase::test_rotation_matrix_defaults[1-1-PC]",
-        "sunpy.map.tests.test_mapbase::test_rotation_matrix_defaults[1-2-CD]",
-        "sunpy.map.tests.test_mapbase::test_rotation_matrix_defaults[1-2-PC]",
-        "sunpy.map.tests.test_mapbase::test_rotation_matrix_defaults[2-1-CD]",
-        "sunpy.map.tests.test_mapbase::test_rotation_matrix_defaults[2-1-PC]",
-        "sunpy.map.tests.test_mapbase::test_rotation_matrix_defaults[2-2-CD]",
-        "sunpy.map.tests.test_mapbase::test_rotation_matrix_defaults[2-2-PC]"
-      ],
-      "id": "sunpy-7df330da0199",
       "target_files": [
         "sunpy/map/mapbase.py"
       ]
@@ -161,22 +127,6 @@
       "id": "sunpy-e50eafb125ae",
       "target_files": [
         "sunpy/map/header_helper.py"
-      ]
-    },
-    {
-      "f2p": [
-        "sunpy.map.tests.test_mapbase::test_rotation_matrix_defaults[1-1-CD]",
-        "sunpy.map.tests.test_mapbase::test_rotation_matrix_defaults[1-1-PC]",
-        "sunpy.map.tests.test_mapbase::test_rotation_matrix_defaults[1-2-CD]",
-        "sunpy.map.tests.test_mapbase::test_rotation_matrix_defaults[1-2-PC]",
-        "sunpy.map.tests.test_mapbase::test_rotation_matrix_defaults[2-1-CD]",
-        "sunpy.map.tests.test_mapbase::test_rotation_matrix_defaults[2-1-PC]",
-        "sunpy.map.tests.test_mapbase::test_rotation_matrix_defaults[2-2-CD]",
-        "sunpy.map.tests.test_mapbase::test_rotation_matrix_defaults[2-2-PC]"
-      ],
-      "id": "sunpy-fd253db3a713",
-      "target_files": [
-        "sunpy/map/mapbase.py"
       ]
     }
   ],

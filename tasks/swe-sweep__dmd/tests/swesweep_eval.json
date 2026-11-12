@@ -185,16 +185,6 @@
     },
     {
       "f2p": [
-        "compiler/test/compilable/test23857.d"
-      ],
-      "id": "dmd-1d7619e57c82",
-      "target_files": [
-        "compiler/src/dmd/backend/go.d",
-        "compiler/src/dmd/backend/inliner.d"
-      ]
-    },
-    {
-      "f2p": [
         "compiler/test/fail_compilation/lexer23465.d"
       ],
       "id": "dmd-1ed1a6384c1f",

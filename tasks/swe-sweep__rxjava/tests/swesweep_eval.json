@@ -42,17 +42,6 @@
     },
     {
       "f2p": [
-        "io.reactivex.internal.operators.maybe.MaybeAmbTest.noWinnerSuccessDispose"
-      ],
-      "id": "rxjava-1c8f5821ed8a",
-      "target_files": [
-        "src/main/java/io/reactivex/internal/operators/completable/CompletableAmb.java",
-        "src/main/java/io/reactivex/internal/operators/maybe/MaybeAmb.java",
-        "src/main/java/io/reactivex/internal/operators/single/SingleAmb.java"
-      ]
-    },
-    {
-      "f2p": [
         "io.reactivex.internal.operators.observable.ObservableTakeLastTimedTest.lastWindowIsFixedInTime"
       ],
       "id": "rxjava-32868fd52d7a",
@@ -153,16 +142,6 @@
     },
     {
       "f2p": [
-        "io.reactivex.processors.MulticastProcessorTest.requestUpstreamPrefetchNonFused",
-        "io.reactivex.processors.MulticastProcessorTest.requestUpstreamPrefetchNonFused2"
-      ],
-      "id": "rxjava-793ac8017f8a",
-      "target_files": [
-        "src/main/java/io/reactivex/rxjava3/processors/MulticastProcessor.java"
-      ]
-    },
-    {
-      "f2p": [
         "io.reactivex.internal.operators.flowable.FlowableMapTest.conditionalFusionNoNPE"
       ],
       "id": "rxjava-7a6f5b60d4a1",
@@ -199,26 +178,6 @@
     },
     {
       "f2p": [
-        "io.reactivex.internal.operators.flowable.FlowableObserveOnTest.fusedNoConcurrentCleanDueToCancel",
-        "io.reactivex.internal.operators.observable.ObservableObserveOnTest.fusedNoConcurrentCleanDueToCancel"
-      ],
-      "id": "rxjava-958fe31f3f2c",
-      "target_files": [
-        "src/main/java/io/reactivex/rxjava3/internal/operators/flowable/FlowableObserveOn.java",
-        "src/main/java/io/reactivex/rxjava3/internal/operators/observable/ObservableObserveOn.java"
-      ]
-    },
-    {
-      "f2p": [
-        "io.reactivex.internal.operators.single.SingleTimeoutTest.timeoutWithZero"
-      ],
-      "id": "rxjava-a2157bd71de8",
-      "target_files": [
-        "src/main/java/io/reactivex/rxjava3/internal/operators/single/SingleTimeout.java"
-      ]
-    },
-    {
-      "f2p": [
         "io.reactivex.internal.operators.flowable.FlowableConcatMapTest.delayErrorCallableTillTheEnd"
       ],
       "id": "rxjava-b7427efe479e",
@@ -247,15 +206,6 @@
     },
     {
       "f2p": [
-        "io.reactivex.internal.operators.flowable.FlowableConcatMapTest.delayErrorCallableTillTheEnd"
-      ],
-      "id": "rxjava-e6ca3c914584",
-      "target_files": [
-        "src/main/java/io/reactivex/internal/operators/flowable/FlowableConcatMap.java"
-      ]
-    },
-    {
-      "f2p": [
         "io.reactivex.internal.operators.observable.ObservableSwitchTest.innerOnSubscribeOuterCancelRace"
       ],
       "id": "rxjava-e6e15f8b3680",
@@ -270,24 +220,6 @@
       "id": "rxjava-ecbb413031aa",
       "target_files": [
         "src/main/java/io/reactivex/internal/operators/flowable/FlowableGroupBy.java"
-      ]
-    },
-    {
-      "f2p": [
-        "io.reactivex.internal.operators.flowable.FlowableOnBackpressureErrorTest.overflowCancels"
-      ],
-      "id": "rxjava-eda731404e51",
-      "target_files": [
-        "src/main/java/io/reactivex/rxjava3/internal/operators/flowable/FlowableOnBackpressureError.java"
-      ]
-    },
-    {
-      "f2p": [
-        "io.reactivex.internal.operators.flowable.FlowableFlatMapTest.mainErrorsInnerCancelled"
-      ],
-      "id": "rxjava-f184cffc63a8",
-      "target_files": [
-        "src/main/java/io/reactivex/internal/operators/flowable/FlowableFlatMap.java"
       ]
     }
   ],

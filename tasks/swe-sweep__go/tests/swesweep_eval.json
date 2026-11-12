@@ -423,16 +423,6 @@
     },
     {
       "f2p": [
-        "src/runtime::TestSegv",
-        "src/runtime::TestSegv/Segv"
-      ],
-      "id": "go-64e80d713a4a",
-      "target_files": [
-        "src/runtime/traceback.go"
-      ]
-    },
-    {
-      "f2p": [
         "src/runtime::TestAbortInCgo"
       ],
       "id": "go-6889cbf90c87",
