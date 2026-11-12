@@ -32,10 +32,10 @@ class ContainerRepository:
         self.git("clean", "-fdq")
 
     def patch_applies(self, patch: str) -> bool:
-        return self.git("apply", "--check", "--whitespace=nowarn", patch).returncode == 0
+        return self.git("apply", "--binary", "--check", "--whitespace=nowarn", patch).returncode == 0
 
     def apply_patch(self, patch: str) -> tuple[bool, str]:
-        result = self.git("apply", "--whitespace=nowarn", patch)
+        result = self.git("apply", "--binary", "--whitespace=nowarn", patch)
         return result.returncode == 0, result.stderr
 
     def restore_files(self, files: list[str]) -> None:
