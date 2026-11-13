@@ -105,7 +105,7 @@ Reviewed environment-dependent tests, out of the base list and never a regressio
 - `quarkus` (170): Never run here: the whole-reactor `mvn -o -T 4 test` is fail-fast and three unrelated module failures (offline `surefire-junit4` provider, Kotlin under `-T`, `AnalyticsServiceTest`) race with these modules; upstream's own ten runs report 465-947 of 984 ids. All 170 pass whenever they run.
 - `qutip` (1): Unseeded `rand_ket(4)` plus random GRAPE initial pulses with no retry; failed 1 of 2 pristine runs here.
 - `scipy` (2): `@pytest.mark.xfail(reason='Fails with ATLAS')` tests that XPASS on upstream's host and XFAIL here (BLAS/CPU-dependent sparse interior-point numerics).
-- `webpack` (2): `asset-modules/http-url` fetches over HTTP when its lockfile entries are stale; the verifier has no network. Failed on 3 of 3 pristine runs of `drydock-pandora-oracle-perbug-full100-v5` (2026-09-29, confirmed by the second visible run) after passing in v3 and v4, so the flip is time-based, not code.
+- `webpack` (7): `asset-modules/http-url` fetches over HTTP when its lockfile entries are stale; the verifier has no network. Failed on 3 of 3 pristine runs of `drydock-pandora-oracle-perbug-full100-v5` (2026-09-29, confirmed by the second visible run) after passing in v3 and v4, so the flip is time-based, not code. Five `FileSystemInfo` `timestamp mode` / `tsh mode` "should invalidate the snapshot when ... is changed" tests modify a file right after taking the snapshot, so when both get the same mtime the snapshot stays valid; a different one of them failed on each of two pristine Oracle runs (#15).
 
 
 ## Reading results
