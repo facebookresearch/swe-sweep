@@ -974,6 +974,16 @@ def verdict_to_result(
                     "report every staged subtask"
                 )
             sub_results.append(_subtask_result(subtask, per[subtask["id"]]))
+    elif not error:
+        # The agent's patch did not build, so no hidden test ran. That is the agent's outcome,
+        # not a grader failure: every subtask still counts, unresolved, so that `n_subtasks`
+        # keeps the task's bugs in the benchmark score's denominator.
+        for subtask in subtasks:
+            sub_results.append(
+                _subtask_result(
+                    subtask, {"detail": {"error": "agent patch did not build"}}
+                )
+            )
     n_subtasks = len(sub_results)
     n_resolved = sum(1 for s in sub_results if s["resolved"])
     visible_ok = False if error else bool(verdict.get("visible_ok", True))
